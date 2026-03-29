@@ -1,0 +1,36 @@
+# Accesco Living
+
+> India's first intelligent circular commerce ecosystem — delivering fresh groceries via Grokly, food via Swadishtt, and instant fashion via InstaStyle. One app. One cart. One ecosystem that learns how your household lives.
+
+Accesco Living Private Limited is a Bengaluru-based, pre-launch consumer commerce startup (ISO 9001:2015 certified) with 20+ team members. We are building a unified intelligent ecosystem that powers daily household commerce across groceries, food delivery, and fashion.
+
+## Our Ventures
+
+- **Grokly**: Fresh grocery and daily essentials delivery sourced directly from Karnataka farms via FarmChain. Includes LocalMeds (pharmacy and health delivery).
+- **Swadishtt**: Food delivery and cloud kitchen platform powered by Swadishtt Cafe micro-kitchens. Includes DineX (smart dining reservations and events).
+- **InstaStyle**: Instant fashion delivery in 15–20 minutes with trial-at-doorstep, virtual try-on, thrift marketplace, and Reverse Fashion Loop.
+
+## Key Differentiators
+
+- **FarmChain**: Direct sourcing network removing 6 middlemen between Karnataka farms and Bengaluru households. Farmers earn 2–3x mandi prices.
+- **Household Intelligence Layer**: Learns household behaviour over 30–60 days, reaching 85% prediction accuracy on weekly grocery needs.
+- **Budget-First Commerce**: Every product tagged in real time against household budget.
+- **Reverse Commerce Loop**: Packaging collected, carbon credits earned, organic waste returned to farms as compost.
+
+## Company Info
+
+- Founded: 2025
+- HQ: Bengaluru, Karnataka, India
+- Certification: ISO 9001:2015
+- Stage: Pre-launch, Beta launching March 2026
+- Fundraising: Pre-seed, seeking Rs 1.5–2 crore
+
+## Links
+
+- Homepage: https://www.accescoliving.com/
+- About: https://www.accescoliving.com/about
+- Grokly: https://www.accescoliving.com/services/grokly
+- Swadishtt: https://www.accescoliving.com/services/swadisht
+- InstaStyle: https://www.accescoliving.com/services/instastyle
+- Blog: https://www.accescoliving.com/blogs
+- Contact: https://www.accescoliving.com/contact

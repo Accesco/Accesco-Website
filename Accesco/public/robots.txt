@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+
+# Disallow admin/private routes
+Disallow: /api/
+Disallow: /auth/
+Disallow: /profile/
+
+# Sitemap location
+Sitemap: https://www.accescoliving.com/sitemap.xml

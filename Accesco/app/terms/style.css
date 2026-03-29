@@ -1,0 +1,158 @@
+/* ================================
+   TERMS PAGE VARIABLES
+================================ */
+:root {
+  --primary: #1a1a1a;
+  --secondary: #4a4a4a;
+  --accent: #0066ff;
+  --border: #e0e0e0;
+  --bg-light: #f9f9f9;
+}
+
+/* ================================
+   BASE
+================================ */
+body {
+  font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  line-height: 1.7;
+  color: var(--primary);
+  margin: 0;
+  background-color: #fff;
+}
+
+/* ================================
+   LAYOUT STRUCTURE
+================================ */
+.page-wrapper {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* ================================
+   SIDEBAR NAVIGATION
+================================ */
+.sidebar {
+  padding: 60px 30px;
+  height: 100vh;
+  position: sticky;
+  top: 0;
+  border-right: 1px solid var(--border);
+}
+
+.sidebar h4 {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--secondary);
+  margin-bottom: 20px;
+}
+
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+}
+
+.sidebar li {
+  margin-bottom: 12px;
+}
+
+.sidebar a {
+  text-decoration: none;
+  color: var(--secondary);
+  font-size: 0.9rem;
+  transition: color 0.2s;
+}
+
+.sidebar a:hover {
+  color: var(--accent);
+}
+
+/* ================================
+   MAIN CONTENT
+================================ */
+.content {
+  padding: 60px 80px;
+}
+
+header {
+  margin-bottom: 60px;
+}
+
+h1 {
+  font-size: 2.5rem;
+  margin-bottom: 10px;
+  font-weight: 700;
+}
+
+.effective-date {
+  color: var(--secondary);
+  font-size: 0.9rem;
+}
+
+section {
+  margin-bottom: 50px;
+  scroll-margin-top: 40px;
+}
+
+h2 {
+  font-size: 1.5rem;
+  margin-bottom: 25px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid var(--primary);
+}
+
+h3 {
+  font-size: 1.1rem;
+  margin-top: 30px;
+  color: var(--accent);
+}
+
+/* ================================
+   LEGAL CLAUSES
+================================ */
+.clause {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 15px;
+}
+
+.clause-num {
+  font-weight: bold;
+  min-width: 45px;
+}
+
+/* ================================
+   DISCLOSURE CARD
+================================ */
+.disclosure-card {
+  background-color: var(--bg-light);
+  border: 1px solid var(--border);
+  padding: 25px;
+  border-radius: 4px;
+  margin: 20px 0;
+}
+
+.disclosure-card strong {
+  display: block;
+  margin-bottom: 10px;
+  color: #d32f2f;
+}
+
+/* ================================
+   RESPONSIVE
+================================ */
+@media (max-width: 900px) {
+  .page-wrapper {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar {
+    display: none;
+  }
+
+  .content {
+    padding: 40px 20px;
+  }
+}
