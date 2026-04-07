@@ -1,0 +1,286 @@
+.catalogPage {
+  min-height: 100vh;
+  background: #fafafa;
+}
+
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.catalogHeader {
+  background: linear-gradient(135deg, #000 0%, #333 100%);
+  color: white;
+  padding: 60px 0 40px;
+  text-align: center;
+}
+
+.catalogHeader h1 {
+  font-size: clamp(32px, 5vw, 48px);
+  margin: 0 0 12px 0;
+  font-weight: 700;
+}
+
+.catalogHeader p {
+  font-size: 18px;
+  opacity: 0.9;
+  margin: 0;
+}
+
+.categoryTabs {
+  background: white;
+  border-bottom: 1px solid #e5e5e5;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.tabsWrapper {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 16px 0;
+  -webkit-overflow-scrolling: touch;
+}
+
+.tabsWrapper::-webkit-scrollbar {
+  display: none;
+}
+
+.tab {
+  padding: 10px 24px;
+  border: 2px solid #e5e5e5;
+  background: white;
+  border-radius: 24px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.tab:hover {
+  border-color: #000;
+}
+
+.tab.active {
+  background: #000;
+  color: white;
+  border-color: #000;
+}
+
+.catalogContent {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 32px;
+  padding: 32px 0;
+}
+
+.filtersSidebar {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  height: fit-content;
+  position: sticky;
+  top: 100px;
+}
+
+.filtersHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #e5e5e5;
+}
+
+.filtersHeader h3 {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.clearBtn {
+  background: none;
+  border: none;
+  color: #666;
+  font-size: 13px;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.clearBtn:hover {
+  color: #000;
+}
+
+.filterSection {
+  margin-bottom: 28px;
+}
+
+.filterSection h4 {
+  font-size: 14px;
+  font-weight: 600;
+  margin: 0 0 12px 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.sizeOptions {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.sizeBtn {
+  padding: 10px;
+  border: 1px solid #e5e5e5;
+  background: white;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.sizeBtn:hover {
+  border-color: #000;
+}
+
+.sizeBtn.active {
+  background: #000;
+  color: white;
+  border-color: #000;
+}
+
+.priceRange input[type="range"] {
+  width: 100%;
+  margin-bottom: 8px;
+}
+
+.priceLabels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  color: #666;
+}
+
+.productsSection {
+  min-height: 500px;
+}
+
+.toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  padding: 16px;
+  background: white;
+  border-radius: 12px;
+}
+
+.filterToggle {
+  display: none;
+  padding: 10px 16px;
+  border: 1px solid #e5e5e5;
+  background: white;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  gap: 8px;
+  align-items: center;
+}
+
+.resultsCount {
+  font-size: 14px;
+  color: #666;
+  font-weight: 500;
+}
+
+.sortSelect {
+  padding: 10px 16px;
+  border: 1px solid #e5e5e5;
+  border-radius: 8px;
+  font-size: 14px;
+  background: white;
+  cursor: pointer;
+}
+
+.productsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 24px;
+}
+
+.noProducts {
+  text-align: center;
+  padding: 80px 20px;
+  background: white;
+  border-radius: 12px;
+}
+
+.noProducts p {
+  font-size: 18px;
+  color: #666;
+  margin-bottom: 20px;
+}
+
+.noProducts button {
+  padding: 12px 24px;
+  background: #000;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+@media (max-width: 1024px) {
+  .catalogContent {
+    grid-template-columns: 1fr;
+  }
+
+  .filtersSidebar {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 100;
+    max-width: 100%;
+    border-radius: 0;
+    overflow-y: auto;
+  }
+
+  .filtersSidebar.show {
+    display: block;
+  }
+
+  .filterToggle {
+    display: flex;
+  }
+
+  .productsGrid {
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 16px;
+  }
+}
+
+@media (max-width: 768px) {
+  .catalogHeader {
+    padding: 40px 0 30px;
+  }
+
+  .toolbar {
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .resultsCount {
+    order: 3;
+    width: 100%;
+    text-align: center;
+  }
+}

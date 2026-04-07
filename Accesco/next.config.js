@@ -4,6 +4,7 @@ const path = require('path')
 const nextConfig = {
   images: {
     unoptimized: true,
+    domains: ['images.unsplash.com'],
   },
   reactStrictMode: false,
   async headers() {

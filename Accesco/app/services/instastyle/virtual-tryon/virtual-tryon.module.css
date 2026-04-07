@@ -1,0 +1,661 @@
+.virtualTryOnPage {
+  min-height: 100vh;
+  background: #f8f9fa;
+}
+
+/* Loading State */
+.loadingContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: #000;
+  color: #fff;
+}
+
+.loader {
+  width: 60px;
+  height: 60px;
+  border: 4px solid rgba(255, 255, 255, 0.1);
+  border-top-color: #667eea;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 24px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.loadingContainer h2 {
+  font-size: 28px;
+  margin: 0 0 12px 0;
+}
+
+.loadingContainer p {
+  font-size: 16px;
+  opacity: 0.7;
+  margin: 0;
+}
+
+/* Header */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 40px;
+  background: #fff;
+  border-bottom: 1px solid #e0e0e0;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.backButton {
+  color: #667eea;
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.backButton:hover {
+  transform: translateX(-4px);
+}
+
+.title {
+  font-size: 28px;
+  font-weight: 800;
+  margin: 0;
+  color: #000;
+}
+
+.headerActions {
+  display: flex;
+  gap: 12px;
+}
+
+.captureBtn {
+  padding: 10px 20px;
+  background: #667eea;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.captureBtn:hover {
+  background: #5568d3;
+  transform: translateY(-2px);
+}
+
+/* Main Content */
+.mainContent {
+  display: grid;
+  grid-template-columns: 1fr 400px;
+  gap: 24px;
+  padding: 24px 40px;
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+/* Camera Section */
+.cameraSection {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.cameraContainer {
+  background: #000;
+  border-radius: 16px;
+  overflow: hidden;
+  aspect-ratio: 16/9;
+  position: relative;
+}
+
+.cameraPlaceholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: #fff;
+  text-align: center;
+  padding: 40px;
+}
+
+.placeholderIcon {
+  font-size: 80px;
+  margin-bottom: 24px;
+  opacity: 0.5;
+}
+
+.cameraPlaceholder h2 {
+  font-size: 32px;
+  margin: 0 0 12px 0;
+}
+
+.cameraPlaceholder p {
+  font-size: 18px;
+  opacity: 0.7;
+  margin: 0 0 32px 0;
+}
+
+.startCameraBtn {
+  padding: 16px 48px;
+  background: #667eea;
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  font-size: 18px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.startCameraBtn:hover {
+  background: #5568d3;
+  transform: scale(1.05);
+}
+
+.errorMessage {
+  color: #ff6b6b;
+  margin-top: 16px;
+  font-size: 14px;
+}
+
+/* Video Wrapper */
+.videoWrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.videoOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.poseIndicator {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(34, 197, 94, 0.9);
+  color: #fff;
+  padding: 8px 16px;
+  border-radius: 24px;
+  font-weight: 600;
+  animation: fadeIn 0.5s ease;
+}
+
+.poseIcon {
+  font-size: 20px;
+}
+
+.selectedProductOverlay {
+  background: rgba(0, 0, 0, 0.8);
+  padding: 12px 20px;
+  border-radius: 12px;
+  backdrop-filter: blur(10px);
+}
+
+.productPreview {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #fff;
+  font-weight: 600;
+}
+
+.productColorSwatch {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  border: 2px solid #fff;
+}
+
+/* Camera Controls */
+.cameraControls {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 24px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 24px;
+  background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+}
+
+.controlBtn {
+  padding: 12px 24px;
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+.controlBtn:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.3);
+  transform: translateY(-2px);
+}
+
+.controlBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.captureButton {
+  width: 80px;
+  height: 80px;
+  background: transparent;
+  border: 4px solid #fff;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.captureButton:hover:not(:disabled) {
+  transform: scale(1.1);
+}
+
+.captureButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.captureCircle {
+  width: 60px;
+  height: 60px;
+  background: #fff;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+}
+
+.captureButton:hover:not(:disabled) .captureCircle {
+  background: #667eea;
+}
+
+/* Captured Image */
+.capturedImageWrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.capturedImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.capturedControls {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 24px;
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+}
+
+.retakeBtn,
+.downloadBtn,
+.tryAnotherBtn {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.retakeBtn {
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(10px);
+}
+
+.downloadBtn {
+  background: #22c55e;
+  color: #fff;
+}
+
+.tryAnotherBtn {
+  background: #667eea;
+  color: #fff;
+}
+
+.retakeBtn:hover,
+.downloadBtn:hover,
+.tryAnotherBtn:hover {
+  transform: translateY(-2px);
+}
+
+/* Instructions */
+.instructions {
+  background: #fff;
+  padding: 24px;
+  border-radius: 12px;
+  border: 1px solid #e0e0e0;
+}
+
+.instructions h3 {
+  font-size: 20px;
+  margin: 0 0 16px 0;
+  color: #000;
+}
+
+.instructions ol {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.instructions li {
+  margin-bottom: 12px;
+  color: #666;
+  line-height: 1.6;
+}
+
+/* Product Sidebar */
+.productSidebar {
+  background: #fff;
+  border-radius: 16px;
+  padding: 24px;
+  border: 1px solid #e0e0e0;
+  display: flex;
+  flex-direction: column;
+  max-height: calc(100vh - 140px);
+  position: sticky;
+  top: 100px;
+}
+
+.sidebarTitle {
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0 0 20px 0;
+  color: #000;
+}
+
+.categoryTabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+  overflow-x: auto;
+}
+
+.categoryTab {
+  padding: 8px 16px;
+  background: #f5f5f5;
+  border: none;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+.categoryTab:hover {
+  background: #e0e0e0;
+}
+
+.categoryTab.active {
+  background: #667eea;
+  color: #fff;
+}
+
+.productList {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.productItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border: 2px solid #e0e0e0;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.productItem:hover {
+  border-color: #667eea;
+  transform: translateX(4px);
+}
+
+.productItem.selected {
+  border-color: #667eea;
+  background: #f0f4ff;
+}
+
+.productThumbnail {
+  width: 60px;
+  height: 60px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.thumbnailIcon {
+  font-size: 28px;
+}
+
+.productInfo {
+  flex: 1;
+}
+
+.productInfo h4 {
+  font-size: 14px;
+  font-weight: 600;
+  margin: 0 0 4px 0;
+  color: #000;
+}
+
+.productCategory {
+  font-size: 12px;
+  color: #666;
+  margin: 0;
+  text-transform: capitalize;
+}
+
+.selectedBadge {
+  width: 24px;
+  height: 24px;
+  background: #667eea;
+  color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.sidebarFooter {
+  padding-top: 20px;
+  border-top: 1px solid #e0e0e0;
+}
+
+.browseMoreBtn {
+  display: block;
+  width: 100%;
+  padding: 12px;
+  background: #f5f5f5;
+  color: #667eea;
+  text-align: center;
+  text-decoration: none;
+  border-radius: 8px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.browseMoreBtn:hover {
+  background: #667eea;
+  color: #fff;
+}
+
+/* Features Section */
+.featuresSection {
+  padding: 60px 40px;
+  background: #fff;
+  margin-top: 40px;
+}
+
+.featuresSection h2 {
+  font-size: 32px;
+  font-weight: 800;
+  text-align: center;
+  margin: 0 0 40px 0;
+  color: #000;
+}
+
+.featuresGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 32px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.featureCard {
+  text-align: center;
+  padding: 32px 20px;
+  background: #f8f9fa;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+}
+
+.featureCard:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.1);
+}
+
+.featureIcon {
+  font-size: 48px;
+  margin-bottom: 16px;
+}
+
+.featureCard h3 {
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0 0 12px 0;
+  color: #000;
+}
+
+.featureCard p {
+  font-size: 14px;
+  color: #666;
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .mainContent {
+    grid-template-columns: 1fr;
+    padding: 20px;
+  }
+
+  .productSidebar {
+    max-height: none;
+    position: static;
+  }
+
+  .header {
+    padding: 16px 20px;
+  }
+
+  .title {
+    font-size: 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .header {
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .headerActions {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .cameraContainer {
+    aspect-ratio: 3/4;
+  }
+
+  .cameraControls {
+    gap: 16px;
+  }
+
+  .captureButton {
+    width: 60px;
+    height: 60px;
+  }
+
+  .captureCircle {
+    width: 45px;
+    height: 45px;
+  }
+
+  .controlBtn {
+    padding: 10px 16px;
+    font-size: 14px;
+  }
+
+  .featuresGrid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .featuresSection {
+    padding: 40px 20px;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

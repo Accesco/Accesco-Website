@@ -1,0 +1,383 @@
+.footer {
+  background: #000;
+  color: #fff;
+}
+
+/* Newsletter Section */
+.newsletter {
+  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+  padding: 60px 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.newsletterContent {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 48px;
+}
+
+.newsletterText {
+  flex: 1;
+}
+
+.newsletterTitle {
+  font-size: 32px;
+  font-weight: 800;
+  margin: 0 0 8px 0;
+  letter-spacing: -0.5px;
+}
+
+.newsletterDescription {
+  font-size: 16px;
+  color: rgba(255, 255, 255, 0.7);
+  margin: 0;
+  line-height: 1.5;
+}
+
+.newsletterForm {
+  flex: 1;
+  max-width: 500px;
+}
+
+.inputWrapper {
+  display: flex;
+  gap: 12px;
+}
+
+.newsletterInput {
+  flex: 1;
+  height: 52px;
+  padding: 0 20px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  color: #fff;
+  font-size: 15px;
+  outline: none;
+  transition: all 0.2s;
+}
+
+.newsletterInput::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.newsletterInput:hover {
+  border-color: rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.newsletterInput:focus {
+  border-color: #fff;
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.newsletterInput:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.newsletterButton {
+  height: 52px;
+  padding: 0 32px;
+  background: #fff;
+  color: #000;
+  border: none;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.newsletterButton:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(255, 255, 255, 0.2);
+}
+
+.newsletterButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.successMessage {
+  margin: 12px 0 0 0;
+  color: #22c55e;
+  font-size: 14px;
+  font-weight: 600;
+  animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Main Footer */
+.main {
+  padding: 80px 20px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 2fr repeat(4, 1fr);
+  gap: 48px;
+}
+
+/* Brand Column */
+.brandColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.footerLogo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  color: #fff;
+  font-weight: 800;
+  font-size: 24px;
+  width: fit-content;
+  transition: opacity 0.2s;
+}
+
+.footerLogo:hover {
+  opacity: 0.8;
+}
+
+.logoIcon {
+  font-size: 28px;
+  line-height: 1;
+}
+
+.logoText {
+  letter-spacing: -0.5px;
+}
+
+.brandDescription {
+  font-size: 14px;
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.6);
+  margin: 0;
+  max-width: 320px;
+}
+
+.social {
+  display: flex;
+  gap: 12px;
+}
+
+.socialLink {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255, 255, 255, 0.6);
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  transition: all 0.2s;
+  text-decoration: none;
+}
+
+.socialLink:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateY(-2px);
+}
+
+/* Links Columns */
+.linksColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.columnTitle {
+  font-size: 14px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin: 0;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.linksList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.link {
+  color: rgba(255, 255, 255, 0.6);
+  text-decoration: none;
+  font-size: 14px;
+  transition: color 0.2s;
+  display: inline-block;
+}
+
+.link:hover {
+  color: #fff;
+}
+
+/* Bottom Bar */
+.bottom {
+  padding: 24px 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.bottomContent {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.copyright {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.5);
+  margin: 0;
+}
+
+.paymentMethods {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.paymentLabel {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.paymentMethod {
+  padding: 6px 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+  }
+
+  .brandColumn {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 768px) {
+  .newsletter {
+    padding: 40px 20px;
+  }
+
+  .newsletterContent {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 32px;
+  }
+
+  .newsletterTitle {
+    font-size: 24px;
+  }
+
+  .newsletterDescription {
+    font-size: 14px;
+  }
+
+  .newsletterForm {
+    width: 100%;
+    max-width: none;
+  }
+
+  .inputWrapper {
+    flex-direction: column;
+  }
+
+  .newsletterButton {
+    width: 100%;
+  }
+
+  .main {
+    padding: 60px 20px;
+  }
+
+  .grid {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+
+  .brandColumn {
+    padding-bottom: 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .bottomContent {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .paymentMethods {
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 0 16px;
+  }
+
+  .social {
+    flex-wrap: wrap;
+  }
+
+  .paymentMethod {
+    font-size: 11px;
+    padding: 4px 8px;
+  }
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .newsletterButton,
+  .socialLink,
+  .link,
+  .successMessage {
+    transition: none;
+  }
+}
+
+/* Focus visible */
+.newsletterInput:focus-visible,
+.newsletterButton:focus-visible,
+.footerLogo:focus-visible,
+.socialLink:focus-visible,
+.link:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}

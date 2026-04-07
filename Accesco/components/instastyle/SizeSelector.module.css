@@ -1,0 +1,94 @@
+.sizeSelector {
+  margin-bottom: 24px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.label {
+  font-size: 14px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #111;
+}
+
+.stock {
+  font-size: 13px;
+  color: #10B981;
+  font-weight: 500;
+}
+
+.sizeGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+  gap: 12px;
+}
+
+.sizeButton {
+  position: relative;
+  padding: 14px 8px;
+  border: 2px solid #e5e5e5;
+  background: white;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sizeButton:hover:not(.disabled) {
+  border-color: #000;
+  transform: translateY(-2px);
+}
+
+.sizeButton.selected {
+  background: #000;
+  color: white;
+  border-color: #000;
+}
+
+.sizeButton.disabled {
+  background: #f5f5f5;
+  color: #ccc;
+  cursor: not-allowed;
+  position: relative;
+}
+
+.sizeLabel {
+  position: relative;
+  z-index: 1;
+}
+
+.outOfStock {
+  position: absolute;
+  font-size: 20px;
+  color: #ef4444;
+  opacity: 0.6;
+}
+
+.hint {
+  margin-top: 8px;
+  font-size: 13px;
+  color: #666;
+  font-style: italic;
+}
+
+@media (max-width: 768px) {
+  .sizeGrid {
+    grid-template-columns: repeat(auto-fill, minmax(50px, 1fr));
+    gap: 8px;
+  }
+
+  .sizeButton {
+    padding: 12px 6px;
+    font-size: 13px;
+  }
+}

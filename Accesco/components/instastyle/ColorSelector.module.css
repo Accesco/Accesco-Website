@@ -1,0 +1,90 @@
+.colorSelector {
+  margin-bottom: 24px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.label {
+  font-size: 14px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #111;
+}
+
+.colorName {
+  font-size: 13px;
+  color: #666;
+  font-weight: 500;
+}
+
+.colorGrid {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.colorButton {
+  position: relative;
+  width: 48px;
+  height: 48px;
+  border: 2px solid #e5e5e5;
+  background: white;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  padding: 4px;
+}
+
+.colorButton:hover {
+  border-color: #000;
+  transform: scale(1.1);
+}
+
+.colorButton.selected {
+  border-color: #000;
+  border-width: 3px;
+}
+
+.colorSwatch {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 2px solid rgba(0, 0, 0, 0.1);
+}
+
+.checkmark {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  font-size: 20px;
+  font-weight: bold;
+  text-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
+  pointer-events: none;
+}
+
+.hint {
+  margin-top: 8px;
+  font-size: 13px;
+  color: #666;
+  font-style: italic;
+}
+
+@media (max-width: 768px) {
+  .colorButton {
+    width: 40px;
+    height: 40px;
+  }
+
+  .checkmark {
+    font-size: 16px;
+  }
+}

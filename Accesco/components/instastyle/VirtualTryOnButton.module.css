@@ -1,0 +1,40 @@
+.tryOnButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.tryOnButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+.icon {
+  font-size: 18px;
+}
+
+.text {
+  white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+  .tryOnButton {
+    padding: 10px 20px;
+    font-size: 13px;
+  }
+  
+  .icon {
+    font-size: 16px;
+  }
+}
