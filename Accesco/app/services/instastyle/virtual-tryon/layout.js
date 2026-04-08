@@ -1,6 +1,6 @@
 export const metadata = {
-  title: "Virtual Try-On | InstaStyle",
-  description: "Try clothes virtually using AR technology. See how outfits look on you before ordering with InstaStyle's Virtual Try-On feature.",
+  title: "Style Preview | InstaStyle",
+  description: "Preview outfits before you buy and compare looks in a simple fitting-room flow for InstaStyle.",
 };
 
 export default function VirtualTryOnLayout({ children }) {

@@ -378,6 +378,91 @@
 .footerLogo:focus-visible,
 .socialLink:focus-visible,
 .link:focus-visible {
-  outline: 2px solid #fff;
+  outline: 2px solid #f0c99d;
   outline-offset: 2px;
+}
+
+/* InstaStyle footer refresh */
+.footer {
+  background: linear-gradient(180deg, #171411 0%, #0f0d0b 100%);
+}
+
+.newsletter {
+  background: linear-gradient(135deg, #8d6648 0%, #4a3126 100%);
+}
+
+.newsletterDescription,
+.paymentLabel,
+.paymentMethod,
+.copyright,
+.brandDescription,
+.link {
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.newsletterInput {
+  background: rgba(255, 255, 255, 0.92);
+  color: #171411;
+  border-radius: 999px;
+}
+
+.newsletterInput::placeholder {
+  color: rgba(23, 20, 17, 0.45);
+}
+
+.newsletterInput:hover,
+.newsletterInput:focus {
+  background: #fff;
+}
+
+.newsletterButton {
+  background: #171411;
+  color: #fff;
+  border-radius: 999px;
+  box-shadow: 0 12px 24px rgba(23, 20, 17, 0.25);
+}
+
+.newsletterButton:hover:not(:disabled) {
+  box-shadow: 0 14px 28px rgba(23, 20, 17, 0.3);
+}
+
+.footerLogo {
+  gap: 12px;
+}
+
+.logoMark {
+  width: 42px;
+  height: 42px;
+  flex: 0 0 auto;
+}
+
+.logoText {
+  letter-spacing: -0.03em;
+}
+
+.brandDescription {
+  color: rgba(255, 255, 255, 0.78);
+}
+
+.socialLink {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.socialLink:hover {
+  background: rgba(255, 255, 255, 0.14);
+}
+
+.columnTitle {
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.paymentMethod {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+@media (max-width: 768px) {
+  .brandColumn {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  }
 }

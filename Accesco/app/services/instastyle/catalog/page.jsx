@@ -1,11 +1,13 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import ProductCard from '@/components/instastyle/ProductCard';
 import { products, categories, sortProducts } from '@/lib/mockData';
 import styles from './catalog.module.css';
 
 export default function CatalogPage() {
+  const searchParams = useSearchParams();
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [sortBy, setSortBy] = useState('newest');
   const [filters, setFilters] = useState({
@@ -14,6 +16,11 @@ export default function CatalogPage() {
     priceRange: [0, 10000],
   });
   const [showFilters, setShowFilters] = useState(false);
+
+  useEffect(() => {
+    const category = searchParams.get('category');
+    setSelectedCategory(category && categories.some(item => item.id === category) ? category : 'all');
+  }, [searchParams]);
 
   // Filter and sort products
   const displayedProducts = useMemo(() => {
@@ -58,8 +65,8 @@ export default function CatalogPage() {
       {/* Header */}
       <div className={styles.catalogHeader}>
         <div className={styles.container}>
-          <h1>Shop Fashion</h1>
-          <p>Discover the latest trends delivered in 15-20 minutes</p>
+          <h1>Shop the Edit</h1>
+          <p>Category-first shopping with a fashion-magazine feel</p>
         </div>
       </div>
 
@@ -71,7 +78,7 @@ export default function CatalogPage() {
               className={`${styles.tab} ${selectedCategory === 'all' ? styles.active : ''}`}
               onClick={() => setSelectedCategory('all')}
             >
-              All
+              Everything
             </button>
             {categories.map(cat => (
               <button
@@ -91,7 +98,7 @@ export default function CatalogPage() {
           {/* Filters Sidebar */}
           <aside className={`${styles.filtersSidebar} ${showFilters ? styles.show : ''}`}>
             <div className={styles.filtersHeader}>
-              <h3>Filters</h3>
+              <h3>Refine</h3>
               <button className={styles.clearBtn} onClick={clearFilters}>
                 Clear All
               </button>
@@ -144,7 +151,7 @@ export default function CatalogPage() {
                 className={styles.filterToggle}
                 onClick={() => setShowFilters(!showFilters)}
               >
-                <span>🔍</span> Filters
+                <span>🔍</span> Refine
               </button>
 
               <div className={styles.resultsCount}>

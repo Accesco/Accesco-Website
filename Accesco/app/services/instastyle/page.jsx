@@ -2,11 +2,24 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { categories, getFeaturedProducts, products } from '@/lib/mockData';
 import styles from './landing.module.css';
 
 export default function InstaStyleLanding() {
   const [email, setEmail] = useState('');
   const [isSubscribed, setIsSubscribed] = useState(false);
+
+  const featuredProducts = getFeaturedProducts().slice(0, 4);
+  const brandSet = Array.from(new Set(products.map((product) => product.brand))).slice(0, 10);
+  const categoryCards = categories.map((category) => {
+    const categoryProducts = products.filter((product) => product.category === category.id);
+    return {
+      id: category.id,
+      name: category.name,
+      image: categoryProducts[0]?.images?.[0]?.url || '',
+      count: categoryProducts.length,
+    };
+  });
 
   // Reviews data
   const reviews = [
@@ -42,9 +55,6 @@ export default function InstaStyleLanding() {
     }
   ];
 
-  // Brands data
-  const brands = ['Zara', 'H&M', 'Nike', 'Adidas', 'Levi\'s', 'Puma', 'Forever 21', 'Mango', 'Gucci', 'Versace'];
-
   const handleNewsletterSubmit = (e) => {
     e.preventDefault();
     setIsSubscribed(true);
@@ -55,7 +65,7 @@ export default function InstaStyleLanding() {
     <div className={styles.landingPage}>
       {/* Announcement Bar */}
       <div className={styles.announcementBar}>
-        <p>🎉 New Customer? Get 30% OFF on your first order! Use code: WELCOME30</p>
+        <p>Accesco Instastyle is live in preview. Faster discovery, cleaner checkout, and fashion-first browsing.</p>
       </div>
 
       {/* Hero Section */}
@@ -73,76 +83,68 @@ export default function InstaStyleLanding() {
         
         <div className={styles.heroContent}>
           <div className={styles.heroBadge}>
-            <span>⚡</span>
-            <span>15-20 Min Delivery</span>
+            <span>Define your look</span>
           </div>
           
           <h1 className={styles.heroTitle}>
-            Fashion at Lightning Speed
+            INSTASTYLE
           </h1>
           
           <p className={styles.heroSubtitle}>
-            Discover the latest trends and get them delivered to your doorstep in just 15-20 minutes. 
-            Try before you buy, shop sustainably, and express yourself.
+            A new wave of clothing and self-expression designed to elevate your style.
           </p>
           
           <div className={styles.heroButtons}>
             <Link href="/services/instastyle/catalog" className={styles.btnPrimary}>
-              Shop Now
+              Explore Collection
             </Link>
-            <Link href="/services/instastyle/virtual-tryon" className={styles.btnSecondary}>
-              Try Virtual Try-On
-            </Link>
-          </div>
-
-          {/* Trust Badges */}
-          <div className={styles.trustBadges}>
-            <div className={styles.trustBadge}>
-              <span>✓</span>
-              <span>Free Returns</span>
-            </div>
-            <div className={styles.trustBadge}>
-              <span>✓</span>
-              <span>Secure Payment</span>
-            </div>
-            <div className={styles.trustBadge}>
-              <span>✓</span>
-              <span>24/7 Support</span>
-            </div>
           </div>
         </div>
       </section>
 
       {/* Trending Now Section */}
-      <section className={styles.trending}>
+      <section id="trending" className={styles.trending}>
         <div className={styles.container}>
           <div className={styles.sectionHeader}>
-            <h2 className={styles.sectionTitle}>Trending Now</h2>
+            <h2 className={styles.sectionTitle}>Shop the edit</h2>
             <Link href="/services/instastyle/catalog" className={styles.viewAll}>
               View All →
             </Link>
           </div>
           
           <div className={styles.trendingGrid}>
-            {[1, 2, 3, 4].map((item) => (
-              <Link key={item} href={`/services/instastyle/products/${item}`} className={styles.trendingCard}>
+            {featuredProducts.map((product) => (
+              <Link key={product.id} href={`/services/instastyle/products/${product.id}`} className={styles.trendingCard}>
                 <div className={styles.trendingImage}>
-                  <div className={styles.imagePlaceholder}>
-                    <span>Product Image</span>
-                  </div>
+                  {product.images?.[0]?.url ? (
+                    <img
+                      src={product.images[0].url}
+                      alt={product.name}
+                      className={styles.trendingPhoto}
+                      loading="lazy"
+                    />
+                  ) : (
+                    <div className={styles.imagePlaceholder}>
+                      <span>{product.name}</span>
+                    </div>
+                  )}
                   <div className={styles.trendingBadge}>Hot</div>
                 </div>
                 <div className={styles.trendingInfo}>
-                  <h3 className={styles.trendingName}>Trending Product {item}</h3>
-                  <p className={styles.trendingBrand}>Premium Brand</p>
+                  <h3 className={styles.trendingName}>{product.name}</h3>
+                  <p className={styles.trendingBrand}>{product.brand}</p>
                   <div className={styles.trendingPrice}>
-                    <span className={styles.currentPrice}>₹1,299</span>
-                    <span className={styles.originalPrice}>₹2,499</span>
-                    <span className={styles.discount}>48% OFF</span>
+                    <span className={styles.currentPrice}>₹{(product.discountedPrice || product.price).toLocaleString()}</span>
+                    {product.discountedPrice && (
+                      <>
+                        <span className={styles.originalPrice}>₹{product.price.toLocaleString()}</span>
+                        <span className={styles.discount}>{product.discountPercentage}% OFF</span>
+                      </>
+                    )}
                   </div>
                   <div className={styles.rating}>
-                    <span>⭐ 4.5</span>
-                    <span>(2.3k reviews)</span>
+                    <span>⭐ {product.rating}</span>
+                    <span>({product.reviewCount} reviews)</span>
                   </div>
                 </div>
               </Link>
@@ -154,9 +156,9 @@ export default function InstaStyleLanding() {
       {/* Features Section */}
       <section id="features" className={styles.features}>
         <div className={styles.container}>
-          <h2 className={styles.sectionTitle}>Why InstaStyle?</h2>
+          <h2 className={styles.sectionTitle}>Why InstaStyle feels different</h2>
           <p className={styles.sectionSubtitle}>
-            Experience fashion shopping like never before with our innovative features
+            Practical shopping features focused on discovery, delivery, and smooth checkout.
           </p>
           
           <div className={styles.featuresGrid}>
@@ -178,9 +180,9 @@ export default function InstaStyleLanding() {
 
             <div className={styles.featureCard}>
               <div className={styles.featureNumber}>03</div>
-              <h3 className={styles.featureTitle}>AI-Powered Styling</h3>
+              <h3 className={styles.featureTitle}>Curated Styling</h3>
               <p className={styles.featureDescription}>
-                Get personalized recommendations based on your style preferences and body type.
+                Get edited recommendations based on browsing, category, and product interest.
               </p>
             </div>
 
@@ -196,7 +198,7 @@ export default function InstaStyleLanding() {
               <div className={styles.featureNumber}>05</div>
               <h3 className={styles.featureTitle}>Virtual Try-On</h3>
               <p className={styles.featureDescription}>
-                See how clothes look on you with our AR-powered virtual fitting room.
+                Preview looks quickly in a simple camera-based fitting room before checkout.
               </p>
             </Link>
 
@@ -212,53 +214,29 @@ export default function InstaStyleLanding() {
       </section>
 
       {/* Categories Section */}
-      <section className={styles.categories}>
+      <section id="categories" className={styles.categories}>
         <div className={styles.container}>
           <h2 className={styles.sectionTitle}>Shop by Category</h2>
           <p className={styles.sectionSubtitle}>
-            Explore our curated collections for every style and occasion
+            Explore curated category collections for everyday looks and occasions.
           </p>
           
           <div className={styles.categoriesGrid}>
-            <Link href="/services/instastyle/catalog?category=men" className={styles.categoryCard}>
-              <div className={styles.categoryImagePlaceholder}>
-                <span>Men's Fashion</span>
-              </div>
-              <div className={styles.categoryOverlay}>
-                <h3 className={styles.categoryName}>Men</h3>
-                <p className={styles.categoryCount}>2,500+ Items</p>
-              </div>
-            </Link>
-
-            <Link href="/services/instastyle/catalog?category=women" className={styles.categoryCard}>
-              <div className={styles.categoryImagePlaceholder}>
-                <span>Women's Fashion</span>
-              </div>
-              <div className={styles.categoryOverlay}>
-                <h3 className={styles.categoryName}>Women</h3>
-                <p className={styles.categoryCount}>3,200+ Items</p>
-              </div>
-            </Link>
-
-            <Link href="/services/instastyle/catalog?category=kids" className={styles.categoryCard}>
-              <div className={styles.categoryImagePlaceholder}>
-                <span>Kids Fashion</span>
-              </div>
-              <div className={styles.categoryOverlay}>
-                <h3 className={styles.categoryName}>Kids</h3>
-                <p className={styles.categoryCount}>1,800+ Items</p>
-              </div>
-            </Link>
-
-            <Link href="/services/instastyle/catalog?category=accessories" className={styles.categoryCard}>
-              <div className={styles.categoryImagePlaceholder}>
-                <span>Accessories</span>
-              </div>
-              <div className={styles.categoryOverlay}>
-                <h3 className={styles.categoryName}>Accessories</h3>
-                <p className={styles.categoryCount}>1,200+ Items</p>
-              </div>
-            </Link>
+            {categoryCards.map((category) => (
+              <Link key={category.id} href={`/services/instastyle/catalog?category=${category.id}`} className={styles.categoryCard}>
+                {category.image ? (
+                  <img src={category.image} alt={`${category.name} fashion`} className={styles.categoryImage} loading="lazy" />
+                ) : (
+                  <div className={styles.categoryImagePlaceholder}>
+                    <span>{category.name}</span>
+                  </div>
+                )}
+                <div className={styles.categoryOverlay}>
+                  <h3 className={styles.categoryName}>{category.name}</h3>
+                  <p className={styles.categoryCount}>{category.count} Items</p>
+                </div>
+              </Link>
+            ))}
           </div>
         </div>
       </section>
@@ -266,7 +244,7 @@ export default function InstaStyleLanding() {
       {/* How It Works Section */}
       <section className={styles.howItWorks}>
         <div className={styles.container}>
-          <h2 className={styles.sectionTitle}>How It Works</h2>
+          <h2 className={styles.sectionTitle}>How the flow works</h2>
           <p className={styles.sectionSubtitle}>
             Get your fashion fix in 4 simple steps
           </p>
@@ -284,7 +262,7 @@ export default function InstaStyleLanding() {
               <div className={styles.stepNumber}>02</div>
               <h3 className={styles.stepTitle}>Virtual Try-On</h3>
               <p className={styles.stepDescription}>
-                Use our AR technology to see how items look on you before ordering
+                Use our camera preview flow to compare looks before ordering
               </p>
             </div>
 
@@ -338,14 +316,14 @@ export default function InstaStyleLanding() {
       {/* Brand Partners Section */}
       <section className={styles.brands}>
         <div className={styles.container}>
-          <h2 className={styles.sectionTitle}>Featured Brands</h2>
+          <h2 className={styles.sectionTitle}>Featured labels</h2>
           <p className={styles.sectionSubtitle}>
-            Shop from your favorite brands
+            Discover a mix of popular and premium labels in one place.
           </p>
           
           <div className={styles.brandsCarousel}>
             <div className={styles.brandsTrack}>
-              {[...brands, ...brands, ...brands].map((brand, index) => (
+              {[...brandSet, ...brandSet, ...brandSet].map((brand, index) => (
                 <div key={index} className={styles.brandCard}>
                   <div className={styles.brandPlaceholder}>{brand}</div>
                 </div>
@@ -359,9 +337,9 @@ export default function InstaStyleLanding() {
       <section className={styles.newsletter}>
         <div className={styles.container}>
           <div className={styles.newsletterContent}>
-            <h2 className={styles.newsletterTitle}>Stay in Style</h2>
+            <h2 className={styles.newsletterTitle}>Stay in the loop</h2>
             <p className={styles.newsletterDescription}>
-              Subscribe to get exclusive deals, style tips, and early access to new collections
+              Get launch updates, curated drops, and early access to the next InstaStyle edits.
             </p>
             
             <form onSubmit={handleNewsletterSubmit} className={styles.newsletterForm}>
@@ -394,13 +372,13 @@ export default function InstaStyleLanding() {
         <div className={styles.container}>
           <div className={styles.ctaContent}>
             <h2 className={styles.ctaTitle}>
-              Ready to Experience Fast Fashion?
+              Ready to open the edit?
             </h2>
             <p className={styles.ctaDescription}>
-              Join thousands of happy customers. Get your favorite styles delivered in 15-20 minutes.
+              Step into the first version of Accesco's fashion marketplace with a sharper structure and a stronger point of view.
             </p>
             <Link href="/services/instastyle/catalog" className={styles.ctaButton}>
-              Start Shopping Now
+              Explore InstaStyle
             </Link>
           </div>
         </div>

@@ -1,0 +1,293 @@
+.page {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 32px 20px 72px;
+}
+
+.hero {
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  gap: 24px;
+  align-items: stretch;
+  margin-bottom: 24px;
+}
+
+.heroCopy,
+.profileCard,
+.panel,
+.ordersSection {
+  border: 1px solid rgba(118, 74, 55, 0.1);
+  background: linear-gradient(180deg, rgba(255, 252, 249, 0.98), rgba(247, 239, 232, 0.98));
+  box-shadow: 0 18px 40px rgba(59, 29, 18, 0.08);
+  border-radius: 28px;
+}
+
+.heroCopy {
+  padding: 42px;
+}
+
+.kicker {
+  margin: 0 0 12px;
+  color: #8f5641;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.heroCopy h1 {
+  margin: 0;
+  color: #241611;
+  font-size: clamp(34px, 4vw, 54px);
+  line-height: 0.98;
+  letter-spacing: -0.05em;
+}
+
+.subtitle {
+  max-width: 640px;
+  margin: 18px 0 0;
+  color: #6f5a51;
+  font-size: 17px;
+  line-height: 1.7;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 28px;
+}
+
+.quickStats {
+  margin-top: 22px;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.statCard {
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.75);
+  border: 1px solid rgba(118, 74, 55, 0.1);
+  padding: 12px;
+}
+
+.statCard span {
+  display: block;
+  font-size: 12px;
+  color: #705b52;
+}
+
+.statCard strong {
+  font-size: 20px;
+  color: #241611;
+}
+
+.primaryAction,
+.secondaryAction {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: 0 18px;
+  border-radius: 999px;
+  text-decoration: none;
+  font-weight: 800;
+}
+
+.primaryAction {
+  background: linear-gradient(135deg, #2d1812, #8f5641);
+  color: #fff;
+}
+
+.secondaryAction {
+  color: #2d1812;
+  border: 1px solid rgba(118, 74, 55, 0.18);
+  background: rgba(255, 255, 255, 0.75);
+}
+
+.profileCard {
+  padding: 28px;
+  display: grid;
+  gap: 16px;
+  align-content: center;
+}
+
+.avatar {
+  width: 76px;
+  height: 76px;
+  border-radius: 24px;
+  display: grid;
+  place-items: center;
+  font-size: 24px;
+  font-weight: 900;
+  color: #fff;
+  background: linear-gradient(135deg, #8f5641, #d29a77);
+}
+
+.profileCard h2,
+.panelHeader h3 {
+  margin: 0;
+  color: #241611;
+}
+
+.profileCard p,
+.cardMeta span,
+.panelHeader span,
+.list,
+.orderRow span {
+  color: #705b52;
+}
+
+.cardMeta strong {
+  display: block;
+  color: #241611;
+  font-size: 20px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+.panel,
+.ordersSection {
+  padding: 28px;
+}
+
+.panelHeader {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: baseline;
+  margin-bottom: 18px;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.chips span {
+  padding: 10px 14px;
+  border-radius: 999px;
+  background: rgba(143, 86, 65, 0.08);
+  color: #5a3c30;
+  font-weight: 700;
+}
+
+.formGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.formGrid label,
+.notesField {
+  display: grid;
+  gap: 6px;
+}
+
+.formGrid span,
+.notesField span {
+  font-size: 12px;
+  color: #705b52;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.formGrid input,
+.formGrid select,
+.notesField textarea {
+  height: 42px;
+  border-radius: 10px;
+  border: 1px solid rgba(118, 74, 55, 0.18);
+  background: rgba(255, 255, 255, 0.9);
+  padding: 0 12px;
+  color: #241611;
+  font-size: 14px;
+}
+
+.notesField {
+  margin-top: 12px;
+}
+
+.notesField textarea {
+  min-height: 92px;
+  resize: vertical;
+  padding: 10px 12px;
+}
+
+.panelActions {
+  margin-top: 14px;
+}
+
+.addressList {
+  display: grid;
+  gap: 10px;
+}
+
+.addressCard {
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid rgba(118, 74, 55, 0.1);
+  padding: 14px;
+}
+
+.addressCard strong {
+  color: #241611;
+}
+
+.addressCard p,
+.addressCard span {
+  margin: 4px 0 0;
+  color: #705b52;
+  font-size: 14px;
+}
+
+.list {
+  margin: 0;
+  padding-left: 18px;
+  display: grid;
+  gap: 12px;
+}
+
+.ordersList {
+  display: grid;
+  gap: 14px;
+}
+
+.orderRow {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px 18px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid rgba(118, 74, 55, 0.08);
+}
+
+.orderRow strong,
+.orderRow span {
+  display: block;
+}
+
+.orderRow strong {
+  color: #241611;
+}
+
+@media (max-width: 900px) {
+  .hero,
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .quickStats,
+  .formGrid {
+    grid-template-columns: 1fr;
+  }
+}

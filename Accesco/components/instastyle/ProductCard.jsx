@@ -3,17 +3,18 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { useState } from 'react';
+import { useCart } from '@/contexts/CartContext';
 import styles from './ProductCard.module.css';
 
 export default function ProductCard({ product }) {
-  const [isWishlisted, setIsWishlisted] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
+  const { toggleWishlist, isWishlisted } = useCart();
+  const active = isWishlisted(product.id);
 
   const handleWishlist = (e) => {
     e.preventDefault();
     e.stopPropagation();
-    setIsWishlisted(!isWishlisted);
-    // TODO: Add to wishlist API call
+    toggleWishlist(product);
   };
 
   const displayPrice = product.discountedPrice || product.price;
@@ -34,11 +35,11 @@ export default function ProductCard({ product }) {
         </div>
         
         <button 
-          className={`${styles.wishlistBtn} ${isWishlisted ? styles.active : ''}`}
+          className={`${styles.wishlistBtn} ${active ? styles.active : ''}`}
           onClick={handleWishlist}
-          aria-label="Add to wishlist"
+          aria-label={active ? 'Remove from wishlist' : 'Add to wishlist'}
         >
-          {isWishlisted ? '❤️' : '🤍'}
+          {active ? '❤️' : '🤍'}
         </button>
 
         {hasDiscount && (

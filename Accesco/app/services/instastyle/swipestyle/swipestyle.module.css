@@ -1,0 +1,257 @@
+.page {
+  min-height: 100vh;
+  background: radial-gradient(circle at 15% 15%, #f6efe8 0%, #f2e7dc 35%, #efe3d5 100%);
+  color: #1f1813;
+  padding: 28px;
+}
+
+.header {
+  max-width: 1300px;
+  margin: 0 auto 24px;
+  display: grid;
+  gap: 8px;
+}
+
+.backLink {
+  text-decoration: none;
+  color: #6f5644;
+  font-weight: 700;
+  width: fit-content;
+}
+
+.title {
+  margin: 0;
+  font-size: clamp(30px, 4.2vw, 48px);
+  line-height: 1;
+  letter-spacing: -0.03em;
+}
+
+.subtitle {
+  margin: 0;
+  color: #6f6054;
+}
+
+.layout {
+  max-width: 1300px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: minmax(320px, 1fr) 420px;
+  gap: 26px;
+}
+
+.deckSection,
+.outfitSection {
+  background: rgba(255, 255, 255, 0.74);
+  border: 1px solid rgba(70, 48, 31, 0.12);
+  border-radius: 28px;
+  backdrop-filter: blur(6px);
+}
+
+.deckSection {
+  padding: 18px;
+}
+
+.deckHint {
+  text-align: center;
+  color: #6e5a48;
+  font-size: 13px;
+  margin-bottom: 12px;
+  font-weight: 700;
+}
+
+.card {
+  position: relative;
+  border-radius: 22px;
+  overflow: hidden;
+  border: 1px solid rgba(52, 33, 20, 0.18);
+  background: #fff;
+  touch-action: pan-y;
+  user-select: none;
+  cursor: grab;
+  transition: transform 0.14s ease;
+}
+
+.cardImage {
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
+  display: block;
+}
+
+.cardBody {
+  padding: 14px 16px 18px;
+}
+
+.brand {
+  margin: 0;
+  color: #8d7560;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.name {
+  margin: 8px 0 6px;
+  font-size: 22px;
+  line-height: 1.2;
+}
+
+.price {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.badgeLike,
+.badgeNope {
+  position: absolute;
+  top: 20px;
+  z-index: 2;
+  font-weight: 900;
+  font-size: 22px;
+  letter-spacing: 0.08em;
+  border: 3px solid;
+  padding: 6px 12px;
+  border-radius: 10px;
+  pointer-events: none;
+}
+
+.badgeLike {
+  right: 16px;
+  color: #047857;
+  border-color: #10b981;
+  background: rgba(16, 185, 129, 0.12);
+}
+
+.badgeNope {
+  left: 16px;
+  color: #b91c1c;
+  border-color: #ef4444;
+  background: rgba(239, 68, 68, 0.12);
+}
+
+.actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.skipBtn,
+.addBtn {
+  height: 46px;
+  border-radius: 14px;
+  border: none;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.skipBtn {
+  background: #fff;
+  border: 1px solid rgba(58, 40, 26, 0.2);
+  color: #4d3c31;
+}
+
+.addBtn {
+  background: #1f1813;
+  color: #fff;
+}
+
+.outfitSection {
+  padding: 20px;
+  display: grid;
+  align-content: start;
+  gap: 14px;
+}
+
+.outfitHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.outfitHeader h3 {
+  margin: 0;
+  font-size: 24px;
+}
+
+.outfitHeader span {
+  color: #7a6655;
+  font-weight: 700;
+}
+
+.slotGrid {
+  display: grid;
+  gap: 10px;
+}
+
+.slotCard {
+  background: rgba(255, 255, 255, 0.88);
+  border: 1px solid rgba(66, 44, 29, 0.12);
+  border-radius: 14px;
+  padding: 10px;
+}
+
+.slotLabel {
+  margin: 0 0 8px;
+  font-size: 11px;
+  color: #7f6b58;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  font-weight: 800;
+}
+
+.slotItem {
+  display: grid;
+  grid-template-columns: 52px 1fr;
+  gap: 10px;
+  align-items: center;
+}
+
+.slotThumb {
+  width: 52px;
+  height: 52px;
+  border-radius: 10px;
+  object-fit: cover;
+}
+
+.slotName {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.slotMeta {
+  margin: 2px 0 0;
+  color: #8a7563;
+  font-size: 12px;
+}
+
+.emptySlot {
+  margin: 0;
+  color: #8f7d6d;
+  font-size: 13px;
+}
+
+.ctaLink {
+  margin-top: 8px;
+  text-decoration: none;
+  height: 46px;
+  border-radius: 14px;
+  display: grid;
+  place-items: center;
+  font-weight: 800;
+  background: #2d2018;
+  color: #fff;
+}
+
+@media (max-width: 1000px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+
+  .outfitSection {
+    order: 2;
+  }
+}

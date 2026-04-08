@@ -1,0 +1,235 @@
+'use client';
+
+import Link from 'next/link';
+import { useEffect, useMemo, useState } from 'react';
+import styles from './profile.module.css';
+import { useCart } from '@/contexts/CartContext';
+import { products } from '@/lib/mockData';
+
+const PROFILE_STORAGE_KEY = 'instastyle_profile';
+
+const initialProfile = {
+  fullName: 'Accesco Customer',
+  email: 'customer@accesco.in',
+  phone: '+91 90000 00000',
+  gender: 'Prefer not to say',
+  sizeTop: 'M',
+  sizeBottom: '32',
+  styleNotes: 'Minimal, everyday, and occasion-ready edits.',
+};
+
+const savedAddresses = [
+  {
+    id: 'addr_1',
+    label: 'Home',
+    line1: '21, 6th Main Road',
+    line2: 'Indiranagar, Bengaluru, Karnataka',
+    pincode: '560038',
+  },
+  {
+    id: 'addr_2',
+    label: 'Work',
+    line1: '2nd Floor, Accesco Hub',
+    line2: 'Koramangala, Bengaluru, Karnataka',
+    pincode: '560095',
+  },
+];
+
+const recentOrders = [
+  { id: 'AC-2041', date: 'Today', status: 'Packed', amount: '₹4,980' },
+  { id: 'AC-1972', date: '2 days ago', status: 'Delivered', amount: '₹2,760' },
+  { id: 'AC-1890', date: 'Last week', status: 'Returned', amount: '₹1,340' },
+];
+
+export default function ProfilePage() {
+  const { cart, wishlist } = useCart();
+  const [profile, setProfile] = useState(initialProfile);
+  const [saveStatus, setSaveStatus] = useState('idle');
+
+  const recommendedCount = useMemo(() => products.filter((product) => product.isFeatured).length, []);
+  const orderCount = recentOrders.length;
+  const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(PROFILE_STORAGE_KEY);
+      if (!raw) return;
+
+      const parsed = JSON.parse(raw);
+      setProfile((prev) => ({ ...prev, ...parsed }));
+    } catch (error) {
+      console.warn('Profile storage read failed:', error);
+    }
+  }, []);
+
+  const updateField = (field, value) => {
+    setProfile((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const saveProfile = () => {
+    try {
+      localStorage.setItem(PROFILE_STORAGE_KEY, JSON.stringify(profile));
+      setSaveStatus('saved');
+      setTimeout(() => setSaveStatus('idle'), 1500);
+    } catch (error) {
+      console.warn('Profile storage write failed:', error);
+      setSaveStatus('error');
+      setTimeout(() => setSaveStatus('idle'), 2000);
+    }
+  };
+
+  return (
+    <div className={styles.page}>
+      <section className={styles.hero}>
+        <div className={styles.heroCopy}>
+          <p className={styles.kicker}>Account center</p>
+          <h1>Your InstaStyle profile</h1>
+          <p className={styles.subtitle}>
+            Keep your sizes, addresses, orders, and style preferences in one place.
+          </p>
+          <div className={styles.actions}>
+            <Link href="/services/instastyle/catalog" className={styles.primaryAction}>Shop the catalog</Link>
+            <Link href="/services/instastyle/wishlist" className={styles.secondaryAction}>Open wishlist</Link>
+          </div>
+
+          <div className={styles.quickStats}>
+            <div className={styles.statCard}>
+              <span>Wishlist</span>
+              <strong>{wishlist.length}</strong>
+            </div>
+            <div className={styles.statCard}>
+              <span>Cart</span>
+              <strong>{cartCount}</strong>
+            </div>
+            <div className={styles.statCard}>
+              <span>Orders</span>
+              <strong>{orderCount}</strong>
+            </div>
+            <div className={styles.statCard}>
+              <span>Recommended</span>
+              <strong>{recommendedCount}</strong>
+            </div>
+          </div>
+        </div>
+
+        <div className={styles.profileCard}>
+          <div className={styles.avatar}>AC</div>
+          <div>
+            <h2>{profile.fullName}</h2>
+            <p>Preferred fit: {profile.sizeTop} / {profile.sizeBottom} • Saved addresses: {savedAddresses.length} • Rewards: Active</p>
+          </div>
+          <div className={styles.cardMeta}>
+            <span>Member since</span>
+            <strong>2026</strong>
+          </div>
+        </div>
+      </section>
+
+      <section className={styles.grid}>
+        <article className={styles.panel}>
+          <div className={styles.panelHeader}>
+            <h3>Profile details</h3>
+            <span>{saveStatus === 'saved' ? 'Saved' : saveStatus === 'error' ? 'Failed' : 'Editable'}</span>
+          </div>
+
+          <div className={styles.formGrid}>
+            <label>
+              <span>Full name</span>
+              <input value={profile.fullName} onChange={(e) => updateField('fullName', e.target.value)} />
+            </label>
+            <label>
+              <span>Email</span>
+              <input value={profile.email} onChange={(e) => updateField('email', e.target.value)} />
+            </label>
+            <label>
+              <span>Phone</span>
+              <input value={profile.phone} onChange={(e) => updateField('phone', e.target.value)} />
+            </label>
+            <label>
+              <span>Gender</span>
+              <select value={profile.gender} onChange={(e) => updateField('gender', e.target.value)}>
+                <option>Prefer not to say</option>
+                <option>Women</option>
+                <option>Men</option>
+                <option>Non-binary</option>
+              </select>
+            </label>
+            <label>
+              <span>Top size</span>
+              <select value={profile.sizeTop} onChange={(e) => updateField('sizeTop', e.target.value)}>
+                <option>XS</option>
+                <option>S</option>
+                <option>M</option>
+                <option>L</option>
+                <option>XL</option>
+              </select>
+            </label>
+            <label>
+              <span>Bottom size</span>
+              <select value={profile.sizeBottom} onChange={(e) => updateField('sizeBottom', e.target.value)}>
+                <option>28</option>
+                <option>30</option>
+                <option>32</option>
+                <option>34</option>
+                <option>36</option>
+              </select>
+            </label>
+          </div>
+
+          <label className={styles.notesField}>
+            <span>Style notes</span>
+            <textarea
+              rows={3}
+              value={profile.styleNotes}
+              onChange={(e) => updateField('styleNotes', e.target.value)}
+            />
+          </label>
+
+          <div className={styles.panelActions}>
+            <button type="button" className={styles.primaryAction} onClick={saveProfile}>Save profile</button>
+          </div>
+        </article>
+
+        <article className={styles.panel}>
+          <div className={styles.panelHeader}>
+            <h3>Saved addresses</h3>
+            <span>{savedAddresses.length} addresses</span>
+          </div>
+
+          <div className={styles.addressList}>
+            {savedAddresses.map((address) => (
+              <div key={address.id} className={styles.addressCard}>
+                <strong>{address.label}</strong>
+                <p>{address.line1}</p>
+                <p>{address.line2}</p>
+                <span>{address.pincode}</span>
+              </div>
+            ))}
+          </div>
+        </article>
+      </section>
+
+      <section className={styles.ordersSection}>
+        <div className={styles.panelHeader}>
+          <h3>Recent orders</h3>
+          <span>Track, return, or reorder</span>
+        </div>
+
+        <div className={styles.ordersList}>
+          {recentOrders.map((order) => (
+            <div key={order.id} className={styles.orderRow}>
+              <div>
+                <strong>{order.id}</strong>
+                <span>{order.date}</span>
+              </div>
+              <div>
+                <strong>{order.amount}</strong>
+                <span>{order.status}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+    </div>
+  );
+}

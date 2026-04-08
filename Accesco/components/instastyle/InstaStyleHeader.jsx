@@ -1,19 +1,19 @@
 'use client';
 
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useCart } from '@/contexts/CartContext';
+import InstaStyleLogo from './InstaStyleLogo';
 import styles from './InstaStyleHeader.module.css';
 
 export default function InstaStyleHeader() {
   const pathname = usePathname();
-  const { cart } = useCart();
+  const { cart, toggleCart } = useCart();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearchFocused, setIsSearchFocused] = useState(false);
-  const searchInputRef = useRef(null);
 
   // Optimized scroll handler with RAF throttling
   useEffect(() => {
@@ -57,19 +57,6 @@ export default function InstaStyleHeader() {
     setIsMobileMenuOpen(false);
   }, [pathname]);
 
-  // Keyboard shortcut for search (Cmd/Ctrl + K)
-  useEffect(() => {
-    const handleKeyDown = (e) => {
-      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
-        e.preventDefault();
-        searchInputRef.current?.focus();
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, []);
-
   const handleSearch = useCallback((e) => {
     e.preventDefault();
     if (searchQuery.trim()) {
@@ -83,44 +70,197 @@ export default function InstaStyleHeader() {
 
   const cartItemCount = cart.reduce((sum, item) => sum + item.quantity, 0);
 
+  const fallback = {
+    header: {
+      position: 'sticky',
+      top: 0,
+      zIndex: 1000,
+      background: '#fff',
+      borderBottom: '1px solid #ece7e2',
+    },
+    container: {
+      maxWidth: '1400px',
+      margin: '0 auto',
+      minHeight: '72px',
+      padding: '0 24px',
+      display: 'flex',
+      alignItems: 'center',
+      gap: '24px',
+    },
+    navList: {
+      listStyle: 'none',
+      display: 'flex',
+      alignItems: 'center',
+      gap: '6px',
+      margin: 0,
+      padding: 0,
+    },
+    navLink: {
+      textDecoration: 'none',
+      color: '#171411',
+      fontSize: '13px',
+      fontWeight: 700,
+      padding: '8px 12px',
+      borderRadius: '999px',
+      textTransform: 'uppercase',
+      letterSpacing: '0.06em',
+    },
+    searchForm: {
+      flex: 1,
+      maxWidth: '460px',
+      position: 'relative',
+    },
+    searchInput: {
+      width: '100%',
+      height: '40px',
+      borderRadius: '999px',
+      border: '1px solid rgba(23, 20, 17, 0.12)',
+      padding: '0 44px 0 16px',
+    },
+    searchButton: {
+      position: 'absolute',
+      right: '10px',
+      top: '50%',
+      transform: 'translateY(-50%)',
+      border: 'none',
+      background: 'transparent',
+      cursor: 'pointer',
+      color: '#171411',
+    },
+    actions: {
+      display: 'flex',
+      alignItems: 'center',
+      gap: '6px',
+    },
+    actionButton: {
+      width: '40px',
+      height: '40px',
+      display: 'inline-flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      color: '#171411',
+      textDecoration: 'none',
+      border: 'none',
+      background: 'transparent',
+      borderRadius: '10px',
+      cursor: 'pointer',
+    },
+    mobileMenu: {
+      display: isMobileMenuOpen ? 'block' : 'none',
+      borderTop: '1px solid rgba(23, 20, 17, 0.08)',
+      background: 'rgba(255, 252, 248, 0.98)',
+      padding: '12px 16px 16px',
+    },
+    mobileNavList: {
+      listStyle: 'none',
+      margin: 0,
+      padding: 0,
+      display: 'grid',
+      gap: '8px',
+    },
+    mobileNavLink: {
+      display: 'block',
+      textDecoration: 'none',
+      color: '#171411',
+      fontSize: '14px',
+      fontWeight: 700,
+      padding: '10px 12px',
+      borderRadius: '10px',
+      background: 'rgba(255, 255, 255, 0.72)',
+    },
+    mobileSearch: {
+      marginTop: '12px',
+      display: 'grid',
+      gridTemplateColumns: '1fr auto',
+      gap: '8px',
+    },
+    mobileSearchInput: {
+      minWidth: 0,
+      height: '40px',
+      border: '1px solid rgba(23, 20, 17, 0.12)',
+      borderRadius: '10px',
+      padding: '0 12px',
+      background: '#fff',
+    },
+    mobileSearchButton: {
+      height: '40px',
+      border: 'none',
+      borderRadius: '10px',
+      padding: '0 14px',
+      background: '#171411',
+      color: '#fff',
+      fontWeight: 700,
+      cursor: 'pointer',
+    },
+    mobileQuickLinks: {
+      marginTop: '12px',
+      display: 'flex',
+      flexWrap: 'wrap',
+      gap: '8px',
+    },
+    mobileQuickLink: {
+      textDecoration: 'none',
+      color: '#171411',
+      fontSize: '12px',
+      fontWeight: 700,
+      border: '1px solid rgba(23, 20, 17, 0.12)',
+      borderRadius: '999px',
+      padding: '6px 10px',
+      background: 'rgba(255, 255, 255, 0.75)',
+    },
+    overlay: {
+      display: isMobileMenuOpen ? 'block' : 'none',
+      position: 'fixed',
+      inset: 0,
+      background: 'rgba(0, 0, 0, 0.25)',
+      zIndex: 998,
+    },
+  };
+
   const navLinks = [
     { href: '/services/instastyle', label: 'Home', exact: true },
-    { href: '/services/instastyle/catalog', label: 'Shop' },
+    { href: '/services/instastyle/catalog?category=women', label: 'Women' },
+    { href: '/services/instastyle/catalog?category=men', label: 'Men' },
+    { href: '/services/instastyle/catalog?category=kids', label: 'Kids' },
+    { href: '/services/instastyle/catalog?category=accessories', label: 'Accessories' },
     { href: '/services/instastyle/virtual-tryon', label: 'Virtual Try-On' },
-    { href: '/services/instastyle/about', label: 'About' },
+    { href: '/services/instastyle/swipestyle', label: 'SwipeStyle' },
   ];
 
   const isActiveLink = (href, exact = false) => {
-    if (exact) return pathname === href;
-    return pathname.startsWith(href);
+    const baseHref = href.split('?')[0];
+    if (exact) return pathname === baseHref;
+    return pathname.startsWith(baseHref);
   };
 
   return (
     <header 
-      className={`${styles.header} ${isScrolled ? styles.scrolled : ''}`}
+      className={`instaHeaderShell ${styles.header} ${isScrolled ? styles.scrolled : ''}`}
+      style={fallback.header}
       role="banner"
     >
-      <div className={styles.container}>
+      <div className={`instaHeaderContainer ${styles.container}`} style={fallback.container}>
         {/* Logo */}
         <Link 
           href="/services/instastyle" 
-          className={styles.logo}
+          className={`instaHeaderLogo ${styles.logo}`}
           aria-label="InstaStyle Home"
         >
-          <span className={styles.logoIcon}>⚡</span>
-          <span className={styles.logoText}>InstaStyle</span>
+          <InstaStyleLogo className={`instaHeaderLogoMark ${styles.logoMark}`} />
+          <span className={`instaHeaderLogoText ${styles.logoText}`}>InstaStyle</span>
         </Link>
 
         {/* Desktop Navigation */}
-        <nav className={styles.nav} aria-label="Main navigation">
-          <ul className={styles.navList}>
+        <nav className={`instaHeaderNav ${styles.nav}`} aria-label="Main navigation">
+          <ul className={`instaHeaderNavList ${styles.navList}`} style={fallback.navList}>
             {navLinks.map(({ href, label, exact }) => (
               <li key={href}>
                 <Link
                   href={href}
-                  className={`${styles.navLink} ${
+                  className={`instaHeaderNavLink ${styles.navLink} ${
                     isActiveLink(href, exact) ? styles.active : ''
                   }`}
+                  style={fallback.navLink}
                   aria-current={isActiveLink(href, exact) ? 'page' : undefined}
                 >
                   {label}
@@ -132,24 +272,26 @@ export default function InstaStyleHeader() {
 
         {/* Search Bar */}
         <form 
-          className={`${styles.searchForm} ${isSearchFocused ? styles.focused : ''}`}
+          className={`instaHeaderSearch ${styles.searchForm} ${isSearchFocused ? styles.focused : ''}`}
+          style={fallback.searchForm}
           onSubmit={handleSearch}
           role="search"
         >
           <input
-            ref={searchInputRef}
             type="search"
             placeholder="Search products..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             onFocus={() => setIsSearchFocused(true)}
             onBlur={() => setIsSearchFocused(false)}
-            className={styles.searchInput}
+            className={`instaHeaderSearchInput ${styles.searchInput}`}
+            style={fallback.searchInput}
             aria-label="Search products"
           />
           <button 
             type="submit" 
-            className={styles.searchButton}
+            className={`instaHeaderSearchButton ${styles.searchButton}`}
+            style={fallback.searchButton}
             aria-label="Submit search"
           >
             <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
@@ -162,16 +304,17 @@ export default function InstaStyleHeader() {
               />
             </svg>
           </button>
-          <kbd className={styles.searchShortcut}>⌘K</kbd>
         </form>
 
         {/* Actions */}
-        <div className={styles.actions}>
+        <div className={`instaHeaderActions ${styles.actions}`} style={fallback.actions}>
           {/* Wishlist */}
           <Link
             href="/services/instastyle/wishlist"
-            className={styles.actionButton}
+            className={`instaHeaderActionButton ${styles.actionButton}`}
+            style={fallback.actionButton}
             aria-label="Wishlist"
+            title="Wishlist"
           >
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
               <path
@@ -185,9 +328,11 @@ export default function InstaStyleHeader() {
           </Link>
 
           {/* Cart */}
-          <Link
-            href="/services/instastyle/cart"
-            className={styles.actionButton}
+          <button
+            type="button"
+            onClick={toggleCart}
+            className={`instaHeaderActionButton ${styles.actionButton}`}
+            style={fallback.actionButton}
             aria-label={`Shopping cart with ${cartItemCount} items`}
           >
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
@@ -204,13 +349,15 @@ export default function InstaStyleHeader() {
                 {cartItemCount > 99 ? '99+' : cartItemCount}
               </span>
             )}
-          </Link>
+          </button>
 
           {/* User Menu */}
           <Link
             href="/services/instastyle/profile"
-            className={styles.actionButton}
-            aria-label="User account"
+            className={`instaHeaderActionButton ${styles.actionButton}`}
+            style={fallback.actionButton}
+            aria-label="Account"
+            title="Account"
           >
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
               <path
@@ -225,13 +372,13 @@ export default function InstaStyleHeader() {
 
           {/* Mobile Menu Toggle */}
           <button
-            className={styles.mobileMenuButton}
+            className={`instaHeaderMobileMenuButton ${styles.mobileMenuButton}`}
             onClick={toggleMobileMenu}
             aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}
             aria-expanded={isMobileMenuOpen}
             aria-controls="mobile-menu"
           >
-            <span className={`${styles.hamburger} ${isMobileMenuOpen ? styles.open : ''}`}>
+            <span className={`instaHeaderHamburger ${styles.hamburger} ${isMobileMenuOpen ? styles.open : ''}`}>
               <span></span>
               <span></span>
               <span></span>
@@ -243,18 +390,20 @@ export default function InstaStyleHeader() {
       {/* Mobile Menu */}
       <div
         id="mobile-menu"
-        className={`${styles.mobileMenu} ${isMobileMenuOpen ? styles.open : ''}`}
+        className={`instaHeaderMobileMenu ${styles.mobileMenu} ${isMobileMenuOpen ? `instaHeaderMobileMenuOpen ${styles.open}` : ''}`}
+        style={fallback.mobileMenu}
         aria-hidden={!isMobileMenuOpen}
       >
-        <nav className={styles.mobileNav} aria-label="Mobile navigation">
-          <ul className={styles.mobileNavList}>
+        <nav className={`instaHeaderMobileNav ${styles.mobileNav}`} aria-label="Mobile navigation">
+          <ul className={`instaHeaderMobileNavList ${styles.mobileNavList}`} style={fallback.mobileNavList}>
             {navLinks.map(({ href, label, exact }) => (
               <li key={href}>
                 <Link
                   href={href}
-                  className={`${styles.mobileNavLink} ${
+                  className={`instaHeaderMobileNavLink ${styles.mobileNavLink} ${
                     isActiveLink(href, exact) ? styles.active : ''
                   }`}
+                  style={fallback.mobileNavLink}
                   aria-current={isActiveLink(href, exact) ? 'page' : undefined}
                 >
                   {label}
@@ -264,30 +413,31 @@ export default function InstaStyleHeader() {
           </ul>
 
           {/* Mobile Search */}
-          <form className={styles.mobileSearch} onSubmit={handleSearch}>
+          <form className={`instaHeaderMobileSearch ${styles.mobileSearch}`} style={fallback.mobileSearch} onSubmit={handleSearch}>
             <input
               type="search"
               placeholder="Search products..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className={styles.mobileSearchInput}
+              className={`instaHeaderMobileSearchInput ${styles.mobileSearchInput}`}
+              style={fallback.mobileSearchInput}
               aria-label="Search products"
             />
-            <button type="submit" className={styles.mobileSearchButton}>
+            <button type="submit" className={`instaHeaderMobileSearchButton ${styles.mobileSearchButton}`} style={fallback.mobileSearchButton}>
               Search
             </button>
           </form>
 
           {/* Mobile Quick Links */}
-          <div className={styles.mobileQuickLinks}>
-            <Link href="/services/instastyle/wishlist" className={styles.mobileQuickLink}>
-              Wishlist
+          <div className={`instaHeaderMobileQuickLinks ${styles.mobileQuickLinks}`} style={fallback.mobileQuickLinks}>
+            <Link href="/services/instastyle/checkout" className={`instaHeaderMobileQuickLink ${styles.mobileQuickLink}`} style={fallback.mobileQuickLink}>
+              Checkout
             </Link>
-            <Link href="/services/instastyle/orders" className={styles.mobileQuickLink}>
-              Orders
+            <Link href="/services/instastyle/catalog" className={`instaHeaderMobileQuickLink ${styles.mobileQuickLink}`} style={fallback.mobileQuickLink}>
+              New Arrivals
             </Link>
-            <Link href="/services/instastyle/profile" className={styles.mobileQuickLink}>
-              Account
+            <Link href="/services/instastyle/virtual-tryon" className={`instaHeaderMobileQuickLink ${styles.mobileQuickLink}`} style={fallback.mobileQuickLink}>
+              Style Preview
             </Link>
           </div>
         </nav>
@@ -296,7 +446,8 @@ export default function InstaStyleHeader() {
       {/* Mobile Menu Overlay */}
       {isMobileMenuOpen && (
         <div
-          className={styles.overlay}
+          className={`instaHeaderOverlay ${styles.overlay}`}
+          style={fallback.overlay}
           onClick={toggleMobileMenu}
           aria-hidden="true"
         />
