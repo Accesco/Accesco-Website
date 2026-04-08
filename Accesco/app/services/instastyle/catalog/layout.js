@@ -1,7 +1,7 @@
 export const metadata = {
   title: 'Shop Fashion | InstaStyle - ACCESCO Living',
-  description: 'Browse the latest fashion trends with 15-20 minute delivery. Shop men, women, kids fashion and accessories.',
-  keywords: 'fashion, online shopping, fast delivery, clothing, accessories',
+  description: 'Browse menswear, womenswear, kidswear, and accessories in a category-first InstaStyle catalog.',
+  keywords: 'fashion, online shopping, clothing, accessories, menswear, womenswear, kidswear',
 };
 
 export default function CatalogLayout({ children }) {

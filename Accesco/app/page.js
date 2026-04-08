@@ -155,6 +155,9 @@ export default function HomePage() {
         {/* App Showcase from bottom half */}
         <AppShowcase />
 
+        {/* InstaStyle Spotlight */}
+        <InstaStyleCard />
+
         {/* Download Section from bottom half */}
         <DownloadSection />
       </main>

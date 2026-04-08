@@ -14,7 +14,7 @@ import styles from './product.module.css';
 export default function ProductDetailPage() {
   const params = useParams();
   const router = useRouter();
-  const { addToCart, openCart } = useCart();
+  const { addToCart, openCart, toggleWishlist, isWishlisted } = useCart();
   
   const [product, setProduct] = useState(null);
   const [selectedSize, setSelectedSize] = useState('');
@@ -46,6 +46,7 @@ export default function ProductDetailPage() {
   const displayPrice = product.discountedPrice || product.price;
   const hasDiscount = product.discountedPrice && product.discountPercentage > 0;
   const maxQuantity = selectedSize ? (product.inventory[selectedSize] || 0) : 10;
+  const wishlisted = isWishlisted(product.id);
 
   const handleAddToCart = () => {
     if (!selectedSize) {
@@ -158,8 +159,12 @@ export default function ProductDetailPage() {
               >
                 {product.inStock ? 'Add to Cart' : 'Out of Stock'}
               </button>
-              <button className={styles.wishlistBtn} aria-label="Add to wishlist">
-                🤍
+              <button
+                className={styles.wishlistBtn}
+                onClick={() => toggleWishlist(product)}
+                aria-label={wishlisted ? 'Remove from wishlist' : 'Add to wishlist'}
+              >
+                {wishlisted ? '❤️' : '🤍'}
               </button>
             </div>
 

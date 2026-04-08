@@ -1,0 +1,236 @@
+/* Fallback shell styles to prevent unstyled header rendering */
+.instaHeaderShell {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background: rgba(255, 252, 248, 0.95);
+  border-bottom: 1px solid rgba(23, 20, 17, 0.08);
+}
+
+.instaHeaderContainer {
+  max-width: 1400px;
+  margin: 0 auto;
+  height: 72px;
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  gap: 28px;
+}
+
+.instaHeaderLogo {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  color: #171411;
+  font-weight: 800;
+  font-size: 22px;
+  flex-shrink: 0;
+}
+
+.instaHeaderLogoMark {
+  width: 40px;
+  height: 40px;
+  flex: 0 0 auto;
+}
+
+.instaHeaderNav {
+  flex: 0 0 auto;
+}
+
+.instaHeaderNavList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.instaHeaderNavLink {
+  text-decoration: none;
+  color: rgba(23, 20, 17, 0.72);
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-weight: 700;
+  padding: 8px 14px;
+  border-radius: 999px;
+}
+
+.instaHeaderSearch {
+  flex: 1;
+  max-width: 460px;
+  position: relative;
+}
+
+.instaHeaderSearchInput {
+  width: 100%;
+  height: 40px;
+  border: 1px solid rgba(23, 20, 17, 0.12);
+  border-radius: 999px;
+  padding: 0 44px 0 16px;
+  background: rgba(255, 255, 255, 0.85);
+}
+
+.instaHeaderSearchButton {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  border: none;
+  background: transparent;
+  color: #171411;
+  cursor: pointer;
+}
+
+.instaHeaderActions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.instaHeaderActionButton {
+  width: 40px;
+  height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #171411;
+  text-decoration: none;
+  border: none;
+  background: transparent;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.instaHeaderMobileMenuButton {
+  display: none;
+}
+
+.instaHeaderMobileMenu {
+  display: none;
+}
+
+.instaHeaderOverlay {
+  display: none;
+}
+
+@media (max-width: 1024px) {
+  .instaHeaderNav {
+    display: none;
+  }
+
+  .instaHeaderMobileMenuButton {
+    display: inline-flex;
+    width: 40px;
+    height: 40px;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background: transparent;
+    color: #171411;
+    cursor: pointer;
+  }
+
+  .instaHeaderHamburger {
+    display: inline-flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .instaHeaderHamburger span {
+    width: 20px;
+    height: 2px;
+    background: currentColor;
+    border-radius: 2px;
+  }
+
+  .instaHeaderMobileMenuOpen {
+    display: block;
+    border-top: 1px solid rgba(23, 20, 17, 0.08);
+    background: rgba(255, 252, 248, 0.98);
+    padding: 12px 16px 16px;
+  }
+
+  .instaHeaderMobileNavList {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 8px;
+  }
+
+  .instaHeaderMobileNavLink {
+    display: block;
+    text-decoration: none;
+    color: #171411;
+    font-size: 14px;
+    font-weight: 700;
+    padding: 10px 12px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.72);
+  }
+
+  .instaHeaderMobileSearch {
+    margin-top: 12px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 8px;
+  }
+
+  .instaHeaderMobileSearchInput {
+    min-width: 0;
+    height: 40px;
+    border: 1px solid rgba(23, 20, 17, 0.12);
+    border-radius: 10px;
+    padding: 0 12px;
+    background: #fff;
+  }
+
+  .instaHeaderMobileSearchButton {
+    height: 40px;
+    border: none;
+    border-radius: 10px;
+    padding: 0 14px;
+    background: #171411;
+    color: #fff;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  .instaHeaderMobileQuickLinks {
+    margin-top: 12px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .instaHeaderMobileQuickLink {
+    text-decoration: none;
+    color: #171411;
+    font-size: 12px;
+    font-weight: 700;
+    border: 1px solid rgba(23, 20, 17, 0.12);
+    border-radius: 999px;
+    padding: 6px 10px;
+    background: rgba(255, 255, 255, 0.75);
+  }
+}
+
+@media (max-width: 768px) {
+  .instaHeaderContainer {
+    height: 64px;
+    padding: 0 16px;
+    gap: 12px;
+  }
+
+  .instaHeaderLogoMark {
+    width: 34px;
+    height: 34px;
+  }
+
+  .instaHeaderSearch {
+    display: none;
+  }
+}

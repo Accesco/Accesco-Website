@@ -284,3 +284,104 @@
     text-align: center;
   }
 }
+
+/* InstaStyle catalog refresh */
+.catalogPage {
+  background:
+    radial-gradient(circle at top left, rgba(210, 175, 144, 0.18), transparent 28%),
+    linear-gradient(180deg, #fbf7f1 0%, #fffdf9 44%, #f5ede3 100%);
+}
+
+.catalogHeader {
+  background: linear-gradient(135deg, rgba(23, 20, 17, 0.94) 0%, rgba(65, 45, 35, 0.96) 100%);
+}
+
+.catalogHeader h1 {
+  letter-spacing: -0.04em;
+}
+
+.catalogHeader p {
+  opacity: 0.82;
+}
+
+.categoryTabs {
+  background: rgba(255, 253, 249, 0.92);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid rgba(23, 20, 17, 0.08);
+}
+
+.tab {
+  border: 1px solid rgba(23, 20, 17, 0.12);
+  background: rgba(255, 255, 255, 0.82);
+}
+
+.tab:hover {
+  border-color: rgba(141, 102, 72, 0.36);
+}
+
+.tab.active {
+  background: #171411;
+  border-color: #171411;
+}
+
+.filtersSidebar {
+  background: rgba(255, 255, 255, 0.88);
+  border-radius: 24px;
+  border: 1px solid rgba(23, 20, 17, 0.08);
+  box-shadow: 0 18px 40px rgba(30, 18, 12, 0.06);
+}
+
+.filtersHeader {
+  border-bottom: 1px solid rgba(23, 20, 17, 0.08);
+}
+
+.clearBtn {
+  color: rgba(23, 20, 17, 0.64);
+}
+
+.clearBtn:hover {
+  color: #171411;
+}
+
+.sizeBtn {
+  border: 1px solid rgba(23, 20, 17, 0.1);
+  background: rgba(255, 255, 255, 0.92);
+}
+
+.sizeBtn:hover {
+  border-color: rgba(141, 102, 72, 0.36);
+}
+
+.sizeBtn.active {
+  background: #171411;
+  border-color: #171411;
+}
+
+.toolbar {
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 20px;
+  border: 1px solid rgba(23, 20, 17, 0.08);
+  box-shadow: 0 16px 36px rgba(30, 18, 12, 0.05);
+}
+
+.filterToggle,
+.sortSelect {
+  border-color: rgba(23, 20, 17, 0.1);
+  background: rgba(255, 255, 255, 0.96);
+}
+
+.resultsCount,
+.priceLabels,
+.noProducts p {
+  color: rgba(23, 20, 17, 0.64);
+}
+
+.noProducts {
+  background: rgba(255, 255, 255, 0.88);
+  border-radius: 24px;
+  border: 1px solid rgba(23, 20, 17, 0.08);
+}
+
+.noProducts button {
+  background: #171411;
+}

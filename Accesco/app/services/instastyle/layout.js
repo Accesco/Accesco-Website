@@ -3,6 +3,7 @@ import CartDrawer from '@/components/instastyle/CartDrawer';
 import CartBadge from '@/components/instastyle/CartBadge';
 import InstaStyleHeader from '@/components/instastyle/InstaStyleHeader';
 import InstaStyleFooter from '@/components/instastyle/InstaStyleFooter';
+import './instastyle-shell.css';
 
 export const metadata = {
   title: "InstaStyle | Fashion Delivered in 15-20 Minutes",

@@ -107,7 +107,7 @@
 .searchInput {
   width: 100%;
   height: 40px;
-  padding: 0 40px 0 16px;
+  padding: 0 46px 0 16px;
   border: 1px solid #e5e7eb;
   border-radius: 8px;
   font-size: 14px;
@@ -129,7 +129,7 @@
 
 .searchButton {
   position: absolute;
-  right: 40px;
+  right: 10px;
   top: 50%;
   transform: translateY(-50%);
   background: none;
@@ -148,19 +148,7 @@
 }
 
 .searchShortcut {
-  position: absolute;
-  right: 8px;
-  top: 50%;
-  transform: translateY(-50%);
-  padding: 4px 8px;
-  background: #fff;
-  border: 1px solid #e5e7eb;
-  border-radius: 4px;
-  font-size: 11px;
-  font-weight: 600;
-  color: #6b7280;
-  pointer-events: none;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  display: none;
 }
 
 .searchForm.focused .searchShortcut {
@@ -450,6 +438,127 @@
 .actionButton:focus-visible,
 .searchInput:focus-visible,
 .mobileMenuButton:focus-visible {
-  outline: 2px solid #000;
+  outline: 2px solid #8d6648;
   outline-offset: 2px;
+}
+
+/* InstaStyle header refresh */
+.header {
+  background: rgba(255, 252, 248, 0.92);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(23, 20, 17, 0.08);
+}
+
+.header.scrolled {
+  border-bottom-color: rgba(23, 20, 17, 0.08);
+  box-shadow: 0 12px 36px rgba(23, 20, 17, 0.08);
+}
+
+.logo {
+  gap: 12px;
+  color: #171411;
+}
+
+.logoMark {
+  width: 40px;
+  height: 40px;
+  flex: 0 0 auto;
+}
+
+.logoText {
+  letter-spacing: -0.03em;
+}
+
+.navLink {
+  color: rgba(23, 20, 17, 0.72);
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  border-radius: 999px;
+}
+
+.navLink:hover {
+  color: #171411;
+  background: rgba(141, 102, 72, 0.08);
+}
+
+.navLink.active {
+  color: #171411;
+  background: rgba(141, 102, 72, 0.14);
+}
+
+.navLink.active::after {
+  display: none;
+}
+
+.searchInput {
+  border: 1px solid rgba(23, 20, 17, 0.12);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.82);
+}
+
+.searchInput:focus {
+  border-color: rgba(141, 102, 72, 0.42);
+  box-shadow: 0 0 0 4px rgba(141, 102, 72, 0.12);
+}
+
+.searchShortcut {
+  background: #fff7ef;
+  border-color: rgba(141, 102, 72, 0.16);
+}
+
+.actionButton {
+  color: rgba(23, 20, 17, 0.68);
+}
+
+.actionButton:hover {
+  color: #171411;
+  background: rgba(141, 102, 72, 0.08);
+}
+
+.badge {
+  background: #171411;
+}
+
+.mobileMenu {
+  background: rgba(255, 253, 249, 0.98);
+  box-shadow: -24px 0 48px rgba(23, 20, 17, 0.14);
+}
+
+.mobileNavLink {
+  color: #171411;
+}
+
+.mobileNavLink:hover,
+.mobileNavLink.active {
+  background: rgba(141, 102, 72, 0.08);
+}
+
+.mobileSearchInput {
+  border: 1px solid rgba(23, 20, 17, 0.12);
+}
+
+.mobileSearchInput:focus {
+  border-color: rgba(141, 102, 72, 0.42);
+}
+
+.mobileSearchButton {
+  background: #171411;
+}
+
+.mobileQuickLink:hover {
+  color: #171411;
+  background: rgba(141, 102, 72, 0.08);
+}
+
+.overlay {
+  background: rgba(23, 20, 17, 0.48);
+}
+
+@media (max-width: 768px) {
+  .logoMark {
+    width: 34px;
+    height: 34px;
+  }
 }
