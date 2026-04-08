@@ -4,11 +4,12 @@ import React from 'react';
 import Image from 'next/image';
 
 export default function Hero() {
+
   return (
     <section className="hero" id="home">
       <style jsx>{`
         .hero {
-          min-height: 100vh;
+          min-height: 110vh;
           background: #000;
           display: flex;
           align-items: flex-start;
@@ -36,26 +37,24 @@ export default function Hero() {
           max-width: 900px;
           margin: 0 auto;
           color: #fff;
-          padding-top: 160px;
+          padding-top: 120px;
           width: 100%;
         }
 
         .hero-logo-img {
-          width: 150px;
-          height: 150px;
-          margin: 0 auto 30px;
+          width: 120px;
+          height: 120px;
           filter: drop-shadow(0 10px 30px rgba(255, 255, 255, 0.3));
         }
 
         .hero-title {
           font-size: clamp(36px, 6vw, 72px);
           font-weight: 900;
-          margin-bottom: 16px;
+          margin-bottom: 10px;
           letter-spacing: -2px;
           text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
         }
 
-        /* ── Kicker — bold white text, no border ── */
         .hero-kicker {
           display: block;
           color: #fff;
@@ -66,7 +65,6 @@ export default function Hero() {
           line-height: 1.25;
           text-align: center;
           text-shadow: 0 2px 16px rgba(0,0,0,0.5);
-          margin-bottom: 20px;
           background: none;
           border: none;
           box-shadow: none;
@@ -80,17 +78,14 @@ export default function Hero() {
         .hero-sub {
           font-size: clamp(16px, 2.5vw, 22px);
           max-width: 700px;
-          margin: 0 auto 40px;
           line-height: 1.6;
           color: rgba(255, 255, 255, 0.9);
         }
 
-        .hero-ctas {
-          margin-bottom: 40px;
-        }
+        
 
         .cta-pill {
-          background: linear-gradient(135deg, #ffd86f, #ffb347);
+          background: white;
           color: #1f0f12;
           padding: 16px 40px;
           border-radius: 50px;
@@ -99,21 +94,21 @@ export default function Hero() {
           border: none;
           cursor: pointer;
           transition: all 0.3s ease;
-          box-shadow: 0 10px 30px rgba(255, 184, 70, 0.4);
+          box-shadow: 0 8px 32px rgba(245,184,0,0.35);
           text-transform: uppercase;
           letter-spacing: 1px;
         }
 
         .cta-pill:hover {
           transform: translateY(-3px);
-          box-shadow: 0 15px 40px rgba(255, 184, 70, 0.6);
+          box-shadow: 0 16px 48px rgba(245,184,0,0.5);
         }
 
         .hero-app-buttons {
           display: flex;
           gap: 16px;
           justify-content: center;
-          margin-bottom: 40px;
+          
         }
 
         .app-btn-link img {
@@ -136,11 +131,17 @@ export default function Hero() {
           text-transform: uppercase;
           letter-spacing: 1px;
           animation: bounce 2s infinite;
+          text-decoration: none;
         }
 
         @keyframes bounce {
           0%, 100% { transform: translateY(0); }
           50%       { transform: translateY(-10px); }
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+          display: none;
         }
 
         @media (max-width: 768px) {
@@ -149,6 +150,7 @@ export default function Hero() {
           .hero-app-buttons { flex-direction: column; align-items: center; }
           .app-btn-link img { height: 45px; }
           .hero-kicker { font-size: 11px; padding: 10px 20px; letter-spacing: 1.5px; }
+          .modal-content { padding: 32px 24px; }
         }
       `}</style>
 
@@ -169,16 +171,18 @@ export default function Hero() {
         <h1 className="hero-title">Accesco Living</h1>
 
         <div className="hero-kicker">
-          India&apos;s first circular intelligent commerce platform.
+          India&apos;s first intelligent delivery app
         </div>
 
         <p className="hero-sub">
-          Groceries, fashion, food, finance &amp; more — all in one intelligent ecosystem.
+          Experience seamless curated meals, grocery & fashion essentials ordering at your doorstep
         </p>
 
         <div className="hero-ctas">
-          <a href="#services">
-            <button className="cta-pill">Explore Services</button>
+          <a href="#app-showcase">
+            <button className="cta-pill">
+              Join Waitlist
+            </button>
           </a>
         </div>
 
@@ -201,6 +205,11 @@ export default function Hero() {
           Scroll down <i className="ri-arrow-down-s-line"></i>
         </a>
       </div>
+
+      {false && (
+        <div className="modal-overlay">
+        </div>
+      )}
     </section>
   );
 }
