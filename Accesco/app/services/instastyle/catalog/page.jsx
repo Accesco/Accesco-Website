@@ -1,12 +1,13 @@
 'use client';
 
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import ProductCard from '@/components/instastyle/ProductCard';
 import { products, categories, sortProducts } from '@/lib/mockData';
 import styles from './catalog.module.css';
 
-export default function CatalogPage() {
+// ✅ Inner component that uses useSearchParams
+function CatalogContent() {
   const searchParams = useSearchParams();
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [sortBy, setSortBy] = useState('newest');
@@ -19,17 +20,19 @@ export default function CatalogPage() {
 
   useEffect(() => {
     const category = searchParams.get('category');
-    setSelectedCategory(category && categories.some(item => item.id === category) ? category : 'all');
+    setSelectedCategory(
+      category && categories.some(item => item.id === category) ? category : 'all'
+    );
   }, [searchParams]);
 
-  // Filter and sort products
   const displayedProducts = useMemo(() => {
-    let filtered = selectedCategory === 'all' 
-      ? products 
-      : products.filter(p => p.category === selectedCategory);
+    let filtered =
+      selectedCategory === 'all'
+        ? products
+        : products.filter(p => p.category === selectedCategory);
 
     if (filters.size.length > 0) {
-      filtered = filtered.filter(p => 
+      filtered = filtered.filter(p =>
         filters.size.some(size => p.sizes.includes(size))
       );
     }
@@ -48,16 +51,12 @@ export default function CatalogPage() {
       ...prev,
       size: prev.size.includes(size)
         ? prev.size.filter(s => s !== size)
-        : [...prev.size, size]
+        : [...prev.size, size],
     }));
   };
 
   const clearFilters = () => {
-    setFilters({
-      category: [],
-      size: [],
-      priceRange: [0, 10000],
-    });
+    setFilters({ category: [], size: [], priceRange: [0, 10000] });
   };
 
   return (
@@ -104,7 +103,6 @@ export default function CatalogPage() {
               </button>
             </div>
 
-            {/* Size Filter */}
             <div className={styles.filterSection}>
               <h4>Size</h4>
               <div className={styles.sizeOptions}>
@@ -120,7 +118,6 @@ export default function CatalogPage() {
               </div>
             </div>
 
-            {/* Price Range */}
             <div className={styles.filterSection}>
               <h4>Price Range</h4>
               <div className={styles.priceRange}>
@@ -130,10 +127,12 @@ export default function CatalogPage() {
                   max="10000"
                   step="100"
                   value={filters.priceRange[1]}
-                  onChange={(e) => setFilters(prev => ({
-                    ...prev,
-                    priceRange: [0, parseInt(e.target.value)]
-                  }))}
+                  onChange={(e) =>
+                    setFilters(prev => ({
+                      ...prev,
+                      priceRange: [0, parseInt(e.target.value)],
+                    }))
+                  }
                 />
                 <div className={styles.priceLabels}>
                   <span>₹0</span>
@@ -145,20 +144,17 @@ export default function CatalogPage() {
 
           {/* Products Grid */}
           <main className={styles.productsSection}>
-            {/* Toolbar */}
             <div className={styles.toolbar}>
-              <button 
+              <button
                 className={styles.filterToggle}
                 onClick={() => setShowFilters(!showFilters)}
               >
                 <span>🔍</span> Refine
               </button>
-
               <div className={styles.resultsCount}>
                 {displayedProducts.length} Products
               </div>
-
-              <select 
+              <select
                 className={styles.sortSelect}
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
@@ -170,7 +166,6 @@ export default function CatalogPage() {
               </select>
             </div>
 
-            {/* Products Grid */}
             {displayedProducts.length > 0 ? (
               <div className={styles.productsGrid}>
                 {displayedProducts.map(product => (
@@ -187,5 +182,14 @@ export default function CatalogPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+// ✅ Default export wraps the inner component in Suspense
+export default function CatalogPage() {
+  return (
+    <Suspense fallback={<div>Loading catalog…</div>}>
+      <CatalogContent />
+    </Suspense>
   );
 }
