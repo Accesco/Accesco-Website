@@ -1,7 +1,6 @@
 'use client'
 
-
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import './calculator.css'
 
 export default function CalculatorPage() {
@@ -12,6 +11,7 @@ export default function CalculatorPage() {
   const [headCount, setHeadCount] = useState(1)
   const [showResults, setShowResults] = useState(false)
   const [incomeError, setIncomeError] = useState(false)
+  const [isCalculating, setIsCalculating] = useState(false)
 
   // Calculated values
   const [needs, setNeeds] = useState({ rent: 0, grocery: 0, transport: 0, bills: 0 })
@@ -19,7 +19,7 @@ export default function CalculatorPage() {
   const [savings, setSavings] = useState(0)
   const [savingsGoal, setSavingsGoal] = useState('')
 
-  const calculateBudget = () => {
+  const calculateBudget = async () => {
     const incomeNum = parseFloat(income) || 0
     const rentNum = parseFloat(rent) || 0
 
@@ -28,8 +28,8 @@ export default function CalculatorPage() {
       return
     }
     setIncomeError(false)
+    setIsCalculating(true)
 
-    // Smart calculation based on lifestyle and city
     const lifestyleMultipliers = {
       frugal: { needs: 0.45, wants: 0.25, savings: 0.30 },
       middle: { needs: 0.50, wants: 0.30, savings: 0.20 },

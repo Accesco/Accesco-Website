@@ -1,131 +1,146 @@
 'use client';
 
-
-import SidebarMenu from '../../components/SidebarMenu';
+import AccescoHeader from '../../components/AccescoHeader';
 import Footer from '../../components/Footer';
 import './about.css';
 
 export default function AboutPage() {
-
   return (
     <>
-      <SidebarMenu />
-      <main className="about-main">
-
-        {/* Hero */}
-        <section className="about-hero">
-          <div className="about-hero-noise" />
-          <div className="about-hero-glow" />
-          <div className="about-hero-content">
-            <div className="about-hero-brand">
-              <img
-                src="/images/accesco_white.png"
-                alt="Accesco Living Logo"
-                className="about-hero-logo"
-              />
-              <span className="about-hero-company">Accesco Living</span>
-            </div>
-            <p className="about-eyebrow">ISO 9001:2015 Certified · Founded 2025 · Bengaluru, India</p>
-            <h1 className="about-hero-title">
-              India's first intelligent<br />
-              <span className="about-hero-accent">circular commerce ecosystem.</span>
-            </h1>
-            <p className="about-hero-sub">
-              One app. One cart. One ecosystem that learns how your household lives —
-              and makes every order smarter than the last.
-            </p>
-          </div>
-          <div className="about-scroll-hint">
-            <span>Scroll</span>
-            <div className="about-scroll-line" />
-          </div>
-        </section>
-
-        {/* Belief statement */}
-        <section className="about-belief">
-          <div className="about-belief-inner">
-            <div className="about-belief-label">Our Mission</div>
-            <blockquote className="about-belief-quote">
-              To make everyday commerce transparent, intelligent, affordable and circular —
-              for the household, the local producer and the planet simultaneously.
-            </blockquote>
-          </div>
-        </section>
-
-        {/* The Problem */}
-        <section className="about-story">
-          <div className="about-container">
-            <div className="about-story-grid">
-              <div className="about-story-left">
-                <h2 className="about-section-title">The problem<br />we are solving</h2>
-                <div className="about-title-bar" />
-              </div>
-              <div className="about-story-right">
-                <p>
-                  Every day, the average urban Indian household opens five different apps to manage
-                  daily needs — one for groceries, one for food, one for fashion, one for medicines,
-                  one for dining. Five separate carts. Five different budgets. Five delivery windows.
-                  Zero coordination. Zero intelligence.
-                </p>
-                <p>
-                  The average Bengaluru household spends approximately{' '}
-                  <em>Rs 17,500 per month</em> across these fragmented platforms — on services that
-                  do not know their name, do not remember what they bought last week, and have never
-                  once predicted what they would need tomorrow.
-                </p>
-                <p>
-                  At the same time, a Karnataka farmer harvests tomatoes at 4 AM and sells them at
-                  the mandi for Rs 6 per kilogram — while the same tomatoes arrive at a Bengaluru
-                  household for Rs 40, with Rs 34 collected by six middlemen who added no value to
-                  the produce and no traceability to the journey.
-                </p>
-                <p>
-                  <em>Accesco Living is the correction to both of these problems simultaneously.</em>
-                </p>
+      <AccescoHeader />
+      <main className="about-page">
+        
+        {/* Hero Section */}
+        <section className="about-hero-section">
+          <div className="about-hero-container">
+            <div className="about-hero-content">
+              <h1 className="about-hero-title">
+                Building India's first intelligent circular commerce ecosystem
+              </h1>
+              <p className="about-hero-description">
+                We're reimagining daily commerce by connecting households directly with local producers, 
+                eliminating waste, and making every transaction smarter through AI-powered intelligence.
+              </p>
+              <div className="about-hero-meta">
+                <span>Founded 2025</span>
+                <span className="meta-divider">·</span>
+                <span>Bengaluru, India</span>
+                <span className="meta-divider">·</span>
+                <span>ISO 9001:2015 Certified</span>
               </div>
             </div>
           </div>
         </section>
 
-        {/* What We've Built */}
-        <section className="about-pillars">
+        {/* Mission Statement */}
+        <section className="about-mission-section">
           <div className="about-container">
-            <p className="about-pillar-overline">What we have built</p>
-            <h2 className="about-section-title about-section-title--center">
-              Three ventures. One ecosystem.
-            </h2>
-            <div className="about-pillars-grid">
-              <div className="about-pillar-card">
-                <div className="about-pillar-number">01</div>
-                <div className="about-pillar-icon">◈</div>
-                <h3>Grokly</h3>
-                <p>
-                  Daily essentials and grocery delivery, sourced directly from Karnataka farms
-                  through our FarmChain network. Every product carries a live QR identity — producer
-                  name, source region, harvest date and quality certificate. Also houses{' '}
-                  <em style={{color:'#c084d0'}}>LocalMeds</em>, our pharmaceutical and health
-                  management sub-category.
+            <div className="mission-content">
+              <h2 className="mission-title">
+                Making everyday commerce transparent, intelligent, and circular
+              </h2>
+              <p className="mission-description">
+                For the household, the local producer, and the planet — simultaneously.
+              </p>
+            </div>
+            
+            {/* Mission Image Placeholder */}
+            <div className="mission-image-placeholder">
+              <div className="placeholder-content">
+                <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
+                  <rect x="10" y="20" width="60" height="40" rx="4" stroke="currentColor" strokeWidth="2"/>
+                  <path d="M20 35L30 25L40 35L50 25L60 35" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  <circle cx="25" cy="30" r="3" fill="currentColor"/>
+                </svg>
+                <span>Mission Visual</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Problem Section */}
+        <section className="about-content-section">
+          <div className="about-container">
+            <div className="content-grid">
+              <div className="content-sidebar">
+                <h2 className="section-heading">The problem we're solving</h2>
+              </div>
+              <div className="content-main">
+                <div className="content-text">
+                  <p>
+                    Every day, the average urban Indian household opens five different apps to manage 
+                    daily needs — one for groceries, one for food, one for fashion, one for medicines, 
+                    one for dining. Five separate carts. Five different budgets. Five delivery windows. 
+                    Zero coordination. Zero intelligence.
+                  </p>
+                  <p>
+                    The average Bengaluru household spends approximately ₹17,500 per month across these 
+                    fragmented platforms — on services that don't know their name, don't remember what 
+                    they bought last week, and have never once predicted what they would need tomorrow.
+                  </p>
+                  
+                  {/* Problem Illustration Placeholder */}
+                  <div className="content-image-placeholder">
+                    <div className="placeholder-content">
+                      <svg width="64" height="64" viewBox="0 0 64 64" fill="none">
+                        <rect x="8" y="16" width="48" height="32" rx="4" stroke="currentColor" strokeWidth="2"/>
+                        <path d="M16 28L24 20L32 28L40 20L48 28" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                        <circle cx="20" cy="24" r="2" fill="currentColor"/>
+                      </svg>
+                      <span>Problem Illustration</span>
+                    </div>
+                  </div>
+                  
+                  <p>
+                    At the same time, a Karnataka farmer harvests tomatoes at 4 AM and sells them at 
+                    the mandi for ₹6 per kilogram — while the same tomatoes arrive at a Bengaluru 
+                    household for ₹40, with ₹34 collected by six middlemen who added no value to the 
+                    produce and no traceability to the journey.
+                  </p>
+                  <p className="highlight-text">
+                    Accesco Living is the correction to both of these problems simultaneously.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Ventures Section */}
+        <section className="about-ventures-section">
+          <div className="about-container">
+            <div className="ventures-header">
+              <h2 className="section-heading-center">Three ventures. One ecosystem.</h2>
+            </div>
+            <div className="ventures-grid">
+              <div className="venture-card">
+                <div className="venture-number">01</div>
+                <h3 className="venture-title">Grokly</h3>
+                <p className="venture-description">
+                  Daily essentials and grocery delivery, sourced directly from Karnataka farms through 
+                  our FarmChain network. Every product carries a live QR identity — producer name, 
+                  source region, harvest date and quality certificate. Also houses LocalMeds, our 
+                  pharmaceutical and health management sub-category.
                 </p>
               </div>
-              <div className="about-pillar-card">
-                <div className="about-pillar-number">02</div>
-                <div className="about-pillar-icon">⬡</div>
-                <h3>Swadishtt</h3>
-                <p>
-                  Food delivery and cloud kitchen platform, powered by Swadishtt Cafe micro-kitchens
-                  inside our dark stores. Also powers{' '}
-                  <em style={{color:'#c084d0'}}>DineX</em> — smart savings dining, assured table
+              
+              <div className="venture-card">
+                <div className="venture-number">02</div>
+                <h3 className="venture-title">Swadishtt</h3>
+                <p className="venture-description">
+                  Food delivery and cloud kitchen platform, powered by Swadishtt Cafe micro-kitchens 
+                  inside our dark stores. Also powers DineX — smart savings dining, assured table 
                   reservations and hosted dining events.
                 </p>
               </div>
-              <div className="about-pillar-card">
-                <div className="about-pillar-number">03</div>
-                <div className="about-pillar-icon">◎</div>
-                <h3>InstaStyle</h3>
-                <p>
-                  Instant fashion delivery in 15–20 minutes, a trial-at-doorstep model, virtual
-                  try-on, a thrift marketplace, and a full Reverse Fashion Loop that collects worn
-                  garments and converts them into circular value.
+              
+              <div className="venture-card">
+                <div className="venture-number">03</div>
+                <h3 className="venture-title">InstaStyle</h3>
+                <p className="venture-description">
+                  Instant fashion delivery in 15–20 minutes, a trial-at-doorstep model, virtual try-on, 
+                  a thrift marketplace, and a full Reverse Fashion Loop that collects worn garments and 
+                  converts them into circular value.
                 </p>
               </div>
             </div>
@@ -133,76 +148,84 @@ export default function AboutPage() {
         </section>
 
         {/* What Makes Us Different */}
-        <section className="about-story" style={{background:'#111013', borderTop:'1px solid #1e1a22'}}>
+        <section className="about-content-section dark-section">
           <div className="about-container">
-            <div className="about-story-grid">
-              <div className="about-story-left">
-                <h2 className="about-section-title">What makes<br />us different</h2>
-                <div className="about-title-bar" />
+            <div className="content-grid">
+              <div className="content-sidebar">
+                <h2 className="section-heading">What makes us different</h2>
               </div>
-              <div className="about-story-right">
-                <p>
-                  <em>FarmChain Direct Sourcing</em> — We operate FarmChain, a direct sourcing
-                  network that removes six commercial middlemen between Karnataka farms and Bengaluru
-                  households. Farmers in Kolar, Chikkaballapur, Hassan, Bidar and beyond earn two to
-                  three times what they receive at the mandi. Consumers pay 20–30% less than on other
-                  platforms.
-                </p>
-                <p>
-                  <em>Household Intelligence Layer</em> — Our platform is not a catalogue. It is a
-                  learning system. Through My Home Profile, it absorbs your household size, dietary
-                  habits, cooking frequency, monthly budget and consumption patterns. Over 60 days, it
-                  reaches 85% prediction accuracy on what you need before you need it. One tap
-                  confirms your week. You never rebuild the same grocery list again.
-                </p>
-                <p>
-                  <em>Budget-First Commerce</em> — Every product across every venture is tagged in
-                  real time against your household's selected budget. For the first time in Indian
-                  commerce, financial clarity is a default — not a filter.
-                </p>
-                <p>
-                  <em>Reverse Commerce Loop</em> — Every delivery creates a return flow of value.
-                  Packaging collected. Carbon credits earned. Grade B FarmChain produce routed to
-                  cloud kitchens instead of waste. Organic material returned to farms as compost.
-                  Sustainability as a commercial operating model — not a marketing claim.
-                </p>
+              <div className="content-main">
+                <div className="features-list">
+                  <div className="feature-item-block">
+                    <h3>FarmChain Direct Sourcing</h3>
+                    <p>
+                      We operate FarmChain, a direct sourcing network that removes six commercial 
+                      middlemen between Karnataka farms and Bengaluru households. Farmers earn 2-3× 
+                      what they receive at the mandi. Consumers pay 20-30% less than on other platforms.
+                    </p>
+                  </div>
+                  
+                  <div className="feature-item-block">
+                    <h3>Household Intelligence Layer</h3>
+                    <p>
+                      Our platform is not a catalogue. It's a learning system. Through My Home Profile, 
+                      it absorbs your household size, dietary habits, cooking frequency, monthly budget 
+                      and consumption patterns. Over 60 days, it reaches 85% prediction accuracy on what 
+                      you need before you need it.
+                    </p>
+                  </div>
+                  
+                  <div className="feature-item-block">
+                    <h3>Budget-First Commerce</h3>
+                    <p>
+                      Every product across every venture is tagged in real time against your household's 
+                      selected budget. For the first time in Indian commerce, financial clarity is a 
+                      default — not a filter.
+                    </p>
+                  </div>
+                  
+                  <div className="feature-item-block">
+                    <h3>Reverse Commerce Loop</h3>
+                    <p>
+                      Every delivery creates a return flow of value. Packaging collected. Carbon credits 
+                      earned. Grade B FarmChain produce routed to cloud kitchens instead of waste. Organic 
+                      material returned to farms as compost. Sustainability as a commercial operating model 
+                      — not a marketing claim.
+                    </p>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </section>
 
-        {/* Three Pillars */}
-        <section className="about-pillars">
+   
+
+        {/* Principles Section */}
+        <section className="about-principles-section">
           <div className="about-container">
-            <p className="about-pillar-overline">What we stand for</p>
-            <h2 className="about-section-title about-section-title--center">
-              Built on three principles
-            </h2>
-            <div className="about-pillars-grid">
-              <div className="about-pillar-card">
-                <div className="about-pillar-number">01</div>
-                <div className="about-pillar-icon">◈</div>
+            <h2 className="section-heading-center">Built on three principles</h2>
+            <div className="principles-grid">
+              <div className="principle-card">
                 <h3>Trusted</h3>
                 <p>
-                  Every product verified at source. Every price fair and published. Every delivery
+                  Every product verified at source. Every price fair and published. Every delivery 
                   traceable from farm to door — with live QR identity on every FarmChain product.
                 </p>
               </div>
-              <div className="about-pillar-card">
-                <div className="about-pillar-number">02</div>
-                <div className="about-pillar-icon">⬡</div>
+              
+              <div className="principle-card">
                 <h3>Intelligent</h3>
                 <p>
-                  A household intelligence layer that learns how you live, predicts what you need,
+                  A household intelligence layer that learns how you live, predicts what you need, 
                   and makes every order smarter than the last — not just faster.
                 </p>
               </div>
-              <div className="about-pillar-card">
-                <div className="about-pillar-number">03</div>
-                <div className="about-pillar-icon">◎</div>
+              
+              <div className="principle-card">
                 <h3>Circular</h3>
                 <p>
-                  Every delivery creates return value. No produce wasted. No packaging discarded.
+                  Every delivery creates return value. No produce wasted. No packaging discarded. 
                   Every transaction closes a loop that earns money for every participant in the chain.
                 </p>
               </div>
@@ -210,106 +233,80 @@ export default function AboutPage() {
           </div>
         </section>
 
-        {/* Stats */}
-        <section className="about-stats">
+        {/* Team Section */}
+        <section className="about-team-section">
           <div className="about-container">
-            <div className="about-stats-grid">
-              <div className="about-stat">
-                <span className="about-stat-value">20+</span>
-                <span className="about-stat-label">Team Members</span>
-              </div>
-              <div className="about-stat-divider" />
-              <div className="about-stat">
-                <span className="about-stat-value">3</span>
-                <span className="about-stat-label">Consumer Ventures</span>
-              </div>
-              <div className="about-stat-divider" />
-              <div className="about-stat">
-                <span className="about-stat-value">85%</span>
-                <span className="about-stat-label">Prediction Accuracy at 60 days</span>
-              </div>
-              <div className="about-stat-divider" />
-              <div className="about-stat">
-                <span className="about-stat-value">6×</span>
-                <span className="about-stat-label">Middlemen Removed</span>
+            <h2 className="section-heading-center">Our founding team</h2>
+            
+            {/* Team Photo Placeholder */}
+            <div className="team-photo-placeholder">
+              <div className="placeholder-content">
+                <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
+                  <circle cx="25" cy="30" r="8" stroke="currentColor" strokeWidth="2"/>
+                  <circle cx="40" cy="30" r="8" stroke="currentColor" strokeWidth="2"/>
+                  <circle cx="55" cy="30" r="8" stroke="currentColor" strokeWidth="2"/>
+                  <path d="M15 55C15 48 19 45 25 45C31 45 35 48 35 55" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                  <path d="M30 55C30 48 34 45 40 45C46 45 50 48 50 55" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                  <path d="M45 55C45 48 49 45 55 45C61 45 65 48 65 55" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                </svg>
+                <span>Team Photo</span>
               </div>
             </div>
-          </div>
-        </section>
-
-        {/* Vision band */}
-        <section className="about-vision">
-          <div className="about-vision-inner">
-            <div className="about-vision-tag">Our Vision</div>
-            <h2>
-              India's most trusted daily-life<br />commerce infrastructure.
-            </h2>
-            <p>
-              We believe access to products is solved. Clarity in consumption is not. We believe
-              the farmer who grows your food deserves to know who ate it — and to be paid fairly.
-              We believe the household of tomorrow does not open five apps. It trusts one ecosystem
-              that already knows.
-            </p>
-          </div>
-        </section>
-
-        {/* Founding Team */}
-        <section className="about-story" style={{background:'#0d0d0f'}}>
-          <div className="about-container">
-            <div style={{textAlign:'center', marginBottom:'64px'}}>
-              <p className="about-pillar-overline">The people behind it</p>
-              <h2 className="about-section-title about-section-title--center">Our founding team</h2>
-            </div>
-            <div className="about-pillars-grid" style={{gridTemplateColumns:'repeat(2, 1fr)'}}>
-              <div className="about-pillar-card">
+            
+            <div className="team-grid">
+              <div className="team-member">
                 <h3>Argha Sengupta</h3>
-                <p style={{color:'#c084d0', fontSize:'12px', letterSpacing:'2px', textTransform:'uppercase', marginBottom:'12px'}}>
-                  Managing Director &amp; CEO
+                <p className="team-role">Managing Director & CEO</p>
+                <p className="team-description">
+                  Leads strategy, fundraising and ecosystem partnerships.
                 </p>
-                <p>Leads strategy, fundraising and ecosystem partnerships.</p>
               </div>
-              <div className="about-pillar-card">
+              
+              <div className="team-member">
                 <h3>Ayushman Saha</h3>
-                <p style={{color:'#c084d0', fontSize:'12px', letterSpacing:'2px', textTransform:'uppercase', marginBottom:'12px'}}>
-                  Executive Director &amp; CBO
+                <p className="team-role">Executive Director & CBO</p>
+                <p className="team-description">
+                  Leads operations, growth and business development.
                 </p>
-                <p>Leads operations, growth and business development.</p>
               </div>
-              <div className="about-pillar-card">
+              
+              <div className="team-member">
                 <h3>Aanushka Saha</h3>
-                <p style={{color:'#c084d0', fontSize:'12px', letterSpacing:'2px', textTransform:'uppercase', marginBottom:'12px'}}>
-                  CTO &amp; Co-Founder
+                <p className="team-role">CTO & Co-Founder</p>
+                <p className="team-description">
+                  Leads technology architecture, product development and the intelligence layer.
                 </p>
-                <p>Leads technology architecture, product development and the intelligence layer.</p>
               </div>
-              <div className="about-pillar-card">
+              
+              <div className="team-member">
                 <h3>Md. Asif</h3>
-                <p style={{color:'#c084d0', fontSize:'12px', letterSpacing:'2px', textTransform:'uppercase', marginBottom:'12px'}}>
-                  Chief Operating Officer
+                <p className="team-role">Chief Operating Officer</p>
+                <p className="team-description">
+                  Leads supply chain, dark store operations and FarmChain sourcing.
                 </p>
-                <p>Leads supply chain, dark store operations and FarmChain sourcing.</p>
               </div>
             </div>
           </div>
         </section>
 
-        {/* CTA */}
-        <section className="about-cta">
+        {/* Vision Section */}
+        <section className="about-vision-section">
           <div className="about-container">
-            <div className="about-cta-card">
-              <div className="about-cta-glow" />
-              <h2>Be part of what comes next.</h2>
-              <p>
-                Accesco Living is preparing for Beta launch in Bengaluru. Join our waitlist and
-                shape the platform before it launches — or speak with us if you believe the next
-                wave of Indian commerce will be defined by trust and intelligence, not just speed.
+            <div className="vision-content">
+              <h2 className="vision-title">
+                India's most trusted daily-life commerce infrastructure
+              </h2>
+              <p className="vision-description">
+                We believe access to products is solved. Clarity in consumption is not. We believe 
+                the farmer who grows your food deserves to know who ate it — and to be paid fairly. 
+                We believe the household of tomorrow doesn't open five apps. It trusts one ecosystem 
+                that already knows.
               </p>
             </div>
           </div>
         </section>
 
       </main>
-
       <Footer />
     </>
   );

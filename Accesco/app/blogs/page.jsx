@@ -220,29 +220,7 @@ export default function BlogsPage() {
         </div>
       </div>
 
-      {/* Footer */}
-      <footer>
-        <div className="footer-grid">
-          <div className="footer-brand">
-            <div className="footer-logo-row">
-              <Image src="/images/accesco_original.png" alt="ACCESCO" width={40} height={40} />
-              <span>ACCESCO BLOGS</span>
-            </div>
-            <p className="footer-tagline">Empowering digital excellence through innovation. Explore our community insights.</p>
-          </div>
-          <div className="footer-col"><h4>Company</h4><ul><li>About Us</li><li>Careers</li><li>Partner</li></ul></div>
-          <div className="footer-col"><h4>Resources</h4><ul><li>Help Center</li><li>Legal</li><li>Support</li></ul></div>
-          <div className="footer-col">
-            <h4>Social Links</h4>
-            <div className="footer-socials">
-              <a href="#" className="social-link"><i className="ri-instagram-line"></i></a>
-              <a href="#" className="social-link"><i className="ri-twitter-fill"></i></a>
-              <a href="#" className="social-link"><i className="ri-linkedin-box-fill"></i></a>
-            </div>
-          </div>
-        </div>
-        <div className="footer-bottom">© 2026 ACCESCO BLOGS — ALL RIGHTS RESERVED.</div>
-      </footer>
+     
 
       {/* ── Reader Modal ── */}
       {showReader && selectedPost && (

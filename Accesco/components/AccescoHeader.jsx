@@ -94,7 +94,7 @@ export default function AccescoHeader() {
               style={{ objectFit: 'contain' }}
             />
             <div className={styles.logoText}>
-              <span className={styles.logoName}>AccesCo</span>
+              <span className={styles.logoName}>Accesco</span>
               <span className={styles.logoTagline}>Living</span>
             </div>
           </Link>

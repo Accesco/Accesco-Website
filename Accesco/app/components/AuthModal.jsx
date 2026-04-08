@@ -59,25 +59,36 @@ export default function AuthModal({ isOpen, onClose, onSuccess }) {
         <div className="am-left">
           <div className="am-left-inner">
             <div className="am-left-logo">
-              <svg width="38" height="38" viewBox="0 0 38 38" fill="none">
-                <circle cx="19" cy="19" r="19" fill="rgba(255,255,255,0.15)"/>
-                <circle cx="19" cy="19" r="12" fill="rgba(255,255,255,0.25)"/>
-                <circle cx="19" cy="19" r="6" fill="white"/>
-              </svg>
+              <img src="/images/accesco_white.png" alt="Accesco Living" />
               <span>Accesco Living</span>
             </div>
-            <h2 className="am-left-title">India's Unified<br/>Living Ecosystem</h2>
-            <p className="am-left-sub">Groceries · Fashion · Food<br/>Finance &amp; more</p>
-            <div className="am-left-pills">
-              <div className="am-pill"><i className="ri-shield-check-line"/> Secure &amp; Private</div>
-              <div className="am-pill"><i className="ri-flashlight-line"/> No Password</div>
-              <div className="am-pill"><i className="ri-heart-line"/> Free Forever</div>
+            <h2 className="am-left-title">India's Unified Living Ecosystem</h2>
+            <p className="am-left-sub">
+              One platform for groceries, fashion, food, finance and more.
+            </p>
+            <div className="am-left-features">
+              <div className="am-feature">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                  <path d="M10 1L13 7L19 8L14.5 12.5L15.5 19L10 16L4.5 19L5.5 12.5L1 8L7 7L10 1Z" fill="currentColor"/>
+                </svg>
+                <span>Secure & Private</span>
+              </div>
+              <div className="am-feature">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                  <path d="M10 18C14.4183 18 18 14.4183 18 10C18 5.58172 14.4183 2 10 2C5.58172 2 2 5.58172 2 10C2 14.4183 5.58172 18 10 18Z" stroke="currentColor" strokeWidth="2"/>
+                  <path d="M7 10L9 12L13 8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+                <span>No Password Required</span>
+              </div>
+              <div className="am-feature">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                  <path d="M10 2C10 2 3 5 3 10C3 15 10 18 10 18C10 18 17 15 17 10C17 5 10 2 10 2Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M10 10C11.1046 10 12 9.10457 12 8C12 6.89543 11.1046 6 10 6C8.89543 6 8 6.89543 8 8C8 9.10457 8.89543 10 10 10Z" stroke="currentColor" strokeWidth="2"/>
+                </svg>
+                <span>Free Forever</span>
+              </div>
             </div>
           </div>
-          {/* decorative circles */}
-          <div className="am-deco am-deco-1"/>
-          <div className="am-deco am-deco-2"/>
-          <div className="am-deco am-deco-3"/>
         </div>
 
         {/* ── Right form panel ── */}
@@ -210,50 +221,55 @@ export default function AuthModal({ isOpen, onClose, onSuccess }) {
 
         /* ── Left panel ── */
         .am-left {
-          width: 300px; flex-shrink: 0;
-          background: linear-gradient(145deg, #3d0230 0%, #570340 40%, #700457 70%, #8e0570 100%);
-          padding: 44px 36px;
-          display: flex; flex-direction: column; justify-content: flex-end;
+          width: 320px; flex-shrink: 0;
+          background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%);
+          padding: 48px 40px;
+          display: flex; flex-direction: column; justify-content: center;
           position: relative; overflow: hidden;
+        }
+        .am-left::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: radial-gradient(circle at 20% 80%, rgba(255,255,255,0.05) 0%, transparent 50%);
+          pointer-events: none;
         }
         .am-left-inner { position: relative; z-index: 1; }
         .am-left-logo {
-          display: flex; align-items: center; gap: 10px;
-          margin-bottom: 40px;
-          font-size: 15px; font-weight: 900; letter-spacing: 1px;
-          text-transform: uppercase; color: rgba(255,255,255,0.9);
+          display: flex; align-items: center; gap: 12px;
+          margin-bottom: 48px;
+          font-size: 16px; font-weight: 700; letter-spacing: -0.3px;
+          color: #ffffff;
+        }
+        .am-left-logo img {
+          width: 52px;
+          height: 52px;
+          object-fit: contain;
         }
         .am-left-title {
-          font-size: 26px; font-weight: 900; line-height: 1.2;
-          color: #fff; margin: 0 0 12px;
+          font-size: 48px; font-weight: 700; line-height: 1.3;
+          color: #fff; margin: 0 0 16px;
+          letter-spacing: -0.5px;
         }
         .am-left-sub {
-          font-size: 13px; color: rgba(255,255,255,0.6);
-          line-height: 1.6; margin: 0 0 28px;
+          font-size: 15px; color: rgba(255,255,255,0.6);
+          line-height: 1.6; margin: 0 0 40px;
         }
-        .am-left-pills { display: flex; flex-direction: column; gap: 8px; }
-        .am-pill {
-          display: inline-flex; align-items: center; gap: 7px;
-          padding: 7px 12px; border-radius: 999px;
-          background: rgba(255,255,255,0.12);
-          border: 1px solid rgba(255,255,255,0.18);
-          color: rgba(255,255,255,0.85); font-size: 12px; font-weight: 600;
-          width: fit-content;
+        .am-left-features { 
+          display: flex; flex-direction: column; gap: 16px; 
         }
-
-        /* Decorative circles */
-        .am-deco { position: absolute; border-radius: 50%; }
-        .am-deco-1 {
-          width: 260px; height: 260px; top: -80px; right: -80px;
-          background: rgba(255,255,255,0.05);
+        .am-feature {
+          display: flex; align-items: center; gap: 12px;
+          color: rgba(255,255,255,0.8); 
+          font-size: 14px; 
+          font-weight: 500;
         }
-        .am-deco-2 {
-          width: 180px; height: 180px; top: 40px; right: -60px;
-          background: rgba(255,255,255,0.04);
-        }
-        .am-deco-3 {
-          width: 120px; height: 120px; bottom: 120px; left: -40px;
-          background: rgba(0,0,0,0.12);
+        .am-feature svg {
+          flex-shrink: 0;
+          color: rgba(255,255,255,0.6);
         }
 
         /* ── Right panel ── */
@@ -282,9 +298,9 @@ export default function AuthModal({ isOpen, onClose, onSuccess }) {
 
         /* Error */
         .am-error {
-          background: #fdf0f8; border: 1px solid #e8b0d8;
+          background: #fef2f2; border: 1px solid #fecaca;
           border-radius: 10px; padding: 11px 14px;
-          font-size: 13px; font-weight: 600; color: #700457;
+          font-size: 13px; font-weight: 600; color: #dc2626;
           display: flex; align-items: center; gap: 8px;
           margin-bottom: 20px;
         }
@@ -299,7 +315,7 @@ export default function AuthModal({ isOpen, onClose, onSuccess }) {
           font-size: 12px; font-weight: 700; color: #555;
           text-transform: uppercase; letter-spacing: 0.6px;
         }
-        .am-req { color: #700457; }
+        .am-req { color: #000000; }
         .am-opt {
           font-size: 11px; font-weight: 500; color: #bbb;
           text-transform: none; letter-spacing: 0;
@@ -313,9 +329,9 @@ export default function AuthModal({ isOpen, onClose, onSuccess }) {
           overflow: hidden;
         }
         .am-field--focus .am-input-row {
-          border-color: #700457;
+          border-color: #000000;
           background: #fff;
-          box-shadow: 0 0 0 4px rgba(112,4,87,.07);
+          box-shadow: 0 0 0 3px rgba(0,0,0,.05);
         }
         .am-field--filled .am-input-row {
           border-color: #ddd;
@@ -326,7 +342,7 @@ export default function AuthModal({ isOpen, onClose, onSuccess }) {
           font-size: 17px; color: #bbb; pointer-events: none;
           transition: color .2s;
         }
-        .am-field--focus .am-ico { color: #700457; }
+        .am-field--focus .am-ico { color: #000000; }
         .am-field--filled .am-ico { color: #999; }
         .am-input-row input {
           width: 100%; padding: 14px 14px 14px 42px;
@@ -342,17 +358,18 @@ export default function AuthModal({ isOpen, onClose, onSuccess }) {
         /* Submit */
         .am-submit {
           width: 100%; padding: 15px;
-          background: linear-gradient(135deg, #700457 0%, #a01e7d 100%);
-          color: #fff; border: none; border-radius: 14px;
-          font-size: 15px; font-weight: 800; letter-spacing: 0.5px;
-          text-transform: uppercase; cursor: pointer;
+          background: #000000;
+          color: #fff; border: none; border-radius: 12px;
+          font-size: 15px; font-weight: 700; letter-spacing: -0.2px;
+          cursor: pointer;
           display: flex; align-items: center; justify-content: center; gap: 8px;
-          transition: all .3s; margin-top: 4px;
-          box-shadow: 0 4px 20px rgba(112,4,87,.3);
+          transition: all .3s; margin-top: 8px;
+          box-shadow: 0 4px 16px rgba(0,0,0,.2);
         }
         .am-submit:hover:not(:disabled) {
+          background: #333333;
           transform: translateY(-2px);
-          box-shadow: 0 8px 28px rgba(112,4,87,.4);
+          box-shadow: 0 8px 24px rgba(0,0,0,.3);
         }
         .am-submit:active:not(:disabled) { transform: translateY(0); }
         .am-submit:disabled { opacity: .6; cursor: not-allowed; }
@@ -374,9 +391,9 @@ export default function AuthModal({ isOpen, onClose, onSuccess }) {
         }
         .am-success-ring {
           width: 72px; height: 72px; border-radius: 50%;
-          background: linear-gradient(135deg, #1e8449, #27ae60);
+          background: #000000;
           display: flex; align-items: center; justify-content: center;
-          box-shadow: 0 8px 28px rgba(39,174,96,.35);
+          box-shadow: 0 8px 28px rgba(0,0,0,.25);
           animation: amPop .4s cubic-bezier(0.22,1,0.36,1);
         }
         @keyframes amPop { from{transform:scale(0.4);opacity:0} to{transform:scale(1);opacity:1} }

@@ -92,38 +92,60 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* CalcIQ Section */}
-        <section className="calciq-section">
-          <div className="calciq-container">
-            <div className="calciq-info">
-              <div className="calciq-badge">
-                <i className="ri-sparkling-2-fill"></i> POWERED BY AI
+        {/* Xpense Meter Section - Meta Engineering Standards */}
+        <section className="xpense-meter-section">
+          <div className="xpense-container">
+            <div className="xpense-content">
+              <div className="xpense-header">
+               
+                <h2 className="xpense-title">
+                  Xpense <span className="xpense-highlight">Meter</span>
+                </h2>
+                <p className="xpense-description">
+                  Transform your financial habits with intelligent expense tracking, 
+                  predictive analytics, and personalized savings recommendations.
+                </p>
+                <div className="xpense-features">
+                  <div className="feature-item">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                      <path d="M10 2L12.09 6.26L17 7L13 10.74L13.91 16L10 13.27L6.09 16L7 10.74L3 7L7.91 6.26L10 2Z" fill="currentColor"/>
+                    </svg>
+                    Smart categorization
+                  </div>
+                  <div className="feature-item">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                      <path d="M3 3V17H17V7H11L9 5H3Z" fill="currentColor"/>
+                    </svg>
+                    Predictive budgeting
+                  </div>
+                  <div className="feature-item">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                      <path d="M10 1L13 7L20 7L15 12L17 19L10 15L3 19L5 12L0 7L7 7L10 1Z" fill="currentColor"/>
+                    </svg>
+                    Goal tracking
+                  </div>
+                </div>
+                <a href="/calculator" className="xpense-cta">
+                  <span>Launch Calculator</span>
+                  <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                    <path d="M4 10H16M16 10L12 6M16 10L12 14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </a>
               </div>
-              <h2>Xpense <span>Meter</span></h2>
-              <p>
-                Stop guessing where your money goes. Visualize your savings, track expenses, 
-                and forecast your future wealth with one tap.
-              </p>
-              <a href="/calculator" className="calciq-btn">
-                Launch Calculator <i className="ri-arrow-right-line"></i>
-              </a>
-            </div>
-
-            <div className="calciq-visual">
-              <div className="glass-interface">
-                <div className="ui-header">
-                  <span>Total Savings</span>
-                  <i className="ri-more-fill"></i>
-                </div>
-                <div className="ui-balance">
-                  ₹24,500 <span>+12% <i className="ri-arrow-up-fill"></i></span>
-                </div>
-                <div className="ui-graph">
-                  <div className="ui-bar b1"></div>
-                  <div className="ui-bar b2"></div>
-                  <div className="ui-bar b3"></div>
-                  <div className="ui-bar b4"></div>
-                  <div className="ui-bar b5"></div>
+              
+              <div className="xpense-visual">
+                <div className="image-placeholder">
+                  <div className="placeholder-icon">
+                    <svg width="64" height="64" viewBox="0 0 64 64" fill="none">
+                      <rect x="8" y="16" width="48" height="32" rx="4" stroke="currentColor" strokeWidth="2" fill="none"/>
+                      <path d="M16 28L24 20L32 28L40 20L48 28" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      <circle cx="20" cy="24" r="2" fill="currentColor"/>
+                    </svg>
+                  </div>
+                  <div className="placeholder-text">
+                    <div className="placeholder-title">Dashboard Preview</div>
+                    <div className="placeholder-subtitle">Image will be added here</div>
+                  </div>
                 </div>
               </div>
             </div>
