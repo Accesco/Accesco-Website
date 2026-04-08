@@ -1,24 +1,14 @@
 'use client';
 
-
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import './homepage.css';
-import SidebarMenu from '../components/SidebarMenu';
+import AccescoHeader from '../components/AccescoHeader';
 import Hero from '../components/Hero';
 import AppShowcase from '../components/AppShowcase';
 import DownloadSection from '../components/DownloadSection';
 import Footer from '../components/Footer';
-import InstaStyleCard from './components/InstaStyleCard';
 
 export default function HomePage() {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [ setIsLoginModalOpen] = useState(false);
-
-  const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen);
-  };
-
-
   useEffect(() => {
     const scripts = ['/js/sidebar-menu.js', '/js/stack-cards.js'];
     scripts.forEach(src => {
@@ -32,7 +22,7 @@ export default function HomePage() {
 
   return (
     <>
-      <SidebarMenu />
+      <AccescoHeader />
       
       <main>
         {/* Hero Section */}
