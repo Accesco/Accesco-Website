@@ -7,6 +7,7 @@ import Hero from '../components/Hero';
 import AppShowcase from '../components/AppShowcase';
 import DownloadSection from '../components/DownloadSection';
 import Footer from '../components/Footer';
+import InstaStyleCard from './components/InstaStyleCard'
 
 export default function HomePage() {
   useEffect(() => {
