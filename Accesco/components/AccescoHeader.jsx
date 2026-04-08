@@ -15,9 +15,13 @@ export default function AccescoHeader() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [isServicesOpen, setIsServicesOpen] = useState(false);
+  const [isPartnersOpen, setIsPartnersOpen] = useState(false);
   const [isMobileServicesOpen, setIsMobileServicesOpen] = useState(false);
+  const [isMobilePartnersOpen, setIsMobilePartnersOpen] = useState(false);
   const dropdownRef = useRef(null);
+  const partnersDropdownRef = useRef(null);
   const timeoutRef = useRef(null);
+  const partnersTimeoutRef = useRef(null);
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 50);
@@ -39,6 +43,9 @@ export default function AccescoHeader() {
     const handleClickOutside = (e) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
         setIsServicesOpen(false);
+      }
+      if (partnersDropdownRef.current && !partnersDropdownRef.current.contains(e.target)) {
+        setIsPartnersOpen(false);
       }
     };
 
@@ -67,6 +74,17 @@ export default function AccescoHeader() {
     }, 150);
   };
 
+  const handlePartnersMouseEnter = () => {
+    if (partnersTimeoutRef.current) clearTimeout(partnersTimeoutRef.current);
+    setIsPartnersOpen(true);
+  };
+
+  const handlePartnersMouseLeave = () => {
+    partnersTimeoutRef.current = setTimeout(() => {
+      setIsPartnersOpen(false);
+    }, 150);
+  };
+
   const initials = user?.name
     ? user.name.split(' ').map(n => n[0]).slice(0, 2).join('').toUpperCase()
     : '';
@@ -78,6 +96,12 @@ export default function AccescoHeader() {
     { name: 'DineX', href: '/services/dinex', description: 'Premium dining experience' },
     { name: 'LocalMeds', href: '/services/localmeds', description: 'Medicines at your doorstep' },
     { name: 'Swadishtt Cafe', href: '/services/swadisht-cafe', description: 'Cafe experience at home' },
+  ];
+
+  const partnerOptions = [
+    { name: 'Partner as Creator', href: '/partner/creator', description: 'Join as content creator' },
+    { name: 'Partner as Vendor', href: '/partner/vendor', description: 'Grow your business' },
+    { name: 'Partner as Delivery', href: '/partner/delivery', description: 'Earn flexible income' },
   ];
 
   return (
@@ -155,7 +179,57 @@ export default function AccescoHeader() {
             </div>
               
             <Link href="/calculator" className={styles.navLink}>Xpense Meter</Link>
-            <Link href="/partner" className={styles.navLink}>Partner</Link>
+            
+            {/* Partners Dropdown */}
+            <div 
+              className={styles.servicesDropdown}
+              ref={partnersDropdownRef}
+              onMouseEnter={handlePartnersMouseEnter}
+              onMouseLeave={handlePartnersMouseLeave}
+            >
+              <button 
+                className={`${styles.navLink} ${styles.servicesButton}`}
+                aria-expanded={isPartnersOpen}
+                aria-haspopup="true"
+              >
+                Partner
+                <svg 
+                  width="12" 
+                  height="12" 
+                  viewBox="0 0 12 12" 
+                  fill="none"
+                  className={styles.dropdownIcon}
+                  style={{ transform: isPartnersOpen ? 'rotate(180deg)' : 'rotate(0deg)' }}
+                >
+                  <path 
+                    d="M3 4.5L6 7.5L9 4.5" 
+                    stroke="currentColor" 
+                    strokeWidth="1.5" 
+                    strokeLinecap="round" 
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </button>
+
+              {isPartnersOpen && (
+                <div className={styles.dropdownMenu}>
+                  <div className={styles.dropdownContent}>
+                    {partnerOptions.map((option) => (
+                      <Link
+                        key={option.href}
+                        href={option.href}
+                        className={styles.dropdownItem}
+                        onClick={() => setIsPartnersOpen(false)}
+                      >
+                        <div className={styles.dropdownItemName}>{option.name}</div>
+                        <div className={styles.dropdownItemDesc}>{option.description}</div>
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+            
              <Link href="/blogs" className={styles.navLink}>Blogs</Link>
             <Link href="/contact" className={styles.navLink}>Contact Us</Link>
           </nav>
@@ -235,7 +309,50 @@ export default function AccescoHeader() {
             </div>
 
             <Link href="/calculator" className={styles.mobileNavLink}>Xpense Meter</Link>
-            <Link href="/partner" className={styles.mobileNavLink}>Partner With Us</Link>
+            
+            {/* Mobile Partners Dropdown */}
+            <div className={styles.mobileServicesDropdown}>
+              <button 
+                className={styles.mobileServicesButton}
+                onClick={() => setIsMobilePartnersOpen(!isMobilePartnersOpen)}
+                aria-expanded={isMobilePartnersOpen}
+              >
+                <span>Partner</span>
+                <svg 
+                  width="12" 
+                  height="12" 
+                  viewBox="0 0 12 12" 
+                  fill="none"
+                  className={styles.mobileDropdownIcon}
+                  style={{ transform: isMobilePartnersOpen ? 'rotate(180deg)' : 'rotate(0deg)' }}
+                >
+                  <path 
+                    d="M3 4.5L6 7.5L9 4.5" 
+                    stroke="currentColor" 
+                    strokeWidth="1.5" 
+                    strokeLinecap="round" 
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </button>
+
+              <div 
+                className={`${styles.mobileServicesContent} ${isMobilePartnersOpen ? styles.open : ''}`}
+              >
+                {partnerOptions.map((option) => (
+                  <Link 
+                    key={option.href} 
+                    href={option.href} 
+                    className={styles.mobileServiceLink}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    <div className={styles.mobileServiceName}>{option.name}</div>
+                    <div className={styles.mobileServiceDesc}>{option.description}</div>
+                  </Link>
+                ))}
+              </div>
+            </div>
+            
             <Link href="/blogs" className={styles.mobileNavLink}>Blogs</Link>
             <Link href="/contact" className={styles.mobileNavLink}>Contact Us</Link>
           

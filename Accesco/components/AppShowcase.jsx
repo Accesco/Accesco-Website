@@ -125,7 +125,7 @@ export default function AppShowcase() {
           left: 0;
           right: 0;
           height: 4px;
-          background: linear-gradient(90deg, #e5e7eb, #d1d5db, #e5e7eb);
+          background: linear-gradient(90deg, #7A0042, #9d0054, #7A0042);
           background-size: 200% 100%;
           animation: shimmer 3s ease-in-out infinite;
         }
@@ -161,8 +161,8 @@ export default function AppShowcase() {
 
         .form-input:focus {
           outline: none;
-          border-color: #9ca3af;
-          box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.05);
+          border-color: #7A0042;
+          box-shadow: 0 0 0 4px rgba(122, 0, 66, 0.1);
           transform: translateY(-1px);
         }
 
@@ -173,7 +173,7 @@ export default function AppShowcase() {
         .submit-button {
           width: 100%;
           padding: 16px;
-          background: #1a1a1a;
+          background: linear-gradient(135deg, #7A0042, #9d0054);
           color: #fff;
           border: none;
           border-radius: 12px;
@@ -189,8 +189,8 @@ export default function AppShowcase() {
 
         .submit-button:hover:not(:disabled) {
           transform: translateY(-2px);
-          box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
-          background: #333;
+          box-shadow: 0 8px 24px rgba(122, 0, 66, 0.3);
+          background: linear-gradient(135deg, #9d0054, #c0006b);
         }
 
         .submit-button:active {
@@ -258,7 +258,7 @@ export default function AppShowcase() {
         .stat-number {
           font-size: 24px;
           font-weight: 900;
-          color: #1a1a1a;
+          color: #7A0042;
           display: block;
         }
 

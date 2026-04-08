@@ -222,7 +222,7 @@ export default function AuthModal({ isOpen, onClose, onSuccess }) {
         /* ── Left panel ── */
         .am-left {
           width: 320px; flex-shrink: 0;
-          background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%);
+          background: #7A0042;
           padding: 48px 40px;
           display: flex; flex-direction: column; justify-content: center;
           position: relative; overflow: hidden;
@@ -329,9 +329,9 @@ export default function AuthModal({ isOpen, onClose, onSuccess }) {
           overflow: hidden;
         }
         .am-field--focus .am-input-row {
-          border-color: #000000;
+          border-color: #7A0042;
           background: #fff;
-          box-shadow: 0 0 0 3px rgba(0,0,0,.05);
+          box-shadow: 0 0 0 3px rgba(122, 0, 66, 0.1);
         }
         .am-field--filled .am-input-row {
           border-color: #ddd;
@@ -342,7 +342,7 @@ export default function AuthModal({ isOpen, onClose, onSuccess }) {
           font-size: 17px; color: #bbb; pointer-events: none;
           transition: color .2s;
         }
-        .am-field--focus .am-ico { color: #000000; }
+        .am-field--focus .am-ico { color: #7A0042; }
         .am-field--filled .am-ico { color: #999; }
         .am-input-row input {
           width: 100%; padding: 14px 14px 14px 42px;
@@ -358,7 +358,7 @@ export default function AuthModal({ isOpen, onClose, onSuccess }) {
         /* Submit */
         .am-submit {
           width: 100%; padding: 15px;
-          background: #000000;
+          background: linear-gradient(135deg, #7A0042, #9d0054);
           color: #fff; border: none; border-radius: 12px;
           font-size: 15px; font-weight: 700; letter-spacing: -0.2px;
           cursor: pointer;
@@ -367,9 +367,9 @@ export default function AuthModal({ isOpen, onClose, onSuccess }) {
           box-shadow: 0 4px 16px rgba(0,0,0,.2);
         }
         .am-submit:hover:not(:disabled) {
-          background: #333333;
+          background: linear-gradient(135deg, #9d0054, #c0006b);
           transform: translateY(-2px);
-          box-shadow: 0 8px 24px rgba(0,0,0,.3);
+          box-shadow: 0 8px 24px rgba(122, 0, 66, 0.3);
         }
         .am-submit:active:not(:disabled) { transform: translateY(0); }
         .am-submit:disabled { opacity: .6; cursor: not-allowed; }
@@ -391,9 +391,9 @@ export default function AuthModal({ isOpen, onClose, onSuccess }) {
         }
         .am-success-ring {
           width: 72px; height: 72px; border-radius: 50%;
-          background: #000000;
+          background: linear-gradient(135deg, #7A0042, #9d0054);
           display: flex; align-items: center; justify-content: center;
-          box-shadow: 0 8px 28px rgba(0,0,0,.25);
+          box-shadow: 0 8px 28px rgba(122, 0, 66, 0.25);
           animation: amPop .4s cubic-bezier(0.22,1,0.36,1);
         }
         @keyframes amPop { from{transform:scale(0.4);opacity:0} to{transform:scale(1);opacity:1} }

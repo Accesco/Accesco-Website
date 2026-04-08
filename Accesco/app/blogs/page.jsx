@@ -172,7 +172,7 @@ export default function BlogsPage() {
       <div className="hero-canvas">
         <section className="hero-viewport">
           <video autoPlay muted loop playsInline poster="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072&auto=format&fit=crop">
-            <source src="https://assets.mixkit.co/videos/preview/mixkit-abstract-glowing-particles-in-dark-space-4112-large.mp4" type="video/mp4" />
+            <source src="/images/blog-video-animation.MP4" type="video/mp4" />
           </video>
           <div className="hero-shimmer"></div>
           <div className="hero-text-box">

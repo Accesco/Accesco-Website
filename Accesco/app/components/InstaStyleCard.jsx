@@ -109,8 +109,8 @@ export default function InstaStyleCard() {
           display: inline-flex;
           align-items: center;
           gap: 8px;
-          background: rgba(139, 10, 20, 0.08);
-          color: #8b0a14;
+          background: rgba(122, 0, 66, 0.08);
+          color: #7A0042;
           padding: 8px 20px;
           border-radius: 50px;
           font-size: 12px;
@@ -123,7 +123,7 @@ export default function InstaStyleCard() {
         .pulse-dot {
           width: 8px;
           height: 8px;
-          background: #8b0a14;
+          background: #7A0042;
           border-radius: 50%;
           animation: pulse 2s ease-in-out infinite;
         }
@@ -172,7 +172,7 @@ export default function InstaStyleCard() {
         }
 
         .feature-item svg {
-          color: #8b0a14;
+          color: #7A0042;
           flex-shrink: 0;
         }
 
@@ -184,7 +184,7 @@ export default function InstaStyleCard() {
         }
 
         .explore-btn {
-          background: linear-gradient(135deg, #8b0a14 0%, #c03b3b 100%);
+          background: linear-gradient(135deg, #7A0042 0%, #9d0054 100%);
           color: white;
           border: none;
           padding: 16px 32px;
@@ -196,12 +196,12 @@ export default function InstaStyleCard() {
           align-items: center;
           gap: 10px;
           transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-          box-shadow: 0 8px 24px rgba(139, 10, 20, 0.3);
+          box-shadow: 0 8px 24px rgba(122, 0, 66, 0.3);
         }
 
         .explore-btn:hover {
           transform: translateY(-3px);
-          box-shadow: 0 12px 32px rgba(139, 10, 20, 0.4);
+          box-shadow: 0 12px 32px rgba(122, 0, 66, 0.4);
         }
 
         .coming-soon-badge {

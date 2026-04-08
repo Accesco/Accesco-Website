@@ -74,7 +74,7 @@ export default function SidebarMenu({ onLoginClick }) {
         .nav-avatar-btn:hover { background: rgba(139,10,20,0.85); }
         .nav-avatar-circle {
           width: 28px; height: 28px; border-radius: 50%;
-          background: linear-gradient(135deg, #8b0a14, #c0392b);
+          background: linear-gradient(135deg, #7A0042, #9d0054);
           display: flex; align-items: center; justify-content: center;
           font-size: 11px; font-weight: 900; color: #fff; flex-shrink: 0;
         }
@@ -92,7 +92,7 @@ export default function SidebarMenu({ onLoginClick }) {
         }
         .sm-user-avatar {
           width: 42px; height: 42px; border-radius: 50%;
-          background: linear-gradient(135deg, #8b0a14, #c0392b);
+          background: linear-gradient(135deg, #7A0042, #9d0054);
           display: flex; align-items: center; justify-content: center;
           font-size: 15px; font-weight: 900; color: #fff; flex-shrink: 0;
         }
@@ -132,7 +132,7 @@ export default function SidebarMenu({ onLoginClick }) {
         }
         .sm-login-card-btn {
           width: 100%; padding: 10px;
-          background: linear-gradient(135deg, #8b0a14, #c0392b);
+          background: linear-gradient(135deg, #7A0042, #9d0054);
           color: #fff; border: none; border-radius: 10px;
           font-size: 13px; font-weight: 800; letter-spacing: 0.5px;
           text-transform: uppercase; cursor: pointer;

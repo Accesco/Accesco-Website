@@ -1049,14 +1049,14 @@ flex-shrink: 0;
   align-items: center;
   gap: 12px;
   padding: 16px 32px;
-  background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+  background: linear-gradient(135deg, #7A0042 0%, #9d0054 100%);
   color: #ffffff;
   text-decoration: none;
   border-radius: 12px;
   font-weight: 700;
   font-size: 16px;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 8px 32px rgba(59, 130, 246, 0.3);
+  box-shadow: 0 8px 32px rgba(122, 0, 66, 0.3);
   position: relative;
   overflow: hidden;
 }
@@ -1078,7 +1078,7 @@ flex-shrink: 0;
 
 .xpense-cta:hover {
   transform: translateY(-2px);
-  box-shadow: 0 12px 48px rgba(59, 130, 246, 0.4);
+  box-shadow: 0 12px 48px rgba(122, 0, 66, 0.4);
 }
 
 .xpense-visual {
@@ -2017,7 +2017,7 @@ display: block;
 }
 
 .grokly-visual { 
-  background-image: url('/images/grokly-image-logo.jpeg');
+  background-image: url('/images/grokly-store.jpg');
   background-color: #c1ff72;
  background-position: center 30%;
   

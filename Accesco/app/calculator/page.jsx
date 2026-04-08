@@ -264,7 +264,7 @@ export default function CalculatorPage() {
                 <div className="break-card">
                   <div className="break-top">
                     <h3 style={{ color: 'var(--accent)' }}>WANTS</h3>
-                    <i className="fa-solid fa-bag-shopping" style={{ color: '#b91c1c' }}></i>
+                    <i className="fa-solid fa-bag-shopping" style={{ color: '#7A0042' }}></i>
                   </div>
                   <div className="break-items">
                     <div className="break-item">
