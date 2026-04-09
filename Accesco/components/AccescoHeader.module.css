@@ -75,6 +75,106 @@
   justify-content: center;
 }
 
+/* Location Selector */
+.locationSelector {
+  position: relative;
+}
+
+.locationButton {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  color: #fff;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.locationButton:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.locationText {
+  max-width: 150px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.locationIcon {
+  transition: transform 0.2s ease;
+  flex-shrink: 0;
+}
+
+.locationDropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  min-width: 280px;
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), 
+              0 0 0 1px rgba(255, 255, 255, 0.05) inset;
+  overflow: hidden;
+  animation: dropdownFadeIn 0.2s ease;
+  z-index: 1001;
+}
+
+.locationDropdownHeader {
+  padding: 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.locationDropdownHeader h4 {
+  margin: 0;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.locationList {
+  padding: 8px;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.locationItem {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  background: none;
+  border: none;
+  border-radius: 8px;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: left;
+}
+
+.locationItem:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+.locationItem.selectedLocation {
+  background: rgba(122, 0, 66, 0.25);
+  color: #fff;
+  border-left: 3px solid #7A0042;
+}
+
 .navLink {
   padding: 8px 16px;
   color: rgba(255, 255, 255, 0.8);
@@ -89,6 +189,8 @@
   display: flex;
   align-items: center;
   gap: 6px;
+  text-transform: none;
+  position: relative;
 }
 
 .navLink:hover {
@@ -98,8 +200,18 @@
 
 .navLink.active {
   color: #fff;
-  background: rgba(122, 0, 66, 0.3);
-  border: 1px solid rgba(122, 0, 66, 0.5);
+  background: transparent;
+}
+
+.navLink.active::after {
+  content: '';
+  position: absolute;
+  bottom: 4px;
+  left: 16px;
+  right: 16px;
+  height: 2px;
+  background: linear-gradient(90deg, #7A0042, #ff6b9d);
+  border-radius: 2px;
 }
 
 /* Services Dropdown */
@@ -111,6 +223,7 @@
   display: flex;
   align-items: center;
   gap: 6px;
+  text-transform: none;
 }
 
 .dropdownIcon {
@@ -378,6 +491,7 @@
   cursor: pointer;
   transition: all 0.2s;
   text-align: left;
+  text-transform: none;
 }
 
 .mobileServicesButton:hover {

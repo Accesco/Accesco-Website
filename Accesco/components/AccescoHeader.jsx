@@ -18,10 +18,22 @@ export default function AccescoHeader() {
   const [isPartnersOpen, setIsPartnersOpen] = useState(false);
   const [isMobileServicesOpen, setIsMobileServicesOpen] = useState(false);
   const [isMobilePartnersOpen, setIsMobilePartnersOpen] = useState(false);
+  const [isLocationOpen, setIsLocationOpen] = useState(false);
+  const [selectedLocation, setSelectedLocation] = useState('Bengaluru, Karnataka');
   const dropdownRef = useRef(null);
   const partnersDropdownRef = useRef(null);
+  const locationDropdownRef = useRef(null);
   const timeoutRef = useRef(null);
   const partnersTimeoutRef = useRef(null);
+
+  const locations = [
+    'Bengaluru, Karnataka',
+    'Mumbai, Maharashtra',
+    'Delhi NCR',
+    'Hyderabad, Telangana',
+    'Chennai, Tamil Nadu',
+    'Pune, Maharashtra',
+  ];
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 50);
@@ -46,6 +58,9 @@ export default function AccescoHeader() {
       }
       if (partnersDropdownRef.current && !partnersDropdownRef.current.contains(e.target)) {
         setIsPartnersOpen(false);
+      }
+      if (locationDropdownRef.current && !locationDropdownRef.current.contains(e.target)) {
+        setIsLocationOpen(false);
       }
     };
 
@@ -124,10 +139,6 @@ export default function AccescoHeader() {
           </Link>
 
           <nav className={styles.nav}>
-            <Link href="/" className={`${styles.navLink} ${pathname === '/' ? styles.active : ''}`}>Home</Link>
-            <Link href="/about" className={`${styles.navLink} ${pathname === '/about' ? styles.active : ''}`}>About Us</Link>
-           
-            
             {/* Services Dropdown */}
             <div 
               className={styles.servicesDropdown}
@@ -177,8 +188,6 @@ export default function AccescoHeader() {
                 </div>
               )}
             </div>
-              
-            <Link href="/calculator" className={`${styles.navLink} ${pathname === '/calculator' ? styles.active : ''}`}>Xpense Meter</Link>
             
             {/* Partners Dropdown */}
             <div 
@@ -192,7 +201,7 @@ export default function AccescoHeader() {
                 aria-expanded={isPartnersOpen}
                 aria-haspopup="true"
               >
-                Be Our Partner
+                Become a Partner
                 <svg 
                   width="12" 
                   height="12" 
@@ -230,11 +239,68 @@ export default function AccescoHeader() {
               )}
             </div>
             
-             <Link href="/blogs" className={`${styles.navLink} ${pathname === '/blogs' ? styles.active : ''}`}>Blogs</Link>
-            <Link href="/contact" className={`${styles.navLink} ${pathname === '/contact' ? styles.active : ''}`}>Contact Us</Link>
+            <Link href="/blogs" className={`${styles.navLink} ${pathname === '/blogs' ? styles.active : ''}`}>Blogs</Link>
+            <Link href="/contact" className={`${styles.navLink} ${pathname === '/contact' ? styles.active : ''}`}>Help & Support</Link>
           </nav>
 
           <div className={styles.actions}>
+            {/* Location Selector */}
+            <div 
+              className={styles.locationSelector}
+              ref={locationDropdownRef}
+            >
+              <button 
+                className={styles.locationButton}
+                onClick={() => setIsLocationOpen(!isLocationOpen)}
+                aria-expanded={isLocationOpen}
+              >
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                  <path d="M8 1C5.24 1 3 3.24 3 6C3 9.5 8 15 8 15C8 15 13 9.5 13 6C13 3.24 10.76 1 8 1ZM8 7.5C7.17 7.5 6.5 6.83 6.5 6C6.5 5.17 7.17 4.5 8 4.5C8.83 4.5 9.5 5.17 9.5 6C9.5 6.83 8.83 7.5 8 7.5Z" fill="currentColor"/>
+                </svg>
+                <span className={styles.locationText}>{selectedLocation}</span>
+                <svg 
+                  width="12" 
+                  height="12" 
+                  viewBox="0 0 12 12" 
+                  fill="none"
+                  className={styles.locationIcon}
+                  style={{ transform: isLocationOpen ? 'rotate(180deg)' : 'rotate(0deg)' }}
+                >
+                  <path 
+                    d="M3 4.5L6 7.5L9 4.5" 
+                    stroke="currentColor" 
+                    strokeWidth="1.5" 
+                    strokeLinecap="round" 
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </button>
+
+              {isLocationOpen && (
+                <div className={styles.locationDropdown}>
+                  <div className={styles.locationDropdownHeader}>
+                    <h4>Select Your Location</h4>
+                  </div>
+                  <div className={styles.locationList}>
+                    {locations.map((location) => (
+                      <button
+                        key={location}
+                        className={`${styles.locationItem} ${selectedLocation === location ? styles.selectedLocation : ''}`}
+                        onClick={() => {
+                          setSelectedLocation(location);
+                          setIsLocationOpen(false);
+                        }}
+                      >
+                        <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+                          <path d="M8 1C5.24 1 3 3.24 3 6C3 9.5 8 15 8 15C8 15 13 9.5 13 6C13 3.24 10.76 1 8 1ZM8 7.5C7.17 7.5 6.5 6.83 6.5 6C6.5 5.17 7.17 4.5 8 4.5C8.83 4.5 9.5 5.17 9.5 6C9.5 6.83 8.83 7.5 8 7.5Z" fill="currentColor"/>
+                        </svg>
+                        {location}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
             {user ? (
               <Link href="/profile" className={styles.userButton}>
                 <div className={styles.avatar}>{initials}</div>
@@ -262,9 +328,6 @@ export default function AccescoHeader() {
           
 
           <nav className={styles.mobileNav}>
-            <Link href="/" className={`${styles.mobileNavLink} ${pathname === '/' ? styles.active : ''}`}>Home</Link>
-            <Link href="/about" className={`${styles.mobileNavLink} ${pathname === '/about' ? styles.active : ''}`}>About Us</Link>
-            
             {/* Mobile Services Dropdown */}
             <div className={styles.mobileServicesDropdown}>
               <button 
@@ -307,8 +370,6 @@ export default function AccescoHeader() {
                 ))}
               </div>
             </div>
-
-            <Link href="/calculator" className={`${styles.mobileNavLink} ${pathname === '/calculator' ? styles.active : ''}`}>Xpense Meter</Link>
             
             {/* Mobile Partners Dropdown */}
             <div className={styles.mobileServicesDropdown}>
@@ -354,7 +415,7 @@ export default function AccescoHeader() {
             </div>
             
             <Link href="/blogs" className={`${styles.mobileNavLink} ${pathname === '/blogs' ? styles.active : ''}`}>Blogs</Link>
-            <Link href="/contact" className={`${styles.mobileNavLink} ${pathname === '/contact' ? styles.active : ''}`}>Contact Us</Link>
+            <Link href="/contact" className={`${styles.mobileNavLink} ${pathname === '/contact' ? styles.active : ''}`}>Contact</Link>
           
           {user ? (
             <div className={styles.mobileUserCard}>
