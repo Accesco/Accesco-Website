@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { addWaitlistEntry } from '../lib/waitlistService';
+import { addWaitlistEntry, validateWaitlistEntry } from '../lib/waitlistService';
 
 export default function AppShowcase() {
   const [form, setForm] = useState({
@@ -18,8 +18,9 @@ export default function AppShowcase() {
     e.preventDefault();
     setError('');
 
-    if (!form.email?.trim() || !form.phone?.trim()) {
-      setError('Email and phone are required');
+    const validationErrors = validateWaitlistEntry(form);
+    if (validationErrors.length > 0) {
+      setError(validationErrors.join(' '));
       return;
     }
 
@@ -32,11 +33,11 @@ export default function AppShowcase() {
       });
       setSuccess(true);
       setForm({ name: '', email: '', phone: '' });
-      
+
       setTimeout(() => setSuccess(false), 5000);
     } catch (err) {
       console.error('Waitlist submit failed:', err);
-      setError('Something went wrong. Please try again.');
+      setError(err.message || 'Something went wrong. Please try again.');
     } finally {
       setLoading(false);
     }
