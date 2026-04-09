@@ -7,7 +7,7 @@ import Hero from '../components/Hero';
 import AppShowcase from '../components/AppShowcase';
 import DownloadSection from '../components/DownloadSection';
 import Footer from '../components/Footer';
-import InstaStyleCard from './components/InstaStyleCard'
+
 
 export default function HomePage() {
   useEffect(() => {
@@ -93,37 +93,51 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* Xpense Meter Section - Meta Engineering Standards */}
+        {/* Xpense Meter Section - Premium Design */}
         <section className="xpense-meter-section">
           <div className="xpense-container">
             <div className="xpense-content">
               <div className="xpense-header">
-               
                 <h2 className="xpense-title">
-                  Xpense <span className="xpense-highlight">Meter</span>
+                  Xpense Meter
                 </h2>
                 <p className="xpense-description">
                   Transform your financial habits with intelligent expense tracking, 
-                  predictive analytics, and personalized savings recommendations.
+                  predictive analytics, and personalized savings recommendations powered by AI.
                 </p>
                 <div className="xpense-features">
                   <div className="feature-item">
-                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                      <path d="M10 2L12.09 6.26L17 7L13 10.74L13.91 16L10 13.27L6.09 16L7 10.74L3 7L7.91 6.26L10 2Z" fill="currentColor"/>
-                    </svg>
-                    Smart categorization
+                    <div className="feature-icon">
+                      <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                        <path d="M10 2L12.09 6.26L17 7L13 10.74L13.91 16L10 13.27L6.09 16L7 10.74L3 7L7.91 6.26L10 2Z" fill="currentColor"/>
+                      </svg>
+                    </div>
+                    <div className="feature-text">
+                      <h4>Smart Categorization</h4>
+                      <p>AI-powered automatic expense sorting</p>
+                    </div>
                   </div>
                   <div className="feature-item">
-                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                      <path d="M3 3V17H17V7H11L9 5H3Z" fill="currentColor"/>
-                    </svg>
-                    Predictive budgeting
+                    <div className="feature-icon">
+                      <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                        <path d="M3 3V17H17V7H11L9 5H3Z" fill="currentColor"/>
+                      </svg>
+                    </div>
+                    <div className="feature-text">
+                      <h4>Predictive Budgeting</h4>
+                      <p>Forecast spending patterns accurately</p>
+                    </div>
                   </div>
                   <div className="feature-item">
-                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                      <path d="M10 1L13 7L20 7L15 12L17 19L10 15L3 19L5 12L0 7L7 7L10 1Z" fill="currentColor"/>
-                    </svg>
-                    Goal tracking
+                    <div className="feature-icon">
+                      <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                        <path d="M10 1L13 7L20 7L15 12L17 19L10 15L3 19L5 12L0 7L7 7L10 1Z" fill="currentColor"/>
+                      </svg>
+                    </div>
+                    <div className="feature-text">
+                      <h4>Goal Tracking</h4>
+                      <p>Achieve financial milestones faster</p>
+                    </div>
                   </div>
                 </div>
                 <a href="/calculator" className="xpense-cta">
@@ -135,17 +149,54 @@ export default function HomePage() {
               </div>
               
               <div className="xpense-visual">
-                <div className="image-placeholder">
-                  <div className="placeholder-icon">
-                    <svg width="64" height="64" viewBox="0 0 64 64" fill="none">
-                      <rect x="8" y="16" width="48" height="32" rx="4" stroke="currentColor" strokeWidth="2" fill="none"/>
-                      <path d="M16 28L24 20L32 28L40 20L48 28" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                      <circle cx="20" cy="24" r="2" fill="currentColor"/>
-                    </svg>
+                <div className="xpense-card-stack">
+                  <div className="xpense-card xpense-card-1">
+                    <div className="card-header">
+                      <div className="card-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                          <path d="M12 2L15 8L22 9L17 14L18 21L12 18L6 21L7 14L2 9L9 8L12 2Z" fill="currentColor"/>
+                        </svg>
+                      </div>
+                      <span className="card-label">Monthly Overview</span>
+                    </div>
+                    <div className="card-value">₹45,280</div>
+                    <div className="card-trend positive">
+                      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                        <path d="M8 12V4M8 4L4 8M8 4L12 8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                      <span>+12.5%</span>
+                    </div>
                   </div>
-                  <div className="placeholder-text">
-                    <div className="placeholder-title">Dashboard Preview</div>
-                    <div className="placeholder-subtitle">Image will be added here</div>
+                  
+                  <div className="xpense-card xpense-card-2">
+                    <div className="card-header">
+                      <div className="card-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                          <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2"/>
+                          <path d="M12 6V12L16 14" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                        </svg>
+                      </div>
+                      <span className="card-label">Savings Goal</span>
+                    </div>
+                    <div className="progress-bar">
+                      <div className="progress-fill" style={{ width: '68%' }}></div>
+                    </div>
+                    <div className="card-progress-text">68% Complete</div>
+                  </div>
+                  
+                  <div className="xpense-card xpense-card-3">
+                    <div className="card-header">
+                      <div className="card-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                          <path d="M3 9L12 2L21 9V20C21 20.5304 20.7893 21.0391 20.4142 21.4142C20.0391 21.7893 19.5304 22 19 22H5C4.46957 22 3.96086 21.7893 3.58579 21.4142C3.21071 21.0391 3 20.5304 3 20V9Z" stroke="currentColor" strokeWidth="2"/>
+                        </svg>
+                      </div>
+                      <span className="card-label">Top Category</span>
+                    </div>
+                    <div className="category-item">
+                      <span className="category-name">Food & Dining</span>
+                      <span className="category-amount">₹12,450</span>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -156,8 +207,7 @@ export default function HomePage() {
         {/* App Showcase from bottom half */}
         <AppShowcase />
 
-        {/* InstaStyle Spotlight */}
-        <InstaStyleCard />
+     
 
         {/* Download Section from bottom half */}
         <DownloadSection />

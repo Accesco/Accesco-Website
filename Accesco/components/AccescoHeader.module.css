@@ -96,6 +96,12 @@
   background: rgba(255, 255, 255, 0.1);
 }
 
+.navLink.active {
+  color: #fff;
+  background: rgba(122, 0, 66, 0.3);
+  border: 1px solid rgba(122, 0, 66, 0.5);
+}
+
 /* Services Dropdown */
 .servicesDropdown {
   position: relative;
@@ -116,12 +122,13 @@
   top: calc(100% + 8px);
   left: 0;
   min-width: 280px;
-  background: rgba(0, 0, 0, 0.98);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 12px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), 
+              0 0 0 1px rgba(255, 255, 255, 0.05) inset;
   overflow: hidden;
   animation: dropdownFadeIn 0.2s ease;
   z-index: 1001;
@@ -151,7 +158,12 @@
 }
 
 .dropdownItem:hover {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.dropdownItem.activeDropdown {
+  background: rgba(122, 0, 66, 0.25);
+  border-left: 3px solid #7A0042;
 }
 
 .dropdownItemName {
@@ -340,6 +352,12 @@
   background: rgba(255, 255, 255, 0.1);
 }
 
+.mobileNavLink.active {
+  color: #fff;
+  background: rgba(122, 0, 66, 0.25);
+  border-left: 3px solid #7A0042;
+}
+
 /* Mobile Services Dropdown */
 .mobileServicesDropdown {
   margin: 4px 0;
@@ -365,6 +383,12 @@
 .mobileServicesButton:hover {
   color: #fff;
   background: rgba(255, 255, 255, 0.1);
+}
+
+.mobileServicesButton.active {
+  color: #fff;
+  background: rgba(122, 0, 66, 0.25);
+  border-left: 3px solid #7A0042;
 }
 
 .mobileDropdownIcon {
@@ -393,6 +417,11 @@
 
 .mobileServiceLink:hover {
   background: rgba(255, 255, 255, 0.08);
+}
+
+.mobileServiceLink.activeMobile {
+  background: rgba(122, 0, 66, 0.2);
+  border-left: 3px solid #7A0042;
 }
 
 .mobileServiceName {

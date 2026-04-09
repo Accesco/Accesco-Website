@@ -124,8 +124,8 @@ export default function AccescoHeader() {
           </Link>
 
           <nav className={styles.nav}>
-            <Link href="/" className={styles.navLink}>Home</Link>
-            <Link href="/about" className={styles.navLink}>About Us</Link>
+            <Link href="/" className={`${styles.navLink} ${pathname === '/' ? styles.active : ''}`}>Home</Link>
+            <Link href="/about" className={`${styles.navLink} ${pathname === '/about' ? styles.active : ''}`}>About Us</Link>
            
             
             {/* Services Dropdown */}
@@ -136,7 +136,7 @@ export default function AccescoHeader() {
               onMouseLeave={handleMouseLeave}
             >
               <button 
-                className={`${styles.navLink} ${styles.servicesButton}`}
+                className={`${styles.navLink} ${styles.servicesButton} ${pathname.startsWith('/services') ? styles.active : ''}`}
                 aria-expanded={isServicesOpen}
                 aria-haspopup="true"
               >
@@ -166,7 +166,7 @@ export default function AccescoHeader() {
                       <Link
                         key={service.href}
                         href={service.href}
-                        className={styles.dropdownItem}
+                        className={`${styles.dropdownItem} ${pathname === service.href ? styles.activeDropdown : ''}`}
                         onClick={() => setIsServicesOpen(false)}
                       >
                         <div className={styles.dropdownItemName}>{service.name}</div>
@@ -178,7 +178,7 @@ export default function AccescoHeader() {
               )}
             </div>
               
-            <Link href="/calculator" className={styles.navLink}>Xpense Meter</Link>
+            <Link href="/calculator" className={`${styles.navLink} ${pathname === '/calculator' ? styles.active : ''}`}>Xpense Meter</Link>
             
             {/* Partners Dropdown */}
             <div 
@@ -188,11 +188,11 @@ export default function AccescoHeader() {
               onMouseLeave={handlePartnersMouseLeave}
             >
               <button 
-                className={`${styles.navLink} ${styles.servicesButton}`}
+                className={`${styles.navLink} ${styles.servicesButton} ${pathname.startsWith('/partner') ? styles.active : ''}`}
                 aria-expanded={isPartnersOpen}
                 aria-haspopup="true"
               >
-                Partner
+                Be Our Partner
                 <svg 
                   width="12" 
                   height="12" 
@@ -218,7 +218,7 @@ export default function AccescoHeader() {
                       <Link
                         key={option.href}
                         href={option.href}
-                        className={styles.dropdownItem}
+                        className={`${styles.dropdownItem} ${pathname === option.href ? styles.activeDropdown : ''}`}
                         onClick={() => setIsPartnersOpen(false)}
                       >
                         <div className={styles.dropdownItemName}>{option.name}</div>
@@ -230,8 +230,8 @@ export default function AccescoHeader() {
               )}
             </div>
             
-             <Link href="/blogs" className={styles.navLink}>Blogs</Link>
-            <Link href="/contact" className={styles.navLink}>Contact Us</Link>
+             <Link href="/blogs" className={`${styles.navLink} ${pathname === '/blogs' ? styles.active : ''}`}>Blogs</Link>
+            <Link href="/contact" className={`${styles.navLink} ${pathname === '/contact' ? styles.active : ''}`}>Contact Us</Link>
           </nav>
 
           <div className={styles.actions}>
@@ -262,13 +262,13 @@ export default function AccescoHeader() {
           
 
           <nav className={styles.mobileNav}>
-            <Link href="/" className={styles.mobileNavLink}>Home</Link>
-            <Link href="/about" className={styles.mobileNavLink}>About Us</Link>
+            <Link href="/" className={`${styles.mobileNavLink} ${pathname === '/' ? styles.active : ''}`}>Home</Link>
+            <Link href="/about" className={`${styles.mobileNavLink} ${pathname === '/about' ? styles.active : ''}`}>About Us</Link>
             
             {/* Mobile Services Dropdown */}
             <div className={styles.mobileServicesDropdown}>
               <button 
-                className={styles.mobileServicesButton}
+                className={`${styles.mobileServicesButton} ${pathname.startsWith('/services') ? styles.active : ''}`}
                 onClick={() => setIsMobileServicesOpen(!isMobileServicesOpen)}
                 aria-expanded={isMobileServicesOpen}
               >
@@ -298,7 +298,7 @@ export default function AccescoHeader() {
                   <Link 
                     key={service.href} 
                     href={service.href} 
-                    className={styles.mobileServiceLink}
+                    className={`${styles.mobileServiceLink} ${pathname === service.href ? styles.activeMobile : ''}`}
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     <div className={styles.mobileServiceName}>{service.name}</div>
@@ -308,12 +308,12 @@ export default function AccescoHeader() {
               </div>
             </div>
 
-            <Link href="/calculator" className={styles.mobileNavLink}>Xpense Meter</Link>
+            <Link href="/calculator" className={`${styles.mobileNavLink} ${pathname === '/calculator' ? styles.active : ''}`}>Xpense Meter</Link>
             
             {/* Mobile Partners Dropdown */}
             <div className={styles.mobileServicesDropdown}>
               <button 
-                className={styles.mobileServicesButton}
+                className={`${styles.mobileServicesButton} ${pathname.startsWith('/partner') ? styles.active : ''}`}
                 onClick={() => setIsMobilePartnersOpen(!isMobilePartnersOpen)}
                 aria-expanded={isMobilePartnersOpen}
               >
@@ -343,7 +343,7 @@ export default function AccescoHeader() {
                   <Link 
                     key={option.href} 
                     href={option.href} 
-                    className={styles.mobileServiceLink}
+                    className={`${styles.mobileServiceLink} ${pathname === option.href ? styles.activeMobile : ''}`}
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     <div className={styles.mobileServiceName}>{option.name}</div>
@@ -353,8 +353,8 @@ export default function AccescoHeader() {
               </div>
             </div>
             
-            <Link href="/blogs" className={styles.mobileNavLink}>Blogs</Link>
-            <Link href="/contact" className={styles.mobileNavLink}>Contact Us</Link>
+            <Link href="/blogs" className={`${styles.mobileNavLink} ${pathname === '/blogs' ? styles.active : ''}`}>Blogs</Link>
+            <Link href="/contact" className={`${styles.mobileNavLink} ${pathname === '/contact' ? styles.active : ''}`}>Contact Us</Link>
           
           {user ? (
             <div className={styles.mobileUserCard}>
