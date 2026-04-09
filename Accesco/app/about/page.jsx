@@ -15,6 +15,9 @@ export default function AboutPage() {
           <div className="about-hero-overlay">
             <div className="about-hero-container">
               <div className="about-hero-content">
+                <div className="about-hero-logo">
+                  <img src="/images/accesco-logo-black.png" alt="Accesco Living" />
+                </div>
                 <h1 className="about-hero-title">
                   Building India's first intelligent circular commerce ecosystem
                 </h1>
@@ -48,7 +51,7 @@ export default function AboutPage() {
             
             {/* Mission Image */}
             <div className="mission-image">
-              <img src="/images/about-mission.jpeg" alt="Our Mission - Transparent and Circular Commerce" />
+              <img src="/images/about-mission.PNG" alt="Our Mission - Transparent and Circular Commerce" />
             </div>
           </div>
         </section>

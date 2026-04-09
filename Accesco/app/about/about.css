@@ -44,6 +44,20 @@
   text-align: center;
 }
 
+.about-hero-logo {
+  margin: 0 auto 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.about-hero-logo img {
+  height: 120px;
+  width: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.1));
+}
+
 .about-hero-title {
   font-size: clamp(40px, 5vw, 64px);
   font-weight: 700;
@@ -577,6 +591,10 @@
   
   .about-hero-content {
     text-align: center;
+  }
+
+  .about-hero-logo img {
+    height: 80px;
   }
   
   .about-hero-title {
