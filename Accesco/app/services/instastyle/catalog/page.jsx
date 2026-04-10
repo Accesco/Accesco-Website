@@ -46,6 +46,15 @@ function CatalogContent() {
     return sortProducts(filtered, sortBy);
   }, [selectedCategory, filters, sortBy]);
 
+  const activeFilterCount =
+    filters.size.length + (filters.priceRange[1] < 10000 ? 1 : 0);
+
+  const averageRating = useMemo(() => {
+    if (displayedProducts.length === 0) return 0;
+    const total = displayedProducts.reduce((sum, item) => sum + (item.rating || 0), 0);
+    return (total / displayedProducts.length).toFixed(1);
+  }, [displayedProducts]);
+
   const handleSizeFilter = (size) => {
     setFilters(prev => ({
       ...prev,
@@ -59,6 +68,10 @@ function CatalogContent() {
     setFilters({ category: [], size: [], priceRange: [0, 10000] });
   };
 
+  const clearPriceCap = () => {
+    setFilters((prev) => ({ ...prev, priceRange: [0, 10000] }));
+  };
+
   return (
     <div className={styles.catalogPage}>
       {/* Header */}
@@ -66,6 +79,11 @@ function CatalogContent() {
         <div className={styles.container}>
           <h1>Shop the Edit</h1>
           <p>Category-first shopping with a fashion-magazine feel</p>
+          <div className={styles.headerMetrics}>
+            <span className={styles.metricPill}>{displayedProducts.length} curated pieces</span>
+            <span className={styles.metricPill}>Avg rating {averageRating}</span>
+            <span className={styles.metricPill}>Fast dispatch available</span>
+          </div>
         </div>
       </div>
 
@@ -153,6 +171,7 @@ function CatalogContent() {
               </button>
               <div className={styles.resultsCount}>
                 {displayedProducts.length} Products
+                {activeFilterCount > 0 ? ` • ${activeFilterCount} active filters` : ''}
               </div>
               <select
                 className={styles.sortSelect}
@@ -165,6 +184,29 @@ function CatalogContent() {
                 <option value="rating">Top Rated</option>
               </select>
             </div>
+
+            {activeFilterCount > 0 && (
+              <div className={styles.activeFilters}>
+                {filters.size.map((size) => (
+                  <button
+                    key={size}
+                    type="button"
+                    className={styles.filterChip}
+                    onClick={() => handleSizeFilter(size)}
+                  >
+                    Size {size} ×
+                  </button>
+                ))}
+                {filters.priceRange[1] < 10000 && (
+                  <button type="button" className={styles.filterChip} onClick={clearPriceCap}>
+                    Up to ₹{filters.priceRange[1].toLocaleString()} ×
+                  </button>
+                )}
+                <button type="button" className={styles.clearInlineBtn} onClick={clearFilters}>
+                  Reset all
+                </button>
+              </div>
+            )}
 
             {displayedProducts.length > 0 ? (
               <div className={styles.productsGrid}>

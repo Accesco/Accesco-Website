@@ -12,6 +12,7 @@ export default function InstaStyleHeader() {
   const { cart, toggleCart } = useCart();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isMobileViewport, setIsMobileViewport] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearchFocused, setIsSearchFocused] = useState(false);
 
@@ -57,6 +58,21 @@ export default function InstaStyleHeader() {
     setIsMobileMenuOpen(false);
   }, [pathname]);
 
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(max-width: 1024px)');
+
+    const updateViewport = () => {
+      setIsMobileViewport(mediaQuery.matches);
+    };
+
+    updateViewport();
+    mediaQuery.addEventListener('change', updateViewport);
+
+    return () => {
+      mediaQuery.removeEventListener('change', updateViewport);
+    };
+  }, []);
+
   const handleSearch = useCallback((e) => {
     e.preventDefault();
     if (searchQuery.trim()) {
@@ -86,6 +102,28 @@ export default function InstaStyleHeader() {
       display: 'flex',
       alignItems: 'center',
       gap: '24px',
+    },
+    logo: {
+      display: 'inline-flex',
+      alignItems: 'center',
+      gap: '10px',
+      textDecoration: 'none',
+      color: '#171411',
+      fontWeight: 800,
+      fontSize: '22px',
+      flexShrink: 0,
+    },
+    logoMark: {
+      width: '40px',
+      height: '40px',
+      flex: '0 0 auto',
+    },
+    logoText: {
+      textDecoration: 'none',
+      color: '#171411',
+      letterSpacing: '-0.03em',
+      fontWeight: 700,
+      lineHeight: 1,
     },
     navList: {
       listStyle: 'none',
@@ -145,8 +183,36 @@ export default function InstaStyleHeader() {
       borderRadius: '10px',
       cursor: 'pointer',
     },
+    mobileMenuButton: {
+      width: '40px',
+      height: '40px',
+      alignItems: 'center',
+      justifyContent: 'center',
+      border: 'none',
+      background: 'transparent',
+      color: '#171411',
+      borderRadius: '999px',
+      cursor: 'pointer',
+      padding: 0,
+    },
+    hamburger: {
+      width: '20px',
+      height: '14px',
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'space-between',
+      position: 'relative',
+    },
+    hamburgerLine: {
+      display: 'block',
+      height: '2px',
+      background: '#171411',
+      borderRadius: '2px',
+      transition: 'all 0.25s ease',
+    },
     mobileMenu: {
       display: isMobileMenuOpen ? 'block' : 'none',
+      transform: isMobileMenuOpen ? 'translateX(0)' : 'translateX(100%)',
       borderTop: '1px solid rgba(23, 20, 17, 0.08)',
       background: 'rgba(255, 252, 248, 0.98)',
       padding: '12px 16px 16px',
@@ -244,10 +310,11 @@ export default function InstaStyleHeader() {
         <Link 
           href="/services/instastyle" 
           className={`instaHeaderLogo ${styles.logo}`}
+          style={fallback.logo}
           aria-label="InstaStyle Home"
         >
-          <InstaStyleLogo className={`instaHeaderLogoMark ${styles.logoMark}`} />
-          <span className={`instaHeaderLogoText ${styles.logoText}`}>InstaStyle</span>
+          <InstaStyleLogo className={`instaHeaderLogoMark ${styles.logoMark}`} style={fallback.logoMark} />
+          <span className={`instaHeaderLogoText ${styles.logoText}`} style={fallback.logoText}>InstaStyle</span>
         </Link>
 
         {/* Desktop Navigation */}
@@ -371,19 +438,37 @@ export default function InstaStyleHeader() {
           </Link>
 
           {/* Mobile Menu Toggle */}
-          <button
-            className={`instaHeaderMobileMenuButton ${styles.mobileMenuButton}`}
-            onClick={toggleMobileMenu}
-            aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}
-            aria-expanded={isMobileMenuOpen}
-            aria-controls="mobile-menu"
-          >
-            <span className={`instaHeaderHamburger ${styles.hamburger} ${isMobileMenuOpen ? styles.open : ''}`}>
-              <span></span>
-              <span></span>
-              <span></span>
-            </span>
-          </button>
+          {isMobileViewport && (
+            <button
+              className={`instaHeaderMobileMenuButton ${styles.mobileMenuButton}`}
+              style={fallback.mobileMenuButton}
+              onClick={toggleMobileMenu}
+              aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}
+              aria-expanded={isMobileMenuOpen}
+              aria-controls="mobile-menu"
+            >
+              <span className={`instaHeaderHamburger ${styles.hamburger} ${isMobileMenuOpen ? styles.open : ''}`} style={fallback.hamburger}>
+                <span
+                  style={{
+                    ...fallback.hamburgerLine,
+                    transform: isMobileMenuOpen ? 'translateY(6px) rotate(45deg)' : 'none',
+                  }}
+                ></span>
+                <span
+                  style={{
+                    ...fallback.hamburgerLine,
+                    opacity: isMobileMenuOpen ? 0 : 1,
+                  }}
+                ></span>
+                <span
+                  style={{
+                    ...fallback.hamburgerLine,
+                    transform: isMobileMenuOpen ? 'translateY(-6px) rotate(-45deg)' : 'none',
+                  }}
+                ></span>
+              </span>
+            </button>
+          )}
         </div>
       </div>
 

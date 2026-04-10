@@ -1,31 +1,15 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import InstaStyleLogo from './InstaStyleLogo';
 import styles from './InstaStyleFooter.module.css';
 
 export default function InstaStyleFooter() {
-  const [email, setEmail] = useState('');
-  const [isSubscribed, setIsSubscribed] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const handleNewsletterSubmit = useCallback(async (e) => {
-    e.preventDefault();
-    
-    if (!email || isSubmitting) return;
-
-    setIsSubmitting(true);
-    
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    setIsSubscribed(true);
-    setEmail('');
-    setIsSubmitting(false);
-
-    setTimeout(() => setIsSubscribed(false), 5000);
-  }, [email, isSubmitting]);
+  const pathname = usePathname();
+  const [showDock, setShowDock] = useState(false);
+  const dockRef = useRef(null);
 
   const currentYear = new Date().getFullYear();
 
@@ -98,54 +82,89 @@ export default function InstaStyleFooter() {
   ];
 
   const paymentMethods = ['Visa', 'Mastercard', 'AmEx', 'PayPal', 'UPI'];
+  const mirrorDockLinks = [
+    { label: 'Home', href: '/services/instastyle' },
+    { label: 'Catalog', href: '/services/instastyle/catalog' },
+    { label: 'Try-On', href: '/services/instastyle/virtual-tryon' },
+    { label: 'Swipe', href: '/services/instastyle/swipestyle' },
+    { label: 'Profile', href: '/services/instastyle/profile' },
+  ];
+
+  useEffect(() => {
+    let rafId = null;
+    const onScroll = () => {
+      if (rafId) return;
+      rafId = requestAnimationFrame(() => {
+        const isInstaStyleHome = pathname === '/services/instastyle';
+        const heroSection = document.getElementById('instastyle-hero');
+        const footerRoot = document.querySelector('[data-instastyle-footer="true"]');
+
+        if (!isInstaStyleHome) {
+          setShowDock(false);
+          rafId = null;
+          return;
+        }
+
+        const heroBottom = heroSection ? heroSection.getBoundingClientRect().bottom : Number.POSITIVE_INFINITY;
+        const footerTop = footerRoot ? footerRoot.getBoundingClientRect().top : Number.POSITIVE_INFINITY;
+        const dockBottom = dockRef.current
+          ? dockRef.current.getBoundingClientRect().bottom
+          : Number.POSITIVE_INFINITY;
+
+        const topHeaderHeight = window.innerWidth <= 768 ? 68 : 72;
+        const triggerOffset = topHeaderHeight + 8;
+        const hasPassedHero = heroBottom <= triggerOffset;
+        const nearFooter = footerTop <= dockBottom + 2;
+
+        setShowDock((prev) => {
+          const pageReady = hasPassedHero;
+          const next = pageReady && !nearFooter;
+          return prev === next ? prev : next;
+        });
+        rafId = null;
+      });
+    };
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      if (rafId) cancelAnimationFrame(rafId);
+    };
+  }, [pathname]);
+
+  useEffect(() => {
+    const className = 'instastyle-dock-active';
+    const footerModeClass = 'instastyle-old-footer-visible';
+
+    if (pathname === '/services/instastyle' && showDock) {
+      document.body.classList.add(className);
+      document.body.classList.remove(footerModeClass);
+    } else {
+      document.body.classList.remove(className);
+      if (pathname === '/services/instastyle') {
+        document.body.classList.add(footerModeClass);
+      } else {
+        document.body.classList.remove(footerModeClass);
+      }
+    }
+
+    return () => {
+      document.body.classList.remove(className);
+      document.body.classList.remove(footerModeClass);
+    };
+  }, [pathname, showDock]);
+
+  const isDockActive = (href) => {
+    const baseHref = href.split('?')[0];
+    if (baseHref === '/services/instastyle') {
+      return pathname === '/services/instastyle';
+    }
+    return pathname.startsWith(baseHref);
+  };
 
   return (
-    <footer className={styles.footer} role="contentinfo">
-      {/* Newsletter Section */}
-      <div className={styles.newsletter}>
-        <div className={styles.container}>
-          <div className={styles.newsletterContent}>
-            <div className={styles.newsletterText}>
-              <h2 className={styles.newsletterTitle}>Stay Updated</h2>
-              <p className={styles.newsletterDescription}>
-                Get exclusive deals, style tips, and early access to new collections
-              </p>
-            </div>
-            <form 
-              className={styles.newsletterForm} 
-              onSubmit={handleNewsletterSubmit}
-              aria-label="Newsletter signup"
-            >
-              <div className={styles.inputWrapper}>
-                <input
-                  type="email"
-                  placeholder="Enter your email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className={styles.newsletterInput}
-                  required
-                  disabled={isSubmitting}
-                  aria-label="Email address"
-                />
-                <button 
-                  type="submit" 
-                  className={styles.newsletterButton}
-                  disabled={isSubmitting || !email}
-                  aria-label="Subscribe to newsletter"
-                >
-                  {isSubmitting ? 'Subscribing...' : 'Subscribe'}
-                </button>
-              </div>
-              {isSubscribed && (
-                <p className={styles.successMessage} role="status">
-                  ✓ Thanks for subscribing!
-                </p>
-              )}
-            </form>
-          </div>
-        </div>
-      </div>
-
+    <footer className={styles.footer} role="contentinfo" data-instastyle-footer="true">
       {/* Main Footer Content */}
       <div className={styles.main}>
         <div className={styles.container}>
@@ -250,6 +269,43 @@ export default function InstaStyleFooter() {
                 </span>
               ))}
             </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Sticky Mirror Footer Dock */}
+      <div
+        ref={dockRef}
+        className={`${styles.mirrorDock} ${showDock ? styles.dockVisible : styles.dockHidden}`}
+        aria-label="Quick navigation"
+      >
+        <div className={styles.mirrorDockInner}>
+          <Link href="/services/instastyle" className={styles.mirrorDockBrand} aria-label="InstaStyle Home">
+            <InstaStyleLogo className={styles.mirrorDockLogo} />
+            <span className={styles.mirrorDockBrandText}>InstaStyle</span>
+          </Link>
+
+          <div className={styles.mirrorDockNav}>
+            <div className={styles.mirrorDockNavGroup}>
+              {mirrorDockLinks.slice(0, 4).map((item) => (
+                <Link
+                  key={item.label}
+                  href={item.href}
+                  className={`${styles.mirrorDockLink} ${isDockActive(item.href) ? styles.mirrorDockLinkActive : ''}`}
+                  aria-current={isDockActive(item.href) ? 'page' : undefined}
+                >
+                  {item.label}
+                </Link>
+              ))}
+            </div>
+
+            <Link
+              href={mirrorDockLinks[4].href}
+              className={`${styles.mirrorDockLink} ${styles.mirrorDockProfileLink} ${isDockActive(mirrorDockLinks[4].href) ? styles.mirrorDockLinkActive : ''}`}
+              aria-current={isDockActive(mirrorDockLinks[4].href) ? 'page' : undefined}
+            >
+              {mirrorDockLinks[4].label}
+            </Link>
           </div>
         </div>
       </div>

@@ -105,7 +105,7 @@
 }
 
 .instaHeaderMobileMenuButton {
-  display: none;
+  display: none !important;
 }
 
 .instaHeaderMobileMenu {
@@ -122,7 +122,7 @@
   }
 
   .instaHeaderMobileMenuButton {
-    display: inline-flex;
+    display: inline-flex !important;
     width: 40px;
     height: 40px;
     align-items: center;
@@ -148,6 +148,15 @@
 
   .instaHeaderMobileMenuOpen {
     display: block;
+    position: fixed;
+    top: 68px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    max-width: none;
+    overflow-y: auto;
+    z-index: 999;
     border-top: 1px solid rgba(23, 20, 17, 0.08);
     background: rgba(255, 252, 248, 0.98);
     padding: 12px 16px 16px;
@@ -225,6 +234,10 @@
     gap: 12px;
   }
 
+  .instaHeaderNav {
+    display: none;
+  }
+
   .instaHeaderLogoMark {
     width: 34px;
     height: 34px;
@@ -232,5 +245,32 @@
 
   .instaHeaderSearch {
     display: none;
+  }
+
+  .instaHeaderActions {
+    margin-left: auto;
+    gap: 2px;
+  }
+
+  .instaHeaderActionButton,
+  .instaHeaderMobileMenuButton {
+    width: 40px;
+    height: 40px;
+    border-radius: 999px;
+  }
+
+  .instaHeaderActionButton svg,
+  .instaHeaderMobileMenuButton svg {
+    width: 23px;
+    height: 23px;
+  }
+
+  .instaHeaderMobileMenu {
+    top: 64px;
+    max-width: 100%;
+  }
+
+  .instaHeaderMobileMenuOpen {
+    top: 64px;
   }
 }

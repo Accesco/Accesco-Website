@@ -385,6 +385,7 @@
 /* InstaStyle footer refresh */
 .footer {
   background: linear-gradient(180deg, #171411 0%, #0f0d0b 100%);
+  padding-bottom: 44px;
 }
 
 .newsletter {
@@ -464,5 +465,357 @@
 @media (max-width: 768px) {
   .brandColumn {
     border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  }
+}
+
+/* Sticky mirror glass dock */
+.mirrorDock {
+  position: fixed;
+  left: 50%;
+  top: max(8px, calc(env(safe-area-inset-top) + 6px));
+  transform: translateX(-50%);
+  width: min(980px, calc(100% - 28px));
+  z-index: 997;
+  pointer-events: auto;
+  transition: opacity 0.24s ease, transform 0.24s ease;
+}
+
+.dockHidden {
+  opacity: 0;
+  transform: translateX(-50%) translateY(-12px);
+  pointer-events: none;
+}
+
+.dockVisible {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+.mirrorDockInner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 10px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.42);
+  border: 1px solid rgba(255, 255, 255, 0.58);
+  box-shadow: 0 12px 30px rgba(17, 12, 8, 0.2);
+  backdrop-filter: blur(20px) saturate(140%);
+}
+
+.mirrorDockBrand {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  color: #171411;
+  border-radius: 999px;
+  padding: 8px 10px;
+  flex: 0 0 auto;
+}
+
+.mirrorDockLogo {
+  width: 28px;
+  height: 28px;
+  flex: 0 0 auto;
+}
+
+.mirrorDockBrandText {
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.mirrorDockNav {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
+}
+
+.mirrorDockNavGroup {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.mirrorDockLink {
+  text-decoration: none;
+  color: rgba(23, 20, 17, 0.8);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 10px 15px;
+  border-radius: 999px;
+  transition: background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+  white-space: nowrap;
+}
+
+.mirrorDockLink:hover {
+  color: #171411;
+  background: rgba(23, 20, 17, 0.1);
+}
+
+:global(body.instastyle-old-footer-visible) .mirrorDock {
+  opacity: 0;
+  transform: translateX(-50%) translateY(-12px);
+  pointer-events: none;
+}
+
+:global(body.instastyle-old-footer-visible) .footer {
+  padding-bottom: 0;
+}
+
+.mirrorDockLinkActive {
+  background: #171411;
+  color: #ffffff;
+  box-shadow: 0 8px 18px rgba(23, 20, 17, 0.24);
+}
+
+@media (max-width: 900px) {
+  .mirrorDock {
+    top: max(8px, calc(env(safe-area-inset-top) + 6px));
+    width: calc(100% - 20px);
+  }
+
+  .mirrorDockInner {
+    justify-content: flex-start;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .mirrorDockInner::-webkit-scrollbar {
+    display: none;
+  }
+
+  .mirrorDockBrand {
+    padding: 6px 8px;
+  }
+
+  .mirrorDockLogo {
+    width: 24px;
+    height: 24px;
+  }
+
+  .mirrorDockBrandText {
+    font-size: 15px;
+  }
+
+  .mirrorDockNav {
+    flex: 0 0 auto;
+  }
+
+  .mirrorDockLink {
+    font-size: 11px;
+    padding: 9px 12px;
+  }
+}
+
+@media (max-width: 768px) {
+  .mirrorDock {
+    top: auto;
+    bottom: max(10px, calc(env(safe-area-inset-bottom) + 8px));
+    width: calc(100% - 16px);
+  }
+
+  .mirrorDockInner {
+    gap: 6px;
+    padding: 8px;
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.34);
+    border: 1px solid rgba(255, 255, 255, 0.46);
+    box-shadow: 0 12px 30px rgba(17, 12, 8, 0.22);
+    backdrop-filter: blur(18px) saturate(140%);
+  }
+
+  .mirrorDockBrand {
+    padding: 4px 6px;
+    margin-right: 2px;
+  }
+
+  .mirrorDockBrandText {
+    display: none;
+  }
+
+  .mirrorDockLogo {
+    width: 22px;
+    height: 22px;
+  }
+
+  .mirrorDockNav {
+    gap: 6px;
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  .mirrorDockNavGroup {
+    flex: 1;
+    justify-content: center;
+    gap: 6px;
+    min-width: 0;
+  }
+
+  .mirrorDockProfileLink {
+    margin-left: auto;
+    flex: 0 0 auto;
+  }
+
+  .mirrorDockLink {
+    font-size: 10px;
+    padding: 8px 10px;
+    letter-spacing: 0.04em;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mirrorDock,
+  .mirrorDockLink {
+    transition: none;
+  }
+}
+
+/* Final footer alignment and mobile cleanup */
+.grid {
+  align-items: start;
+}
+
+.brandColumn,
+.linksColumn {
+  align-items: center;
+  text-align: center;
+}
+
+.linksList {
+  align-items: center;
+}
+
+.bottomContent {
+  justify-content: center;
+  flex-wrap: wrap;
+  text-align: center;
+}
+
+.copyright {
+  width: 100%;
+}
+
+.paymentMethods {
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 768px) {
+  .mirrorDock {
+    display: none;
+  }
+
+  .grid {
+    justify-items: center;
+  }
+
+  .brandColumn,
+  .linksColumn {
+    width: 100%;
+    max-width: 360px;
+  }
+
+  .linksList {
+    width: 100%;
+  }
+
+  .link {
+    width: 100%;
+  }
+
+  .bottomContent {
+    align-items: center;
+  }
+
+  .copyright {
+    text-align: center;
+  }
+
+  .paymentMethods {
+    justify-content: center;
+  }
+}
+
+@media (max-width: 900px) {
+  .mirrorDock {
+    display: none;
+  }
+}
+
+/* Final mobile mirror blur override: keep dock visible and polished */
+@media (max-width: 900px) {
+  .mirrorDock {
+    display: block;
+    width: calc(100% - 14px);
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .mirrorDockInner {
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .mirrorDockInner::-webkit-scrollbar {
+    display: none;
+    width: 0;
+    height: 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .mirrorDock {
+    bottom: max(8px, calc(env(safe-area-inset-bottom) + 6px));
+  }
+
+  .mirrorDockInner {
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    box-shadow: 0 10px 24px rgba(17, 12, 8, 0.22);
+    backdrop-filter: blur(20px) saturate(145%);
+  }
+}
+
+/* Final alignment: keep nav centered while retaining brand icon */
+.mirrorDockInner {
+  position: relative;
+  justify-content: center;
+}
+
+.mirrorDockBrand {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.mirrorDockNav {
+  flex: 0 1 auto;
+  justify-content: center;
+}
+
+@media (max-width: 768px) {
+  .mirrorDockBrand {
+    left: 8px;
+  }
+
+  .mirrorDockNav {
+    width: 100%;
+    justify-content: center;
+    padding-left: 22px;
   }
 }

@@ -41,6 +41,12 @@ const recentOrders = [
   { id: 'AC-1890', date: 'Last week', status: 'Returned', amount: '₹1,340' },
 ];
 
+const accountMoments = [
+  { id: 'm_1', title: 'Profile tuned', detail: 'Sizes and preferences updated', time: 'Today' },
+  { id: 'm_2', title: 'Order delivered', detail: 'Premium summer edit delivered', time: '2 days ago' },
+  { id: 'm_3', title: 'Wishlist refreshed', detail: '5 new products saved', time: 'This week' },
+];
+
 export default function ProfilePage() {
   const { cart, wishlist } = useCart();
   const [profile, setProfile] = useState(initialProfile);
@@ -49,6 +55,12 @@ export default function ProfilePage() {
   const recommendedCount = useMemo(() => products.filter((product) => product.isFeatured).length, []);
   const orderCount = recentOrders.length;
   const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+  const completionKeys = ['fullName', 'email', 'phone', 'gender', 'sizeTop', 'sizeBottom', 'styleNotes'];
+  const profileCompletion = Math.round(
+    (completionKeys.filter((field) => String(profile[field] || '').trim().length > 0).length /
+      completionKeys.length) *
+      100
+  );
 
   useEffect(() => {
     try {
@@ -117,6 +129,15 @@ export default function ProfilePage() {
           <div>
             <h2>{profile.fullName}</h2>
             <p>Preferred fit: {profile.sizeTop} / {profile.sizeBottom} • Saved addresses: {savedAddresses.length} • Rewards: Active</p>
+          </div>
+          <div className={styles.completionWrap}>
+            <div className={styles.completionHeader}>
+              <span>Profile completion</span>
+              <strong>{profileCompletion}%</strong>
+            </div>
+            <div className={styles.completionTrack}>
+              <div className={styles.completionBar} style={{ width: `${profileCompletion}%` }} />
+            </div>
           </div>
           <div className={styles.cardMeta}>
             <span>Member since</span>
@@ -227,6 +248,24 @@ export default function ProfilePage() {
                 <span>{order.status}</span>
               </div>
             </div>
+          ))}
+        </div>
+      </section>
+
+      <section className={styles.timelineSection}>
+        <div className={styles.panelHeader}>
+          <h3>Activity timeline</h3>
+          <span>Recent account moments</span>
+        </div>
+        <div className={styles.timelineList}>
+          {accountMoments.map((moment) => (
+            <article key={moment.id} className={styles.timelineItem}>
+              <div>
+                <strong>{moment.title}</strong>
+                <p>{moment.detail}</p>
+              </div>
+              <span>{moment.time}</span>
+            </article>
           ))}
         </div>
       </section>

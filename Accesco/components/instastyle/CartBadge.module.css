@@ -1,9 +1,9 @@
 .cartBadge {
   position: fixed;
-  bottom: 32px;
+  bottom: max(16px, calc(env(safe-area-inset-bottom) + 12px));
   right: 32px;
-  width: 64px;
-  height: 64px;
+  width: 58px;
+  height: 58px;
   background: #000;
   color: white;
   border: none;
@@ -12,7 +12,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.28);
   transition: all 0.3s ease;
   z-index: 998;
 }
@@ -23,8 +23,8 @@
 }
 
 .icon {
-  width: 28px;
-  height: 28px;
+  width: 24px;
+  height: 24px;
 }
 
 .badge {
@@ -59,15 +59,15 @@
 
 @media (max-width: 768px) {
   .cartBadge {
-    bottom: 24px;
-    right: 24px;
-    width: 56px;
-    height: 56px;
+    bottom: max(86px, calc(env(safe-area-inset-bottom) + 76px));
+    right: 12px;
+    width: 48px;
+    height: 48px;
   }
 
   .icon {
-    width: 24px;
-    height: 24px;
+    width: 20px;
+    height: 20px;
   }
 
   .badge {
