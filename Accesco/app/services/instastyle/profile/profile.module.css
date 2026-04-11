@@ -113,6 +113,47 @@
   align-content: center;
 }
 
+.completionWrap {
+  padding: 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(118, 74, 55, 0.12);
+  background: rgba(255, 255, 255, 0.82);
+}
+
+.completionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.completionHeader span {
+  color: #705b52;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-weight: 700;
+}
+
+.completionHeader strong {
+  color: #241611;
+  font-size: 16px;
+}
+
+.completionTrack {
+  margin-top: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(118, 74, 55, 0.14);
+  overflow: hidden;
+}
+
+.completionBar {
+  height: 100%;
+  background: linear-gradient(90deg, #8f5641, #d29a77);
+  border-radius: inherit;
+}
+
 .avatar {
   width: 76px;
   height: 76px;
@@ -155,6 +196,45 @@
 .panel,
 .ordersSection {
   padding: 28px;
+}
+
+.timelineSection {
+  border: 1px solid rgba(118, 74, 55, 0.1);
+  background: linear-gradient(180deg, rgba(255, 252, 249, 0.98), rgba(247, 239, 232, 0.98));
+  box-shadow: 0 18px 40px rgba(59, 29, 18, 0.08);
+  border-radius: 28px;
+  padding: 28px;
+}
+
+.timelineList {
+  display: grid;
+  gap: 10px;
+}
+
+.timelineItem {
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.78);
+  border: 1px solid rgba(118, 74, 55, 0.1);
+  padding: 14px;
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.timelineItem strong {
+  color: #241611;
+}
+
+.timelineItem p {
+  margin: 4px 0 0;
+  color: #705b52;
+  font-size: 14px;
+}
+
+.timelineItem span {
+  color: #705b52;
+  font-size: 13px;
+  white-space: nowrap;
 }
 
 .panelHeader {
@@ -289,5 +369,9 @@
   .quickStats,
   .formGrid {
     grid-template-columns: 1fr;
+  }
+
+  .timelineItem {
+    flex-direction: column;
   }
 }

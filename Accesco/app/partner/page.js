@@ -1,12 +1,14 @@
 'use client';
 
-
 import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import './partnership.css';
 
 export default function BrandPartnership() {
+  const router = useRouter();
+  const [showDropdown, setShowDropdown] = useState(false);
   const [formData, setFormData] = useState({
     brandName: '',
     email: '',
@@ -70,10 +72,53 @@ export default function BrandPartnership() {
 
   return (
     <div className="page-wrapper">
-      <Link href="/" className="logo-container">
-        <Image src="/images/accesco_original.png" alt="AccesCo" className="logo-img" width={65} height={65} />
-        <div className="logo-text">AccesCo Living</div>
-      </Link>
+      <nav className="partner-nav">
+        <Link href="/" className="logo-container">
+          <Image src="/images/accesco_original.png" alt="AccesCo" className="logo-img" width={65} height={65} />
+          <div className="logo-text">AccesCo Living</div>
+        </Link>
+
+        <div className="partner-dropdown-container">
+          <button 
+            className="partner-dropdown-btn"
+            onClick={() => setShowDropdown(!showDropdown)}
+          >
+            Partner Programs ▼
+          </button>
+          {showDropdown && (
+            <div className="partner-dropdown-menu">
+              <Link href="/partner/creator" className="dropdown-item">
+                <span className="dropdown-icon">🎨</span>
+                <div>
+                  <strong>Partner as Creator</strong>
+                  <p>Join as content creator</p>
+                </div>
+              </Link>
+              <Link href="/partner/vendor" className="dropdown-item">
+                <span className="dropdown-icon">🏪</span>
+                <div>
+                  <strong>Partner as Vendor</strong>
+                  <p>Grow your business</p>
+                </div>
+              </Link>
+              <Link href="/partner/delivery" className="dropdown-item">
+                <span className="dropdown-icon">🚴</span>
+                <div>
+                  <strong>Partner as Delivery</strong>
+                  <p>Earn flexible income</p>
+                </div>
+              </Link>
+              <Link href="/partner" className="dropdown-item active">
+                <span className="dropdown-icon">🤝</span>
+                <div>
+                  <strong>Brand Partnership</strong>
+                  <p>Collaborate with us</p>
+                </div>
+              </Link>
+            </div>
+          )}
+        </div>
+      </nav>
 
       <div className="form-container">
         <h1>Let&apos;s Collaborate</h1>

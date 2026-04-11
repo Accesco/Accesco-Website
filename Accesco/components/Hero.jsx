@@ -171,7 +171,7 @@ export default function Hero() {
         <h1 className="hero-title">Accesco Living</h1>
 
         <div className="hero-kicker">
-          India&apos;s first intelligent delivery app
+          India&apos;s  #1  intelligent delivery app
         </div>
 
         <p className="hero-sub">

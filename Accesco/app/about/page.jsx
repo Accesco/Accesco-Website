@@ -11,22 +11,27 @@ export default function AboutPage() {
       <main className="about-page">
         
         {/* Hero Section */}
-        <section className="about-hero-section">
-          <div className="about-hero-container">
-            <div className="about-hero-content">
-              <h1 className="about-hero-title">
-                Building India's first intelligent circular commerce ecosystem
-              </h1>
-              <p className="about-hero-description">
-                We're reimagining daily commerce by connecting households directly with local producers, 
-                eliminating waste, and making every transaction smarter through AI-powered intelligence.
-              </p>
-              <div className="about-hero-meta">
-                <span>Founded 2025</span>
-                <span className="meta-divider">·</span>
-                <span>Bengaluru, India</span>
-                <span className="meta-divider">·</span>
-                <span>ISO 9001:2015 Certified</span>
+        <section className="about-hero-section" style={{backgroundImage: 'url(/images/about.jpeg)'}}>
+          <div className="about-hero-overlay">
+            <div className="about-hero-container">
+              <div className="about-hero-content">
+                <div className="about-hero-logo">
+                  <img src="/images/accesco-logo-black.png" alt="Accesco Living" />
+                </div>
+                <h1 className="about-hero-title">
+                  Building India's first intelligent circular commerce ecosystem
+                </h1>
+                <p className="about-hero-description">
+                  We're reimagining daily commerce by connecting households directly with local producers, 
+                  eliminating waste, and making every transaction smarter through AI-powered intelligence.
+                </p>
+                <div className="about-hero-meta">
+                  <span>Founded 2025</span>
+                  <span className="meta-divider">·</span>
+                  <span>Bengaluru, India</span>
+                  <span className="meta-divider">·</span>
+                  <span>ISO 9001:2015 Certified</span>
+                </div>
               </div>
             </div>
           </div>
@@ -44,16 +49,9 @@ export default function AboutPage() {
               </p>
             </div>
             
-            {/* Mission Image Placeholder */}
-            <div className="mission-image-placeholder">
-              <div className="placeholder-content">
-                <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
-                  <rect x="10" y="20" width="60" height="40" rx="4" stroke="currentColor" strokeWidth="2"/>
-                  <path d="M20 35L30 25L40 35L50 25L60 35" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  <circle cx="25" cy="30" r="3" fill="currentColor"/>
-                </svg>
-                <span>Mission Visual</span>
-              </div>
+            {/* Mission Image */}
+            <div className="mission-image">
+              <img src="/images/about-mission.PNG" alt="Our Mission - Transparent and Circular Commerce" />
             </div>
           </div>
         </section>
@@ -79,16 +77,9 @@ export default function AboutPage() {
                     they bought last week, and have never once predicted what they would need tomorrow.
                   </p>
                   
-                  {/* Problem Illustration Placeholder */}
-                  <div className="content-image-placeholder">
-                    <div className="placeholder-content">
-                      <svg width="64" height="64" viewBox="0 0 64 64" fill="none">
-                        <rect x="8" y="16" width="48" height="32" rx="4" stroke="currentColor" strokeWidth="2"/>
-                        <path d="M16 28L24 20L32 28L40 20L48 28" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                        <circle cx="20" cy="24" r="2" fill="currentColor"/>
-                      </svg>
-                      <span>Problem Illustration</span>
-                    </div>
+                  {/* Problem Illustration */}
+                  <div className="content-image">
+                    <img src="/images/about-problem.jpeg" alt="The Problem We're Solving" />
                   </div>
                   
                   <p>
@@ -238,20 +229,6 @@ export default function AboutPage() {
           <div className="about-container">
             <h2 className="section-heading-center">Our founding team</h2>
             
-            {/* Team Photo Placeholder */}
-            <div className="team-photo-placeholder">
-              <div className="placeholder-content">
-                <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
-                  <circle cx="25" cy="30" r="8" stroke="currentColor" strokeWidth="2"/>
-                  <circle cx="40" cy="30" r="8" stroke="currentColor" strokeWidth="2"/>
-                  <circle cx="55" cy="30" r="8" stroke="currentColor" strokeWidth="2"/>
-                  <path d="M15 55C15 48 19 45 25 45C31 45 35 48 35 55" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-                  <path d="M30 55C30 48 34 45 40 45C46 45 50 48 50 55" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-                  <path d="M45 55C45 48 49 45 55 45C61 45 65 48 65 55" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-                </svg>
-                <span>Team Photo</span>
-              </div>
-            </div>
             
             <div className="team-grid">
               <div className="team-member">
@@ -302,6 +279,10 @@ export default function AboutPage() {
                 We believe the household of tomorrow doesn't open five apps. It trusts one ecosystem 
                 that already knows.
               </p>
+              <div className="vision-cta-buttons">
+                <a href="/contact" className="vision-cta-button primary">Get in Touch</a>
+                <a href="/partner" className="vision-cta-button secondary">Become a Partner</a>
+              </div>
             </div>
           </div>
         </section>

@@ -13,14 +13,16 @@ export const metadata = {
 export default function Layout({ children }) {
   return (
     <CartProvider>
-      <InstaStyleHeader />
-      
-      <main style={{ minHeight: '60vh' }}>
-        {children}
-      </main>
-      <InstaStyleFooter />
-      <CartDrawer />
-      <CartBadge />
+      <div style={{ minHeight: '100vh', background: '#0d0a08' }}>
+        <InstaStyleHeader />
+
+        <main style={{ minHeight: '60vh', background: '#0d0a08' }}>
+          {children}
+        </main>
+        <InstaStyleFooter />
+        <CartDrawer />
+        <CartBadge />
+      </div>
     </CartProvider>
   );
 }

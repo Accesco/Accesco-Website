@@ -55,7 +55,8 @@ export default function ContactPage() {
         <section className="contact-hero">
           <div className="contact-container">
             <div className="hero-content">
-              <h1 className="hero-title">Get in touch</h1>
+              <h1 className="hero-title">We would love to hear from you!
+</h1>
               <p className="hero-description">
                 Have a question or need support? Our team is here to help you.
               </p>
@@ -69,12 +70,9 @@ export default function ContactPage() {
             <div className="contact-layout">
               {/* Left Side - Contact Methods */}
               <div className="contact-methods">
-                <div className="methods-header">
-                  <h2>Get in touch</h2>
-                  <p>Choose your preferred way to reach us</p>
-                </div>
-                
-                <div className="methods-list">
+      
+
+                  <div className="methods-list">
                   <div className="method-card">
                     <div className="method-icon">
                       <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -83,7 +81,9 @@ export default function ContactPage() {
                     </div>
                     <div className="method-content">
                       <h3>Email</h3>
-                      <p>support@accescoliving.com</p>
+                      <a href="mailto:support@accescoliving.com" className="method-link">
+                        support@accescoliving.com
+                      </a>
                       <span className="method-note">We'll respond within 24 hours</span>
                     </div>
                   </div>
@@ -101,7 +101,7 @@ export default function ContactPage() {
                     </div>
                   </div>
 
-                  <div className="method-card">
+                  <div className="method-card method-card-map">
                     <div className="method-icon">
                       <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
                         <path d="M17.657 16.657L13.414 20.9C13.039 21.275 12.535 21.487 12.01 21.487C11.485 21.487 10.981 21.275 10.606 20.9L6.343 16.657C5.22422 15.5381 4.46234 14.1127 4.15369 12.5608C3.84504 11.009 4.00349 9.40047 4.60901 7.93868C5.21452 6.4769 6.2399 5.22749 7.55548 4.34846C8.87107 3.46943 10.4178 3 12 3C13.5822 3 15.1289 3.46943 16.4445 4.34846C17.7601 5.22749 18.7855 6.4769 19.391 7.93868C19.9965 9.40047 20.155 11.009 19.8463 12.5608C19.5377 14.1127 18.7758 15.5381 17.657 16.657V16.657Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -109,9 +109,20 @@ export default function ContactPage() {
                       </svg>
                     </div>
                     <div className="method-content">
-                      <h3>Office</h3>
-                      <p>Bengaluru, Karnataka</p>
-                      <span className="method-note">India</span>
+                      <h3>Office Location</h3>
+                      <p>Bengaluru, Karnataka, India</p>
+                      <div className="map-embed">
+                        <iframe
+                          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d497698.77490949034!2d77.3507609!3d12.9539974!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bae1670c9b44e6d%3A0xf8dfc3e8517e4fe0!2sBengaluru%2C%20Karnataka!5e0!3m2!1sen!2sin!4v1234567890"
+                          width="100%"
+                          height="200"
+                          style={{ border: 0, borderRadius: '8px', marginTop: '12px' }}
+                          allowFullScreen=""
+                          loading="lazy"
+                          referrerPolicy="no-referrer-when-downgrade"
+                          title="AccesCo Living Office Location"
+                        ></iframe>
+                      </div>
                     </div>
                   </div>
 

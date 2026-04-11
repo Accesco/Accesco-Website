@@ -304,6 +304,26 @@
   opacity: 0.82;
 }
 
+.headerMetrics {
+  margin-top: 18px;
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.metricPill {
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  color: rgba(255, 255, 255, 0.92);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
 .categoryTabs {
   background: rgba(255, 253, 249, 0.92);
   backdrop-filter: blur(14px);
@@ -364,6 +384,46 @@
   box-shadow: 0 16px 36px rgba(30, 18, 12, 0.05);
 }
 
+.activeFilters {
+  margin: -4px 0 18px;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.filterChip {
+  border: 1px solid rgba(23, 20, 17, 0.14);
+  background: rgba(255, 255, 255, 0.92);
+  color: #171411;
+  border-radius: 999px;
+  height: 34px;
+  padding: 0 14px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.filterChip:hover {
+  border-color: rgba(141, 102, 72, 0.4);
+  transform: translateY(-1px);
+}
+
+.clearInlineBtn {
+  border: none;
+  background: transparent;
+  color: rgba(23, 20, 17, 0.64);
+  text-decoration: underline;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.clearInlineBtn:hover {
+  color: #171411;
+}
+
 .filterToggle,
 .sortSelect {
   border-color: rgba(23, 20, 17, 0.1);
@@ -384,4 +444,14 @@
 
 .noProducts button {
   background: #171411;
+}
+
+@media (max-width: 768px) {
+  .headerMetrics {
+    justify-content: center;
+  }
+
+  .activeFilters {
+    margin-top: 4px;
+  }
 }

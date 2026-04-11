@@ -1,10 +1,11 @@
 'use client';
 
-
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import './blogs.css';
 import { fetchBlogs, addBlog } from '../../lib/blogService';
+import AccescoHeader from '../../components/AccescoHeader';
+import Footer from '../../components/Footer';
 
 export default function BlogsPage() {
   const [posts, setPosts] = useState([]);
@@ -14,6 +15,7 @@ export default function BlogsPage() {
   const [showWriter, setShowWriter] = useState(false);
   const [selectedPost, setSelectedPost] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
 
   // Form states — matches Firestore field structure
   const [postTitle, setPostTitle] = useState('');
@@ -45,6 +47,7 @@ export default function BlogsPage() {
   // ── Category filter ──────────────────────────────────────────────────────────
   const filterArchive = (category) => {
     setActiveCategory(category);
+    setSearchQuery('');
     if (category === 'All') {
       setFilteredPosts(posts);
     } else {
@@ -55,6 +58,24 @@ export default function BlogsPage() {
       );
       setFilteredPosts(filtered);
     }
+  };
+
+  // ── Search filter ────────────────────────────────────────────────────────────
+  const handleSearch = (query) => {
+    setSearchQuery(query);
+    if (!query.trim()) {
+      filterArchive(activeCategory);
+      return;
+    }
+    const searchLower = query.toLowerCase();
+    const filtered = posts.filter(
+      (post) =>
+        post.title?.toLowerCase().includes(searchLower) ||
+        post.excerpt?.toLowerCase().includes(searchLower) ||
+        post.content?.toLowerCase().includes(searchLower) ||
+        post.author?.toLowerCase().includes(searchLower)
+    );
+    setFilteredPosts(filtered);
   };
 
   useEffect(() => {
@@ -146,27 +167,8 @@ export default function BlogsPage() {
         </div>
       )}
 
-      {/* Header */}
-      <header>
-        <div className="top-bar">
-          <div className="logo-area" onClick={() => filterArchive('All')}>
-            <Image src="/images/accesco_original.png" alt="ACCESCO" width={36} height={36} />
-            <span>ACCESCO LIVING</span>
-          </div>
-          <ul className="nav-links" id="mainNav">
-            <li className={activeCategory === 'All' ? 'active' : ''} onClick={() => filterArchive('All')}>Archive</li>
-            <li className={activeCategory === 'Business' ? 'active' : ''} onClick={() => filterArchive('Business')}>Business</li>
-            <li className={activeCategory === 'Innovation' || activeCategory === 'Technology' ? 'active' : ''} onClick={() => filterArchive('Innovation')}>Innovation</li>
-            <li className={activeCategory === 'Lifestyle' ? 'active' : ''} onClick={() => filterArchive('Lifestyle')}>Lifestyle</li>
-          </ul>
-          <div style={{ display: 'flex', gap: '15px', alignItems: 'center' }}>
-            <button className="btn-pill" onClick={openWriter}>
-              <i className="ri-quill-pen-fill"></i>
-              <span>Draft Narrative</span>
-            </button>
-          </div>
-        </div>
-      </header>
+      {/* Common Website Header */}
+      <AccescoHeader />
 
       {/* Hero Section */}
       <div className="hero-canvas">
@@ -176,32 +178,94 @@ export default function BlogsPage() {
           </video>
           <div className="hero-shimmer"></div>
           <div className="hero-text-box">
-            <h1>The Intelligent Edit.</h1>
-            <p>Curated perspectives and deep dives into the trends shaping our digital and cultural landscape.</p>
-            <button className="btn-pill light" onClick={() => window.scrollTo({ top: 700, behavior: 'smooth' })}>Begin Reading</button>
+            <h1>Stories That Matter</h1>
+            <p>Insights, innovations, and ideas from the world of modern living and technology.</p>
           </div>
         </section>
+      </div>
+
+      {/* Blog Navigation Bar */}
+      <div className="blog-nav-wrapper">
+        <div className="blog-nav-container">
+          <nav className="blog-nav">
+            <ul className="blog-nav-links">
+              <li className={activeCategory === 'All' ? 'active' : ''} onClick={() => filterArchive('All')}>All Stories</li>
+              <li className={activeCategory === 'Business' ? 'active' : ''} onClick={() => filterArchive('Business')}>Business</li>
+              <li className={activeCategory === 'Innovation' || activeCategory === 'Technology' ? 'active' : ''} onClick={() => filterArchive('Innovation')}>Innovation</li>
+              <li className={activeCategory === 'Lifestyle' ? 'active' : ''} onClick={() => filterArchive('Lifestyle')}>Lifestyle</li>
+            </ul>
+            <div className="blog-nav-actions">
+              <div className="search-box">
+                <i className="ri-search-line"></i>
+                <input
+                  type="text"
+                  placeholder="Search stories..."
+                  value={searchQuery}
+                  onChange={(e) => handleSearch(e.target.value)}
+                  className="search-input"
+                />
+              </div>
+              <button className="btn-pill" onClick={openWriter}>
+                <i className="ri-quill-pen-fill"></i>
+                <span>Write</span>
+              </button>
+            </div>
+          </nav>
+        </div>
       </div>
 
       {/* Main Archive */}
       <main className="content-archive">
         <div className="archive-header">
-          <h2 id="activeCategory">{activeCategory === 'All' ? 'Latest Collection' : activeCategory}</h2>
-          <span className="count">{filteredPosts.length} Narratives</span>
+          <div>
+            <h2 id="activeCategory">{searchQuery ? 'Search Results' : activeCategory === 'All' ? 'Latest Stories' : activeCategory}</h2>
+            <p className="archive-subtitle">
+              {searchQuery ? `Found ${filteredPosts.length} results for "${searchQuery}"` : 'Discover insights and stories from our community'}
+            </p>
+          </div>
+          <span className="count">{filteredPosts.length} {filteredPosts.length === 1 ? 'Story' : 'Stories'}</span>
         </div>
-        <div id="storyContainer" className="story-grid">
-          {filteredPosts.map((post) => (
-            <article key={post.id} className="story-card" onClick={() => openReader(post)}>
-              <div className="story-visual">
-                <Image src={post.image || '/images/download (2).png'} alt={post.title} fill style={{ objectFit: 'cover' }} unoptimized />
-              </div>
-              <span className="story-tag">{post.category}</span>
-              <h3 className="story-headline">{post.title}</h3>
-              <p className="story-summary">{post.excerpt}</p>
-              <span className="btn-action-text">Read Archive Entry</span>
-            </article>
-          ))}
-        </div>
+
+        {filteredPosts.length === 0 ? (
+          <div className="empty-state">
+            <i className="ri-file-search-line"></i>
+            <h3>No stories found</h3>
+            <p>Try adjusting your search or browse all stories</p>
+            <button className="btn-pill" onClick={() => { setSearchQuery(''); filterArchive('All'); }}>
+              View All Stories
+            </button>
+          </div>
+        ) : (
+          <div id="storyContainer" className="story-grid">
+            {filteredPosts.map((post, index) => (
+              <article key={post.id} className="story-card" onClick={() => openReader(post)} style={{ animationDelay: `${index * 0.05}s` }}>
+                <div className="story-visual">
+                  <Image src={post.image || '/images/download (2).png'} alt={post.title} fill style={{ objectFit: 'cover' }} unoptimized />
+                  <div className="story-overlay">
+                    <span className="read-time"><i className="ri-time-line"></i> 5 min read</span>
+                  </div>
+                </div>
+                <div className="story-content">
+                  <div className="story-meta">
+                    <span className="story-tag">{post.category}</span>
+                    <span className="story-date">{new Date(post.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+                  </div>
+                  <h3 className="story-headline">{post.title}</h3>
+                  <p className="story-summary">{post.excerpt}</p>
+                  <div className="story-footer">
+                    <span className="story-author">
+                      <i className="ri-user-line"></i>
+                      {post.author || 'ACCESCO Editorial'}
+                    </span>
+                    <span className="read-more">
+                      Read more <i className="ri-arrow-right-line"></i>
+                    </span>
+                  </div>
+                </div>
+              </article>
+            ))}
+          </div>
+        )}
       </main>
 
       {/* Mobile Nav */}
@@ -220,28 +284,58 @@ export default function BlogsPage() {
         </div>
       </div>
 
-     
-
       {/* ── Reader Modal ── */}
       {showReader && selectedPost && (
         <div className="modal-overlay" onClick={closeModals}>
           <button className="modal-close" onClick={closeModals}><i className="ri-close-line"></i></button>
-          <div className="modal-container" onClick={(e) => e.stopPropagation()}>
+          <div className="modal-container reader-container" onClick={(e) => e.stopPropagation()}>
             <div className="reader-top">
-              <span className="story-tag">{selectedPost.category}</span>
+              <div className="reader-meta-row">
+                <span className="story-tag">{selectedPost.category}</span>
+                <span className="reader-date">{new Date(selectedPost.date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</span>
+              </div>
               <h1 className="reader-h1">{selectedPost.title}</h1>
-              <p style={{ color: 'var(--secondary)', fontWeight: 700, fontSize: '15px' }}>
-                By {selectedPost.author || 'ACCESCO Editorial Team'}
-              </p>
+              <div className="reader-author-row">
+                <div className="author-info">
+                  <div className="author-avatar">
+                    <i className="ri-user-fill"></i>
+                  </div>
+                  <div>
+                    <p className="author-name">{selectedPost.author || 'ACCESCO Editorial Team'}</p>
+                    <p className="author-meta">5 min read • {new Date(selectedPost.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</p>
+                  </div>
+                </div>
+                <div className="reader-actions">
+                  <button className="icon-btn" title="Share"><i className="ri-share-line"></i></button>
+                  <button className="icon-btn" title="Bookmark"><i className="ri-bookmark-line"></i></button>
+                </div>
+              </div>
             </div>
             <Image
               src={selectedPost.image || '/images/download (2).png'}
               alt={selectedPost.title}
               width={1200} height={600}
               unoptimized
-              style={{ width: '100%', height: 'auto', borderRadius: '28px', marginBottom: '4rem', boxShadow: '0 40px 80px rgba(0,0,0,0.15)' }}
+              style={{ width: '100%', height: 'auto', borderRadius: '20px', marginBottom: '3rem', boxShadow: '0 20px 60px rgba(0,0,0,0.1)' }}
             />
-            <div className="reader-article"><p>{selectedPost.content}</p></div>
+            <div className="reader-article">
+              <p>{selectedPost.content}</p>
+            </div>
+            <div className="reader-footer">
+              <div className="reader-tags">
+                <span className="tag-item">{selectedPost.category}</span>
+                <span className="tag-item">Featured</span>
+              </div>
+              <div className="reader-share">
+                <p>Share this story</p>
+                <div className="share-buttons">
+                  <button className="share-btn"><i className="ri-twitter-x-line"></i></button>
+                  <button className="share-btn"><i className="ri-facebook-fill"></i></button>
+                  <button className="share-btn"><i className="ri-linkedin-fill"></i></button>
+                  <button className="share-btn"><i className="ri-link"></i></button>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       )}
@@ -352,6 +446,9 @@ export default function BlogsPage() {
           </div>
         </div>
       )}
+
+      {/* Common Website Footer */}
+      <Footer />
     </>
   );
 }
