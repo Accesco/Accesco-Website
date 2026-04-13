@@ -1,0 +1,219 @@
+/**
+ * CouponSection Styles
+ */
+
+.couponSection {
+  padding: 16px;
+  background: var(--grokly-bg);
+  border-radius: var(--grokly-radius-md);
+  margin-bottom: 16px;
+}
+
+/* Applied Coupon */
+.appliedCoupon {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px;
+  background: linear-gradient(135deg, #dcfce7, #bbf7d0);
+  border: 2px dashed var(--grokly-primary);
+  border-radius: var(--grokly-radius-md);
+}
+
+.appliedLeft {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.appliedIcon {
+  font-size: 24px;
+}
+
+.appliedCode {
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--grokly-primary-dark);
+  letter-spacing: 0.5px;
+}
+
+.appliedSavings {
+  font-size: 12px;
+  color: var(--grokly-primary);
+  font-weight: 600;
+}
+
+.removeBtn {
+  background: rgba(255, 255, 255, 0.8);
+  border: none;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--grokly-text-muted);
+  transition: var(--grokly-transition-fast);
+}
+
+.removeBtn:hover {
+  background: var(--grokly-bg-white);
+  color: var(--grokly-text-primary);
+}
+
+/* Coupon Input */
+.couponInput {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.input {
+  flex: 1;
+  padding: 10px 12px;
+  border: 2px solid var(--grokly-border);
+  border-radius: var(--grokly-radius-sm);
+  font-size: 14px;
+  font-family: var(--grokly-font-primary);
+  font-weight: 600;
+  color: var(--grokly-text-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  outline: none;
+  transition: var(--grokly-transition-fast);
+}
+
+.input:focus {
+  border-color: var(--grokly-primary);
+}
+
+.input::placeholder {
+  text-transform: none;
+  letter-spacing: normal;
+  font-weight: 500;
+}
+
+.applyBtn {
+  padding: 10px 20px;
+  background: var(--grokly-primary);
+  color: var(--grokly-text-white);
+  border: none;
+  border-radius: var(--grokly-radius-sm);
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: var(--grokly-transition-fast);
+}
+
+.applyBtn:hover:not(:disabled) {
+  background: var(--grokly-primary-dark);
+}
+
+.applyBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Error Message */
+.error {
+  color: var(--grokly-error);
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  padding: 8px 12px;
+  background: #fee2e2;
+  border-radius: var(--grokly-radius-sm);
+}
+
+/* View Coupons Button */
+.viewCouponsBtn {
+  width: 100%;
+  padding: 10px;
+  background: none;
+  border: 2px dashed var(--grokly-border);
+  border-radius: var(--grokly-radius-sm);
+  color: var(--grokly-primary);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: var(--grokly-transition-fast);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.viewCouponsBtn:hover {
+  border-color: var(--grokly-primary);
+  background: var(--grokly-primary-extra-light);
+}
+
+/* Coupons List */
+.couponsList {
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.couponCard {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px;
+  background: var(--grokly-bg-white);
+  border: 2px solid var(--grokly-border);
+  border-radius: var(--grokly-radius-md);
+  transition: var(--grokly-transition-fast);
+}
+
+.couponCard:not(.disabled):hover {
+  border-color: var(--grokly-primary);
+  box-shadow: var(--grokly-shadow-sm);
+}
+
+.couponCard.disabled {
+  opacity: 0.6;
+}
+
+.couponLeft {
+  flex: 1;
+}
+
+.couponCode {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--grokly-primary);
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+}
+
+.couponDesc {
+  font-size: 11px;
+  color: var(--grokly-text-muted);
+  font-weight: 600;
+}
+
+.couponApplyBtn {
+  padding: 6px 16px;
+  background: var(--grokly-primary);
+  color: var(--grokly-text-white);
+  border: none;
+  border-radius: var(--grokly-radius-sm);
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: var(--grokly-transition-fast);
+  white-space: nowrap;
+}
+
+.couponApplyBtn:hover:not(:disabled) {
+  background: var(--grokly-primary-dark);
+}
+
+.couponApplyBtn:disabled {
+  background: var(--grokly-text-muted);
+  cursor: not-allowed;
+  font-size: 10px;
+}

@@ -1,0 +1,60 @@
+/**
+ * BottomNav Styles
+ */
+
+.bottomNav {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--grokly-bg-white);
+  border-top: 1px solid var(--grokly-border);
+  z-index: var(--grokly-z-fixed);
+  height: var(--grokly-bottom-nav-height);
+  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.05);
+}
+
+@media (max-width: 768px) {
+  .bottomNav {
+    display: flex;
+  }
+}
+
+.navItem {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  background: none;
+  border: none;
+  padding: 8px;
+  cursor: pointer;
+  transition: var(--grokly-transition-fast);
+  color: var(--grokly-text-muted);
+}
+
+.navItem:active {
+  transform: scale(0.95);
+}
+
+.navItem.active {
+  color: var(--grokly-primary);
+}
+
+.navIcon {
+  font-size: 22px;
+  transition: var(--grokly-transition-fast);
+}
+
+.navItem.active .navIcon {
+  transform: scale(1.1);
+}
+
+.navLabel {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+}

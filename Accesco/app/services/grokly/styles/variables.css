@@ -1,0 +1,158 @@
+/**
+ * Grokly CSS Variables
+ * Design System - Color Palette, Typography, Spacing
+ * @version 1.0.0
+ */
+
+:root {
+  /* ═══════════════════════════════════════════════
+     PRIMARY COLORS
+  ═══════════════════════════════════════════════ */
+  --grokly-primary: #0c831f;
+  --grokly-primary-dark: #065f17;
+  --grokly-primary-light: #e8f5eb;
+  --grokly-primary-extra-light: #f0faf2;
+  --grokly-lime: #b9f566;
+  --grokly-lime-2: #9de030;
+  
+  /* ═══════════════════════════════════════════════
+     TEXT COLORS
+  ═══════════════════════════════════════════════ */
+  --grokly-text-primary: #1a1a1a;
+  --grokly-text-secondary: #555;
+  --grokly-text-muted: #999;
+  --grokly-text-white: #ffffff;
+  
+  /* ═══════════════════════════════════════════════
+     BACKGROUND COLORS
+  ═══════════════════════════════════════════════ */
+  --grokly-bg: #f7f8fa;
+  --grokly-bg-white: #ffffff;
+  --grokly-bg-overlay: rgba(0, 0, 0, 0.5);
+  --grokly-border: #ebebeb;
+  
+  /* ═══════════════════════════════════════════════
+     STATUS COLORS
+  ═══════════════════════════════════════════════ */
+  --grokly-success: #10b981;
+  --grokly-error: #e53935;
+  --grokly-warning: #f59e0b;
+  --grokly-info: #3b82f6;
+  
+  /* ═══════════════════════════════════════════════
+     CATEGORY COLORS
+  ═══════════════════════════════════════════════ */
+  --grokly-cat-vegetables: #10b981;
+  --grokly-cat-dairy: #3b82f6;
+  --grokly-cat-munchies: #f59e0b;
+  --grokly-cat-drinks: #ef4444;
+  --grokly-cat-frozen: #8b5cf6;
+  --grokly-cat-tea: #78350f;
+  --grokly-cat-bakery: #d97706;
+  --grokly-cat-sweets: #ec4899;
+  --grokly-cat-atta: #eab308;
+  --grokly-cat-masala: #dc2626;
+  --grokly-cat-sauces: #f97316;
+  --grokly-cat-organic: #059669;
+  --grokly-cat-baby: #06b6d4;
+  --grokly-cat-pharma: #0891b2;
+  --grokly-cat-cleaning: #0284c7;
+  --grokly-cat-home: #6366f1;
+  --grokly-cat-personal: #a855f7;
+  --grokly-cat-pet: #d946ef;
+  
+  /* ═══════════════════════════════════════════════
+     SHADOWS
+  ═══════════════════════════════════════════════ */
+  --grokly-shadow-sm: 0 1px 4px rgba(0, 0, 0, 0.07);
+  --grokly-shadow-md: 0 4px 16px rgba(0, 0, 0, 0.10);
+  --grokly-shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.15);
+  --grokly-shadow-xl: 0 20px 60px rgba(0, 0, 0, 0.20);
+  
+  /* ═══════════════════════════════════════════════
+     BORDER RADIUS
+  ═══════════════════════════════════════════════ */
+  --grokly-radius-xs: 4px;
+  --grokly-radius-sm: 8px;
+  --grokly-radius-md: 12px;
+  --grokly-radius-lg: 16px;
+  --grokly-radius-xl: 24px;
+  --grokly-radius-full: 9999px;
+  
+  /* ═══════════════════════════════════════════════
+     SPACING
+  ═══════════════════════════════════════════════ */
+  --grokly-space-xs: 4px;
+  --grokly-space-sm: 8px;
+  --grokly-space-md: 16px;
+  --grokly-space-lg: 24px;
+  --grokly-space-xl: 32px;
+  --grokly-space-2xl: 48px;
+  
+  /* ═══════════════════════════════════════════════
+     TYPOGRAPHY
+  ═══════════════════════════════════════════════ */
+  --grokly-font-primary: 'Nunito', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --grokly-font-display: 'Syne', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  
+  --grokly-font-size-xs: 10px;
+  --grokly-font-size-sm: 12px;
+  --grokly-font-size-base: 14px;
+  --grokly-font-size-lg: 16px;
+  --grokly-font-size-xl: 18px;
+  --grokly-font-size-2xl: 20px;
+  --grokly-font-size-3xl: 24px;
+  
+  --grokly-font-weight-normal: 400;
+  --grokly-font-weight-medium: 500;
+  --grokly-font-weight-semibold: 600;
+  --grokly-font-weight-bold: 700;
+  --grokly-font-weight-extrabold: 800;
+  --grokly-font-weight-black: 900;
+  
+  /* ═══════════════════════════════════════════════
+     TRANSITIONS
+  ═══════════════════════════════════════════════ */
+  --grokly-transition-fast: 150ms ease;
+  --grokly-transition-base: 200ms ease;
+  --grokly-transition-slow: 300ms ease;
+  --grokly-transition-bounce: 400ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  
+  /* ═══════════════════════════════════════════════
+     Z-INDEX LAYERS
+  ═══════════════════════════════════════════════ */
+  --grokly-z-base: 1;
+  --grokly-z-dropdown: 100;
+  --grokly-z-sticky: 200;
+  --grokly-z-fixed: 300;
+  --grokly-z-modal-backdrop: 400;
+  --grokly-z-modal: 500;
+  --grokly-z-popover: 600;
+  --grokly-z-tooltip: 700;
+  --grokly-z-toast: 800;
+  
+  /* ═══════════════════════════════════════════════
+     BREAKPOINTS (for reference in JS)
+  ═══════════════════════════════════════════════ */
+  --grokly-breakpoint-mobile: 768px;
+  --grokly-breakpoint-tablet: 1024px;
+  --grokly-breakpoint-desktop: 1280px;
+  --grokly-breakpoint-wide: 1536px;
+  
+  /* ═══════════════════════════════════════════════
+     LAYOUT
+  ═══════════════════════════════════════════════ */
+  --grokly-header-height: 64px;
+  --grokly-mobile-header-height: 113px;
+  --grokly-bottom-nav-height: 62px;
+  --grokly-max-width: 1400px;
+}
+
+/* ═══════════════════════════════════════════════
+   DARK MODE SUPPORT (Future Enhancement)
+═══════════════════════════════════════════════ */
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* Dark mode variables can be added here */
+  }
+}

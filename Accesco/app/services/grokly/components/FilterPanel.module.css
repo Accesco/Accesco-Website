@@ -1,0 +1,118 @@
+/**
+ * FilterPanel Styles - Zepto-style horizontal layout
+ */
+
+.filterPanel {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+  width: 100%;
+}
+
+/* Horizontal Filter Chips */
+.filterChips {
+  flex: 1;
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 4px 0;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE/Edge */
+}
+
+.filterChips::-webkit-scrollbar {
+  display: none; /* Chrome/Safari */
+}
+
+.filterChip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  background: var(--grokly-bg-white);
+  border: 2px solid var(--grokly-border);
+  border-radius: var(--grokly-radius-full);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--grokly-text-secondary);
+  cursor: pointer;
+  transition: all var(--grokly-transition-fast);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.filterChip:hover {
+  border-color: var(--grokly-primary);
+  background: var(--grokly-primary-extra-light);
+  color: var(--grokly-text-primary);
+}
+
+.filterChip.active {
+  background: var(--grokly-primary);
+  border-color: var(--grokly-primary);
+  color: var(--grokly-text-white);
+}
+
+.filterIcon {
+  font-size: 14px;
+}
+
+.filterLabel {
+  font-size: 13px;
+  font-weight: 700;
+}
+
+/* Sort Section */
+.sortSection {
+  flex-shrink: 0;
+}
+
+.sortSelect {
+  padding: 8px 32px 8px 12px;
+  background: var(--grokly-bg-white);
+  border: 2px solid var(--grokly-border);
+  border-radius: var(--grokly-radius-md);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--grokly-text-primary);
+  cursor: pointer;
+  outline: none;
+  transition: var(--grokly-transition-fast);
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23666' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+}
+
+.sortSelect:hover {
+  border-color: var(--grokly-primary);
+  background-color: var(--grokly-primary-extra-light);
+}
+
+.sortSelect:focus {
+  border-color: var(--grokly-primary);
+  box-shadow: 0 0 0 3px rgba(12, 131, 31, 0.1);
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .filterPanel {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .filterChips {
+    order: 2;
+  }
+
+  .sortSection {
+    order: 1;
+  }
+
+  .sortSelect {
+    width: 100%;
+  }
+}

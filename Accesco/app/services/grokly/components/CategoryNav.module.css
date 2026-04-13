@@ -1,0 +1,76 @@
+/**
+ * CategoryNav Styles
+ * @version 1.0.0
+ */
+
+.subnav {
+  background: var(--grokly-bg-white);
+  border-bottom: 1px solid var(--grokly-border);
+  position: sticky;
+  top: var(--grokly-header-height);
+  z-index: calc(var(--grokly-z-fixed) - 10);
+  overflow: hidden;
+}
+
+.subnavInner {
+  max-width: var(--grokly-max-width);
+  margin: 0 auto;
+  display: flex;
+  gap: 4px;
+  padding: 8px 24px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.subnavInner::-webkit-scrollbar {
+  display: none;
+}
+
+.catChip {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 7px 14px;
+  border-radius: var(--grokly-radius-full);
+  border: 1.5px solid var(--grokly-border);
+  background: var(--grokly-bg);
+  font-size: var(--grokly-font-size-sm);
+  font-weight: var(--grokly-font-weight-bold);
+  color: var(--grokly-text-secondary);
+  white-space: nowrap;
+  transition: all var(--grokly-transition-fast);
+  flex-shrink: 0;
+  cursor: pointer;
+  font-family: var(--grokly-font-primary);
+}
+
+.catChip:hover {
+  border-color: var(--grokly-primary);
+  color: var(--grokly-primary);
+  background: var(--grokly-primary-extra-light);
+}
+
+.catChip.active {
+  background: var(--grokly-primary);
+  border-color: var(--grokly-primary);
+  color: var(--grokly-text-white);
+  box-shadow: 0 2px 8px rgba(12,131,31,.3);
+}
+
+.catChipImg {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+@media (max-width: 768px) {
+  .subnav {
+    top: var(--grokly-mobile-header-height);
+  }
+
+  .subnavInner {
+    padding: 8px 14px;
+  }
+}
