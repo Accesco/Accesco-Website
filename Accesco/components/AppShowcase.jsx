@@ -1,7 +1,12 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { addWaitlistEntry, validateWaitlistEntry } from '../lib/waitlistService';
+import {
+  addWaitlistEntry,
+  sendOtpEmailVerification,
+  validateWaitlistEntry,
+  verifyOtpEmailCode,
+} from '../lib/waitlistService';
 
 export default function AppShowcase() {
   const [currentStep, setCurrentStep] = useState(1);
@@ -16,8 +21,8 @@ export default function AppShowcase() {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState('');
-  const [sentVerificationCode, setSentVerificationCode] = useState('');
   const [codeSent, setCodeSent] = useState(false);
+  const [otpVerified, setOtpVerified] = useState(false);
 
   const interestOptions = [
     { id: 'grokly', label: 'Groceries & Essentials', icon: '🛒' },
@@ -43,19 +48,17 @@ export default function AppShowcase() {
 
     setLoading(true);
     setError('');
-    
-    // Generate a 6-digit code
-    const code = Math.floor(100000 + Math.random() * 900000).toString();
-    setSentVerificationCode(code);
-    
-    // Simulate sending email (in production, call your email API)
-    setTimeout(() => {
+
+    try {
+      await sendOtpEmailVerification(form.email.trim());
       setCodeSent(true);
+      setOtpVerified(false);
+    } catch (err) {
+      console.error('OTP send failed:', err);
+      setError(err.message || 'Failed to send verification code');
+    } finally {
       setLoading(false);
-      // In production, you would send this code via email
-      console.log('Verification code:', code);
-      alert(`Verification code sent to ${form.email}\n\nFor demo purposes, your code is: ${code}`);
-    }, 1000);
+    }
   };
 
   const handleNext = () => {
@@ -94,8 +97,21 @@ export default function AppShowcase() {
       return;
     }
 
+    if (!codeSent) {
+      setError('Verification code is still being sent. Please wait a moment.');
+      return;
+    }
+
+    if (!/^\d{6}$/.test(form.verificationCode.trim())) {
+      setError('Please enter a valid 6-digit verification code.');
+      return;
+    }
+
     try {
       setLoading(true);
+      await verifyOtpEmailCode(form.email.trim(), form.verificationCode.trim());
+      setOtpVerified(true);
+
       await addWaitlistEntry({
         name: form.name,
         email: form.email,
@@ -103,7 +119,10 @@ export default function AppShowcase() {
         interests: form.interests.join(', '),
       });
       setSuccess(true);
-      setForm({ name: '', email: '', phone: '' });
+      setForm({ name: '', email: '', phone: '', interests: [], verificationCode: '' });
+      setCodeSent(false);
+      setOtpVerified(false);
+      setCurrentStep(1);
 
       setTimeout(() => setSuccess(false), 5000);
     } catch (err) {
@@ -784,6 +803,7 @@ export default function AppShowcase() {
                       <>
                         <p>We've sent a verification code to <strong>{form.email}</strong></p>
                         <p>Please check your inbox and enter the code below.</p>
+                        {otpVerified && <p>Email verification successful.</p>}
                       </>
                     ) : (
                       <p>Sending verification code...</p>
