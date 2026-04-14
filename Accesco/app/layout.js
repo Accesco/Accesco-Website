@@ -38,9 +38,94 @@ export const metadata = {
 };
 
 export default function RootLayout({ children }) {
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "FAQPage",
+        "mainEntity": [{
+          "@type": "Question",
+          "name": "What is Accesco Living?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Accesco Living is a circular ecosystem platform that connects consumers directly with manufacturers and farm chains, offering groceries, food, and fashion at affordable prices through quick commerce."
+          }
+        },{
+          "@type": "Question",
+          "name": "How does Accesco Living offer cheaper prices?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "By sourcing directly from manufacturers and farms, we eliminate middlemen passing the cost savings straight to you."
+          }
+        },{
+          "@type": "Question",
+          "name": "What products can I buy on Accesco Living?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "We offer a curated range across three categories Grocery, Food, and Fashion  all personalised to your preferences and needs."
+          }
+        },{
+          "@type": "Question",
+          "name": "What makes Accesco Living different from other quick commerce apps?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Unlike regular delivery apps, Accesco Living integrates curation, personalisation, and sustainability into one circular ecosystem  from farm to doorstep to waste pickup."
+          }
+        },{
+          "@type": "Question",
+          "name": "How does the waste return program work?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Simply hand back your waste materials to our delivery partner. We collect it directly from your door and credit your account with redeemable points."
+          }
+        },{
+          "@type": "Question",
+          "name": "What can I do with my redeemable points?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Your points can be used for discounts on future orders  making sustainability rewarding for you and the planet."
+          }
+        },{
+          "@type": "Question",
+          "name": "What is the Personalised Budget feature?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Accesco Living creates a custom monthly budget plan based on your income and spending capacity, ensuring you never overspend on essentials like groceries, food, and fashion."
+          }
+        },{
+          "@type": "Question",
+          "name": "Will Accesco Living suggest products I can actually afford?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. Every product recommendation is budget-aligned meaning you only see items that fit your personalised spending plan, removing decision fatigue and financial stress."
+          }
+        },{
+          "@type": "Question",
+          "name": "Is my financial data safe with Accesco Living?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Absolutely. Your income and budget data is encrypted and used solely to enhance your personalised shopping experience never shared with third parties."
+          }
+        },{
+          "@type": "Question",
+          "name": "Can I update my budget preferences over time?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. Your budget plan is dynamic  you can update your income or spending limits anytime, and recommendations will adjust in real time."
+          }
+        }]
+      }
+    ]
+  }
   return (
     <html lang="en">
       <head>
+        {/* Structured Data for SEO */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+        />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link 

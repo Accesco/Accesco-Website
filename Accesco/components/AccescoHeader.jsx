@@ -7,7 +7,7 @@ import { usePathname } from 'next/navigation';
 import { useAuth } from '../app/components/AuthProvider';
 import AuthModal from '../app/components/AuthModal';
 import styles from './AccescoHeader.module.css';
-import { getUserCity } from '../lib/locationService';
+import { getPersonCity } from '../lib/locationService';
 
 export default function AccescoHeader() {
   const pathname = usePathname();
@@ -47,7 +47,7 @@ export default function AccescoHeader() {
     }
 
     // If not in localStorage, fetch user's city
-    getUserCity()
+    getPersonCity()
       .then((city) => {
         setSelectedLocation(city);
         localStorage.setItem('userLocation', city);
