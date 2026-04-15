@@ -1,17 +1,117 @@
-/* Fallback shell styles to prevent unstyled header rendering */
+/* ============================================================
+   INSTASTYLE GLOBAL DESIGN TOKENS
+   Defined here (global CSS) so CSS Modules can safely use var()
+   ============================================================ */
+:root {
+  /* ── Backgrounds ── */
+  --is-white:        #FFFFFF;
+  --is-off-white:    #FAF9F6; /* Luxury Warm White */
+  --is-parchment:    #F2F1EF; /* Neutral Editorial */
+  --is-cream:        #F4EFE8;
+
+  /* ── Brand colours ── */
+  --is-black:        #0D0D0D; /* Rich Soft Black */
+  --is-brown:        #7C4A2D;
+  --is-brown-light:  #C8956A;
+  --is-brown-pale:   #EDD9C5;
+  --is-amber:        #D4872A;   /* rare – CTAs / badges   */
+  --is-gold:         #D9B061;   /* Warm Gold Accent */
+  --is-sage:         #4A6741;   /* rare – success / delivery */
+
+  /* ── Text ── */
+  --is-text-primary:   #0D0D0D;
+  --is-text-secondary: #44444C;
+  --is-text-muted:     #97796D;
+
+  /* ── Borders ── */
+  --is-border:       rgba(26,17,8,0.08);
+  --is-border-hover: rgba(26,17,8,0.18);
+
+  /* ── Typography ── */
+  --font-display: 'Syne', 'Playfair Display', Georgia, serif;
+  --font-body:    'DM Sans', 'Segoe UI', sans-serif;
+
+  /* ── Spacing ── */
+  --section-y:  clamp(72px, 9vw, 112px);
+  --container:  1280px;
+  --gutter:     clamp(16px, 4vw, 48px);
+  --r-sm:       8px;
+  --r-md:       16px;
+  --r-lg:       24px;
+  --r-xl:       32px;
+  --r-pill:     9999px;
+
+  /* ── Easing ── */
+  --ease-out:    cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* ── Header tokens ── */
+  --h-white:    #FFFFFF;
+  --h-black:    #1A1108;
+  --h-brown:    #7C4A2D;
+  --h-brown-l:  #C8956A;
+  --h-border:   rgba(26,17,8,0.08);
+  --h-border-h: rgba(26,17,8,0.16);
+  --h-muted:    rgba(26,17,8,0.52);
+  --h-bg:       rgba(255,255,255,0.96);
+}
+
+@media (max-width: 480px) {
+  :root {
+    --gutter: 16px;
+    --section-y: 64px;
+  }
+}
+
+/* ── LENIS SMOOTH SCROLL ── */
+html.lenis, html.lenis-scrolling {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth {
+  height: auto;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+.lenis.lenis-scrolling iframe {
+  pointer-events: none;
+}
+
+/* ── CUSTOM CURSOR ── */
+@media (pointer: fine) {
+  /* cursor none removed for debugging */
+}
+
+.char {
+  display: inline-block;
+  will-change: transform, opacity;
+}
+
+/* ============================================================
+   INSTASTYLE HEADER SHELL — Fallback SSR styles
+   WHITE / BLACK / BROWN design system
+   ============================================================ */
 .instaHeaderShell {
   position: sticky;
   top: 0;
   z-index: 1000;
-  background: rgba(255, 252, 248, 0.95);
-  border-bottom: 1px solid rgba(23, 20, 17, 0.08);
+  background: rgba(255,255,255,0.96);
+  border-bottom: 1px solid rgba(26,17,8,0.08);
+  backdrop-filter: blur(18px) saturate(160%);
 }
 
 .instaHeaderContainer {
   max-width: 1400px;
   margin: 0 auto;
-  height: 72px;
-  padding: 0 24px;
+  height: 70px;
+  padding: 0 clamp(16px,3vw,40px);
   display: flex;
   align-items: center;
   gap: 28px;
@@ -22,21 +122,25 @@
   align-items: center;
   gap: 10px;
   text-decoration: none;
-  color: #171411;
-  font-weight: 800;
-  font-size: 22px;
+  color: #1A1108;
   flex-shrink: 0;
 }
 
 .instaHeaderLogoMark {
-  width: 40px;
-  height: 40px;
+  width: 38px;
+  height: 38px;
   flex: 0 0 auto;
 }
 
-.instaHeaderNav {
-  flex: 0 0 auto;
+.instaHeaderLogoText {
+  font-family: 'Syne', Georgia, sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  color: #1A1108;
 }
+
+.instaHeaderNav { flex: 0 0 auto; }
 
 .instaHeaderNavList {
   list-style: none;
@@ -44,18 +148,20 @@
   padding: 0;
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 2px;
 }
 
 .instaHeaderNavLink {
   text-decoration: none;
-  color: rgba(23, 20, 17, 0.72);
-  font-size: 13px;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
+  color: rgba(26,17,8,0.52);
+  font-family: 'DM Sans','Segoe UI',sans-serif;
+  font-size: 12px;
   font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
   padding: 8px 14px;
-  border-radius: 999px;
+  border-radius: 9999px;
+  display: block;
 }
 
 .instaHeaderSearch {
@@ -67,27 +173,33 @@
 .instaHeaderSearchInput {
   width: 100%;
   height: 40px;
-  border: 1px solid rgba(23, 20, 17, 0.12);
-  border-radius: 999px;
-  padding: 0 44px 0 16px;
-  background: rgba(255, 255, 255, 0.85);
+  border: 1.5px solid rgba(26,17,8,0.08);
+  border-radius: 9999px;
+  padding: 0 44px 0 18px;
+  font-family: 'DM Sans','Segoe UI',sans-serif;
+  font-size: 13px;
+  color: #1A1108;
+  background: rgba(26,17,8,0.03);
+  outline: none;
 }
 
 .instaHeaderSearchButton {
   position: absolute;
-  right: 10px;
+  right: 12px;
   top: 50%;
   transform: translateY(-50%);
   border: none;
   background: transparent;
-  color: #171411;
+  color: rgba(26,17,8,0.52);
   cursor: pointer;
+  display: flex;
+  align-items: center;
 }
 
 .instaHeaderActions {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
 }
 
 .instaHeaderActionButton {
@@ -96,41 +208,37 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  color: #171411;
+  color: rgba(26,17,8,0.52);
   text-decoration: none;
   border: none;
   background: transparent;
-  border-radius: 10px;
+  border-radius: 9999px;
   cursor: pointer;
 }
 
 .instaHeaderMobileMenuButton {
   display: none !important;
+  width: 40px;
+  height: 40px;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: transparent;
+  color: #1A1108;
+  border-radius: 9999px;
+  cursor: pointer;
+  padding: 0;
 }
 
-.instaHeaderMobileMenu {
-  display: none;
-}
+.instaHeaderMobileMenu { display: none; }
+.instaHeaderOverlay   { display: none; }
 
-.instaHeaderOverlay {
-  display: none;
-}
-
+/* ── RESPONSIVE ── */
 @media (max-width: 1024px) {
-  .instaHeaderNav {
-    display: none;
-  }
+  .instaHeaderNav { display: none; }
 
   .instaHeaderMobileMenuButton {
     display: inline-flex !important;
-    width: 40px;
-    height: 40px;
-    align-items: center;
-    justify-content: center;
-    border: none;
-    background: transparent;
-    color: #171411;
-    cursor: pointer;
   }
 
   .instaHeaderHamburger {
@@ -142,74 +250,84 @@
   .instaHeaderHamburger span {
     width: 20px;
     height: 2px;
-    background: currentColor;
+    background: #1A1108;
     border-radius: 2px;
+    display: block;
   }
 
   .instaHeaderMobileMenuOpen {
     display: block;
     position: fixed;
-    top: 68px;
+    top: 70px;
     left: 0;
     right: 0;
     bottom: 0;
     width: 100%;
-    max-width: none;
     overflow-y: auto;
     z-index: 999;
-    border-top: 1px solid rgba(23, 20, 17, 0.08);
-    background: rgba(255, 252, 248, 0.98);
-    padding: 12px 16px 16px;
+    border-top: 1px solid rgba(26,17,8,0.08);
+    background: rgba(255,255,255,0.98);
+    backdrop-filter: blur(20px);
+    padding: 16px 20px 24px;
   }
 
   .instaHeaderMobileNavList {
     list-style: none;
-    margin: 0;
+    margin: 0 0 20px 0;
     padding: 0;
-    display: grid;
-    gap: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
   }
 
   .instaHeaderMobileNavLink {
     display: block;
     text-decoration: none;
-    color: #171411;
-    font-size: 14px;
-    font-weight: 700;
-    padding: 10px 12px;
-    border-radius: 10px;
-    background: rgba(255, 255, 255, 0.72);
+    color: #1A1108;
+    font-family: 'DM Sans','Segoe UI',sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    padding: 13px 16px;
+    border-radius: 12px;
+    background: transparent;
+    transition: background 0.2s;
   }
 
   .instaHeaderMobileSearch {
     margin-top: 12px;
     display: grid;
     grid-template-columns: 1fr auto;
-    gap: 8px;
+    gap: 10px;
   }
 
   .instaHeaderMobileSearchInput {
     min-width: 0;
-    height: 40px;
-    border: 1px solid rgba(23, 20, 17, 0.12);
-    border-radius: 10px;
-    padding: 0 12px;
+    height: 46px;
+    border: 1.5px solid rgba(26,17,8,0.1);
+    border-radius: 12px;
+    padding: 0 14px;
+    font-family: 'DM Sans','Segoe UI',sans-serif;
+    font-size: 14px;
     background: #fff;
+    color: #1A1108;
+    outline: none;
   }
 
   .instaHeaderMobileSearchButton {
-    height: 40px;
+    height: 46px;
     border: none;
-    border-radius: 10px;
-    padding: 0 14px;
-    background: #171411;
+    border-radius: 12px;
+    padding: 0 18px;
+    background: #1A1108;
     color: #fff;
+    font-family: 'DM Sans','Segoe UI',sans-serif;
+    font-size: 13px;
     font-weight: 700;
     cursor: pointer;
   }
 
   .instaHeaderMobileQuickLinks {
-    margin-top: 12px;
+    margin-top: 14px;
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
@@ -217,13 +335,16 @@
 
   .instaHeaderMobileQuickLink {
     text-decoration: none;
-    color: #171411;
+    color: rgba(26,17,8,0.6);
+    font-family: 'DM Sans','Segoe UI',sans-serif;
     font-size: 12px;
     font-weight: 700;
-    border: 1px solid rgba(23, 20, 17, 0.12);
-    border-radius: 999px;
-    padding: 6px 10px;
-    background: rgba(255, 255, 255, 0.75);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    border: 1px solid rgba(26,17,8,0.1);
+    border-radius: 9999px;
+    padding: 7px 14px;
+    background: rgba(26,17,8,0.03);
   }
 }
 
@@ -231,46 +352,23 @@
   .instaHeaderContainer {
     height: 64px;
     padding: 0 16px;
-    gap: 12px;
+    gap: 10px;
   }
 
-  .instaHeaderNav {
-    display: none;
-  }
-
-  .instaHeaderLogoMark {
-    width: 34px;
-    height: 34px;
-  }
-
-  .instaHeaderSearch {
-    display: none;
-  }
-
-  .instaHeaderActions {
-    margin-left: auto;
-    gap: 2px;
-  }
+  .instaHeaderNav { display: none; }
+  .instaHeaderSearch { display: none; }
+  .instaHeaderLogoMark { width: 34px; height: 34px; }
+  .instaHeaderLogoText { font-size: 18px; }
+  .instaHeaderActions { margin-left: auto; gap: 2px; }
 
   .instaHeaderActionButton,
   .instaHeaderMobileMenuButton {
     width: 40px;
     height: 40px;
-    border-radius: 999px;
+    border-radius: 9999px;
   }
 
-  .instaHeaderActionButton svg,
-  .instaHeaderMobileMenuButton svg {
-    width: 23px;
-    height: 23px;
-  }
-
-  .instaHeaderMobileMenu {
-    top: 64px;
-    max-width: 100%;
-  }
-
-  .instaHeaderMobileMenuOpen {
-    top: 64px;
-  }
+  .instaHeaderMobileMenuOpen { top: 64px; }
 }
+
+/* Fallback visibility overrides removed */

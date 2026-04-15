@@ -25,7 +25,7 @@ export default function ProductCard({ product }) {
       <div className={styles.imageContainer}>
         <div className={`${styles.imageWrapper} ${imageLoaded ? styles.loaded : ''}`}>
           <Image
-            src={product.images[0].url}
+            src={product.images?.[0]?.url || product.image || '/images/placeholder.jpg'}
             alt={product.name}
             fill
             sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
@@ -39,7 +39,9 @@ export default function ProductCard({ product }) {
           onClick={handleWishlist}
           aria-label={active ? 'Remove from wishlist' : 'Add to wishlist'}
         >
-          {active ? '❤️' : '🤍'}
+          <svg width="20" height="20" viewBox="0 0 24 24" fill={active ? "currentColor" : "none"} stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+          </svg>
         </button>
 
         {hasDiscount && (
@@ -67,8 +69,13 @@ export default function ProductCard({ product }) {
         </div>
 
         <div className={styles.rating}>
-          <span className={styles.stars}>⭐ {product.rating}</span>
-          <span className={styles.reviews}>({product.reviewCount})</span>
+          <span className={styles.stars}>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" stroke="none">
+              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+            </svg>
+            {product.rating}
+          </span>
+          <span className={styles.reviews}>({product.reviewCount} reviews)</span>
         </div>
       </div>
     </Link>

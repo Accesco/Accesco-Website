@@ -3,6 +3,8 @@ import CartDrawer from '@/components/instastyle/CartDrawer';
 import CartBadge from '@/components/instastyle/CartBadge';
 import InstaStyleHeader from '@/components/instastyle/InstaStyleHeader';
 import InstaStyleFooter from '@/components/instastyle/InstaStyleFooter';
+import SmoothScroll from '@/components/instastyle/SmoothScroll';
+import CustomCursor from '@/components/instastyle/CustomCursor';
 import './instastyle-shell.css';
 
 export const metadata = {
@@ -13,16 +15,19 @@ export const metadata = {
 export default function Layout({ children }) {
   return (
     <CartProvider>
-      <div style={{ minHeight: '100vh', background: '#0d0a08' }}>
-        <InstaStyleHeader />
+      <SmoothScroll>
+        <div style={{ background: '#FFFFFF', minHeight: '100vh', width: '100%' }}>
+          <CustomCursor />
+          <InstaStyleHeader />
 
-        <main style={{ minHeight: '60vh', background: '#0d0a08' }}>
-          {children}
-        </main>
-        <InstaStyleFooter />
-        <CartDrawer />
-        <CartBadge />
-      </div>
+          <main>
+            {children}
+          </main>
+          <InstaStyleFooter />
+          <CartDrawer />
+          <CartBadge />
+        </div>
+      </SmoothScroll>
     </CartProvider>
   );
 }

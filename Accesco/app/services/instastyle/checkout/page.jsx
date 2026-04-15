@@ -268,8 +268,8 @@ export default function CheckoutPage() {
                       onChange={handleInputChange}
                     />
                     <div className={styles.paymentInfo}>
-                      <span className={styles.paymentName}>💳 Razorpay</span>
-                      <span className={styles.paymentDesc}>Credit/Debit Card, UPI, Net Banking</span>
+                      <span className={styles.paymentName}>Digital Payment</span>
+                      <span className={styles.paymentDesc}>UPI, Credit/Debit Card, Net Banking</span>
                     </div>
                   </label>
 
@@ -282,8 +282,8 @@ export default function CheckoutPage() {
                       onChange={handleInputChange}
                     />
                     <div className={styles.paymentInfo}>
-                      <span className={styles.paymentName}>💵 Cash on Delivery</span>
-                      <span className={styles.paymentDesc}>Pay when you receive</span>
+                      <span className={styles.paymentName}>Cash on Delivery</span>
+                      <span className={styles.paymentDesc}>Pay securely at your doorstep</span>
                     </div>
                   </label>
                 </div>
@@ -355,8 +355,8 @@ export default function CheckoutPage() {
 
               {/* Delivery Info */}
               <div className={styles.deliveryInfo}>
-                <span className={styles.deliveryIcon}>⚡</span>
-                <span>Delivered in 15-20 minutes</span>
+                <div className={styles.deliveryDot} />
+                <span>Express Delivery in 15-20 minutes</span>
               </div>
             </div>
           </div>

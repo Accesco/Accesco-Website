@@ -134,7 +134,7 @@ export function CartProvider({ children }) {
         brand: product.brand,
         price: product.price,
         discountedPrice: product.discountedPrice,
-        image: product.images[0].url,
+        image: product.images?.[0]?.url || '',
         selectedSize: size,
         selectedColor: color,
         quantity: quantity,
@@ -188,8 +188,11 @@ export function CartProvider({ children }) {
           brand: product.brand,
           price: product.price,
           discountedPrice: product.discountedPrice,
-          image: product.images?.[0]?.url || '',
+          image: product.image || product.images?.[0]?.url || '',
+          images: product.images || (product.image ? [{ url: product.image }] : []),
           category: product.category,
+          rating: product.rating,
+          reviewCount: product.reviewCount,
         },
       ];
     });

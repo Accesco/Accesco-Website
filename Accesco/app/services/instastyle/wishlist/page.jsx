@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
+import ProductCard from '@/components/instastyle/ProductCard';
 import styles from './wishlist.module.css';
 import { useCart } from '@/contexts/CartContext';
 
@@ -66,24 +67,7 @@ export default function WishlistPage() {
         ) : (
           <div className={styles.grid}>
             {wishlist.map((product) => (
-              <article key={product.id} className={styles.card}>
-                <div className={styles.imageWrap}>
-                  {product.image ? (
-                    <Image src={product.image} alt={product.name} fill className={styles.image} sizes="(max-width: 980px) 50vw, 25vw" />
-                  ) : (
-                    <div className={styles.imageFallback} aria-hidden="true" />
-                  )}
-                </div>
-                <div className={styles.cardBody}>
-                  <h3>{product.name}</h3>
-                  <p>{product.brand}</p>
-                  <strong>₹{(product.discountedPrice || product.price).toLocaleString()}</strong>
-                  <div className={styles.cardActions}>
-                    <Link href={`/services/instastyle/products/${product.id}`} className={styles.cardLink}>View</Link>
-                    <button type="button" onClick={() => removeFromWishlist(product.id)} className={styles.removeBtn}>Remove</button>
-                  </div>
-                </div>
-              </article>
+              <ProductCard key={product.id} product={product} />
             ))}
           </div>
         )}

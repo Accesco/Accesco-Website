@@ -84,6 +84,18 @@ export default function InstaStyleHeader() {
     setIsMobileMenuOpen(prev => !prev);
   }, []);
 
+  // Lock body scroll when mobile menu is open
+  useEffect(() => {
+    if (isMobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [isMobileMenuOpen]);
+
   const cartItemCount = cart.reduce((sum, item) => sum + item.quantity, 0);
 
   const fallback = {
@@ -210,70 +222,16 @@ export default function InstaStyleHeader() {
       borderRadius: '2px',
       transition: 'all 0.25s ease',
     },
-    mobileMenu: {
-      display: isMobileMenuOpen ? 'block' : 'none',
-      transform: isMobileMenuOpen ? 'translateX(0)' : 'translateX(100%)',
-      borderTop: '1px solid rgba(23, 20, 17, 0.08)',
-      background: 'rgba(255, 252, 248, 0.98)',
-      padding: '12px 16px 16px',
-    },
-    mobileNavList: {
-      listStyle: 'none',
-      margin: 0,
-      padding: 0,
-      display: 'grid',
-      gap: '8px',
-    },
-    mobileNavLink: {
-      display: 'block',
-      textDecoration: 'none',
-      color: '#171411',
-      fontSize: '14px',
-      fontWeight: 700,
-      padding: '10px 12px',
-      borderRadius: '10px',
-      background: 'rgba(255, 255, 255, 0.72)',
-    },
-    mobileSearch: {
-      marginTop: '12px',
-      display: 'grid',
-      gridTemplateColumns: '1fr auto',
-      gap: '8px',
-    },
-    mobileSearchInput: {
-      minWidth: 0,
-      height: '40px',
-      border: '1px solid rgba(23, 20, 17, 0.12)',
-      borderRadius: '10px',
-      padding: '0 12px',
-      background: '#fff',
-    },
-    mobileSearchButton: {
-      height: '40px',
-      border: 'none',
-      borderRadius: '10px',
-      padding: '0 14px',
-      background: '#171411',
-      color: '#fff',
-      fontWeight: 700,
-      cursor: 'pointer',
-    },
-    mobileQuickLinks: {
-      marginTop: '12px',
-      display: 'flex',
-      flexWrap: 'wrap',
-      gap: '8px',
-    },
-    mobileQuickLink: {
-      textDecoration: 'none',
-      color: '#171411',
-      fontSize: '12px',
-      fontWeight: 700,
-      border: '1px solid rgba(23, 20, 17, 0.12)',
-      borderRadius: '999px',
-      padding: '6px 10px',
-      background: 'rgba(255, 255, 255, 0.75)',
-    },
+    mobileMenu: {},
+    mobileNavList: {},
+    mobileNavLink: {},
+    mobileSearch: {},
+    mobileSearchInput: {},
+
+    mobileSearchButton: {},
+    mobileQuickLinks: {},
+    mobileQuickLink: {},
+
     overlay: {
       display: isMobileMenuOpen ? 'block' : 'none',
       position: 'fixed',
@@ -383,14 +341,8 @@ export default function InstaStyleHeader() {
             aria-label="Wishlist"
             title="Wishlist"
           >
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-              <path
-                d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
             </svg>
           </Link>
 
@@ -402,14 +354,10 @@ export default function InstaStyleHeader() {
             style={fallback.actionButton}
             aria-label={`Shopping cart with ${cartItemCount} items`}
           >
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-              <path
-                d="M9 2L7 6H3l3 14h12l3-14h-4l-2-4H9z"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z" />
+              <path d="M3 6h18" />
+              <path d="M16 10a4 4 0 0 1-8 0" />
             </svg>
             {cartItemCount > 0 && (
               <span className={styles.badge} aria-label={`${cartItemCount} items`}>
@@ -426,14 +374,9 @@ export default function InstaStyleHeader() {
             aria-label="Account"
             title="Account"
           >
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-              <path
-                d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+              <circle cx="12" cy="7" r="4" />
             </svg>
           </Link>
 
