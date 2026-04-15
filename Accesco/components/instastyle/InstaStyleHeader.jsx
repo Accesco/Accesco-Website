@@ -88,11 +88,14 @@ export default function InstaStyleHeader() {
   useEffect(() => {
     if (isMobileMenuOpen) {
       document.body.style.overflow = 'hidden';
+      document.body.style.touchAction = 'none';
     } else {
-      document.body.style.overflow = 'unset';
+      document.body.style.overflow = '';
+      document.body.style.touchAction = '';
     }
     return () => {
-      document.body.style.overflow = 'unset';
+      document.body.style.overflow = '';
+      document.body.style.touchAction = '';
     };
   }, [isMobileMenuOpen]);
 
@@ -415,58 +418,48 @@ export default function InstaStyleHeader() {
         </div>
       </div>
 
-      {/* Mobile Menu */}
+      {/* Mobile Menu — IMMERSIVE FULL-SCREEN OVERLAY */}
       <div
         id="mobile-menu"
-        className={`instaHeaderMobileMenu ${styles.mobileMenu} ${isMobileMenuOpen ? `instaHeaderMobileMenuOpen ${styles.open}` : ''}`}
-        style={fallback.mobileMenu}
+        className={`${styles.mobileMenu} ${isMobileMenuOpen ? styles.open : ''}`}
         aria-hidden={!isMobileMenuOpen}
       >
-        <nav className={`instaHeaderMobileNav ${styles.mobileNav}`} aria-label="Mobile navigation">
-          <ul className={`instaHeaderMobileNavList ${styles.mobileNavList}`} style={fallback.mobileNavList}>
-            {navLinks.map(({ href, label, exact }) => (
-              <li key={href}>
+        <div className={styles.mobileMenuHeader}>
+          <Link href="/services/instastyle" className={styles.mobileLogo} onClick={toggleMobileMenu}>
+            <InstaStyleLogo className={styles.logoMark} />
+            <span>InstaStyle</span>
+          </Link>
+          <button className={styles.mobileClose} onClick={toggleMobileMenu} aria-label="Close menu">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M18 6L6 18M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+
+        <nav className={styles.mobileNav} aria-label="Mobile navigation">
+          <ul className={styles.mobileNavList}>
+            {navLinks.map(({ href, label, exact }, i) => (
+              <li key={href} style={{ '--index': i }}>
                 <Link
                   href={href}
-                  className={`instaHeaderMobileNavLink ${styles.mobileNavLink} ${
-                    isActiveLink(href, exact) ? styles.active : ''
-                  }`}
-                  style={fallback.mobileNavLink}
-                  aria-current={isActiveLink(href, exact) ? 'page' : undefined}
+                  className={`${styles.mobileNavLink} ${isActiveLink(href, exact) ? styles.active : ''}`}
+                  onClick={toggleMobileMenu}
                 >
-                  {label}
+                  <span className={styles.mobileNavLinkNum}>0{i + 1}</span>
+                  <span className={styles.mobileNavLinkText}>{label}</span>
+                  <span className={styles.mobileNavLinkArrow}>→</span>
                 </Link>
               </li>
             ))}
           </ul>
 
-          {/* Mobile Search */}
-          <form className={`instaHeaderMobileSearch ${styles.mobileSearch}`} style={fallback.mobileSearch} onSubmit={handleSearch}>
-            <input
-              type="search"
-              placeholder="Search products..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className={`instaHeaderMobileSearchInput ${styles.mobileSearchInput}`}
-              style={fallback.mobileSearchInput}
-              aria-label="Search products"
-            />
-            <button type="submit" className={`instaHeaderMobileSearchButton ${styles.mobileSearchButton}`} style={fallback.mobileSearchButton}>
-              Search
-            </button>
-          </form>
-
-          {/* Mobile Quick Links */}
-          <div className={`instaHeaderMobileQuickLinks ${styles.mobileQuickLinks}`} style={fallback.mobileQuickLinks}>
-            <Link href="/services/instastyle/checkout" className={`instaHeaderMobileQuickLink ${styles.mobileQuickLink}`} style={fallback.mobileQuickLink}>
-              Checkout
-            </Link>
-            <Link href="/services/instastyle/catalog" className={`instaHeaderMobileQuickLink ${styles.mobileQuickLink}`} style={fallback.mobileQuickLink}>
-              New Arrivals
-            </Link>
-            <Link href="/services/instastyle/virtual-tryon" className={`instaHeaderMobileQuickLink ${styles.mobileQuickLink}`} style={fallback.mobileQuickLink}>
-              Style Preview
-            </Link>
+          <div className={styles.mobileFooter}>
+            <div className={styles.mobileSocials}>
+              <a href="#" className={styles.socialLink}>Instagram</a>
+              <a href="#" className={styles.socialLink}>TikTok</a>
+              <a href="#" className={styles.socialLink}>Magazine</a>
+            </div>
+            <p className={styles.mobileCopyright}>© 2026 Accesco Living</p>
           </div>
         </nav>
       </div>

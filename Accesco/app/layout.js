@@ -1,6 +1,8 @@
 import Script from 'next/script';
 import './globals.css';
 import { AuthProvider } from './components/AuthProvider';
+import { SmoothScrollProvider } from './components/SmoothScrollProvider';
+import CustomCursor from './components/CustomCursor';
 
 export const metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'),
@@ -128,8 +130,9 @@ export default function RootLayout({ children }) {
         />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        {/* Updated Font Links with Variable Axes (wght 400..900) */}
         <link 
-          href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Poppins:wght@400;600;700;800&family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" 
+          href="https://fonts.googleapis.com/css2?family=Inter:wght@300..900&family=Poppins:wght@400;600;700;800&family=Syne:wght@400..800&family=DM+Sans:ital,opsz,wght@0,9..40,300..700;1,9..40,400&family=Outfit:wght@200..900&family=Playfair+Display:wght@500..900&display=swap" 
           rel="stylesheet" 
         />
         <link 
@@ -140,18 +143,13 @@ export default function RootLayout({ children }) {
           rel="stylesheet" 
           href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" 
         />
-        <link 
-    href="https://fonts.googleapis.com/css2?family=Outfit:wght@200;300;400;500;700;900&display=swap" 
-    rel="stylesheet" 
-  />
-  <link 
-    href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700;900&display=swap" 
-    rel="stylesheet" 
-  />
       </head>
       <body>
         <AuthProvider>
-        {children}
+          <SmoothScrollProvider>
+            <CustomCursor />
+            {children}
+          </SmoothScrollProvider>
         </AuthProvider>
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-SH32KGLK5F"

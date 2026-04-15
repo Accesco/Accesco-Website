@@ -9,6 +9,9 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useGSAP } from '@gsap/react';
 import SplitType from 'split-type';
 import FeatureAccordion from '@/components/instastyle/FeatureAccordion';
+import FashionCollections from '@/components/instastyle/FashionCollections';
+import SwipeStyleShowcase from '@/components/instastyle/SwipeStyleShowcase';
+import DeliveryHero from '@/components/instastyle/DeliveryHero';
 
 // ── Register GSAP Plugins
 if (typeof window !== 'undefined') {
@@ -109,6 +112,18 @@ export default function InstaStyleLanding() {
 
   // ── GSAP Reveal Animations
   useGSAP(() => {
+    // 0. Theme Configuration
+    const themeChapters = [
+      { trigger: '#instastyle-hero', bg: '#f2f1ef', text: '#0D0D0D' },
+      { trigger: '#why-instastyle', bg: '#0D0D0D', text: '#FAF9F6' },
+      { trigger: '#collections', bg: '#FAF9F6', text: '#0D0D0D' },
+      { trigger: '#instastyle-categories', bg: '#0D0D0D', text: '#FAF9F6' },
+      { trigger: '#swipe-showcase', bg: '#0D0D0D', text: '#FAF9F6' },
+      { trigger: '#instastyle-featured', bg: '#FAF9F6', text: '#0D0D0D' },
+      { trigger: '#delivery', bg: '#0D0D0D', text: '#FAF9F6' },
+      { trigger: '#instastyle-how-it-works', bg: '#FAF9F6', text: '#0D0D0D' }
+    ];
+
     // 1. Text Splitting for Hero
     const heroTitle = new SplitType(`.${styles.heroTitle}`, { types: 'chars,words' });
     
@@ -138,7 +153,7 @@ export default function InstaStyleLanding() {
       }, '-=0.3');
 
     // 3. ScrollTrigger for reveal items
-    const revealItems = document.querySelectorAll('[data-reveal]');
+    const revealItems = pageRef.current.querySelectorAll('[data-reveal]');
     revealItems.forEach((item) => {
       gsap.from(item, {
         opacity: 0,
@@ -149,6 +164,23 @@ export default function InstaStyleLanding() {
           trigger: item,
           start: 'top 85%',
           toggleActions: 'play none none none'
+        }
+      });
+    });
+
+    // 3.5 RevealText Character Animations (Awwwards staple)
+    const sectionTitles = pageRef.current.querySelectorAll(`.${styles.sectionTitle}`);
+    sectionTitles.forEach((title) => {
+      const split = new SplitType(title, { types: 'chars' });
+      gsap.from(split.chars, {
+        opacity: 0,
+        y: 25,
+        stagger: 0.02,
+        duration: 0.8,
+        ease: 'power2.out',
+        scrollTrigger: {
+          trigger: title,
+          start: 'top 90%',
         }
       });
     });
@@ -170,6 +202,49 @@ export default function InstaStyleLanding() {
         start: 'top top',
         end: 'bottom top',
         scrub: true,
+      }
+    });
+
+    // 6. VARIABLE TYPOGRAPHY PHYSICS (High-Fidelity)
+    // Headline "breathes" with scroll velocity
+    ScrollTrigger.create({
+      onUpdate: (self) => {
+        const velocity = Math.abs(self.getVelocity());
+        const weight = gsap.utils.interpolate(400, 800, gsap.utils.clamp(0, 1, velocity / 1000));
+        gsap.to(`.${styles.heroTitle}`, {
+          '--font-weight': weight,
+          fontWeight: weight,
+          duration: 0.5,
+          overwrite: 'auto',
+          ease: 'power2.out'
+        });
+      }
+    });
+
+    // 7. CONTEXTUAL THEME SWITCHING (Elite Layer)
+    themeChapters.forEach((chapter) => {
+      const el = pageRef.current.querySelector(chapter.trigger);
+      if (el) {
+        ScrollTrigger.create({
+          trigger: el,
+          start: 'top 50%',
+          onEnter: () => {
+            gsap.to(pageRef.current, {
+              backgroundColor: chapter.bg,
+              color: chapter.text,
+              duration: 1.2,
+              ease: 'power2.inOut'
+            });
+          },
+          onEnterBack: () => {
+            gsap.to(pageRef.current, {
+              backgroundColor: chapter.bg,
+              color: chapter.text,
+              duration: 1.2,
+              ease: 'power2.inOut'
+            });
+          }
+        });
       }
     });
 
@@ -213,6 +288,30 @@ export default function InstaStyleLanding() {
     setEmail('');
   }, [email]);
 
+  // ── MAGNETIC BUTTON LOGIC (Awwwards staple)
+  const handleMagneticMove = (e) => {
+    const btn = e.currentTarget;
+    const rect = btn.getBoundingClientRect();
+    const x = e.clientX - rect.left - rect.width / 2;
+    const y = e.clientY - rect.top - rect.height / 2;
+    
+    gsap.to(btn, {
+      x: x * 0.3,
+      y: y * 0.3,
+      duration: 0.4,
+      ease: 'power2.out'
+    });
+  };
+
+  const resetMagneticMove = (e) => {
+    gsap.to(e.currentTarget, {
+      x: 0,
+      y: 0,
+      duration: 0.6,
+      ease: 'elastic.out(1, 0.3)'
+    });
+  };
+
   return (
     <div ref={pageRef} className={styles.landingPage}>
       {/* ── Scroll Progress Bar ── */}
@@ -228,7 +327,7 @@ export default function InstaStyleLanding() {
       ══════════════════════════════════════════ */}
       <section
         id="instastyle-hero"
-        className={`${styles.hero} ${styles.revealItem}`}
+        className={`${styles.hero} ${styles.revealItem} w-full overflow-x-hidden`}
         ref={heroRef}
         data-reveal
         aria-label="Hero"
@@ -262,10 +361,22 @@ export default function InstaStyleLanding() {
           </p>
 
           <div className={styles.heroButtons}>
-            <Link href="/services/instastyle/catalog" className={styles.btnPrimary}>
+            <Link 
+              href="/services/instastyle/catalog" 
+              className={styles.btnPrimary}
+              onMouseMove={handleMagneticMove}
+              onMouseLeave={resetMagneticMove}
+              data-magnetic
+            >
               Explore Collection
             </Link>
-            <Link href="/services/instastyle/swipestyle" className={styles.btnSecondary}>
+            <Link 
+              href="/services/instastyle/swipestyle" 
+              className={styles.btnSecondary}
+              onMouseMove={handleMagneticMove}
+              onMouseLeave={resetMagneticMove}
+              data-magnetic
+            >
               SwipeStyle
             </Link>
           </div>
@@ -290,15 +401,15 @@ export default function InstaStyleLanding() {
         </div>
       </div>
 
-      {/* ══════════════════════════════════════════
-          SECTION 2 — WHY INSTASTYLE (FEATURE ACCORDION)
-      ══════════════════════════════════════════ */}
-      <FeatureAccordion />
+      <div id="why-instastyle" className="w-full overflow-x-hidden">
+        <FeatureAccordion />
+      </div>
 
-      {/* ══════════════════════════════════════════
-          SECTION 3 — SHOP THE EDIT (Products)
-      ══════════════════════════════════════════ */}
-      <section id="trending" className={`${styles.trending} ${styles.revealItem}`} data-reveal>
+      {/* ── 3. FASHION COLLECTIONS (NEW) ── */}
+      <FashionCollections />
+
+      {/* ── 4. TRENDING PRODUCTS (SHOP THE EDIT) ── */}
+      <section id="instastyle-featured" className={`${styles.trending} ${styles.revealItem}`} data-reveal>
         <div className={styles.container}>
           <div className={styles.sectionHeader}>
             <div>
@@ -362,6 +473,9 @@ export default function InstaStyleLanding() {
         </div>
       </section>
 
+      {/* ── 5. DELIVERY HERO (NEW) ── */}
+      <DeliveryHero />
+
       {/* ══════════════════════════════════════════
           SECTION 4 — CATEGORIES
       ══════════════════════════════════════════ */}
@@ -403,7 +517,7 @@ export default function InstaStyleLanding() {
       {/* ══════════════════════════════════════════
           SECTION 5 — HOW IT WORKS
       ══════════════════════════════════════════ */}
-      <section className={`${styles.howItWorks} ${styles.revealItem}`} data-reveal>
+      <section id="instastyle-how-it-works" className={`${styles.howItWorks} ${styles.revealItem} w-full overflow-x-hidden`} data-reveal>
         <div className={styles.container}>
           <div className={styles.sectionHeader}>
             <div>
@@ -412,8 +526,8 @@ export default function InstaStyleLanding() {
             </div>
           </div>
 
-          {/* Desktop */}
-          <div className={styles.stepsDesktopGrid}>
+          {/* Desktop version (4-column grid) — hide on mobile */}
+          <div className={`${styles.stepsDesktopGrid} hidden md:grid`}>
             {howItWorksSteps.map((step, i) => (
               <div
                 key={step.number}
@@ -428,8 +542,8 @@ export default function InstaStyleLanding() {
             ))}
           </div>
 
-          {/* Mobile slider */}
-          <div className={styles.stepsMobileSlider}>
+          {/* Mobile slider — hide on desktop */}
+          <div className={`${styles.stepsMobileSlider} block md:hidden`}>
             <button type="button" className={styles.sliderArrow} onClick={() => goToStep('prev')} aria-label="Previous step">‹</button>
             <div className={styles.sliderViewport} ref={stepsSliderRef}>
               <div className={styles.sliderTrack} style={{ transform: `translateX(-${activeStepIndex * 100}%)` }}>
@@ -532,9 +646,7 @@ export default function InstaStyleLanding() {
         </div>
       </section>
 
-      {/* ══════════════════════════════════════════
-          SECTION 8 — WHY PREMIUM SHOPPERS STAY
-      ══════════════════════════════════════════ */}
+      {/* ── 8. WHY PREMIUM SHOPPERS STAY (SPOTLIGHT) ── */}
       <section className={`${styles.editorialSpotlight} ${styles.revealItem}`} data-reveal>
         <div className={styles.container}>
           <div className={styles.sectionHeader}>
@@ -565,6 +677,9 @@ export default function InstaStyleLanding() {
           </div>
         </div>
       </section>
+
+      {/* ── 9. SWIPESTYLE SHOWCASE (NEW) ── */}
+      <SwipeStyleShowcase />
 
       {/* ══════════════════════════════════════════
           SECTION 9 — JOURNAL / STYLE NOTES

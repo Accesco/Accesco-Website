@@ -1,8 +1,8 @@
 .page {
   min-height: 100vh;
-  background: radial-gradient(circle at 15% 15%, #f6efe8 0%, #f2e7dc 35%, #efe3d5 100%);
-  color: #1f1813;
-  padding: 28px;
+  background: radial-gradient(circle at 15% 15%, #f6efe8 0%, #FAF9F6 35%, #F0EAD6 100%);
+  color: #0D0D0D;
+  padding: 24px;
 }
 
 .header {
@@ -41,10 +41,12 @@
 
 .deckSection,
 .outfitSection {
-  background: rgba(255, 255, 255, 0.74);
-  border: 1px solid rgba(70, 48, 31, 0.12);
-  border-radius: 28px;
-  backdrop-filter: blur(6px);
+  background: rgba(255, 255, 255, 0.4);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 32px;
+  backdrop-filter: blur(20px) saturate(160%);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.05);
 }
 
 .deckSection {
@@ -61,14 +63,21 @@
 
 .card {
   position: relative;
-  border-radius: 22px;
+  max-width: 480px;
+  margin: 0 auto;
+  border-radius: 24px;
   overflow: hidden;
-  border: 1px solid rgba(52, 33, 20, 0.18);
-  background: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  background: #FFF;
   touch-action: pan-y;
   user-select: none;
   cursor: grab;
-  transition: transform 0.14s ease;
+  transition: transform 0.14s ease, box-shadow 0.3s ease;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+}
+
+.card:hover {
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.15);
 }
 
 .cardImage {
@@ -132,30 +141,55 @@
 }
 
 .actions {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  margin-top: 14px;
+  display: flex;
+  justify-content: center;
+  gap: 32px;
+  margin-top: 32px;
 }
 
 .skipBtn,
 .addBtn {
-  height: 46px;
-  border-radius: 14px;
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
   border: none;
-  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
 }
 
 .skipBtn {
-  background: #fff;
-  border: 1px solid rgba(58, 40, 26, 0.2);
-  color: #4d3c31;
+  background: #FFF;
+  color: #FF4B4B;
+  border: 1px solid rgba(255, 75, 75, 0.15);
+}
+
+.skipBtn:hover {
+  transform: translateY(-4px) scale(1.1);
+  background: #FF4B4B;
+  color: #FFF;
+  box-shadow: 0 12px 32px rgba(255, 75, 75, 0.3);
 }
 
 .addBtn {
-  background: #1f1813;
-  color: #fff;
+  background: #000;
+  color: #4BFF4B;
+}
+
+.addBtn:hover {
+  transform: translateY(-4px) scale(1.1);
+  background: #4BFF4B;
+  color: #000;
+  box-shadow: 0 12px 32px rgba(75, 255, 75, 0.3);
+}
+
+.btnIcon {
+  width: 28px;
+  height: 28px;
+  stroke-width: 3.5;
 }
 
 .outfitSection {

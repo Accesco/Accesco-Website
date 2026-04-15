@@ -2,10 +2,10 @@
 .overlay {
   position: fixed;
   inset: 0;
-  background: rgba(26, 17, 8, 0.4);
+  background: rgba(0, 0, 0, 0.4);
   z-index: 999;
   animation: fadeIn 0.4s ease;
-  backdrop-filter: blur(8px);
+  backdrop-filter: blur(20px);
 }
 
 @keyframes fadeIn {
@@ -20,13 +20,16 @@
   right: 0;
   bottom: 0;
   width: 100%;
-  max-width: 440px;
-  background: var(--is-white);
+  max-width: 480px;
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(32px) saturate(180%);
+  -webkit-backdrop-filter: blur(32px) saturate(180%);
   z-index: 1000;
   display: flex;
   flex-direction: column;
-  animation: slideIn 0.5s cubic-bezier(0.165, 0.84, 0.44, 1);
-  box-shadow: -10px 0 40px rgba(26, 17, 8, 0.1);
+  animation: slideIn 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: -20px 0 60px rgba(0, 0, 0, 0.1);
+  border-left: 1px solid rgba(255, 255, 255, 0.3);
 }
 
 @keyframes slideIn {
@@ -44,21 +47,24 @@
 }
 
 .title {
-  font-family: var(--font-display);
-  font-size: 24px;
-  font-weight: 700;
-  color: var(--is-black);
+  font-family: 'Syne', sans-serif;
+  font-size: 28px;
+  font-weight: 800;
+  color: #0D0D0D;
   margin: 0;
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 16px;
+  letter-spacing: -0.02em;
 }
 
 .count {
-  font-family: var(--font-body);
-  font-size: 14px;
-  color: var(--is-brown-light);
-  font-weight: 500;
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  color: #c99639; /* High-contrast gold */
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
 }
 
 .closeButton {
@@ -192,12 +198,13 @@
 }
 
 .itemBrand {
-  font-family: var(--font-body);
-  font-size: 11px;
-  color: var(--is-brown-light);
+  font-family: 'Inter', sans-serif;
+  font-size: 10px;
+  color: rgba(0, 0, 0, 0.5);
   margin: 0;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.1em;
+  font-weight: 700;
 }
 
 .itemMeta {

@@ -1,6 +1,6 @@
 .page {
   min-height: 100vh;
-  background: var(--is-white);
+  background: #FAF9F6;
   padding-bottom: 120px;
 }
 
@@ -14,23 +14,23 @@
 }
 
 .kicker {
-  font-family: var(--font-body);
+  font-family: 'Inter', sans-serif;
   font-size: 11px;
-  font-weight: 700;
-  color: var(--is-brown-light);
+  font-weight: 800;
+  color: #c99639; /* High-contrast gold */
   text-transform: uppercase;
-  letter-spacing: 0.14em;
-  margin-bottom: 16px;
+  letter-spacing: 0.18em;
+  margin-bottom: 20px;
 }
 
 .hero h1 {
-  font-family: var(--font-display);
-  font-size: clamp(40px, 8vw, 72px);
-  font-weight: 700;
-  color: var(--is-black);
-  margin: 0 0 16px 0;
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(40px, 8vw, 84px);
+  font-weight: 800;
+  color: #0D0D0D;
+  margin: 0 0 20px 0;
   letter-spacing: -0.04em;
-  line-height: 1;
+  line-height: 0.95;
 }
 
 .subtitle {
@@ -98,12 +98,14 @@
 
 .summaryCard {
   padding: 32px;
-  background: rgba(26, 17, 8, 0.02);
-  border: 1px solid rgba(26, 17, 8, 0.04);
-  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(0, 0, 0, 0.04);
+  border-radius: 20px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.02);
 }
 
 .summaryCard span {

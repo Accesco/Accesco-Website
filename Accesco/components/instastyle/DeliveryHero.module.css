@@ -1,0 +1,154 @@
+.section {
+  position: relative;
+  height: 100vh;
+  min-height: 700px;
+  background: #000;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+}
+
+.bgWrapper {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
+.bgImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.6;
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(70deg, #000 30%, transparent 80%);
+}
+
+.container {
+  position: relative;
+  z-index: 2;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0 60px;
+  width: 100%;
+}
+
+.content {
+  max-width: 600px;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 16px;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 999px;
+  font-family: 'Inter', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  color: #FFF;
+  letter-spacing: 0.1em;
+  margin-bottom: 32px;
+}
+
+.pulse {
+  width: 8px;
+  height: 8px;
+  background: #4BFF4B;
+  border-radius: 50%;
+  box-shadow: 0 0 10px #4BFF4B;
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.5); opacity: 0.5; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.heading {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(3rem, 6vw, 5rem);
+  font-weight: 800;
+  line-height: 0.95;
+  color: #FFF;
+  margin-bottom: 32px;
+  letter-spacing: -0.03em;
+}
+
+.accent {
+  color: #D9B061;
+}
+
+.description {
+  font-family: 'Inter', sans-serif;
+  font-size: 18px;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 48px;
+}
+
+.stats {
+  display: flex;
+  gap: 40px;
+}
+
+.statItem {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.statLine {
+  width: 30px;
+  height: 2px;
+  background: #D9B061;
+  margin-bottom: 12px;
+}
+
+.statNum {
+  font-family: 'Syne', sans-serif;
+  font-size: 32px;
+  font-weight: 800;
+  color: #FFF;
+}
+
+.statLabel {
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.5);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* ── SPEED LINES ── */
+.speedLines {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.line {
+  position: absolute;
+  right: 0;
+  width: 100px;
+  height: 1px;
+  background: linear-gradient(to right, transparent, rgba(217, 176, 97, 0.4));
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 0 24px;
+  }
+  .stats {
+    gap: 24px;
+  }
+}

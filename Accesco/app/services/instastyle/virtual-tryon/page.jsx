@@ -424,13 +424,19 @@ export default function VirtualTryOnPage() {
       {/* Header */}
       <div className={styles.header}>
         <Link href="/services/instastyle/catalog" className={styles.backButton}>
-          ← Back to Catalog
+          ← Catalog
         </Link>
-        <h1 className={styles.title}>Style Preview</h1>
+        <div className={styles.headerTitleGroup}>
+          <h1 className={styles.title}>Style Preview</h1>
+          <span className={styles.liveIndicator}>
+            <span className={styles.liveDot}></span>
+            Live Fitting Room
+          </span>
+        </div>
         <div className={styles.headerActions}>
           {isCameraActive && (
             <button onClick={capturePhoto} className={styles.captureBtn}>
-              Capture
+              Capture Look
             </button>
           )}
         </div>

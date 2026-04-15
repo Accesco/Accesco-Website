@@ -131,11 +131,15 @@ export default function SwipeStylePage() {
           )}
 
           <div className={styles.actions}>
-            <button className={styles.skipBtn} onClick={() => swipe('left')}>
-              Swipe Left
+            <button className={styles.skipBtn} onClick={() => swipe('left')} aria-label="Skip">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" className={styles.btnIcon}>
+                <path d="M18 6L6 18M6 6l12 12" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
             </button>
-            <button className={styles.addBtn} onClick={() => swipe('right')}>
-              Swipe Right
+            <button className={styles.addBtn} onClick={() => swipe('right')} aria-label="Add to outfit">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" className={styles.btnIcon}>
+                <path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
             </button>
           </div>
         </section>
