@@ -33,6 +33,22 @@
     padding: 0 clamp(24px, 4vw, 60px);
     box-sizing: border-box;
     overflow-x: hidden;
+    /* Hide native scrollbar on desktop during pin */
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .is-scroll-section::-webkit-scrollbar {
+    display: none;
+  }
+
+  .is-scroll-right {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .is-scroll-right::-webkit-scrollbar {
+    display: none;
   }
 
   /* LEFT: sticky label panel */
@@ -547,9 +563,9 @@
   position: absolute;
   inset: 0;
   background: linear-gradient(180deg,
-      rgba(255, 255, 255, 0.15) 0%,
-      rgba(255, 255, 255, 0.6) 50%,
-      rgba(255, 255, 255, 0.96) 100%);
+      rgba(255, 255, 255, 0.05) 0%,
+      rgba(255, 255, 255, 0.3) 50%,
+      rgba(255, 255, 255, 0.88) 100%);
 }
 
 .is-vibe-content {

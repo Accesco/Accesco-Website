@@ -22,7 +22,7 @@ const COLLECTIONS = [
     title: 'Evening Elegance',
     image: 'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=800&q=80',
     className: styles.photoPortrait
-  },
+  }
 ];
 
 const FashionCollections = () => {

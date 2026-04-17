@@ -152,7 +152,7 @@
 
 .heroTitle {
   font-family: var(--font-display);
-  font-size: clamp(64px, 14vw, 160px);
+  font-size: clamp(32px, 8.5vw, 130px);
   font-weight: var(--font-weight, 800);
   margin: 0 0 20px 0;
   letter-spacing: -0.05em;
@@ -161,6 +161,7 @@
   color: var(--is-white);
   perspective: 1000px;
   will-change: font-weight;
+  white-space: nowrap;
 }
 
 .heroTitleAccent {
@@ -752,12 +753,15 @@
 
 .categoryName {
   font-family: 'Syne', sans-serif;
-  font-size: 26px;
+  font-size: clamp(16px, 3.5vw, 26px);
   font-weight: 800;
   letter-spacing: -0.02em;
   margin: 0 0 4px 0;
   color: #FFF;
   text-transform: uppercase;
+  max-width: 100%;
+  word-wrap: break-word;
+  white-space: normal;
 }
 
 .categoryCount {
@@ -1418,8 +1422,9 @@
 
 @media (max-width: 768px) {
   .heroTitle {
-    font-size: clamp(40px, 13vw, 60px);
+    font-size: clamp(28px, 9.5vw, 48px);
     letter-spacing: -0.03em;
+    white-space: nowrap;
   }
 
   .heroButtons {

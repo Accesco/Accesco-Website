@@ -1,7 +1,7 @@
 .section {
-  padding: 120px 0;
+  padding: 120px 0 150px;
   background: #FAF9F6;
-  overflow: hidden;
+  overflow: visible;
   position: relative;
 }
 
@@ -116,6 +116,7 @@
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 24px;
+  padding-bottom: 40px;
 }
 
 .photoWrapper {
@@ -188,6 +189,14 @@
 }
 
 @media (max-width: 768px) {
+  .section {
+    padding: 60px 0;
+  }
+  
+  .seal {
+    display: none;
+  }
+
   .collageColumn {
     gap: 12px;
   }

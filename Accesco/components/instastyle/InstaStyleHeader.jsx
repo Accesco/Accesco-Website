@@ -261,11 +261,12 @@ export default function InstaStyleHeader() {
   };
 
   return (
-    <header 
-      className={`instaHeaderShell ${styles.header} ${isScrolled ? styles.scrolled : ''}`}
-      style={fallback.header}
-      role="banner"
-    >
+    <>
+      <header 
+        className={`instaHeaderShell ${styles.header} ${isScrolled ? styles.scrolled : ''}`}
+        style={fallback.header}
+        role="banner"
+      >
       <div className={`instaHeaderContainer ${styles.container}`} style={fallback.container}>
         {/* Logo */}
         <Link 
@@ -417,6 +418,7 @@ export default function InstaStyleHeader() {
           )}
         </div>
       </div>
+      </header>
 
       {/* Mobile Menu — IMMERSIVE FULL-SCREEN OVERLAY */}
       <div
@@ -473,6 +475,6 @@ export default function InstaStyleHeader() {
           aria-hidden="true"
         />
       )}
-    </header>
+    </>
   );
 }

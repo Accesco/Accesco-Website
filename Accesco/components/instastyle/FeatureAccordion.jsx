@@ -8,12 +8,12 @@ import { useGSAP } from '@gsap/react';
 
 // Premium high-fidelity fashion placeholders from Unsplash
 const PHOTOS = [
-  'https://images.unsplash.com/photo-1483985988355-763728e1935b?w=1200&q=80', // 01 Drop (editorial high-fashion)
-  'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1200&q=80', // 02 Curated (premium apparel)
-  'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=1200&q=80', // 03 Perfect Fit (Bug 3: Tailored fit)
-  'https://images.unsplash.com/photo-1529139574466-a303027c028b?w=1200&q=80', // 04 Vibe Check (Bug 3: Group vibe)
-  'https://images.unsplash.com/photo-1445205170230-053b83016050?w=1200&q=80', // 05 Complete Look (fashion rack)
-  'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=1200&q=80'  // 06 Moment (dynamic runway)
+  'https://images.unsplash.com/photo-1483985988355-763728e1935b?w=1200&q=80', // 01 Drop
+  'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1200&q=80', // 02 Curated
+  'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=1200&q=80', // 03 Perfect Fit
+  'https://images.unsplash.com/photo-1511556820780-d912e42b4980?w=1200&q=80', // 04 Vibe Check (reliable lifestyle image)
+  'https://images.unsplash.com/photo-1445205170230-053b83016050?w=1200&q=80', // 05 Complete Look
+  'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=1200&q=80'  // 06 Moment
 ];
 
 export default function FeatureAccordion() {
@@ -205,7 +205,9 @@ export default function FeatureAccordion() {
 
             {/* BOX 04 — VIBE CHECK */}
             <div className={`is-acc-item is-vibe ${activeIndex === 3 ? 'is-active' : ''}`}>
-              <div className="is-acc-bg" style={{ backgroundImage: `url('${PHOTOS[3]}')` }}></div>
+              {/* Background image — now properly visible */}
+              <div className="is-acc-bg" style={{ backgroundImage: `url('${PHOTOS[3]}')`, opacity: activeIndex === 3 ? 0.85 : 0.55 }}></div>
+              <div className="is-gold-line"></div>
 
               {/* Collapsed state for Vibe Check (added so it acts like normal row) */}
               <div className="is-acc-collapsed">

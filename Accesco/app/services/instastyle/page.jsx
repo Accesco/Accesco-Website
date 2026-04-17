@@ -550,8 +550,10 @@ export default function InstaStyleLanding() {
                 {howItWorksSteps.map(step => (
                   <div key={step.number} className={`${styles.step} ${styles.stepCompact}`}>
                     <span className={styles.stepNumber}>{step.number}</span>
-                    <h3 className={styles.stepTitle}>{step.title}</h3>
-                    <p className={styles.stepDescription}>{step.description}</p>
+                    <div>
+                      <h3 className={styles.stepTitle}>{step.title}</h3>
+                      <p className={styles.stepDescription}>{step.description}</p>
+                    </div>
                   </div>
                 ))}
               </div>
