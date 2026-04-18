@@ -179,7 +179,7 @@ function GroklyPageContent() {
       <BannerCarousel />
 
       {/* Main Content */}
-      <main style={{ flex: 1, maxWidth: 'var(--grokly-max-width)', margin: '0 auto', width: '100%', padding: '20px' }}>
+      <main style={{ flex: 1, maxWidth: 'var(--grokly-max-width)', margin: '0 auto', width: '100%', padding: '8px 20px' }}>
         {/* Filter Panel - Only show when not in horizontal category view */}
         {!productsByCategory && (
           <FilterPanel 
@@ -216,15 +216,15 @@ function GroklyPageContent() {
 
         {/* Horizontal Category Layout (Zepto-style) */}
         {productsByCategory ? (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
             {Object.entries(productsByCategory).map(([categoryId, { category, products: categoryProducts }]) => (
-              <section key={categoryId} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              <section key={categoryId} style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
                 {/* Category Header */}
                 <div style={{ 
                   display: 'flex', 
                   justifyContent: 'space-between', 
                   alignItems: 'center',
-                  paddingBottom: '8px'
+                  paddingBottom: '0px'
                 }}>
                   <h2 style={{ 
                     fontFamily: 'var(--grokly-font-display)', 
@@ -266,11 +266,12 @@ function GroklyPageContent() {
                   gap: '12px',
                   overflowX: 'auto',
                   overflowY: 'hidden',
-                  scrollbarWidth: 'thin',
-                  scrollbarColor: 'var(--grokly-border) transparent',
-                  paddingBottom: '8px',
+                  scrollbarWidth: 'none',
+                  msOverflowStyle: 'none',
                   WebkitOverflowScrolling: 'touch'
-                }}>
+                }}
+                className="hide-scrollbar"
+                >
                   {categoryProducts.map((product) => (
                     <div key={product.id} style={{ minWidth: '200px', maxWidth: '200px', flexShrink: 0 }}>
                       <ProductCard product={product} />

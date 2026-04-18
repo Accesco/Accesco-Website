@@ -146,18 +146,20 @@ export default function Footer() {
                 <Image 
                   src="https://upload.wikimedia.org/wikipedia/commons/3/3c/Download_on_the_App_Store_Badge.svg" 
                   alt="App Store" 
-                  width={140} 
-                  height={42} 
-                  loading="lazy" 
+                  width={120} 
+                  height={40} 
+                  loading="lazy"
+                  style={{ width: '120px', height: 'auto', display: 'block', borderRadius: 0 }}
                 />
               </a>
               <a href="#" target="_blank" rel="noopener noreferrer" className="app-badge">
                 <Image 
                   src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg" 
                   alt="Google Play" 
-                  width={140} 
-                  height={42} 
-                  loading="lazy" 
+                  width={135} 
+                  height={40} 
+                  loading="lazy"
+                  style={{ width: '120px', height: 'auto', display: 'block', borderRadius: 0 }}
                 />
               </a>
             </div>
@@ -238,9 +240,9 @@ export default function Footer() {
         }
 
         .brand-tagline {
-          font-size: 17px;
-          color: rgba(255, 255, 255, 0.6);
-          line-height: 1.6;
+          font-size: 16px;
+          color: rgba(255, 255, 255, 0.75);
+          line-height: 1.7;
           margin: 0 0 40px 0;
           max-width: 320px;
         }
@@ -251,9 +253,9 @@ export default function Footer() {
         }
 
         .social-title {
-          font-size: 13px;
+          font-size: 16px;
           font-weight: 700;
-          color: rgba(255, 255, 255, 0.7);
+          color: rgba(255, 255, 255, 0.9);
           text-transform: uppercase;
           letter-spacing: 1.5px;
           margin: 0 0 20px 0;
@@ -261,31 +263,31 @@ export default function Footer() {
 
         .social-links {
           display: flex;
-          gap: 12px;
+          gap: 14px;
           flex-wrap: wrap;
         }
 
         .social-link {
-          width: 48px;
-          height: 48px;
+          width: 52px;
+          height: 52px;
           border-radius: 12px;
-          background: rgba(122, 0, 66, 0.15);
-          border: 1px solid rgba(122, 0, 66, 0.3);
+          background: rgba(122, 0, 66, 0.25);
+          border: 2px solid rgba(122, 0, 66, 0.4);
           display: flex;
           align-items: center;
           justify-content: center;
-          color: rgba(255, 255, 255, 0.7);
-          font-size: 20px;
+          color: rgba(255, 255, 255, 0.9);
+          font-size: 22px;
           transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
           text-decoration: none;
         }
 
         .social-link:hover {
           background: linear-gradient(135deg, #7A0042, #9d0054);
-          border-color: #7A0042;
+          border-color: #9d0054;
           color: #ffffff;
           transform: translateY(-3px);
-          box-shadow: 0 8px 20px rgba(122, 0, 66, 0.4);
+          box-shadow: 0 8px 20px rgba(122, 0, 66, 0.5);
         }
 
         /* Links Grid */
@@ -301,7 +303,7 @@ export default function Footer() {
         }
 
         .column-title {
-          font-size: 14px;
+          font-size: 16px;
           font-weight: 700;
           color: #ffffff;
           text-transform: uppercase;
@@ -315,17 +317,17 @@ export default function Footer() {
           padding: 0;
           display: flex;
           flex-direction: column;
-          gap: 16px;
+          gap: 18px;
         }
 
         .column-links li {
-          line-height: 1;
+          line-height: 1.5;
         }
 
         .column-links a {
-          color: rgba(255, 255, 255, 0.65);
+          color: rgba(255, 255, 255, 0.75);
           text-decoration: none;
-          font-size: 16px;
+          font-size: 15px;
           font-weight: 500;
           transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
           display: inline-block;
@@ -359,7 +361,7 @@ export default function Footer() {
         }
 
         .download-title {
-          font-size: 14px;
+          font-size: 16px;
           font-weight: 700;
           color: #ffffff;
           text-transform: uppercase;
@@ -369,22 +371,22 @@ export default function Footer() {
 
         .download-desc {
           font-size: 15px;
-          color: rgba(255, 255, 255, 0.6);
+          color: rgba(255, 255, 255, 0.75);
           margin: 0 0 28px 0;
           line-height: 1.6;
         }
 
         .app-badges {
           display: flex;
-          flex-direction: column;
+          flex-direction: row;
           gap: 12px;
         }
 
         .app-badge {
           display: block;
           transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-          border-radius: 8px;
-          overflow: hidden;
+          overflow: visible;
+          border-radius: 0;
         }
 
         .app-badge:hover {
@@ -394,8 +396,10 @@ export default function Footer() {
 
         .app-badge img {
           display: block;
-          width: 150px;
+          width: auto;
           height: auto;
+          border-radius: 0;
+          object-fit: contain;
         }
 
         /* Footer Bottom */

@@ -1,0 +1,883 @@
+/* Checkout Page - Zomato Style */
+
+.page {
+  min-height: 100vh;
+  background: #F8F9FA;
+  padding-top: 72px;
+  padding-bottom: 40px;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 32px 24px;
+}
+
+.checkoutLayout {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: 24px;
+}
+
+/* Main Section */
+.mainSection {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Progress Steps - Zomato Style */
+.progressSteps {
+  display: flex;
+  align-items: center;
+  background: #ffffff;
+  padding: 20px 24px;
+  border-radius: 8px;
+  border: 1px solid #E8E8E8;
+}
+
+.progressStep {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+}
+
+.stepNumber {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #E8E8E8;
+  color: #696969;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 16px;
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+}
+
+.progressStep.active .stepNumber {
+  background: #0F8A65;
+  color: #ffffff;
+}
+
+.stepLabel {
+  font-size: 15px;
+  font-weight: 500;
+  color: #696969;
+  letter-spacing: -0.01em;
+}
+
+.progressStep.active .stepLabel {
+  color: #1C1C1C;
+  font-weight: 600;
+}
+
+.progressLine {
+  height: 2px;
+  background: #E8E8E8;
+  flex: 1;
+  margin: 0 16px;
+}
+
+/* Step Content */
+.stepContent {
+  background: #ffffff;
+  border-radius: 8px;
+  padding: 28px;
+  border: 1px solid #E8E8E8;
+}
+
+.stepTitle {
+  font-size: 22px;
+  font-weight: 600;
+  margin-bottom: 24px;
+  color: #1C1C1C;
+  letter-spacing: -0.01em;
+}
+
+.backBtn {
+  background: none;
+  border: 1px solid #E8E8E8;
+  color: #696969;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  margin-bottom: 24px;
+  transition: all 0.2s ease;
+}
+
+.backBtn:hover {
+  border-color: #0F8A65;
+  color: #0F8A65;
+}
+
+/* Address Form - Zomato Style */
+.addressForm {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.formRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.formLabel {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1C1C1C;
+  letter-spacing: -0.01em;
+}
+
+.formInput,
+.formTextarea {
+  padding: 11px 14px;
+  border: 1px solid #E8E8E8;
+  border-radius: 6px;
+  font-size: 14px;
+  font-family: inherit;
+  transition: all 0.2s ease;
+  color: #1C1C1C;
+}
+
+.formInput:focus,
+.formTextarea:focus {
+  outline: none;
+  border-color: #0F8A65;
+  box-shadow: 0 0 0 3px rgba(15,138,101,0.1);
+}
+
+.formTextarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.continueBtn {
+  background: #0F8A65;
+  color: #ffffff;
+  border: none;
+  padding: 14px;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 12px;
+  transition: all 0.2s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.continueBtn:hover {
+  background: #0D7556;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(15,138,101,0.3);
+}
+
+/* Payment Methods - Zomato Style */
+.paymentMethods {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.paymentOption {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  border: 1px solid #E8E8E8;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background: #ffffff;
+}
+
+.paymentOption:hover {
+  border-color: #0F8A65;
+  background: #F8FFF8;
+}
+
+.paymentOption.selected {
+  border-color: #0F8A65;
+  background: #E8F5E9;
+  border-width: 2px;
+  padding: 15px;
+}
+
+.paymentRadio {
+  width: 20px;
+  height: 20px;
+  border: 2px solid #E8E8E8;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+}
+
+.paymentOption.selected .paymentRadio {
+  border-color: #0F8A65;
+}
+
+.radioSelected {
+  width: 10px;
+  height: 10px;
+  background: #0F8A65;
+  border-radius: 50%;
+}
+
+.paymentInfo {
+  flex: 1;
+}
+
+.paymentTitle {
+  font-size: 15px;
+  font-weight: 600;
+  color: #1C1C1C;
+  margin-bottom: 4px;
+  letter-spacing: -0.01em;
+}
+
+.paymentDesc {
+  font-size: 13px;
+  color: #696969;
+}
+
+.placeOrderBtn {
+  width: 100%;
+  background: #0F8A65;
+  color: #ffffff;
+  border: none;
+  padding: 16px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.placeOrderBtn:hover {
+  background: #0D7556;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(15,138,101,0.3);
+}
+
+/* Order Summary Sidebar - Zomato Style */
+.sidebarSection {
+  position: sticky;
+  top: 96px;
+  height: fit-content;
+}
+
+.summaryCard {
+  background: #ffffff;
+  border: 1px solid #E8E8E8;
+  border-radius: 8px;
+  padding: 20px;
+}
+
+.summaryTitle {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  color: #1C1C1C;
+  letter-spacing: -0.01em;
+}
+
+.orderItems {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 16px;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.orderItem {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #F8F8F8;
+}
+
+.orderItem:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.orderItemImage {
+  width: 56px;
+  height: 56px;
+  border-radius: 6px;
+  object-fit: cover;
+  background: #F8F8F8;
+  flex-shrink: 0;
+}
+
+.orderItemInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.orderItemName {
+  font-size: 14px;
+  font-weight: 500;
+  color: #1C1C1C;
+  margin-bottom: 4px;
+  letter-spacing: -0.01em;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.orderItemQty {
+  font-size: 12px;
+  color: #696969;
+}
+
+.orderItemPrice {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1C1C1C;
+  flex-shrink: 0;
+}
+
+.summaryDivider {
+  height: 1px;
+  background: #E8E8E8;
+  margin: 14px 0;
+}
+
+.summaryRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  font-size: 14px;
+  color: #696969;
+}
+
+.summaryRow span:last-child {
+  font-weight: 500;
+  color: #1C1C1C;
+}
+
+.summaryRow.total {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1C1C1C;
+  margin-top: 4px;
+}
+
+.summaryRow.total span {
+  font-size: 18px;
+  color: #1C1C1C;
+  font-weight: 600;
+}
+
+.free {
+  color: #0F8A65 !important;
+  font-weight: 600 !important;
+}
+
+/* Success Screen - Zomato Style */
+.successScreen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  text-align: center;
+  padding: 60px 24px;
+  background: #ffffff;
+  border-radius: 8px;
+  margin-top: 40px;
+}
+
+.successIcon {
+  width: 80px;
+  height: 80px;
+  background: #0F8A65;
+  color: #ffffff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 48px;
+  margin-bottom: 24px;
+  animation: scaleIn 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 16px rgba(15,138,101,0.3);
+}
+
+@keyframes scaleIn {
+  from {
+    transform: scale(0);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.successTitle {
+  font-size: 28px;
+  font-weight: 600;
+  color: #1C1C1C;
+  margin-bottom: 12px;
+  letter-spacing: -0.02em;
+}
+
+.successText {
+  font-size: 16px;
+  color: #696969;
+  margin-bottom: 24px;
+  line-height: 1.5;
+}
+
+.orderNumber {
+  background: #E8F5E9;
+  border: 1px solid #0F8A65;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 18px;
+  font-weight: 600;
+  color: #0F8A65;
+  margin-bottom: 16px;
+  letter-spacing: 0.5px;
+}
+
+.redirectText {
+  font-size: 14px;
+  color: #696969;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 968px) {
+  .checkoutLayout {
+    grid-template-columns: 1fr;
+  }
+  
+  .sidebarSection {
+    position: static;
+    order: -1;
+  }
+  
+  .formRow {
+    grid-template-columns: 1fr;
+  }
+  
+  .progressSteps {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  
+  .progressLine {
+    display: none;
+  }
+  
+  .progressStep {
+    width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .page {
+    padding-top: 116px;
+  }
+  
+  .container {
+    padding: 24px 12px;
+  }
+  
+  .checkoutLayout {
+    gap: 20px;
+  }
+  
+  .mainSection {
+    gap: 16px;
+  }
+  
+  .progressSteps {
+    padding: 16px 20px;
+  }
+  
+  .stepNumber {
+    width: 32px;
+    height: 32px;
+    font-size: 15px;
+  }
+  
+  .stepLabel {
+    font-size: 14px;
+  }
+  
+  .stepContent {
+    padding: 24px;
+  }
+  
+  .stepTitle {
+    font-size: 20px;
+    margin-bottom: 20px;
+  }
+  
+  .backBtn {
+    padding: 7px 14px;
+    font-size: 13px;
+    margin-bottom: 20px;
+  }
+  
+  .addressForm {
+    gap: 16px;
+  }
+  
+  .formLabel {
+    font-size: 13px;
+  }
+  
+  .formInput,
+  .formTextarea {
+    padding: 10px 12px;
+    font-size: 13px;
+  }
+  
+  .formTextarea {
+    min-height: 70px;
+  }
+  
+  .continueBtn {
+    padding: 12px;
+    font-size: 14px;
+    margin-top: 10px;
+  }
+  
+  .paymentMethods {
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  
+  .paymentOption {
+    padding: 14px;
+  }
+  
+  .paymentOption.selected {
+    padding: 13px;
+  }
+  
+  .paymentRadio {
+    width: 18px;
+    height: 18px;
+  }
+  
+  .radioSelected {
+    width: 9px;
+    height: 9px;
+  }
+  
+  .paymentTitle {
+    font-size: 14px;
+  }
+  
+  .paymentDesc {
+    font-size: 12px;
+  }
+  
+  .placeOrderBtn {
+    padding: 14px;
+    font-size: 15px;
+  }
+  
+  .summaryCard {
+    padding: 18px;
+  }
+  
+  .summaryTitle {
+    font-size: 17px;
+    margin-bottom: 14px;
+  }
+  
+  .orderItems {
+    gap: 10px;
+    margin-bottom: 14px;
+    max-height: 250px;
+  }
+  
+  .orderItem {
+    gap: 10px;
+    padding-bottom: 10px;
+  }
+  
+  .orderItemImage {
+    width: 52px;
+    height: 52px;
+  }
+  
+  .orderItemName {
+    font-size: 13px;
+  }
+  
+  .orderItemQty {
+    font-size: 11px;
+  }
+  
+  .orderItemPrice {
+    font-size: 13px;
+  }
+  
+  .summaryRow {
+    margin-bottom: 8px;
+    font-size: 13px;
+  }
+  
+  .summaryRow.total {
+    font-size: 15px;
+  }
+  
+  .summaryRow.total span {
+    font-size: 17px;
+  }
+  
+  .successScreen {
+    min-height: 50vh;
+    padding: 50px 20px;
+    margin-top: 30px;
+  }
+  
+  .successIcon {
+    width: 70px;
+    height: 70px;
+    font-size: 42px;
+    margin-bottom: 20px;
+  }
+  
+  .successTitle {
+    font-size: 26px;
+    margin-bottom: 10px;
+  }
+  
+  .successText {
+    font-size: 15px;
+    margin-bottom: 20px;
+  }
+  
+  .orderNumber {
+    padding: 10px 20px;
+    font-size: 17px;
+    margin-bottom: 14px;
+  }
+  
+  .redirectText {
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 640px) {
+  .page {
+    padding-top: 106px;
+  }
+  
+  .container {
+    padding: 20px 10px;
+  }
+  
+  .progressSteps {
+    padding: 14px 16px;
+  }
+  
+  .stepNumber {
+    width: 28px;
+    height: 28px;
+    font-size: 14px;
+  }
+  
+  .stepLabel {
+    font-size: 13px;
+  }
+  
+  .stepContent {
+    padding: 20px;
+  }
+  
+  .stepTitle {
+    font-size: 18px;
+    margin-bottom: 18px;
+  }
+  
+  .backBtn {
+    padding: 6px 12px;
+    font-size: 12px;
+    margin-bottom: 18px;
+  }
+  
+  .addressForm {
+    gap: 14px;
+  }
+  
+  .formLabel {
+    font-size: 12px;
+  }
+  
+  .formInput,
+  .formTextarea {
+    padding: 9px 11px;
+    font-size: 12px;
+  }
+  
+  .formTextarea {
+    min-height: 60px;
+  }
+  
+  .continueBtn {
+    padding: 11px;
+    font-size: 13px;
+  }
+  
+  .paymentMethods {
+    gap: 8px;
+    margin-bottom: 18px;
+  }
+  
+  .paymentOption {
+    padding: 12px;
+    gap: 12px;
+  }
+  
+  .paymentOption.selected {
+    padding: 11px;
+  }
+  
+  .paymentRadio {
+    width: 16px;
+    height: 16px;
+  }
+  
+  .radioSelected {
+    width: 8px;
+    height: 8px;
+  }
+  
+  .paymentTitle {
+    font-size: 13px;
+  }
+  
+  .paymentDesc {
+    font-size: 11px;
+  }
+  
+  .placeOrderBtn {
+    padding: 13px;
+    font-size: 14px;
+  }
+  
+  .summaryCard {
+    padding: 16px;
+  }
+  
+  .summaryTitle {
+    font-size: 16px;
+    margin-bottom: 12px;
+  }
+  
+  .orderItems {
+    gap: 8px;
+    margin-bottom: 12px;
+    max-height: 200px;
+  }
+  
+  .orderItem {
+    gap: 8px;
+    padding-bottom: 8px;
+  }
+  
+  .orderItemImage {
+    width: 48px;
+    height: 48px;
+  }
+  
+  .orderItemName {
+    font-size: 12px;
+  }
+  
+  .orderItemQty {
+    font-size: 10px;
+  }
+  
+  .orderItemPrice {
+    font-size: 12px;
+  }
+  
+  .summaryRow {
+    font-size: 12px;
+  }
+  
+  .summaryRow.total {
+    font-size: 14px;
+  }
+  
+  .summaryRow.total span {
+    font-size: 16px;
+  }
+  
+  .successScreen {
+    min-height: 40vh;
+    padding: 40px 16px;
+    margin-top: 20px;
+  }
+  
+  .successIcon {
+    width: 60px;
+    height: 60px;
+    font-size: 36px;
+    margin-bottom: 18px;
+  }
+  
+  .successTitle {
+    font-size: 22px;
+    margin-bottom: 8px;
+  }
+  
+  .successText {
+    font-size: 14px;
+    margin-bottom: 18px;
+  }
+  
+  .orderNumber {
+    padding: 9px 18px;
+    font-size: 16px;
+    margin-bottom: 12px;
+  }
+  
+  .redirectText {
+    font-size: 12px;
+  }
+}

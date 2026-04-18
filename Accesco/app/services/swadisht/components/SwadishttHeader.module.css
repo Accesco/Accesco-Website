@@ -1,0 +1,537 @@
+/* Swadishtt Header - Apple-Quality Design */
+
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: rgba(255,255,255,0.8);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border-bottom: 1px solid rgba(0,0,0,0.06);
+  z-index: 1000;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.header.scrolled {
+  background: rgba(255,255,255,0.95);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.headerContent {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  height: 72px;
+}
+
+/* Logo */
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  transition: opacity 0.2s ease;
+}
+
+.logo:hover {
+  opacity: 0.8;
+}
+
+.logoImage {
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
+  border-radius: 8px;
+}
+
+.brandName {
+  font-size: 22px;
+  font-weight: 700;
+  color: #E23744;
+  letter-spacing: -0.02em;
+}
+
+/* Location Selector */
+.locationWrapper {
+  position: relative;
+}
+
+.locationButton {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #F8F9FA;
+  border: 1px solid #E5E7EB;
+  border-radius: 8px;
+  padding: 10px 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 200px;
+}
+
+.locationButton:hover {
+  background: #F3F4F6;
+  border-color: #D1D5DB;
+}
+
+.locationIcon {
+  width: 20px;
+  height: 20px;
+  color: #E23744;
+  flex-shrink: 0;
+}
+
+.locationText {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+
+.locationLabel {
+  font-size: 11px;
+  color: #696969;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.locationArea {
+  font-size: 14px;
+  font-weight: 600;
+  color: #111827;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.locationCity {
+  font-size: 13px;
+  color: #6B7280;
+}
+
+.dropdownIcon {
+  width: 16px;
+  height: 16px;
+  color: #6B7280;
+  flex-shrink: 0;
+}
+
+.locationDropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.1), 0 0 0 1px rgba(0,0,0,0.05);
+  min-width: 320px;
+  z-index: 100;
+  animation: slideDown 0.2s ease;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.dropdownHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid #F3F4F6;
+}
+
+.dropdownHeader h3 {
+  font-size: 16px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.dropdownHeader button {
+  background: none;
+  border: none;
+  font-size: 20px;
+  color: #6B7280;
+  cursor: pointer;
+  padding: 4px;
+  transition: color 0.2s ease;
+}
+
+.dropdownHeader button:hover {
+  color: #111827;
+}
+
+.locationList {
+  padding: 8px;
+  max-height: 320px;
+  overflow-y: auto;
+}
+
+.locationItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  background: none;
+  border: none;
+  border-radius: 12px;
+  padding: 12px;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.locationItem:hover {
+  background: #F8F9FA;
+}
+
+.locationItemIcon {
+  width: 18px;
+  height: 18px;
+  color: #6B7280;
+  flex-shrink: 0;
+}
+
+.locationItemArea {
+  font-size: 15px;
+  font-weight: 500;
+  color: #111827;
+  margin-bottom: 2px;
+}
+
+.locationItemCity {
+  font-size: 13px;
+  color: #6B7280;
+}
+
+/* Search Bar */
+.searchForm {
+  flex: 1;
+  max-width: 600px;
+  position: relative;
+}
+
+.searchIcon {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 20px;
+  height: 20px;
+  color: #9CA3AF;
+  pointer-events: none;
+}
+
+.searchInput {
+  width: 100%;
+  background: #F8F9FA;
+  border: 1px solid #E5E7EB;
+  border-radius: 12px;
+  padding: 12px 16px 12px 48px;
+  font-size: 15px;
+  color: #111827;
+  transition: all 0.2s ease;
+}
+
+.searchInput::placeholder {
+  color: #9CA3AF;
+}
+
+.searchInput:focus {
+  outline: none;
+  background: #ffffff;
+  border-color: #E23744;
+  box-shadow: 0 0 0 3px rgba(226,55,68,0.1);
+}
+
+/* Navigation */
+.nav {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+}
+
+.navLink {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 500;
+  color: #374151;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.navLink:hover {
+  background: #F8F9FA;
+  color: #111827;
+}
+
+.navIcon {
+  width: 20px;
+  height: 20px;
+}
+
+.navText {
+  font-size: 15px;
+}
+
+.cartButton {
+  background: #E23744;
+  color: #ffffff;
+  padding: 10px 16px;
+}
+
+.cartButton:hover {
+  background: #C62828;
+  color: #ffffff;
+}
+
+.cartBadge {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  background: #FBBF24;
+  color: #111827;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 10px;
+  min-width: 18px;
+  text-align: center;
+  line-height: 1;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .headerContent {
+    gap: 16px;
+  }
+  
+  .searchForm {
+    max-width: 350px;
+  }
+  
+  .locationButton {
+    min-width: 160px;
+    padding: 8px 12px;
+  }
+  
+  .locationLabel {
+    font-size: 10px;
+  }
+  
+  .locationArea {
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 768px) {
+  .header {
+    position: fixed;
+  }
+  
+  .container {
+    padding: 0 12px;
+  }
+  
+  .headerContent {
+    height: 60px;
+    gap: 8px;
+  }
+  
+  /* Logo */
+  .logo {
+    gap: 8px;
+  }
+  
+  .logoImage {
+    width: 28px;
+    height: 28px;
+  }
+  
+  .brandName {
+    font-size: 18px;
+  }
+  
+  /* Location - Compact */
+  .locationButton {
+    min-width: auto;
+    padding: 6px 10px;
+    gap: 6px;
+  }
+  
+  .locationIcon {
+    width: 18px;
+    height: 18px;
+  }
+  
+  .locationLabel {
+    display: none;
+  }
+  
+  .locationArea {
+    font-size: 12px;
+    max-width: 80px;
+  }
+  
+  .dropdownIcon {
+    width: 14px;
+    height: 14px;
+  }
+  
+  /* Search - Full width on mobile */
+  .searchForm {
+    order: 4;
+    position: absolute;
+    top: 60px;
+    left: 0;
+    right: 0;
+    max-width: 100%;
+    background: #ffffff;
+    border-bottom: 1px solid #E8E8E8;
+    padding: 12px;
+    z-index: 100;
+  }
+  
+  .searchInput {
+    font-size: 14px;
+    padding: 10px 12px 10px 40px;
+  }
+  
+  .searchIcon {
+    left: 12px;
+  }
+  
+  /* Navigation - Icons only */
+  .nav {
+    gap: 4px;
+    margin-left: auto;
+  }
+  
+  .navLink {
+    padding: 8px;
+    min-width: auto;
+  }
+  
+  .navText {
+    display: none;
+  }
+  
+  .navIcon {
+    width: 22px;
+    height: 22px;
+  }
+  
+  .cartButton {
+    padding: 8px 10px;
+  }
+  
+  .cartBadge {
+    top: 2px;
+    right: 2px;
+    font-size: 10px;
+    padding: 2px 5px;
+    min-width: 16px;
+  }
+  
+  /* Location Dropdown - Full width */
+  .locationDropdown {
+    left: 0;
+    right: 0;
+    min-width: 100vw;
+    max-width: 100vw;
+    border-radius: 0;
+    top: calc(100% + 1px);
+  }
+  
+  .dropdownHeader {
+    padding: 14px 16px;
+  }
+  
+  .dropdownHeader h3 {
+    font-size: 15px;
+  }
+  
+  .locationList {
+    padding: 6px;
+    max-height: 60vh;
+  }
+  
+  .locationItem {
+    padding: 12px;
+  }
+  
+  .locationItemArea {
+    font-size: 14px;
+  }
+  
+  .locationItemCity {
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 640px) {
+  .headerContent {
+    height: 56px;
+  }
+  
+  .brandName {
+    font-size: 16px;
+  }
+  
+  .logoImage {
+    width: 24px;
+    height: 24px;
+  }
+  
+  .locationButton {
+    padding: 5px 8px;
+  }
+  
+  .locationArea {
+    font-size: 11px;
+    max-width: 60px;
+  }
+  
+  .searchForm {
+    top: 56px;
+    padding: 10px;
+  }
+  
+  .searchInput {
+    font-size: 13px;
+    padding: 9px 10px 9px 36px;
+  }
+  
+  .navIcon {
+    width: 20px;
+    height: 20px;
+  }
+  
+  .navLink {
+    padding: 6px;
+  }
+}

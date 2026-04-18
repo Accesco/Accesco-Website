@@ -1,0 +1,375 @@
+.page {
+  min-height: 100vh;
+  background: #F8F8F8;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px 60px;
+}
+
+/* Hero */
+.hero {
+  background: linear-gradient(135deg, #E23744 0%, #CB202D 100%);
+  color: white;
+  padding: 120px 0 80px;
+  text-align: center;
+}
+
+.heroTitle {
+  font-size: 48px;
+  font-weight: 700;
+  margin-bottom: 16px;
+}
+
+.heroSubtitle {
+  font-size: 20px;
+  opacity: 0.95;
+  margin-bottom: 32px;
+}
+
+.heroBadges {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.heroBadge {
+  background: rgba(255,255,255,0.2);
+  backdrop-filter: blur(10px);
+  padding: 10px 20px;
+  border-radius: 24px;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+/* Plans Section */
+.plansSection {
+  margin-top: -60px;
+  margin-bottom: 60px;
+}
+
+.sectionTitle {
+  font-size: 32px;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 40px;
+  color: #1C1C1C;
+}
+
+.plansGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 24px;
+}
+
+.planCard {
+  background: white;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+  transition: all 0.3s;
+  position: relative;
+}
+
+.planCard:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+}
+
+.popularPlan {
+  border: 3px solid #E23744;
+}
+
+.popularBadge {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: #FFB800;
+  color: #1C1C1C;
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 700;
+  z-index: 1;
+}
+
+.planHeader {
+  padding: 32px 24px;
+  text-align: center;
+  border-top: 4px solid;
+}
+
+.planName {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 16px;
+  color: #1C1C1C;
+}
+
+.planPrice {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  margin-bottom: 8px;
+}
+
+.currency {
+  font-size: 24px;
+  font-weight: 600;
+  color: #696969;
+}
+
+.amount {
+  font-size: 48px;
+  font-weight: 700;
+  color: #1C1C1C;
+}
+
+.period {
+  font-size: 18px;
+  color: #696969;
+  margin-left: 4px;
+}
+
+.customPrice {
+  font-size: 28px;
+  font-weight: 700;
+  color: #1C1C1C;
+}
+
+.savings {
+  font-size: 14px;
+  color: #1C8B3C;
+  font-weight: 600;
+}
+
+.planBenefits {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.benefit {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  font-size: 15px;
+  color: #1C1C1C;
+}
+
+.checkIcon {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+}
+
+.subscribeBtn {
+  width: calc(100% - 48px);
+  margin: 0 24px 24px;
+  padding: 16px;
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.subscribeBtn:hover {
+  transform: scale(1.02);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+/* Comparison Table */
+.comparisonSection {
+  margin-bottom: 60px;
+}
+
+.comparisonTable {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.tableHeader,
+.tableRow {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 16px;
+}
+
+.tableHeader {
+  background: #1C1C1C;
+  color: white;
+  padding: 20px 24px;
+  font-weight: 700;
+}
+
+.tableRow {
+  padding: 16px 24px;
+  border-bottom: 1px solid #CFCFCF;
+}
+
+.tableRow:last-child {
+  border-bottom: none;
+}
+
+.tableRow:nth-child(even) {
+  background: #F8F8F8;
+}
+
+.featureCol {
+  font-weight: 600;
+  color: #1C1C1C;
+}
+
+.planCol {
+  text-align: center;
+  color: #696969;
+}
+
+/* How It Works */
+.howItWorks {
+  margin-bottom: 60px;
+}
+
+.stepsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 32px;
+}
+
+.step {
+  text-align: center;
+}
+
+.stepNumber {
+  width: 60px;
+  height: 60px;
+  background: #E23744;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  font-weight: 700;
+  margin: 0 auto 16px;
+}
+
+.stepTitle {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: #1C1C1C;
+}
+
+.stepDesc {
+  font-size: 15px;
+  color: #696969;
+  line-height: 1.6;
+}
+
+/* FAQ */
+.faqSection {
+  margin-bottom: 60px;
+}
+
+.faqList {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.faqItem {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.faqQuestion {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  background: none;
+  border: none;
+  text-align: left;
+  font-size: 16px;
+  font-weight: 600;
+  color: #1C1C1C;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.faqQuestion:hover {
+  background: #F8F8F8;
+}
+
+.faqIcon {
+  width: 24px;
+  height: 24px;
+  color: #696969;
+  transition: transform 0.3s;
+}
+
+.faqIcon.open {
+  transform: rotate(180deg);
+}
+
+.faqAnswer {
+  padding: 0 24px 20px;
+  font-size: 15px;
+  color: #696969;
+  line-height: 1.6;
+  animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 768px) {
+  .heroTitle {
+    font-size: 32px;
+  }
+  
+  .heroSubtitle {
+    font-size: 16px;
+  }
+  
+  .plansGrid {
+    grid-template-columns: 1fr;
+  }
+  
+  .tableHeader,
+  .tableRow {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  
+  .planCol {
+    text-align: left;
+  }
+  
+  .planCol::before {
+    content: attr(data-label);
+    font-weight: 600;
+    margin-right: 8px;
+  }
+}

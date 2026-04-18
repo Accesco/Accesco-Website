@@ -164,6 +164,16 @@
   background: var(--grokly-text-muted);
 }
 
+/* Hide scrollbar for horizontal product rows */
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
 /* Focus Visible */
 *:focus-visible {
   outline: 2px solid var(--grokly-primary);

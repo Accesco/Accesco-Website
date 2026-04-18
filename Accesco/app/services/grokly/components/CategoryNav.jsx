@@ -32,18 +32,20 @@ export default function CategoryNav({
           <button
             key={category.id}
             data-category={category.id}
-            className={`${styles.catChip} ${activeCategory === category.id ? styles.active : ''}`}
+            className={`${styles.catItem} ${activeCategory === category.id ? styles.active : ''}`}
             onClick={() => onCategorySelect(category.id)}
             aria-label={`Filter by ${category.name}`}
             aria-pressed={activeCategory === category.id}
           >
-            <img 
-              src={category.image} 
-              alt="" 
-              className={styles.catChipImg}
-              loading="lazy"
-            />
-            <span>{category.name}</span>
+            <div className={styles.catImageWrapper}>
+              <img 
+                src={category.image} 
+                alt="" 
+                className={styles.catImage}
+                loading="lazy"
+              />
+            </div>
+            <span className={styles.catName}>{category.name}</span>
           </button>
         ))}
       </div>

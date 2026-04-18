@@ -1,0 +1,542 @@
+/* SwipeEat Page - Tinder-style Food Discovery */
+
+.pageContent {
+  min-height: 100vh;
+  background: #ffffff;
+  padding-top: 72px;
+}
+
+/* Hero Section */
+.hero {
+  background: #ffffff;
+  padding: 40px 24px 32px;
+  text-align: center;
+  border-bottom: 1px solid #E8E8E8;
+}
+
+.heroTitle {
+  font-size: 32px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  color: #1C1C1C;
+  letter-spacing: -0.01em;
+}
+
+.heroSub {
+  font-size: 16px;
+  color: #696969;
+  max-width: 600px;
+  margin: 0 auto 24px;
+  line-height: 1.5;
+}
+
+.statsRow {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.stat {
+  font-size: 14px;
+  font-weight: 500;
+  color: #696969;
+  padding: 8px 16px;
+  background: #F8F9FA;
+  border-radius: 8px;
+}
+
+/* Swipe Area */
+.swipeArea {
+  max-width: 480px;
+  margin: -60px auto 60px;
+  padding: 0 24px;
+  min-height: 600px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.swipeCard {
+  position: absolute;
+  width: 100%;
+  max-width: 420px;
+  background: #ffffff;
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.topCard {
+  z-index: 10;
+}
+
+.backCard {
+  z-index: 5;
+  transform: scale(0.95) translateY(20px);
+  opacity: 0.7;
+}
+
+/* Card Image */
+.cardImageWrap {
+  position: relative;
+  width: 100%;
+  height: 400px;
+  overflow: hidden;
+}
+
+.cardImageWrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.cardImageOverlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.4) 100%);
+}
+
+.cardBadges {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  display: flex;
+  gap: 8px;
+  z-index: 2;
+}
+
+.tag {
+  background: rgba(255,255,255,0.95);
+  color: #E23744;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.vegIndicator {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: #ffffff;
+  padding: 6px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  z-index: 2;
+}
+
+.vegDot {
+  display: block;
+  width: 12px;
+  height: 12px;
+  border: 2px solid #0F8A65;
+  border-radius: 3px;
+}
+
+.nonVegDot {
+  display: block;
+  width: 12px;
+  height: 12px;
+  border: 2px solid #E23744;
+  border-radius: 3px;
+}
+
+/* Like/Skip Overlays */
+.likeOverlay,
+.skipOverlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 64px;
+  font-weight: 900;
+  letter-spacing: 4px;
+  pointer-events: none;
+  z-index: 3;
+  transition: opacity 0.2s ease;
+}
+
+.likeOverlay {
+  background: rgba(28,139,60,0.9);
+  color: #ffffff;
+}
+
+.skipOverlay {
+  background: rgba(226,55,68,0.9);
+  color: #ffffff;
+}
+
+/* Card Info */
+.cardInfo {
+  padding: 24px;
+}
+
+.cardTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 16px;
+}
+
+.dishName {
+  font-size: 28px;
+  font-weight: 700;
+  color: #1C1C1C;
+  margin-bottom: 4px;
+  letter-spacing: -0.01em;
+}
+
+.restaurantName {
+  font-size: 15px;
+  color: #696969;
+}
+
+.ratingPill {
+  background: #0F8A65;
+  color: #ffffff;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.cardMeta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 15px;
+  color: #696969;
+  margin-bottom: 16px;
+}
+
+.dot {
+  color: #CFCFCF;
+}
+
+.moodTags {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.moodTag {
+  background: #F8F9FA;
+  color: #696969;
+  padding: 6px 14px;
+  border-radius: 16px;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+/* Action Buttons */
+.actionButtons {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 24px;
+  margin: 40px 0;
+}
+
+.skipBtn,
+.likeBtn,
+.undoBtn {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  border: none;
+  font-size: 32px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.skipBtn {
+  background: #ffffff;
+  border: 3px solid #E23744;
+}
+
+.skipBtn:hover {
+  background: #E23744;
+  transform: scale(1.1);
+}
+
+.likeBtn {
+  background: #1C8B3C;
+  width: 80px;
+  height: 80px;
+  font-size: 40px;
+}
+
+.likeBtn:hover {
+  background: #0F8A65;
+  transform: scale(1.1);
+  box-shadow: 0 6px 24px rgba(28,139,60,0.4);
+}
+
+.undoBtn {
+  background: #ffffff;
+  border: 3px solid #E8E8E8;
+  font-size: 28px;
+}
+
+.undoBtn:hover:not(:disabled) {
+  border-color: #696969;
+  transform: scale(1.1);
+}
+
+.undoBtn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* Done State */
+.doneState {
+  text-align: center;
+  padding: 80px 24px;
+}
+
+.doneIcon {
+  font-size: 96px;
+  margin-bottom: 24px;
+  animation: bounce 1s ease infinite;
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-20px); }
+}
+
+.doneTitle {
+  font-size: 32px;
+  font-weight: 700;
+  color: #1C1C1C;
+  margin-bottom: 12px;
+  letter-spacing: -0.01em;
+}
+
+.doneSub {
+  font-size: 18px;
+  color: #696969;
+  margin-bottom: 32px;
+}
+
+.doneActions {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.btnPrimary,
+.btnSecondary {
+  padding: 14px 32px;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.btnPrimary {
+  background: #E23744;
+  color: #ffffff;
+  border: none;
+}
+
+.btnPrimary:hover {
+  background: #C62828;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(226,55,68,0.3);
+}
+
+.btnSecondary {
+  background: #ffffff;
+  color: #E23744;
+  border: 3px solid #E23744;
+}
+
+.btnSecondary:hover {
+  background: #E23744;
+  color: #ffffff;
+}
+
+/* Liked Section */
+.likedSection {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 60px 24px;
+}
+
+.likedTitle {
+  font-size: 28px;
+  font-weight: 700;
+  color: #1C1C1C;
+  margin-bottom: 24px;
+  letter-spacing: -0.01em;
+}
+
+.likedGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+.likedCard {
+  background: #ffffff;
+  border: 1px solid #E8E8E8;
+  border-radius: 12px;
+  overflow: hidden;
+  display: flex;
+  gap: 12px;
+  padding: 12px;
+  transition: all 0.2s ease;
+}
+
+.likedCard:hover {
+  box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+  border-color: #CFCFCF;
+}
+
+.likedCard img {
+  width: 80px;
+  height: 80px;
+  border-radius: 8px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.likedInfo {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+  flex: 1;
+}
+
+.likedName {
+  font-size: 15px;
+  font-weight: 600;
+  color: #1C1C1C;
+}
+
+.likedPrice {
+  font-size: 14px;
+  font-weight: 500;
+  color: #0F8A65;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .pageContent {
+    padding-top: 116px;
+  }
+  
+  .hero {
+    padding: 32px 16px 24px;
+  }
+  
+  .heroTitle {
+    font-size: 24px;
+  }
+  
+  .heroSub {
+    font-size: 14px;
+  }
+  
+  .statsRow {
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .stat {
+    font-size: 13px;
+    padding: 6px 12px;
+  }
+  
+  .swipeArea {
+    margin: -40px auto 40px;
+    padding: 0 16px;
+    min-height: 500px;
+  }
+  
+  .cardImageWrap {
+    height: 320px;
+  }
+  
+  .dishName {
+    font-size: 24px;
+  }
+  
+  .actionButtons {
+    gap: 16px;
+  }
+  
+  .skipBtn,
+  .undoBtn {
+    width: 56px;
+    height: 56px;
+    font-size: 24px;
+  }
+  
+  .likeBtn {
+    width: 72px;
+    height: 72px;
+    font-size: 32px;
+  }
+  
+  .likedGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .pageContent {
+    padding-top: 106px;
+  }
+  
+  .heroTitle {
+    font-size: 28px;
+  }
+  
+  .heroSub {
+    font-size: 14px;
+  }
+  
+  .stat {
+    font-size: 14px;
+    padding: 8px 16px;
+  }
+  
+  .cardImageWrap {
+    height: 280px;
+  }
+  
+  .dishName {
+    font-size: 20px;
+  }
+  
+  .doneIcon {
+    font-size: 72px;
+  }
+  
+  .doneTitle {
+    font-size: 24px;
+  }
+  
+  .doneSub {
+    font-size: 16px;
+  }
+}

@@ -1,0 +1,829 @@
+/* Cart Page - Zomato Style */
+
+.page {
+  min-height: 100vh;
+  background: #F8F9FA;
+  padding-top: 72px;
+  padding-bottom: 40px;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 32px 24px;
+}
+
+/* Empty Cart */
+.emptyCart {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  text-align: center;
+  background: #ffffff;
+  border-radius: 8px;
+  padding: 60px 24px;
+  margin-top: 40px;
+}
+
+.emptyIcon {
+  font-size: 72px;
+  margin-bottom: 24px;
+  opacity: 0.4;
+}
+
+.emptyTitle {
+  font-size: 24px;
+  font-weight: 600;
+  color: #1C1C1C;
+  margin-bottom: 12px;
+  letter-spacing: -0.01em;
+}
+
+.emptyText {
+  font-size: 15px;
+  color: #696969;
+  margin-bottom: 32px;
+}
+
+.browseBtn {
+  background: #E23744;
+  color: #ffffff;
+  padding: 12px 32px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 15px;
+  transition: all 0.2s ease;
+  display: inline-block;
+}
+
+.browseBtn:hover {
+  background: #C62828;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(226,55,68,0.3);
+}
+
+/* Cart Layout */
+.cartLayout {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: 24px;
+}
+
+.cartSection {
+  background: #ffffff;
+  border: 1px solid #E8E8E8;
+  border-radius: 8px;
+  padding: 24px;
+}
+
+.cartHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #E8E8E8;
+}
+
+.cartTitle {
+  font-size: 22px;
+  font-weight: 600;
+  color: #1C1C1C;
+  letter-spacing: -0.01em;
+}
+
+.clearBtn {
+  background: none;
+  border: 1px solid #E8E8E8;
+  color: #696969;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.clearBtn:hover {
+  border-color: #E23744;
+  color: #E23744;
+  background: #FFEBEE;
+}
+
+/* Cart Items - Zomato Style */
+.cartItems {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.cartItem {
+  display: flex;
+  gap: 16px;
+  padding: 16px 0;
+  border-bottom: 1px solid #E8E8E8;
+  transition: all 0.2s ease;
+}
+
+.cartItem:last-child {
+  border-bottom: none;
+}
+
+.itemImage {
+  width: 80px;
+  height: 80px;
+  border-radius: 8px;
+  overflow: hidden;
+  flex-shrink: 0;
+  background: #F8F8F8;
+}
+
+.itemImage img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.itemInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.itemName {
+  font-size: 16px;
+  font-weight: 500;
+  color: #1C1C1C;
+  margin-bottom: 4px;
+  letter-spacing: -0.01em;
+}
+
+.itemRestaurant {
+  font-size: 13px;
+  color: #696969;
+  margin-bottom: 8px;
+}
+
+.itemPrice {
+  font-size: 15px;
+  font-weight: 500;
+  color: #1C1C1C;
+}
+
+.itemActions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.quantityControl {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid #E8E8E8;
+  border-radius: 6px;
+  padding: 2px;
+}
+
+.qtyBtn {
+  background: none;
+  border: none;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  color: #0F8A65;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  font-weight: 600;
+}
+
+.qtyBtn:hover {
+  background: #E8F5E9;
+}
+
+.qtyValue {
+  font-size: 14px;
+  font-weight: 600;
+  min-width: 20px;
+  text-align: center;
+  color: #0F8A65;
+}
+
+.removeBtn {
+  background: none;
+  border: none;
+  color: #696969;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.removeBtn:hover {
+  color: #E23744;
+}
+
+.removeBtn svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* Promo Section - Zomato Style */
+.promoSection {
+  padding-top: 20px;
+  border-top: 1px solid #E8E8E8;
+}
+
+.promoTitle {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  color: #1C1C1C;
+  letter-spacing: -0.01em;
+}
+
+.promoInput {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.promoField {
+  flex: 1;
+  padding: 10px 14px;
+  border: 1px solid #E8E8E8;
+  border-radius: 6px;
+  font-size: 14px;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+.promoField:focus {
+  outline: none;
+  border-color: #0F8A65;
+}
+
+.applyBtn {
+  background: #0F8A65;
+  color: #ffffff;
+  border: none;
+  padding: 10px 24px;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.applyBtn:hover {
+  background: #0D7556;
+}
+
+.appliedPromo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #E8F5E9;
+  border: 1px solid #0F8A65;
+  padding: 10px 14px;
+  border-radius: 6px;
+  margin-bottom: 16px;
+}
+
+.checkIcon {
+  width: 18px;
+  height: 18px;
+  color: #0F8A65;
+  flex-shrink: 0;
+}
+
+.appliedPromo span {
+  flex: 1;
+  font-size: 13px;
+  color: #0F8A65;
+  font-weight: 500;
+}
+
+.removePromo {
+  background: none;
+  border: none;
+  color: #0F8A65;
+  cursor: pointer;
+  font-size: 16px;
+  padding: 4px;
+  line-height: 1;
+}
+
+.availablePromos {
+  margin-top: 16px;
+}
+
+.availableTitle {
+  font-size: 13px;
+  color: #696969;
+  margin-bottom: 10px;
+}
+
+.promoChip {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  width: 100%;
+  background: #F8F9FA;
+  border: 1px solid #E8E8E8;
+  padding: 12px;
+  border-radius: 6px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: left;
+}
+
+.promoChip:hover {
+  border-color: #0F8A65;
+  background: #E8F5E9;
+}
+
+.promoCode {
+  font-size: 13px;
+  font-weight: 700;
+  color: #0F8A65;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.promoDesc {
+  font-size: 12px;
+  color: #696969;
+  line-height: 1.4;
+}
+
+/* Summary Section - Zomato Style */
+.summarySection {
+  position: sticky;
+  top: 96px;
+  height: fit-content;
+}
+
+.summaryCard {
+  background: #ffffff;
+  border: 1px solid #E8E8E8;
+  border-radius: 8px;
+  padding: 20px;
+}
+
+.summaryTitle {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  color: #1C1C1C;
+  letter-spacing: -0.01em;
+}
+
+.summaryRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  font-size: 14px;
+  color: #696969;
+}
+
+.summaryRow span:last-child {
+  font-weight: 500;
+  color: #1C1C1C;
+}
+
+.summaryRow.discount {
+  color: #0F8A65;
+}
+
+.summaryRow.discount span {
+  color: #0F8A65;
+  font-weight: 600;
+}
+
+.free {
+  color: #0F8A65 !important;
+  font-weight: 600 !important;
+}
+
+.deliveryTip {
+  background: #FFF3E0;
+  border-left: 3px solid #FFB800;
+  padding: 10px 12px;
+  border-radius: 4px;
+  font-size: 12px;
+  color: #E65100;
+  margin-bottom: 12px;
+  line-height: 1.4;
+}
+
+.summaryDivider {
+  height: 1px;
+  background: #E8E8E8;
+  margin: 14px 0;
+}
+
+.summaryRow.total {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1C1C1C;
+  margin-top: 4px;
+}
+
+.summaryRow.total span {
+  font-size: 18px;
+  color: #1C1C1C;
+  font-weight: 600;
+}
+
+.checkoutBtn {
+  width: 100%;
+  background: #0F8A65;
+  color: #ffffff;
+  border: none;
+  padding: 14px;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 16px;
+  transition: all 0.2s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.checkoutBtn:hover {
+  background: #0D7556;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(15,138,101,0.3);
+}
+
+.secureNote {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 12px;
+  font-size: 12px;
+  color: #696969;
+}
+
+.lockIcon {
+  width: 14px;
+  height: 14px;
+  color: #0F8A65;
+}
+
+/* Responsive Design */
+@media (max-width: 968px) {
+  .cartLayout {
+    grid-template-columns: 1fr;
+  }
+  
+  .summarySection {
+    position: static;
+  }
+}
+
+@media (max-width: 768px) {
+  .page {
+    padding-top: 116px;
+  }
+  
+  .container {
+    padding: 24px 12px;
+  }
+  
+  .cartSection {
+    padding: 20px;
+  }
+  
+  .cartHeader {
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+  }
+  
+  .cartTitle {
+    font-size: 20px;
+  }
+  
+  .clearBtn {
+    padding: 7px 14px;
+    font-size: 13px;
+  }
+  
+  .cartItems {
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+  
+  .cartItem {
+    padding: 12px 0;
+    gap: 12px;
+  }
+  
+  .itemImage {
+    width: 70px;
+    height: 70px;
+  }
+  
+  .itemName {
+    font-size: 15px;
+  }
+  
+  .itemRestaurant {
+    font-size: 12px;
+  }
+  
+  .itemPrice {
+    font-size: 14px;
+  }
+  
+  .quantityControl {
+    gap: 6px;
+  }
+  
+  .qtyBtn {
+    width: 26px;
+    height: 26px;
+    font-size: 15px;
+  }
+  
+  .qtyValue {
+    font-size: 13px;
+    min-width: 18px;
+  }
+  
+  .promoSection {
+    padding-top: 16px;
+  }
+  
+  .promoTitle {
+    font-size: 15px;
+    margin-bottom: 10px;
+  }
+  
+  .promoInput {
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  
+  .promoField {
+    padding: 9px 12px;
+    font-size: 13px;
+  }
+  
+  .applyBtn {
+    padding: 9px 20px;
+    font-size: 13px;
+  }
+  
+  .appliedPromo {
+    padding: 9px 12px;
+    margin-bottom: 12px;
+  }
+  
+  .checkIcon {
+    width: 16px;
+    height: 16px;
+  }
+  
+  .appliedPromo span {
+    font-size: 12px;
+  }
+  
+  .availablePromos {
+    margin-top: 12px;
+  }
+  
+  .availableTitle {
+    font-size: 12px;
+    margin-bottom: 8px;
+  }
+  
+  .promoChip {
+    padding: 10px;
+    margin-bottom: 6px;
+  }
+  
+  .promoCode {
+    font-size: 12px;
+  }
+  
+  .promoDesc {
+    font-size: 11px;
+  }
+  
+  .summaryCard {
+    padding: 18px;
+  }
+  
+  .summaryTitle {
+    font-size: 17px;
+    margin-bottom: 14px;
+  }
+  
+  .summaryRow {
+    margin-bottom: 8px;
+    font-size: 13px;
+  }
+  
+  .summaryRow.total {
+    font-size: 15px;
+  }
+  
+  .summaryRow.total span {
+    font-size: 17px;
+  }
+  
+  .deliveryTip {
+    padding: 9px 10px;
+    font-size: 11px;
+    margin-bottom: 10px;
+  }
+  
+  .checkoutBtn {
+    padding: 12px;
+    font-size: 14px;
+    margin-top: 14px;
+  }
+  
+  .secureNote {
+    margin-top: 10px;
+    font-size: 11px;
+  }
+  
+  .lockIcon {
+    width: 12px;
+    height: 12px;
+  }
+  
+  .emptyCart {
+    padding: 50px 20px;
+    margin-top: 30px;
+  }
+  
+  .emptyIcon {
+    font-size: 60px;
+    margin-bottom: 20px;
+  }
+  
+  .emptyTitle {
+    font-size: 20px;
+    margin-bottom: 10px;
+  }
+  
+  .emptyText {
+    font-size: 14px;
+    margin-bottom: 28px;
+  }
+  
+  .browseBtn {
+    padding: 11px 28px;
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 640px) {
+  .page {
+    padding-top: 106px;
+  }
+  
+  .container {
+    padding: 20px 10px;
+  }
+  
+  .cartSection {
+    padding: 16px;
+  }
+  
+  .cartTitle {
+    font-size: 18px;
+  }
+  
+  .clearBtn {
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+  
+  .cartItem {
+    flex-wrap: wrap;
+    padding: 10px 0;
+  }
+  
+  .itemImage {
+    width: 100%;
+    height: 120px;
+  }
+  
+  .itemName {
+    font-size: 14px;
+  }
+  
+  .itemRestaurant {
+    font-size: 11px;
+  }
+  
+  .itemPrice {
+    font-size: 13px;
+  }
+  
+  .itemActions {
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+  }
+  
+  .quantityControl {
+    gap: 6px;
+  }
+  
+  .qtyBtn {
+    width: 24px;
+    height: 24px;
+    font-size: 14px;
+  }
+  
+  .qtyValue {
+    font-size: 12px;
+    min-width: 16px;
+  }
+  
+  .removeBtn svg {
+    width: 16px;
+    height: 16px;
+  }
+  
+  .promoInput {
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .applyBtn {
+    width: 100%;
+    padding: 10px;
+  }
+  
+  .summaryCard {
+    padding: 16px;
+  }
+  
+  .summaryTitle {
+    font-size: 16px;
+  }
+  
+  .summaryRow {
+    font-size: 12px;
+  }
+  
+  .summaryRow.total {
+    font-size: 14px;
+  }
+  
+  .summaryRow.total span {
+    font-size: 16px;
+  }
+  
+  .checkoutBtn {
+    padding: 11px;
+    font-size: 13px;
+  }
+  
+  .emptyCart {
+    padding: 40px 16px;
+    margin-top: 20px;
+  }
+  
+  .emptyIcon {
+    font-size: 48px;
+    margin-bottom: 16px;
+  }
+  
+  .emptyTitle {
+    font-size: 18px;
+  }
+  
+  .emptyText {
+    font-size: 13px;
+    margin-bottom: 24px;
+  }
+  
+  .browseBtn {
+    padding: 10px 24px;
+    font-size: 13px;
+  }
+}

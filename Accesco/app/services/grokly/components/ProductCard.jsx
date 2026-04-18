@@ -20,13 +20,97 @@ const generateStars = (rating) => {
 };
 
 /**
- * Generate fallback image URL
- * @param {string} name - Product name
- * @returns {string} Fallback image URL
+ * Get Unsplash image URL based on product category and index
+ * Uses direct Unsplash photo URLs for reliability
+ * @param {string} productId - Product ID
+ * @param {string} category - Product category
+ * @returns {string} Unsplash image URL
  */
-const getFallbackImage = (name) => {
-  const firstLetter = name ? name[0].toUpperCase() : 'P';
-  return `https://placehold.co/120x120/e8f5e9/0c831f?text=${encodeURIComponent(firstLetter)}`;
+const getProductImage = (productId, category) => {
+  // Map of category to Unsplash photo collections
+  const categoryImages = {
+    'vegetables-fruits': [
+      'https://images.unsplash.com/photo-1540420773420-3366772f4999?w=300&h=300&fit=crop', // vegetables
+      'https://images.unsplash.com/photo-1610348725531-843dff563e2c?w=300&h=300&fit=crop', // tomatoes
+      'https://images.unsplash.com/photo-1587049352846-4a222e784422?w=300&h=300&fit=crop', // fruits
+      'https://images.unsplash.com/photo-1619566636858-adf3ef46400b?w=300&h=300&fit=crop', // fresh produce
+      'https://images.unsplash.com/photo-1566385101042-1a0aa0c1268c?w=300&h=300&fit=crop', // bananas
+    ],
+    'dairy-breakfast': [
+      'https://images.unsplash.com/photo-1563636619-e9143da7973b?w=300&h=300&fit=crop', // milk
+      'https://images.unsplash.com/photo-1628088062854-d1870b4553da?w=300&h=300&fit=crop', // dairy
+      'https://images.unsplash.com/photo-1486297678162-eb2a19b0a32d?w=300&h=300&fit=crop', // butter
+      'https://images.unsplash.com/photo-1452195100486-9cc805987862?w=300&h=300&fit=crop', // cheese
+    ],
+    'munchies': [
+      'https://images.unsplash.com/photo-1621939514649-280e2ee25f60?w=300&h=300&fit=crop', // chips
+      'https://images.unsplash.com/photo-1599490659213-e2b9527bd087?w=300&h=300&fit=crop', // snacks
+      'https://images.unsplash.com/photo-1613919113640-25732ec5e61f?w=300&h=300&fit=crop', // crackers
+    ],
+    'cold-drinks': [
+      'https://images.unsplash.com/photo-1581006852262-e4307cf6283a?w=300&h=300&fit=crop', // drinks
+      'https://images.unsplash.com/photo-1625772299848-391b6a87d7b3?w=300&h=300&fit=crop', // beverages
+      'https://images.unsplash.com/photo-1622483767028-3f66f32aef97?w=300&h=300&fit=crop', // juice
+    ],
+    'instant-frozen': [
+      'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=300&h=300&fit=crop', // pizza
+      'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=300&h=300&fit=crop', // food
+    ],
+    'tea-coffee': [
+      'https://images.unsplash.com/photo-1511920170033-f8396924c348?w=300&h=300&fit=crop', // coffee
+      'https://images.unsplash.com/photo-1564890369478-c89ca6d9cde9?w=300&h=300&fit=crop', // tea
+    ],
+    'bakery-biscuits': [
+      'https://images.unsplash.com/photo-1558961363-fa8fdf82db35?w=300&h=300&fit=crop', // cookies
+      'https://images.unsplash.com/photo-1486427944299-d1955d23e34d?w=300&h=300&fit=crop', // bread
+    ],
+    'sweet-tooth': [
+      'https://images.unsplash.com/photo-1511381939415-e44015466834?w=300&h=300&fit=crop', // chocolate
+      'https://images.unsplash.com/photo-1481391319762-47dff72954d9?w=300&h=300&fit=crop', // candy
+    ],
+    'default': [
+      'https://images.unsplash.com/photo-1534723452862-4c874018d66d?w=300&h=300&fit=crop', // grocery
+      'https://images.unsplash.com/photo-1542838132-92c53300491e?w=300&h=300&fit=crop', // products
+    ]
+  };
+
+  // Get images for category or use default
+  const images = categoryImages[category] || categoryImages['default'];
+  
+  // Use product ID hash to consistently select an image
+  const hash = productId.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+  const index = hash % images.length;
+  
+  return images[index];
+};
+
+/**
+ * Get product emoji based on category (fallback)
+ * @param {string} category - Product category
+ * @returns {string} Emoji
+ */
+const getCategoryEmoji = (category) => {
+  const emojiMap = {
+    'vegetables-fruits': '🥬',
+    'dairy-breakfast': '🥛',
+    'munchies': '🍿',
+    'cold-drinks': '🥤',
+    'instant-frozen': '🍕',
+    'tea-coffee': '☕',
+    'bakery-biscuits': '🍪',
+    'sweet-tooth': '🍫',
+    'atta-rice-dal': '🌾',
+    'masala-oil': '🌶️',
+    'sauces-spreads': '🍯',
+    'organic-healthy': '🥗',
+    'baby-care': '👶',
+    'pharma-wellness': '💊',
+    'cleaning': '🧹',
+    'home-office': '🏠',
+    'personal-care': '🧴',
+    'pet-care': '🐾'
+  };
+  return emojiMap[category] || '🛒';
 };
 
 /**
@@ -41,7 +125,8 @@ const getFallbackImage = (name) => {
  * @param {number} props.product.mrp - Original price
  * @param {number} props.product.disc - Discount percentage
  * @param {string} props.product.unit - Unit (e.g., "500 g")
- * @param {string} props.product.img - Image URL
+ * @param {string} props.product.image - Image URL
+ * @param {string} props.product.category - Product category
  * @param {Array<string>} [props.product.tags] - Product tags
  * @param {number} props.product.rating - Rating (0-5)
  */
@@ -50,12 +135,15 @@ function ProductCard({ product }) {
   
   const quantity = getProductQuantity(product.id);
   const stars = generateStars(product.rating);
+  const categoryEmoji = getCategoryEmoji(product.category);
+  const imageUrl = getProductImage(product.id, product.category);
 
   /**
-   * Handle image error - show fallback
+   * Handle image error - show emoji fallback
    */
   const handleImageError = (e) => {
-    e.target.src = getFallbackImage(product.name);
+    e.target.style.display = 'none';
+    e.target.nextElementSibling.style.display = 'flex';
   };
 
   /**
@@ -113,11 +201,14 @@ function ProductCard({ product }) {
       <div className={styles.pimgWrap}>
         <img 
           className={styles.pimg} 
-          src={product.img} 
+          src={imageUrl} 
           alt={`${product.name} - ${product.brand}`}
           loading="lazy"
           onError={handleImageError}
         />
+        <div className={styles.pimgPlaceholder} style={{ display: 'none' }}>
+          <span className={styles.pimgEmoji}>{categoryEmoji}</span>
+        </div>
       </div>
 
       {/* Delivery Time Badge */}

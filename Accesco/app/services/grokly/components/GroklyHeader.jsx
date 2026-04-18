@@ -48,7 +48,6 @@ export default function GroklyHeader({
         >
           <span className={styles.locPin} aria-hidden="true">📍</span>
           <div className={styles.locText}>
-            <div className={styles.locLabel}>DELIVERY IN 11 MINS</div>
             <div className={styles.locName}>{location}</div>
           </div>
           <span className={styles.locArrow} aria-hidden="true">▼</span>
@@ -75,11 +74,6 @@ export default function GroklyHeader({
           )}
         </div>
 
-        {/* Delivery Badge */}
-        <div className={styles.deskDeliv} aria-label="11 minute delivery">
-          <span className={styles.bolt} aria-hidden="true">⚡</span>
-          <span>Delivery in <strong>11 MINS</strong></span>
-        </div>
 
         {/* Cart Button */}
         <button 

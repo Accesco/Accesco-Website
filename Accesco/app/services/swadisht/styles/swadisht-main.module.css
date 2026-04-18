@@ -1,0 +1,746 @@
+/* Swadisht Main Page - Apple-Quality Design */
+
+.page {
+  min-height: 100vh;
+  background: #ffffff;
+}
+
+.pageContent {
+  padding-top: 72px;
+}
+
+/* Hero Section - Zomato Tab Style */
+.hero {
+  position: relative;
+  background: #ffffff;
+  border-bottom: 1px solid #E8E8E8;
+  padding: 40px 0 0;
+}
+
+.heroContent {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.heroText {
+  margin-bottom: 32px;
+  text-align: center;
+}
+
+.heroTitle {
+  font-size: 42px;
+  font-weight: 500;
+  color: #1C1C1C;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+
+.heroSubtitle {
+  font-size: 16px;
+  color: #696969;
+  font-weight: 400;
+  margin-top: 8px;
+}
+
+/* Zomato-style Tabs */
+.heroTabs {
+  display: flex;
+  gap: 0;
+  border-bottom: 1px solid #E8E8E8;
+}
+
+.heroTab {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 16px 24px;
+  text-decoration: none;
+  position: relative;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  min-width: 120px;
+}
+
+.heroTab:hover {
+  background: #F8F9FA;
+}
+
+.heroTab.active {
+  background: transparent;
+}
+
+.heroTab.active::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: #E23744;
+  border-radius: 3px 3px 0 0;
+}
+
+.tabIcon {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #696969;
+  transition: color 0.2s ease;
+}
+
+.heroTab.active .tabIcon {
+  color: #E23744;
+}
+
+.tabIcon svg {
+  width: 24px;
+  height: 24px;
+}
+
+.tabLabel {
+  font-size: 15px;
+  font-weight: 500;
+  color: #696969;
+  letter-spacing: -0.01em;
+  transition: color 0.2s ease;
+}
+
+.heroTab.active .tabLabel {
+  color: #E23744;
+  font-weight: 600;
+}
+
+/* Main Content */
+.mainContent {
+  background: #F8F9FA;
+  min-height: 60vh;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 24px;
+}
+
+/* Filter Bar - Zomato Style */
+.filterBar {
+  background: #ffffff;
+  border-bottom: 1px solid #E8E8E8;
+  padding: 16px 0;
+  margin-bottom: 24px;
+  position: sticky;
+  top: 72px;
+  z-index: 100;
+}
+
+.filterScroll {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.filterScroll::-webkit-scrollbar {
+  display: none;
+}
+
+.filterBtn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #ffffff;
+  border: 1px solid #CFCFCF;
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 400;
+  color: #1C1C1C;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+.filterBtn:hover {
+  border-color: #9C9C9C;
+}
+
+.filterIcon {
+  width: 16px;
+  height: 16px;
+  color: #696969;
+}
+
+.filterChip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #ffffff;
+  border: 1px solid #CFCFCF;
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 400;
+  color: #1C1C1C;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+.filterChip:hover {
+  border-color: #9C9C9C;
+  background: #F8F8F8;
+}
+
+.filterChip.active {
+  background: #E23744;
+  border-color: #E23744;
+  color: #ffffff;
+  font-weight: 500;
+}
+
+/* Results Header */
+.resultsHeader {
+  margin-bottom: 24px;
+}
+
+.resultsTitle {
+  font-size: 28px;
+  font-weight: 700;
+  color: #111827;
+  letter-spacing: -0.02em;
+}
+
+/* Restaurant Grid - Zomato Style */
+.restaurantGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 32px 24px;
+}
+
+/* Restaurant Card - Exact Zomato Design */
+.restaurantCard {
+  background: #ffffff;
+  border: 1px solid #E8E8E8;
+  border-radius: 8px;
+  overflow: hidden;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.restaurantCard:hover {
+  border-color: #CFCFCF;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.08);
+}
+
+.cardImageWrapper {
+  position: relative;
+  width: 100%;
+  height: 168px;
+  overflow: hidden;
+  background: #F8F8F8;
+}
+
+.cardImage {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.cardImage img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.restaurantCard:hover .cardImage img {
+  transform: scale(1.03);
+}
+
+.imageSkeleton {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, #F8F8F8 25%, #E8E8E8 50%, #F8F8F8 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.imageOverlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.03) 100%);
+}
+
+.offerTag {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 100%);
+  padding: 24px 12px 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.offerIcon {
+  width: 14px;
+  height: 14px;
+}
+
+.vegBadge {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  background: #ffffff;
+  border-radius: 4px;
+  padding: 4px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+}
+
+.vegDotIcon {
+  width: 10px;
+  height: 10px;
+  border: 1.5px solid #0F8A65;
+  border-radius: 2px;
+}
+
+.cardContent {
+  padding: 12px;
+}
+
+.cardTop {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.restaurantName {
+  font-size: 17px;
+  font-weight: 500;
+  color: #1C1C1C;
+  letter-spacing: -0.01em;
+  line-height: 1.3;
+  flex: 1;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.ratingPill {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: #0F8A65;
+  border-radius: 6px;
+  padding: 3px 6px;
+  flex-shrink: 0;
+}
+
+.ratingValue {
+  font-size: 12px;
+  font-weight: 500;
+  color: #ffffff;
+}
+
+.ratingPill .starIcon {
+  width: 10px;
+  height: 10px;
+  color: #ffffff;
+}
+
+.cuisines {
+  font-size: 13px;
+  color: #696969;
+  margin-bottom: 8px;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.cardFooter {
+  padding-top: 8px;
+  border-top: 1px solid #E8E8E8;
+}
+
+.metaInfo {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: #696969;
+}
+
+.deliveryTime {
+  font-weight: 400;
+}
+
+.metaDot {
+  color: #CFCFCF;
+  font-size: 10px;
+}
+
+.priceForTwo {
+  font-weight: 400;
+}
+
+/* Empty State */
+.emptyState {
+  text-align: center;
+  padding: 80px 24px;
+}
+
+.emptyIcon {
+  font-size: 64px;
+  margin-bottom: 24px;
+  opacity: 0.4;
+}
+
+.emptyTitle {
+  font-size: 24px;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 12px;
+}
+
+.emptyText {
+  font-size: 16px;
+  color: #6B7280;
+  margin-bottom: 32px;
+}
+
+.resetButton {
+  background: #E23744;
+  color: #ffffff;
+  border: none;
+  border-radius: 12px;
+  padding: 14px 28px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.resetButton:hover {
+  background: #C62828;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(226,55,68,0.3);
+}
+
+/* Footer */
+.footer {
+  background: #111827;
+  color: #ffffff;
+  padding: 60px 0 32px;
+  margin-top: 80px;
+}
+
+.footerGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 40px;
+  margin-bottom: 40px;
+}
+
+.footerCol {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.footerTitle {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  letter-spacing: -0.01em;
+}
+
+.footerCol a {
+  color: #9CA3AF;
+  text-decoration: none;
+  font-size: 15px;
+  transition: color 0.2s ease;
+}
+
+.footerCol a:hover {
+  color: #ffffff;
+}
+
+.footerText {
+  color: #9CA3AF;
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.footerBottom {
+  padding-top: 32px;
+  border-top: 1px solid #374151;
+  text-align: center;
+  color: #6B7280;
+  font-size: 14px;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .heroTitle {
+    font-size: 36px;
+  }
+  
+  .heroTabs {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding: 0 12px;
+  }
+  
+  .heroTabs::-webkit-scrollbar {
+    display: none;
+  }
+  
+  .heroTab {
+    min-width: 110px;
+  }
+  
+  .restaurantGrid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+  
+  .container {
+    padding: 32px 16px;
+  }
+}
+
+@media (max-width: 768px) {
+  .pageContent {
+    padding-top: 116px; /* Header + Search bar */
+  }
+  
+  .hero {
+    padding: 20px 0 0;
+  }
+  
+  .heroContent {
+    padding: 0 12px;
+  }
+  
+  .heroText {
+    margin-bottom: 20px;
+  }
+  
+  .heroTitle {
+    font-size: 28px;
+  }
+  
+  .heroSubtitle {
+    font-size: 14px;
+  }
+  
+  .heroTab {
+    padding: 10px 16px;
+    min-width: 100px;
+    gap: 6px;
+  }
+  
+  .tabIcon {
+    width: 26px;
+    height: 26px;
+  }
+  
+  .tabIcon svg {
+    width: 18px;
+    height: 18px;
+  }
+  
+  .tabLabel {
+    font-size: 13px;
+  }
+  
+  /* Filter Bar */
+  .filterBar {
+    top: 116px;
+    padding: 12px 0;
+  }
+  
+  .filterScroll {
+    padding: 0 12px;
+    gap: 8px;
+  }
+  
+  .filterBtn,
+  .filterChip {
+    padding: 7px 14px;
+    font-size: 13px;
+    white-space: nowrap;
+  }
+  
+  /* Results */
+  .resultsHeader {
+    margin-bottom: 16px;
+  }
+  
+  .resultsTitle {
+    font-size: 20px;
+  }
+  
+  .restaurantGrid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  
+  /* Restaurant Cards - Mobile optimized */
+  .restaurantCard {
+    border-radius: 12px;
+  }
+  
+  .cardImageWrapper {
+    height: 180px;
+  }
+  
+  .cardContent {
+    padding: 14px;
+  }
+  
+  .restaurantName {
+    font-size: 16px;
+  }
+  
+  .cuisines {
+    font-size: 12px;
+  }
+  
+  .metaInfo {
+    font-size: 12px;
+  }
+  
+  .container {
+    padding: 24px 12px;
+  }
+  
+  /* Empty State */
+  .emptyState {
+    padding: 60px 16px;
+  }
+  
+  .emptyIcon {
+    font-size: 48px;
+  }
+  
+  .emptyTitle {
+    font-size: 20px;
+  }
+  
+  .emptyText {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 640px) {
+  .pageContent {
+    padding-top: 106px; /* Adjusted for smaller header */
+  }
+  
+  .heroContent {
+    padding: 0 10px;
+  }
+  
+  .heroTitle {
+    font-size: 24px;
+  }
+  
+  .heroSubtitle {
+    font-size: 13px;
+  }
+  
+  .heroTab {
+    padding: 8px 12px;
+    min-width: 85px;
+    gap: 4px;
+  }
+  
+  .tabIcon {
+    width: 22px;
+    height: 22px;
+  }
+  
+  .tabIcon svg {
+    width: 16px;
+    height: 16px;
+  }
+  
+  .tabLabel {
+    font-size: 12px;
+  }
+  
+  .filterBar {
+    top: 106px;
+    padding: 10px 0;
+  }
+  
+  .filterScroll {
+    padding: 0 10px;
+  }
+  
+  .filterBtn,
+  .filterChip {
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+  
+  .container {
+    padding: 20px 10px;
+  }
+  
+  .resultsTitle {
+    font-size: 18px;
+  }
+  
+  .cardImageWrapper {
+    height: 160px;
+  }
+  
+  .cardContent {
+    padding: 12px;
+  }
+  
+  .restaurantName {
+    font-size: 15px;
+  }
+  
+  .ratingPill {
+    padding: 2px 5px;
+  }
+  
+  .ratingValue {
+    font-size: 11px;
+  }
+  
+  .ratingPill .starIcon {
+    width: 9px;
+    height: 9px;
+  }
+}

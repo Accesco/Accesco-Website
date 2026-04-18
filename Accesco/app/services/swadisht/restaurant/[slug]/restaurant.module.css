@@ -1,0 +1,704 @@
+/* Restaurant Detail Page - Zomato Style */
+
+.page {
+  min-height: 100vh;
+  background: #ffffff;
+  padding-top: 72px;
+}
+
+.loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  gap: 16px;
+}
+
+.spinner {
+  width: 48px;
+  height: 48px;
+  border: 3px solid #F8F8F8;
+  border-top-color: #E23744;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Hero Section - Zomato Style */
+.hero {
+  position: relative;
+  background: #ffffff;
+  border-bottom: 1px solid #E8E8E8;
+}
+
+.heroImage {
+  width: 100%;
+  height: 320px;
+  overflow: hidden;
+  background: #F8F8F8;
+}
+
+.heroImage img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.heroOverlay {
+  display: none;
+}
+
+.heroContent {
+  background: #ffffff;
+  padding: 24px 0;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+  width: 100%;
+}
+
+.restaurantName {
+  font-size: 36px;
+  font-weight: 500;
+  color: #1C1C1C;
+  margin-bottom: 8px;
+  letter-spacing: -0.02em;
+}
+
+.cuisines {
+  font-size: 15px;
+  color: #696969;
+  margin-bottom: 16px;
+}
+
+.metaRow {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #E8E8E8;
+}
+
+.metaItem {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 15px;
+  color: #1C1C1C;
+}
+
+.starIcon {
+  width: 18px;
+  height: 18px;
+  color: #0F8A65;
+}
+
+.rating {
+  font-weight: 600;
+  color: #0F8A65;
+}
+
+.ratingCount {
+  color: #696969;
+  font-size: 14px;
+}
+
+.metaDivider {
+  color: #CFCFCF;
+  font-size: 12px;
+}
+
+.metaIcon {
+  width: 16px;
+  height: 16px;
+  color: #696969;
+}
+
+.location {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #696969;
+  font-size: 14px;
+  margin-bottom: 16px;
+}
+
+.locationIcon {
+  width: 16px;
+  height: 16px;
+}
+
+.offers {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.offerCard {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #FFF3E0;
+  border: 1px solid #FFB800;
+  padding: 12px 16px;
+  border-radius: 8px;
+}
+
+.offerIcon {
+  width: 20px;
+  height: 20px;
+  color: #E65100;
+  flex-shrink: 0;
+}
+
+.offerTitle {
+  font-weight: 600;
+  color: #E65100;
+  font-size: 14px;
+}
+
+.offerDesc {
+  font-size: 13px;
+  color: #E65100;
+}
+
+/* Menu Section - Zomato Style */
+.menuSection {
+  background: #F8F9FA;
+  padding: 32px 0 100px;
+}
+
+.menuLayout {
+  display: flex;
+  gap: 24px;
+}
+
+.categorySidebar {
+  position: sticky;
+  top: 96px;
+  width: 220px;
+  height: fit-content;
+  flex-shrink: 0;
+}
+
+.sidebarTitle {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  color: #1C1C1C;
+  padding: 0 8px;
+}
+
+.categoryList {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.categoryBtn {
+  background: none;
+  border: none;
+  padding: 12px 16px;
+  text-align: left;
+  font-size: 15px;
+  color: #696969;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-transform: capitalize;
+}
+
+.categoryBtn:hover {
+  background: #F8F8F8;
+  color: #1C1C1C;
+}
+
+.categoryBtn.active {
+  background: #E23744;
+  color: #ffffff;
+  font-weight: 500;
+}
+
+.menuContent {
+  flex: 1;
+  min-width: 0;
+}
+
+.menuTitle {
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 24px;
+  color: #1C1C1C;
+  text-transform: capitalize;
+  letter-spacing: -0.01em;
+}
+
+.menuGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Dish Card - Horizontal Zomato Style */
+.dishCard {
+  background: #ffffff;
+  border: 1px solid #E8E8E8;
+  border-radius: 8px;
+  padding: 16px;
+  display: flex;
+  gap: 16px;
+  transition: all 0.2s ease;
+}
+
+.dishCard:hover {
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  border-color: #CFCFCF;
+}
+
+.dishImage {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  border-radius: 8px;
+  overflow: hidden;
+  flex-shrink: 0;
+  background: #F8F8F8;
+}
+
+.dishImage img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.bestsellerBadge {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  background: rgba(255,184,0,0.95);
+  color: #1C1C1C;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.vegIndicator {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: #ffffff;
+  padding: 3px;
+  border-radius: 3px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+}
+
+.vegDot {
+  display: block;
+  width: 10px;
+  height: 10px;
+  border: 1.5px solid #0F8A65;
+  border-radius: 2px;
+}
+
+.nonVegDot {
+  display: block;
+  width: 10px;
+  height: 10px;
+  border: 1.5px solid #E23744;
+  border-radius: 2px;
+}
+
+.dishInfo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.dishName {
+  font-size: 17px;
+  font-weight: 500;
+  color: #1C1C1C;
+  margin-bottom: 6px;
+  letter-spacing: -0.01em;
+}
+
+.dishDesc {
+  font-size: 13px;
+  color: #696969;
+  margin-bottom: 12px;
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.dishFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: auto;
+}
+
+.dishPrice {
+  font-size: 16px;
+  font-weight: 500;
+  color: #1C1C1C;
+}
+
+.addBtn {
+  background: #ffffff;
+  color: #E23744;
+  border: 1px solid #E23744;
+  padding: 8px 28px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.addBtn:hover {
+  background: #E23744;
+  color: #ffffff;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(226,55,68,0.3);
+}
+
+/* Cart Float - Zomato Style */
+.cartFloat {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #0F8A65;
+  color: #ffffff;
+  padding: 16px 24px;
+  box-shadow: 0 -2px 16px rgba(0,0,0,0.1);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  z-index: 1000;
+}
+
+.cartFloat:hover {
+  background: #0D7556;
+}
+
+.cartFloatContent {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.cartCount {
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.cartTotal {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.cartFloatText {
+  font-weight: 600;
+  font-size: 15px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Responsive Design */
+@media (max-width: 968px) {
+  .menuLayout {
+    flex-direction: column;
+  }
+  
+  .categorySidebar {
+    position: static;
+    width: 100%;
+  }
+  
+  .categoryList {
+    flex-direction: row;
+    overflow-x: auto;
+    gap: 8px;
+    padding-bottom: 8px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  
+  .categoryList::-webkit-scrollbar {
+    display: none;
+  }
+  
+  .categoryBtn {
+    white-space: nowrap;
+  }
+  
+  .heroImage {
+    height: 240px;
+  }
+  
+  .restaurantName {
+    font-size: 28px;
+  }
+}
+
+@media (max-width: 768px) {
+  .page {
+    padding-top: 116px; /* Header + Search bar */
+  }
+  
+  .container {
+    padding: 0 12px;
+  }
+  
+  .heroImage {
+    height: 200px;
+  }
+  
+  .heroContent {
+    padding: 20px 0;
+  }
+  
+  .restaurantName {
+    font-size: 24px;
+    margin-bottom: 6px;
+  }
+  
+  .cuisines {
+    font-size: 14px;
+    margin-bottom: 12px;
+  }
+  
+  .metaRow {
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 12px;
+    padding-bottom: 12px;
+  }
+  
+  .metaItem {
+    font-size: 14px;
+  }
+  
+  .location {
+    font-size: 13px;
+    margin-bottom: 12px;
+  }
+  
+  .offers {
+    gap: 8px;
+  }
+  
+  .offerCard {
+    padding: 10px 12px;
+    gap: 10px;
+  }
+  
+  .offerIcon {
+    width: 18px;
+    height: 18px;
+  }
+  
+  .offerTitle {
+    font-size: 13px;
+  }
+  
+  .offerDesc {
+    font-size: 12px;
+  }
+  
+  .menuSection {
+    padding: 24px 0 100px;
+  }
+  
+  .menuTitle {
+    font-size: 20px;
+    margin-bottom: 20px;
+  }
+  
+  .menuGrid {
+    gap: 12px;
+  }
+  
+  .dishCard {
+    padding: 12px;
+    gap: 12px;
+  }
+  
+  .dishImage {
+    width: 100px;
+    height: 100px;
+  }
+  
+  .dishName {
+    font-size: 16px;
+    margin-bottom: 4px;
+  }
+  
+  .dishDesc {
+    font-size: 12px;
+    margin-bottom: 10px;
+  }
+  
+  .dishPrice {
+    font-size: 15px;
+  }
+  
+  .addBtn {
+    padding: 7px 24px;
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 640px) {
+  .page {
+    padding-top: 106px;
+  }
+  
+  .heroImage {
+    height: 180px;
+  }
+  
+  .heroContent {
+    padding: 16px 0;
+  }
+  
+  .restaurantName {
+    font-size: 20px;
+  }
+  
+  .cuisines {
+    font-size: 13px;
+  }
+  
+  .metaRow {
+    gap: 10px;
+  }
+  
+  .metaItem {
+    font-size: 13px;
+  }
+  
+  .starIcon {
+    width: 16px;
+    height: 16px;
+  }
+  
+  .metaIcon {
+    width: 14px;
+    height: 14px;
+  }
+  
+  .location {
+    font-size: 12px;
+  }
+  
+  .locationIcon {
+    width: 14px;
+    height: 14px;
+  }
+  
+  .offerCard {
+    padding: 8px 10px;
+    gap: 8px;
+  }
+  
+  .offerIcon {
+    width: 16px;
+    height: 16px;
+  }
+  
+  .offerTitle {
+    font-size: 12px;
+  }
+  
+  .offerDesc {
+    font-size: 11px;
+  }
+  
+  .menuSection {
+    padding: 20px 0 100px;
+  }
+  
+  .menuTitle {
+    font-size: 18px;
+    margin-bottom: 16px;
+  }
+  
+  .sidebarTitle {
+    font-size: 15px;
+    margin-bottom: 12px;
+  }
+  
+  .categoryBtn {
+    padding: 10px 14px;
+    font-size: 14px;
+  }
+  
+  .dishCard {
+    flex-direction: column;
+    padding: 10px;
+  }
+  
+  .dishImage {
+    width: 100%;
+    height: 160px;
+  }
+  
+  .dishName {
+    font-size: 15px;
+  }
+  
+  .dishDesc {
+    font-size: 11px;
+  }
+  
+  .dishPrice {
+    font-size: 14px;
+  }
+  
+  .addBtn {
+    padding: 6px 20px;
+    font-size: 12px;
+  }
+  
+  .cartFloat {
+    padding: 12px 12px;
+  }
+  
+  .cartFloatContent {
+    gap: 10px;
+  }
+  
+  .cartCount {
+    font-size: 13px;
+  }
+  
+  .cartTotal {
+    font-size: 16px;
+  }
+  
+  .cartFloatText {
+    font-size: 13px;
+  }
+}

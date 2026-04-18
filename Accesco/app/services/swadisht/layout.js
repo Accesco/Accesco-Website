@@ -1,8 +1,11 @@
-export const metadata = {
-  title: "Swadishtt | Food Delivery & Cloud Kitchen Platform",
-  description: "Order from Swadishtt — Accesco Living's food delivery and cloud kitchen platform powered by Swadishtt Cafe micro-kitchens and FarmChain-sourced ingredients.",
-};
+/**
+ * Swadishtt Layout
+ * @description Layout wrapper for all Swadishtt pages
+ */
 
-export default function Layout({ children }) {
+// Force dynamic rendering for all Swadishtt pages
+export const dynamic = 'force-dynamic';
+
+export default function SwadishttLayout({ children }) {
   return children;
 }
