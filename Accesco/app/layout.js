@@ -3,6 +3,7 @@ import './globals.css';
 import { AuthProvider } from './components/AuthProvider';
 import { SmoothScrollProvider } from './components/SmoothScrollProvider';
 import CustomCursor from './components/CustomCursor';
+import CookieConsent from './components/CookieConsent';
 
 export const metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'),
@@ -149,6 +150,7 @@ export default function RootLayout({ children }) {
           <SmoothScrollProvider>
             <CustomCursor />
             {children}
+            <CookieConsent />
           </SmoothScrollProvider>
         </AuthProvider>
         <Script
