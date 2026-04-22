@@ -13,6 +13,7 @@ import FashionCollections from '@/components/instastyle/FashionCollections';
 import SwipeStyleShowcase from '@/components/instastyle/SwipeStyleShowcase';
 import DeliveryHero from '@/components/instastyle/DeliveryHero';
 
+
 // ── Register GSAP Plugins
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger);
@@ -252,7 +253,7 @@ export default function InstaStyleLanding() {
       heroTitle.revert();
       ScrollTrigger.getAll().forEach(t => t.kill());
     };
-  }, { scope: pageRef });
+  }, { scope: pageRef, dependencies: [] });
 
 
   // ── Mobile step auto-scroll
@@ -313,7 +314,9 @@ export default function InstaStyleLanding() {
   };
 
   return (
-    <div ref={pageRef} className={styles.landingPage}>
+    <>
+
+      <div ref={pageRef} className={styles.landingPage}>
       {/* ── Scroll Progress Bar ── */}
       <div ref={progressRef} className={styles.progressBar} aria-hidden="true" />
 
@@ -753,5 +756,6 @@ export default function InstaStyleLanding() {
         </div>
       </section>
     </div>
+    </>
   );
 }

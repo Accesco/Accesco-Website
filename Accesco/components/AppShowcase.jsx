@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import { ShoppingCart, Utensils, Shirt, GlassWater } from 'lucide-react';
 import {
   addWaitlistEntry,
   sendOtpEmailVerification,
@@ -25,10 +26,10 @@ export default function AppShowcase() {
   const [otpVerified, setOtpVerified] = useState(false);
 
   const interestOptions = [
-    { id: 'grokly', label: 'Groceries & Essentials', icon: '🛒' },
-    { id: 'swadishtt', label: 'Food Delivery', icon: '🍽️' },
-    { id: 'instastyle', label: 'Fashion & Styling', icon: '👗' },
-    { id: 'dinex', label: 'Dining Experience', icon: '🍷' },
+    { id: 'grokly', label: 'Groceries & Essentials', icon: <ShoppingCart size={32} /> },
+    { id: 'swadishtt', label: 'Food Delivery', icon: <Utensils size={32} /> },
+    { id: 'instastyle', label: 'Fashion & Styling', icon: <Shirt size={32} /> },
+    { id: 'dinex', label: 'Dining Experience', icon: <GlassWater size={32} /> },
   ];
 
   const toggleInterest = (id) => {
@@ -63,7 +64,7 @@ export default function AppShowcase() {
 
   const handleNext = () => {
     setError('');
-    
+
     if (currentStep === 1) {
       if (!form.name?.trim() || !form.email?.trim() || !form.phone?.trim()) {
         setError('Please fill in all fields');
@@ -154,543 +155,107 @@ export default function AppShowcase() {
   }, []);
 
   return (
-    <section className="app-showcase" id="app-showcase">
-      <style jsx>{`
-        .app-showcase {
-          padding: 120px 20px;
-          background: linear-gradient(180deg, #ffffff 0%, #fafafa 100%);
-          width: 100%;
-          position: relative;
-        }
-
-        .waitlist-container {
-          max-width: 1200px;
-          margin: 0 auto;
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 80px;
-          align-items: center;
-          background: transparent;
-        }
-
-        .waitlist-info {
-          max-width: 540px;
-          background: transparent;
-        }
-
-        .waitlist-badge {
-          display: inline-flex;
-          align-items: center;
-          gap: 8px;
-          background: rgba(122, 0, 66, 0.08);
-          border: 1.5px solid rgba(122, 0, 66, 0.15);
-          color: #7A0042;
-          padding: 8px 18px;
-          border-radius: 50px;
-          font-size: 12px;
-          font-weight: 700;
-          text-transform: uppercase;
-          letter-spacing: 1.2px;
-          margin-bottom: 24px;
-        }
-
-        .waitlist-title {
-          font-size: 56px;
-          font-weight: 900;
-          color: #1a0014;
-          margin: 0 0 24px;
-          letter-spacing: -2px;
-          line-height: 1.1;
-          font-family: 'Davetica', sans-serif;
-        }
-
-        .waitlist-title .highlight {
-          background: linear-gradient(135deg, #7A0042 0%, #ffb347 100%);
-          background-clip: text;
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-        }
-
-        .waitlist-subtitle {
-          font-size: 18px;
-          color: #3a2a3a;
-          margin: 0 0 40px;
-          line-height: 1.7;
-        }
-
-        .waitlist-features {
-          display: flex;
-          flex-direction: column;
-          gap: 20px;
-          margin-bottom: 40px;
-        }
-
-        .feature-item {
-          display: flex;
-          align-items: center;
-          gap: 16px;
-        }
-
-        .feature-icon {
-          width: 48px;
-          height: 48px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          background: linear-gradient(135deg, #7A0042 0%, #9d0054 100%);
-          border-radius: 12px;
-          color: #ffffff;
-          flex-shrink: 0;
-          box-shadow: 0 4px 12px rgba(122, 0, 66, 0.25);
-        }
-
-        .feature-text h4 {
-          font-size: 16px;
-          font-weight: 700;
-          color: #1a0014;
-          margin: 0 0 4px 0;
-        }
-
-        .feature-text p {
-          font-size: 14px;
-          color: #6b5a6b;
-          margin: 0;
-        }
-
-        .waitlist-stats {
-          display: flex;
-          gap: 40px;
-          padding-top: 40px;
-          border-top: 1px solid rgba(122, 0, 66, 0.1);
-        }
-
-        .stat-item {
-          text-align: left;
-        }
-
-        .stat-number {
-          font-size: 32px;
-          font-weight: 900;
-          color: #7A0042;
-          display: block;
-          font-family: 'Davetica', sans-serif;
-          letter-spacing: -1px;
-        }
-
-        .stat-label {
-          font-size: 13px;
-          color: #6b5a6b;
-          text-transform: uppercase;
-          letter-spacing: 0.8px;
-          font-weight: 600;
-          margin-top: 4px;
-        }
-
-        .waitlist-form-wrapper {
-          background: #ffffff;
-          border-radius: 24px;
-          padding: 48px;
-          box-shadow: 0 10px 40px rgba(122, 0, 66, 0.08), 0 4px 12px rgba(0, 0, 0, 0.04);
-          border: 1px solid rgba(122, 0, 66, 0.08);
-          position: relative;
-          overflow: hidden;
-        }
-
-        .waitlist-form-wrapper::before {
-          content: '';
-          position: absolute;
-          top: 0;
-          left: 0;
-          right: 0;
-          height: 4px;
-          background: linear-gradient(90deg, #7A0042, #9d0054, #ffb347);
-          background-size: 200% 100%;
-          animation: shimmer 3s ease-in-out infinite;
-        }
-
-        @keyframes shimmer {
-          0%, 100% { background-position: 200% 0; }
-          50% { background-position: -200% 0; }
-        }
-
-        .form-header {
-          text-align: center;
-          margin-bottom: 32px;
-        }
-
-        .form-title {
-          font-size: 24px;
-          font-weight: 800;
-          color: #1a0014;
-          margin: 0 0 8px;
-          letter-spacing: -0.5px;
-        }
-
-        .form-description {
-          font-size: 14px;
-          color: #6b5a6b;
-          margin: 0;
-        }
-
-        .step-indicator {
-          display: flex;
-          justify-content: center;
-          gap: 12px;
-          margin-bottom: 32px;
-        }
-
-        .step-dot {
-          width: 12px;
-          height: 12px;
-          border-radius: 50%;
-          background: #e5e7eb;
-          transition: all 0.3s ease;
-        }
-
-        .step-dot.active {
-          background: #1a1a1a;
-          width: 32px;
-          border-radius: 6px;
-        }
-
-        .form-group {
-          margin-bottom: 24px;
-        }
-
-        .form-label {
-          display: block;
-          font-size: 14px;
-          font-weight: 600;
-          color: #1a1a1a;
-          margin-bottom: 8px;
-        }
-
-        .form-input {
-          width: 100%;
-          padding: 16px 20px;
-          border: 2px solid #e5e7eb;
-          border-radius: 12px;
-          font-size: 16px;
-          font-family: inherit;
-          transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-          background: #fff;
-          box-sizing: border-box;
-        }
-
-        .form-input:focus {
-          outline: none;
-          border-color: #1a1a1a;
-          box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.05);
-        }
-
-        .form-input::placeholder {
-          color: #9ca3af;
-        }
-
-        .interests-grid {
-          display: grid;
-          grid-template-columns: repeat(2, 1fr);
-          gap: 12px;
-          margin-bottom: 24px;
-        }
-
-        .interest-card {
-          padding: 20px 16px;
-          border: 2px solid #e5e7eb;
-          border-radius: 12px;
-          cursor: pointer;
-          transition: all 0.2s ease;
-          text-align: center;
-          background: #fff;
-        }
-
-        .interest-card:hover {
-          border-color: #9ca3af;
-        }
-
-        .interest-card.selected {
-          border-color: #1a1a1a;
-          background: #f9fafb;
-        }
-
-        .interest-icon {
-          font-size: 32px;
-          margin-bottom: 8px;
-        }
-
-        .interest-label {
-          font-size: 14px;
-          font-weight: 600;
-          color: #1a1a1a;
-        }
-
-        .verification-section {
-          text-align: center;
-        }
-
-        .verification-info {
-          background: #f0f9ff;
-          border: 1px solid #bae6fd;
-          border-radius: 12px;
-          padding: 16px;
-          margin-bottom: 24px;
-          font-size: 14px;
-          color: #0c4a6e;
-        }
-
-        .resend-code {
-          background: none;
-          border: none;
-          color: #1a1a1a;
-          font-weight: 600;
-          cursor: pointer;
-          text-decoration: underline;
-          font-size: 14px;
-          margin-top: 12px;
-        }
-
-        .button-group {
-          display: flex;
-          gap: 12px;
-          margin-top: 24px;
-        }
-
-        .nav-button {
-          flex: 1;
-          padding: 18px;
-          border: 2px solid #e5e7eb;
-          background: #fff;
-          color: #1a1a1a;
-          border-radius: 12px;
-          font-size: 16px;
-          font-weight: 700;
-          cursor: pointer;
-          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-          text-transform: uppercase;
-          letter-spacing: 1px;
-        }
-
-        .nav-button:hover:not(:disabled) {
-          border-color: #1a1a1a;
-          background: #f9fafb;
-        }
-
-        .nav-button:disabled {
-          opacity: 0.5;
-          cursor: not-allowed;
-        }
-
-        .submit-button {
-          width: 100%;
-          padding: 18px;
-          background: #000000;
-          color: #fff;
-          border: none;
-          border-radius: 12px;
-          font-size: 16px;
-          font-weight: 700;
-          cursor: pointer;
-          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-          position: relative;
-          overflow: hidden;
-          text-transform: uppercase;
-          letter-spacing: 1px;
-        }
-
-        .submit-button::before {
-          content: '';
-          position: absolute;
-          top: 0;
-          left: -100%;
-          width: 100%;
-          height: 100%;
-          background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-          transition: left 0.5s;
-        }
-
-        .submit-button:hover:not(:disabled)::before {
-          left: 100%;
-        }
-
-        .submit-button:hover:not(:disabled) {
-          transform: translateY(-2px);
-          box-shadow: 0 12px 32px rgba(0, 0, 0, 0.3);
-          background: #1a1a1a;
-        }
-
-        .submit-button:active {
-          transform: translateY(0);
-        }
-
-        .submit-button:disabled {
-          opacity: 0.7;
-          cursor: not-allowed;
-          transform: none;
-        }
-
-        .loading-spinner {
-          display: inline-block;
-          width: 16px;
-          height: 16px;
-          border: 2px solid rgba(255, 255, 255, 0.3);
-          border-radius: 50%;
-          border-top-color: #fff;
-          animation: spin 1s ease-in-out infinite;
-          margin-right: 8px;
-        }
-
-        @keyframes spin {
-          to { transform: rotate(360deg); }
-        }
-
-        .success-message {
-          background: linear-gradient(135deg, #10b981, #059669);
-          color: #fff;
-          padding: 16px 20px;
-          border-radius: 12px;
-          text-align: center;
-          font-weight: 600;
-          margin-bottom: 24px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          gap: 8px;
-        }
-
-        .error-message {
-          background: #fef2f2;
-          color: #dc2626;
-          padding: 12px 16px;
-          border-radius: 8px;
-          font-size: 14px;
-          margin-bottom: 20px;
-          border: 1px solid #fecaca;
-        }
-
-        @media (max-width: 900px) {
-          .app-showcase {
-            padding: 80px 20px;
-          }
-
-          .waitlist-container {
-            grid-template-columns: 1fr;
-            gap: 60px;
-          }
-
-          .waitlist-info {
-            max-width: 100%;
-          }
-
-          .waitlist-title {
-            font-size: 42px;
-          }
-
-          .waitlist-form-wrapper {
-            padding: 32px 24px;
-          }
-        }
-
-        @media (max-width: 640px) {
-          .app-showcase {
-            padding: 60px 16px;
-          }
-
-          .waitlist-container {
-            gap: 40px;
-          }
-
-          .waitlist-title {
-            font-size: 36px;
-          }
-
-          .waitlist-subtitle {
-            font-size: 16px;
-          }
-
-          .waitlist-stats {
-            gap: 24px;
-          }
-
-          .stat-number {
-            font-size: 28px;
-          }
-
-          .waitlist-form-wrapper {
-            padding: 24px 20px;
-          }
-
-          .interests-grid {
-            grid-template-columns: 1fr;
-          }
-
-          .button-group {
-            flex-direction: column;
-          }
-
-          .nav-button {
-            width: 100%;
-          }
-        }
+    <section id="app-showcase" style={{ padding: '64px 20px', background: '#FFFDF8', position: 'relative' }}>
+      <style>{`
+        /* ── Waitlist premium skin ── */
+        .waitlist-container { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 0.85fr 1.15fr; gap: 80px; align-items: center; }
+        .waitlist-info { max-width: 540px; }
+        .waitlist-title { font-family: 'Sora', sans-serif; font-size: clamp(2rem, 4vw, 3.2rem); font-weight: 900; color: #1A0A0F; margin: 0 0 20px; letter-spacing: -0.04em; line-height: 1.08; }
+        .waitlist-title .highlight { background: linear-gradient(135deg, #7A0042 0%, #C8963E 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .waitlist-subtitle { font-family: 'DM Sans', sans-serif; font-size: 1.05rem; color: #6B5B65; margin: 0 0 36px; line-height: 1.7; }
+        .waitlist-features { display: none; }
+        .waitlist-poster-wrap { margin-bottom: 40px; border-radius: 24px; overflow: hidden; box-shadow: 0 30px 60px rgba(26,10,15,0.15); border: 1px solid rgba(122,0,66,0.1); }
+        .waitlist-poster-img { width: 100%; height: auto; display: block; }
+        .feature-text h4 { font-family: 'Sora', sans-serif; font-size: 0.9rem; font-weight: 700; color: #1A0A0F; margin: 0 0 3px; }
+        .feature-text p  { font-family: 'DM Sans', sans-serif; font-size: 0.82rem; color: #6B5B65; margin: 0; }
+        /* Form card */
+        .waitlist-form-wrapper { background: #fff; border-radius: 28px; padding: 44px; box-shadow: 0 12px 50px rgba(122,0,66,0.07), 0 4px 14px rgba(0,0,0,0.04); border: 1px solid rgba(122,0,66,0.09); position: relative; overflow: hidden; }
+        .waitlist-form-wrapper::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, #7A0042, #C8963E, #7A0042); background-size: 200%; animation: wlShimmer 3s ease infinite; }
+        @keyframes wlShimmer { 0%,100%{background-position:0% center} 50%{background-position:100% center} }
+        .form-header { text-align: center; margin-bottom: 28px; }
+        .form-title { font-family: 'Sora', sans-serif; font-size: 1.3rem; font-weight: 800; color: #1A0A0F; margin: 0 0 6px; letter-spacing: -0.02em; }
+        .form-description { font-family: 'DM Sans', sans-serif; font-size: 0.88rem; color: #6B5B65; margin: 0; }
+        /* Step indicator */
+        .step-indicator { display: flex; justify-content: center; gap: 8px; margin-bottom: 28px; }
+        .step-dot { height: 4px; width: 24px; border-radius: 9999px; background: rgba(122,0,66,0.12); transition: all 0.35s; }
+        .step-dot.active { background: linear-gradient(90deg, #7A0042, #C8963E); width: 48px; }
+        /* Inputs */
+        .form-group { margin-bottom: 20px; }
+        .form-label { display: block; font-family: 'Sora', sans-serif; font-size: 0.68rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #6B5B65; margin-bottom: 8px; }
+        .form-input { width: 100%; padding: 14px 18px; border: 1.5px solid rgba(122,0,66,0.14); border-radius: 12px; font-size: 0.95rem; font-family: 'DM Sans', sans-serif; transition: all 0.22s; background: #FAFAF9; box-sizing: border-box; color: #1A0A0F; outline: none; }
+        .form-input:focus { border-color: #7A0042; box-shadow: 0 0 0 3px rgba(122,0,66,0.08); background: #fff; }
+        .form-input::placeholder { color: rgba(107,91,101,0.45); }
+        /* Interests */
+        .interests-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 10px; margin-bottom: 20px; }
+        .interest-card { padding: 18px 14px; border: 1.5px solid rgba(122,0,66,0.12); border-radius: 14px; cursor: pointer; transition: all 0.22s; text-align: center; background: #FAFAF9; }
+        .interest-card:hover { border-color: rgba(122,0,66,0.3); background: rgba(122,0,66,0.03); }
+        .interest-card.selected { border-color: #7A0042; background: rgba(122,0,66,0.05); }
+        .interest-icon { display: flex; justify-content: center; color: #7A0042; margin-bottom: 12px; }
+        .interest-label { font-family: 'DM Sans', sans-serif; font-size: 0.82rem; font-weight: 600; color: #1A0A0F; }
+        /* Verification */
+        .verification-section { text-align: center; }
+        .verification-info { background: rgba(122,0,66,0.04); border: 1px solid rgba(122,0,66,0.1); border-radius: 12px; padding: 14px 16px; margin-bottom: 20px; font-family: 'DM Sans', sans-serif; font-size: 0.88rem; color: #6B5B65; line-height: 1.6; }
+        .resend-code { background: none; border: none; color: #7A0042; font-family: 'Sora', sans-serif; font-weight: 700; font-size: 0.82rem; cursor: pointer; text-decoration: underline; margin-top: 10px; }
+        /* Buttons */
+        .button-group { display: flex; gap: 10px; margin-top: 20px; }
+        .nav-button { flex: 1; padding: 15px; border: 1.5px solid rgba(122,0,66,0.18); background: #fff; color: #7A0042; border-radius: 12px; font-family: 'Sora', sans-serif; font-size: 0.85rem; font-weight: 700; cursor: pointer; transition: all 0.22s; letter-spacing: 0.06em; text-transform: uppercase; }
+        .nav-button:hover:not(:disabled) { border-color: #7A0042; background: rgba(122,0,66,0.04); }
+        .nav-button:disabled { opacity: 0.45; cursor: not-allowed; }
+        .submit-button { width: 100%; padding: 16px; background: #7A0042; color: #FFFDF8; border: none; border-radius: 12px; font-family: 'Sora', sans-serif; font-size: 0.9rem; font-weight: 700; cursor: pointer; transition: all 0.3s; position: relative; overflow: hidden; letter-spacing: 0.08em; text-transform: uppercase; box-shadow: 0 4px 22px rgba(122,0,66,0.3); }
+        .submit-button::before { content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent); transition: left 0.5s; }
+        .submit-button:hover:not(:disabled)::before { left: 100%; }
+        .submit-button:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(122,0,66,0.4); background: #5A0031; }
+        .submit-button:disabled { opacity: 0.65; cursor: not-allowed; transform: none; }
+        /* Spinner */
+        .loading-spinner { display: inline-block; width: 14px; height: 14px; border: 2px solid rgba(255,255,255,0.3); border-radius: 50%; border-top-color: #fff; animation: spin 0.8s linear infinite; margin-right: 8px; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        /* Feedback messages */
+        .success-message { background: linear-gradient(135deg, #10b981, #059669); color: #fff; padding: 14px 18px; border-radius: 12px; text-align: center; font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: 0.9rem; margin-bottom: 20px; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .error-message { background: #fef2f2; color: #dc2626; padding: 12px 16px; border-radius: 10px; font-family: 'DM Sans', sans-serif; font-size: 0.86rem; margin-bottom: 18px; border: 1px solid rgba(220,38,38,0.2); }
+        /* Responsive */
+        @media (max-width: 900px) { .waitlist-container { grid-template-columns: 1fr; gap: 50px; } .waitlist-info { max-width: 100%; } }
+        @media (max-width: 640px) { .interests-grid { grid-template-columns: 1fr; } .button-group { flex-direction: column; } .waitlist-form-wrapper { padding: 28px 20px; } }
       `}</style>
 
-      {/* Waitlist Section */}
+      {/* Waitlist Section Header */}
+      <div style={{ maxWidth: '1200px', margin: '0 auto 40px', padding: '0 20px' }}>
+        <div className="ac-chip ac-chip-maroon" style={{ marginBottom: '20px' }}>
+          <span>✦</span> Early Access Program
+        </div>
+
+        <h2 className="waitlist-title">
+          Join the <span className="highlight">Revolution</span>
+        </h2>
+
+        <p className="waitlist-subtitle" style={{ maxWidth: '100%', fontSize: '1.1rem' }}>
+          Be among the first to experience India's most intelligent commerce platform.
+          Get exclusive early access and special launch benefits.
+        </p>
+      </div>
+
       <div className="waitlist-container">
-        {/* Left Side - Information */}
+        {/* Left Side - Information (Poster) */}
         <div className="waitlist-info">
-          
-          
-          <h2 className="waitlist-title">
-            Join the <span className="highlight">Revolution</span>
-          </h2>
-          
-          <p className="waitlist-subtitle">
-            Be among the first to experience India's most intelligent commerce platform. 
-            Get exclusive early access and special launch benefits.
-          </p>
-
-          <div className="waitlist-features">
-            <div className="feature-item">
-              <div className="feature-icon">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                  <path d="M12 2L15 8L22 9L17 14L18 21L12 18L6 21L7 14L2 9L9 8L12 2Z" fill="currentColor"/>
-                </svg>
-              </div>
-              <div className="feature-text">
-                <h4>Priority Access</h4>
-                <p>Be first to try new features</p>
-              </div>
-            </div>
-
-            <div className="feature-item">
-              <div className="feature-icon">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                  <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM10 17L5 12L6.41 10.59L10 14.17L17.59 6.58L19 8L10 17Z" fill="currentColor"/>
-                </svg>
-              </div>
-              <div className="feature-text">
-                <h4>Exclusive Offers</h4>
-                <p>Special discounts for early members</p>
-              </div>
-            </div>
-
-            <div className="feature-item">
-              <div className="feature-icon">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                  <path d="M20 2H4C2.9 2 2 2.9 2 4V22L6 18H20C21.1 18 22 17.1 22 16V4C22 2.9 21.1 2 20 2Z" fill="currentColor"/>
-                </svg>
-              </div>
-              <div className="feature-text">
-                <h4>Direct Support</h4>
-                <p>Dedicated assistance from our team</p>
-              </div>
-            </div>
+          <div className="waitlist-poster-wrap">
+            <img
+              src="/images/xpense-banner.jpg"
+              alt="Accesco Living - Xpense Meter"
+              className="waitlist-poster-img"
+              onError={(e) => {
+                e.currentTarget.src = '/images/accesco_original.png';
+                e.currentTarget.style.padding = '40px';
+                e.currentTarget.style.background = 'linear-gradient(135deg, #7A0042, #1A0A0F)';
+              }}
+            />
           </div>
-
-         
         </div>
 
         {/* Right Side - Form */}
-        <div className="waitlist-form-wrapper">
+        <div className="waitlist-form-wrapper" style={{
+          background: currentStep === 1 ? '#FFFDF8' : currentStep === 2 ? '#FAF7F0' : '#F0F9F4',
+          border: `2px solid ${currentStep === 1 ? '#7A0042' : currentStep === 2 ? '#C8963E' : '#10b981'}`,
+          transition: 'all 0.4s ease'
+        }}>
           <div className="form-header">
             <h3 className="form-title">Get Early Access</h3>
             <p className="form-description">
@@ -702,9 +267,9 @@ export default function AppShowcase() {
 
           {/* Step Indicator */}
           <div className="step-indicator">
-            <div className={`step-dot ${currentStep >= 1 ? 'active' : ''}`}></div>
-            <div className={`step-dot ${currentStep >= 2 ? 'active' : ''}`}></div>
-            <div className={`step-dot ${currentStep >= 3 ? 'active' : ''}`}></div>
+            <div className={`step-dot ${currentStep >= 1 ? 'active' : ''}`} style={currentStep === 1 ? { background: '#7A0042', transform: 'scale(1.2)' } : {}}></div>
+            <div className={`step-dot ${currentStep >= 2 ? 'active' : ''}`} style={currentStep === 2 ? { background: '#C8963E', transform: 'scale(1.2)' } : {}}></div>
+            <div className={`step-dot ${currentStep >= 3 ? 'active' : ''}`} style={currentStep === 3 ? { background: '#10b981', transform: 'scale(1.2)' } : {}}></div>
           </div>
 
           {success && (
@@ -824,9 +389,9 @@ export default function AppShowcase() {
                     />
                   </div>
 
-                  <button 
-                    type="button" 
-                    className="resend-code" 
+                  <button
+                    type="button"
+                    className="resend-code"
                     onClick={sendVerificationCode}
                     disabled={loading}
                   >

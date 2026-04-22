@@ -2,6 +2,7 @@
 
 import AccescoHeader from '../../components/AccescoHeader';
 import Footer from '../../components/Footer';
+import { AccescoHero } from '../../components/HeroBanners';
 import './about.css';
 
 export default function AboutPage() {
@@ -10,32 +11,8 @@ export default function AboutPage() {
       <AccescoHeader />
       <main className="about-page">
         
-        {/* Hero Section */}
-        <section className="about-hero-section" style={{backgroundImage: 'url(/images/about.jpeg)'}}>
-          <div className="about-hero-overlay">
-            <div className="about-hero-container">
-              <div className="about-hero-content">
-                <div className="about-hero-logo">
-                  <img src="/images/accesco-logo-black.png" alt="Accesco Living" />
-                </div>
-                <h1 className="about-hero-title">
-                  Building India's first intelligent circular commerce ecosystem
-                </h1>
-                <p className="about-hero-description">
-                  We're reimagining daily commerce by connecting households directly with local producers, 
-                  eliminating waste, and making every transaction smarter through AI-powered intelligence.
-                </p>
-                <div className="about-hero-meta">
-                  <span>Founded 2025</span>
-                  <span className="meta-divider">·</span>
-                  <span>Bengaluru, India</span>
-                  <span className="meta-divider">·</span>
-                  <span>ISO 9001:2015 Certified</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
+        {/* Premium Brand Hero — replaces old image-based hero */}
+        <AccescoHero />
 
         {/* Mission Statement */}
         <section className="about-mission-section">
@@ -228,41 +205,37 @@ export default function AboutPage() {
         <section className="about-team-section">
           <div className="about-container">
             <h2 className="section-heading-center">Our founding team</h2>
-            
-            
-            <div className="team-grid">
-              <div className="team-member">
-                <h3>Argha Sengupta</h3>
-                <p className="team-role">Managing Director & CEO</p>
-                <p className="team-description">
-                  Leads strategy, fundraising and ecosystem partnerships.
-                </p>
-              </div>
-              
-              <div className="team-member">
-                <h3>Ayushman Saha</h3>
-                <p className="team-role">Executive Director & CBO</p>
-                <p className="team-description">
-                  Leads operations, growth and business development.
-                </p>
-              </div>
-              
-              <div className="team-member">
-                <h3>Aanushka Saha</h3>
-                <p className="team-role">CTO & Co-Founder</p>
-                <p className="team-description">
-                  Leads technology architecture, product development and the intelligence layer.
-                </p>
-              </div>
-              
-              <div className="team-member">
-                <h3>Md. Asif</h3>
-                <p className="team-role">Chief Operating Officer</p>
-                <p className="team-description">
-                  Leads supply chain, dark store operations and FarmChain sourcing.
-                </p>
-              </div>
+
+            {/* Founders photo */}
+            <div style={{
+              maxWidth: 960,
+              margin: '0 auto 56px',
+              borderRadius: 20,
+              overflow: 'hidden',
+              boxShadow: '0 24px 72px rgba(122,0,66,0.15)',
+              position: 'relative',
+            }}>
+              <img
+                src="/images/foundersteam.jpg"
+                alt="Accesco Living founding team"
+                style={{
+                  width: '100%',
+                  height: 'auto',
+                  display: 'block',
+                  objectFit: 'cover',
+                }}
+              />
+              {/* Subtle bottom gradient for branding */}
+              <div style={{
+                position: 'absolute',
+                bottom: 0, left: 0, right: 0,
+                height: 80,
+                background: 'linear-gradient(to top, rgba(26,10,15,0.55), transparent)',
+                pointerEvents: 'none',
+              }} />
             </div>
+
+
           </div>
         </section>
 

@@ -4,12 +4,21 @@ import React from 'react';
 import Image from 'next/image';
 
 export default function Hero() {
+  const videoRef = React.useRef(null);
+
+  React.useEffect(() => {
+    if (videoRef.current) {
+      videoRef.current.play().catch(error => {
+        console.log("Video autoplay failed, user interaction may be required:", error);
+      });
+    }
+  }, []);
 
   return (
     <section className="hero" id="home">
       <style jsx>{`
         .hero {
-          min-height: 110vh;
+          min-height: 100vh;
           background: #000;
           display: flex;
           align-items: flex-start;
@@ -65,24 +74,15 @@ export default function Hero() {
           line-height: 1.25;
           text-align: center;
           text-shadow: 0 2px 16px rgba(0,0,0,0.5);
-          background: none;
-          border: none;
-          box-shadow: none;
-          padding: 0;
-          backdrop-filter: none;
-          -webkit-backdrop-filter: none;
         }
-        .hero-kicker::before { content: none; }
-        .hero-kicker::after  { content: none; }
 
         .hero-sub {
           font-size: clamp(16px, 2.5vw, 22px);
           max-width: 700px;
           line-height: 1.6;
           color: rgba(255, 255, 255, 0.9);
+          margin: 0 auto 40px;
         }
-
-        
 
         .cta-pill {
           background: white;
@@ -108,7 +108,7 @@ export default function Hero() {
           display: flex;
           gap: 16px;
           justify-content: center;
-          
+          margin-top: 40px;
         }
 
         .app-btn-link img {
@@ -132,6 +132,7 @@ export default function Hero() {
           letter-spacing: 1px;
           animation: bounce 2s infinite;
           text-decoration: none;
+          margin-top: 40px;
         }
 
         @keyframes bounce {
@@ -139,33 +140,37 @@ export default function Hero() {
           50%       { transform: translateY(-10px); }
         }
 
-        /* Modal Styles */
-        .modal-overlay {
-          display: none;
-        }
-
         @media (max-width: 768px) {
           .hero { min-height: 90vh; padding: 0 20px 40px; }
           .hero-grid { padding-top: 110px; }
           .hero-app-buttons { flex-direction: column; align-items: center; }
           .app-btn-link img { height: 45px; }
-          .hero-kicker { font-size: 11px; padding: 10px 20px; letter-spacing: 1.5px; }
-          .modal-content { padding: 32px 24px; }
         }
       `}</style>
 
-      <video className="hero-bg-video" autoPlay muted loop playsInline poster="/images/poster.jpg">
+      <video 
+        ref={videoRef}
+        className="hero-bg-video" 
+        autoPlay 
+        muted 
+        loop 
+        playsInline 
+        preload="auto"
+        style={{ pointerEvents: 'none' }}
+      >
         <source src="/images/start.mp4" type="video/mp4" />
+        Your browser does not support the video tag.
       </video>
 
       <div className="hero-grid">
         <Image
           src="/images/accesco_white.png"
           className="hero-logo-img"
-          alt="AccesCo Logo"
-          width={150}
-          height={150}
+          alt="accesco logo"
+          width={120}
+          height={120}
           priority
+          style={{ width: '120px', height: '120px', objectFit: 'contain' }}
         />
 
         <h1 className="hero-title">Accesco Living</h1>
@@ -205,11 +210,6 @@ export default function Hero() {
           Scroll down <i className="ri-arrow-down-s-line"></i>
         </a>
       </div>
-
-      {false && (
-        <div className="modal-overlay">
-        </div>
-      )}
     </section>
   );
 }

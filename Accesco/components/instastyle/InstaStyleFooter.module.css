@@ -16,7 +16,7 @@
 
 /* ── MAIN FOOTER BODY ── */
 .main {
-  padding: clamp(64px, 8vw, 96px) clamp(16px, 3vw, 48px);
+  padding: clamp(32px, 5vw, 64px) clamp(16px, 3vw, 48px);
 }
 
 .grid {
@@ -346,7 +346,12 @@
 }
 
 @media (max-width: 480px) {
-  .grid { grid-template-columns: 1fr; gap: 28px; }
+  .grid { grid-template-columns: 1fr 1fr; gap: 32px 16px; }
+  .brandColumn { text-align: left; }
+  .social { justify-content: flex-start; }
+  .linksColumn { gap: 12px; }
+  .columnTitle { font-size: 10px; }
+  .link { font-size: 13px; }
   .paymentMethods { flex-wrap: wrap; }
 }
 

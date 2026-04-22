@@ -99,9 +99,11 @@ html.lenis, html.lenis-scrolling {
    WHITE / BLACK / BROWN design system
    ============================================================ */
 .instaHeaderShell {
-  position: sticky;
+  position: fixed;
   top: 0;
-  z-index: 1000;
+  left: 0;
+  right: 0;
+  z-index: 1100;
   background: rgba(255,255,255,0.96);
   border-bottom: 1px solid rgba(26,17,8,0.08);
   backdrop-filter: blur(18px) saturate(160%);

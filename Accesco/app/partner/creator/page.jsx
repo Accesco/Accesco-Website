@@ -103,7 +103,7 @@ export default function PartnerAsCreator() {
               <span className="gradient-text"> Profit</span>
             </h1>
             <p className="hero-subtitle">
-              Partner with AccesCo Living and unlock unlimited earning potential. 
+              Partner with accesco living and unlock unlimited earning potential. 
               Create content, build your brand, and get paid for what you love.
             </p>
             
@@ -123,7 +123,7 @@ export default function PartnerAsCreator() {
         <section className="benefits-section">
           <div className="section-header">
             <span className="section-tag">Why Choose Us</span>
-            <h2 className="section-title">Everything You Need to Succeed</h2>
+            <h2 className="section-title">India solved delivery in 10 minutes. Nobody solved the household in 10 years.</h2>
             <p className="section-subtitle">
               We provide the tools, support, and opportunities to help you grow your creator business
             </p>
@@ -220,7 +220,7 @@ export default function PartnerAsCreator() {
             <div className="form-header">
               <span className="form-tag">Ready to Start?</span>
               <h2 className="form-title">Apply Now</h2>
-              <p className="form-subtitle">Join thousands of creators earning with AccesCo Living</p>
+              <p className="form-subtitle">Join thousands of creators earning with accesco living</p>
             </div>
 
             <form onSubmit={handleSubmit} className="application-form">

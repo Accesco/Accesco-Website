@@ -103,9 +103,11 @@ export default function InstaStyleHeader() {
 
   const fallback = {
     header: {
-      position: 'sticky',
+      position: 'fixed',
       top: 0,
-      zIndex: 1000,
+      left: 0,
+      width: '100%',
+      zIndex: 1100,
       background: '#fff',
       borderBottom: '1px solid #ece7e2',
     },

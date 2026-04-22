@@ -103,7 +103,7 @@ export default function AuthModal({ isOpen, onClose, onSuccess }) {
                 <div className="am-success-check">✓</div>
               </div>
               <h3>You're in!</h3>
-              <p>Welcome to AccesCo, {name.split(' ')[0]}.</p>
+              <p>Welcome to accesco, {name.split(' ')[0]}.</p>
             </div>
           ) : (
             <>

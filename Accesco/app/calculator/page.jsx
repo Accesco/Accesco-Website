@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import './calculator.css'
+import AccescoHeader from '@/components/AccescoHeader'
 
 export default function CalculatorPage() {
   const [income, setIncome] = useState('')
@@ -75,23 +76,23 @@ export default function CalculatorPage() {
   }
 
   return (
-    <div className="calculator-page">
-      <div className="calc-wrap">
-        {/* Header */}
-        <div className="brand-strip">
-          <div className="brand-box">
-            <img src="/images/accesco_white.png" alt="AccesCo" onError={(e) => e.target.style.display = 'none'} />
-          </div>
-          <div>
-            <h1 className="brand-title">
-              ACCESCO <span style={{ color: 'var(--accent)' }}>CALCULATOR</span>
-            </h1>
-            <div className="brand-sub">Smart budget planner</div>
-          </div>
-          <div className="brand-badge">INDIA 2025</div>
+    <>
+      <AccescoHeader />
+      <div className="calculator-page">
+        <div className="calculator-hero">
+          <img 
+            src="/images/skip-the-line.jpg" 
+            alt="Accesco Living - Skip the Line" 
+            className="calculator-hero-img"
+            onError={(e) => {
+              e.currentTarget.src = '/images/accesco_original.png';
+              e.currentTarget.style.padding = '20px';
+              e.currentTarget.style.background = 'linear-gradient(135deg, #7A0042, #1A0A0F)';
+            }}
+          />
         </div>
-
-        {/* Main Grid */}
+        <div className="calc-wrap">
+          {/* Main Grid */}
         <div className="calc-grid">
           {/* Left Sidebar - Input Form */}
           <aside className="card card-lg">
@@ -327,13 +328,38 @@ export default function CalculatorPage() {
                         fontWeight: 800
                       }}
                     >
-                      🎯 Plan Goal
+                      Plan Goal
                     </button>
                   </div>
                 </div>
               </div>
             )}
           </section>
+        </div>
+
+        {/* AI Features Highlight */}
+        <div style={{ 
+          marginTop: '60px', 
+          padding: '40px 20px', 
+          background: 'rgba(122, 0, 66, 0.03)', 
+          borderRadius: '24px',
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+          gap: '30px'
+        }}>
+          {[
+            { title: 'Smart Categorization', desc: 'AI-powered automatic expense sorting', icon: '✦' },
+            { title: 'Predictive Budgeting', desc: 'Forecast spending patterns accurately', icon: '✦' },
+            { title: 'Goal Tracking', desc: 'Achieve financial milestones faster', icon: '✦' },
+          ].map((f, i) => (
+            <div key={i} style={{ display: 'flex', gap: '15px', alignItems: 'flex-start' }}>
+              <div style={{ color: '#7A0042', fontSize: '1.5rem', fontWeight: 900 }}>{f.icon}</div>
+              <div>
+                <h3 style={{ margin: '0 0 8px', fontFamily: 'Sora', fontSize: '1.1rem', fontWeight: 800, color: '#1A0A0F' }}>{f.title}</h3>
+                <p style={{ margin: 0, fontFamily: 'DM Sans', fontSize: '0.95rem', color: '#6B5B65', lineHeight: 1.5 }}>{f.desc}</p>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
 
@@ -343,5 +369,6 @@ export default function CalculatorPage() {
         rel="stylesheet"
       />
     </div>
+    </>
   )
 }
