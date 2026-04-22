@@ -4,7 +4,7 @@ import { NextResponse } from 'next/server';
 // In actual production, you should use firebase-admin, but let's implement the standard fetch API securely against Firestore REST 
 // or use the server-side initialized firebase. 
 // Assuming the user has configured process.env or has standard firebase access.
-import { db } from '../../../lib/firebase';
+import { db } from '../../../../lib/firebase';
 import { collection, query, where, getDocs, doc, runTransaction, addDoc } from 'firebase/firestore';
 
 export async function POST(request) {
