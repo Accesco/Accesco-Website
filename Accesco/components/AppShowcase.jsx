@@ -7,6 +7,7 @@ import {
   validateWaitlistEntry,
   verifyOtpEmailCode,
 } from '../lib/waitlistService';
+import { initializeReferralProfile } from '../lib/referralService';
 
 export default function AppShowcase() {
   const [currentStep, setCurrentStep] = useState(1);
@@ -23,6 +24,7 @@ export default function AppShowcase() {
   const [error, setError] = useState('');
   const [codeSent, setCodeSent] = useState(false);
   const [otpVerified, setOtpVerified] = useState(false);
+  const [referralLink, setReferralLink] = useState('');
 
   const interestOptions = [
     { id: 'grokly', label: 'Groceries & Essentials', icon: '🛒' },
@@ -118,13 +120,15 @@ export default function AppShowcase() {
         phone: form.phone,
         interests: form.interests.join(', '),
       });
+      
+      const referredBy = sessionStorage.getItem('referredBy');
+      const newRefCode = await initializeReferralProfile(form.email.trim(), form.name, referredBy);
+      setReferralLink(`https://accescoliving.com/?ref=${newRefCode}`);
+      
       setSuccess(true);
-      setForm({ name: '', email: '', phone: '', interests: [], verificationCode: '' });
       setCodeSent(false);
       setOtpVerified(false);
-      setCurrentStep(1);
-
-      setTimeout(() => setSuccess(false), 5000);
+      setCurrentStep(4);
     } catch (err) {
       console.error('Waitlist submit failed:', err);
       setError(err.message || 'Something went wrong. Please try again.');
@@ -134,6 +138,14 @@ export default function AppShowcase() {
   };
 
   useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const refCode = params.get('ref');
+      if (refCode) {
+        sessionStorage.setItem('referredBy', refCode);
+      }
+    }
+
     const stack = document.getElementById('stack');
     if (!stack) return;
 
@@ -697,15 +709,18 @@ export default function AppShowcase() {
               {currentStep === 1 && 'Tell us about yourself'}
               {currentStep === 2 && 'What interests you?'}
               {currentStep === 3 && 'Verify your email'}
+              {currentStep === 4 && 'Start referring your friends'}
             </p>
           </div>
 
           {/* Step Indicator */}
-          <div className="step-indicator">
-            <div className={`step-dot ${currentStep >= 1 ? 'active' : ''}`}></div>
-            <div className={`step-dot ${currentStep >= 2 ? 'active' : ''}`}></div>
-            <div className={`step-dot ${currentStep >= 3 ? 'active' : ''}`}></div>
-          </div>
+          {currentStep < 4 && (
+            <div className="step-indicator">
+              <div className={`step-dot ${currentStep >= 1 ? 'active' : ''}`}></div>
+              <div className={`step-dot ${currentStep >= 2 ? 'active' : ''}`}></div>
+              <div className={`step-dot ${currentStep >= 3 ? 'active' : ''}`}></div>
+            </div>
+          )}
 
           {success && (
             <div className="success-message">
@@ -841,6 +856,61 @@ export default function AppShowcase() {
                   <button type="submit" className="submit-button" disabled={loading}>
                     {loading && <span className="loading-spinner"></span>}
                     {loading ? 'Joining...' : 'Join Waitlist'}
+                  </button>
+                </div>
+              </>
+            )}
+
+            {/* Step 4: Referral Dashboard */}
+            {currentStep === 4 && (
+              <>
+                <div className="verification-section">
+                  <h4 style={{ fontSize: '24px', fontWeight: '800', marginBottom: '16px', color: '#1a0014' }}>
+                    You're in! 🎉
+                  </h4>
+                  <p style={{ color: '#6b5a6b', marginBottom: '32px', fontSize: '16px' }}>
+                    Now invite 1 friend to unlock your first 20 coins!
+                  </p>
+                  
+                  <div className="form-group" style={{ textAlign: 'left' }}>
+                    <label className="form-label">Your Unique Referral Link</label>
+                    <div style={{ display: 'flex', gap: '8px' }}>
+                      <input
+                        type="text"
+                        className="form-input"
+                        value={referralLink}
+                        readOnly
+                        style={{ backgroundColor: '#f9fafb', color: '#7A0042', fontWeight: 'bold' }}
+                      />
+                      <button 
+                        type="button" 
+                        className="nav-button"
+                        style={{ flex: 'none', width: 'auto', padding: '0 24px' }}
+                        onClick={() => {
+                          if (navigator.clipboard) {
+                            navigator.clipboard.writeText(referralLink);
+                          }
+                          if (navigator.vibrate) {
+                            navigator.vibrate(50);
+                          }
+                          alert('Copied to clipboard!');
+                        }}
+                      >
+                        Copy
+                      </button>
+                    </div>
+                  </div>
+                  
+                  <button 
+                    type="button" 
+                    className="submit-button"
+                    style={{ backgroundColor: '#25D366', marginTop: '16px' }}
+                    onClick={() => {
+                      const text = `Join the Accesco Waitlist and get early access! Use my link: ${referralLink}`;
+                      window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
+                    }}
+                  >
+                    Share on WhatsApp
                   </button>
                 </div>
               </>

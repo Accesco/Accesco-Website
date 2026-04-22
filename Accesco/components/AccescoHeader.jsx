@@ -27,6 +27,9 @@ export default function AccescoHeader() {
   const timeoutRef = useRef(null);
   const partnersTimeoutRef = useRef(null);
 
+  // Check if current page has light background (not homepage)
+  const isLightBgPage = pathname !== '/';
+
   const locations = [
     'Bengaluru, Karnataka',
     'Mumbai, Maharashtra',
@@ -143,7 +146,7 @@ export default function AccescoHeader() {
 
   return (
     <>
-      <header className={`${styles.header} ${isScrolled ? styles.scrolled : ''}`}>
+      <header className={`${styles.header} ${isScrolled ? styles.scrolled : ''} ${isLightBgPage ? styles.lightBg : ''}`}>
         <div className={styles.container}>
           <Link href="/" className={styles.logo}>
             <Image 
@@ -261,6 +264,7 @@ export default function AccescoHeader() {
               )}
             </div>
             
+            <Link href="/referral" className={`${styles.navLink} ${pathname === '/referral' ? styles.active : ''}`}>Invite & Earn 🎁</Link>
             <Link href="/blogs" className={`${styles.navLink} ${pathname === '/blogs' ? styles.active : ''}`}>Blogs</Link>
             <Link href="/contact" className={`${styles.navLink} ${pathname === '/contact' ? styles.active : ''}`}>Help & Support</Link>
           </nav>
@@ -444,6 +448,7 @@ export default function AccescoHeader() {
               </div>
             </div>
             
+            <Link href="/referral" className={`${styles.mobileNavLink} ${pathname === '/referral' ? styles.active : ''}`}>Invite & Earn 🎁</Link>
             <Link href="/blogs" className={`${styles.mobileNavLink} ${pathname === '/blogs' ? styles.active : ''}`}>Blogs</Link>
             <Link href="/contact" className={`${styles.mobileNavLink} ${pathname === '/contact' ? styles.active : ''}`}>Contact</Link>
           

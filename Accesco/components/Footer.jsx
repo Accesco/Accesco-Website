@@ -118,8 +118,9 @@ export default function Footer() {
             <div className="footer-column">
               <h4 className="column-title">Resources</h4>
               <ul className="column-links">
+                <li><Link href="/referral">Referral Program</Link></li>
+                <li><Link href="/faq">FAQ</Link></li>
                 <li><Link href="/qtcvideos">QTC Videos</Link></li>
-                
                 <li><Link href="/blogs">Blog</Link></li>
                
               </ul>

@@ -25,6 +25,7 @@ export default function BlogsPage() {
   const [postImgUrl, setPostImgUrl] = useState('');
   const [postDate, setPostDate] = useState(() => new Date().toISOString().split('T')[0]);
   const [publishing, setPublishing] = useState(false);
+  const [uploadingImage, setUploadingImage] = useState(false);
 
   // ── Load blogs from Firestore on mount ──────────────────────────────────────
   useEffect(() => {
@@ -150,6 +151,48 @@ export default function BlogsPage() {
       alert('Failed to publish. Check the console for details.');
     } finally {
       setPublishing(false);
+    }
+  };
+
+  // ── Handle Image Upload ──────────────────────────────────────────────────────
+  const handleImageUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      alert('Please upload an image file');
+      return;
+    }
+
+    // Validate file size (max 10MB)
+    if (file.size > 10 * 1024 * 1024) {
+      alert('Image size should be less than 10MB');
+      return;
+    }
+
+    setUploadingImage(true);
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const response = await fetch('/api/upload-image', {
+        method: 'POST',
+        body: formData,
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        setPostImgUrl(data.url);
+      } else {
+        alert('Failed to upload image: ' + (data.error || 'Unknown error'));
+      }
+    } catch (err) {
+      console.error('Upload error:', err);
+      alert('Failed to upload image. Please try again.');
+    } finally {
+      setUploadingImage(false);
     }
   };
 
@@ -388,25 +431,34 @@ export default function BlogsPage() {
                   />
                 </div>
 
-                {/* Image URL */}
+                {/* Image Upload */}
                 <div className="field-group">
-                  <label className="form-label">Image URL <span className="label-hint">(Cloudinary)</span></label>
+                  <label className="form-label">Cover Image</label>
                   <input
-                    type="text"
-                    value={postImgUrl}
-                    onChange={(e) => setPostImgUrl(e.target.value)}
-                    placeholder="https://res.cloudinary.com/..."
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageUpload}
                     className="form-select"
+                    style={{ padding: '8px' }}
+                    disabled={uploadingImage}
                   />
-                  {postImgUrl && (
-                    <img
-                      src={postImgUrl}
-                      alt="Cover preview"
-                      className="img-preview"
-                      onError={(e) => { e.target.style.display = 'none'; }}
-                    />
+                  {uploadingImage && (
+                    <p className="field-hint" style={{ color: '#7A0042' }}>
+                      <i className="ri-loader-4-line" style={{ animation: 'spin 1s linear infinite' }}></i> Uploading to Cloudinary...
+                    </p>
                   )}
-                  <p className="field-hint">Upload on cloudinary.com first, then paste URL here.</p>
+                  {postImgUrl && !uploadingImage && (
+                    <>
+                      <img
+                        src={postImgUrl}
+                        alt="Cover preview"
+                        className="img-preview"
+                        onError={(e) => { e.target.style.display = 'none'; }}
+                      />
+                      <p className="field-hint" style={{ color: '#10b981' }}>✓ Image uploaded to Cloudinary</p>
+                    </>
+                  )}
+                  <p className="field-hint">Upload an image (max 10MB). Auto-optimized and stored on Cloudinary CDN.</p>
                 </div>
 
               </div>{/* end sidebar-fields */}
