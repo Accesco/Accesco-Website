@@ -73,7 +73,7 @@ export default function CustomCursor() {
           backgroundColor: '#fff',
           borderRadius: '50%',
           pointerEvents: 'none',
-          zIndex: 99999,
+          zIndex: 100001,
           mixBlendMode: 'difference',
           transform: 'translate(-50%, -50%)',
           display: 'flex',

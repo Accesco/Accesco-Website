@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import styles from './CookieConsent.module.css';
 
 const CONSENT_KEY = 'accesco_cookie_consent';
@@ -8,6 +8,7 @@ const CONSENT_KEY = 'accesco_cookie_consent';
 export default function CookieConsent() {
   const [isVisible, setIsVisible] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
+  const bannerRef = useRef(null);
 
   useEffect(() => {
     const storedConsent = window.localStorage.getItem(CONSENT_KEY);
@@ -34,12 +35,26 @@ export default function CookieConsent() {
     closeBanner('rejected');
   };
 
+  useEffect(() => {
+    if (!isVisible || !bannerRef.current) {
+      return undefined;
+    }
+
+    const previousPaddingBottom = document.body.style.paddingBottom;
+    const bannerHeight = bannerRef.current.offsetHeight;
+    document.body.style.paddingBottom = `${bannerHeight + 32}px`;
+
+    return () => {
+      document.body.style.paddingBottom = previousPaddingBottom;
+    };
+  }, [isVisible]);
+
   if (!isVisible) {
     return null;
   }
 
   return (
-    <div className={`${styles.banner} ${isClosing ? styles.fadeOut : styles.fadeIn}`} role="dialog" aria-live="polite" aria-label="Cookie consent">
+    <div ref={bannerRef} className={`${styles.banner} ${isClosing ? styles.fadeOut : styles.fadeIn}`} role="dialog" aria-live="polite" aria-label="Cookie consent">
       <p className={styles.message}>
         We use cookies and similar technologies to improve your browsing experience, remember your preferences, analyze site traffic, and personalize content and recommendations. You can choose to accept all cookies or reject non-essential cookies at any time.
       </p>
