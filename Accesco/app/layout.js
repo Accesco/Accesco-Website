@@ -1,6 +1,7 @@
 import Script from 'next/script';
 import './globals.css';
 import { AuthProvider } from './components/AuthProvider';
+import CookieConsent from './components/CookieConsent';
 
 export const metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'),
@@ -128,7 +129,6 @@ export default function RootLayout({ children }) {
         />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        {/* Updated Font Links with Variable Axes (wght 400..900) */}
         <link 
           href="https://fonts.googleapis.com/css2?family=Sora:wght@300..800&family=DM+Sans:wght@400;500;700&family=Inter:wght@400..700&display=swap" 
           rel="stylesheet" 
@@ -145,6 +145,7 @@ export default function RootLayout({ children }) {
       <body>
         <AuthProvider>
           {children}
+          <CookieConsent />
         </AuthProvider>
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-SH32KGLK5F"

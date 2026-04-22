@@ -1,0 +1,117 @@
+.banner {
+  position: fixed;
+  left: 50%;
+  bottom: 20px;
+  transform: translateX(-50%);
+  width: fit-content;
+  max-width: min(900px, calc(100% - 24px));
+  min-height: auto;
+  background: #e6e6fa;
+  color: #000000;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  border-radius: 14px;
+  padding: 20px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  z-index: 100000;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 14px 32px rgba(2, 6, 23, 0.35);
+}
+
+.message {
+  font-size: 1.2rem;
+  line-height: 1.45;
+  color: #000000;
+  margin: 0;
+  flex: 1;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.acceptButton,
+.rejectButton {
+  border: 0;
+  border-radius: 10px;
+  padding: 20px 34px;
+  font-size: 1.15rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.16s ease, opacity 0.16s ease, background-color 0.2s ease;
+}
+
+.acceptButton {
+  background: #ec4899;
+  color: #000000;
+}
+
+.acceptButton:hover {
+  background: #f472b6;
+  transform: translateY(-1px);
+}
+
+.rejectButton {
+  background: transparent;
+  color: #000000;
+  border: 1px solid rgba(0, 0, 0, 0.35);
+}
+
+.rejectButton:hover {
+  background: rgba(0, 0, 0, 0.08);
+  transform: translateY(-1px);
+}
+
+.fadeIn {
+  animation: cookieFadeIn 0.24s ease-out;
+}
+
+.fadeOut {
+  animation: cookieFadeOut 0.22s ease-in forwards;
+}
+
+@keyframes cookieFadeIn {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+@keyframes cookieFadeOut {
+  from {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(-50%) translateY(10px);
+  }
+}
+
+@media (max-width: 640px) {
+  .banner {
+    width: calc(100% - 16px);
+    min-height: auto;
+    bottom: 10px;
+    padding: 12px;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .message {
+    font-size: 1rem;
+  }
+
+  .actions {
+    width: 100%;
+    justify-content: flex-end;
+  }
+}

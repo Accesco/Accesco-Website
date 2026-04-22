@@ -4,12 +4,12 @@ import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import './homepage.css';
-import AccescoHeader from '@/components/AccescoHeader';
-import Hero from '@/components/Hero';
-import AppShowcase from '@/components/AppShowcase';
-import DownloadSection from '@/components/DownloadSection';
-import FAQSection from '@/components/FAQSection';
-import Footer from '@/components/Footer';
+import AccescoHeader from '../components/AccescoHeader';
+import Hero from '../components/Hero';
+import AppShowcase from '../components/AppShowcase';
+import DownloadSection from '../components/DownloadSection';
+import FAQSection from '../components/FAQSection';
+import Footer from '../components/Footer';
 
 export default function HomePage() {
   const [isClient, setIsClient] = useState(false);
@@ -18,21 +18,16 @@ export default function HomePage() {
     setIsClient(true);
   }, []);
 
-  useEffect(() => {
-    // Scripts previously loaded here are now handled by React components
-  }, []);
-
   return (
     <>
       <AccescoHeader />
 
       <main>
-        {/* ── Hero Section (unchanged — backend video preserved) ── */}
+        {/* ── Hero Section ── */}
         <Hero />
 
         {/* ── Services Section — Premium Redesign ── */}
         <section id="services" style={{ padding: '100px 0', background: '#FFFDF8', position: 'relative' }}>
-          {/* Subtle background pattern */}
           <div style={{
             position: 'absolute', inset: 0,
             backgroundImage: 'radial-gradient(circle at 20% 50%, rgba(122,0,66,0.03) 0%, transparent 60%), radial-gradient(circle at 80% 20%, rgba(200,150,62,0.03) 0%, transparent 60%)',
@@ -40,7 +35,6 @@ export default function HomePage() {
           }} />
 
           <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 40px', position: 'relative' }}>
-            {/* Section header */}
             <div style={{ marginBottom: '60px' }}>
               <div className="ac-chip ac-chip-maroon" style={{ marginBottom: '18px' }}>
                 Your Daily Services
@@ -73,13 +67,7 @@ export default function HomePage() {
                   <div className="service-card-visual">
                     <Image src="/images/grokly-new.png" alt="Grokly Groceries" fill style={{ objectFit: 'cover' }} />
                     <div className="service-icon-circle">
-                      <Image
-                        src="/images/grokly-icon.png"
-                        alt="Grokly"
-                        width={32}
-                        height={32}
-                        style={{ objectFit: 'contain', width: '32px', height: '32px' }}
-                      />
+                      <Image src="/images/grokly-icon.png" alt="Grokly" width={32} height={32} style={{ objectFit: 'contain', width: '32px', height: '32px' }} />
                     </div>
                   </div>
                   <div className="service-card-body">
@@ -92,9 +80,7 @@ export default function HomePage() {
                       <span>10 AM – 11 PM</span>
                       <span>5 km radius</span>
                     </div>
-                    <div className="service-card-cta grokly-btn">
-                      Shop Groceries
-                    </div>
+                    <div className="service-card-cta grokly-btn">Shop Groceries</div>
                   </div>
                 </div>
               </a>
@@ -104,13 +90,7 @@ export default function HomePage() {
                   <div className="service-card-visual">
                     <Image src="/images/swadisht-new.png" alt="Swadishtt Meals" fill style={{ objectFit: 'cover' }} />
                     <div className="service-icon-circle">
-                      <Image
-                        src="/images/swadisht/swadisht-icon.png"
-                        alt="Swadishtt"
-                        width={32}
-                        height={32}
-                        style={{ objectFit: 'contain', width: '32px', height: '32px' }}
-                      />
+                      <Image src="/images/swadisht/swadisht-icon.png" alt="Swadishtt" width={32} height={32} style={{ objectFit: 'contain', width: '32px', height: '32px' }} />
                     </div>
                   </div>
                   <div className="service-card-body">
@@ -121,11 +101,9 @@ export default function HomePage() {
                     <p className="service-card-desc">Home-style meals, delivered warm.</p>
                     <div className="service-card-meta">
                       <span>200+ Dishes</span>
-                      <span>Hot & Fresh</span>
+                      <span>Hot &amp; Fresh</span>
                     </div>
-                    <div className="service-card-cta swadishtt-btn">
-                      Order Food
-                    </div>
+                    <div className="service-card-cta swadishtt-btn">Order Food</div>
                   </div>
                 </div>
               </a>
@@ -135,13 +113,7 @@ export default function HomePage() {
                   <div className="service-card-visual">
                     <Image src="/images/fashion-new.png" alt="InstaStyle Fashion" fill style={{ objectFit: 'cover' }} />
                     <div className="service-icon-circle">
-                      <Image
-                        src="/images/instastyle-icon.png"
-                        alt="InstaStyle"
-                        width={32}
-                        height={32}
-                        style={{ objectFit: 'contain', width: '32px', height: '32px' }}
-                      />
+                      <Image src="/images/instastyle-icon.png" alt="InstaStyle" width={32} height={32} style={{ objectFit: 'contain', width: '32px', height: '32px' }} />
                     </div>
                   </div>
                   <div className="service-card-body">
@@ -154,29 +126,16 @@ export default function HomePage() {
                       <span>Premium Brands</span>
                       <span>3–7 Days</span>
                     </div>
-                    <div className="service-card-cta instastyle-btn">
-                      Explore Fashion
-                    </div>
+                    <div className="service-card-cta instastyle-btn">Explore Fashion</div>
                   </div>
                 </div>
               </a>
             </div>
           </div>
 
-          <style>{`
-            .service-premium-card {
-              background: #fff;
-              border-radius: 24px;
-              border: 1px solid rgba(122,0,66,0.08);
-              overflow: hidden;
-              transition: transform 0.35s cubic-bezier(0.22,1,0.36,1), box-shadow 0.35s cubic-bezier(0.22,1,0.36,1);
-              cursor: pointer;
-              height: 100%;
-            }
-            .service-premium-card:hover {
-              transform: translateY(-6px);
-              box-shadow: 0 24px 60px rgba(122,0,66,0.12);
-            }
+          <style dangerouslySetInnerHTML={{ __html: `
+            .service-premium-card { background: #fff; border-radius: 24px; border: 1px solid rgba(122,0,66,0.08); overflow: hidden; transition: transform 0.35s cubic-bezier(0.22,1,0.36,1), box-shadow 0.35s cubic-bezier(0.22,1,0.36,1); cursor: pointer; height: 100%; }
+            .service-premium-card:hover { transform: translateY(-6px); box-shadow: 0 24px 60px rgba(122,0,66,0.12); }
             .service-card-visual { height: 200px; position: relative; overflow: hidden; }
             .service-card-body { padding: 24px; }
             .service-card-name { font-family: 'Sora', sans-serif; font-weight: 800; font-size: 1.35rem; color: #1A0A0F; margin: 0; }
@@ -194,108 +153,49 @@ export default function HomePage() {
             .service-premium-card:hover .grokly-btn { background: #2E7D32; color: #fff; }
             .service-premium-card:hover .swadishtt-btn { background: #7A0042; color: #fff; }
             .service-premium-card:hover .instastyle-btn { background: #4A148C; color: #fff; }
-            
-            /* Xpense Highlights Hover */
             .xpense-card-float { transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1); cursor: pointer; }
             .xpense-details { max-height: 0; opacity: 0; overflow: hidden; transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1); margin-top: 0; }
             .xpense-card-float:hover { transform: translateY(-10px) scale(1.05) rotate(0deg) !important; z-index: 10 !important; box-shadow: 0 30px 60px rgba(0,0,0,0.15) !important; }
             .xpense-card-float:hover .xpense-details { max-height: 120px; opacity: 1; margin-top: 16px; }
-          `}</style>
+          ` }} />
         </section>
 
         {/* ── Xpense Meter Section ── */}
         <section style={{ padding: '80px 0', background: '#FFFDF8', position: 'relative', overflow: 'hidden' }}>
           <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 40px', position: 'relative', zIndex: 1 }}>
-            <div style={{ 
-              background: '#FFF5F7', 
-              borderRadius: '48px', 
-              padding: '100px 80px',
-              border: '1px solid #FFE5E9',
-              display: 'grid', 
-              gridTemplateColumns: '1fr 1.2fr', 
-              gap: '80px', 
-              alignItems: 'center',
-              position: 'relative',
-              overflow: 'hidden'
+            <div style={{
+              background: '#FFF5F7', borderRadius: '48px', padding: '100px 80px',
+              border: '1px solid #FFE5E9', display: 'grid',
+              gridTemplateColumns: '1fr 1.2fr', gap: '80px', alignItems: 'center',
+              position: 'relative', overflow: 'hidden'
             }} className="xpense-box-container">
-              {/* Subtle background glow */}
-              <div style={{
-                position: 'absolute',
-                top: '-20%',
-                right: '-10%',
-                width: '600px',
-                height: '600px',
-                background: 'radial-gradient(circle, rgba(122, 0, 66, 0.04) 0%, transparent 70%)',
-                zIndex: 0,
-                pointerEvents: 'none'
-              }} />
+              <div style={{ position: 'absolute', top: '-20%', right: '-10%', width: '600px', height: '600px', background: 'radial-gradient(circle, rgba(122, 0, 66, 0.04) 0%, transparent 70%)', zIndex: 0, pointerEvents: 'none' }} />
               <div>
                 <div className="ac-chip ac-chip-maroon" style={{ marginBottom: '20px' }}>Financial Intelligence</div>
                 <h2 style={{ fontFamily: "'Sora', sans-serif", fontWeight: 800, fontSize: 'clamp(2rem, 5vw, 3.2rem)', color: '#1A0A0F', margin: '0 0 20px', lineHeight: 1.1 }}>
-                  Xpense<br />
-                  <span className="ac-gradient-text">Meter</span>
+                  Xpense<br /><span className="ac-gradient-text">Meter</span>
                 </h2>
                 <p style={{ fontSize: '1.05rem', color: '#6B5B65', lineHeight: 1.75, marginBottom: '36px' }}>
                   Transform your financial habits with intelligent expense tracking and predictive analytics.
                 </p>
-                <Link href="/calculator" style={{
-                  display: 'inline-block',
-                  padding: '14px 32px',
-                  background: '#1A0A0F',
-                  color: '#FFFDF8',
-                  borderRadius: '9999px',
-                  fontWeight: 700,
-                  textDecoration: 'none',
-                  boxShadow: '0 10px 20px rgba(0,0,0,0.1)',
-                  position: 'relative',
-                  zIndex: 2
-                }}>
+                <Link href="/calculator" style={{ display: 'inline-block', padding: '14px 32px', background: '#1A0A0F', color: '#FFFDF8', borderRadius: '9999px', fontWeight: 700, textDecoration: 'none', boxShadow: '0 10px 20px rgba(0,0,0,0.1)', position: 'relative', zIndex: 2 }}>
                   Launch Calculator →
                 </Link>
               </div>
-              {/* Right — Dynamic Highlights Visual */}
+
               <div style={{ position: 'relative', height: '480px', display: 'flex', alignItems: 'center', justifyContent: 'center' }} className="xpense-visual-wrap">
-                {/* Highlight 1: Smart Categorization */}
-                <div className="xpense-card-float" style={{
-                  position: 'absolute',
-                  top: '5%', right: '0%',
-                  width: '260px',
-                  background: '#FFFDF8',
-                  padding: '24px',
-                  borderRadius: '24px',
-                  boxShadow: '0 20px 40px rgba(122,0,66,0.12)',
-                  border: '2px solid #FFE5E9',
-                  zIndex: 3,
-                  transform: 'rotate(2deg)',
-                  color: '#000000'
-                }}>
+                <div className="xpense-card-float" style={{ position: 'absolute', top: '5%', right: '0%', width: '260px', background: '#FFFDF8', padding: '24px', borderRadius: '24px', boxShadow: '0 20px 40px rgba(122,0,66,0.12)', border: '2px solid #FFE5E9', zIndex: 3, transform: 'rotate(2deg)', color: '#000' }}>
                   <div style={{ color: '#7A0042', fontWeight: 900, marginBottom: '8px', fontSize: '1rem' }}>✦ Smart Categorization</div>
-                  <div style={{ fontSize: '0.85rem', color: '#1A0A0F', fontWeight: 600, opacity: 1 }}>AI-powered automatic expense sorting</div>
-                  
+                  <div style={{ fontSize: '0.85rem', color: '#1A0A0F', fontWeight: 600 }}>AI-powered automatic expense sorting</div>
                   <div className="xpense-details">
                     <div style={{ background: '#FDF2F5', padding: '12px', borderRadius: '12px', border: '1px solid rgba(122,0,66,0.1)', marginTop: '12px' }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', fontSize: '0.8rem' }}>
-                        <span style={{ color: '#1A0A0F', fontWeight: 500 }}>Groceries</span>
-                        <span style={{ fontWeight: 800, color: '#7A0042' }}>45%</span>
-                      </div>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8rem' }}>
-                        <span style={{ color: '#1A0A0F', fontWeight: 500 }}>Dining</span>
-                        <span style={{ fontWeight: 800, color: '#7A0042' }}>25%</span>
-                      </div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', fontSize: '0.8rem' }}><span style={{ color: '#1A0A0F', fontWeight: 500 }}>Groceries</span><span style={{ fontWeight: 800, color: '#7A0042' }}>45%</span></div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8rem' }}><span style={{ color: '#1A0A0F', fontWeight: 500 }}>Dining</span><span style={{ fontWeight: 800, color: '#7A0042' }}>25%</span></div>
                     </div>
                   </div>
                 </div>
 
-                {/* Highlight 2: Predictive Budgeting (The main box) */}
-                <div style={{
-                  width: '100%', maxWidth: '340px',
-                  background: '#1A0A0F',
-                  boxShadow: '0 40px 100px rgba(26,10,15,0.2)',
-                  borderRadius: '32px', padding: '36px',
-                  position: 'relative',
-                  zIndex: 2,
-                  color: '#FFFDF8'
-                }}>
+                <div style={{ width: '100%', maxWidth: '340px', background: '#1A0A0F', boxShadow: '0 40px 100px rgba(26,10,15,0.2)', borderRadius: '32px', padding: '36px', position: 'relative', zIndex: 2, color: '#FFFDF8' }}>
                   <div style={{ marginBottom: '24px' }}>
                     <div style={{ opacity: 0.6, fontSize: '0.75rem', marginBottom: '4px' }}>Monthly Overview</div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
@@ -303,7 +203,6 @@ export default function HomePage() {
                       <div style={{ background: 'rgba(46,125,50,0.15)', color: '#4ADE80', padding: '2px 8px', borderRadius: '6px', fontSize: '0.75rem', fontWeight: 700 }}>+12.5%</div>
                     </div>
                   </div>
-
                   <div style={{ marginBottom: '24px' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
                       <div style={{ fontSize: '0.85rem', fontWeight: 700 }}>Savings Goal</div>
@@ -313,11 +212,10 @@ export default function HomePage() {
                       <div style={{ width: '68%', height: '100%', background: '#C8963E', borderRadius: '10px' }} />
                     </div>
                   </div>
-
                   <div style={{ padding: '16px', background: 'rgba(255,255,255,0.05)', borderRadius: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <div>
                       <div style={{ opacity: 0.6, fontSize: '0.7rem', marginBottom: '2px' }}>Top Category</div>
-                      <div style={{ fontWeight: 700, fontSize: '0.9rem' }}>Food & Dining</div>
+                      <div style={{ fontWeight: 700, fontSize: '0.9rem' }}>Food &amp; Dining</div>
                     </div>
                     <div style={{ width: '32px', height: '32px', background: '#7A0042', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FFFDF8" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m19 9-7 7-7-7"/></svg>
@@ -325,30 +223,17 @@ export default function HomePage() {
                   </div>
                 </div>
 
-                {/* Highlight 3: Goal Tracking */}
-                <div className="xpense-card-float" style={{
-                  position: 'absolute',
-                  bottom: '5%', left: '0%',
-                  width: '260px',
-                  background: '#C8963E',
-                  padding: '24px',
-                  borderRadius: '24px',
-                  boxShadow: '0 20px 40px rgba(200,150,62,0.2)',
-                  zIndex: 1,
-                  color: '#000000',
-                  transform: 'rotate(-3deg)'
-                }}>
-                  <div style={{ fontWeight: 900, marginBottom: '8px', fontSize: '1rem', color: '#000000' }}>✦ Goal Tracking</div>
-                  <div style={{ fontSize: '0.85rem', color: '#000000', fontWeight: 600, opacity: 0.9, marginBottom: '16px' }}>Achieve milestones faster</div>
-                  
+                <div className="xpense-card-float" style={{ position: 'absolute', bottom: '5%', left: '0%', width: '260px', background: '#C8963E', padding: '24px', borderRadius: '24px', boxShadow: '0 20px 40px rgba(200,150,62,0.2)', zIndex: 1, color: '#000', transform: 'rotate(-3deg)' }}>
+                  <div style={{ fontWeight: 900, marginBottom: '8px', fontSize: '1rem' }}>✦ Goal Tracking</div>
+                  <div style={{ fontSize: '0.85rem', fontWeight: 600, opacity: 0.9, marginBottom: '16px' }}>Achieve milestones faster</div>
                   <div className="xpense-details">
                     <div style={{ padding: '12px', background: 'rgba(0,0,0,0.1)', borderRadius: '12px' }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
-                        <div style={{ fontSize: '0.8rem', fontWeight: 800, color: '#000000' }}>Investment</div>
-                        <div style={{ fontSize: '0.8rem', color: '#000000', fontWeight: 700 }}>68% Complete</div>
+                        <div style={{ fontSize: '0.8rem', fontWeight: 800 }}>Investment</div>
+                        <div style={{ fontSize: '0.8rem', fontWeight: 700 }}>68% Complete</div>
                       </div>
                       <div style={{ height: '6px', background: 'rgba(0,0,0,0.15)', borderRadius: '10px', overflow: 'hidden' }}>
-                        <div style={{ width: '68%', height: '100%', background: '#000000', borderRadius: '10px' }} />
+                        <div style={{ width: '68%', height: '100%', background: '#000', borderRadius: '10px' }} />
                       </div>
                     </div>
                   </div>
@@ -356,21 +241,13 @@ export default function HomePage() {
               </div>
             </div>
           </div>
-          {/* Responsive xpense */}
-          <style>{`
+
+          <style dangerouslySetInnerHTML={{ __html: `
             @media (max-width: 960px) {
-              .xpense-box-container { 
-                grid-template-columns: 1fr !important; 
-                padding: 60px 24px !important; 
-                gap: 40px !important;
-                text-align: center !important;
-              }
+              .xpense-box-container { grid-template-columns: 1fr !important; padding: 60px 24px !important; gap: 40px !important; text-align: center !important; }
               .xpense-visual-wrap { display: none !important; }
-              .xpense-header { display: flex; flex-direction: column; align-items: center; text-align: center; }
-              .xpense-title { font-size: 2.2rem !important; }
-              .xpense-description { font-size: 1rem !important; }
             }
-          `}</style>
+          ` }} />
         </section>
 
         {/* ── Waitlist / App Showcase ── */}
@@ -383,10 +260,8 @@ export default function HomePage() {
         <DownloadSection />
       </main>
 
-      {/* ── Footer ── */}
       <Footer />
 
-      {/* Dialogflow chatbot — preserved — rendered only on client to avoid hydration mismatch */}
       {isClient && (
         <df-messenger
           intent="WELCOME"
