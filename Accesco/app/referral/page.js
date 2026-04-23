@@ -151,7 +151,7 @@ export default function ReferralPage() {
           <div>
             <div style={{ background: '#fff', borderRadius: '24px', padding: '32px', boxShadow: '0 10px 40px rgba(122,0,66,0.08)' }}>
               <h2 style={{ fontSize: '24px', fontWeight: '800', marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                🏆 Top Referrers Leaderboard
+                Top Referrers Leaderboard
               </h2>
 
               {leaderboard.length === 0 ? (

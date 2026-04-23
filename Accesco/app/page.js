@@ -8,7 +8,6 @@ import AccescoHeader from '../components/AccescoHeader';
 import Hero from '../components/Hero';
 import AppShowcase from '../components/AppShowcase';
 import DownloadSection from '../components/DownloadSection';
-import FAQSection from '../components/FAQSection';
 import Footer from '../components/Footer';
 
 export default function HomePage() {
@@ -252,9 +251,6 @@ export default function HomePage() {
 
         {/* ── Waitlist / App Showcase ── */}
         <AppShowcase />
-
-        {/* ── FAQ Section ── */}
-        <FAQSection />
 
         {/* ── Download Section ── */}
         <DownloadSection />

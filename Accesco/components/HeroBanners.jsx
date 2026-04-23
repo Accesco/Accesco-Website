@@ -199,7 +199,11 @@ export function SwadishttHero() {
 /* ── Accesco About Hero ───────────────────────────── */
 export function AccescoHero() {
   return (
-    <section style={heroSection}>
+    <section style={{
+      ...heroSection,
+      height: '480px',
+      alignItems: 'center',
+    }}>
       <style>{`
         .hero-inner-ac { position:absolute;inset:0; }
         .hero-inner-ac img { width:100%;height:100%;object-fit:cover;object-position:center; }
@@ -211,13 +215,13 @@ export function AccescoHero() {
 
       <div style={{
         position: 'absolute', inset: 0,
-        background: 'linear-gradient(to top, rgba(26,10,15,0.88) 0%, rgba(26,10,15,0.4) 55%, transparent 100%)',
+        background: 'linear-gradient(to top, rgba(26,10,15,0.95) 0%, rgba(26,10,15,0.7) 50%, rgba(26,10,15,0.4) 100%)',
       }} />
 
       <div style={{
         position: 'relative', zIndex: 2,
         width: '100%', maxWidth: 1200, margin: '0 auto',
-        padding: 'clamp(24px, 4vw, 56px) clamp(20px, 4vw, 48px)',
+        padding: '120px clamp(20px, 4vw, 48px) 40px',
       }}>
         <div style={chip()}>
           <span style={dot('#c8963e')} />

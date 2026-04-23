@@ -251,7 +251,9 @@ export default function AccescoHeader() {
               )}
             </div>
 
-            <Link href="/referral" className={`${styles.navLink} ${pathname === '/referral' ? styles.active : ''}`}>Invite & Earn 🎁</Link>
+            <Link href="/referral" className={`${styles.navLink} ${pathname === '/referral' ? styles.active : ''}`}>
+              Invite & Earn <i className="ri-gift-line" style={{ marginLeft: '6px', fontSize: '1.1em' }}></i>
+            </Link>
             <Link href="/blogs" className={`${styles.navLink} ${pathname === '/blogs' ? styles.active : ''}`}>Blogs</Link>
             <Link href="/contact" className={`${styles.navLink} ${pathname === '/contact' ? styles.active : ''}`}>Help &amp; Support</Link>
           </nav>
@@ -411,7 +413,9 @@ export default function AccescoHeader() {
               </div>
             </div>
 
-            <Link href="/referral" className={`${styles.mobileNavLink} ${pathname === '/referral' ? styles.active : ''}`} onClick={() => setIsMobileMenuOpen(false)}>Invite & Earn 🎁</Link>
+            <Link href="/referral" className={`${styles.mobileNavLink} ${pathname === '/referral' ? styles.active : ''}`} onClick={() => setIsMobileMenuOpen(false)}>
+              Invite & Earn <i className="ri-gift-line" style={{ marginLeft: '8px' }}></i>
+            </Link>
             <Link href="/blogs" className={`${styles.mobileNavLink} ${pathname === '/blogs' ? styles.active : ''}`} onClick={() => setIsMobileMenuOpen(false)}>Blogs</Link>
             <Link href="/contact" className={`${styles.mobileNavLink} ${pathname === '/contact' ? styles.active : ''}`} onClick={() => setIsMobileMenuOpen(false)}>Help &amp; Support</Link>
 

@@ -2,6 +2,7 @@
 
 import React from 'react';
 import Image from 'next/image';
+import styles from './DownloadSection.module.css';
 
 export default function DownloadSection() {
   return (
@@ -31,7 +32,7 @@ export default function DownloadSection() {
           background: 'linear-gradient(90deg, transparent, rgba(200,150,62,0.5), transparent)',
         }} />
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: '60px', alignItems: 'center', position: 'relative', zIndex: 1 }} className="dl-grid">
+        <div className={styles.dlGrid}>
 
           {/* Left — copy */}
           <div>
@@ -103,9 +104,9 @@ export default function DownloadSection() {
           </div>
 
           {/* Right — QR Box */}
-          <div style={{
+          <div className={styles.dlQr} style={{
             display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '14px', flexShrink: 0,
-          }} className="dl-qr">
+          }}>
             <div style={{
               background: '#FFFDF8', borderRadius: '20px', padding: '20px',
               boxShadow: '0 0 0 1px rgba(122,0,66,0.1), 0 20px 50px rgba(0,0,0,0.4)',
@@ -127,15 +128,6 @@ export default function DownloadSection() {
             </span>
           </div>
         </div>
-
-        {/* Responsive overrides */}
-        <style>{`
-          @media (max-width: 900px) {
-            .dl-grid { grid-template-columns: 1fr !important; gap: 40px !important; text-align: center; }
-            .dl-grid > div:first-child { display: flex; flex-direction: column; align-items: center; }
-            .dl-qr { display: none !important; }
-          }
-        `}</style>
       </div>
     </section>
   );
