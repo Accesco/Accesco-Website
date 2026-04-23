@@ -1,19 +1,21 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import './blogs.css';
 import { fetchBlogs, addBlog } from '../../lib/blogService';
 import AccescoHeader from '../../components/AccescoHeader';
 import Footer from '../../components/Footer';
+import { useAuth } from '../components/AuthProvider';
 
 export default function BlogsPage() {
+  const router = useRouter();
+  const { user } = useAuth();
   const [posts, setPosts] = useState([]);
   const [filteredPosts, setFilteredPosts] = useState([]);
   const [activeCategory, setActiveCategory] = useState('All');
-  const [showReader, setShowReader] = useState(false);
   const [showWriter, setShowWriter] = useState(false);
-  const [selectedPost, setSelectedPost] = useState(null);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -86,9 +88,7 @@ export default function BlogsPage() {
 
   // ── Modal helpers ─────────────────────────────────────────────────────────────
   const openReader = (post) => {
-    setSelectedPost(post);
-    setShowReader(true);
-    document.body.style.overflow = 'hidden';
+    router.push(`/blogs/${post.id}`);
   };
 
   const openWriter = () => {
@@ -97,9 +97,7 @@ export default function BlogsPage() {
   };
 
   const closeModals = () => {
-    setShowReader(false);
     setShowWriter(false);
-    setSelectedPost(null);
     document.body.style.overflow = 'auto';
     setPostTitle('');
     setPostContent('');
@@ -195,6 +193,81 @@ export default function BlogsPage() {
       setUploadingImage(false);
     }
   };
+
+  // ── Share Functions ──────────────────────────────────────────────────────────
+  const handleShare = async (platform, post) => {
+    const url = typeof window !== 'undefined' ? window.location.origin + '/blogs' : '';
+    const text = `Check out this article: ${post.title}`;
+    
+    const shareUrls = {
+      twitter: `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`,
+      facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`,
+      linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`,
+      copy: url
+    };
+
+    if (platform === 'copy') {
+      try {
+        await navigator.clipboard.writeText(url);
+        alert('Link copied to clipboard!');
+      } catch (err) {
+        console.error('Failed to copy:', err);
+        alert('Failed to copy link');
+      }
+    } else if (platform === 'native') {
+      if (navigator.share) {
+        try {
+          await navigator.share({
+            title: post.title,
+            text: post.excerpt,
+            url: url,
+          });
+        } catch (err) {
+          if (err.name !== 'AbortError') {
+            console.error('Share failed:', err);
+          }
+        }
+      } else {
+        // Fallback to copy
+        handleShare('copy', post);
+      }
+    } else {
+      window.open(shareUrls[platform], '_blank', 'width=600,height=400');
+    }
+  };
+
+  // ── Bookmark Functions ───────────────────────────────────────────────────────
+  const toggleBookmark = async (postId) => {
+    if (user?.email) {
+      // Use Firebase for logged-in users
+      try {
+        const isCurrentlyBookmarked = bookmarkedPosts.includes(postId);
+        
+        if (isCurrentlyBookmarked) {
+          await removeBookmark(user.email, postId);
+          setBookmarkedPosts(prev => prev.filter(id => id !== postId));
+        } else {
+          await addBookmark(user.email, postId);
+          setBookmarkedPosts(prev => [...prev, postId]);
+        }
+      } catch (error) {
+        console.error('Bookmark error:', error);
+        alert('Failed to update bookmark. Please try again.');
+      }
+    } else {
+      // Use localStorage for non-logged-in users
+      setBookmarkedPosts(prev => {
+        const newBookmarks = prev.includes(postId)
+          ? prev.filter(id => id !== postId)
+          : [...prev, postId];
+        
+        localStorage.setItem('bookmarkedPosts', JSON.stringify(newBookmarks));
+        return newBookmarks;
+      });
+    }
+  };
+
+  const isBookmarked = (postId) => bookmarkedPosts.includes(postId);
 
   return (
     <>
@@ -326,62 +399,6 @@ export default function BlogsPage() {
           <i className="ri-add-circle-fill"></i><span>Write</span>
         </div>
       </div>
-
-      {/* ── Reader Modal ── */}
-      {showReader && selectedPost && (
-        <div className="modal-overlay" onClick={closeModals}>
-          <button className="modal-close" onClick={closeModals}><i className="ri-close-line"></i></button>
-          <div className="modal-container reader-container" onClick={(e) => e.stopPropagation()}>
-            <div className="reader-top">
-              <div className="reader-meta-row">
-                <span className="story-tag">{selectedPost.category}</span>
-                <span className="reader-date">{new Date(selectedPost.date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</span>
-              </div>
-              <h1 className="reader-h1">{selectedPost.title}</h1>
-              <div className="reader-author-row">
-                <div className="author-info">
-                  <div className="author-avatar">
-                    <i className="ri-user-fill"></i>
-                  </div>
-                  <div>
-                    <p className="author-name">{selectedPost.author || 'ACCESCO Editorial Team'}</p>
-                    <p className="author-meta">5 min read • {new Date(selectedPost.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</p>
-                  </div>
-                </div>
-                <div className="reader-actions">
-                  <button className="icon-btn" title="Share"><i className="ri-share-line"></i></button>
-                  <button className="icon-btn" title="Bookmark"><i className="ri-bookmark-line"></i></button>
-                </div>
-              </div>
-            </div>
-            <Image
-              src={selectedPost.image || '/images/download (2).png'}
-              alt={selectedPost.title}
-              width={1200} height={600}
-              unoptimized
-              style={{ width: '100%', height: 'auto', borderRadius: '20px', marginBottom: '3rem', boxShadow: '0 20px 60px rgba(0,0,0,0.1)' }}
-            />
-            <div className="reader-article">
-              <p>{selectedPost.content}</p>
-            </div>
-            <div className="reader-footer">
-              <div className="reader-tags">
-                <span className="tag-item">{selectedPost.category}</span>
-                <span className="tag-item">Featured</span>
-              </div>
-              <div className="reader-share">
-                <p>Share this story</p>
-                <div className="share-buttons">
-                  <button className="share-btn"><i className="ri-twitter-x-line"></i></button>
-                  <button className="share-btn"><i className="ri-facebook-fill"></i></button>
-                  <button className="share-btn"><i className="ri-linkedin-fill"></i></button>
-                  <button className="share-btn"><i className="ri-link"></i></button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* ── Writer Modal ── */}
       {showWriter && (
