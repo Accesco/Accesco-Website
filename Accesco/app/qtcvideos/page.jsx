@@ -3,7 +3,7 @@
 
 import React, { useState, useMemo } from 'react';
 import './style.css';
-import SidebarMenu from '@/components/SidebarMenu';
+import AccescoHeader from '@/components/AccescoHeader';
 import VideoCard from '@/components/VideoCard';
 import VideoModal from '@/components/VideoModal';
 import Footer from '@/components/Footer';
@@ -36,6 +36,78 @@ const videos = [
     thumbnail: '',
     videoUrl: '/images/IMG_0065.mp4',
   },
+  {
+    id: 4,
+    title: 'QTC Video 1',
+    category: 'About',
+    duration: '00:30',
+    description: 'Quick training content for team operations and workflows.',
+    thumbnail: '/images/thumbnail_1.jpg',
+    videoUrl: '/video/qtc (1).mp4',
+  },
+  {
+    id: 5,
+    title: 'QTC Video 2',
+    category: 'Riders',
+    duration: '00:30',
+    description: 'Delivery process and rider guidelines overview.',
+    thumbnail: '/images/thumbnail_3.jpg',
+    videoUrl: '/video/qtc (2).MP4',
+  },
+  {
+    id: 6,
+    title: 'QTC Video 3',
+    category: 'About',
+    duration: '00:30',
+    description: 'Platform features and capabilities demonstration.',
+    thumbnail: '/images/thumbnail_1.jpg',
+    videoUrl: '/video/qtc (3).MP4',
+  },
+  {
+    id: 7,
+    title: 'QTC Video 4',
+    category: 'Riders',
+    duration: '00:30',
+    description: 'Advanced delivery techniques and best practices.',
+    thumbnail: '/images/thumbnail_3.jpg',
+    videoUrl: '/video/qtc (4).MP4',
+  },
+  {
+    id: 8,
+    title: 'QTC Video 5',
+    category: 'About',
+    duration: '00:30',
+    description: 'Company culture and team collaboration insights.',
+    thumbnail: '/images/thumbnail_1.jpg',
+    videoUrl: '/video/qtc (5).MP4',
+  },
+  {
+    id: 9,
+    title: 'QTC Video 6',
+    category: 'Riders',
+    duration: '00:30',
+    description: 'Safety protocols and operational standards.',
+    thumbnail: '/images/thumbnail_3.jpg',
+    videoUrl: '/video/qtc (6).MP4',
+  },
+  {
+    id: 10,
+    title: 'QTC Video 7',
+    category: 'About',
+    duration: '00:30',
+    description: 'Customer service excellence and quality standards.',
+    thumbnail: '/images/thumbnail_1.jpg',
+    videoUrl: '/video/qtc (7).MP4',
+  },
+  {
+    id: 11,
+    title: 'QTC Video 8',
+    category: 'Riders',
+    duration: '00:30',
+    description: 'Performance optimization and efficiency tips.',
+    thumbnail: '/images/thumbnail_3.jpg',
+    videoUrl: '/video/qtc (8).MP4',
+  },
 ];
 
 export default function QTCPage() {
@@ -61,7 +133,7 @@ export default function QTCPage() {
 
   return (
     <>
-      <SidebarMenu />
+      <AccescoHeader />
 
       <main className="qtc-container">
         {/* HERO SECTION */}
