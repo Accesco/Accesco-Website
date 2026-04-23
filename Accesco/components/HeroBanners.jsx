@@ -70,10 +70,6 @@ export function GroklyHero() {
         width: '100%', maxWidth: 1200, margin: '0 auto',
         padding: 'clamp(24px, 4vw, 56px) clamp(20px, 4vw, 48px)',
       }}>
-        <div style={chip()}>
-          <span style={dot('#4ade80')} />
-          Live in Bengaluru
-        </div>
         <h1 style={{
           fontFamily: "'Sora', sans-serif",
           fontWeight: 900,
@@ -145,10 +141,6 @@ export function SwadishttHero() {
         width: '100%', maxWidth: 1200, margin: '0 auto',
         padding: 'clamp(24px, 4vw, 56px) clamp(20px, 4vw, 48px)',
       }}>
-        <div style={chip('#E23744')}>
-          <span style={dot('#fbbf24')} />
-          Delivering now
-        </div>
         <h1 style={{
           fontFamily: "'Sora', sans-serif",
           fontWeight: 900,
@@ -223,10 +215,6 @@ export function AccescoHero() {
         width: '100%', maxWidth: 1200, margin: '0 auto',
         padding: '120px clamp(20px, 4vw, 48px) 40px',
       }}>
-        <div style={chip()}>
-          <span style={dot('#c8963e')} />
-          Bengaluru, India
-        </div>
         <h1 style={{
           fontFamily: "'Sora', sans-serif",
           fontWeight: 900,

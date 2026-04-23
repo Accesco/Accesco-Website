@@ -56,83 +56,128 @@ export default function HomePage() {
               </p>
             </div>
 
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))',
-              gap: '24px',
-            }}>
-              <a href="/services/grokly" style={{ textDecoration: 'none', display: 'block' }}>
-                <div className="service-premium-card grokly-card">
-                  <div className="service-card-visual">
-                    <Image src="/images/grokly-new.png" alt="Grokly Groceries" fill style={{ objectFit: 'cover' }} />
-                    <div className="service-icon-circle">
-                      <Image src="/images/grokly-icon.png" alt="Grokly" width={32} height={32} style={{ objectFit: 'contain', width: '32px', height: '32px' }} />
-                    </div>
-                  </div>
-                  <div className="service-card-body">
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>
-                      <h3 className="service-card-name">Grokly</h3>
-                      <span className="service-tag-green">22 mins</span>
-                    </div>
-                    <p className="service-card-desc">Fresh groceries to your door, fast.</p>
-                    <div className="service-card-meta">
-                      <span>10 AM – 11 PM</span>
-                      <span>5 km radius</span>
-                    </div>
-                    <div className="service-card-cta grokly-btn">Shop Groceries</div>
-                  </div>
-                </div>
-              </a>
+            <div className="services-container-wrapper">
 
-              <a href="/services/swadisht" style={{ textDecoration: 'none', display: 'block' }}>
-                <div className="service-premium-card swadisht-card">
-                  <div className="service-card-visual">
-                    <Image src="/images/swadisht-new.png" alt="Swadishtt Meals" fill style={{ objectFit: 'cover' }} />
-                    <div className="service-icon-circle">
-                      <Image src="/images/swadisht/swadisht-icon.png" alt="Swadishtt" width={32} height={32} style={{ objectFit: 'contain', width: '32px', height: '32px' }} />
+              <div id="services-scroll-container" className="services-grid">
+                <a href="/services/grokly" style={{ textDecoration: 'none', display: 'block' }}>
+                  <div className="service-premium-card grokly-card">
+                    <div className="service-card-visual">
+                      <Image src="/images/grokly-new.png" alt="Grokly Groceries" fill style={{ objectFit: 'cover' }} />
+                      <div className="service-icon-circle">
+                        <Image src="/images/grokly-icon.png" alt="Grokly" width={32} height={32} style={{ objectFit: 'contain', width: '32px', height: '32px' }} />
+                      </div>
+                    </div>
+                    <div className="service-card-body">
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>
+                        <h3 className="service-card-name">Grokly</h3>
+                        <span className="service-tag-green">22 mins</span>
+                      </div>
+                      <p className="service-card-desc">Fresh groceries to your door, fast.</p>
+                      <div className="service-card-meta">
+                        <span>10 AM – 11 PM</span>
+                        <span>5 km radius</span>
+                      </div>
+                      <div className="service-card-cta grokly-btn">Shop Groceries</div>
                     </div>
                   </div>
-                  <div className="service-card-body">
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>
-                      <h3 className="service-card-name">Swadishtt</h3>
-                      <span className="service-tag-red">35 mins</span>
-                    </div>
-                    <p className="service-card-desc">Home-style meals, delivered warm.</p>
-                    <div className="service-card-meta">
-                      <span>200+ Dishes</span>
-                      <span>Hot &amp; Fresh</span>
-                    </div>
-                    <div className="service-card-cta swadishtt-btn">Order Food</div>
-                  </div>
-                </div>
-              </a>
+                </a>
 
-              <a href="/services/instastyle" style={{ textDecoration: 'none', display: 'block' }}>
-                <div className="service-premium-card instastyle-card">
-                  <div className="service-card-visual">
-                    <Image src="/images/fashion-new.png" alt="InstaStyle Fashion" fill style={{ objectFit: 'cover' }} />
-                    <div className="service-icon-circle">
-                      <Image src="/images/instastyle-icon.png" alt="InstaStyle" width={32} height={32} style={{ objectFit: 'contain', width: '32px', height: '32px' }} />
+                <a href="/services/swadisht" style={{ textDecoration: 'none', display: 'block' }}>
+                  <div className="service-premium-card swadisht-card">
+                    <div className="service-card-visual">
+                      <Image src="/images/swadisht-new.png" alt="Swadishtt Meals" fill style={{ objectFit: 'cover' }} />
+                      <div className="service-icon-circle">
+                        <Image src="/images/swadisht/swadisht-icon.png" alt="Swadishtt" width={32} height={32} style={{ objectFit: 'contain', width: '32px', height: '32px' }} />
+                      </div>
+                    </div>
+                    <div className="service-card-body">
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>
+                        <h3 className="service-card-name">Swadishtt</h3>
+                        <span className="service-tag-red">35 mins</span>
+                      </div>
+                      <p className="service-card-desc">Home-style meals, delivered warm.</p>
+                      <div className="service-card-meta">
+                        <span>200+ Dishes</span>
+                        <span>Hot &amp; Fresh</span>
+                      </div>
+                      <div className="service-card-cta swadishtt-btn">Order Food</div>
                     </div>
                   </div>
-                  <div className="service-card-body">
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>
-                      <h3 className="service-card-name">InstaStyle</h3>
-                      <span className="service-tag-purple">Trending</span>
+                </a>
+
+                <a href="/services/instastyle" style={{ textDecoration: 'none', display: 'block' }}>
+                  <div className="service-premium-card instastyle-card">
+                    <div className="service-card-visual">
+                      <Image src="/images/fashion-new.png" alt="InstaStyle Fashion" fill style={{ objectFit: 'cover' }} />
+                      <div className="service-icon-circle">
+                        <Image src="/images/instastyle-icon.png" alt="InstaStyle" width={32} height={32} style={{ objectFit: 'contain', width: '32px', height: '32px' }} />
+                      </div>
                     </div>
-                    <p className="service-card-desc">Rent the runway, own the moment.</p>
-                    <div className="service-card-meta">
-                      <span>Premium Brands</span>
-                      <span>3–7 Days</span>
+                    <div className="service-card-body">
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>
+                        <h3 className="service-card-name">InstaStyle</h3>
+                        <span className="service-tag-purple">Trending</span>
+                      </div>
+                      <p className="service-card-desc">Rent the runway, own the moment.</p>
+                      <div className="service-card-meta">
+                        <span>Premium Brands</span>
+                        <span>3–7 Days</span>
+                      </div>
+                      <div className="service-card-cta instastyle-btn">Explore Fashion</div>
                     </div>
-                    <div className="service-card-cta instastyle-btn">Explore Fashion</div>
                   </div>
-                </div>
-              </a>
+                </a>
+              </div>
             </div>
           </div>
 
           <style dangerouslySetInnerHTML={{ __html: `
+            .services-container-wrapper { position: relative; width: 100%; display: flex; align-items: center; }
+            .services-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; width: 100%; }
+            @media (max-width: 960px) {
+              .services-grid { 
+                display: flex; 
+                overflow-x: auto; 
+                scroll-snap-type: x mandatory; 
+                padding: 20px; 
+                gap: 20px;
+                scroll-padding: 0 20px;
+                scrollbar-width: thin;
+              }
+              .services-grid::-webkit-scrollbar { display: block; height: 6px; }
+              .services-grid::-webkit-scrollbar-track { background: transparent; }
+              .services-grid::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.1); border-radius: 10px; }
+              .services-grid > a { 
+                flex: 0 0 calc(100% - 40px); 
+                scroll-snap-align: center; 
+              }
+              .scroll-arrow { display: none !important; }
+              .services-container-wrapper { padding: 0; }
+            }
+
+            .xpense-box-container {
+              max-width: 1200px;
+              margin: 0 auto;
+              width: 92%;
+              box-sizing: border-box;
+              overflow: visible;
+            }
+
+            @media (max-width: 960px) {
+              .xpense-box-container { 
+                grid-template-columns: 1fr !important; 
+                padding: 40px 16px !important; 
+                gap: 24px !important; 
+                text-align: center !important;
+                border-radius: 20px !important;
+                margin: 0 auto !important;
+                width: 95% !important;
+              }       }
+
+            @media (max-width: 480px) {
+              .scroll-arrow { width: 40px; height: 40px; font-size: 20px; }
+            }
+
             .service-premium-card { background: #fff; border-radius: 24px; border: 1px solid rgba(122,0,66,0.08); overflow: hidden; transition: transform 0.35s cubic-bezier(0.22,1,0.36,1), box-shadow 0.35s cubic-bezier(0.22,1,0.36,1); cursor: pointer; height: 100%; }
             .service-premium-card:hover { transform: translateY(-6px); box-shadow: 0 24px 60px rgba(122,0,66,0.12); }
             .service-card-visual { height: 200px; position: relative; overflow: hidden; }
@@ -194,12 +239,12 @@ export default function HomePage() {
                   </div>
                 </div>
 
-                <div style={{ width: '100%', maxWidth: '340px', background: '#1A0A0F', boxShadow: '0 40px 100px rgba(26,10,15,0.2)', borderRadius: '32px', padding: '36px', position: 'relative', zIndex: 2, color: '#FFFDF8' }}>
+                <div style={{ width: '100%', maxWidth: '280px', background: '#1A0A0F', boxShadow: '0 40px 100px rgba(26,10,15,0.2)', borderRadius: '32px', padding: '32px', position: 'relative', zIndex: 2, color: '#FFFDF8' }}>
                   <div style={{ marginBottom: '24px' }}>
-                    <div style={{ opacity: 0.6, fontSize: '0.75rem', marginBottom: '4px' }}>Monthly Overview</div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                      <div style={{ fontSize: '2rem', fontWeight: 900 }}>₹45,280</div>
-                      <div style={{ background: 'rgba(46,125,50,0.15)', color: '#4ADE80', padding: '2px 8px', borderRadius: '6px', fontSize: '0.75rem', fontWeight: 700 }}>+12.5%</div>
+                    <div style={{ opacity: 0.6, fontSize: '0.7rem', marginBottom: '4px' }}>Monthly Overview</div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <div style={{ fontSize: '1.8rem', fontWeight: 900 }}>₹45,280</div>
+                      <div style={{ background: 'rgba(46,125,50,0.15)', color: '#4ADE80', padding: '2px 6px', borderRadius: '6px', fontSize: '0.7rem', fontWeight: 700 }}>+12.5%</div>
                     </div>
                   </div>
                   <div style={{ marginBottom: '24px' }}>
@@ -242,9 +287,38 @@ export default function HomePage() {
           </div>
 
           <style dangerouslySetInnerHTML={{ __html: `
+            .xpense-box-container {
+              max-width: 1200px;
+              margin: 0 auto;
+              width: calc(100% - 40px);
+              box-sizing: border-box;
+            }
             @media (max-width: 960px) {
-              .xpense-box-container { grid-template-columns: 1fr !important; padding: 60px 24px !important; gap: 40px !important; text-align: center !important; }
-              .xpense-visual-wrap { display: none !important; }
+              .xpense-box-container { 
+                grid-template-columns: 1fr !important; 
+                padding: 48px 20px !important; 
+                gap: 32px !important; 
+                text-align: center !important;
+                border-radius: 24px !important;
+                margin: 0 10px !important;
+                width: calc(100% - 20px) !important;
+              }
+              .xpense-visual-wrap { 
+                height: auto !important;
+                margin-top: 16px !important;
+                display: flex !important;
+                justify-content: center !important;
+              }
+              .xpense-visual-wrap > div:not(:nth-child(2)) {
+                display: none !important;
+              }
+              .xpense-visual-wrap > div:nth-child(2) {
+                position: relative !important;
+                transform: none !important;
+                margin: 0 auto !important;
+                width: 100% !important;
+                max-width: 280px !important;
+              }
             }
           ` }} />
         </section>

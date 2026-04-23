@@ -23,18 +23,33 @@ export default function Footer() {
             <div className="social-links">
               <a href="https://twitter.com/accescoliving" aria-label="Twitter"><i className="ri-twitter-x-line"></i></a><a href="https://instagram.com/accescoliving" aria-label="Instagram"><i className="ri-instagram-line"></i></a><a href="https://linkedin.com/company/accescoliving" aria-label="LinkedIn"><i className="ri-linkedin-fill"></i></a>
             </div>
+            <div className="footer-app-badges" style={{ display: 'flex', gap: '12px', margin: '20px 0' }}>
+              <a href="#" style={{ display: 'block' }}>
+                <img 
+                  src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg" 
+                  alt="Get it on Google Play" 
+                  style={{ height: '32px', width: 'auto' }}
+                />
+              </a>
+              <a href="#" style={{ display: 'block' }}>
+                <img 
+                  src="https://upload.wikimedia.org/wikipedia/commons/3/3c/Download_on_the_App_Store_Badge.svg" 
+                  alt="Download on the App Store" 
+                  style={{ height: '32px', width: 'auto' }}
+                />
+              </a>
+            </div>
           </div>
           
           <div className="footer-links-grid">
             <div className="footer-column">
               <h4>Services</h4>
               <ul>
-                <li><Link href="/services/grokly">Grokly Groceries</Link></li>
-                <li><Link href="/services/swadisht">Swadishtt Meals</Link></li>
-                <li><Link href="/services/instastyle">InstaStyle Fashion</Link></li>
-                <li><Link href="/services/dinex">DineX Premium</Link></li>
+                <li><Link href="/services/grokly">Grokly</Link></li>
+                <li><Link href="/services/swadisht">Swadishtt</Link></li>
+                <li><Link href="/services/instastyle">InstaStyle</Link></li>
+                <li><Link href="/services/dinex">DineX</Link></li>
                 <li><Link href="/services/localmeds">LocalMeds</Link></li>
-                <li><Link href="/calculator">Xpense Meter</Link></li>
               </ul>
             </div>
             
@@ -43,7 +58,6 @@ export default function Footer() {
               <ul>
                 <li><Link href="/about">About Us</Link></li>
                 <li><Link href="/careers">Careers</Link></li>
-                <li><Link href="/sustainability">Sustainability</Link></li>
                 <li><Link href="/press">Press & Media</Link></li>
                 <li><Link href="/blogs">Blogs</Link></li>
               </ul>
@@ -66,13 +80,16 @@ export default function Footer() {
 
         {/* Bottom Section */}
         <div className="footer-bottom">
-          <div className="footer-copyright">
-            &copy; {new Date().getFullYear()} Accesco Living India Pvt Ltd. All rights reserved.
-          </div>
+          <p className="footer-copyright">
+            &copy; {new Date().getFullYear()} Accesco Living. All rights reserved.
+          </p>
+          
+
+
           <div className="footer-legal">
-            <Link href="/terms">Terms of Service</Link>
             <Link href="/privacy">Privacy Policy</Link>
-            <Link href="/refunds">Refund Policy</Link>
+            <Link href="/terms">Terms of Service</Link>
+            <Link href="/cookies">Cookie Policy</Link>
           </div>
         </div>
       </div>

@@ -21,4 +21,15 @@
   .dlQr {
     display: none !important;
   }
+  .dl-buttons-wrap {
+    justify-content: center !important;
+    width: 100% !important;
+    display: flex !important;
+    flex-direction: row !important;
+  }
+  .dl-trust-wrap {
+    justify-content: center !important;
+    width: 100% !important;
+    display: flex !important;
+  }
 }

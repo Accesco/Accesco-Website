@@ -69,35 +69,39 @@ export default function DownloadSection() {
             </p>
 
             {/* Store buttons */}
-            <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap', marginBottom: '32px', alignItems: 'center' }}>
+            <div className="dl-buttons-wrap" style={{ display: 'flex', gap: '12px', flexWrap: 'nowrap', marginBottom: '32px', alignItems: 'center', flexDirection: 'row' }}>
               <a href="#" style={{ textDecoration: 'none', display: 'block' }}>
                 <Image
                   src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg"
                   alt="Get it on Google Play"
-                  width={156}
-                  height={46}
+                  width={135}
+                  height={40}
                   loading="lazy"
-                  style={{ display: 'block', borderRadius: '8px', height: '44px', width: 'auto' }}
+                  style={{ display: 'block', borderRadius: '6px', height: '36px', width: 'auto' }}
                 />
               </a>
               <a href="#" style={{ textDecoration: 'none', display: 'block' }}>
                 <Image
                   src="https://upload.wikimedia.org/wikipedia/commons/3/3c/Download_on_the_App_Store_Badge.svg"
                   alt="Download on the App Store"
-                  width={140}
-                  height={46}
+                  width={120}
+                  height={40}
                   loading="lazy"
-                  style={{ display: 'block', borderRadius: '8px', height: '44px', width: 'auto' }}
+                  style={{ display: 'block', borderRadius: '6px', height: '36px', width: 'auto' }}
                 />
               </a>
             </div>
 
             {/* Trust badges */}
-            <div style={{ display: 'flex', gap: '24px', flexWrap: 'wrap' }}>
-              {[['10K+', 'Early Users'], ['4.9 / 5', 'Rating'], ['100%', 'Secure']].map(([num, label]) => (
-                <div key={label} style={{ textAlign: 'center' }}>
-                  <div style={{ fontFamily: "'Sora', sans-serif", fontWeight: 800, fontSize: '1.2rem', color: '#C8963E' }}>{num}</div>
-                  <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: '0.72rem', color: 'rgba(255,253,248,0.35)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>{label}</div>
+            <div className="dl-trust-wrap" style={{ display: 'flex', gap: '24px', flexWrap: 'nowrap', width: 'auto', flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'flex-start' }}>
+              {[
+                { num: '10K+', label: 'Early Users' },
+                { num: '4.9 / 5', label: 'Rating' },
+                { num: '100% Secure', label: '' }
+              ].map((item) => (
+                <div key={item.label || item.num} style={{ textAlign: 'left', flex: '0 0 auto' }}>
+                  <div style={{ fontFamily: "'Sora', sans-serif", fontWeight: 800, fontSize: 'clamp(0.9rem, 2vw, 1.1rem)', color: '#C8963E', whiteSpace: 'nowrap' }}>{item.num}</div>
+                  {item.label && <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: '0.65rem', color: 'rgba(255,253,248,0.35)', textTransform: 'uppercase', letterSpacing: '0.05em', whiteSpace: 'nowrap' }}>{item.label}</div>}
                 </div>
               ))}
             </div>

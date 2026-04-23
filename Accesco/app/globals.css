@@ -67,12 +67,7 @@ body {
 img { max-width: 100%; display: block; }
 
 /* ─── SCROLLBAR ──────────────────────────────────────────────────────── */
-::-webkit-scrollbar { width: 5px; }
-::-webkit-scrollbar-track { background: var(--ac-primary); }
-::-webkit-scrollbar-thumb {
-  background: var(--ac-secondary);
-  border-radius: var(--radius-full);
-}
+/* Removed custom scrollbar to use native browser scrollbar */
 
 /* ─── SELECTION ──────────────────────────────────────────────────────── */
 ::selection {
