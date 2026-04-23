@@ -97,7 +97,7 @@ export default function DownloadSection() {
               {[
                 { num: '10K+', label: 'Early Users' },
                 { num: '4.9 / 5', label: 'Rating' },
-                { num: '100% Secure', label: '' }
+                { num: '100%', label: 'Secure' }
               ].map((item) => (
                 <div key={item.label || item.num} style={{ textAlign: 'left', flex: '0 0 auto' }}>
                   <div style={{ fontFamily: "'Sora', sans-serif", fontWeight: 800, fontSize: 'clamp(0.9rem, 2vw, 1.1rem)', color: '#C8963E', whiteSpace: 'nowrap' }}>{item.num}</div>

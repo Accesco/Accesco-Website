@@ -19,6 +19,7 @@ export default function AccescoHeader() {
   const [isPartnersOpen, setIsPartnersOpen] = useState(false);
   const [isMobileServicesOpen, setIsMobileServicesOpen] = useState(false);
   const [isMobilePartnersOpen, setIsMobilePartnersOpen] = useState(false);
+  const [isMobileLocationOpen, setIsMobileLocationOpen] = useState(false);
   const [isLocationOpen, setIsLocationOpen] = useState(false);
   const [selectedLocation, setSelectedLocation] = useState('Bengaluru, Karnataka');
   const dropdownRef = useRef(null);
@@ -421,12 +422,44 @@ export default function AccescoHeader() {
 
             <div className={styles.mobileDivider} />
 
-            {/* Location row */}
-            <div className={styles.mobileLocationRow}>
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                <path d="M8 1C5.24 1 3 3.24 3 6C3 9.5 8 15 8 15C8 15 13 9.5 13 6C13 3.24 10.76 1 8 1ZM8 7.5C7.17 7.5 6.5 6.83 6.5 6C6.5 5.17 7.17 4.5 8 4.5C8.83 4.5 9.5 5.17 9.5 6C9.5 6.83 8.83 7.5 8 7.5Z" fill="currentColor" />
-              </svg>
-              <span>{selectedLocation}</span>
+            {/* Location row — Accordion added per user request */}
+            <div className={styles.mobileServicesDropdown}>
+              <button
+                className={styles.mobileServicesButton}
+                onClick={() => setIsMobileLocationOpen(!isMobileLocationOpen)}
+                aria-expanded={isMobileLocationOpen}
+              >
+                <div className={styles.mobileLocationRow}>
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                    <path d="M8 1C5.24 1 3 3.24 3 6C3 9.5 8 15 8 15C8 15 13 9.5 13 6C13 3.24 10.76 1 8 1ZM8 7.5C7.17 7.5 6.5 6.83 6.5 6C6.5 5.17 7.17 4.5 8 4.5C8.83 4.5 9.5 5.17 9.5 6C9.5 6.83 8.83 7.5 8 7.5Z" fill="currentColor" />
+                  </svg>
+                  <span>{selectedLocation}</span>
+                </div>
+                <svg
+                  width="14" height="14" viewBox="0 0 12 12" fill="none"
+                  className={styles.mobileDropdownIcon}
+                  style={{ transform: isMobileLocationOpen ? 'rotate(180deg)' : 'rotate(0deg)' }}
+                >
+                  <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </button>
+              <div className={`${styles.mobileServicesContent} ${isMobileLocationOpen ? styles.open : ''}`}>
+                <div className={styles.mobileLocationList}>
+                  {locations.map((loc) => (
+                    <button
+                      key={loc}
+                      className={`${styles.mobileLocationItem} ${selectedLocation === loc ? styles.activeLocation : ''}`}
+                      onClick={() => {
+                        setSelectedLocation(loc);
+                        localStorage.setItem('userLocation', loc);
+                        setIsMobileLocationOpen(false);
+                      }}
+                    >
+                      {loc}
+                    </button>
+                  ))}
+                </div>
+              </div>
             </div>
 
             {/* Auth */}

@@ -62,35 +62,39 @@ export default function InstaStyleLanding() {
     },
   ];
 
-  const spotlightFeatures = [
+  const instastyleFeatures = [
     {
-      title: 'Stylist-approved capsules',
-      description: 'Build polished looks faster with pre-paired outfits curated by category, fit, and occasion.',
-      tag: 'Curated',
-      cta: 'View Capsules',
-      href: '/services/instastyle/catalog?sort=popular',
+      title: '15-20 Min Outfit Delivery',
+      description: 'High-demand outfits pre-stocked inside integrated dark stores enabling near-instant delivery for events and last-minute plans.',
     },
     {
-      title: 'Premium fabric finder',
-      description: 'Filter by fabric feel, drape, and seasonality so every purchase matches comfort and quality.',
-      tag: 'Smart Filter',
-      cta: 'Try Finder',
-      href: '/services/instastyle/catalog',
+      title: 'Trial at Doorstep',
+      description: 'Try selected outfits at home while the rider waits up to 15 minutes. Customers only pay for items they keep.',
     },
     {
-      title: 'Express style support',
-      description: 'Get quick outfit guidance from look experts for events, office days, and weekend edits.',
-      tag: 'Assisted',
-      cta: 'Start Session',
-      href: '/services/instastyle/profile',
+      title: 'THE VIBE CHECK',
+      description: 'Shopping is a team sport. Turn every purchase into a group decision. Share outfit options with friends, create instant polls, compare looks together, and get your squad\'s approval before you confidently check out.',
     },
-  ];
-
-  const howItWorksSteps = [
-    { number: '01', title: 'Browse & Select', description: 'Explore top brands and pick your favourites.' },
-    { number: '02', title: 'Virtual Try-On', description: 'Preview looks instantly before ordering.' },
-    { number: '03', title: 'Quick Delivery', description: 'Get your order in 15–20 minutes at your door.' },
-    { number: '04', title: 'Try & Keep', description: 'Keep what you love and return the rest easily.' },
+    {
+      title: 'Instant Outfit Builder',
+      description: 'Select an occasion and InstaStyle instantly curates a complete ready-to-wear outfit set delivered from the dark store within minutes.',
+    },
+    {
+      title: 'Size memory engine',
+      description: 'Learns your exact fit preference per brand and category. Never wrong-sizes an order again.',
+    },
+    {
+      title: 'Thrift Marketplace',
+      description: 'Curated resale marketplace where users and vendors sell verified pre-owned fashion, enabling affordability and circular fashion.',
+    },
+    {
+      title: 'Virtual Try-On',
+      description: 'Digital body-mapping previews that let users visualise fit, fall, and proportions before ordering, reducing size confusion and returns.',
+    },
+    {
+      title: 'SwipeStyle Discovery',
+      description: 'Swipe-based fashion exploration that learns style preferences instantly and builds a personalised SwipeStyle Cart.',
+    }
   ];
 
   const categoryCards = categories.map(cat => {
@@ -256,16 +260,7 @@ export default function InstaStyleLanding() {
   }, { scope: pageRef, dependencies: [] });
 
 
-  // ── Mobile step auto-scroll
-  useEffect(() => {
-    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (prefersReducedMotion) return undefined;
-    const t = window.setInterval(
-      () => setActiveStepIndex(c => (c + 1) % howItWorksSteps.length),
-      4200
-    );
-    return () => window.clearInterval(t);
-  }, [howItWorksSteps.length]);
+  // ── Mobile auto-scroll logic removed since grid is static now
 
   // ── Mobile review auto-scroll
   useEffect(() => {
@@ -278,7 +273,7 @@ export default function InstaStyleLanding() {
     return () => window.clearInterval(t);
   }, [reviews.length]);
 
-  const goToStep   = dir => setActiveStepIndex(c => dir === 'next' ? (c + 1) % howItWorksSteps.length : (c - 1 + howItWorksSteps.length) % howItWorksSteps.length);
+
   const goToReview = dir => setActiveReviewIndex(c => dir === 'next' ? (c + 1) % reviews.length : (c - 1 + reviews.length) % reviews.length);
 
   const handleNewsletterSubmit = useCallback(e => {
@@ -517,54 +512,6 @@ export default function InstaStyleLanding() {
         </div>
       </section>
 
-      {/* ══════════════════════════════════════════
-          SECTION 5 — HOW IT WORKS
-      ══════════════════════════════════════════ */}
-      <section id="instastyle-how-it-works" className={`${styles.howItWorks} ${styles.revealItem} w-full overflow-x-hidden`} data-reveal>
-        <div className={styles.container}>
-          <div className={styles.sectionHeader}>
-            <div>
-              <h2 className={styles.sectionTitle}>How InstaStyle works</h2>
-              <p className={styles.sectionSubtitle}>One clean flow from browse to doorstep.</p>
-            </div>
-          </div>
-
-          {/* Desktop version (4-column grid) — hide on mobile */}
-          <div className={`${styles.stepsDesktopGrid} hidden md:grid`}>
-            {howItWorksSteps.map((step, i) => (
-              <div
-                key={step.number}
-                className={`${styles.step}`}
-               
-                style={{ '--reveal-delay': `${(i + 1) * 70}ms` }}
-              >
-                <span className={styles.stepNumber}>{step.number}</span>
-                <h3 className={styles.stepTitle}>{step.title}</h3>
-                <p className={styles.stepDescription}>{step.description}</p>
-              </div>
-            ))}
-          </div>
-
-          {/* Mobile slider — hide on desktop */}
-          <div className={`${styles.stepsMobileSlider} block md:hidden`}>
-            <button type="button" className={styles.sliderArrow} onClick={() => goToStep('prev')} aria-label="Previous step">‹</button>
-            <div className={styles.sliderViewport} ref={stepsSliderRef}>
-              <div className={styles.sliderTrack} style={{ transform: `translateX(-${activeStepIndex * 100}%)` }}>
-                {howItWorksSteps.map(step => (
-                  <div key={step.number} className={`${styles.step} ${styles.stepCompact}`}>
-                    <span className={styles.stepNumber}>{step.number}</span>
-                    <div>
-                      <h3 className={styles.stepTitle}>{step.title}</h3>
-                      <p className={styles.stepDescription}>{step.description}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-            <button type="button" className={styles.sliderArrow} onClick={() => goToStep('next')} aria-label="Next step">›</button>
-          </div>
-        </div>
-      </section>
 
       {/* ══════════════════════════════════════════
           SECTION 6 — TESTIMONIALS
@@ -646,38 +593,6 @@ export default function InstaStyleLanding() {
               <div key={`${brand}-${i}`} className={styles.brandCard}>
                 <span className={styles.brandPlaceholder}>{brand}</span>
               </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── 8. WHY PREMIUM SHOPPERS STAY (SPOTLIGHT) ── */}
-      <section className={`${styles.editorialSpotlight} ${styles.revealItem}`} data-reveal>
-        <div className={styles.container}>
-          <div className={styles.sectionHeader}>
-            <div>
-              <h2 className={styles.sectionTitle}>Why premium shoppers stay</h2>
-              <p className={styles.sectionSubtitle}>
-                Built for people who care about fit, finish, and fast decision-making.
-              </p>
-            </div>
-          </div>
-
-          <div className={styles.editorialGrid}>
-            {spotlightFeatures.map((item, i) => (
-              <article
-                key={item.title}
-                className={`${styles.editorialCard}`}
-               
-                style={{ '--reveal-delay': `${i * 80}ms` }}
-              >
-                <span className={styles.editorialTag}>{item.tag}</span>
-                <h3 className={styles.editorialTitle}>{item.title}</h3>
-                <p className={styles.editorialDescription}>{item.description}</p>
-                <Link href={item.href} className={styles.editorialCta}>
-                  {item.cta} →
-                </Link>
-              </article>
             ))}
           </div>
         </div>

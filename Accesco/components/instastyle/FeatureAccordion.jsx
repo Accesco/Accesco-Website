@@ -8,12 +8,14 @@ import { useGSAP } from '@gsap/react';
 
 // Premium high-fidelity fashion placeholders from Unsplash
 const PHOTOS = [
-  'https://images.unsplash.com/photo-1483985988355-763728e1935b?w=1200&q=80', // 01 Drop
-  'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1200&q=80', // 02 Curated
-  'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=1200&q=80', // 03 Perfect Fit
-  'https://images.unsplash.com/photo-1511556820780-d912e42b4980?w=1200&q=80', // 04 Vibe Check (reliable lifestyle image)
-  'https://images.unsplash.com/photo-1445205170230-053b83016050?w=1200&q=80', // 05 Complete Look
-  'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=1200&q=80'  // 06 Moment
+  'https://images.unsplash.com/photo-1483985988355-763728e1935b?w=1200&q=80',
+  'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1200&q=80',
+  'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=1200&q=80',
+  'https://images.unsplash.com/photo-1511556820780-d912e42b4980?w=1200&q=80',
+  'https://images.unsplash.com/photo-1445205170230-053b83016050?w=1200&q=80',
+  'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=1200&q=80',
+  'https://images.unsplash.com/photo-1539109136881-3be0616acf4b?w=1200&q=80',
+  'https://images.unsplash.com/photo-1509631179647-0177331693ae?w=1200&q=80'
 ];
 
 export default function FeatureAccordion() {
@@ -36,7 +38,7 @@ export default function FeatureAccordion() {
       scrub: true,
       onUpdate: (self) => {
         // 2. SCRUB THROUGH THE BOXES
-        const totalItems = 6;
+        const totalItems = 8;
         let p = self.progress;
 
         // Edge cases
@@ -98,12 +100,14 @@ export default function FeatureAccordion() {
             {/* Progress dots — highlight active box */}
             <div className="is-progress-dots">
               {[
-                'Never Miss a Drop',
-                'Curated For You',
-                'Your Perfect Fit',
+                '15-20 Min Delivery',
+                'Trial at Doorstep',
                 'The Vibe Check',
-                'Complete the Look',
-                'Dress for the Moment'
+                'Instant Outfit Builder',
+                'Size Memory Engine',
+                'Thrift Marketplace',
+                'Virtual Try-On',
+                'SwipeStyle Discovery'
               ].map((label, idx) => (
                 <div
                   key={idx}
@@ -130,169 +134,67 @@ export default function FeatureAccordion() {
           </div>
 
           <div className="is-acc-stack">
-
-            {/* BOX 01 */}
-            <div className={`is-acc-item ${activeIndex === 0 ? 'is-active' : ''}`}>
-              <div className="is-acc-bg" style={{ backgroundImage: `url('${PHOTOS[0]}')` }}></div>
-              <div className="is-gold-line"></div>
-              <div className="is-acc-overlay"></div>
-              <div className="is-acc-collapsed">
-                <span className="is-acc-num">01</span>
-                <span className="is-acc-title">Never Miss a Drop</span>
-                <div className="is-acc-preview" style={{ backgroundImage: `url('${PHOTOS[0]}')` }} />
-              </div>
-              <div className="is-acc-expanded">
-                <span className="is-acc-num">01</span>
-                <h3 className="is-acc-heading">Never Miss a Drop</h3>
-                <p className="is-acc-desc">
-                  Be the first to know about exclusive releases, limited drops, and trending styles before they sell out. Real-time alerts for every brand you follow.
-                </p>
-                <div className="is-chips">
-                  <span className="is-chip is-chip-accent" style={{ transitionDelay: activeIndex === 0 ? '0.2s' : '0s' }}>Instant Alerts</span>
-                  <span className="is-chip" style={{ transitionDelay: activeIndex === 0 ? '0.26s' : '0s' }}>Limited Drops</span>
-                  <span className="is-chip" style={{ transitionDelay: activeIndex === 0 ? '0.32s' : '0s' }}>Trend Tracking</span>
-                </div>
-              </div>
-            </div>
-
-            {/* BOX 02 */}
-            <div className={`is-acc-item ${activeIndex === 1 ? 'is-active' : ''}`}>
-              <div className="is-acc-bg" style={{ backgroundImage: `url('${PHOTOS[1]}')` }}></div>
-              <div className="is-gold-line"></div>
-              <div className="is-acc-overlay"></div>
-              <div className="is-acc-collapsed">
-                <span className="is-acc-num">02</span>
-                <span className="is-acc-title">Curated For You</span>
-                <div className="is-acc-preview" style={{ backgroundImage: `url('${PHOTOS[1]}')` }} />
-              </div>
-              <div className="is-acc-expanded">
-                <span className="is-acc-num">02</span>
-                <h3 className="is-acc-heading">Curated For You</h3>
-                <p className="is-acc-desc">
-                  Personalized recommendations tailored to your unique taste. Our AI learns what you love with every swipe, save, and purchase.
-                </p>
-                <div className="is-chips">
-                  <span className="is-chip is-chip-accent" style={{ transitionDelay: activeIndex === 1 ? '0.2s' : '0s' }}>AI-Powered</span>
-                  <span className="is-chip" style={{ transitionDelay: activeIndex === 1 ? '0.26s' : '0s' }}>Style Memory</span>
-                  <span className="is-chip" style={{ transitionDelay: activeIndex === 1 ? '0.32s' : '0s' }}>Smart Picks</span>
-                </div>
-              </div>
-            </div>
-
-            {/* BOX 03 */}
-            <div className={`is-acc-item ${activeIndex === 2 ? 'is-active' : ''}`}>
-              <div className="is-acc-bg" style={{ backgroundImage: `url('${PHOTOS[2]}')` }}></div>
-              <div className="is-gold-line"></div>
-              <div className="is-acc-overlay"></div>
-              <div className="is-acc-collapsed">
-                <span className="is-acc-num">03</span>
-                <span className="is-acc-title">Your Perfect Fit</span>
-                <div className="is-acc-preview" style={{ backgroundImage: `url('${PHOTOS[2]}')` }} />
-              </div>
-              <div className="is-acc-expanded">
-                <span className="is-acc-num">03</span>
-                <h3 className="is-acc-heading">Your Perfect Fit</h3>
-                <p className="is-acc-desc">
-                  Smart sizing per brand and category. The Size Memory Engine learns your exact measurements — zero wrong sizes, ever.
-                </p>
-                <div className="is-chips">
-                  <span className="is-chip is-chip-accent" style={{ transitionDelay: activeIndex === 2 ? '0.2s' : '0s' }}>Zero Wrong Sizes</span>
-                  <span className="is-chip" style={{ transitionDelay: activeIndex === 2 ? '0.26s' : '0s' }}>Per-Brand Fit</span>
-                  <span className="is-chip" style={{ transitionDelay: activeIndex === 2 ? '0.32s' : '0s' }}>Size Memory</span>
-                </div>
-              </div>
-            </div>
-
-            {/* BOX 04 — VIBE CHECK */}
-            <div className={`is-acc-item is-vibe ${activeIndex === 3 ? 'is-active' : ''}`}>
-              {/* Background image — now properly visible */}
-              <div className="is-acc-bg" style={{ backgroundImage: `url('${PHOTOS[3]}')`, opacity: activeIndex === 3 ? 0.85 : 0.55 }}></div>
-              <div className="is-gold-line"></div>
-
-              {/* Collapsed state for Vibe Check (added so it acts like normal row) */}
-              <div className="is-acc-collapsed">
-                <span className="is-acc-num">04</span>
-                <span className="is-acc-title">The Vibe Check</span>
-                <div className="is-acc-preview" style={{ backgroundImage: `url('${PHOTOS[3]}')` }} />
-              </div>
-
-              <div className="is-vibe-overlay" style={{ opacity: activeIndex === 3 ? 1 : 0, transition: 'opacity 0.4s' }}></div>
-
-              <div className="is-vibe-content" style={{ opacity: activeIndex === 3 ? 1 : 0, pointerEvents: activeIndex === 3 ? 'auto' : 'none', transition: 'opacity 0.4s 0.2s' }}>
-                <span className="is-vibe-label">Featured</span>
-                <h3 className="is-vibe-heading">The Vibe Check</h3>
-                <p className="is-vibe-desc">
-                  Shopping is a team sport. Share your looks, start a poll, and get your squad's approval before you check out.
-                </p>
-                <div className="is-squad-row">
-                  <div className="is-avatars">
-                    <div className="is-av av-y">P</div>
-                    <div className="is-av av-g">R</div>
-                    <div className="is-av av-p">A</div>
+            {[
+              { title: '15-20 Min Delivery', desc: 'High-demand outfits pre-stocked inside integrated dark stores enabling near-instant delivery.' },
+              { title: 'Trial at Doorstep', desc: 'Try selected outfits at home while the rider waits up to 15 minutes. Pay only for items you keep.' },
+              { title: 'The Vibe Check', desc: 'Shopping is a team sport. Share options with friends, start a poll, and get squad approval.', isVibe: true },
+              { title: 'Instant Outfit Builder', desc: 'Select an occasion and InstaStyle instantly curates a complete ready-to-wear outfit for you.' },
+              { title: 'Size Memory Engine', desc: 'Learns your exact fit preference per brand and category. Never wrong-sizes an order again.' },
+              { title: 'Thrift Marketplace', desc: 'Curated resale marketplace where users and vendors sell verified pre-owned fashion.' },
+              { title: 'Virtual Try-On', desc: 'See how any outfit looks on you instantly using our advanced AI-powered virtual mirror.' },
+              { title: 'SwipeStyle Discovery', desc: 'Find your next favorite look with a personalized, swipe-based discovery feed.' }
+            ].map((feature, idx) => {
+              if (feature.isVibe) {
+                return (
+                  <div key={idx} className={`is-acc-item is-vibe ${activeIndex === idx ? 'is-active' : ''}`}>
+                    <div className="is-acc-bg" style={{ backgroundImage: `url('${PHOTOS[idx]}')`, opacity: activeIndex === idx ? 0.85 : 0.55 }}></div>
+                    <div className="is-gold-line"></div>
+                    <div className="is-acc-collapsed">
+                      <span className="is-acc-num">{String(idx + 1).padStart(2, '0')}</span>
+                      <span className="is-acc-title">{feature.title}</span>
+                      <div className="is-acc-preview" style={{ backgroundImage: `url('${PHOTOS[idx]}')` }} />
+                    </div>
+                    <div className="is-vibe-overlay" style={{ opacity: activeIndex === idx ? 1 : 0, transition: 'opacity 0.4s' }}></div>
+                    <div className="is-vibe-content" style={{ opacity: activeIndex === idx ? 1 : 0, pointerEvents: activeIndex === idx ? 'auto' : 'none', transition: 'opacity 0.4s 0.2s' }}>
+                      <span className="is-vibe-label">Featured</span>
+                      <h3 className="is-vibe-heading">{feature.title}</h3>
+                      <p className="is-vibe-desc">{feature.desc}</p>
+                      <div className="is-squad-row">
+                        <div className="is-avatars">
+                          <div className="is-av av-y">P</div>
+                          <div className="is-av av-g">R</div>
+                          <div className="is-av av-p">A</div>
+                        </div>
+                        <span className="is-squad-text"><b>3 friends</b> are voting now</span>
+                      </div>
+                      <div className="is-poll-row">
+                        <span className="is-poll-opt poll-a">A 68%</span>
+                        <span className="is-poll-opt poll-b">B 20%</span>
+                        <span className="is-poll-opt poll-c">C 12%</span>
+                        <div className="is-poll-bar"><div className="is-poll-fill"></div></div>
+                      </div>
+                    </div>
                   </div>
-                  <span className="is-squad-text">
-                    <b>3 friends</b> are voting now
-                  </span>
-                </div>
-                <div className="is-poll-row">
-                  <span className="is-poll-opt poll-a">A 68%</span>
-                  <span className="is-poll-opt poll-b">B 20%</span>
-                  <span className="is-poll-opt poll-c">C 12%</span>
-                  <div className="is-poll-bar">
-                    <div className="is-poll-fill"></div>
+                );
+              }
+              return (
+                <div key={idx} className={`is-acc-item ${activeIndex === idx ? 'is-active' : ''}`}>
+                  <div className="is-acc-bg" style={{ backgroundImage: `url('${PHOTOS[idx]}')` }}></div>
+                  <div className="is-gold-line"></div>
+                  <div className="is-acc-overlay"></div>
+                  <div className="is-acc-collapsed">
+                    <span className="is-acc-num">{String(idx + 1).padStart(2, '0')}</span>
+                    <span className="is-acc-title">{feature.title}</span>
+                    <div className="is-acc-preview" style={{ backgroundImage: `url('${PHOTOS[idx]}')` }} />
+                  </div>
+                  <div className="is-acc-expanded">
+                    <span className="is-acc-num">{String(idx + 1).padStart(2, '0')}</span>
+                    <h3 className="is-acc-heading">{feature.title}</h3>
+                    <p className="is-acc-desc">{feature.desc}</p>
                   </div>
                 </div>
-              </div>
-            </div>
-
-            {/* BOX 05 */}
-            <div className={`is-acc-item ${activeIndex === 4 ? 'is-active' : ''}`}>
-              <div className="is-acc-bg" style={{ backgroundImage: `url('${PHOTOS[4]}')` }}></div>
-              <div className="is-gold-line"></div>
-              <div className="is-acc-overlay"></div>
-              <div className="is-acc-collapsed">
-                <span className="is-acc-num">05</span>
-                <span className="is-acc-title">Complete the Look</span>
-                <div className="is-acc-preview" style={{ backgroundImage: `url('${PHOTOS[4]}')` }} />
-              </div>
-              <div className="is-acc-expanded">
-                <span className="is-acc-num">05</span>
-                <h3 className="is-acc-heading">Complete the Look</h3>
-                <p className="is-acc-desc">
-                  Get instant suggestions to finish your outfit with the perfect accessories and layers. AI pairing that actually works.
-                </p>
-                <div className="is-chips">
-                  <span className="is-chip is-chip-accent" style={{ transitionDelay: activeIndex === 4 ? '0.2s' : '0s' }}>Smart Pairing</span>
-                  <span className="is-chip" style={{ transitionDelay: activeIndex === 4 ? '0.26s' : '0s' }}>Accessories</span>
-                  <span className="is-chip" style={{ transitionDelay: activeIndex === 4 ? '0.32s' : '0s' }}>Full Outfits</span>
-                </div>
-              </div>
-            </div>
-
-            {/* BOX 06 */}
-            <div className={`is-acc-item ${activeIndex === 5 ? 'is-active' : ''}`}>
-              <div className="is-acc-bg" style={{ backgroundImage: `url('${PHOTOS[5]}')` }}></div>
-              <div className="is-gold-line"></div>
-              <div className="is-acc-overlay"></div>
-              <div className="is-acc-collapsed">
-                <span className="is-acc-num">06</span>
-                <span className="is-acc-title">Dress for the Moment</span>
-                <div className="is-acc-preview" style={{ backgroundImage: `url('${PHOTOS[5]}')` }} />
-              </div>
-              <div className="is-acc-expanded">
-                <span className="is-acc-num">06</span>
-                <h3 className="is-acc-heading">Dress for the Moment</h3>
-                <p className="is-acc-desc">
-                  Find styles for every occasion — casual hangouts to black tie. Tell us the vibe, we build the complete look in 15 minutes.
-                </p>
-                <div className="is-chips">
-                  <span className="is-chip is-chip-accent" style={{ transitionDelay: activeIndex === 5 ? '0.2s' : '0s' }}>Occasion-Ready</span>
-                  <span className="is-chip" style={{ transitionDelay: activeIndex === 5 ? '0.26s' : '0s' }}>Event Styling</span>
-                  <span className="is-chip" style={{ transitionDelay: activeIndex === 5 ? '0.32s' : '0s' }}>15 min</span>
-                </div>
-              </div>
-            </div>
-
+              );
+            })}
           </div>
           {/* /.is-acc-stack */}
         </div>
