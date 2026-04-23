@@ -234,7 +234,7 @@ export default function SidebarMenu({ onLoginClick }) {
           </div>
 
           <div className="sm-socials">
-            <h3>Follow AccesCo</h3>
+            <h3>Follow Accesco</h3>
             <div className="sm-social-icons">
               <a href="https://www.instagram.com/accescoliving" target="_blank" rel="noopener noreferrer"><i className="ri-instagram-line"></i></a>
               <a href="https://www.linkedin.com/company/acceso-living/" target="_blank" rel="noopener noreferrer"><i className="ri-linkedin-box-line"></i></a>

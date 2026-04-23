@@ -134,9 +134,18 @@ export default function PartnerAsVendor() {
               <h3>Dark Store</h3>
               <p>Quick commerce fulfillment centers for rapid delivery operations</p>
               <ul className="vendor-type-features">
-                <li>✓ 10-minute delivery</li>
-                <li>✓ Inventory management</li>
-                <li>✓ Real-time tracking</li>
+                <li>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                  10-minute delivery
+                </li>
+                <li>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                  Inventory management
+                </li>
+                <li>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                  Real-time tracking
+                </li>
               </ul>
             </div>
 
@@ -151,9 +160,18 @@ export default function PartnerAsVendor() {
               <h3>QSR (Quick Service Restaurant)</h3>
               <p>Fast food restaurants and quick service food outlets</p>
               <ul className="vendor-type-features">
-                <li>✓ Online ordering</li>
-                <li>✓ Menu management</li>
-                <li>✓ Customer reviews</li>
+                <li>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                  Online ordering
+                </li>
+                <li>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                  Menu management
+                </li>
+                <li>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                  Customer reviews
+                </li>
               </ul>
             </div>
 
@@ -170,9 +188,18 @@ export default function PartnerAsVendor() {
               <h3>D2C Brand</h3>
               <p>Direct-to-consumer brands selling products online</p>
               <ul className="vendor-type-features">
-                <li>✓ Multi-category support</li>
-                <li>✓ Brand storefront</li>
-                <li>✓ Marketing tools</li>
+                <li>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                  Multi-category support
+                </li>
+                <li>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                  Brand storefront
+                </li>
+                <li>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                  Marketing tools
+                </li>
               </ul>
             </div>
           </div>
@@ -384,27 +411,35 @@ export default function PartnerAsVendor() {
         <section className="vendor-benefits-section">
           <div className="vendor-section-header">
             <span className="vendor-section-tag">Why Partner With Us</span>
-            <h2 className="vendor-section-title">Grow Your Business with AccesCo</h2>
+            <h2 className="vendor-section-title">Grow Your Business with accesco</h2>
           </div>
 
           <div className="vendor-benefits-grid">
             <div className="vendor-benefit-card">
-              <div className="vendor-benefit-icon">📈</div>
+              <div className="vendor-benefit-icon">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg>
+              </div>
               <h3>Increase Revenue</h3>
               <p>Access millions of customers and boost your sales by up to 3x</p>
             </div>
             <div className="vendor-benefit-card">
-              <div className="vendor-benefit-icon">🎯</div>
+              <div className="vendor-benefit-icon">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle><circle cx="12" cy="12" r="2"></circle></svg>
+              </div>
               <h3>Marketing Support</h3>
               <p>Featured listings, promotional campaigns, and targeted advertising</p>
             </div>
             <div className="vendor-benefit-card">
-              <div className="vendor-benefit-icon">💳</div>
+              <div className="vendor-benefit-icon">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
+              </div>
               <h3>Quick Settlements</h3>
               <p>Fast and transparent payment processing with weekly payouts</p>
             </div>
             <div className="vendor-benefit-card">
-              <div className="vendor-benefit-icon">📊</div>
+              <div className="vendor-benefit-icon">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+              </div>
               <h3>Business Analytics</h3>
               <p>Real-time insights and performance tracking dashboard</p>
             </div>

@@ -74,8 +74,8 @@ export default function BrandPartnership() {
     <div className="page-wrapper">
       <nav className="partner-nav">
         <Link href="/" className="logo-container">
-          <Image src="/images/accesco_original.png" alt="AccesCo" className="logo-img" width={65} height={65} />
-          <div className="logo-text">AccesCo Living</div>
+          <Image src="/images/accesco_original.png" alt="accesco" className="logo-img" width={65} height={65} />
+          <div className="logo-text">Accesco Living</div>
         </Link>
 
         <div className="partner-dropdown-container">
@@ -88,28 +88,36 @@ export default function BrandPartnership() {
           {showDropdown && (
             <div className="partner-dropdown-menu">
               <Link href="/partner/creator" className="dropdown-item">
-                <span className="dropdown-icon">🎨</span>
+                <span className="dropdown-icon">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 19l7-7 3 3-7 7-3-3z"></path><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"></path><path d="M2 2l7.5 1.5"></path><path d="M7.5 9L2 2"></path></svg>
+                </span>
                 <div>
                   <strong>Partner as Creator</strong>
                   <p>Join as content creator</p>
                 </div>
               </Link>
               <Link href="/partner/vendor" className="dropdown-item">
-                <span className="dropdown-icon">🏪</span>
+                <span className="dropdown-icon">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg>
+                </span>
                 <div>
                   <strong>Partner as Vendor</strong>
                   <p>Grow your business</p>
                 </div>
               </Link>
               <Link href="/partner/delivery" className="dropdown-item">
-                <span className="dropdown-icon">🚴</span>
+                <span className="dropdown-icon">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="18.5" cy="17.5" r="3.5"></circle><circle cx="5.5" cy="17.5" r="3.5"></circle><circle cx="9" cy="7.5" r="3.5"></circle><path d="M5.5 17.5v-7.5l3.5-3.5h7.5l3.5 3.5v7.5"></path><line x1="12" y1="7.5" x2="12" y2="17.5"></line></svg>
+                </span>
                 <div>
                   <strong>Partner as Delivery</strong>
                   <p>Earn flexible income</p>
                 </div>
               </Link>
               <Link href="/partner" className="dropdown-item active">
-                <span className="dropdown-icon">🤝</span>
+                <span className="dropdown-icon">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                </span>
                 <div>
                   <strong>Brand Partnership</strong>
                   <p>Collaborate with us</p>

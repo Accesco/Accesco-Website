@@ -116,7 +116,7 @@ export default function ProfilePage() {
 
                 <div className="profile-card full-width">
                   <div className="profile-card-title">
-                    <i className="ri-apps-line"></i> Explore AccesCo
+                    <i className="ri-apps-line"></i> Explore accesco
                   </div>
                   <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
                     {[

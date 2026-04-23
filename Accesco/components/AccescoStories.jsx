@@ -3,7 +3,7 @@
 import React from 'react';
 import Image from 'next/image';
 
-export default function AccesCoStories() {
+export default function AccescoStories() {
   const stories = [
     {
       id: 1,
@@ -19,7 +19,7 @@ export default function AccesCoStories() {
       id: 2,
       category: 'OUR STORY',
       date: '05 Jan 2026',
-      title: 'AccesCo Living: A Story That Started Long Before the Company',
+      title: 'Accesco Living: A Story That Started Long Before the Company',
       description:
         "Step behind the scenes of the vision that built India's first daily-living ecosystem for the modern consumer.",
       image: '/images/blog-accesco.jpg',
@@ -29,7 +29,7 @@ export default function AccesCoStories() {
       id: 3,
       category: 'LIFESTYLE',
       date: '01 Jan 2026',
-      title: 'A Day With AccesCo Living: How Life Changes When Everything Works Together',
+      title: 'A Day With Accesco Living: How Life Changes When Everything Works Together',
       description:
         'Explore how a unified ecosystem of groceries, fashion, and finance streamlines every part of your routine.',
       image: '/images/blog-lifestyle.jpg',
@@ -231,7 +231,7 @@ export default function AccesCoStories() {
       <div className="stories-container">
         <div className="stories-header">
           <div className="stories-kicker">LIFESTYLE & INSIGHTS</div>
-          <h2 className="stories-title">The AccesCo Stories</h2>
+          <h2 className="stories-title">The Accesco Stories</h2>
           <p className="stories-subtitle">
             Your guide to intelligent living, from financial hacks to the latest in sustainable fashion.
           </p>

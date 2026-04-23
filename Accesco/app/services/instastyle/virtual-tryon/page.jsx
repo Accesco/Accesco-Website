@@ -353,7 +353,7 @@ export default function VirtualTryOnPage() {
 
         if (selectedProduct.image) {
           await new Promise((resolve) => {
-            const productImg = new Image();
+            const productImg = new window.Image();
             productImg.crossOrigin = 'anonymous';
             productImg.onload = () => {
               const imageRatio = productImg.width / productImg.height;

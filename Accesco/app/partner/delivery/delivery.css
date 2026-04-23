@@ -1,11 +1,11 @@
 :root {
-  --brand-primary: #700457;
+  --brand-primary: #7A0042;
   --brand-secondary: #9d0054;
   --delivery-primary: #0a8a5c;
   --delivery-secondary: #0db572;
-  --text-dark: #1a1a1a;
-  --text-muted: #6b7280;
-  --bg-light: #f9fafb;
+  --text-dark: #1A0A0F;
+  --text-muted: #6B5B65;
+  --bg-light: #FFFDF8;
 }
 
 * {
@@ -35,7 +35,7 @@
 .delivery-hero-background {
   position: absolute;
   inset: 0;
-  background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+  background: linear-gradient(135deg, #FFFDF8 0%, #f0fdf4 100%);
   z-index: 0;
 }
 
@@ -257,10 +257,11 @@
   background: white;
   padding: 40px 32px;
   border-radius: 24px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 20px rgba(122, 0, 66, 0.04);
+  transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
   position: relative;
   overflow: hidden;
+  border: 1px solid rgba(122, 0, 66, 0.08);
 }
 
 .delivery-benefit-card::before {
@@ -672,15 +673,15 @@
   justify-content: center;
   gap: 8px;
   padding: 18px 40px;
-  background: linear-gradient(135deg, var(--delivery-primary), var(--delivery-secondary));
+  background: var(--brand-primary);
   color: white;
   border: none;
   border-radius: 12px;
   font-size: 1.1rem;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 10px 30px rgba(10, 138, 92, 0.3);
+  transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  box-shadow: 0 10px 30px rgba(122, 0, 66, 0.2);
 }
 
 .delivery-submit-button:hover:not(:disabled) {

@@ -1,0 +1,35 @@
+.dlGrid {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 60px;
+  align-items: center;
+  position: relative;
+  z-index: 1;
+}
+
+@media (max-width: 900px) {
+  .dlGrid {
+    grid-template-columns: 1fr !important;
+    gap: 40px !important;
+    text-align: center;
+  }
+  .dlGrid > div:first-child {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .dlQr {
+    display: none !important;
+  }
+  .dl-buttons-wrap {
+    justify-content: center !important;
+    width: 100% !important;
+    display: flex !important;
+    flex-direction: row !important;
+  }
+  .dl-trust-wrap {
+    justify-content: center !important;
+    width: 100% !important;
+    display: flex !important;
+  }
+}

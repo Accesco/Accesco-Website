@@ -20,6 +20,7 @@ import LocationModal from './components/LocationModal';
 import FloatingCartBar from './components/FloatingCartBar';
 import BottomNav from './components/BottomNav';
 import { categories, products, getProductsByCategory, searchProducts } from './lib/groklyData';
+import { GroklyHero } from '@/components/HeroBanners';
 import './styles/variables.css';
 import './styles/globals.css';
 
@@ -158,6 +159,9 @@ function GroklyPageContent() {
   
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', background: 'var(--grokly-bg)' }}>
+      {/* Premium Hero Banner */}
+      <GroklyHero />
+
       {/* Desktop Header */}
       <GroklyHeader 
         searchQuery={searchQuery}
@@ -315,7 +319,7 @@ function GroklyPageContent() {
                 alignItems: 'center',
                 gap: '12px'
               }}>
-                <div style={{ fontSize: '56px' }}>🔍</div>
+                <div style={{ fontSize: '56px', opacity: 0.1 }}>SEARCH</div>
                 <h3 style={{ 
                   fontSize: '18px', 
                   fontWeight: 800, 

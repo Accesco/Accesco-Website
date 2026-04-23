@@ -1,8 +1,6 @@
 import Script from 'next/script';
 import './globals.css';
 import { AuthProvider } from './components/AuthProvider';
-import { SmoothScrollProvider } from './components/SmoothScrollProvider';
-import CustomCursor from './components/CustomCursor';
 import CookieConsent from './components/CookieConsent';
 
 export const metadata = {
@@ -131,9 +129,8 @@ export default function RootLayout({ children }) {
         />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        {/* Updated Font Links with Variable Axes (wght 400..900) */}
         <link 
-          href="https://fonts.googleapis.com/css2?family=Inter:wght@300..900&family=Poppins:wght@400;600;700;800&family=Syne:wght@400..800&family=DM+Sans:ital,opsz,wght@0,9..40,300..700;1,9..40,400&family=Outfit:wght@200..900&family=Playfair+Display:wght@500..900&display=swap" 
+          href="https://fonts.googleapis.com/css2?family=Sora:wght@300..800&family=DM+Sans:wght@400;500;700&family=Inter:wght@400..700&display=swap" 
           rel="stylesheet" 
         />
         <link 
@@ -147,11 +144,8 @@ export default function RootLayout({ children }) {
       </head>
       <body>
         <AuthProvider>
-          <SmoothScrollProvider>
-            <CustomCursor />
-            {children}
-            <CookieConsent />
-          </SmoothScrollProvider>
+          {children}
+          <CookieConsent />
         </AuthProvider>
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-SH32KGLK5F"

@@ -107,7 +107,7 @@ export default function PartnerAsDelivery() {
               <span className="delivery-gradient-text"> Your Schedule</span>
             </h1>
             <p className="delivery-hero-subtitle">
-              Become a delivery partner with AccesCo Living. Flexible hours, competitive earnings, and weekly payouts.
+              Become a delivery partner with accesco living. Flexible hours, competitive earnings, and weekly payouts.
             </p>
             
             <div className="delivery-hero-cta">
@@ -125,7 +125,7 @@ export default function PartnerAsDelivery() {
         <section className="delivery-benefits-section">
           <div className="delivery-section-header">
             <span className="delivery-section-tag">Why Deliver With Us</span>
-            <h2 className="delivery-section-title">Everything You Need to Succeed</h2>
+            <h2 className="delivery-section-title">India solved delivery in 10 minutes. Nobody solved the household in 10 years.</h2>
             <p className="delivery-section-subtitle">
               We provide the tools, support, and opportunities to help you maximize your earnings
             </p>
@@ -226,22 +226,30 @@ export default function PartnerAsDelivery() {
 
           <div className="delivery-extra-benefits-grid">
             <div className="delivery-extra-benefit-card">
-              <div className="delivery-extra-benefit-icon">📱</div>
+              <div className="delivery-extra-benefit-icon">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
+              </div>
               <h3>Easy-to-Use App</h3>
               <p>Simple app to manage orders, track earnings, and navigate efficiently</p>
             </div>
             <div className="delivery-extra-benefit-card">
-              <div className="delivery-extra-benefit-icon">🎯</div>
+              <div className="delivery-extra-benefit-icon">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle><circle cx="12" cy="12" r="2"></circle></svg>
+              </div>
               <h3>Smart Order Matching</h3>
               <p>AI-powered system assigns orders based on your location and preferences</p>
             </div>
             <div className="delivery-extra-benefit-card">
-              <div className="delivery-extra-benefit-icon">💬</div>
+              <div className="delivery-extra-benefit-icon">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+              </div>
               <h3>24/7 Support</h3>
               <p>Dedicated support team always ready to help with any issues</p>
             </div>
             <div className="delivery-extra-benefit-card">
-              <div className="delivery-extra-benefit-icon">📊</div>
+              <div className="delivery-extra-benefit-icon">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+              </div>
               <h3>Earnings Dashboard</h3>
               <p>Real-time tracking of your earnings, trips, and performance metrics</p>
             </div>
@@ -257,7 +265,9 @@ export default function PartnerAsDelivery() {
 
           <div className="delivery-requirements-grid">
             <div className="delivery-requirement-card">
-              <div className="delivery-requirement-icon">📋</div>
+              <div className="delivery-requirement-icon">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+              </div>
               <h3>Documents</h3>
               <ul>
                 <li>Valid Driving License</li>
@@ -268,7 +278,9 @@ export default function PartnerAsDelivery() {
             </div>
 
             <div className="delivery-requirement-card">
-              <div className="delivery-requirement-icon">🏍️</div>
+              <div className="delivery-requirement-icon">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="18.5" cy="17.5" r="3.5"></circle><circle cx="5.5" cy="17.5" r="3.5"></circle><circle cx="9" cy="7.5" r="3.5"></circle><path d="M5.5 17.5v-7.5l3.5-3.5h7.5l3.5 3.5v7.5"></path><line x1="12" y1="7.5" x2="12" y2="17.5"></line></svg>
+              </div>
               <h3>Vehicle</h3>
               <ul>
                 <li>Two-wheeler or Bicycle</li>
@@ -279,7 +291,9 @@ export default function PartnerAsDelivery() {
             </div>
 
             <div className="delivery-requirement-card">
-              <div className="delivery-requirement-icon">👤</div>
+              <div className="delivery-requirement-icon">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+              </div>
               <h3>Personal</h3>
               <ul>
                 <li>Age: 18-60 years</li>

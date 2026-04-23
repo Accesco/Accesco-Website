@@ -13,6 +13,7 @@ export function SmoothScrollProvider({ children }) {
   const lenisRef = useRef(null);
 
   useEffect(() => {
+    /*
     // 1. Initialize Lenis
     const lenis = new Lenis({
       duration: 1.2,
@@ -43,6 +44,7 @@ export function SmoothScrollProvider({ children }) {
       lenis.destroy();
       gsap.ticker.remove(lenis.raf);
     };
+    */
   }, []);
 
   return (
