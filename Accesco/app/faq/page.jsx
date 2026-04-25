@@ -387,8 +387,102 @@ export default function FAQPage() {
     setOpenQuestion(openQuestion === key ? null : key);
   };
 
+  // FAQ Schema for SEO
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Does Grokly source produce directly from farms, or through distributors?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Grokly sources fresh produce directly from verified farmers through our FarmChain network, cutting out middlemen to ensure better prices for you and fairer earnings for farmers."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How does Grokly's FarmChain model ensure freshness and traceability?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Every FarmChain product is tagged with its source farm and harvest date. This allows us to maintain cold-chain integrity and gives you full visibility into where your food comes from."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Does Swadisht operate its own cloud kitchens, or partner with existing restaurants?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Swadisht operates a hybrid model — we run curated in-house cloud kitchen brands while also partnering with select local restaurants that meet our quality and hygiene standards."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Does Grokly support bulk orders for families or shared households?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Absolutely. Grokly offers bulk pricing tiers for large households and group purchases, making it ideal for joint families or flatmates pooling their grocery budget."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Can I customise my meal preferences (veg-only, low-calorie, etc.) on Swadisht?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. Swadisht lets you set dietary filters including vegetarian, vegan, low-calorie, high-protein, and allergen-free, so every recommendation is tailored to your preferences."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Will Swadisht list home chefs or only commercial cloud kitchens?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Home chefs with FSSAI registration will be onboarded as part of a later phase, giving you access to authentic homestyle cooking from verified local cooks."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Does InstaStyle source clothes from local Bengaluru manufacturers?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. InstaStyle's sourcing strategy prioritises local and regional manufacturers, particularly from Karnataka's garment clusters, to keep costs low and turnaround times fast."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What is the return and exchange policy for fashion items on InstaStyle?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "InstaStyle offers a 7-day hassle-free return and exchange policy on all apparel, provided items are unused and in original condition with tags intact."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Will InstaStyle carry ethnic wear alongside everyday casual clothing?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. InstaStyle will stock both everyday casuals and ethnic wear including kurtas, sarees, and fusion styles — catering to the full wardrobe needs of urban Indian households."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How does InstaStyle differ from Meesho or Myntra for budget shoppers?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Unlike standalone fashion apps, InstaStyle is integrated with Xpense Meter, so your fashion spending is tracked against your monthly budget in real time — helping you shop smart, not just cheap."
+        }
+      }
+    ]
+  };
+
   return (
     <>
+      {/* FAQ Schema for SEO */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+      />
+      
       <AccescoHeader />
       <main className="faq-page">
         <section className="faq-section">
