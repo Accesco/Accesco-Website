@@ -26,14 +26,14 @@ export default function HomePage() {
         <Hero />
 
         {/* ── Services Section — Premium Redesign ── */}
-        <section id="services" style={{ padding: '100px 0', background: '#FFFDF8', position: 'relative' }}>
+        <section id="services" style={{ padding: 'clamp(60px, 8vw, 100px) 0', background: '#FFFDF8', position: 'relative' }}>
           <div style={{
             position: 'absolute', inset: 0,
             backgroundImage: 'radial-gradient(circle at 20% 50%, rgba(122,0,66,0.03) 0%, transparent 60%), radial-gradient(circle at 80% 20%, rgba(200,150,62,0.03) 0%, transparent 60%)',
             pointerEvents: 'none',
           }} />
 
-          <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 40px', position: 'relative' }}>
+          <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 clamp(20px, 4vw, 40px)', position: 'relative' }}>
             <div style={{ marginBottom: '60px' }}>
               <div className="ac-chip ac-chip-maroon" style={{ marginBottom: '18px' }}>
                 Your Daily Services
@@ -63,21 +63,14 @@ export default function HomePage() {
                   <div className="service-premium-card grokly-card">
                     <div className="service-card-visual">
                       <Image src="/images/grokly-new.png" alt="Grokly Groceries" fill style={{ objectFit: 'cover' }} />
-                      <div className="service-icon-circle">
-                        <Image src="/images/grokly-icon.png" alt="Grokly" width={32} height={32} style={{ objectFit: 'contain', width: '32px', height: '32px' }} />
-                      </div>
+                    </div>
+                    <div className="service-icon-circle">
+                      <Image src="/images/grokly-icon.png" alt="Grokly" width={40} height={40} style={{ objectFit: 'contain', width: '100%', height: '100%' }} />
                     </div>
                     <div className="service-card-body">
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>
-                        <h3 className="service-card-name">Grokly</h3>
-                        <span className="service-tag-green">22 mins</span>
-                      </div>
-                      <p className="service-card-desc">Fresh groceries to your door, fast.</p>
-                      <div className="service-card-meta">
-                        <span>10 AM – 11 PM</span>
-                        <span>5 km radius</span>
-                      </div>
-                      <div className="service-card-cta grokly-btn">Shop Groceries</div>
+                      <h3 className="service-card-name">Grokly</h3>
+                      <p className="service-card-desc">Fresh groceries &amp; curated essentials at your doorstep</p>
+                      <div className="service-card-cta grokly-btn">Shop Groceries →</div>
                     </div>
                   </div>
                 </a>
@@ -86,21 +79,14 @@ export default function HomePage() {
                   <div className="service-premium-card swadisht-card">
                     <div className="service-card-visual">
                       <Image src="/images/swadisht-new.png" alt="Swadishtt Meals" fill style={{ objectFit: 'cover' }} />
-                      <div className="service-icon-circle">
-                        <Image src="/images/swadisht/swadisht-icon.png" alt="Swadishtt" width={32} height={32} style={{ objectFit: 'contain', width: '32px', height: '32px' }} />
-                      </div>
+                    </div>
+                    <div className="service-icon-circle">
+                      <Image src="/images/swadisht/swadisht_logo.JPG" alt="Swadishtt" width={40} height={40} style={{ objectFit: 'contain', width: '100%', height: '100%' }} />
                     </div>
                     <div className="service-card-body">
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>
-                        <h3 className="service-card-name">Swadishtt</h3>
-                        <span className="service-tag-red">35 mins</span>
-                      </div>
-                      <p className="service-card-desc">Home-style meals, delivered warm.</p>
-                      <div className="service-card-meta">
-                        <span>200+ Dishes</span>
-                        <span>Hot &amp; Fresh</span>
-                      </div>
-                      <div className="service-card-cta swadishtt-btn">Order Food</div>
+                      <h3 className="service-card-name">Swadishtt</h3>
+                      <p className="service-card-desc">Meals made only for you!</p>
+                      <div className="service-card-cta swadishtt-btn">Order Food →</div>
                     </div>
                   </div>
                 </a>
@@ -109,21 +95,14 @@ export default function HomePage() {
                   <div className="service-premium-card instastyle-card">
                     <div className="service-card-visual">
                       <Image src="/images/fashion-new.png" alt="InstaStyle Fashion" fill style={{ objectFit: 'cover' }} />
-                      <div className="service-icon-circle">
-                        <Image src="/images/instastyle-icon.png" alt="InstaStyle" width={32} height={32} style={{ objectFit: 'contain', width: '32px', height: '32px' }} />
-                      </div>
+                    </div>
+                    <div className="service-icon-circle">
+                      <Image src="/images/instastyle-logo.png" alt="InstaStyle" width={40} height={40} style={{ objectFit: 'contain', width: '100%', height: '100%' }} />
                     </div>
                     <div className="service-card-body">
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>
-                        <h3 className="service-card-name">InstaStyle</h3>
-                        <span className="service-tag-purple">Trending</span>
-                      </div>
-                      <p className="service-card-desc">Rent the runway, own the moment.</p>
-                      <div className="service-card-meta">
-                        <span>Premium Brands</span>
-                        <span>3–7 Days</span>
-                      </div>
-                      <div className="service-card-cta instastyle-btn">Explore Fashion</div>
+                      <h3 className="service-card-name">InstaStyle</h3>
+                      <p className="service-card-desc">Outfit ready, before you are!</p>
+                      <div className="service-card-cta instastyle-btn">Explore Fashion →</div>
                     </div>
                   </div>
                 </a>
@@ -132,24 +111,32 @@ export default function HomePage() {
           </div>
 
           <style dangerouslySetInnerHTML={{ __html: `
-            .services-container-wrapper { position: relative; width: 100%; display: flex; align-items: center; }
+            .services-container-wrapper { 
+              position: relative; 
+              width: 100%; 
+              display: flex; 
+              align-items: center; 
+              overflow: hidden;
+            }
             .services-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; width: 100%; }
             @media (max-width: 960px) {
+              .services-container-wrapper { overflow: hidden; }
               .services-grid { 
                 display: flex; 
                 overflow-x: auto; 
                 scroll-snap-type: x mandatory; 
-                padding: 20px; 
-                gap: 20px;
-                scroll-padding: 0 20px;
-                scrollbar-width: thin;
+                padding: 0;
+                gap: 0;
+                scrollbar-width: none;
+                -ms-overflow-style: none;
               }
-              .services-grid::-webkit-scrollbar { display: block; height: 6px; }
-              .services-grid::-webkit-scrollbar-track { background: transparent; }
-              .services-grid::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.1); border-radius: 10px; }
+              .services-grid::-webkit-scrollbar { display: none; }
               .services-grid > a { 
-                flex: 0 0 calc(100% - 40px); 
-                scroll-snap-align: center; 
+                flex: 0 0 100%; 
+                min-width: 100%;
+                scroll-snap-align: center;
+                padding: 16px 20px;
+                box-sizing: border-box;
               }
               .scroll-arrow { display: none !important; }
               .services-container-wrapper { padding: 0; }
@@ -166,38 +153,47 @@ export default function HomePage() {
             @media (max-width: 960px) {
               .xpense-box-container { 
                 grid-template-columns: 1fr !important; 
-                padding: 40px 16px !important; 
+                padding: 40px 20px !important; 
                 gap: 24px !important; 
                 text-align: center !important;
-                border-radius: 20px !important;
-                margin: 0 auto !important;
-                width: 95% !important;
-              }       }
-
-            @media (max-width: 480px) {
-              .scroll-arrow { width: 40px; height: 40px; font-size: 20px; }
+                border-radius: 24px !important;
+                margin: 0 16px !important;
+                width: calc(100% - 32px) !important;
+              }
             }
 
-            .service-premium-card { background: #fff; border-radius: 24px; border: 1px solid rgba(122,0,66,0.08); overflow: hidden; transition: transform 0.35s cubic-bezier(0.22,1,0.36,1), box-shadow 0.35s cubic-bezier(0.22,1,0.36,1); cursor: pointer; height: 100%; }
-            .service-premium-card:hover { transform: translateY(-6px); box-shadow: 0 24px 60px rgba(122,0,66,0.12); }
-            .service-card-visual { height: 200px; position: relative; overflow: hidden; }
-            .service-card-body { padding: 24px; }
-            .service-card-name { font-family: 'Sora', sans-serif; font-weight: 800; font-size: 1.35rem; color: #1A0A0F; margin: 0; }
-            .service-tag-green { background: rgba(46,125,50,0.1); color: #2E7D32; font-family: 'Sora', sans-serif; font-size: 0.72rem; font-weight: 700; padding: 4px 10px; border-radius: 9999px; }
-            .service-tag-red { background: rgba(122,0,66,0.08); color: #7A0042; font-family: 'Sora', sans-serif; font-size: 0.72rem; font-weight: 700; padding: 4px 10px; border-radius: 9999px; }
-            .service-tag-purple { background: rgba(74,20,140,0.08); color: #4A148C; font-family: 'Sora', sans-serif; font-size: 0.72rem; font-weight: 700; padding: 4px 10px; border-radius: 9999px; }
-            .service-icon-circle { position: absolute; bottom: -20px; right: 24px; width: 44px; height: 44px; background: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; box-shadow: 0 8px 20px rgba(0,0,0,0.1); z-index: 2; transition: transform 0.3s cubic-bezier(0.22,1,0.36,1); }
-            .service-premium-card:hover .service-icon-circle { transform: translateY(-4px) scale(1.1); }
-            .service-card-desc { font-family: 'DM Sans', sans-serif; font-size: 0.92rem; color: #6B5B65; margin: 0 0 16px; }
-            .service-card-meta { display: flex; gap: 16px; margin-bottom: 20px; font-family: 'DM Sans', sans-serif; font-size: 0.8rem; color: #9E8E98; }
-            .service-card-cta { display: inline-flex; align-items: center; justify-content: center; width: 100%; padding: 12px; border-radius: 12px; font-family: 'Sora', sans-serif; font-size: 0.85rem; font-weight: 700; transition: all 0.3s; margin-top: 4px; }
-            .grokly-btn { background: rgba(46,125,50,0.08); color: #2E7D32; }
-            .swadishtt-btn { background: rgba(122,0,66,0.06); color: #7A0042; }
-            .instastyle-btn { background: rgba(74,20,140,0.06); color: #4A148C; }
-            .service-premium-card:hover .grokly-btn { background: #2E7D32; color: #fff; }
-            .service-premium-card:hover .swadishtt-btn { background: #7A0042; color: #fff; }
-            .service-premium-card:hover .instastyle-btn { background: #4A148C; color: #fff; }
+            .service-premium-card { position: relative; background: #fff; border-radius: 24px; border: 1px solid rgba(122,0,66,0.08); overflow: hidden; transition: transform 0.35s cubic-bezier(0.22,1,0.36,1), box-shadow 0.35s cubic-bezier(0.22,1,0.36,1); cursor: pointer; height: 100%; transform: translateZ(0); -webkit-mask-image: -webkit-radial-gradient(white, black); display: flex; flex-direction: column; }
+            .service-premium-card:hover { transform: translateY(-6px) translateZ(0); box-shadow: 0 24px 60px rgba(122,0,66,0.12); }
+            .service-card-visual { height: 200px; position: relative; overflow: hidden; border-radius: 24px 24px 0 0; flex-shrink: 0; }
+            .service-card-visual img { width: 100%; height: 100%; object-fit: cover; }
+            .service-card-body { padding: 20px 20px 24px; flex: 1; display: flex; flex-direction: column; justify-content: space-between; }
+            .service-card-name { font-family: 'Sora', sans-serif; font-weight: 800; font-size: 1.35rem; color: #1A0A0F; margin: 0 0 8px; }
+            .service-icon-circle { 
+              position: absolute; top: 170px; right: 20px; 
+              width: 60px; height: 60px; 
+              background: #fff; border-radius: 50%; 
+              display: flex; align-items: center; justify-content: center; 
+              box-shadow: 0 10px 25px rgba(0,0,0,0.12); 
+              z-index: 2; transition: transform 0.3s cubic-bezier(0.22,1,0.36,1); 
+              overflow: hidden;
+              padding: 10px;
+            }.service-premium-card:hover .service-icon-circle { transform: translateY(-4px) scale(1.1); }
+            .service-card-desc { font-family: 'DM Sans', sans-serif; font-size: 0.95rem; color: #6B5B65; margin: 0 0 20px; line-height: 1.5; }
+            .service-card-cta { display: flex; align-items: center; justify-content: center; width: 100%; padding: 14px; border-radius: 12px; font-family: 'Sora', sans-serif; font-size: 0.88rem; font-weight: 700; transition: all 0.25s; letter-spacing: 0.02em; }
+            .grokly-btn { background: #2E7D32; color: #fff; box-shadow: 0 4px 12px rgba(46,125,50,0.25); }
+            .swadishtt-btn { background: #7A0042; color: #fff; box-shadow: 0 4px 12px rgba(122,0,66,0.25); }
+            .instastyle-btn { background: #4A148C; color: #fff; box-shadow: 0 4px 12px rgba(74,20,140,0.25); }
+            .grokly-btn:hover { background: #1b5e20; }
+            .swadishtt-btn:hover { background: #5a0031; }
+            .instastyle-btn:hover { background: #311264; }
             .xpense-card-float { transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1); cursor: pointer; }
+            .footer-badge-link img {
+              height: 40px;
+              width: auto;
+              display: block;
+              transition: transform 0.2s;
+              border-radius: 4px;
+            }
             .xpense-details { max-height: 0; opacity: 0; overflow: hidden; transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1); margin-top: 0; }
             .xpense-card-float:hover { transform: translateY(-10px) scale(1.05) rotate(0deg) !important; z-index: 10 !important; box-shadow: 0 30px 60px rgba(0,0,0,0.15) !important; }
             .xpense-card-float:hover .xpense-details { max-height: 120px; opacity: 1; margin-top: 16px; }
@@ -227,8 +223,8 @@ export default function HomePage() {
                 </Link>
               </div>
 
-              <div style={{ position: 'relative', height: '480px', display: 'flex', alignItems: 'center', justifyContent: 'center' }} className="xpense-visual-wrap">
-                <div className="xpense-card-float" style={{ position: 'absolute', top: '5%', right: '0%', width: '260px', background: '#FFFDF8', padding: '24px', borderRadius: '24px', boxShadow: '0 20px 40px rgba(122,0,66,0.12)', border: '2px solid #FFE5E9', zIndex: 3, transform: 'rotate(2deg)', color: '#000' }}>
+              <div style={{ position: 'relative', height: '480px', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', maxWidth: '340px', margin: '0 auto' }} className="xpense-visual-wrap">
+                <div className="xpense-card-float" style={{ position: 'absolute', top: '5%', right: '-10%', width: '100%', maxWidth: '240px', background: '#FFFDF8', padding: '24px', borderRadius: '24px', boxShadow: '0 20px 40px rgba(122,0,66,0.12)', border: '2px solid #FFE5E9', zIndex: 3, transform: 'rotate(2deg)', color: '#000' }}>
                   <div style={{ color: '#7A0042', fontWeight: 900, marginBottom: '8px', fontSize: '1rem' }}>✦ Smart Categorization</div>
                   <div style={{ fontSize: '0.85rem', color: '#1A0A0F', fontWeight: 600 }}>AI-powered automatic expense sorting</div>
                   <div className="xpense-details">
@@ -267,7 +263,7 @@ export default function HomePage() {
                   </div>
                 </div>
 
-                <div className="xpense-card-float" style={{ position: 'absolute', bottom: '5%', left: '0%', width: '260px', background: '#C8963E', padding: '24px', borderRadius: '24px', boxShadow: '0 20px 40px rgba(200,150,62,0.2)', zIndex: 1, color: '#000', transform: 'rotate(-3deg)' }}>
+                <div className="xpense-card-float" style={{ position: 'absolute', bottom: '5%', right: '-10%', width: '100%', maxWidth: '240px', background: '#C8963E', padding: '24px', borderRadius: '24px', boxShadow: '0 20px 40px rgba(200,150,62,0.2)', zIndex: 1, color: '#000', transform: 'rotate(-3deg)' }}>
                   <div style={{ fontWeight: 900, marginBottom: '8px', fontSize: '1rem' }}>✦ Goal Tracking</div>
                   <div style={{ fontSize: '0.85rem', fontWeight: 600, opacity: 0.9, marginBottom: '16px' }}>Achieve milestones faster</div>
                   <div className="xpense-details">
