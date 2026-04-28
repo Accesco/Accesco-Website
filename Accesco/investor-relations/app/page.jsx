@@ -194,6 +194,26 @@ export default function HomePage() {
               <GovernanceCard key={item} title={item} />
             ))}
           </div>
+          <div className="board-section">
+  <h3>Board of Directors</h3>
+
+  <div className="board-grid">
+    <div className="board-card">
+      <strong>Argha Sengupta</strong>
+      <span>Managing Director</span>
+    </div>
+
+    <div className="board-card">
+      <strong>Ayushman Saha</strong>
+      <span>Director II</span>
+    </div>
+  </div>
+
+  <p className="incorporation-date">
+    <strong>Date of Incorporation:</strong> 23/12/2025
+  </p>
+</div>
+          
           <div className="dpiit-section">
   <div className="dpiit-card unified">
     <img src="/logos/startup-india.png" alt="Startup India DPIIT" />

@@ -773,3 +773,42 @@ a {
 .deck-card:hover .deck-overlay {
   opacity: 1;
 }
+/* Board Section */
+.board-section {
+  margin-top: 40px;
+}
+
+.board-section h3 {
+  color: white;
+  margin-bottom: 20px;
+  font-size: 28px;
+}
+
+.board-grid {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.board-card {
+  padding: 20px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  min-width: 220px;
+}
+
+.board-card strong {
+  display: block;
+  color: white;
+  font-size: 18px;
+}
+
+.board-card span {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.incorporation-date {
+  margin-top: 20px;
+  color: rgba(255, 255, 255, 0.7);
+}
