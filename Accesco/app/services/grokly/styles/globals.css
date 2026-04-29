@@ -190,3 +190,43 @@
     transition-duration: 0.01ms !important;
   }
 }
+/* ─── GROKLY HERO IMAGE FIX ───────────────────────────────────────── */
+
+.grokly-page section:first-of-type {
+  min-height: 75vh !important;
+  position: relative !important;
+  overflow: hidden !important;
+}
+
+.grokly-page section:first-of-type img {
+  object-fit: contain !important;
+  object-position: center bottom !important;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.grokly-page section:first-of-type picture,
+.grokly-page section:first-of-type span {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* Desktop: keep full grocery image visible */
+@media (min-width: 769px) {
+  .grokly-page section:first-of-type img {
+    object-fit: contain !important;
+    object-position: center bottom !important;
+  }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .grokly-page section:first-of-type {
+    min-height: 80vh !important;
+  }
+
+  .grokly-page section:first-of-type img {
+    object-fit: contain !important;
+    object-position: center bottom !important;
+  }
+}

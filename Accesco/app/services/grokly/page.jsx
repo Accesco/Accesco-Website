@@ -359,6 +359,11 @@ function GroklyPageContent() {
 /**
  * Main Export with Provider
  */
+
 export default function GroklyPage() {
-  return <GroklyPageContent />;
+  return (
+    <GroklyProvider>
+      <GroklyPageContent />
+    </GroklyProvider>
+  );
 }
