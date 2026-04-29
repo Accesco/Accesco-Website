@@ -18,7 +18,7 @@ export default function InstaStyleFooter() {
       { label: 'SwipeStyle Discovery', href: '/services/instastyle/swipestyle' },
     ],
     company: [
-      { label: 'About Us', href: '/services/instastyle/about' },
+      { label: 'About Us', href: '/about' },
       { label: 'Careers', href: '/services/instastyle/careers' },
       { label: 'Press', href: '/services/instastyle/press' },
       { label: 'Blog', href: '/services/instastyle/blogs' },

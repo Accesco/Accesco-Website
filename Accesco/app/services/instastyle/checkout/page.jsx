@@ -8,7 +8,7 @@ import styles from './checkout.module.css';
 
 export default function CheckoutPage() {
   const router = useRouter();
-  const { cart, subtotal, deliveryFee, tax, total, clearCart } = useCart();
+  const { cart, subtotal, deliveryFee, tax, total, clearCart, placeOrder } = useCart();
 
   const [formData, setFormData] = useState({
     fullName: '',
@@ -78,13 +78,20 @@ export default function CheckoutPage() {
 
     setIsProcessing(true);
 
+    // Place order via context
+    const order = placeOrder({
+      total,
+      subtotal,
+      tax,
+      deliveryFee,
+      address: formData,
+      paymentMethod: formData.paymentMethod
+    });
+
     // Simulate order processing
     setTimeout(() => {
-      // In production, this would call your payment gateway and backend API
-      alert('Order placed successfully! (Demo mode)');
-      clearCart();
-      router.push('/services/instastyle');
       setIsProcessing(false);
+      router.push(`/services/instastyle/order-tracking?id=${order.id}`);
     }, 2000);
   };
 
@@ -95,7 +102,24 @@ export default function CheckoutPage() {
   return (
     <div className={styles.checkoutPage}>
       <div className={styles.container}>
-        <h1 className={styles.pageTitle}>Checkout</h1>
+        <div className={styles.stepIndicator}>
+          <div className={`${styles.step} ${styles.active}`}>
+            <span className={styles.stepNum}>1</span>
+            <span className={styles.stepLabel}>Shipping</span>
+          </div>
+          <div className={styles.stepLine}></div>
+          <div className={styles.step}>
+            <span className={styles.stepNum}>2</span>
+            <span className={styles.stepLabel}>Payment</span>
+          </div>
+          <div className={styles.stepLine}></div>
+          <div className={styles.step}>
+            <span className={styles.stepNum}>3</span>
+            <span className={styles.stepLabel}>Review</span>
+          </div>
+        </div>
+
+        <h1 className={styles.pageTitle}>Secure Checkout</h1>
 
         <div className={styles.checkoutGrid}>
           {/* Left: Forms */}

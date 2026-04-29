@@ -21,7 +21,6 @@ import FloatingCartBar from './components/FloatingCartBar';
 import BottomNav from './components/BottomNav';
 import { categories, products, getProductsByCategory, searchProducts } from './lib/groklyData';
 import { GroklyHero } from '@/components/HeroBanners';
-import HouseholdForm from '@/components/HouseholdForm';
 import './styles/variables.css';
 import './styles/globals.css';
 
@@ -185,10 +184,6 @@ function GroklyPageContent() {
 
       {/* Main Content */}
       <main style={{ flex: 1, maxWidth: 'var(--grokly-max-width)', margin: '0 auto', width: '100%', padding: '8px 20px' }}>
-        <section style={{ marginBottom: '24px' }}>
-          <HouseholdForm />
-        </section>
-
         {/* Filter Panel - Only show when not in horizontal category view */}
         {!productsByCategory && (
           <FilterPanel 
@@ -365,9 +360,5 @@ function GroklyPageContent() {
  * Main Export with Provider
  */
 export default function GroklyPage() {
-  return (
-    <GroklyProvider>
-      <GroklyPageContent />
-    </GroklyProvider>
-  );
+  return <GroklyPageContent />;
 }

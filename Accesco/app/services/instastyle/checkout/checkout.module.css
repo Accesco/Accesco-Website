@@ -20,6 +20,55 @@
   letter-spacing: -0.04em;
 }
 
+/* Step Indicator */
+.stepIndicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-bottom: 60px;
+}
+
+.step {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  opacity: 0.3;
+  transition: opacity 0.3s ease;
+}
+
+.step.active {
+  opacity: 1;
+}
+
+.stepNum {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--is-black);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.stepLabel {
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--is-black);
+}
+
+.stepLine {
+  width: 40px;
+  height: 1px;
+  background: rgba(0,0,0,0.1);
+}
+
 /* Checkout Grid */
 .checkoutGrid {
   display: grid;

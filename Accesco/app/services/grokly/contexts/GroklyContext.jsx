@@ -1,412 +1,150 @@
-/**
- * Grokly Context - Global State Management
- * Manages cart, location, and UI state for Grokly module
- * @version 1.0.0
- */
-
 'use client';
 
-import { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
+import { createContext, useContext, useState, useEffect, useMemo } from 'react';
 
-// Create Context
-const GroklyContext = createContext(undefined);
+const GroklyContext = createContext();
 
-// Local Storage Keys
-const STORAGE_KEYS = {
-  CART: 'grokly_cart',
-  LOCATION: 'grokly_location',
-};
+const CART_STORAGE_KEY = 'grokly_cart';
+const ORDERS_STORAGE_KEY = 'grokly_orders';
 
-/**
- * GroklyProvider Component
- * Wraps the application and provides global state
- * 
- * @param {Object} props
- * @param {React.ReactNode} props.children - Child components
- */
 export function GroklyProvider({ children }) {
-  // ═══════════════════════════════════════════════
-  // STATE MANAGEMENT
-  // ═══════════════════════════════════════════════
-  
-  const [cart, setCart] = useState({});
-  const [location, setLocation] = useState('Koramangala, Bangalore');
+  const [cart, setCart] = useState({}); // id -> quantity mapping for compatibility
+  const [orders, setOrders] = useState([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
-  const [isLocationModalOpen, setIsLocationModalOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
 
-  // ═══════════════════════════════════════════════
-  // INITIALIZATION - Load from localStorage
-  // ═══════════════════════════════════════════════
-  
+  // Load from local storage
   useEffect(() => {
     try {
-      // Load cart from localStorage
-      const savedCart = localStorage.getItem(STORAGE_KEYS.CART);
-      if (savedCart) {
-        const parsedCart = JSON.parse(savedCart);
-        setCart(parsedCart);
-      }
-
-      // Load location from localStorage
-      const savedLocation = localStorage.getItem(STORAGE_KEYS.LOCATION);
-      if (savedLocation) {
-        setLocation(savedLocation);
-      }
-    } catch (error) {
-      console.error('[GroklyContext] Error loading from localStorage:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
-
-  // ═══════════════════════════════════════════════
-  // PERSISTENCE - Save to localStorage
-  // ═══════════════════════════════════════════════
-  
-  useEffect(() => {
-    if (!isLoading) {
-      try {
-        localStorage.setItem(STORAGE_KEYS.CART, JSON.stringify(cart));
-      } catch (error) {
-        console.error('[GroklyContext] Error saving cart to localStorage:', error);
-      }
-    }
-  }, [cart, isLoading]);
-
-  useEffect(() => {
-    if (!isLoading) {
-      try {
-        localStorage.setItem(STORAGE_KEYS.LOCATION, location);
-      } catch (error) {
-        console.error('[GroklyContext] Error saving location to localStorage:', error);
-      }
-    }
-  }, [location, isLoading]);
-
-  // ═══════════════════════════════════════════════
-  // CART OPERATIONS
-  // ═══════════════════════════════════════════════
-  
-  /**
-   * Add product to cart
-   * @param {string} productId - Product ID
-   */
-  const addToCart = useCallback((productId) => {
-    setCart(prev => ({
-      ...prev,
-      [productId]: (prev[productId] || 0) + 1
-    }));
-  }, []);
-
-  /**
-   * Remove product from cart completely
-   * @param {string} productId - Product ID
-   */
-  const removeFromCart = useCallback((productId) => {
-    setCart(prev => {
-      const newCart = { ...prev };
-      delete newCart[productId];
-      return newCart;
-    });
-  }, []);
-
-  /**
-   * Increment product quantity
-   * @param {string} productId - Product ID
-   */
-  const incrementQuantity = useCallback((productId) => {
-    setCart(prev => ({
-      ...prev,
-      [productId]: (prev[productId] || 0) + 1
-    }));
-  }, []);
-
-  /**
-   * Decrement product quantity (removes if quantity becomes 0)
-   * @param {string} productId - Product ID
-   */
-  const decrementQuantity = useCallback((productId) => {
-    setCart(prev => {
-      const newCart = { ...prev };
-      const currentQty = newCart[productId] || 0;
+      const savedCart = localStorage.getItem(CART_STORAGE_KEY);
+      const savedOrders = localStorage.getItem(ORDERS_STORAGE_KEY);
       
-      if (currentQty > 1) {
-        newCart[productId] = currentQty - 1;
-      } else {
-        delete newCart[productId];
-      }
-      
-      return newCart;
-    });
-  }, []);
-
-  /**
-   * Update product quantity directly
-   * @param {string} productId - Product ID
-   * @param {number} quantity - New quantity
-   */
-  const updateQuantity = useCallback((productId, quantity) => {
-    if (quantity <= 0) {
-      removeFromCart(productId);
-    } else {
-      setCart(prev => ({
-        ...prev,
-        [productId]: quantity
-      }));
+      if (savedCart) setCart(JSON.parse(savedCart));
+      if (savedOrders) setOrders(JSON.parse(savedOrders));
+    } catch (e) {
+      console.error('Failed to load Grokly data:', e);
     }
-  }, [removeFromCart]);
-
-  /**
-   * Clear entire cart
-   */
-  const clearCart = useCallback(() => {
-    setCart({});
   }, []);
 
-  /**
-   * Get quantity of a specific product in cart
-   * @param {string} productId - Product ID
-   * @returns {number} Quantity
-   */
-  const getProductQuantity = useCallback((productId) => {
-    return cart[productId] || 0;
+  // Save to local storage
+  useEffect(() => {
+    localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cart));
   }, [cart]);
 
-  // ═══════════════════════════════════════════════
-  // CART COMPUTED VALUES
-  // ═══════════════════════════════════════════════
-  
-  /**
-   * Total number of items in cart
-   */
+  useEffect(() => {
+    localStorage.setItem(ORDERS_STORAGE_KEY, JSON.stringify(orders));
+  }, [orders]);
+
   const cartCount = useMemo(() => {
     return Object.values(cart).reduce((sum, qty) => sum + qty, 0);
   }, [cart]);
 
-  /**
-   * Check if cart is empty
-   */
-  const isCartEmpty = useMemo(() => {
-    return cartCount === 0;
-  }, [cartCount]);
+  const getProductQuantity = (productId) => cart[productId] || 0;
 
-  /**
-   * Get cart items as array
-   * @returns {Array<{productId: string, quantity: number}>}
-   */
-  const cartItems = useMemo(() => {
-    return Object.entries(cart).map(([productId, quantity]) => ({
-      productId,
-      quantity
+  const addToCart = (productId, quantity = 1) => {
+    setCart(prev => ({
+      ...prev,
+      [productId]: (prev[productId] || 0) + quantity
     }));
-  }, [cart]);
+  };
 
-  // ═══════════════════════════════════════════════
-  // LOCATION OPERATIONS
-  // ═══════════════════════════════════════════════
-  
-  /**
-   * Update delivery location
-   * @param {string} newLocation - New location string
-   */
-  const updateLocation = useCallback((newLocation) => {
-    setLocation(newLocation);
-  }, []);
+  const incrementQuantity = (productId) => addToCart(productId, 1);
+  const decrementQuantity = (productId) => {
+    setCart(prev => {
+      const newQty = (prev[productId] || 0) - 1;
+      if (newQty <= 0) {
+        const next = { ...prev };
+        delete next[productId];
+        return next;
+      }
+      return { ...prev, [productId]: newQty };
+    });
+  };
 
-  // ═══════════════════════════════════════════════
-  // UI STATE OPERATIONS
-  // ═══════════════════════════════════════════════
-  
-  /**
-   * Toggle cart drawer
-   */
-  const toggleCart = useCallback(() => {
-    setIsCartOpen(prev => !prev);
-  }, []);
+  const removeFromCart = (productId) => {
+    setCart(prev => {
+      const next = { ...prev };
+      delete next[productId];
+      return next;
+    });
+  };
 
-  /**
-   * Open cart drawer
-   */
-  const openCart = useCallback(() => {
-    setIsCartOpen(true);
-  }, []);
+  const clearCart = () => setCart({});
 
-  /**
-   * Close cart drawer
-   */
-  const closeCart = useCallback(() => {
-    setIsCartOpen(false);
-  }, []);
+  const openCart = () => setIsCartOpen(true);
+  const closeCart = () => setIsCartOpen(false);
+  const toggleCart = () => setIsCartOpen(prev => !prev);
 
-  /**
-   * Toggle location modal
-   */
-  const toggleLocationModal = useCallback(() => {
-    setIsLocationModalOpen(prev => !prev);
-  }, []);
+  const placeOrder = (orderDetails) => {
+    // Note: orderDetails should include the items if they want to snapshot them
+    const newOrder = {
+      id: `GRK-${Date.now()}`,
+      status: 'PLACED',
+      timestamp: new Date().toISOString(),
+      venture: 'Grokly',
+      ...orderDetails
+    };
+    setOrders(prev => [newOrder, ...prev]);
+    setCart({});
+    return newOrder;
+  };
 
-  /**
-   * Open location modal
-   */
-  const openLocationModal = useCallback(() => {
-    setIsLocationModalOpen(true);
-  }, []);
-
-  /**
-   * Close location modal
-   */
-  const closeLocationModal = useCallback(() => {
-    setIsLocationModalOpen(false);
-  }, []);
-
-  // ═══════════════════════════════════════════════
-  // CONTEXT VALUE
-  // ═══════════════════════════════════════════════
-  
-  const value = useMemo(() => ({
-    // Cart State
-    cart,
-    cartCount,
-    isCartEmpty,
-    cartItems,
+  // Simulate order progress
+  useEffect(() => {
+    if (orders.length === 0) return;
     
-    // Cart Operations
-    addToCart,
-    removeFromCart,
-    incrementQuantity,
-    decrementQuantity,
-    updateQuantity,
-    clearCart,
-    getProductQuantity,
+    const interval = setInterval(() => {
+      setOrders(prev => {
+        let hasChanged = false;
+        const updated = prev.map(order => {
+          if (order.status === 'DELIVERED') return order;
+          
+          const age = (Date.now() - new Date(order.timestamp).getTime()) / 1000;
+          let nextStatus = order.status;
+          
+          if (age > 60) nextStatus = 'DELIVERED';
+          else if (age > 40) nextStatus = 'OUT_FOR_DELIVERY';
+          else if (age > 20) nextStatus = 'PACKING';
+          else if (age > 5) nextStatus = 'CONFIRMED';
+          
+          if (nextStatus !== order.status) {
+            hasChanged = true;
+            return { ...order, status: nextStatus };
+          }
+          return order;
+        });
+        return hasChanged ? updated : prev;
+      });
+    }, 5000);
     
-    // Location State
-    location,
-    updateLocation,
-    
-    // UI State
-    isCartOpen,
-    isLocationModalOpen,
-    
-    // UI Operations
-    toggleCart,
-    openCart,
-    closeCart,
-    toggleLocationModal,
-    openLocationModal,
-    closeLocationModal,
-    
-    // Loading State
-    isLoading,
-  }), [
-    cart,
-    cartCount,
-    isCartEmpty,
-    cartItems,
-    addToCart,
-    removeFromCart,
-    incrementQuantity,
-    decrementQuantity,
-    updateQuantity,
-    clearCart,
-    getProductQuantity,
-    location,
-    updateLocation,
-    isCartOpen,
-    isLocationModalOpen,
-    toggleCart,
-    openCart,
-    closeCart,
-    toggleLocationModal,
-    openLocationModal,
-    closeLocationModal,
-    isLoading,
-  ]);
+    return () => clearInterval(interval);
+  }, [orders]);
 
   return (
-    <GroklyContext.Provider value={value}>
+    <GroklyContext.Provider value={{
+      cart,
+      cartCount,
+      orders,
+      isCartOpen,
+      getProductQuantity,
+      addToCart,
+      incrementQuantity,
+      decrementQuantity,
+      removeFromCart,
+      clearCart,
+      openCart,
+      closeCart,
+      toggleCart,
+      placeOrder
+    }}>
       {children}
     </GroklyContext.Provider>
   );
 }
 
-/**
- * useGrokly Hook
- * Access Grokly context in components
- * 
- * @returns {Object} Grokly context value
- * @throws {Error} If used outside GroklyProvider
- */
 export function useGrokly() {
   const context = useContext(GroklyContext);
-  
-  if (context === undefined) {
-    throw new Error('useGrokly must be used within a GroklyProvider');
-  }
-  
+  if (!context) throw new Error('useGrokly must be used within GroklyProvider');
   return context;
 }
 
-/**
- * useCart Hook
- * Convenience hook for cart-specific operations
- * 
- * @returns {Object} Cart state and operations
- */
-export function useCart() {
-  const {
-    cart,
-    cartCount,
-    isCartEmpty,
-    cartItems,
-    addToCart,
-    removeFromCart,
-    incrementQuantity,
-    decrementQuantity,
-    updateQuantity,
-    clearCart,
-    getProductQuantity,
-  } = useGrokly();
-
-  return {
-    cart,
-    cartCount,
-    isCartEmpty,
-    cartItems,
-    addToCart,
-    removeFromCart,
-    incrementQuantity,
-    decrementQuantity,
-    updateQuantity,
-    clearCart,
-    getProductQuantity,
-  };
-}
-
-/**
- * useLocation Hook
- * Convenience hook for location operations
- * 
- * @returns {Object} Location state and operations
- */
-export function useLocation() {
-  const {
-    location,
-    updateLocation,
-    isLocationModalOpen,
-    toggleLocationModal,
-    openLocationModal,
-    closeLocationModal,
-  } = useGrokly();
-
-  return {
-    location,
-    updateLocation,
-    isLocationModalOpen,
-    toggleLocationModal,
-    openLocationModal,
-    closeLocationModal,
-  };
-}
-
-export default GroklyContext;
+export const useCart = useGrokly;

@@ -228,8 +228,8 @@
 .item {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 16px 20px;
+  gap: 20px;
+  padding: 24px 20px;
   border-bottom: 1px solid #f5f5f5;
   transition: all var(--grokly-transition-fast);
   animation: slideInCart 0.3s ease;
@@ -251,12 +251,12 @@
 }
 
 .itemImgWrap {
-  width: 70px;
-  height: 70px;
+  width: 90px;
+  height: 90px;
   border-radius: var(--grokly-radius-md);
   background: var(--grokly-primary-extra-light);
   flex-shrink: 0;
-  padding: 6px;
+  padding: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -342,14 +342,14 @@
   background: none;
   border: none;
   color: var(--grokly-text-white);
-  width: 32px;
-  height: 32px;
+  width: 40px;
+  height: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: all var(--grokly-transition-fast);
   cursor: pointer;
-  font-size: 18px;
+  font-size: 22px;
   font-weight: var(--grokly-font-weight-extrabold);
 }
 
@@ -503,14 +503,14 @@
 }
 
 .checkoutAmount {
-  font-size: var(--grokly-font-size-2xl);
+  font-size: 26px;
   font-weight: var(--grokly-font-weight-black);
   line-height: 1;
   margin-bottom: 4px;
 }
 
 .checkoutSub {
-  font-size: 11px;
+  font-size: 13px;
   font-weight: var(--grokly-font-weight-bold);
   opacity: 0.8;
   letter-spacing: 0.5px;
@@ -520,7 +520,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 15px;
+  font-size: 18px;
   font-weight: var(--grokly-font-weight-extrabold);
 }
 

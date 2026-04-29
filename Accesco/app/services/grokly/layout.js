@@ -3,6 +3,12 @@ export const metadata = {
   description: "Order fresh groceries with Grokly by Accesco Living. Farm-direct sourcing via FarmChain, live QR traceability, and 20-30% lower prices. Serving Bengaluru.",
 };
 
+import GroklyLayoutClient from './layout-client';
+
 export default function Layout({ children }) {
-  return children;
+  return (
+    <GroklyLayoutClient>
+      {children}
+    </GroklyLayoutClient>
+  );
 }

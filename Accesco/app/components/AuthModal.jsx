@@ -148,7 +148,7 @@ export default function AuthModal({ isOpen, onClose, onSuccess }) {
                     <span className="am-ico"><i className="ri-phone-line"/></span>
                     <input
                       type="tel"
-                      placeholder="+91 98765 43210"
+                      placeholder="+91 9022217637"
                       value={phone}
                       onChange={e => setPhone(e.target.value)}
                       onFocus={() => setFocused('phone')}

@@ -1,11 +1,12 @@
 'use client';
 
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import SidebarMenu from '../../components/SidebarMenu';
 import AuthModal from '../components/AuthModal';
 import { useAuth } from '../components/AuthProvider';
+import ActiveOrdersWidget from '../../components/ActiveOrdersWidget';
 import './profile.css';
 
 export default function ProfilePage() {
@@ -24,6 +25,15 @@ export default function ProfilePage() {
     .toUpperCase();
 
   const handleSignOut = () => signOut();
+
+  const [totalOrders, setTotalOrders] = useState(0);
+
+  useEffect(() => {
+    const grokly = JSON.parse(localStorage.getItem('grokly_orders') || '[]');
+    const swadishtt = JSON.parse(localStorage.getItem('swadishtt-orders') || '[]');
+    const instastyle = JSON.parse(localStorage.getItem('instastyle_orders') || '[]');
+    setTotalOrders(grokly.length + swadishtt.length + instastyle.length);
+  }, []);
 
   const handleLoginSuccess = (userData) => {
     signIn(userData);
@@ -77,6 +87,8 @@ export default function ProfilePage() {
                 </button>
               </div>
 
+              <ActiveOrdersWidget />
+
               <div className="profile-grid">
                 <div className="profile-card">
                   <div className="profile-card-title">
@@ -104,7 +116,7 @@ export default function ProfilePage() {
                   </div>
                   <div className="profile-stats-grid">
                     <div className="profile-stat-item">
-                      <div className="profile-stat-number">0</div>
+                      <div className="profile-stat-number">{totalOrders}</div>
                       <div className="profile-stat-label">Orders</div>
                     </div>
                     <div className="profile-stat-item">

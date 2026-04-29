@@ -15,7 +15,7 @@ const DeliveryHero = () => {
         className={styles.bgWrapper}
       >
         <img 
-          src="https://images.unsplash.com/photo-1512436991641-6745cdb1723f?w=1600&q=80" 
+          src="/instastyle_fashion_hero_1777395647380.png" 
           alt="Delivery Background" 
           className={styles.bgImage}
         />

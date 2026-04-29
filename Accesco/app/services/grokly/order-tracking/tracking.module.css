@@ -1,0 +1,245 @@
+.container {
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 0 20px;
+  font-family: 'Inter', sans-serif;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 40px;
+}
+
+.orderInfo h1 {
+  font-size: 28px;
+  font-weight: 800;
+  margin: 0;
+}
+
+.orderInfo p {
+  color: #666;
+  margin: 4px 0 0;
+}
+
+.statusBadge {
+  padding: 8px 16px;
+  background: #e8f5e9;
+  color: #2e7d32;
+  border-radius: 99px;
+  font-weight: 700;
+  font-size: 14px;
+  text-transform: uppercase;
+}
+
+.trackingCard {
+  background: white;
+  padding: 40px;
+  border-radius: 24px;
+  border: 1px solid #eee;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+  margin-bottom: 40px;
+}
+
+.timeline {
+  display: flex;
+  justify-content: space-between;
+}
+
+.step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  flex: 1;
+}
+
+.stepDot {
+  width: 32px;
+  height: 32px;
+  background: #f0f0f0;
+  color: #999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-weight: 700;
+  z-index: 2;
+  transition: all 0.3s ease;
+}
+
+.stepLabel {
+  margin-top: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #999;
+  text-align: center;
+}
+
+.stepLine {
+  position: absolute;
+  top: 16px;
+  left: 50%;
+  width: 100%;
+  height: 2px;
+  background: #f0f0f0;
+  z-index: 1;
+}
+
+.active .stepDot {
+  background: #2e7d32;
+  color: white;
+}
+
+.active .stepLabel {
+  color: #2e7d32;
+}
+
+.active .stepLine {
+  background: #2e7d32;
+}
+
+.current .stepDot {
+  box-shadow: 0 0 0 4px rgba(46,125,50,0.2);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 32px;
+  margin-bottom: 40px;
+}
+
+.detailSection {
+  margin-bottom: 32px;
+}
+
+.detailSection h2 {
+  font-size: 16px;
+  font-weight: 700;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 12px;
+}
+
+.detailCard {
+  display: flex;
+  gap: 16px;
+  padding: 20px;
+  background: white;
+  border: 1px solid #eee;
+  border-radius: 16px;
+}
+
+.iconBox {
+  width: 44px;
+  height: 44px;
+  background: #f0fdf4;
+  color: #2e7d32;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.detailCard strong {
+  display: block;
+  font-size: 16px;
+  margin-bottom: 4px;
+}
+
+.detailCard p {
+  margin: 0;
+  font-size: 14px;
+  color: #555;
+  line-height: 1.4;
+}
+
+.phone {
+  margin-top: 4px !important;
+  font-weight: 600;
+  color: #111 !important;
+}
+
+.itemsList {
+  margin-bottom: 20px;
+}
+
+.divider {
+  border: none;
+  border-top: 1px solid #eee;
+  margin: 20px 0;
+}
+
+.billRow {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  font-size: 14px;
+  color: #555;
+}
+
+.partnerCard {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px;
+  background: #f9f9f9;
+  border: 1px solid #eee;
+  border-radius: 16px;
+}
+
+.avatar {
+  width: 48px;
+  height: 48px;
+  background: #ddd;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+}
+
+.item {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+.total {
+  display: flex;
+  justify-content: space-between;
+  font-weight: 700;
+  font-size: 16px;
+  color: #2e7d32;
+}
+
+.actions {
+  display: flex;
+  gap: 16px;
+}
+
+.profileBtn, .shopBtn {
+  flex: 1;
+  padding: 16px;
+  text-align: center;
+  text-decoration: none;
+  border-radius: 12px;
+  font-weight: 700;
+}
+
+.profileBtn {
+  background: white;
+  border: 1px solid #ddd;
+  color: #1a1a1a;
+}
+
+.shopBtn {
+  background: #2e7d32;
+  color: white;
+}

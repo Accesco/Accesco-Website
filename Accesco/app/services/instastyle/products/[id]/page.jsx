@@ -14,7 +14,7 @@ import styles from './product.module.css';
 export default function ProductDetailPage() {
   const params = useParams();
   const router = useRouter();
-  const { addToCart, openCart, toggleWishlist, isWishlisted } = useCart();
+  const { addToCart, openCart, toggleWishlist, isWishlisted, inventory } = useCart();
   
   const [product, setProduct] = useState(null);
   const [selectedSize, setSelectedSize] = useState('');
@@ -45,8 +45,15 @@ export default function ProductDetailPage() {
 
   const displayPrice = product.discountedPrice || product.price;
   const hasDiscount = product.discountedPrice && product.discountPercentage > 0;
-  const maxQuantity = selectedSize ? (product.inventory[selectedSize] || 0) : 10;
+  
+  // Use context inventory if available, otherwise fallback to static mock inventory
+  const currentInventory = (inventory[product.id] && inventory[product.id][selectedSize] !== undefined)
+    ? inventory[product.id][selectedSize]
+    : (product.inventory[selectedSize] !== undefined ? product.inventory[selectedSize] : 10);
+
+  const maxQuantity = selectedSize ? currentInventory : 10;
   const wishlisted = isWishlisted(product.id);
+  const isInStock = selectedSize ? currentInventory > 0 : product.inStock;
 
   const handleAddToCart = () => {
     if (!selectedSize) {
@@ -155,9 +162,9 @@ export default function ProductDetailPage() {
               <button
                 className={styles.addToCartBtn}
                 onClick={handleAddToCart}
-                disabled={!product.inStock}
+                disabled={!isInStock}
               >
-                {product.inStock ? 'Add to Cart' : 'Out of Stock'}
+                {isInStock ? 'Add to Cart' : 'Out of Stock'}
               </button>
               <button
                 className={styles.wishlistBtn}

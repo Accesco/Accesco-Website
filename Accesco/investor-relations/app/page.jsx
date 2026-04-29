@@ -254,7 +254,7 @@ export default function HomePage() {
               <strong>Email:</strong> info@accescoliving.com 
             </p>
             <p>
-              <strong>Phone:</strong> +91 99727 06940
+              <strong>Phone:</strong> +91 9022217637
             </p>
             <p>
               <strong>Address:</strong> Accesco living,Jaladarshini Layout, Bengaluru -560094, Karnataka, India

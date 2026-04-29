@@ -7,6 +7,7 @@
 'use client';
 
 import { useMemo, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import styles from './CartDrawer.module.css';
 import { useGrokly } from '../contexts/GroklyContext';
 import { products } from '../../../../lib/groklyProducts';
@@ -68,10 +69,11 @@ export default function CartDrawer() {
   /**
    * Handle checkout
    */
+  const router = useRouter();
+
   const handleCheckout = () => {
-    // TODO: Navigate to checkout page
-    console.log('Proceeding to checkout with items:', cartItems);
-    alert('Checkout functionality will be implemented soon!');
+    closeCart();
+    router.push('/services/grokly/checkout');
   };
 
   /**
