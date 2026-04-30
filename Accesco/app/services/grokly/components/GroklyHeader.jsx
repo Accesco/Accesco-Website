@@ -9,6 +9,7 @@ import Image from 'next/image';
 import { MapPin, Search, X, ShoppingCart } from 'lucide-react';
 import styles from './GroklyHeader.module.css';
 import { useGrokly } from '../contexts/GroklyContext';
+import Link from 'next/link';
 
 export default function GroklyHeader({ 
   searchQuery, 
@@ -28,6 +29,9 @@ export default function GroklyHeader({
   return (
     <div className={styles.topbar}>
       <div className={styles.topbarInner}>
+        <Link href="/" className={styles.backBtn}>
+  ← Back
+</Link>
         {/* Logo */}
         <div className={styles.logo}>
           <div className={styles.logoIcon}>

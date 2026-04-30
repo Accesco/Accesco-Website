@@ -36,6 +36,14 @@ export default function SwadishttHeader() {
     <header className={`${styles.header} ${scrolled ? styles.scrolled : ''}`}>
       <div className={styles.container}>
         <div className={styles.headerContent}>
+          <Link
+  href="/"
+  className={styles.backBtn}
+  aria-label="Back to Accesco"
+>
+  <span className={styles.backDesktop}>← Back</span>
+  <span className={styles.backMobile}>←</span>
+</Link>
           {/* Logo */}
           <Link href="/services/swadisht" className={styles.logo}>
             <img 

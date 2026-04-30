@@ -417,3 +417,67 @@
   backdrop-filter: blur(4px);
   z-index: 1999;
 }
+.backBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  text-decoration: none;
+  color: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  transition: opacity 0.2s ease;
+  flex-shrink: 0;
+}
+
+.backBtn:hover {
+  opacity: 0.65;
+}
+
+.backDesktop {
+  display: inline;
+}
+
+.backMobile {
+  display: none;
+}
+
+
+
+@media (max-width: 768px) {
+  .backDesktop {
+    display: none;
+  }
+
+  .backMobile {
+    display: inline;
+  }
+
+  .backBtn {
+    padding: 8px 12px;
+    min-width: 40px;
+    justify-content: center;
+  }
+}
+.backDesktop {
+  display: inline !important;
+}
+
+.backMobile {
+  display: none !important;
+}
+
+@media (max-width: 768px) {
+  .backDesktop {
+    display: none !important;
+  }
+
+  .backMobile {
+    display: inline !important;
+  }
+
+  .backBtn {
+    padding: 8px 12px !important;
+    min-width: 40px !important;
+  }
+}

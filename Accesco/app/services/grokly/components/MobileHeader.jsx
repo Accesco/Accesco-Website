@@ -9,7 +9,7 @@ import Image from 'next/image';
 import { MapPin, ShoppingCart, Search, ChevronDown } from 'lucide-react';
 import styles from './MobileHeader.module.css';
 import { useGrokly } from '../contexts/GroklyContext';
-
+import Link from 'next/link';
 /**
  * MobileHeader Component
  * Displays mobile-optimized header with location and search
@@ -26,6 +26,9 @@ export default function MobileHeader() {
     <div className={styles.mobileHeader}>
       {/* Top Bar - Location and Cart */}
       <div className={styles.topBar}>
+        <Link href="/" className={styles.mobileBackBtn}>
+  ←
+</Link>
         {/* Location Button */}
         <button 
           className={styles.locationBtn}
