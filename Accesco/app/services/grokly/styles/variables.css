@@ -95,12 +95,12 @@
   --grokly-font-primary: 'Nunito', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   --grokly-font-display: 'Syne', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   
-  --grokly-font-size-xs: 10px;
-  --grokly-font-size-sm: 12px;
-  --grokly-font-size-base: 14px;
-  --grokly-font-size-lg: 16px;
-  --grokly-font-size-xl: 18px;
-  --grokly-font-size-2xl: 20px;
+  --grokly-font-size-xs: 12px;
+  --grokly-font-size-sm: 14px;
+  --grokly-font-size-base: 16px;
+  --grokly-font-size-lg: 18px;
+  --grokly-font-size-xl: 22px;
+  --grokly-font-size-2xl: 28px;
   --grokly-font-size-3xl: 24px;
   
   --grokly-font-weight-normal: 400;

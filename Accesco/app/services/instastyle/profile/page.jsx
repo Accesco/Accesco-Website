@@ -5,13 +5,14 @@ import { useEffect, useMemo, useState } from 'react';
 import styles from './profile.module.css';
 import { useCart } from '@/contexts/CartContext';
 import { products } from '@/lib/mockData';
+import ActiveOrdersWidget from '@/components/ActiveOrdersWidget';
 
 const PROFILE_STORAGE_KEY = 'instastyle_profile';
 
 const initialProfile = {
   fullName: 'Accesco Customer',
   email: 'customer@accesco.in',
-  phone: '+91 90000 00000',
+  phone: '+91 9022217637',
   gender: 'Prefer not to say',
   sizeTop: 'M',
   sizeBottom: '32',
@@ -231,24 +232,24 @@ export default function ProfilePage() {
       </section>
 
       <section className={styles.ordersSection}>
-        <div className={styles.panelHeader}>
-          <h3>Recent orders</h3>
-          <span>Track, return, or reorder</span>
-        </div>
-
-        <div className={styles.ordersList}>
-          {recentOrders.map((order) => (
-            <div key={order.id} className={styles.orderRow}>
-              <div>
-                <strong>{order.id}</strong>
-                <span>{order.date}</span>
-              </div>
-              <div>
-                <strong>{order.amount}</strong>
-                <span>{order.status}</span>
-              </div>
-            </div>
-          ))}
+        <ActiveOrdersWidget venture="InstaStyle" />
+        <div style={{ marginTop: '20px', textAlign: 'center' }}>
+          <Link 
+            href="/services/instastyle/orders" 
+            className={styles.secondaryAction}
+            style={{ 
+              display: 'inline-block', 
+              padding: '12px 24px', 
+              textDecoration: 'none',
+              background: '#f8f9fa',
+              borderRadius: '8px',
+              fontWeight: 600,
+              color: '#111',
+              border: '1px solid #eee'
+            }}
+          >
+            View Order History →
+          </Link>
         </div>
       </section>
 

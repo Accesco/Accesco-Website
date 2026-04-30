@@ -356,23 +356,26 @@ textarea.form-input {
 .social-links {
   display: flex;
   justify-content: center;
-  gap: 16px;
+  gap: 24px;
   flex-wrap: wrap;
+  padding: 10px 0;
 }
 
 .social-link {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 12px 24px;
+  gap: 12px;
+  padding: 14px 28px;
   background: #fafafa;
   border: 1px solid #e5e5e5;
-  border-radius: 8px;
+  border-radius: 12px;
   color: #000000;
   text-decoration: none;
   font-size: 15px;
-  font-weight: 500;
-  transition: all 0.3s ease;
+  font-weight: 600;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  min-width: 160px;
+  justify-content: center;
 }
 
 .social-link:hover {

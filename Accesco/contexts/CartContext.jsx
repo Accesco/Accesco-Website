@@ -8,6 +8,8 @@ const CartContext = createContext();
 
 const CART_STORAGE_KEY = 'instastyle_cart';
 const WISHLIST_STORAGE_KEY = 'instastyle_wishlist';
+const ORDERS_STORAGE_KEY = 'instastyle_orders';
+const INVENTORY_STORAGE_KEY = 'instastyle_inventory';
 const DEVICE_ID_KEY = 'instastyle_device_id';
 
 function getDeviceId() {
@@ -24,33 +26,106 @@ function getDeviceId() {
 export function CartProvider({ children }) {
   const [cart, setCart] = useState([]);
   const [wishlist, setWishlist] = useState([]);
+  const [orders, setOrders] = useState([]);
+  const [inventory, setInventory] = useState({}); // { productId: { size: count } }
   const [isCartOpen, setIsCartOpen] = useState(false);
 
-  // Load cart and wishlist from localStorage on mount
+  // Load data from localStorage on mount
   useEffect(() => {
-    const savedCart = localStorage.getItem(CART_STORAGE_KEY);
-    if (savedCart) {
-      try {
-        setCart(JSON.parse(savedCart));
-      } catch (error) {
-        console.error('Error loading cart:', error);
-      }
-    }
+    if (typeof window === 'undefined') return;
 
-    const savedWishlist = localStorage.getItem(WISHLIST_STORAGE_KEY);
-    if (savedWishlist) {
-      try {
-        setWishlist(JSON.parse(savedWishlist));
-      } catch (error) {
-        console.error('Error loading wishlist:', error);
+    const loadData = (key, setter) => {
+      const saved = localStorage.getItem(key);
+      if (saved) {
+        try {
+          setter(JSON.parse(saved));
+        } catch (error) {
+          console.error(`Error loading ${key}:`, error);
+        }
       }
-    }
+    };
+
+    loadData(CART_STORAGE_KEY, setCart);
+    loadData(WISHLIST_STORAGE_KEY, setWishlist);
+    loadData(ORDERS_STORAGE_KEY, setOrders);
+    loadData(INVENTORY_STORAGE_KEY, setInventory);
+
+    // Hydrate wishlist from cloud
+    const hydrateWishlistFromCloud = async () => {
+      const deviceId = getDeviceId();
+      if (!deviceId) return;
+      try {
+        const snapshot = await getDoc(doc(db, 'instastyle_wishlists', deviceId));
+        if (snapshot.exists()) {
+          const remoteItems = snapshot.data()?.items;
+          if (Array.isArray(remoteItems) && remoteItems.length > 0) {
+            setWishlist((current) => (current.length > 0 ? current : remoteItems));
+          }
+        }
+      } catch (error) {
+        console.warn('Wishlist cloud read fallback to local only:', error?.message || error);
+      }
+    };
+    hydrateWishlistFromCloud();
   }, []);
 
-  // Save cart to localStorage whenever it changes
+  // Save data to localStorage whenever it changes
   useEffect(() => {
     localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cart));
   }, [cart]);
+
+  useEffect(() => {
+    localStorage.setItem(ORDERS_STORAGE_KEY, JSON.stringify(orders));
+  }, [orders]);
+
+  // ═══════════════════════════════════════════════
+  // ETA & ORDER ACCEPTANCE SIMULATION
+  // ═══════════════════════════════════════════════
+  
+  useEffect(() => {
+    if (orders.length === 0) return;
+
+    const simulateProgress = () => {
+      setOrders(prevOrders => {
+        let changed = false;
+        const now = Date.now();
+        
+        const newOrders = prevOrders.map(order => {
+          if (order.status === 'DELIVERED') return order;
+          
+          const orderTime = new Date(order.timestamp).getTime();
+          const elapsedSeconds = (now - orderTime) / 1000;
+          
+          let newStatus = order.status;
+          
+          if (order.status === 'PLACED' && elapsedSeconds > 5) {
+            newStatus = 'CONFIRMED';
+          } else if (order.status === 'CONFIRMED' && elapsedSeconds > 15) {
+            newStatus = 'PACKING';
+          } else if (order.status === 'PACKING' && elapsedSeconds > 40) {
+            newStatus = 'OUT_FOR_DELIVERY';
+          } else if (order.status === 'OUT_FOR_DELIVERY' && elapsedSeconds > 80) {
+            newStatus = 'DELIVERED';
+          }
+
+          if (newStatus !== order.status) {
+            changed = true;
+            return { ...order, status: newStatus };
+          }
+          return order;
+        });
+
+        return changed ? newOrders : prevOrders;
+      });
+    };
+
+    const interval = setInterval(simulateProgress, 2000);
+    return () => clearInterval(interval);
+  }, [orders]);
+
+  useEffect(() => {
+    localStorage.setItem(INVENTORY_STORAGE_KEY, JSON.stringify(inventory));
+  }, [inventory]);
 
   // Save wishlist locally and sync to Firestore when available
   useEffect(() => {
@@ -176,6 +251,39 @@ export function CartProvider({ children }) {
     setCart([]);
   };
 
+  const placeOrder = (orderData) => {
+    const newOrder = {
+      id: `INS-${Date.now()}`,
+      items: [...cart],
+      status: 'PLACED',
+      timestamp: new Date().toISOString(),
+      venture: 'InstaStyle',
+      ...orderData
+    };
+    
+    // Reduce stock
+    setInventory(prev => {
+      const next = { ...prev };
+      cart.forEach(item => {
+        if (!next[item.id]) next[item.id] = {};
+        const currentSizeStock = next[item.id][item.selectedSize] !== undefined ? 
+                                next[item.id][item.selectedSize] : 10; // Default 10 if not set
+        next[item.id][item.selectedSize] = Math.max(0, currentSizeStock - item.quantity);
+      });
+      return next;
+    });
+
+    setOrders(prev => [newOrder, ...prev]);
+    clearCart();
+    return newOrder;
+  };
+
+  const updateOrderStatus = (orderId, status) => {
+    setOrders(prev => prev.map(order => 
+      order.id === orderId ? { ...order, status } : order
+    ));
+  };
+
   const addToWishlist = (product) => {
     setWishlist((prev) => {
       if (prev.some((item) => item.id === product.id)) return prev;
@@ -240,6 +348,8 @@ export function CartProvider({ children }) {
     removeFromCart,
     updateQuantity,
     clearCart,
+    placeOrder,
+    updateOrderStatus,
     addToWishlist,
     removeFromWishlist,
     toggleWishlist,
@@ -247,6 +357,8 @@ export function CartProvider({ children }) {
     toggleCart,
     openCart,
     closeCart,
+    orders,
+    inventory,
   };
 
   return (

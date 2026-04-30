@@ -1,6 +1,7 @@
 import { CartProvider } from '@/contexts/CartContext';
 import InstaStyleHeader from '@/components/instastyle/InstaStyleHeader';
 import InstaStyleFooter from '@/components/instastyle/InstaStyleFooter';
+import CartDrawer from '@/components/instastyle/CartDrawer';
 import './instastyle-shell.css';
 
 export const metadata = {
@@ -13,6 +14,7 @@ export default function Layout({ children }) {
     <div className="instastyle-root">
       <CartProvider>
         <InstaStyleHeader />
+        <CartDrawer />
         <div className="instastyle-content-wrapper">
           {children}
         </div>

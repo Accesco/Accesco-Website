@@ -406,6 +406,9 @@ export default function InstaStyleLanding() {
       {/* ── 3. FASHION COLLECTIONS (NEW) ── */}
       <FashionCollections />
 
+      {/* ── 3.5 SWIPE STYLE DISCOVERY (RESTORED) ── */}
+      <SwipeStyleShowcase />
+
       {/* ── 4. TRENDING PRODUCTS (SHOP THE EDIT) ── */}
       <section id="instastyle-featured" className={`${styles.trending} ${styles.revealItem}`} data-reveal>
         <div className={styles.container}>

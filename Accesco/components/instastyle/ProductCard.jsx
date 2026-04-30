@@ -8,8 +8,14 @@ import styles from './ProductCard.module.css';
 
 export default function ProductCard({ product }) {
   const [imageLoaded, setImageLoaded] = useState(false);
-  const { toggleWishlist, isWishlisted } = useCart();
+  const { toggleWishlist, isWishlisted, inventory } = useCart();
   const active = isWishlisted(product.id);
+  
+  // Check real inventory from context
+  const productStock = inventory[product.id];
+  const isInStock = productStock 
+    ? Object.values(productStock).some(count => count > 0) 
+    : product.inStock;
 
   const handleWishlist = (e) => {
     e.preventDefault();
@@ -50,7 +56,7 @@ export default function ProductCard({ product }) {
           </span>
         )}
 
-        {!product.inStock && (
+        {!isInStock && (
           <div className={styles.outOfStockOverlay}>
             <span>Out of Stock</span>
           </div>

@@ -48,14 +48,42 @@ export function GroklyHero() {
   return (
     <section style={heroSection}>
       <style>{`
-        @keyframes heroPulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.6;transform:scale(1.25)} }
-        .hero-inner-grokly { position:absolute;inset:0; }
-        .hero-inner-grokly img { width:100%;height:100%;object-fit:cover;object-position:center; }
+        @keyframes heroPulse { 
+          0%,100%{opacity:1;transform:scale(1)} 
+          50%{opacity:.6;transform:scale(1.25)} 
+        }
+
+        .hero-inner-grokly { 
+          position:absolute;
+          inset:0; 
+        }
+
+        .hero-inner-grokly img { 
+          width:100%;
+          height:100%;
+          object-fit: cover;
+          object-position: center 75%;
+        }
+
+        /* 🔥 MOBILE ONLY IMAGE CHANGE */
+        @media (max-width: 768px) {
+          section {
+            height: 500px !important;
+          }
+
+          .hero-inner-grokly img {
+            content: url('/images/banners/hero-grokly-mobile.jpg');
+            object-position: center bottom;
+          }
+        }
       `}</style>
 
       {/* Image */}
       <div className="hero-inner-grokly">
-        <img src="/images/banners/hero-grokly.jpg" alt="Grokly fresh groceries" />
+        <img 
+          src="/images/banners/hero-grokly.jpg" 
+          alt="Grokly fresh groceries" 
+        />
       </div>
 
       {/* Gradient overlay */}
@@ -70,19 +98,46 @@ export function GroklyHero() {
         width: '100%', maxWidth: 1200, margin: '0 auto',
         padding: 'clamp(24px, 4vw, 56px) clamp(20px, 4vw, 48px)',
       }}>
+        <div style={{ marginBottom: '14px' }}>
+          <div style={{
+            fontFamily: "'Sora', sans-serif",
+            fontWeight: 900,
+            fontSize: 'clamp(2.8rem, 7vw, 5.5rem)',
+            letterSpacing: '0.22em',
+            color: '#ffffff',
+            textTransform: 'uppercase',
+            marginBottom: '6px',
+            marginLeft: '-0.06em',
+          }}>
+            GROKLY
+          </div>
+
+          <div style={{
+            fontFamily: "'DM Sans', sans-serif",
+            fontWeight: 900,
+            fontSize: 'clamp(0.95rem, 1.6vw, 1.2rem)',
+            letterSpacing: '0.14em',
+            textTransform: 'uppercase',
+            color: '#fff',
+          }}>
+            Fresh groceries, thoughtfully curated
+          </div>
+        </div>
+
         <h1 style={{
           fontFamily: "'Sora', sans-serif",
           fontWeight: 900,
-          fontSize: 'clamp(1.6rem, 4vw, 3.2rem)',
+          fontSize: 'clamp(1.3rem, 3vw, 2.4rem)',
           color: '#fff',
           letterSpacing: '-0.03em',
           lineHeight: 1.1,
           margin: '0 0 10px',
           maxWidth: 560,
         }}>
-          Groceries in<br />
-          <span style={{ color: '#4ade80' }}>11 minutes flat.</span>
+          Groceries in 
+          <span style={{ color: '#4ade80' }}> 11 minutes flat.</span>
         </h1>
+
         <p style={{
           fontFamily: "'DM Sans', sans-serif",
           fontSize: 'clamp(0.9rem, 1.6vw, 1.05rem)',
@@ -92,6 +147,7 @@ export function GroklyHero() {
         }}>
           Farm-fresh essentials sourced directly from Karnataka farms. No middlemen. Full transparency.
         </p>
+
         <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
           <Link href="/services/grokly" style={{
             padding: '11px 28px', borderRadius: 9999,
@@ -102,6 +158,7 @@ export function GroklyHero() {
           }}>
             Shop Now →
           </Link>
+
           <span style={{
             padding: '11px 20px', borderRadius: 9999,
             background: 'rgba(255,255,255,0.12)',
@@ -124,7 +181,39 @@ export function SwadishttHero() {
     <section style={heroSection}>
       <style>{`
         .hero-inner-sw { position:absolute;inset:0; }
-        .hero-inner-sw img { width:100%;height:100%;object-fit:cover;object-position:center top; }
+        .hero-inner-sw img { width:100%;height:100%;object-fit:cover;object-position:center 60%; }
+
+   @media (max-width: 768px) {
+  .hero-content-swadishtt {
+    position: absolute !important;
+    left: 20px !important;
+    right: 20px !important;
+    bottom: 24px !important;
+    top: auto !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  .hero-content-swadishtt h1 {
+    font-size: 1.4rem !important;
+    line-height: 1.15 !important;
+    margin: 0 0 8px !important;
+    max-width: 310px !important;
+  }
+
+  .hero-content-swadishtt p {
+    font-size: 0.85rem !important;
+    line-height: 1.4 !important;
+    margin: 0 0 14px !important;
+    max-width: 310px !important;
+  }
+
+  .hero-content-swadishtt a,
+  .hero-content-swadishtt span {
+    padding: 9px 16px !important;
+    font-size: 0.8rem !important;
+  }
+}
       `}</style>
 
       <div className="hero-inner-sw">
@@ -136,7 +225,7 @@ export function SwadishttHero() {
         background: 'linear-gradient(to top, rgba(60,10,10,0.88) 0%, rgba(60,10,10,0.4) 55%, transparent 100%)',
       }} />
 
-      <div style={{
+      <div className="hero-content-swadishtt" style={{
         position: 'relative', zIndex: 2,
         width: '100%', maxWidth: 1200, margin: '0 auto',
         padding: 'clamp(24px, 4vw, 56px) clamp(20px, 4vw, 48px)',
@@ -154,6 +243,7 @@ export function SwadishttHero() {
           Ghar jaisa khana,<br />
           <span style={{ color: '#fbbf24' }}>30 minutes away.</span>
         </h1>
+
         <p style={{
           fontFamily: "'DM Sans', sans-serif",
           fontSize: 'clamp(0.9rem, 1.6vw, 1.05rem)',
@@ -163,6 +253,7 @@ export function SwadishttHero() {
         }}>
           200+ dishes from our cloud kitchens. Hot, fresh, and built for the Indian household.
         </p>
+
         <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
           <Link href="/services/swadisht" style={{
             padding: '11px 28px', borderRadius: 9999,
@@ -172,6 +263,7 @@ export function SwadishttHero() {
           }}>
             Order Food →
           </Link>
+
           <span style={{
             padding: '11px 20px', borderRadius: 9999,
             background: 'rgba(255,255,255,0.12)',

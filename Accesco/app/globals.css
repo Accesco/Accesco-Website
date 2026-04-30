@@ -332,3 +332,89 @@ img { max-width: 100%; display: block; }
 @media (min-width: 769px) {
   .ac-hide-desktop { display: none !important; }
 }
+/* ─── HERO BANNER FIXES ─────────────────────────────────────────────── */
+
+/* 1. Increase hero height on desktop */
+@media (min-width: 769px) {
+  section[class*="hero"],
+  .hero,
+  .hero-section,
+  .hero-banner {
+    min-height: 70vh !important;
+    padding-top: 120px !important;
+    padding-bottom: 120px !important;
+  }
+}
+
+/* 2. Ensure hero text stays above background images */
+.hero,
+.hero-section,
+.hero-banner,
+section[class*="hero"] {
+  position: relative;
+  overflow: hidden;
+}
+
+.hero *,
+.hero-section *,
+.hero-banner *,
+section[class*="hero"] * {
+  position: relative;
+  z-index: 2;
+}
+
+/* 3. Dark overlay so background image does not overpower text */
+.hero::before,
+.hero-section::before,
+.hero-banner::before,
+section[class*="hero"]::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(
+    90deg,
+    rgba(0, 0, 0, 0.68),
+    rgba(0, 0, 0, 0.42),
+    rgba(0, 0, 0, 0.28)
+  );
+}
+
+/* 4. Mobile hero text visibility fix */
+@media (max-width: 768px) {
+  section[class*="hero"],
+  .hero,
+  .hero-section,
+  .hero-banner {
+    min-height: 78vh !important;
+    padding-top: 100px !important;
+    padding-bottom: 70px !important;
+  }
+
+  .hero h1,
+  .hero-section h1,
+  .hero-banner h1,
+  section[class*="hero"] h1 {
+    font-size: 2rem !important;
+    line-height: 1.15 !important;
+    max-width: 100% !important;
+  }
+
+  .hero p,
+  .hero-section p,
+  .hero-banner p,
+  section[class*="hero"] p {
+    font-size: 0.95rem !important;
+    line-height: 1.55 !important;
+    max-width: 100% !important;
+  }
+
+  .hero::before,
+  .hero-section::before,
+  .hero-banner::before,
+  section[class*="hero"]::before {
+    background: rgba(0, 0, 0, 0.68);
+  }
+}
+
