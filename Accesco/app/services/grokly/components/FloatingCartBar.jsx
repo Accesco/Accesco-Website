@@ -5,6 +5,7 @@
 
 'use client';
 
+import { ShoppingCart, ArrowRight } from 'lucide-react';
 import styles from './FloatingCartBar.module.css';
 import { useGrokly } from '../contexts/GroklyContext';
 
@@ -26,14 +27,14 @@ export default function FloatingCartBar() {
         aria-label={`View cart with ${cartCount} items`}
       >
         <div className={styles.cartLeft}>
-          <span className={styles.cartIcon} aria-hidden="true">🛒</span>
+          <ShoppingCart className={styles.cartIcon} size={20} aria-hidden="true" />
           <div className={styles.cartInfo}>
             <div className={styles.cartCount}>{cartCount} item{cartCount !== 1 ? 's' : ''}</div>
             <div className={styles.cartLabel}>View Cart</div>
           </div>
         </div>
         <div className={styles.cartRight}>
-          <span className={styles.cartArrow} aria-hidden="true">→</span>
+          <ArrowRight className={styles.cartArrow} size={20} aria-hidden="true" />
         </div>
       </button>
     </div>

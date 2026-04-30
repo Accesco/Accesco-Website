@@ -7,6 +7,7 @@
 'use client';
 
 import { memo } from 'react';
+import { Zap, Star, Sparkles } from 'lucide-react';
 import styles from './ProductCard.module.css';
 import { useCart } from '../contexts/GroklyContext';
 
@@ -179,14 +180,14 @@ function ProductCard({ product }) {
       {/* Bestseller Badge */}
       {product.tags?.includes("Bestseller") && (
         <div className={styles.bestBadge} aria-label="Bestseller">
-          <span aria-hidden="true">⚡</span> Best
+          <Zap size={12} aria-hidden="true" /> Best
         </div>
       )}
 
       {/* Premium Badge */}
       {product.tags?.includes("Premium") && (
         <div className={`${styles.bestBadge} ${styles.premium}`} aria-label="Premium product">
-          <span aria-hidden="true">✦</span> Premium
+          <Sparkles size={12} aria-hidden="true" /> Premium
         </div>
       )}
 
@@ -213,7 +214,7 @@ function ProductCard({ product }) {
 
       {/* Delivery Time Badge */}
       <div className={styles.pdeliv} aria-label="Delivery in 11 minutes">
-        <span aria-hidden="true">⚡</span> 11 MINS
+        <Zap size={12} aria-hidden="true" /> 11 MINS
       </div>
 
       {/* Product Information */}

@@ -14,7 +14,7 @@
 /* ===== HERO SECTION ===== */
 .contact-hero {
   padding: 160px 24px 80px;
-  background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('/images/contact-us-hero.webp');
+  background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('/images/contact.jpg');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;

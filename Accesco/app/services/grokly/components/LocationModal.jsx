@@ -6,6 +6,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { MapPin, Search, X, Target, Clock, Zap, AlertTriangle, Navigation } from 'lucide-react';
 import styles from './LocationModal.module.css';
 import { useGrokly } from '../contexts/GroklyContext';
 
@@ -179,10 +180,7 @@ export default function LocationModal() {
             onClick={closeLocationModal}
             aria-label="Close modal"
           >
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <line x1="18" y1="6" x2="6" y2="18"></line>
-              <line x1="6" y1="6" x2="18" y2="18"></line>
-            </svg>
+            <X size={20} />
           </button>
         </div>
 
@@ -195,9 +193,11 @@ export default function LocationModal() {
             disabled={isDetecting}
             aria-label="Detect my current location"
           >
-            <span className={styles.detectIcon} aria-hidden="true">
-              {isDetecting ? '⏳' : '🎯'}
-            </span>
+            {isDetecting ? (
+              <Clock className={styles.detectIcon} size={20} aria-hidden="true" />
+            ) : (
+              <Target className={styles.detectIcon} size={20} aria-hidden="true" />
+            )}
             <div className={styles.detectText}>
               <div className={styles.detectLabel}>
                 {isDetecting ? 'Detecting...' : 'Detect my location'}
@@ -211,7 +211,7 @@ export default function LocationModal() {
           {/* Location Error */}
           {locationError && (
             <div className={styles.errorBox}>
-              <span aria-hidden="true">⚠️</span>
+              <AlertTriangle size={18} aria-hidden="true" />
               <span>{locationError}</span>
             </div>
           )}
@@ -222,7 +222,7 @@ export default function LocationModal() {
               className={styles.detectedLocation}
               onClick={handleUseDetectedLocation}
             >
-              <span className={styles.detectedIcon} aria-hidden="true">📍</span>
+              <Navigation className={styles.detectedIcon} size={20} aria-hidden="true" />
               <div className={styles.detectedText}>
                 <div className={styles.detectedLabel}>Detected Location</div>
                 <div className={styles.detectedName}>{detectedLocation.name}</div>
@@ -234,7 +234,7 @@ export default function LocationModal() {
 
           {/* Search Box */}
           <div className={styles.searchBox}>
-            <span className={styles.searchIcon} aria-hidden="true">🔍</span>
+            <Search className={styles.searchIcon} size={18} aria-hidden="true" />
             <input
               type="search"
               placeholder="Search for your location..."
@@ -247,7 +247,7 @@ export default function LocationModal() {
 
           {/* Current Location */}
           <div className={styles.currentLocation}>
-            <span className={styles.currentIcon} aria-hidden="true">📍</span>
+            <MapPin className={styles.currentIcon} size={18} aria-hidden="true" />
             <div className={styles.currentText}>
               <div className={styles.currentLabel}>Current Location</div>
               <div className={styles.currentName}>{location}</div>
@@ -265,20 +265,20 @@ export default function LocationModal() {
                   onClick={() => handleSelectLocation(loc.name)}
                   aria-label={`Select ${loc.name}, delivery in ${loc.time}`}
                 >
-                  <span className={styles.locationIcon} aria-hidden="true">📍</span>
+                  <MapPin className={styles.locationIcon} size={18} aria-hidden="true" />
                   <div className={styles.locationInfo}>
                     <div className={styles.locationName}>{loc.name}</div>
                     <div className={styles.locationArea}>{loc.area}</div>
                   </div>
                   <div className={styles.locationTime}>
-                    <span className={styles.timeIcon} aria-hidden="true">⚡</span>
+                    <Zap className={styles.timeIcon} size={14} aria-hidden="true" />
                     {loc.time}
                   </div>
                 </button>
               ))
             ) : (
               <div className={styles.noResults}>
-                <span aria-hidden="true">🔍</span>
+                <Search size={32} aria-hidden="true" />
                 <p>No locations found</p>
               </div>
             )}

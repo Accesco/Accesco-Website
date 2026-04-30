@@ -6,6 +6,7 @@
 'use client';
 
 import { useState } from 'react';
+import { ShoppingCart, Zap, Tag, DollarSign, Sparkles, AlertTriangle } from 'lucide-react';
 import styles from './FilterPanel.module.css';
 
 /**
@@ -19,13 +20,13 @@ export default function FilterPanel({ onFilterChange, onSortChange, activeFilter
    * Quick filter options
    */
   const quickFilters = [
-    { id: 'all', label: 'All', icon: '🛒' },
-    { id: 'bestseller', label: 'Bestseller', icon: '⚡' },
-    { id: 'discount', label: 'On Sale', icon: '🏷️' },
-    { id: 'under-50', label: 'Under ₹50', icon: '💰' },
-    { id: 'under-100', label: 'Under ₹100', icon: '💵' },
-    { id: 'premium', label: 'Premium', icon: '✦' },
-    { id: 'low-stock', label: 'Low Stock', icon: '⚠️' },
+    { id: 'all', label: 'All', Icon: ShoppingCart },
+    { id: 'bestseller', label: 'Bestseller', Icon: Zap },
+    { id: 'discount', label: 'On Sale', Icon: Tag },
+    { id: 'under-50', label: 'Under ₹50', Icon: DollarSign },
+    { id: 'under-100', label: 'Under ₹100', Icon: DollarSign },
+    { id: 'premium', label: 'Premium', Icon: Sparkles },
+    { id: 'low-stock', label: 'Low Stock', Icon: AlertTriangle },
   ];
 
   /**
@@ -60,17 +61,20 @@ export default function FilterPanel({ onFilterChange, onSortChange, activeFilter
     <div className={styles.filterPanel}>
       {/* Horizontal Filter Chips */}
       <div className={styles.filterChips}>
-        {quickFilters.map((filter) => (
-          <button
-            key={filter.id}
-            className={`${styles.filterChip} ${activeFilters[filter.id] ? styles.active : ''}`}
-            onClick={() => handleFilterClick(filter.id)}
-            aria-pressed={activeFilters[filter.id]}
-          >
-            <span className={styles.filterIcon} aria-hidden="true">{filter.icon}</span>
-            <span className={styles.filterLabel}>{filter.label}</span>
-          </button>
-        ))}
+        {quickFilters.map((filter) => {
+          const IconComponent = filter.Icon;
+          return (
+            <button
+              key={filter.id}
+              className={`${styles.filterChip} ${activeFilters[filter.id] ? styles.active : ''}`}
+              onClick={() => handleFilterClick(filter.id)}
+              aria-pressed={activeFilters[filter.id]}
+            >
+              <IconComponent className={styles.filterIcon} size={14} aria-hidden="true" />
+              <span className={styles.filterLabel}>{filter.label}</span>
+            </button>
+          );
+        })}
       </div>
 
       {/* Sort Dropdown (Compact) */}

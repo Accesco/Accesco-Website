@@ -6,16 +6,17 @@
 'use client';
 
 import { useEffect } from 'react';
+import { Check, X, AlertTriangle, Info } from 'lucide-react';
 import styles from './Toast.module.css';
 
 /**
  * Toast icons by type
  */
 const TOAST_ICONS = {
-  success: '✓',
-  error: '✕',
-  warning: '⚠',
-  info: 'ℹ',
+  success: Check,
+  error: X,
+  warning: AlertTriangle,
+  info: Info,
 };
 
 /**
@@ -44,6 +45,8 @@ export default function Toast({
 
   if (!message) return null;
 
+  const IconComponent = TOAST_ICONS[type];
+
   return (
     <div className={styles.toastContainer}>
       <div 
@@ -51,9 +54,7 @@ export default function Toast({
         role="alert"
         aria-live="polite"
       >
-        <span className={styles.toastIcon} aria-hidden="true">
-          {TOAST_ICONS[type]}
-        </span>
+        <IconComponent className={styles.toastIcon} size={18} aria-hidden="true" />
         <span className={styles.toastMessage}>{message}</span>
       </div>
     </div>

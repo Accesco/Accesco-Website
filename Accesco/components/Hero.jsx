@@ -233,11 +233,11 @@ export default function Hero() {
         <h1 className="hero-title" style={{ fontSize: 'clamp(2.8rem, 8vh, 5.2rem)', marginBottom: '12px' }}>Accesco Living</h1>
 
         <div className="hero-kicker" style={{ fontSize: 'clamp(1.2rem, 3.2vh, 2rem)', marginBottom: '15px', fontWeight: 800 }}>
-          India&apos;s  #1  intelligent delivery app
+          India&apos;s #1 Intelligent Circular Commerce Ecosystem
         </div>
 
         <p className="hero-sub" style={{ fontSize: 'clamp(0.85rem, 1.8vh, 1.15rem)', maxWidth: '600px', margin: '0 auto 15px', lineHeight: 1.4 }}>
-          Experience seamless curated meals, grocery & fashion essentials ordering at your doorstep
+          Delivering Groceries, Food, Fashion, and Financial Intelligence — all under one unified platform
         </p>
 
         <div className="hero-action-group">

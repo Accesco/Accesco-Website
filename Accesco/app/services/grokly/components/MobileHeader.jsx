@@ -6,6 +6,7 @@
 'use client';
 
 import Image from 'next/image';
+import { MapPin, ShoppingCart, Search, ChevronDown } from 'lucide-react';
 import styles from './MobileHeader.module.css';
 import { useGrokly } from '../contexts/GroklyContext';
 
@@ -31,12 +32,12 @@ export default function MobileHeader() {
           onClick={openLocationModal}
           aria-label="Change delivery location"
         >
-          <span className={styles.locationIcon} aria-hidden="true">📍</span>
+          <MapPin className={styles.locationIcon} size={18} aria-hidden="true" />
           <div className={styles.locationText}>
             <div className={styles.locationLabel}>Delivery in 11 mins</div>
             <div className={styles.locationName}>
               {location}
-              <span className={styles.locationArrow} aria-hidden="true">▼</span>
+              <ChevronDown className={styles.locationArrow} size={14} aria-hidden="true" />
             </div>
           </div>
         </button>
@@ -47,7 +48,7 @@ export default function MobileHeader() {
           onClick={openCart}
           aria-label={`Shopping cart with ${cartCount} items`}
         >
-          <span className={styles.cartIcon} aria-hidden="true">🛒</span>
+          <ShoppingCart className={styles.cartIcon} size={20} aria-hidden="true" />
           {cartCount > 0 && (
             <span className={styles.cartBadge} aria-label={`${cartCount} items`}>
               {cartCount}
@@ -58,7 +59,7 @@ export default function MobileHeader() {
 
       {/* Search Bar */}
       <div className={styles.searchBar}>
-        <span className={styles.searchIcon} aria-hidden="true">🔍</span>
+        <Search className={styles.searchIcon} size={18} aria-hidden="true" />
         <input
           type="search"
           placeholder="Search for products..."

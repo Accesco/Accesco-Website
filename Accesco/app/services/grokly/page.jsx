@@ -11,7 +11,6 @@ import { GroklyProvider } from './contexts/GroklyContext';
 import GroklyHeader from './components/GroklyHeader';
 import MobileHeader from './components/MobileHeader';
 import CategoryNav from './components/CategoryNav';
-import BannerCarousel from './components/BannerCarousel';
 import ProductCard from './components/ProductCard';
 import ProductSkeleton from './components/ProductSkeleton';
 import FilterPanel from './components/FilterPanel';
@@ -20,7 +19,6 @@ import LocationModal from './components/LocationModal';
 import FloatingCartBar from './components/FloatingCartBar';
 import BottomNav from './components/BottomNav';
 import { categories, products, getProductsByCategory, searchProducts } from './lib/groklyData';
-import { GroklyHero } from '@/components/HeroBanners';
 import './styles/variables.css';
 import './styles/globals.css';
 
@@ -159,9 +157,6 @@ function GroklyPageContent() {
   
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', background: 'var(--grokly-bg)' }}>
-      {/* Premium Hero Banner */}
-      <GroklyHero />
-
       {/* Desktop Header */}
       <GroklyHeader 
         searchQuery={searchQuery}
@@ -179,8 +174,122 @@ function GroklyPageContent() {
         onCategorySelect={handleCategorySelect}
       />
 
-      {/* Banner Carousel */}
-      <BannerCarousel />
+      {/* Single Big Banner */}
+      <div style={{ 
+        maxWidth: 'var(--grokly-max-width)', 
+        margin: '0 auto', 
+        width: '100%', 
+        padding: '16px 20px' 
+      }}>
+        <div 
+          onClick={() => {
+            const mainContent = document.querySelector('main');
+            if (mainContent) {
+              mainContent.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+          }}
+          style={{
+            position: 'relative',
+            height: 'clamp(280px, 40vw, 450px)',
+            borderRadius: '16px',
+            overflow: 'hidden',
+            cursor: 'pointer',
+            transition: 'transform 0.3s ease',
+          }}
+          onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.01)'}
+          onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
+        >
+          <img 
+            src="/images/banners/hero-grokly.jpg" 
+            alt="Grokly Fresh Groceries" 
+            style={{ 
+              width: '100%', 
+              height: '100%', 
+              objectFit: 'cover',
+              objectPosition: 'center'
+            }}
+          />
+          <div style={{
+            position: 'absolute',
+            inset: 0,
+            background: 'linear-gradient(to right, rgba(10,30,10,0.88) 0%, rgba(10,30,10,0.5) 50%, transparent 80%)',
+            display: 'flex',
+            alignItems: 'center',
+            padding: 'clamp(32px, 5vw, 64px)',
+          }}>
+            <div style={{ maxWidth: '650px' }}>
+              <h2 style={{
+                fontFamily: 'var(--grokly-font-display)',
+                fontSize: 'clamp(28px, 5vw, 52px)',
+                fontWeight: 900,
+                color: '#fff',
+                margin: '0 0 12px',
+                letterSpacing: '-0.02em',
+                lineHeight: 1.1,
+              }}>
+                Groceries in <span style={{ color: '#4ade80' }}>11 minutes flat.</span>
+              </h2>
+              <p style={{
+                fontFamily: 'var(--grokly-font-body)',
+                fontSize: 'clamp(15px, 2vw, 20px)',
+                color: 'rgba(255,255,255,0.9)',
+                margin: '0 0 24px',
+                lineHeight: 1.6,
+              }}>
+                Farm-fresh essentials sourced directly from Karnataka farms. No middlemen. Full transparency.
+              </p>
+              <div style={{ display: 'flex', gap: '14px', flexWrap: 'wrap' }}>
+                <button 
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    const mainContent = document.querySelector('main');
+                    if (mainContent) {
+                      mainContent.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                  }}
+                  style={{
+                    padding: '14px 32px',
+                    borderRadius: '9999px',
+                    background: '#4ade80',
+                    color: '#0a1e0a',
+                    fontFamily: 'var(--grokly-font-display)',
+                    fontWeight: 800,
+                    fontSize: '16px',
+                    border: 'none',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.target.style.background = '#22c55e';
+                    e.target.style.transform = 'translateY(-2px)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.background = '#4ade80';
+                    e.target.style.transform = 'translateY(0)';
+                  }}
+                >
+                  Shop Now →
+                </button>
+                <span style={{
+                  padding: '14px 24px',
+                  borderRadius: '9999px',
+                  background: 'rgba(255,255,255,0.15)',
+                  backdropFilter: 'blur(8px)',
+                  border: '1px solid rgba(255,255,255,0.25)',
+                  color: '#fff',
+                  fontSize: '15px',
+                  fontFamily: 'var(--grokly-font-body)',
+                  fontWeight: 600,
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                }}>
+                  Free delivery on ₹199+
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
 
       {/* Main Content */}
       <main style={{ flex: 1, maxWidth: 'var(--grokly-max-width)', margin: '0 auto', width: '100%', padding: '8px 20px' }}>

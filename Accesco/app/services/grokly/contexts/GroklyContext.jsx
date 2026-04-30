@@ -11,6 +11,8 @@ export function GroklyProvider({ children }) {
   const [cart, setCart] = useState({}); // id -> quantity mapping for compatibility
   const [orders, setOrders] = useState([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [location, setLocation] = useState('Koramangala');
+  const [isLocationModalOpen, setIsLocationModalOpen] = useState(false);
 
   // Load from local storage
   useEffect(() => {
@@ -74,6 +76,10 @@ export function GroklyProvider({ children }) {
   const closeCart = () => setIsCartOpen(false);
   const toggleCart = () => setIsCartOpen(prev => !prev);
 
+  const updateLocation = (newLocation) => setLocation(newLocation);
+  const openLocationModal = () => setIsLocationModalOpen(true);
+  const closeLocationModal = () => setIsLocationModalOpen(false);
+
   const placeOrder = (orderDetails) => {
     // Note: orderDetails should include the items if they want to snapshot them
     const newOrder = {
@@ -125,6 +131,8 @@ export function GroklyProvider({ children }) {
       cartCount,
       orders,
       isCartOpen,
+      location,
+      isLocationModalOpen,
       getProductQuantity,
       addToCart,
       incrementQuantity,
@@ -134,6 +142,9 @@ export function GroklyProvider({ children }) {
       openCart,
       closeCart,
       toggleCart,
+      updateLocation,
+      openLocationModal,
+      closeLocationModal,
       placeOrder
     }}>
       {children}

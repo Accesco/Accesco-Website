@@ -79,7 +79,7 @@ export default function Footer() {
               <h4>Company</h4>
               <ul>
                 <li><Link href="/about">About Us</Link></li>
-                <li><Link href="/careers">Careers</Link></li>
+                <li><Link href="/qtcvideos">QTC Videos</Link></li>
                 <li><Link href="/press">Press &amp; Media</Link></li>
                 <li><Link href="/blogs">Blogs</Link></li>
               </ul>

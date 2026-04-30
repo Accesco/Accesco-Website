@@ -6,6 +6,7 @@
 'use client';
 
 import { useState } from 'react';
+import { PartyPopper, X, ChevronDown, ChevronUp } from 'lucide-react';
 import styles from './CouponSection.module.css';
 
 /**
@@ -80,7 +81,7 @@ export default function CouponSection({ cartTotal, onApply }) {
       {appliedCoupon ? (
         <div className={styles.appliedCoupon}>
           <div className={styles.appliedLeft}>
-            <span className={styles.appliedIcon} aria-hidden="true">🎉</span>
+            <PartyPopper className={styles.appliedIcon} size={20} aria-hidden="true" />
             <div>
               <div className={styles.appliedCode}>{appliedCoupon.code}</div>
               <div className={styles.appliedSavings}>You saved ₹{appliedCoupon.discount}!</div>
@@ -91,7 +92,7 @@ export default function CouponSection({ cartTotal, onApply }) {
             onClick={handleRemove}
             aria-label="Remove coupon"
           >
-            ✕
+            <X size={16} />
           </button>
         </div>
       ) : (
@@ -130,7 +131,11 @@ export default function CouponSection({ cartTotal, onApply }) {
             aria-expanded={showCoupons}
           >
             {showCoupons ? 'Hide' : 'View'} available coupons
-            <span aria-hidden="true">{showCoupons ? '▲' : '▼'}</span>
+            {showCoupons ? (
+              <ChevronUp size={16} aria-hidden="true" />
+            ) : (
+              <ChevronDown size={16} aria-hidden="true" />
+            )}
           </button>
 
           {/* Available Coupons List */}

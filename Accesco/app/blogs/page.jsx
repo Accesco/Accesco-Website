@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import './blogs.css';
 import { fetchBlogs, addBlog } from '../../lib/blogService';
+import { addBookmark, removeBookmark, getUserBookmarks } from '../../lib/bookmarkService';
 import AccescoHeader from '../../components/AccescoHeader';
 import Footer from '../../components/Footer';
 import { useAuth } from '../components/AuthProvider';
@@ -18,6 +19,7 @@ export default function BlogsPage() {
   const [showWriter, setShowWriter] = useState(false);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
+  const [bookmarkedPosts, setBookmarkedPosts] = useState([]);
 
   // Form states — matches Firestore field structure
   const [postTitle, setPostTitle] = useState('');
@@ -32,7 +34,8 @@ export default function BlogsPage() {
   // ── Load blogs from Firestore on mount ──────────────────────────────────────
   useEffect(() => {
     loadBlogs();
-  }, []);
+    loadBookmarks();
+  }, [user]);
 
   async function loadBlogs() {
     setLoading(true);
@@ -44,6 +47,27 @@ export default function BlogsPage() {
       console.error('Failed to load blogs:', err);
     } finally {
       setLoading(false);
+    }
+  }
+
+  async function loadBookmarks() {
+    if (user?.email) {
+      try {
+        const bookmarks = await getUserBookmarks(user.email);
+        setBookmarkedPosts(bookmarks);
+      } catch (err) {
+        console.error('Failed to load bookmarks:', err);
+      }
+    } else {
+      // Load from localStorage for non-logged-in users
+      const saved = localStorage.getItem('bookmarkedPosts');
+      if (saved) {
+        try {
+          setBookmarkedPosts(JSON.parse(saved));
+        } catch (err) {
+          console.error('Failed to parse bookmarks:', err);
+        }
+      }
     }
   }
 
@@ -451,30 +475,84 @@ export default function BlogsPage() {
                 {/* Image Upload */}
                 <div className="field-group">
                   <label className="form-label">Cover Image</label>
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleImageUpload}
-                    className="form-select"
-                    style={{ padding: '8px' }}
-                    disabled={uploadingImage}
-                  />
-                  {uploadingImage && (
-                    <p className="field-hint" style={{ color: '#7A0042' }}>
-                      <i className="ri-loader-4-line" style={{ animation: 'spin 1s linear infinite' }}></i> Uploading to Cloudinary...
-                    </p>
-                  )}
-                  {postImgUrl && !uploadingImage && (
-                    <>
-                      <img
-                        src={postImgUrl}
-                        alt="Cover preview"
-                        className="img-preview"
-                        onError={(e) => { e.target.style.display = 'none'; }}
-                      />
-                      <p className="field-hint" style={{ color: '#10b981' }}>✓ Image uploaded to Cloudinary</p>
-                    </>
-                  )}
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageUpload}
+                      className="form-select"
+                      style={{ padding: '8px' }}
+                      disabled={uploadingImage}
+                      id="imageUploadInput"
+                    />
+                    {uploadingImage && (
+                      <div style={{ 
+                        padding: '12px', 
+                        background: 'rgba(122, 0, 66, 0.1)', 
+                        borderRadius: '8px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '8px'
+                      }}>
+                        <i className="ri-loader-4-line" style={{ animation: 'spin 1s linear infinite', color: '#7A0042' }}></i>
+                        <span style={{ color: '#7A0042', fontSize: '0.9rem' }}>Uploading to Cloudinary...</span>
+                      </div>
+                    )}
+                    {postImgUrl && !uploadingImage && (
+                      <div style={{ 
+                        padding: '12px', 
+                        background: 'rgba(16, 185, 129, 0.1)', 
+                        borderRadius: '8px',
+                        border: '2px solid rgba(16, 185, 129, 0.3)'
+                      }}>
+                        <img
+                          src={postImgUrl}
+                          alt="Cover preview"
+                          className="img-preview"
+                          style={{ 
+                            width: '100%',
+                            maxHeight: '200px',
+                            objectFit: 'cover',
+                            borderRadius: '6px',
+                            marginBottom: '8px'
+                          }}
+                          onError={(e) => { 
+                            console.error('Image failed to load:', postImgUrl);
+                            e.target.style.display = 'none'; 
+                          }}
+                        />
+                        <p style={{ 
+                          color: '#10b981', 
+                          fontSize: '0.85rem',
+                          margin: 0,
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '6px'
+                        }}>
+                          <i className="ri-check-line"></i> Image uploaded successfully
+                        </p>
+                        <button
+                          type="button"
+                          onClick={() => setPostImgUrl('')}
+                          style={{
+                            marginTop: '8px',
+                            padding: '6px 12px',
+                            background: 'transparent',
+                            border: '1px solid #ef4444',
+                            color: '#ef4444',
+                            borderRadius: '6px',
+                            cursor: 'pointer',
+                            fontSize: '0.85rem',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '4px'
+                          }}
+                        >
+                          <i className="ri-delete-bin-line"></i> Remove Image
+                        </button>
+                      </div>
+                    )}
+                  </div>
                   <p className="field-hint">Upload an image (max 10MB). Auto-optimized and stored on Cloudinary CDN.</p>
                 </div>
 
