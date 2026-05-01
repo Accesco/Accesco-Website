@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useGrokly } from '../contexts/GroklyContext';
 import { products } from '../../../../lib/groklyProducts';
@@ -10,11 +10,67 @@ export default function GroklyCheckout() {
   const { cart, placeOrder } = useGrokly();
   const router = useRouter();
   const [isProcessing, setIsProcessing] = useState(false);
+  const [isLoadingLocation, setIsLoadingLocation] = useState(true);
   const [customerDetails, setCustomerDetails] = useState({
     name: 'Accesco Customer',
-    address: 'Jaladarshini Layout, Bengaluru, Karnataka 560094',
+    address: 'Bengaluru',
     phone: '+91 9022217637'
   });
+
+  // Fetch address from geolocation
+  // It is to add the address automatically in the checkout box
+  useEffect(() => {
+    const fetchLocationAddress = async () => {
+      try {
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(
+            async (position) => {
+              const { latitude, longitude, accuracy } = position.coords;
+              
+              try {
+                const response = await fetch('/api/location', {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json',
+                  },
+                  body: JSON.stringify({
+                    latitude,
+                    longitude,
+                    accuracy,
+                  }),
+                });
+
+                if (response.ok) {
+                  const data = await response.json();
+                  if (data.success) {
+                    setCustomerDetails(prev => ({
+                      ...prev,
+                      address: data.formattedAddress?.label || data.locationName || prev.address,
+                    }));
+                  }
+                }
+              } catch (error) {
+                console.error('Error fetching location address:', error);
+              } finally {
+                setIsLoadingLocation(false);
+              }
+            },
+            (error) => {
+              console.error('Geolocation error:', error);
+              setIsLoadingLocation(false);
+            }
+          );
+        } else {
+          setIsLoadingLocation(false);
+        }
+      } catch (error) {
+        console.error('Error in location fetch:', error);
+        setIsLoadingLocation(false);
+      }
+    };
+
+    fetchLocationAddress();
+  }, []);
 
   const cartItems = Object.entries(cart)
     .map(([id, qty]) => ({ product: products.find(p => p.id === id), quantity: qty }))
@@ -68,10 +124,12 @@ export default function GroklyCheckout() {
               />
             </div>
             <div className={styles.formGroup}>
-              <label>Address</label>
+              <label>Address {isLoadingLocation && '(Loading...)'}</label>
               <textarea 
                 value={customerDetails.address}
                 onChange={(e) => setCustomerDetails({...customerDetails, address: e.target.value})}
+                placeholder={isLoadingLocation ? 'Fetching your location...' : 'Enter your address'}
+                disabled={isLoadingLocation}
               />
             </div>
             <div className={styles.formGroup}>
