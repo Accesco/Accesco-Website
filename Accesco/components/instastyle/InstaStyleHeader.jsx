@@ -108,7 +108,6 @@ export default function InstaStyleHeader() {
       left: 0,
       width: '100%',
       zIndex: 1100,
-      background: '#fff',
       borderBottom: '1px solid #ece7e2',
     },
     container: {
@@ -270,14 +269,6 @@ export default function InstaStyleHeader() {
         role="banner"
       >
       <div className={`instaHeaderContainer ${styles.container}`} style={fallback.container}>
-        <Link
-  href="/"
-  className={styles.backBtn}
-  aria-label="Back to Accesco"
->
-  <span className={styles.backDesktop}>←Back</span>
-  <span className={styles.backMobile}>←</span>
-</Link>
         {/* Logo */}
         <Link 
           href="/services/instastyle" 

@@ -8,12 +8,12 @@
 /* ── GLOBAL RESET ── */
 .landingPage {
   min-height: 100vh;
-  background: var(--is-white);
+  position: relative;
   color: var(--is-text-primary);
   font-family: var(--font-body);
   overflow-x: hidden;
   width: 100%;
-  transition: background-color 1.2s cubic-bezier(0.4, 0, 0.2, 1), color 0.8s ease;
+  transition: color 0.8s ease;
 }
 
 /* ── SCROLL PROGRESS BAR ── */
@@ -68,44 +68,39 @@
    HERO SECTION
    ============================================================ */
 .hero {
-  position: relative;
-  height: 100svh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-  background: var(--is-black);
-  --hero-shift: 0px;
-  --hero-video-shift: 0px;
+  position: relative !important;
+  width: 100% !important;
+  height: 100vh !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  overflow: hidden !important;
+  background: #000 !important;
 }
 
 .heroVideo {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  opacity: 1;
-  /* Maximum visibility as requested */
-  filter: contrast(1.05) brightness(0.95);
-  z-index: 0;
-  transform: scale(1.05) translateY(var(--hero-video-shift));
-  transition: transform 0.2s linear;
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  opacity: 1 !important;
+  filter: contrast(1.05) brightness(0.9) !important;
+  z-index: 1 !important;
 }
 
 .heroOverlay {
-  position: absolute;
-  inset: 0;
-  /* Lighter, smoother overlay for readability without obscuring video */
-  background: radial-gradient(circle at center,
-      rgba(26, 17, 8, 0.25) 0%,
-      rgba(26, 17, 8, 0.45) 100%);
-  z-index: 1;
+  position: absolute !important;
+  inset: 0 !important;
+  background: rgba(0, 0, 0, 0.45) !important;
+  z-index: 2 !important;
 }
 
 .heroContent {
   position: relative;
-  z-index: 2;
+  z-index: 10;
   text-align: center;
   padding: 0 20px;
   max-width: 960px;

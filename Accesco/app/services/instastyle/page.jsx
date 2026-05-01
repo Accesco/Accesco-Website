@@ -315,11 +315,6 @@ export default function InstaStyleLanding() {
       {/* ── Scroll Progress Bar ── */}
       <div ref={progressRef} className={styles.progressBar} aria-hidden="true" />
 
-      {/* ── Announcement Bar ── */}
-      <div className={styles.announcementBar} role="marquee">
-        Accesco InstaStyle is live in preview — faster discovery, curated edits, try before you buy.
-      </div>
-
       {/* ══════════════════════════════════════════
           SECTION 1 — HERO
       ══════════════════════════════════════════ */}
@@ -330,6 +325,10 @@ export default function InstaStyleLanding() {
         data-reveal
         aria-label="Hero"
       >
+        {/* ── Announcement Bar (Floating over video) ── */}
+        <div className={styles.announcementBar} style={{ position: 'absolute', top: 0, left: 0, width: '100%', zIndex: 20 }}>
+          Accesco InstaStyle is live in preview — faster discovery, curated edits, try before you buy.
+        </div>
         {/* Video background — DO NOT CHANGE */}
         <video
           className={styles.heroVideo}
@@ -380,9 +379,9 @@ export default function InstaStyleLanding() {
           </div>
 
           <div className={styles.heroChips}>
-            <span className={styles.heroChip}>⚡ 15 min delivery</span>
-            <span className={styles.heroChip}>🪞 Try before you buy</span>
-            <span className={styles.heroChip}>♻️ Thrift marketplace</span>
+            <span className={styles.heroChip}>15 min delivery</span>
+            <span className={styles.heroChip}>Try before you buy</span>
+            <span className={styles.heroChip}>Thrift marketplace</span>
           </div>
         </div>
       </section>

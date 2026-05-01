@@ -3,7 +3,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import SidebarMenu from '../../components/SidebarMenu';
+import AccescoHeader from '../../components/AccescoHeader';
 import AuthModal from '../components/AuthModal';
 import { useAuth } from '../components/AuthProvider';
 import ActiveOrdersWidget from '../../components/ActiveOrdersWidget';
@@ -15,6 +15,11 @@ export default function ProfilePage() {
 
   const openLoginModal = () => setIsLoginModalOpen(true);
   const closeLoginModal = () => setIsLoginModalOpen(false);
+
+  const handleLoginSuccess = (userData) => {
+    signIn(userData);
+    closeLoginModal();
+  };
 
   const displayName = user?.name || 'AccesCo User';
   const initials = displayName
@@ -34,15 +39,9 @@ export default function ProfilePage() {
     const instastyle = JSON.parse(localStorage.getItem('instastyle_orders') || '[]');
     setTotalOrders(grokly.length + swadishtt.length + instastyle.length);
   }, []);
-
-  const handleLoginSuccess = (userData) => {
-    signIn(userData);
-    closeLoginModal();
-  };
-
   return (
     <>
-      <SidebarMenu onLoginClick={openLoginModal} />
+      <AccescoHeader />
 
       <div className="profile-page">
         <div className="profile-container">

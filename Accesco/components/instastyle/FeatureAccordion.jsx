@@ -22,44 +22,9 @@ export default function FeatureAccordion() {
   const sectionRef = useRef(null);
   const [activeIndex, setActiveIndex] = useState(0);
 
-  // ── GSAP Scroll-Lock (Pinned Scrollytelling) ──
+  // ── Interaction Logic ──
   useGSAP(() => {
     if (!sectionRef.current) return;
-
-    // Register plugin if needed (already registered in page.jsx, but safe to re-check locally if isolated)
-    gsap.registerPlugin(ScrollTrigger);
-
-    // 1. PIN THE SECTION
-    const pinTrigger = ScrollTrigger.create({
-      trigger: sectionRef.current,
-      start: 'top top',    // Lock when section hits top of viewport
-      end: '+=2200',       // ~360px per box × 6 boxes — enough to cycle through all
-      pin: true,           // Lock it!
-      scrub: true,
-      onUpdate: (self) => {
-        // 2. SCRUB THROUGH THE BOXES
-        const totalItems = 8;
-        let p = self.progress;
-
-        // Edge cases
-        if (p >= 1) p = 0.999;
-        if (p < 0) p = 0;
-
-        // Math to figure out which box is active
-        const newIndex = Math.floor(p * totalItems);
-        setActiveIndex(newIndex);
-
-        // 3. SPECIAL VIBE CHECK ANIMATION (Index 3)
-        const pollFill = sectionRef.current.querySelector('.is-poll-fill');
-        if (pollFill) {
-          if (newIndex === 3) {
-            pollFill.classList.add('is-filled');
-          } else {
-            pollFill.classList.remove('is-filled');
-          }
-        }
-      }
-    });
 
     // Sub-animation: Fade in the massive heading gently
     gsap.fromTo(sectionRef.current.querySelector('.is-scroll-heading'),
@@ -71,16 +36,25 @@ export default function FeatureAccordion() {
         ease: 'power3.out',
         scrollTrigger: {
           trigger: sectionRef.current,
-          start: 'top 60%', // trigger before it pins
+          start: 'top 85%', 
         }
       }
     );
-
-    return () => {
-      // Clean up the specific trigger
-      pinTrigger.kill();
-    };
   }, { scope: sectionRef });
+
+  const handleItemClick = (index) => {
+    setActiveIndex(index);
+    
+    // Trigger the Vibe Check fill animation if it's the Vibe Check section
+    const pollFill = sectionRef.current.querySelector('.is-poll-fill');
+    if (pollFill) {
+      if (index === 2) { // "The Vibe Check" is at index 2 (01, 02, 03...)
+        pollFill.classList.add('is-filled');
+      } else {
+        pollFill.classList.remove('is-filled');
+      }
+    }
+  };
 
   return (
     <section className="is-scroll-section" id="whyInstastyle" ref={sectionRef}>
@@ -112,6 +86,8 @@ export default function FeatureAccordion() {
                 <div
                   key={idx}
                   className={`is-dot ${activeIndex === idx ? 'is-dot--active' : ''}`}
+                  onClick={() => handleItemClick(idx)}
+                  style={{ cursor: 'pointer' }}
                 >
                   <span className="is-dot-label">{label}</span>
                 </div>
@@ -146,7 +122,12 @@ export default function FeatureAccordion() {
             ].map((feature, idx) => {
               if (feature.isVibe) {
                 return (
-                  <div key={idx} className={`is-acc-item is-vibe ${activeIndex === idx ? 'is-active' : ''}`}>
+                <div 
+                  key={idx} 
+                  className={`is-acc-item is-vibe ${activeIndex === idx ? 'is-active' : ''}`}
+                  onClick={() => handleItemClick(idx)}
+                  style={{ cursor: 'pointer' }}
+                >
                     <div className="is-acc-bg" style={{ backgroundImage: `url('${PHOTOS[idx]}')`, opacity: activeIndex === idx ? 0.85 : 0.55 }}></div>
                     <div className="is-gold-line"></div>
                     <div className="is-acc-collapsed">
@@ -178,7 +159,12 @@ export default function FeatureAccordion() {
                 );
               }
               return (
-                <div key={idx} className={`is-acc-item ${activeIndex === idx ? 'is-active' : ''}`}>
+                <div 
+                  key={idx} 
+                  className={`is-acc-item ${activeIndex === idx ? 'is-active' : ''}`}
+                  onClick={() => handleItemClick(idx)}
+                  style={{ cursor: 'pointer' }}
+                >
                   <div className="is-acc-bg" style={{ backgroundImage: `url('${PHOTOS[idx]}')` }}></div>
                   <div className="is-gold-line"></div>
                   <div className="is-acc-overlay"></div>

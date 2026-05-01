@@ -21,12 +21,12 @@
 .container {
   max-width: 1440px;
   margin: 0 auto;
-  padding: 0 24px;
+  padding: 0 clamp(12px, 2vw, 24px);
   height: 80px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 20px;
+  gap: clamp(8px, 1.5vw, 20px);
   transition: height 0.4s ease;
 }
 
@@ -66,7 +66,7 @@
   display: none;
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 1150px) {
   .nav {
     display: block;
   }
@@ -213,7 +213,7 @@
   z-index: 1001;
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 1150px) {
   .mobileMenuButton {
     display: none;
   }

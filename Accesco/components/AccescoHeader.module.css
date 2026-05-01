@@ -29,11 +29,12 @@
 .container {
   max-width: 1320px;
   margin: 0 auto;
-  padding: 0 40px;
+  padding: 0 clamp(16px, 3vw, 40px);
   width: 100%;
   display: flex;
   align-items: center;
-  gap: 32px;
+  gap: clamp(12px, 2vw, 32px);
+  justify-content: space-between;
 }
 
 /* ── Logo ── */
@@ -87,16 +88,17 @@
 .nav {
   display: flex;
   align-items: center;
-  gap: 2px;
+  gap: clamp(4px, 1vw, 12px);
   flex: 1;
+  justify-content: center;
 }
 
 .navLink {
   display: inline-flex;
   align-items: center;
-  padding: 8px 14px;
+  padding: 8px clamp(6px, 1vw, 14px);
   font-family: 'Sora', sans-serif;
-  font-size: 0.88rem;
+  font-size: 0.82rem;
   font-weight: 500;
   color: rgba(255, 253, 248, 0.92);
   text-decoration: none;
@@ -203,6 +205,12 @@
   flex-shrink: 0;
 }
 
+@media (max-width: 1350px) {
+  .actions {
+    gap: 6px;
+  }
+}
+
 /* ── Location Selector ── */
 .locationSelector {
   position: relative;
@@ -235,6 +243,12 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+@media (max-width: 1350px) {
+  .locationText {
+    display: none;
+  }
 }
 
 .locationIcon {
@@ -758,21 +772,29 @@
 }
 
 /* ─── RESPONSIVE ──────────────────────────────────────────────────────── */
-@media (max-width: 960px) {
+@media (max-width: 1250px) {
   .nav {
     display: none;
   }
 
   .locationButton {
+    /* Only show icon if we really need space, or just hide entirely if burger menu is active */
     display: none;
   }
 
   .mobileMenuButton {
     display: flex;
   }
-
+  
   .container {
-    padding: 0 20px;
+    padding: 0 16px;
+    gap: 12px;
+  }
+}
+
+@media (max-width: 1350px) {
+  .logoText {
+    display: none;
   }
 }
 

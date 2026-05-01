@@ -227,10 +227,10 @@ export default function Hero() {
           width={100}
           height={100}
           priority
-          style={{ width: 'clamp(80px, 12vh, 120px)', height: 'clamp(80px, 12vh, 120px)', objectFit: 'contain', marginBottom: '10px' }}
+          style={{ width: 'clamp(70px, 10vh, 100px)', height: 'clamp(70px, 10vh, 100px)', objectFit: 'contain', marginBottom: '8px' }}
         />
 
-        <h1 className="hero-title" style={{ fontSize: 'clamp(2.8rem, 8vh, 5.2rem)', marginBottom: '12px' }}>Accesco Living</h1>
+        <h1 className="hero-title" style={{ fontSize: 'clamp(2.4rem, 7vh, 4.8rem)', marginBottom: '10px' }}>Accesco Living</h1>
 
         <div className="hero-kicker" style={{ fontSize: 'clamp(1.2rem, 3.2vh, 2rem)', marginBottom: '15px', fontWeight: 800 }}>
           India&apos;s #1 Intelligent Circular Commerce Ecosystem
