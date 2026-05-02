@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useMemo } from 'react';
+import { Suspense, useEffect, useState, useMemo } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useCart } from '@/contexts/CartContext';
 import styles from './tracking.module.css';
@@ -13,7 +13,7 @@ const STEPS = [
   { id: 'DELIVERED', label: 'Style Delivered', sub: 'Unbox your new look' }
 ];
 
-export default function OrderTrackingPage() {
+function OrderTrackingContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const { orders, updateOrderStatus } = useCart();
@@ -38,7 +38,6 @@ export default function OrderTrackingPage() {
     return () => clearInterval(timer);
   }, [order, orderId, updateOrderStatus]);
 
-  // Smooth delivery animation logic
   useEffect(() => {
     if (order?.status === 'OUT_FOR_DELIVERY') {
       const animationTimer = setInterval(() => {
@@ -47,9 +46,9 @@ export default function OrderTrackingPage() {
             clearInterval(animationTimer);
             return 100;
           }
-          return prev + 1; // 100 steps
+          return prev + 1;
         });
-      }, 250); // Takes 25 seconds to complete
+      }, 250);
       return () => clearInterval(animationTimer);
     }
   }, [order?.status]);
@@ -114,7 +113,6 @@ export default function OrderTrackingPage() {
           })}
         </div>
 
-        {/* Live Tracking Map */}
         <div className={styles.mapContainer}>
           <div className={styles.mapWrapper}>
             <div className={styles.mapBackground} style={{
@@ -193,5 +191,19 @@ export default function OrderTrackingPage() {
         </button>
       </div>
     </div>
+  );
+}
+
+export default function OrderTrackingPage() {
+  return (
+    <Suspense fallback={
+      <div className={styles.container}>
+        <div className={styles.card}>
+          <p style={{ textAlign: 'center' }}>Loading your order...</p>
+        </div>
+      </div>
+    }>
+      <OrderTrackingContent />
+    </Suspense>
   );
 }
