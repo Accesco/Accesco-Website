@@ -3,6 +3,12 @@
 import React, { useEffect, useState } from 'react';
 import { ShoppingCart, Utensils, Shirt, GlassWater } from 'lucide-react';
 import styles from './AppShowcase.module.css';
+import {
+  addWaitlistEntry,
+  sendOtpEmailVerification,
+  validateWaitlistEntry,
+  verifyOtpEmailCode,
+} from '../lib/waitlistService';
 
 export default function AppShowcase() {
   const [currentStep, setCurrentStep] = useState(1);
