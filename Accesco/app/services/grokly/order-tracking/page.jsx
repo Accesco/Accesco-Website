@@ -1,11 +1,12 @@
 'use client';
 
+import { Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useGrokly } from '../contexts/GroklyContext';
 import styles from './tracking.module.css';
 import Link from 'next/link';
 
-export default function GroklyTracking() {
+function GroklyTrackingContent() {
   const searchParams = useSearchParams();
   const orderId = searchParams.get('id');
   const { orders } = useGrokly();
@@ -128,5 +129,13 @@ export default function GroklyTracking() {
         <Link href="/services/grokly" className={styles.shopBtn}>Continue Shopping</Link>
       </div>
     </div>
+  );
+}
+
+export default function GroklyTracking() {
+  return (
+    <Suspense fallback={<div className={styles.container}><p>Loading order...</p></div>}>
+      <GroklyTrackingContent />
+    </Suspense>
   );
 }
