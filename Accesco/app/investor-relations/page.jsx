@@ -1,10 +1,10 @@
-import Navbar from "../components/Navbar";
-import Hero from "../components/Hero";
-import SectionHeader from "../components/SectionHeader";
-import ReportCard from "../components/ReportCard";
-import PresentationCard from "../components/PresentationCard";
-import GovernanceCard from "../components/GovernanceCard";
-import Footer from "../components/Footer";
+import Navbar from "./components/Navbar";
+import Hero from "./components/Hero";
+import SectionHeader from "./components/SectionHeader";
+import ReportCard from "./components/ReportCard";
+import PresentationCard from "./components/PresentationCard";
+import GovernanceCard from "./components/GovernanceCard";
+import Footer from "./components/Footer";
 const ecosystemLogos = [
   { name: "AWS Startups", src: "/logos/aws-startups.png" },
   //{ name: "RBL Bank", src: "/logos/rbl-bank.png" },
@@ -98,7 +98,7 @@ export default function HomePage() {
             <div className="integrity-section">
               <p>We uphold the highest standardsof ethics and transparency across all our operations.</p>
               <a
-                href="/pledge.jpeg"
+                href="./pledge.jpeg"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="outline-button"

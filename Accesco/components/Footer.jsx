@@ -92,7 +92,7 @@ export default function Footer() {
                 <li><Link href="/partner">Partner with Us</Link></li>
                 <li><Link href="/faq">FAQ</Link></li>
                 <li><Link href="/referral">Referral Program</Link></li>
-                <li><Link href="/investors">Investor Relations</Link></li>
+                <li><Link href="/investor-relations">Investor Relations</Link></li>
               </ul>
             </div>
           </div>
