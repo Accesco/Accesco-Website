@@ -39,19 +39,11 @@ export default function AccescoHeader() {
 
   // Location detection — preserved exactly from original
   useEffect(() => {
-    const savedLocation = localStorage.getItem('userLocation');
+    const savedLocation = localStorage.getItem('location');
     if (savedLocation) {
       setSelectedLocation(savedLocation);
       return;
     }
-    getPersonCity()
-      .then((city) => {
-        setSelectedLocation(city);
-        localStorage.setItem('userLocation', city);
-      })
-      .catch((err) => {
-        console.error('Location error:', err);
-      });
   }, []);
 
   // Scroll listener — transparent → glass after 60px
