@@ -254,7 +254,7 @@ export default function AccescoHeader() {
           {/* ── Right side actions ── */}
           <div className={styles.actions}>
 
-            {/* Location Selector */}
+            {/* Location Selector
             <div className={styles.locationSelector} ref={locationDropdownRef}>
               <button
                 className={styles.locationButton}
@@ -299,7 +299,7 @@ export default function AccescoHeader() {
                   </div>
                 </div>
               )}
-            </div>
+            </div> */}
 
             {/* Login / User */}
             {user ? (
