@@ -294,6 +294,21 @@ export default function LocationModal() {
       // Cache the result
       setCachedLocation(latitude, longitude, locationData);
       setDetectedLocation(locationData);
+
+      // Store the location in localstorage as key = userLocation
+      //console.log(locationData)
+      localStorage.setItem(
+        "userLocation",
+        JSON.stringify({
+          lat: locationData.coords.latitude,
+          lon: locationData.coords.longitude,
+          accuracy: locationData.coords.accuracy,
+          name: locationData.name,
+          address: locationData.fullAddress,
+        })
+      );
+
+
     } catch (error) {
       const message =
         error?.code === 1

@@ -16,6 +16,7 @@ export default function GroklyCheckout() {
     address: 'Bengaluru',
     phone: '+91 9022217637'
   });
+  const [eta , setEta] = useState(0);
 
   // Fetch address from geolocation
   // It is to add the address automatically in the checkout box
@@ -95,9 +96,50 @@ export default function GroklyCheckout() {
 
     setTimeout(() => {
       setIsProcessing(false);
-      router.push(`/services/grokly/order-tracking?id=${order.id}`);
+      router.push(`/services/grokly/order-tracking?id=${order.id}&eta=${eta}`);
     }, 2000);
   };
+  useEffect(() => {
+  const fetchEta = async () => {
+    try {
+      const location = JSON.parse(localStorage.getItem("userLocation"));
+
+      if (!location) {
+        console.log("No location found in localStorage");
+        return;
+      }
+
+      const res = await fetch("/api/darkstore", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          latitude: location.lat,
+          longitude: location.lon,
+        }),
+      });
+
+      const text = await res.text();
+      if (!text) {
+        console.error("Empty response");
+        return;
+      }
+
+      const data = JSON.parse(text);
+
+      console.log("API Response:", data);
+
+      // ✅ STORE ETA
+      setEta(data.eta_minutes);
+
+    } catch (err) {
+      console.error("Error:", err);
+    }
+  };
+
+  fetchEta();
+}, []); 
 
   if (cart.length === 0) {
     return (

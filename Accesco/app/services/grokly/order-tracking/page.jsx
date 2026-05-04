@@ -9,6 +9,7 @@ import Link from 'next/link';
 function GroklyTrackingContent() {
   const searchParams = useSearchParams();
   const orderId = searchParams.get('id');
+  const eta = searchParams.get('eta')
   const { orders } = useGrokly();
   
   const order = orders.find(o => o.id === orderId);
@@ -37,7 +38,7 @@ function GroklyTrackingContent() {
       <header className={styles.header}>
         <div className={styles.orderInfo}>
           <h1>Track Order {order.id}</h1>
-          <p>Estimated arrival: 20-30 mins</p>
+          <p>Estimated arrival time: {eta}</p>
         </div>
         <div className={styles.statusBadge} data-status={order.status}>
           {order.status.replace(/_/g, ' ')}
