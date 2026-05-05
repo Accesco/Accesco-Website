@@ -388,92 +388,132 @@ export default function FAQPage() {
   };
 
   // FAQ Schema for SEO
-  const faqSchema = {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    "mainEntity": [
-      {
-        "@type": "Question",
-        "name": "Does Grokly source produce directly from farms, or through distributors?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "Grokly sources fresh produce directly from verified farmers through our FarmChain network, cutting out middlemen to ensure better prices for you and fairer earnings for farmers."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "How does Grokly's FarmChain model ensure freshness and traceability?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "Every FarmChain product is tagged with its source farm and harvest date. This allows us to maintain cold-chain integrity and gives you full visibility into where your food comes from."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "Does Swadisht operate its own cloud kitchens, or partner with existing restaurants?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "Swadisht operates a hybrid model — we run curated in-house cloud kitchen brands while also partnering with select local restaurants that meet our quality and hygiene standards."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "Does Grokly support bulk orders for families or shared households?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "Absolutely. Grokly offers bulk pricing tiers for large households and group purchases, making it ideal for joint families or flatmates pooling their grocery budget."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "Can I customise my meal preferences (veg-only, low-calorie, etc.) on Swadisht?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "Yes. Swadisht lets you set dietary filters including vegetarian, vegan, low-calorie, high-protein, and allergen-free, so every recommendation is tailored to your preferences."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "Will Swadisht list home chefs or only commercial cloud kitchens?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "Home chefs with FSSAI registration will be onboarded as part of a later phase, giving you access to authentic homestyle cooking from verified local cooks."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "Does InstaStyle source clothes from local Bengaluru manufacturers?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "Yes. InstaStyle's sourcing strategy prioritises local and regional manufacturers, particularly from Karnataka's garment clusters, to keep costs low and turnaround times fast."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "What is the return and exchange policy for fashion items on InstaStyle?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "InstaStyle offers a 7-day hassle-free return and exchange policy on all apparel, provided items are unused and in original condition with tags intact."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "Will InstaStyle carry ethnic wear alongside everyday casual clothing?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "Yes. InstaStyle will stock both everyday casuals and ethnic wear including kurtas, sarees, and fusion styles — catering to the full wardrobe needs of urban Indian households."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "How does InstaStyle differ from Meesho or Myntra for budget shoppers?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "Unlike standalone fashion apps, InstaStyle is integrated with Xpense Meter, so your fashion spending is tracked against your monthly budget in real time — helping you shop smart, not just cheap."
-        }
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is Accesco Living?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Accesco Living is an all-in-one smart app that combines groceries, food delivery, and fashion into a single platform for Indian households."
       }
-    ]
-  };
+    },
+    {
+      "@type": "Question",
+      "name": "How is Accesco Living different from other apps?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Unlike multiple apps, Accesco Living integrates daily needs in one place, uses AI to predict requirements, and focuses on sustainability."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What services does Accesco Living offer?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Accesco Living offers grocery delivery, home-style food services, and curated fashion products through one unified platform."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Does Accesco Living support local farmers?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes, Accesco Living sources products directly from farmers, helping them earn better while offering fresh produce to users."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How does Accesco Living reduce waste?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Accesco Living collects used packaging from customers and promotes a zero-waste, eco-friendly delivery system."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Is Accesco Living available in my city?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Accesco Living is currently in its early stage and expanding to multiple cities across India."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Is Accesco Living affordable?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes, by cutting middlemen and optimizing delivery, Accesco Living aims to provide competitive and fair pricing."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How does the AI prediction feature work?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The app analyzes your usage patterns and suggests what you might need before you run out of essentials."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I order groceries, food, and fashion together?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes, Accesco Living allows you to shop across categories in one app with a seamless checkout experience."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Is Accesco Living eco-friendly?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes, sustainability is a core focus, from sourcing to packaging and delivery operations."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Is Accesco Living a safe and reliable delivery app?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes, Accesco Living ensures a secure and reliable shopping experience with trusted sellers, quality-checked products, and safe payment methods, including online and cash-on-delivery options."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is Accesco Living and how does it work?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Accesco Living is an online delivery platform that allows users to order groceries, daily essentials, and lifestyle products through a mobile app or website. Customers simply browse products, place an order, and get it delivered to their doorstep quickly."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What kind of products are available on Accesco Living?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Accesco Living offers a wide range of items such as groceries, fresh produce, household essentials, personal care products, and other daily-use goods, making it a one-stop solution for everyday needs."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How fast is delivery on Accesco Living?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Delivery speed on Accesco Living depends on your location, but the platform focuses on quick deliveries, often within a few hours, ensuring convenience for urgent needs."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Does Accesco Living offer discounts or free delivery?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes, Accesco Living regularly provides discounts, promo codes, and special deals. Free delivery may also be available on selected orders or when a minimum cart value is met."
+      }
+    }
+  ]
+};
 
   return (
     <>
