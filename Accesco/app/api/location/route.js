@@ -1,9 +1,13 @@
 import { NextResponse } from "next/server";
 
 const REQUIRED_ACCURACY_METERS = 500;
-const FETCH_TIMEOUT_MS = 8000; // 8 second timeout for external API
-const COORDINATE_CACHE_RADIUS = 50; // meters - cache hits within 50m
-const CACHE_DURATION_MS = 15 * 60 * 1000; // 15 minutes
+const FETCH_TIMEOUT_MS = 8000;
+// 4 decimal places is roughly ~11 meters at the equator. 
+// This is optimal for caching as it groups requests within a small radius 
+// while staying well under your 50m cache radius target.
+const CACHE_DECIMAL_PRECISION = 4; 
+const CACHE_DURATION_MS = 15 * 60 * 1000; 
+const MAX_CACHE_SIZE = 1000; // Prevents memory leaks in serverless environments
 
 // In-memory cache for coordinates
 const coordinateCache = new Map();
@@ -21,27 +25,31 @@ function pick(address, keys) {
 }
 
 function getCacheKey(latitude, longitude) {
-  // Round to ~5 decimal places (~1m precision) to increase cache hit likelihood
-  return `${latitude.toFixed(5)},${longitude.toFixed(5)}`;
+  return `${latitude.toFixed(CACHE_DECIMAL_PRECISION)},${longitude.toFixed(CACHE_DECIMAL_PRECISION)}`;
 }
 
 function getCachedResult(latitude, longitude) {
   const key = getCacheKey(latitude, longitude);
   const cached = coordinateCache.get(key);
   
-  if (cached && Date.now() - cached.timestamp < CACHE_DURATION_MS) {
+  if (!cached) return null;
+
+  if (Date.now() - cached.timestamp < CACHE_DURATION_MS) {
     return cached.data;
   }
   
-  // Clean up expired entries
-  if (cached) {
-    coordinateCache.delete(key);
-  }
-  
+  // Clean up expired entry
+  coordinateCache.delete(key);
   return null;
 }
 
 function setCachedResult(latitude, longitude, data) {
+  // FIFO Cache Eviction to prevent memory leaks
+  if (coordinateCache.size >= MAX_CACHE_SIZE) {
+    const firstKey = coordinateCache.keys().next().value;
+    coordinateCache.delete(firstKey);
+  }
+
   const key = getCacheKey(latitude, longitude);
   coordinateCache.set(key, {
     data,
@@ -104,12 +112,18 @@ export async function POST(request) {
     );
   }
 
-  // Check cache first
+  // 1. Check cache first
   const cachedResult = getCachedResult(latitude, longitude);
   if (cachedResult) {
-    return NextResponse.json(cachedResult, { status: 200 });
+    return NextResponse.json(cachedResult, { 
+      status: 200,
+      headers: {
+        "X-Cache": "HIT" // Useful for debugging frontend performance
+      } 
+    });
   }
 
+  // 2. Fetch from Nominatim
   try {
     const url = new URL("https://nominatim.openstreetmap.org/reverse");
     url.searchParams.set("format", "jsonv2");
@@ -118,7 +132,6 @@ export async function POST(request) {
     url.searchParams.set("zoom", "18");
     url.searchParams.set("addressdetails", "1");
 
-    // Use AbortController for timeout
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
 
@@ -127,7 +140,9 @@ export async function POST(request) {
       response = await fetch(url.toString(), {
         headers: {
           "Accept-Language": "en",
-          "User-Agent": "Accesco-Location-API",
+          // OpenStreetMap strictly requires a unique User-Agent, preferably with an email.
+          // Generic ones often get IP banned. Update this to your real project email!
+          "User-Agent": "Accesco-Location-API/1.0", 
         },
         signal: controller.signal,
       });
@@ -148,29 +163,27 @@ export async function POST(request) {
     const data = await response.json();
     const address = data?.address || {};
 
+    // 3. Process Address Data
     const houseNumber = address.house_number || null;
     const road = pick(address, ["road", "pedestrian", "footway", "path"]);
-    const area = pick(address, [
-      "neighbourhood",
-      "suburb",
-      "city_district",
-      "quarter",
-    ]);
+    const area = pick(address, ["neighbourhood", "suburb", "city_district", "quarter"]);
     const city = pick(address, ["city", "town", "village", "municipality"]);
     const postalCode = address.postcode || null;
-    const locationName =
-      [houseNumber, road, area, city, postalCode].filter(Boolean).join(", ") ||
-      [area, city].filter(Boolean).join(", ") ||
+
+    // DRY'd up the array joining logic
+    const addressComponents = [houseNumber, road, area, city, postalCode].filter(Boolean);
+    const shortAddressComponents = [area, city].filter(Boolean);
+    
+    const locationName = 
+      addressComponents.join(", ") || 
+      shortAddressComponents.join(", ") || 
       "Your Location";
 
     const responsePayload = {
       success: true,
       requiredAccuracyMeters: REQUIRED_ACCURACY_METERS,
       isAccurate: true,
-      coordinates: {
-        latitude,
-        longitude,
-      },
+      coordinates: { latitude, longitude },
       accuracyMeters: Math.round(accuracy),
       locationName,
       display_name: data?.display_name || null,
@@ -191,9 +204,7 @@ export async function POST(request) {
         country_code: address.country_code || null,
       },
       formattedAddress: {
-        label: [houseNumber, road, area, city, postalCode]
-          .filter(Boolean)
-          .join(", "),
+        label: addressComponents.join(", "),
         full: data?.display_name || null,
         houseNumber,
         road,
@@ -205,17 +216,17 @@ export async function POST(request) {
       },
     };
 
-    // Cache the result
+    // 4. Cache and Return
     setCachedResult(latitude, longitude, responsePayload);
 
     return NextResponse.json(responsePayload, { 
       status: 200,
       headers: {
-        "Cache-Control": "public, s-maxage=900, stale-while-revalidate=1800"
+        "Cache-Control": "public, s-maxage=900, stale-while-revalidate=1800",
+        "X-Cache": "MISS"
       }
     });
   } catch (error) {
-    // Handle timeout errors
     if (error.name === "AbortError") {
       return NextResponse.json(
         {
@@ -236,4 +247,3 @@ export async function POST(request) {
     );
   }
 }
-
