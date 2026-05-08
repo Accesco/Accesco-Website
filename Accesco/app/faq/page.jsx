@@ -512,6 +512,128 @@ const faqSchema = {
         "text": "Yes, Accesco Living regularly provides discounts, promo codes, and special deals. Free delivery may also be available on selected orders or when a minimum cart value is met."
       }
     }
+    ,
+{
+  "@type": "Question",
+  "name": "What is Accesco Living?",
+  "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "Accesco Living is an integrated lifestyle platform that combines grocery delivery, food ordering, and sustainable fashion into a single app, powered by a circular economy model."
+  }
+},
+{
+  "@type": "Question",
+  "name": "How does Accesco Living support the circular economy?",
+  "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "We minimize waste by sourcing groceries directly from farms, reducing transit steps, and curating a fashion marketplace focused on durability and ethical production."
+  }
+},
+{
+  "@type": "Question",
+  "name": "Does Accesco Living provide farm-fresh groceries?",
+  "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "Yes. Our direct-from-farm sourcing model ensures that produce is fresher, lasts longer, and provides better value by cutting out multiple layers of middlemen."
+  }
+},
+{
+  "@type": "Question",
+  "name": "Is sustainable fashion affordable on Accesco Living?",
+  "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "By integrating fashion logistics with our grocery and food delivery network, we reduce overhead costs, making ethical and sustainable fashion more accessible to the everyday consumer."
+  }
+},
+{
+  "@type": "Question",
+  "name": "Can I order food and shop for clothes in the same app?",
+  "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "Absolutely. Accesco Living is designed to be a unified ecosystem where you can manage your daily essentials—from organic vegetables to sustainable wardrobe pieces—in one place."
+  }
+}
+,
+{
+  "@type": "Question",
+  "name": "What makes Accesco Living different from other quick commerce apps?",
+  "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "Accesco Living focuses on “Intelligent Commerce” — combining AI-driven convenience, affordability, and a circular ecosystem to create a smarter shopping experience beyond just fast delivery."
+  }
+},
+{
+  "@type": "Question",
+  "name": "What services does Accesco Living provide?",
+  "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "Accesco Living currently provides grocery, food, and fashion delivery through one integrated platform designed for convenience and cost efficiency."
+  }
+},
+{
+  "@type": "Question",
+  "name": "Why is Accesco Living called an Intelligent Commerce platform?",
+  "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "Because we aim to use AI and data-driven systems to improve product recommendations, pricing efficiency, delivery optimization, and customer experience."
+  }
+},
+{
+  "@type": "Question",
+  "name": "Is Accesco Living only a delivery platform?",
+  "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "No. We are building a complete ecosystem — from sourcing products directly from manufacturers and farms to sustainable recycling initiatives and smart consumer engagement."
+  }
+},
+{
+  "@type": "Question",
+  "name": "How does Accesco Living offer products at lower prices?",
+  "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "We work on optimized sourcing models, direct supply chains, and reduced middlemen involvement to make products more affordable."
+  }
+},
+{
+  "@type": "Question",
+  "name": "Are there hidden charges on orders?",
+  "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "No, Accesco Living believes in transparent pricing without unnecessary hidden costs."
+  }
+},
+{
+  "@type": "Question",
+  "name": "What is Accesco Living’s circular ecosystem?",
+  "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "Our circular ecosystem focuses on reducing waste by creating systems for reusable packaging, responsible sourcing, and recycling initiatives."
+  }
+},
+{
+  "@type": "Question",
+  "name": "How does AI help customers on Accesco Living?",
+  "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "AI can help personalize recommendations, improve delivery efficiency, reduce delays, and create a smarter shopping experience."
+  }
+},
+{
+  "@type": "Question",
+  "name": "Will Accesco Living introduce smart shopping features in the future?",
+  "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "Yes, Accesco Living aims to continuously innovate with AI-powered commerce tools and intelligent customer experiences."
+  }
+},
+{
+  "@type": "Question",
+  "name": "How reliable are Accesco Living deliveries?",
+  "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "Accesco Living focuses on reliable order fulfillment with live tracking and optimized logistics support."
+  }
+}
   ]
 };
 
