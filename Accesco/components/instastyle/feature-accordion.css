@@ -595,11 +595,15 @@
 }
 
 .is-vibe-desc {
-  font-size: 14px;
+  font-size: 13px;
   color: rgba(26, 17, 8, 0.7);
-  line-height: 1.55;
+  line-height: 1.4;
   max-width: 440px;
-  margin-bottom: 14px;
+  margin-bottom: 10px;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 /* Squad avatars */

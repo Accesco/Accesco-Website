@@ -95,6 +95,20 @@ html.lenis, html.lenis-scrolling {
 }
 
 /* ============================================================
+   INSTASTYLE ROOT & CONTENT
+   Ensures light luxury background throughout
+   ============================================================ */
+.instastyle-root {
+  background: var(--is-off-white);
+  min-height: 100vh;
+}
+
+.instastyle-content-wrapper {
+  background: var(--is-off-white);
+  min-height: 100vh;
+}
+
+/* ============================================================
    INSTASTYLE HEADER SHELL — Fallback SSR styles
    WHITE / BLACK / BROWN design system
    ============================================================ */

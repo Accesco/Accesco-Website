@@ -1,7 +1,8 @@
 .checkoutPage {
   min-height: 100vh;
   background: var(--is-off-white);
-  padding: clamp(40px, 8vw, 80px) 0;
+  padding-top: calc(72px + clamp(40px, 8vw, 80px));
+  padding-bottom: clamp(40px, 8vw, 80px);
   color: var(--is-text-primary);
 }
 
@@ -398,7 +399,8 @@
 
 @media (max-width: 768px) {
   .checkoutPage {
-    padding: 24px 0 60px;
+    padding-top: calc(72px + 24px);
+    padding-bottom: 60px;
   }
 
   .pageTitle {

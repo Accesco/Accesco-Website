@@ -405,8 +405,6 @@ export default function InstaStyleLanding() {
       {/* ── 3. FASHION COLLECTIONS (NEW) ── */}
       <FashionCollections />
 
-      {/* ── 3.5 SWIPE STYLE DISCOVERY (RESTORED) ── */}
-      <SwipeStyleShowcase />
 
       {/* ── 4. TRENDING PRODUCTS (SHOP THE EDIT) ── */}
       <section id="instastyle-featured" className={`${styles.trending} ${styles.revealItem}`} data-reveal>
@@ -533,7 +531,13 @@ export default function InstaStyleLanding() {
               {[...reviews, ...reviews].map((r, i) => (
                 <div key={i} className={styles.reviewCard}>
                   <span className={styles.reviewQuoteMark}>"</span>
-                  <div className={styles.reviewStars}>★★★★★</div>
+                  <div className={styles.reviewStars} style={{ display: 'flex', gap: '2px', color: '#1a1108' }}>
+                    {[...Array(5)].map((_, idx) => (
+                      <svg key={idx} width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                      </svg>
+                    ))}
+                  </div>
                   <p className={styles.reviewText}>{r.text}</p>
                   <div className={styles.reviewer}>
                     <div className={styles.reviewerAvatar}>{r.initial}</div>
@@ -555,7 +559,13 @@ export default function InstaStyleLanding() {
                 {reviews.map((r, i) => (
                   <article key={i} className={`${styles.reviewCard} ${styles.reviewCompact}`}>
                     <span className={styles.reviewQuoteMark}>"</span>
-                    <div className={styles.reviewStars}>★★★★★</div>
+                    <div className={styles.reviewStars} style={{ display: 'flex', gap: '2px', color: '#1a1108' }}>
+                      {[...Array(5)].map((_, idx) => (
+                        <svg key={idx} width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                        </svg>
+                      ))}
+                    </div>
                     <p className={styles.reviewText}>{r.text}</p>
                     <div className={styles.reviewer}>
                       <div className={styles.reviewerAvatar}>{r.initial}</div>
@@ -572,6 +582,9 @@ export default function InstaStyleLanding() {
           </div>
         </div>
       </section>
+
+      {/* ── SWIPE STYLE DISCOVERY ── */}
+      <SwipeStyleShowcase />
 
       {/* ══════════════════════════════════════════
           SECTION 7 — BRAND LABELS
@@ -600,8 +613,7 @@ export default function InstaStyleLanding() {
         </div>
       </section>
 
-      {/* ── 9. SWIPESTYLE SHOWCASE (NEW) ── */}
-      <SwipeStyleShowcase />
+
 
       {/* ══════════════════════════════════════════
           SECTION 9 — JOURNAL / STYLE NOTES

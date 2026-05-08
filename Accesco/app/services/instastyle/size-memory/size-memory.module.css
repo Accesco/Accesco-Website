@@ -1,0 +1,144 @@
+.page {
+  min-height: 100vh;
+  background-color: #faf9f6;
+  color: #1a1a1a;
+  padding: 40px 24px 100px;
+}
+
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 48px;
+}
+
+.title {
+  font-size: clamp(32px, 5vw, 48px);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  margin: 0 0 12px;
+  color: #2d2018;
+}
+
+.subtitle {
+  font-size: 16px;
+  color: #6e5a48;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.formCard {
+  background: #ffffff;
+  border-radius: 24px;
+  padding: 32px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(0, 0, 0, 0.04);
+}
+
+.section {
+  margin-bottom: 32px;
+}
+
+.sectionTitle {
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0 0 16px;
+  color: #1a1a1a;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.inputGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.label {
+  font-size: 13px;
+  font-weight: 700;
+  color: #6e5a48;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.select {
+  appearance: none;
+  background: #fcfbf9;
+  border: 1px solid #e0d5c1;
+  border-radius: 12px;
+  padding: 14px 16px;
+  font-size: 16px;
+  color: #1a1a1a;
+  font-weight: 500;
+  outline: none;
+  transition: border-color 0.2s;
+  cursor: pointer;
+}
+
+.select:focus {
+  border-color: #2d2018;
+}
+
+.submitBtn {
+  width: 100%;
+  padding: 16px;
+  background: #2d2018;
+  color: #fff;
+  border: none;
+  border-radius: 14px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.2s, background 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.submitBtn:hover {
+  background: #4a3528;
+  transform: translateY(-2px);
+}
+
+.submitBtn:disabled {
+  background: #a09282;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.statusMessage {
+  margin-top: 16px;
+  padding: 12px;
+  border-radius: 8px;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.statusSuccess {
+  background: #e6f4ea;
+  color: #137333;
+}
+
+.statusError {
+  background: #fce8e6;
+  color: #c5221f;
+}
+
+@media (max-width: 600px) {
+  .formCard {
+    padding: 24px;
+  }
+}

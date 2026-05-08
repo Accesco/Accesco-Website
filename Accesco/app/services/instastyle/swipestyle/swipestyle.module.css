@@ -2,7 +2,7 @@
   min-height: 100vh;
   background: radial-gradient(circle at 15% 15%, #f6efe8 0%, #FAF9F6 35%, #F0EAD6 100%);
   color: #0D0D0D;
-  padding: 24px;
+  padding: 80px 24px 120px; /* Increased top padding to clear fixed header (70px + space) */
 }
 
 .header {
@@ -51,6 +51,9 @@
 
 .deckSection {
   padding: 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .deckHint {
@@ -61,19 +64,30 @@
   font-weight: 700;
 }
 
-.card {
+.cardContainer {
   position: relative;
-  max-width: 480px;
-  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  perspective: 1000px;
+  height: 680px; /* Increased height to prevent overlapping buttons */
+  width: 100%;
+}
+
+.card {
+  position: absolute; /* Essential for AnimatePresence transitions */
+  max-width: 400px; /* Slightly reduced width to ensure height fits container */
+  width: 100%;
   border-radius: 24px;
   overflow: hidden;
   border: 1px solid rgba(0, 0, 0, 0.05);
   background: #FFF;
-  touch-action: pan-y;
+  touch-action: none;
   user-select: none;
   cursor: grab;
-  transition: transform 0.14s ease, box-shadow 0.3s ease;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.3s ease;
+  z-index: 1;
 }
 
 .card:hover {

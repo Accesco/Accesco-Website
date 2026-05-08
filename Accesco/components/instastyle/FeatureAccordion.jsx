@@ -74,11 +74,11 @@ export default function FeatureAccordion() {
             {/* Progress dots — highlight active box */}
             <div className="is-progress-dots">
               {[
-                '15-20 Min Delivery',
+                '15-20 Min Outfit Delivery',
                 'Trial at Doorstep',
-                'The Vibe Check',
+                'THE VIBE CHECK',
                 'Instant Outfit Builder',
-                'Size Memory Engine',
+                'Size memory engine',
                 'Thrift Marketplace',
                 'Virtual Try-On',
                 'SwipeStyle Discovery'
@@ -111,14 +111,14 @@ export default function FeatureAccordion() {
 
           <div className="is-acc-stack">
             {[
-              { title: '15-20 Min Delivery', desc: 'High-demand outfits pre-stocked inside integrated dark stores enabling near-instant delivery.' },
-              { title: 'Trial at Doorstep', desc: 'Try selected outfits at home while the rider waits up to 15 minutes. Pay only for items you keep.' },
-              { title: 'The Vibe Check', desc: 'Shopping is a team sport. Share options with friends, start a poll, and get squad approval.', isVibe: true },
-              { title: 'Instant Outfit Builder', desc: 'Select an occasion and InstaStyle instantly curates a complete ready-to-wear outfit for you.' },
-              { title: 'Size Memory Engine', desc: 'Learns your exact fit preference per brand and category. Never wrong-sizes an order again.' },
-              { title: 'Thrift Marketplace', desc: 'Curated resale marketplace where users and vendors sell verified pre-owned fashion.' },
-              { title: 'Virtual Try-On', desc: 'See how any outfit looks on you instantly using our advanced AI-powered virtual mirror.' },
-              { title: 'SwipeStyle Discovery', desc: 'Find your next favorite look with a personalized, swipe-based discovery feed.' }
+              { title: '15-20 Min Outfit Delivery', desc: 'High-demand outfits pre-stocked inside integrated dark stores enabling near-instant delivery for events and last-minute plans.' },
+              { title: 'Trial at Doorstep', desc: 'Try selected outfits at home while the rider waits up to 15 minutes. Customers only pay for items they keep.' },
+              { title: 'THE VIBE CHECK', desc: 'Shopping is a team sport. Turn every purchase into a group decision. Share outfit options with friends, create instant polls, compare looks together, and get your squad\'s approval before you confidently check out.', isVibe: true },
+              { title: 'Instant Outfit Builder', desc: 'Select an occasion and InstaStyle instantly curates a complete ready-to-wear outfit set delivered from the dark store within minutes.' },
+              { title: 'Size memory engine', desc: 'Learns your exact fit preference per brand and category. Never wrong-sizes an order again.' },
+              { title: 'Thrift Marketplace', desc: 'Curated resale marketplace where users and vendors sell verified pre-owned fashion, enabling affordability and circular fashion.' },
+              { title: 'Virtual Try-On', desc: 'Digital body-mapping previews that let users visualise fit, fall, and proportions before ordering, reducing size confusion and returns.' },
+              { title: 'SwipeStyle Discovery', desc: 'Swipe-based fashion exploration that learns style preferences instantly and builds a personalised SwipeStyle Cart.' }
             ].map((feature, idx) => {
               if (feature.isVibe) {
                 return (

@@ -153,8 +153,16 @@ export default function CartDrawer() {
 
                   {/* Price & Remove */}
                   <div className={styles.itemActions}>
-                    <div className={styles.itemPrice}>
-                      ₹{((item.discountedPrice || item.price) * item.quantity).toLocaleString()}
+                    <div className={styles.priceContainer} style={{ textAlign: 'right' }}>
+                      <div className={styles.itemPrice}>
+                        ₹{((item.discountedPrice || item.price) * item.quantity).toLocaleString()}
+                      </div>
+                      {(item.discountedPrice && item.discountedPrice < item.price) && (
+                        <div className={styles.discountRow} style={{ fontSize: '11px', display: 'flex', gap: '4px', alignItems: 'center', justifyContent: 'flex-end', marginTop: '2px' }}>
+                          <span style={{ textDecoration: 'line-through', color: 'rgba(26, 17, 8, 0.5)' }}>₹{(item.price * item.quantity).toLocaleString()}</span>
+                          <span style={{ color: '#22c55e', fontWeight: '600' }}>{item.discountPercentage}% OFF</span>
+                        </div>
+                      )}
                     </div>
                     <button
                       className={styles.removeButton}

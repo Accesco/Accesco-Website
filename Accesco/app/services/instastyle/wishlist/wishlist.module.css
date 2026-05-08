@@ -1,6 +1,6 @@
 .page {
   min-height: 100vh;
-  background: #FAF9F6;
+  background: #FAF9F6 !important;
   padding-bottom: 120px;
 }
 
@@ -11,6 +11,7 @@
   padding-left: var(--gutter);
   padding-right: var(--gutter);
   border-bottom: 1px solid rgba(26, 17, 8, 0.06);
+  background: transparent !important;
 }
 
 .kicker {

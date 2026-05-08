@@ -253,6 +253,7 @@ export default function InstaStyleHeader() {
     { href: '/services/instastyle/catalog?category=accessories', label: 'Accessories' },
     { href: '/services/instastyle/virtual-tryon', label: 'Virtual Try-On' },
     { href: '/services/instastyle/swipestyle', label: 'SwipeStyle' },
+    { href: '/services/instastyle/thrift', label: 'Thrift' },
   ];
 
   const isActiveLink = (href, exact = false) => {
