@@ -193,23 +193,6 @@ export default function InstaStyleFooter() {
         </div>
       </div>
 
-      {/* Sticky Mirror Glass Dock */}
-      <div className={`${styles.mirrorDock} ${styles.dockVisible}`}>
-        <div className={styles.mirrorDockInner}>
-          <Link href="/services/instastyle" className={styles.mirrorDockBrand}>
-            <InstaStyleLogo className={styles.mirrorDockLogo} />
-            <span className={styles.mirrorDockBrandText}>InstaStyle</span>
-          </Link>
-          <nav className={styles.mirrorDockNav}>
-            <div className={styles.mirrorDockNavGroup}>
-              <Link href="/services/instastyle/catalog" className={styles.mirrorDockLink}>Shop</Link>
-              <Link href="/services/instastyle/swipestyle" className={styles.mirrorDockLink}>Swipe</Link>
-              <Link href="/services/instastyle/thrift" className={styles.mirrorDockLink}>Thrift</Link>
-              <Link href="/services/instastyle/profile" className={styles.mirrorDockLink}>Profile</Link>
-            </div>
-          </nav>
-        </div>
-      </div>
     </footer>
   );
 }

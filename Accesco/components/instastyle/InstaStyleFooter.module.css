@@ -183,114 +183,7 @@
   border-radius: 6px;
 }
 
-/* ══════════════════════════════════════════
-   STICKY MIRROR GLASS DOCK
-══════════════════════════════════════════ */
-.mirrorDock {
-  position: fixed;
-  left: 50%;
-  top: max(8px, calc(env(safe-area-inset-top) + 6px));
-  transform: translateX(-50%);
-  width: min(1000px, calc(100% - 28px));
-  z-index: 997;
-  pointer-events: auto;
-  transition: opacity 0.26s ease, transform 0.26s ease;
-}
 
-.dockHidden {
-  opacity: 0;
-  transform: translateX(-50%) translateY(-14px);
-  pointer-events: none;
-}
-
-.dockVisible {
-  opacity: 1;
-  transform: translateX(-50%) translateY(0);
-}
-
-.mirrorDockInner {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  padding: 8px 10px;
-  border-radius: 9999px;
-  background: rgba(255,255,255,0.90);
-  border: 1px solid rgba(26,17,8,0.1);
-  box-shadow: 0 8px 28px rgba(26,17,8,0.14);
-  backdrop-filter: blur(20px) saturate(160%);
-}
-
-.mirrorDockBrand {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  text-decoration: none;
-  color: #1A1108;
-  border-radius: 9999px;
-  padding: 6px 10px;
-  flex: 0 0 auto;
-  transition: background 0.2s;
-}
-
-.mirrorDockBrand:hover { background: rgba(26,17,8,0.06); }
-
-.mirrorDockLogo {
-  width: 26px;
-  height: 26px;
-  flex: 0 0 auto;
-}
-
-.mirrorDockBrandText {
-  font-family: 'Syne', Georgia, sans-serif;
-  font-size: 16px;
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  color: #1A1108;
-}
-
-.mirrorDockNav {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  flex: 1;
-  justify-content: center;
-}
-
-.mirrorDockNavGroup {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-}
-
-.mirrorDockLink {
-  text-decoration: none;
-  color: rgba(26,17,8,0.72);
-  font-family: 'DM Sans', 'Segoe UI', sans-serif;
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  padding: 9px 16px;
-  border-radius: 9999px;
-  white-space: nowrap;
-  transition: background 0.2s, color 0.2s;
-}
-
-.mirrorDockLink:hover {
-  color: #1A1108;
-  background: rgba(26,17,8,0.07);
-}
-
-.mirrorDockLinkActive {
-  background: #1A1108;
-  color: #FFFFFF;
-}
-
-.mirrorDockLinkActive:hover {
-  background: #7C4A2D;
-  color: #FFFFFF;
-}
 
 /* ══════════════════════════════════════════
    RESPONSIVE
@@ -303,19 +196,6 @@
   .brandColumn { grid-column: 1 / -1; }
 }
 
-@media (max-width: 900px) {
-  .mirrorDock {
-    width: calc(100% - 20px);
-  }
-  .mirrorDockInner {
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-    justify-content: flex-start;
-  }
-  .mirrorDockInner::-webkit-scrollbar { display: none; }
-  .mirrorDockNav { flex: 0 0 auto; }
-}
 
 @media (max-width: 768px) {
   .grid {
@@ -326,23 +206,6 @@
   .brandColumn { border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 28px; }
   .bottomContent { flex-direction: column; align-items: flex-start; gap: 14px; }
 
-  /* Bottom dock on mobile */
-  .mirrorDock {
-    top: auto;
-    bottom: max(10px, calc(env(safe-area-inset-bottom) + 8px));
-    width: calc(100% - 16px);
-  }
-  .mirrorDockInner {
-    border-radius: 18px;
-    background: rgba(255,255,255,0.92);
-    padding: 8px 10px;
-    gap: 4px;
-  }
-  .mirrorDockBrandText { display: none; }
-  .mirrorDockLogo { width: 22px; height: 22px; }
-  .mirrorDockNav { width: 100%; justify-content: space-evenly; }
-  .mirrorDockNavGroup { flex: 1; justify-content: space-evenly; gap: 2px; }
-  .mirrorDockLink { font-size: 10px; padding: 8px 10px; letter-spacing: 0.04em; }
 }
 
 @media (max-width: 480px) {
@@ -355,18 +218,10 @@
   .paymentMethods { flex-wrap: wrap; }
 }
 
-/* ── BODY CLASS OVERRIDES ── */
-:global(body.instastyle-dock-active) .header { display: none; }
-
-:global(body.instastyle-old-footer-visible) .mirrorDock {
-  opacity: 0;
-  transform: translateX(-50%) translateY(-14px);
-  pointer-events: none;
-}
 
 /* ── ACCESS HOOKS ── */
 @media (prefers-reduced-motion: reduce) {
-  .mirrorDock, .mirrorDockLink, .socialLink, .link {
+  .socialLink, .link {
     transition: none;
   }
 }
