@@ -15,6 +15,12 @@ export default function SwadishttHeader() {
   const [scrolled, setScrolled] = useState(false);
   const [locationDropdown, setLocationDropdown] = useState(false);
   const [detectingLocation, setDetectingLocation] = useState(false);
+  
+  // Custom Modal States
+  const [showManualModal, setShowManualModal] = useState(false);
+  const [manualArea, setManualArea] = useState('');
+  const [manualCity, setManualCity] = useState('');
+
   const { location, updateLocation, getCartCount, searchQuery, setSearchQuery } = useSwadishtt();
   
   const cartCount = getCartCount();
@@ -32,197 +38,298 @@ export default function SwadishttHeader() {
     console.log('Searching for:', searchQuery);
   };
 
+  const handleManualLocationSubmit = () => {
+    if (manualArea.trim() && manualCity.trim()) {
+      updateLocation({ area: manualArea.trim(), city: manualCity.trim() });
+      setShowManualModal(false);
+      setManualArea('');
+      setManualCity('');
+    } else {
+      alert("Please enter both Area and City.");
+    }
+  };
+
   return (
-    <header className={`${styles.header} ${scrolled ? styles.scrolled : ''}`}>
-      <div className={styles.container}>
-        <div className={styles.headerContent}>
-          <Link
-  href="/"
-  className={styles.backBtn}
-  aria-label="Back to Accesco"
->
-  <span className={styles.backDesktop}>← Back</span>
-  <span className={styles.backMobile}>←</span>
-</Link>
-          {/* Logo */}
-          <Link href="/services/swadisht" className={styles.logo}>
-            <img 
-              src="/images/swadisht/swadisht_logo.JPG" 
-              alt="Swadishtt" 
-              className={styles.logoImage}
-              onError={(e) => e.target.style.display = 'none'}
-            />
-            <span className={styles.brandName}>Swadishtt</span>
-          </Link>
-
-          {/* Location Selector */}
-          <div className={styles.locationWrapper}>
-            <button 
-              className={styles.locationButton}
-              onClick={() => setLocationDropdown(!locationDropdown)}
+    <>
+      <header className={`${styles.header} ${scrolled ? styles.scrolled : ''}`}>
+        <div className={styles.container}>
+          <div className={styles.headerContent}>
+            <Link
+              href="/"
+              className={styles.backBtn}
+              aria-label="Back to Accesco"
             >
-              <svg className={styles.locationIcon} viewBox="0 0 20 20" fill="currentColor">
-                <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd"/>
-              </svg>
-              <div className={styles.locationText}>
-                <span className={styles.locationLabel}>Deliver to</span>
-                <span className={styles.locationArea}>{location.area}, {location.city}</span>
-              </div>
-              <svg className={styles.dropdownIcon} viewBox="0 0 20 20" fill="currentColor">
-                <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd"/>
-              </svg>
-            </button>
+              <span className={styles.backDesktop}>← Back</span>
+              <span className={styles.backMobile}>←</span>
+            </Link>
+            
+            {/* Logo */}
+            <Link href="/services/swadisht" className={styles.logo}>
+              <img 
+                src="/images/swadisht/swadisht_logo.JPG" 
+                alt="Swadishtt" 
+                className={styles.logoImage}
+                onError={(e) => e.target.style.display = 'none'}
+              />
+              <span className={styles.brandName}>Swadishtt</span>
+            </Link>
 
-            {locationDropdown && (
-              <div className={styles.locationDropdown}>
-                <div className={styles.dropdownHeader}>
-                  <h3>Select Delivery Location</h3>
-                  <button onClick={() => setLocationDropdown(false)}>✕</button>
+            {/* Location Selector */}
+            <div className={styles.locationWrapper}>
+              <button 
+                className={styles.locationButton}
+                onClick={() => setLocationDropdown(!locationDropdown)}
+              >
+                <svg className={styles.locationIcon} viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd"/>
+                </svg>
+                <div className={styles.locationText}>
+                  <span className={styles.locationLabel}>Deliver to</span>
+                  <span className={styles.locationArea}>{location.area}, {location.city}</span>
                 </div>
-                <div className={styles.locationList}>
-                  <button
-                    className={styles.locationItem}
-                    onClick={() => {
-                      // Trigger geolocation
-                      if (navigator.geolocation) {
-                        setDetectingLocation(true);
-                        navigator.geolocation.getCurrentPosition(
-                          async (position) => {
-                            const { latitude, longitude } = position.coords;
-                            try {
-                              const response = await fetch(
-                                `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&addressdetails=1`
-                              );
-                              const data = await response.json();
-                              
-                              // Better fallback logic with more options
-                              const area = data.address?.suburb || 
-                                          data.address?.neighbourhood || 
-                                          data.address?.city_district ||
-                                          data.address?.quarter ||
-                                          data.address?.road ||
-                                          data.address?.hamlet ||
-                                          'Location';
-                              
-                              const city = data.address?.city || 
-                                          data.address?.town || 
-                                          data.address?.village ||
-                                          data.address?.municipality ||
-                                          data.address?.county ||
-                                          data.address?.state ||
-                                          'Detected';
-                              
-                              updateLocation({ 
-                                area, 
-                                city, 
-                                coordinates: { lat: latitude, lng: longitude }
-                              });
-                              setLocationDropdown(false);
+                <svg className={styles.dropdownIcon} viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd"/>
+                </svg>
+              </button>
+
+              {locationDropdown && (
+                <div className={styles.locationDropdown}>
+                  <div className={styles.dropdownHeader}>
+                    <h3>Select Delivery Location</h3>
+                    <button onClick={() => setLocationDropdown(false)}>✕</button>
+                  </div>
+                  <div className={styles.locationList}>
+                    <button
+                      className={styles.locationItem}
+                      onClick={() => {
+                        if (navigator.geolocation) {
+                          setDetectingLocation(true);
+                          navigator.geolocation.getCurrentPosition(
+                            async (position) => {
+                              const { latitude, longitude, accuracy } = position.coords;
+                              try {
+                                const response = await fetch('/api/location', {
+                                  method: 'POST',
+                                  headers: { 'Content-Type': 'application/json' },
+                                  body: JSON.stringify({ latitude, longitude, accuracy }),
+                                });
+                                
+                                const data = await response.json();
+                                
+                                if (!response.ok || !data.success) {
+                                  throw new Error(data.message || 'Location API returned an error.');
+                                }
+                                
+                                const addr = data.formattedAddress || {};
+                                
+                                const area = addr.area || addr.road || 'Location';
+                                const city = addr.city || addr.state || 'Detected';
+                                
+                                updateLocation({ 
+                                  area, 
+                                  city, 
+                                  coordinates: { lat: latitude, lng: longitude }
+                                });
+                                
+                                setLocationDropdown(false);
+                              } catch (error) {
+                                console.error('Error fetching from /api/location:', error);
+                                updateLocation({ 
+                                  area: `${latitude.toFixed(4)}°`, 
+                                  city: `${longitude.toFixed(4)}°`,
+                                  coordinates: { lat: latitude, lng: longitude }
+                                });
+                                setLocationDropdown(false);
+                              } finally {
+                                setDetectingLocation(false);
+                              }
+                            },
+                            (error) => {
+                              console.error('Geolocation error:', error);
                               setDetectingLocation(false);
-                            } catch (error) {
-                              console.error('Error fetching location:', error);
-                              // If reverse geocoding fails, just show coordinates
-                              updateLocation({ 
-                                area: `${latitude.toFixed(4)}°`, 
-                                city: `${longitude.toFixed(4)}°`,
-                                coordinates: { lat: latitude, lng: longitude }
-                              });
-                              setLocationDropdown(false);
-                              setDetectingLocation(false);
+                              alert('Unable to access your location. Please check browser permissions and try again, or enter manually.');
+                            },
+                            {
+                              enableHighAccuracy: true,
+                              timeout: 10000,
+                              maximumAge: 0
                             }
-                          },
-                          (error) => {
-                            console.error('Geolocation error:', error);
-                            setDetectingLocation(false);
-                            alert('Unable to access your location. Please check browser permissions and try again, or enter manually.');
-                          },
-                          {
-                            enableHighAccuracy: true,
-                            timeout: 10000,
-                            maximumAge: 0
-                          }
-                        );
-                      } else {
-                        alert('Geolocation is not supported by your browser. Please enter location manually.');
-                      }
-                    }}
-                    disabled={detectingLocation}
-                  >
-                    <svg className={styles.locationItemIcon} viewBox="0 0 20 20" fill="currentColor">
-                      <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd"/>
-                    </svg>
-                    <div>
-                      <div className={styles.locationItemArea}>
-                        {detectingLocation ? 'Detecting...' : 'Use Current Location'}
+                          );
+                        } else {
+                          alert('Geolocation is not supported by your browser. Please enter location manually.');
+                        }
+                      }}
+                      disabled={detectingLocation}
+                    >
+                      <svg className={styles.locationItemIcon} viewBox="0 0 20 20" fill="currentColor">
+                        <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd"/>
+                      </svg>
+                      <div>
+                        <div className={styles.locationItemArea}>
+                          {detectingLocation ? 'Detecting...' : 'Use Current Location'}
+                        </div>
+                        <div className={styles.locationItemCity}>
+                          {detectingLocation ? 'Please wait' : 'Detect automatically'}
+                        </div>
                       </div>
-                      <div className={styles.locationItemCity}>
-                        {detectingLocation ? 'Please wait' : 'Detect automatically'}
-                      </div>
-                    </div>
-                  </button>
-                  
-                  <button
-                    className={styles.locationItem}
-                    onClick={() => {
-                      const manualArea = prompt('Enter your area/locality:');
-                      const manualCity = prompt('Enter your city:');
-                      if (manualArea && manualCity) {
-                        updateLocation({ area: manualArea, city: manualCity });
+                    </button>
+                    
+                    <button
+                      className={styles.locationItem}
+                      onClick={() => {
                         setLocationDropdown(false);
-                      }
-                    }}
-                  >
-                    <svg className={styles.locationItemIcon} viewBox="0 0 20 20" fill="currentColor">
-                      <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"/>
-                    </svg>
-                    <div>
-                      <div className={styles.locationItemArea}>Enter Manually</div>
-                      <div className={styles.locationItemCity}>Type your location</div>
-                    </div>
-                  </button>
+                        setShowManualModal(true);
+                      }}
+                    >
+                      <svg className={styles.locationItemIcon} viewBox="0 0 20 20" fill="currentColor">
+                        <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"/>
+                      </svg>
+                      <div>
+                        <div className={styles.locationItemArea}>Enter Manually</div>
+                        <div className={styles.locationItemCity}>Type your location</div>
+                      </div>
+                    </button>
+                  </div>
                 </div>
-              </div>
-            )}
-          </div>
-
-          {/* Search Bar */}
-          <form className={styles.searchForm} onSubmit={handleSearch}>
-            <svg className={styles.searchIcon} viewBox="0 0 20 20" fill="currentColor">
-              <path fillRule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clipRule="evenodd"/>
-            </svg>
-            <input
-              type="text"
-              placeholder="Search for restaurants, cuisines, or dishes"
-              className={styles.searchInput}
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-          </form>
-
-          {/* Navigation */}
-          <nav className={styles.nav}>
-            <Link href="/services/swadisht/profile" className={styles.navLink}>
-              <svg className={styles.navIcon} viewBox="0 0 20 20" fill="currentColor">
-                <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd"/>
-              </svg>
-              <span className={styles.navText}>Profile</span>
-            </Link>
-
-            <Link 
-              href="/services/swadisht/cart"
-              className={`${styles.navLink} ${styles.cartButton}`}
-            >
-              <svg className={styles.navIcon} viewBox="0 0 20 20" fill="currentColor">
-                <path d="M3 1a1 1 0 000 2h1.22l.305 1.222a.997.997 0 00.01.042l1.358 5.43-.893.892C3.74 11.846 4.632 14 6.414 14H15a1 1 0 000-2H6.414l1-1H14a1 1 0 00.894-.553l3-6A1 1 0 0017 3H6.28l-.31-1.243A1 1 0 005 1H3zM16 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM6.5 18a1.5 1.5 0 100-3 1.5 1.5 0 000 3z"/>
-              </svg>
-              <span className={styles.navText}>Cart</span>
-              {cartCount > 0 && (
-                <span className={styles.cartBadge}>{cartCount}</span>
               )}
-            </Link>
-          </nav>
+            </div>
+
+            {/* Search Bar */}
+            <form className={styles.searchForm} onSubmit={handleSearch}>
+              <svg className={styles.searchIcon} viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clipRule="evenodd"/>
+              </svg>
+              <input
+                type="text"
+                placeholder="Search for restaurants, cuisines, or dishes"
+                className={styles.searchInput}
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+            </form>
+
+            {/* Navigation */}
+            <nav className={styles.nav}>
+              <Link href="/services/swadisht/profile" className={styles.navLink}>
+                <svg className={styles.navIcon} viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd"/>
+                </svg>
+                <span className={styles.navText}>Profile</span>
+              </Link>
+
+              <Link 
+                href="/services/swadisht/cart"
+                className={`${styles.navLink} ${styles.cartButton}`}
+              >
+                <svg className={styles.navIcon} viewBox="0 0 20 20" fill="currentColor">
+                  <path d="M3 1a1 1 0 000 2h1.22l.305 1.222a.997.997 0 00.01.042l1.358 5.43-.893.892C3.74 11.846 4.632 14 6.414 14H15a1 1 0 000-2H6.414l1-1H14a1 1 0 00.894-.553l3-6A1 1 0 0017 3H6.28l-.31-1.243A1 1 0 005 1H3zM16 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM6.5 18a1.5 1.5 0 100-3 1.5 1.5 0 000 3z"/>
+                </svg>
+                <span className={styles.navText}>Cart</span>
+                {cartCount > 0 && (
+                  <span className={styles.cartBadge}>{cartCount}</span>
+                )}
+              </Link>
+            </nav>
+          </div>
         </div>
-      </div>
-    </header>
+      </header>
+
+      {/* Manual Location Modal Overlay */}
+      {showManualModal && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0, 0, 0, 0.6)',
+          zIndex: 9999,
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          backdropFilter: 'blur(2px)'
+        }}>
+          <div style={{
+            backgroundColor: '#fff',
+            padding: '24px',
+            borderRadius: '12px',
+            width: '90%',
+            maxWidth: '400px',
+            boxShadow: '0 10px 25px rgba(0,0,0,0.2)',
+            color: '#333'
+          }}>
+            <h3 style={{ margin: '0 0 16px 0', fontSize: '1.25rem', fontWeight: '600' }}>Enter Details</h3>
+            
+            <div style={{ marginBottom: '16px' }}>
+              <label style={{ display: 'block', marginBottom: '6px', fontSize: '0.875rem', fontWeight: '500' }}>Area / Locality</label>
+              <input 
+                type="text" 
+                value={manualArea} 
+                onChange={(e) => setManualArea(e.target.value)} 
+                placeholder="e.g. Anna Nagar"
+                autoFocus
+                style={{
+                  width: '100%',
+                  padding: '10px 12px',
+                  border: '1px solid #ddd',
+                  borderRadius: '6px',
+                  fontSize: '1rem',
+                  outline: 'none'
+                }}
+              />
+            </div>
+            
+            <div style={{ marginBottom: '24px' }}>
+              <label style={{ display: 'block', marginBottom: '6px', fontSize: '0.875rem', fontWeight: '500' }}>City</label>
+              <input 
+                type="text" 
+                value={manualCity} 
+                onChange={(e) => setManualCity(e.target.value)} 
+                placeholder="e.g. Chennai"
+                style={{
+                  width: '100%',
+                  padding: '10px 12px',
+                  border: '1px solid #ddd',
+                  borderRadius: '6px',
+                  fontSize: '1rem',
+                  outline: 'none'
+                }}
+              />
+            </div>
+            
+            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px' }}>
+              <button 
+                onClick={() => setShowManualModal(false)}
+                style={{
+                  padding: '8px 16px',
+                  backgroundColor: 'transparent',
+                  border: 'none',
+                  color: '#666',
+                  cursor: 'pointer',
+                  fontWeight: '500',
+                  borderRadius: '6px'
+                }}
+              >
+                Cancel
+              </button>
+              <button 
+                onClick={handleManualLocationSubmit}
+                style={{
+                  padding: '8px 16px',
+                  backgroundColor: '#E23744', /* Zomato-style red */
+                  color: '#fff',
+                  border: 'none',
+                  borderRadius: '6px',
+                  cursor: 'pointer',
+                  fontWeight: '500'
+                }}
+              >
+                Save Location
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 }

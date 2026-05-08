@@ -5,7 +5,7 @@
 
 "use client";
 
-import { useState, useRef } from "react";
+import { useEffect, useState, useRef } from "react";
 import {
   MapPin,
   Search,
@@ -20,7 +20,7 @@ import styles from "./LocationModal.module.css";
 import { useGrokly } from "../contexts/GroklyContext";
 
 const TARGET_ACCURACY_METERS = 50;
-const ACCEPTABLE_ACCURACY_METERS = 100; // Parallel API call after this
+const ACCEPTABLE_ACCURACY_METERS = 100;
 const CLIENT_CACHE_DURATION_MS = 10 * 60 * 1000; // 10 minutes
 
 // Client-side cache for detected locations
@@ -31,7 +31,12 @@ function getCachedLocation(latitude, longitude) {
   const cached = locationCache.get(key);
   
   if (cached && Date.now() - cached.timestamp < CLIENT_CACHE_DURATION_MS) {
-    return cached.data;
+    const cachedAccuracy = Number(cached?.data?.coords?.accuracy);
+    if (Number.isFinite(cachedAccuracy) && cachedAccuracy <= ACCEPTABLE_ACCURACY_METERS) {
+      return cached.data;
+    }
+    locationCache.delete(key);
+    return null;
   }
   
   if (cached) {
@@ -42,6 +47,10 @@ function getCachedLocation(latitude, longitude) {
 }
 
 function setCachedLocation(latitude, longitude, data) {
+  const accuracy = Number(data?.coords?.accuracy);
+  if (!Number.isFinite(accuracy) || accuracy > ACCEPTABLE_ACCURACY_METERS) {
+    return;
+  }
   const key = `${latitude.toFixed(4)},${longitude.toFixed(4)}`;
   locationCache.set(key, {
     data,
@@ -52,8 +61,8 @@ function setCachedLocation(latitude, longitude, data) {
 function getDeliveryGradePosition({
   targetAccuracy = TARGET_ACCURACY_METERS,
   acceptableAccuracy = ACCEPTABLE_ACCURACY_METERS,
-  timeoutMs = 20000,
-  maxAgeMs = 60000,
+   timeoutMs = 20000,
+   maxAgeMs = 0,
 } = {}) {
   return new Promise((resolve, reject) => {
     if (!navigator.geolocation) {
@@ -65,13 +74,14 @@ function getDeliveryGradePosition({
     let finished = false;
     let watchId = null;
     let timeoutId = null;
-    let acceptablePositionFound = false;
+    let acceptableTimeoutId = null;
 
     const finishSuccess = (position) => {
       if (finished) return;
       finished = true;
       if (watchId !== null) navigator.geolocation.clearWatch(watchId);
       if (timeoutId !== null) clearTimeout(timeoutId);
+      if (acceptableTimeoutId !== null) clearTimeout(acceptableTimeoutId);
       resolve(position);
     };
 
@@ -80,6 +90,7 @@ function getDeliveryGradePosition({
       finished = true;
       if (watchId !== null) navigator.geolocation.clearWatch(watchId);
       if (timeoutId !== null) clearTimeout(timeoutId);
+      if (acceptableTimeoutId !== null) clearTimeout(acceptableTimeoutId);
       reject(error);
     };
 
@@ -89,20 +100,20 @@ function getDeliveryGradePosition({
         const accuracy = Number(position?.coords?.accuracy);
         bestPosition = position;
 
-        // If we got acceptable accuracy quickly, use it and continue watching for better
-        if (Number.isFinite(accuracy) && accuracy <= acceptableAccuracy) {
-          acceptablePositionFound = true;
-          // Immediately resolve with acceptable position, but keep watching for target
-          // This is the key optimization - don't wait for 50m if we have 100m
-        }
-
         if (Number.isFinite(accuracy) && accuracy <= targetAccuracy) {
           finishSuccess(position);
+          return;
+        }
+
+        if (Number.isFinite(accuracy) && accuracy <= acceptableAccuracy) {
+          // If acceptable but not target, give the hardware 3 more seconds to find a better lock.
+          // If it can't, resolve early so the user isn't stuck waiting.
+          acceptableTimeoutId = setTimeout(() => {
+            finishSuccess(bestPosition);
+          }, 3000);
         }
       },
-      () => {
-        // getCurrentPosition failed, fall back to watchPosition
-      },
+      () => {}, // Ignore fast-fail, rely on watchPosition
       {
         enableHighAccuracy: true,
         timeout: 5000,
@@ -116,7 +127,6 @@ function getDeliveryGradePosition({
         const currentAccuracy = Number(position?.coords?.accuracy);
         const bestAccuracy = Number(bestPosition?.coords?.accuracy);
 
-        // Keep track of best position
         if (
           !bestPosition ||
           (Number.isFinite(currentAccuracy) &&
@@ -125,19 +135,11 @@ function getDeliveryGradePosition({
           bestPosition = position;
         }
 
-        // Target accuracy reached
         if (Number.isFinite(currentAccuracy) && currentAccuracy <= targetAccuracy) {
           finishSuccess(position);
-          return;
-        }
-
-        // If we found acceptable accuracy and haven't finished, trigger a parallel API call
-        if (acceptablePositionFound && !finished && bestPosition) {
-          // This will be handled in the component
         }
       },
       (error) => {
-        // Only fail if we have no position at all
         if (!bestPosition) {
           finishError(error);
         }
@@ -149,7 +151,7 @@ function getDeliveryGradePosition({
       }
     );
 
-    // Total timeout - return best position found so far
+    // Total fallback timeout
     timeoutId = setTimeout(() => {
       if (finished) return;
       if (bestPosition) {
@@ -171,6 +173,18 @@ export default function LocationModal() {
   const [locationError, setLocationError] = useState(null);
   const abortControllerRef = useRef(null);
 
+  // Clean up any pending location fetch when the component unmounts
+  useEffect(() => {
+    return () => {
+      try {
+        abortControllerRef.current?.abort?.();
+      } catch (e) {
+        // ignore
+      }
+    };
+  }, []);
+
+  // ... (POPULAR_LOCATIONS array remains unchanged) ...
   const POPULAR_LOCATIONS = [
     { name: "Koramangala", area: "Bangalore", time: "11 mins" },
     { name: "Indiranagar", area: "Bangalore", time: "12 mins" },
@@ -195,110 +209,100 @@ export default function LocationModal() {
       const response = await fetch("/api/location", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          latitude,
-          longitude,
-          accuracy,
-        }),
+        body: JSON.stringify({ latitude, longitude, accuracy }),
         signal: abortControllerRef.current?.signal,
       });
 
-      const payload = await response.json();
+      let payload = null;
+      try {
+        payload = await response.json();
+      } catch (e) {
+        // Non-JSON response
+      }
 
-      if (!response.ok || !payload?.success) {
+      if (!response.ok) {
+        const serverMessage = payload?.message || payload?.error || "Location service returned an error.";
+        setLocationError(serverMessage);
         return null;
       }
 
-      const addr = payload?.address || {};
-      const house = addr.house_number || "";
-      const road = addr.road || addr.pedestrian || addr.footway || "";
-      const area = addr.neighbourhood || addr.suburb || addr.city_district || "";
-      const city = addr.city || addr.town || addr.village || "";
-      const pincode = addr.postcode || "";
-      const detailedName = [house, road, area, city, pincode]
-        .filter(Boolean)
-        .join(", ");
-      const fallbackName =
-        payload?.locationName ||
-        payload?.formattedAddress?.label ||
-        [area, city].filter(Boolean).join(", ") ||
-        "Your Location";
-      const locationName = detailedName || fallbackName;
+      if (!payload?.success) {
+        setLocationError(payload?.message || "Unable to resolve location details.");
+        return null;
+      }
 
       return {
-        name: locationName,
-        fullAddress:
-          payload?.display_name ||
-          payload?.formattedAddress?.full ||
-          "Address unavailable",
+        name: payload.locationName,
+        fullAddress: payload.display_name || payload.formattedAddress?.full || "Address unavailable",
         coords: {
-          latitude: payload?.coordinates?.latitude ?? latitude,
-          longitude: payload?.coordinates?.longitude ?? longitude,
-          accuracy: payload?.accuracyMeters ?? Math.round(accuracy),
+          latitude: payload.coordinates?.latitude ?? latitude,
+          longitude: payload.coordinates?.longitude ?? longitude,
+          accuracy: payload.accuracyMeters ?? Math.round(accuracy),
         },
-        raw: addr,
+        raw: payload.address,
       };
     } catch (error) {
       if (error?.name !== "AbortError") {
         console.error("API fetch error:", error);
+        setLocationError("Failed to contact location service.");
       }
       return null;
     }
   };
 
   const detectLocation = async () => {
+    // Geolocation requires a secure context (HTTPS) or localhost
+    if (typeof window !== 'undefined' && !window.isSecureContext) {
+      setLocationError('Geolocation requires a secure context (HTTPS or localhost).');
+      return;
+    }
+
     setIsDetecting(true);
     setLocationError(null);
     setDetectedLocation(null);
     abortControllerRef.current = new AbortController();
 
     try {
-      const position = await getDeliveryGradePosition({
-        targetAccuracy: TARGET_ACCURACY_METERS,
-        acceptableAccuracy: ACCEPTABLE_ACCURACY_METERS,
-        timeoutMs: 15000, // Reduced from 25s
-      });
+      // If permissions are explicitly denied, provide a helpful message early
+      if (navigator.permissions && navigator.permissions.query) {
+        try {
+          const perm = await navigator.permissions.query({ name: 'geolocation' });
+          if (perm.state === 'denied') {
+            setLocationError('Location permission is denied. Please enable location for this site in your browser settings.');
+            return;
+          }
+        } catch (e) {
+          // ignore permission query errors and proceed
+        }
+      }
 
-      const { latitude, longitude, accuracy } = position.coords;
-      const roundedAccuracy = Math.round(accuracy);
+      const position = await getDeliveryGradePosition();
 
-      // Check client-side cache first
+       const { latitude, longitude, accuracy } = position.coords;
+       const roundedAccuracy = Math.round(accuracy);
+
+       if (roundedAccuracy > ACCEPTABLE_ACCURACY_METERS) {
+         setLocationError(
+           `GPS accuracy is ${roundedAccuracy}m. Please move to open sky and retry until it is within ${ACCEPTABLE_ACCURACY_METERS}m.`
+         );
+         return;
+       }
+
       const cached = getCachedLocation(latitude, longitude);
       if (cached) {
         setDetectedLocation(cached);
-        setIsDetecting(false);
         return;
       }
 
-      // Fetch location details
       const locationData = await fetchLocationDetails(latitude, longitude, accuracy);
 
-      if (!locationData) {
-        // Fallback: create basic location from coordinates
-        setLocationError(
-          "Could not fetch location details, but GPS coordinates are accurate."
-        );
-        setDetectedLocation({
-          name: `Lat: ${latitude.toFixed(4)}, Lon: ${longitude.toFixed(4)}`,
-          fullAddress: "Coordinates saved, refine in next step",
-          coords: {
-            latitude,
-            longitude,
-            accuracy: roundedAccuracy,
-          },
-          raw: {},
-        });
-        return;
-      }
+      if (!locationData) return;
 
-      // Cache the result
       setCachedLocation(latitude, longitude, locationData);
       setDetectedLocation(locationData);
 
-      // Store the location in localstorage as key = userLocation
-      //console.log(locationData)
       localStorage.setItem(
-        "userLocation",
+        'userLocation',
         JSON.stringify({
           lat: locationData.coords.latitude,
           lon: locationData.coords.longitude,
@@ -307,21 +311,21 @@ export default function LocationModal() {
           address: locationData.fullAddress,
         })
       );
-
-
     } catch (error) {
       const message =
         error?.code === 1
-          ? "Location permission denied. Please allow location access."
+          ? 'Location permission denied. Please allow location access.'
           : error?.code === 2
-          ? "Location unavailable. Try again after moving to open sky."
+          ? 'Location unavailable. Try again after moving to open sky.'
           : error?.code === 3
-          ? "Location request timed out. Please retry."
-          : error?.message || "Failed to detect location.";
+          ? 'Location request timed out. Please retry.'
+          : error?.message || 'Failed to detect location.';
 
       setLocationError(message);
     } finally {
       setIsDetecting(false);
+      // clear abort controller reference to avoid stale signal reuse
+      abortControllerRef.current = null;
     }
   };
 
@@ -455,4 +459,3 @@ export default function LocationModal() {
     </>
   );
 }
-

@@ -25,8 +25,14 @@ export default function CheckoutPage() {
 
   const [errors, setErrors] = useState({});
   const [isProcessing, setIsProcessing] = useState(false);
+  
+  // Location detection states
+  const [isLocating, setIsLocating] = useState(false);
+  const [locationError, setLocationError] = useState('');
+  
+  // Dynamic ETA state
+  const [deliveryETA, setDeliveryETA] = useState(null);
 
-  // Redirect if cart is empty
   useEffect(() => {
     if (cart.length === 0) {
       router.push('/services/instastyle/catalog');
@@ -63,10 +69,84 @@ export default function CheckoutPage() {
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
-    // Clear error when user starts typing
     if (errors[name]) {
       setErrors(prev => ({ ...prev, [name]: '' }));
     }
+  };
+
+  const handleDetectLocation = () => {
+    if (!navigator.geolocation) {
+      setLocationError('Geolocation is not supported by your browser.');
+      return;
+    }
+
+    setIsLocating(true);
+    setLocationError('');
+
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        const { latitude, longitude, accuracy } = position.coords;
+
+        try {
+          // Execute API calls concurrently to optimize loading time
+          const [locationResponse, darkStoreResponse] = await Promise.all([
+            fetch('/api/location', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ latitude, longitude, accuracy }),
+            }),
+            fetch('/api/darkstore', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ latitude, longitude }),
+            })
+          ]);
+
+          const locationData = await locationResponse.json();
+          const storeData = await darkStoreResponse.json();
+
+          if (!locationResponse.ok) {
+            throw new Error(locationData.message || 'Failed to detect location.');
+          }
+
+          // Handle Address Autofill
+          if (locationData.success && locationData.formattedAddress) {
+            const addr = locationData.formattedAddress;
+            setFormData(prev => ({
+              ...prev,
+              addressLine1: [addr.houseNumber, addr.road].filter(Boolean).join(', ') || addr.area || '',
+              addressLine2: addr.area || '',
+              city: addr.city || '',
+              state: addr.state || '',
+              pincode: addr.postalCode || '',
+            }));
+
+            setErrors(prev => ({
+              ...prev,
+              addressLine1: '',
+              city: '',
+              state: '',
+              pincode: ''
+            }));
+          }
+
+          // Handle Dynamic ETA
+          if (storeData.success && storeData.eta_minutes) {
+            setDeliveryETA(storeData.eta_minutes);
+          }
+
+        } catch (error) {
+          setLocationError(error.message);
+        } finally {
+          setIsLocating(false);
+        }
+      },
+      (error) => {
+        setLocationError(error.message);
+        setIsLocating(false);
+      },
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 } 
+    );
   };
 
   const handleSubmit = async (e) => {
@@ -78,17 +158,16 @@ export default function CheckoutPage() {
 
     setIsProcessing(true);
 
-    // Place order via context
     const order = placeOrder({
       total,
       subtotal,
       tax,
       deliveryFee,
       address: formData,
-      paymentMethod: formData.paymentMethod
+      paymentMethod: formData.paymentMethod,
+      eta: deliveryETA // Optional: Passing the ETA to the order payload
     });
 
-    // Simulate order processing
     setTimeout(() => {
       setIsProcessing(false);
       router.push(`/services/instastyle/order-tracking?id=${order.id}`);
@@ -122,10 +201,8 @@ export default function CheckoutPage() {
         <h1 className={styles.pageTitle}>Secure Checkout</h1>
 
         <div className={styles.checkoutGrid}>
-          {/* Left: Forms */}
           <div className={styles.formsSection}>
             <form onSubmit={handleSubmit}>
-              {/* Contact Information */}
               <section className={styles.section}>
                 <h2 className={styles.sectionTitle}>Contact Information</h2>
                 
@@ -140,9 +217,7 @@ export default function CheckoutPage() {
                       onChange={handleInputChange}
                       className={errors.fullName ? styles.error : ''}
                     />
-                    {errors.fullName && (
-                      <span className={styles.errorText}>{errors.fullName}</span>
-                    )}
+                    {errors.fullName && <span className={styles.errorText}>{errors.fullName}</span>}
                   </div>
 
                   <div className={styles.formGroup}>
@@ -156,9 +231,7 @@ export default function CheckoutPage() {
                       placeholder="10-digit mobile number"
                       className={errors.phone ? styles.error : ''}
                     />
-                    {errors.phone && (
-                      <span className={styles.errorText}>{errors.phone}</span>
-                    )}
+                    {errors.phone && <span className={styles.errorText}>{errors.phone}</span>}
                   </div>
 
                   <div className={`${styles.formGroup} ${styles.fullWidth}`}>
@@ -171,17 +244,30 @@ export default function CheckoutPage() {
                       onChange={handleInputChange}
                       className={errors.email ? styles.error : ''}
                     />
-                    {errors.email && (
-                      <span className={styles.errorText}>{errors.email}</span>
-                    )}
+                    {errors.email && <span className={styles.errorText}>{errors.email}</span>}
                   </div>
                 </div>
               </section>
 
-              {/* Delivery Address */}
               <section className={styles.section}>
-                <h2 className={styles.sectionTitle}>Delivery Address</h2>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+                  <h2 className={styles.sectionTitle} style={{ margin: 0 }}>Delivery Address</h2>
+                  <button 
+                    type="button" 
+                    onClick={handleDetectLocation} 
+                    disabled={isLocating}
+                    style={{ padding: '8px 16px', cursor: 'pointer', backgroundColor: '#000', color: '#fff', border: 'none', borderRadius: '4px' }}
+                  >
+                    {isLocating ? 'Locating & Calculating ETA...' : '📍 Detect My Location'}
+                  </button>
+                </div>
                 
+                {locationError && (
+                  <div style={{ color: 'red', marginBottom: '1rem', fontSize: '0.875rem' }}>
+                    {locationError}
+                  </div>
+                )}
+
                 <div className={styles.formGrid}>
                   <div className={`${styles.formGroup} ${styles.fullWidth}`}>
                     <label htmlFor="addressLine1">Address Line 1 *</label>
@@ -194,9 +280,7 @@ export default function CheckoutPage() {
                       placeholder="House No., Building Name"
                       className={errors.addressLine1 ? styles.error : ''}
                     />
-                    {errors.addressLine1 && (
-                      <span className={styles.errorText}>{errors.addressLine1}</span>
-                    )}
+                    {errors.addressLine1 && <span className={styles.errorText}>{errors.addressLine1}</span>}
                   </div>
 
                   <div className={`${styles.formGroup} ${styles.fullWidth}`}>
@@ -232,9 +316,7 @@ export default function CheckoutPage() {
                       onChange={handleInputChange}
                       className={errors.city ? styles.error : ''}
                     />
-                    {errors.city && (
-                      <span className={styles.errorText}>{errors.city}</span>
-                    )}
+                    {errors.city && <span className={styles.errorText}>{errors.city}</span>}
                   </div>
 
                   <div className={styles.formGroup}>
@@ -255,9 +337,7 @@ export default function CheckoutPage() {
                       <option value="Rajasthan">Rajasthan</option>
                       <option value="Uttar Pradesh">Uttar Pradesh</option>
                     </select>
-                    {errors.state && (
-                      <span className={styles.errorText}>{errors.state}</span>
-                    )}
+                    {errors.state && <span className={styles.errorText}>{errors.state}</span>}
                   </div>
 
                   <div className={styles.formGroup}>
@@ -271,14 +351,11 @@ export default function CheckoutPage() {
                       placeholder="6-digit pincode"
                       className={errors.pincode ? styles.error : ''}
                     />
-                    {errors.pincode && (
-                      <span className={styles.errorText}>{errors.pincode}</span>
-                    )}
+                    {errors.pincode && <span className={styles.errorText}>{errors.pincode}</span>}
                   </div>
                 </div>
               </section>
 
-              {/* Payment Method */}
               <section className={styles.section}>
                 <h2 className={styles.sectionTitle}>Payment Method</h2>
                 
@@ -313,7 +390,6 @@ export default function CheckoutPage() {
                 </div>
               </section>
 
-              {/* Submit Button */}
               <button
                 type="submit"
                 className={styles.placeOrderBtn}
@@ -324,12 +400,10 @@ export default function CheckoutPage() {
             </form>
           </div>
 
-          {/* Right: Order Summary */}
           <div className={styles.summarySection}>
             <div className={styles.summarySticky}>
               <h2 className={styles.summaryTitle}>Order Summary</h2>
 
-              {/* Items */}
               <div className={styles.summaryItems}>
                 {cart.map((item) => (
                   <div key={`${item.id}-${item.selectedSize}-${item.selectedColor}`} className={styles.summaryItem}>
@@ -355,7 +429,6 @@ export default function CheckoutPage() {
                 ))}
               </div>
 
-              {/* Totals */}
               <div className={styles.summaryTotals}>
                 <div className={styles.totalRow}>
                   <span>Subtotal</span>
@@ -377,10 +450,13 @@ export default function CheckoutPage() {
                 </div>
               </div>
 
-              {/* Delivery Info */}
               <div className={styles.deliveryInfo}>
                 <div className={styles.deliveryDot} />
-                <span>Express Delivery in 15-20 minutes</span>
+                <span>
+                  {deliveryETA 
+                    ? `Express Delivery in ${deliveryETA} minutes` 
+                    : 'Express Delivery in 15-20 minutes'}
+                </span>
               </div>
             </div>
           </div>
