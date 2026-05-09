@@ -634,6 +634,175 @@ const faqSchema = {
     "text": "Accesco Living focuses on reliable order fulfillment with live tracking and optimized logistics support."
   }
 }
+,
+{
+  "@type": "Question",
+  "name": "Why are early users excited about Accesco Living?",
+  "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "Because they are getting early access to a platform that aims to redefine commerce beyond traditional delivery apps."
+  }
+},
+{
+  "@type": "Question",
+  "name": "What does joining the beta phase of Accesco Living mean?",
+  "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "Beta users become part of the early community helping shape the future of the platform through feedback and real usage."
+  }
+},
+{
+  "@type": "Question",
+  "name": "Why is the Accesco Living beta launch limited?",
+  "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "A limited beta helps us ensure quality, gather focused feedback, and improve the experience before scaling."
+  }
+},
+{
+  "@type": "Question",
+  "name": "What is the ultimate vision of Accesco Living?",
+  "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "To create a smarter, more affordable, sustainable, and integrated commerce ecosystem that improves everyday life."
+  }
+},
+{
+  "@type": "Question",
+  "name": "What would shopping look like in the future with intelligent commerce?",
+  "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "Shopping could become more predictive, personalized, affordable, sustainable, and deeply integrated into daily life."
+  }
+},
+{
+  "@type": "Question",
+  "name": "Is Accesco Living building the super app model for India?",
+  "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "Our vision is to create an integrated ecosystem where multiple essential services work together seamlessly in one platform."
+  }
+},
+{
+  "@type": "Question",
+  "name": "Does Accesco Living collaborate with UGC creators and influencers?",
+  "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "Yes. We work with creators and communities to build authentic and relatable brand engagement."
+  }
+},
+{
+  "@type": "Question",
+  "name": "How does Accesco Living support local businesses and farmers?",
+  "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "By building direct sourcing networks and partnerships, we aim to create opportunities for local suppliers and producers."
+  }
+},
+{
+  "@type": "Question",
+  "name": "How does Accesco Living maintain delivery speed without compromising quality?",
+  "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "We focus on operational efficiency, smart logistics, and technology-driven management systems."
+  }
+},
+{
+  "@type": "Question",
+  "name": "What happens if an order gets delayed or cancelled?",
+  "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "Our support system aims to keep users informed with updates and provide quick resolutions whenever issues occur."
+  }
+},
+{
+  "@type": "Question",
+  "name": "What Is Accesco Living and Why Is It Different?",
+  "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "Accesco Living is an AI-powered smart living platform that brings groceries, food, fashion, and household management into one seamless experience, eliminating the need for multiple apps."
+  }
+},
+{
+  "@type": "Question",
+  "name": "How Does Accesco Living Make Daily Life Easier?",
+  "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "From smart grocery delivery to AI expense tracking, Accesco Living simplifies everyday tasks through intelligent automation, personalized recommendations, and hyperlocal convenience."
+  }
+},
+{
+  "@type": "Question",
+  "name": "Why Is Accesco Living Called an Intelligent Commerce Platform?",
+  "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "Accesco Living uses AI-powered technology to predict household needs, improve shopping experiences, and create a smarter, faster, and more connected lifestyle ecosystem."
+  }
+},
+{
+  "@type": "Question",
+  "name": "Can Accesco Living Help Users Save Time and Money?",
+  "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "Yes. With predictive grocery shopping, smart budgeting tools, and AI-driven household management, Accesco Living helps families reduce unnecessary spending and manage daily life more efficiently."
+  }
+},
+{
+  "@type": "Question",
+  "name": "How Is Accesco Living Redefining Smart Living in India?",
+  "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "By combining quick commerce, AI-powered services, hyperlocal delivery, and intelligent lifestyle management, Accesco Living is shaping the future of connected living for modern Indian households."
+  }
+},
+{
+  "@type": "Question",
+  "name": "What is the future of Accesco Living?",
+  "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "We aim to be the first Zero-Waste Lifestyle OS. From the food you eat to the clothes you wear and the way you track your money, Accesco is building a unified, circular future for the modern Indian city."
+  }
+},
+{
+  "@type": "Question",
+  "name": "What is the core philosophy behind Accesco Living?",
+  "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "Our philosophy is Integrated Urban Wellness. We believe convenience shouldn't be fragmented or wasteful. By combining Grokly, Swadishtt, and InstaStyle, we create a single point of contact for a resident's essential needs, governed by a circular economy model."
+  }
+},
+{
+  "@type": "Question",
+  "name": "How does the Direct-from-Farm model impact the Bangalore supply chain?",
+  "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "It eliminates the middleman. By sourcing directly for our Grokly service, we reduce the carbon footprint and ensure farmers get a fairer share. Delivering in 22 minutes ensures the produce is live and hasn't wilted in a suburban warehouse."
+  }
+},
+{
+  "@type": "Question",
+  "name": "Can a delivery app really improve financial health?",
+  "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "Yes, through transparency. Our Xpense Meter provides a granular breakdown of consumption. When you see exactly how much is spent on perishables versus fashion, you become a more conscious consumer."
+  }
+},
+{
+  "@type": "Question",
+  "name": "How does Swadishtt tackle the plastic waste problem?",
+  "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "We’ve replaced single-use plastic with Reusable Asset Containers. These are food-grade, high-durability containers that we pick up during your next delivery. It’s a zero-waste loop that keeps Bangalore’s streets cleaner."
+  }
+},
+{
+  "@type": "Question",
+  "name": "What makes InstaStyle different from typical e-commerce?",
+  "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "Logistics. Because our riders are already in your neighborhood for groceries and food, fashion returns or rotations become zero-cost movements. It makes sustainable fashion as convenient as fast fashion."
+  }
+}
   ]
 };
 
