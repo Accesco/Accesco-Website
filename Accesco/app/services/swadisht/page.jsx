@@ -13,96 +13,17 @@ import SwadishttHeader from './components/SwadishttHeader';
 import { RESTAURANTS, filterRestaurants } from './lib/swadishttData';
 import { SwadishttHero } from '../../../components/HeroBanners';
 import styles from './styles/swadisht-main.module.css';
+import CategorySection from './components/CategorySection';
 
 // Hero Section Component
 function HeroSection() {
   const [activeTab, setActiveTab] = useState('delivery');
   
-  return (
-    <div className={styles.hero}>
-      <div className={styles.heroContent}>
-        <div className={styles.heroText}>
-          <h1 className={styles.heroTitle}>
-            Swadishtt
-          </h1>
-          <p className={styles.heroSubtitle}>
-            Discover restaurants delivering to you
-          </p>
-        </div>
-        
-        {/* Zomato-style Tabs */}
-        <div className={styles.heroTabs}>
-          <Link 
-            href="/services/swadisht" 
-            className={`${styles.heroTab} ${activeTab === 'delivery' ? styles.active : ''}`}
-            onClick={() => setActiveTab('delivery')}
-          >
-            <div className={styles.tabIcon}>
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
-              </svg>
-            </div>
-            <span className={styles.tabLabel}>Delivery</span>
-          </Link>
-          
-          <Link 
-            href="/services/swadisht/swipe-eat" 
-            className={`${styles.heroTab} ${activeTab === 'swipe' ? styles.active : ''}`}
-            onClick={() => setActiveTab('swipe')}
-          >
-            <div className={styles.tabIcon}>
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M12 2L2 7l10 5 10-5-10-5z"/>
-                <path d="M2 17l10 5 10-5M2 12l10 5 10-5"/>
-              </svg>
-            </div>
-            <span className={styles.tabLabel}>SwipeEat</span>
-          </Link>
-          
-          <Link 
-            href="/services/swadisht/thali-engine" 
-            className={`${styles.heroTab} ${activeTab === 'thali' ? styles.active : ''}`}
-            onClick={() => setActiveTab('thali')}
-          >
-            <div className={styles.tabIcon}>
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <circle cx="12" cy="12" r="10"/>
-                <path d="M12 6v6l4 2"/>
-              </svg>
-            </div>
-            <span className={styles.tabLabel}>Thali Engine</span>
-          </Link>
-          
-          <Link 
-            href="/services/swadisht/healthy-mode" 
-            className={`${styles.heroTab} ${activeTab === 'healthy' ? styles.active : ''}`}
-            onClick={() => setActiveTab('healthy')}
-          >
-            <div className={styles.tabIcon}>
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
-              </svg>
-            </div>
-            <span className={styles.tabLabel}>Healthy Mode</span>
-          </Link>
-          
-          <Link 
-            href="/services/swadisht/regional-soul" 
-            className={`${styles.heroTab} ${activeTab === 'regional' ? styles.active : ''}`}
-            onClick={() => setActiveTab('regional')}
-          >
-            <div className={styles.tabIcon}>
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
-                <circle cx="12" cy="10" r="3"/>
-              </svg>
-            </div>
-            <span className={styles.tabLabel}>Regional Soul</span>
-          </Link>
-        </div>
-      </div>
-    </div>
-  );
+ return (
+  <div className={styles.hero}>
+
+  </div>
+);
 }
 
 // Filter Bar Component
@@ -310,7 +231,8 @@ export default function SwadishttPage() {
         <SwadishttHero />
         <SwadishttHeader />
         <div className={styles.pageContent}>
-          <HeroSection />
+          <CategorySection />
+          <HeroSection />           
           <MainContent />
         </div>
       </div>

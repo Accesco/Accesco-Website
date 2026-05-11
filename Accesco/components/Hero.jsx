@@ -37,10 +37,22 @@ export default function Hero() {
           width: 100%;
           height: 100%;
           object-fit: cover;
-          opacity: 0.8;
+          opacity: 0.65;
           z-index: 0;
         }
-
+.hero::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(
+      to bottom,
+      rgba(0,0,0,0.45),
+      rgba(0,0,0,0.22),
+      rgba(0,0,0,0.62)
+    );
+  z-index: 1;
+}
         .hero-grid {
           position: relative;
           z-index: 2;
@@ -62,37 +74,37 @@ export default function Hero() {
           filter: drop-shadow(0 10px 30px rgba(255, 255, 255, 0.3));
           margin-bottom: clamp(10px, 2vh, 20px);
         }
-
-        .hero-title {
-          font-size: clamp(32px, 6vw, 72px);
-          font-weight: 900;
-          margin-bottom: 8px;
-          letter-spacing: -1.5px;
-          line-height: 1.1;
-        }
+.hero-title {
+  font-size: clamp(42px, 7vw, 88px);
+  font-weight: 900;
+  margin-bottom: 14px;
+  letter-spacing: -0.06em;
+  line-height: 0.95;
+  text-shadow:
+    0 6px 30px rgba(0,0,0,0.45),
+    0 2px 10px rgba(0,0,0,0.35);
+}
 
         .hero-kicker {
-          display: block;
-          color: #fff;
-          font-weight: 800;
-          letter-spacing: -0.3px;
-          text-transform: none;
-          font-size: clamp(20px, 4.5vw, 36px);
-          line-height: 1.2;
-          text-align: center;
-          margin-bottom: clamp(12px, 2vh, 16px);
-          background: transparent;
-          text-shadow: none;
-        }
-
-        .hero-sub {
-          font-size: clamp(14px, 2.5vw, 20px);
-          max-width: 700px;
-          line-height: 1.4;
-          color: rgba(255, 255, 255, 0.95);
-          margin: 0 auto clamp(20px, 3vh, 32px);
-        }
-
+  display: block;
+  color: rgba(255,255,255,0.95);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  text-transform: none;
+  font-size: clamp(22px, 4vw, 38px);
+  line-height: 1.15;
+  text-align: center;
+  margin-bottom: 20px;
+  text-shadow: 0 4px 20px rgba(0,0,0,0.35);
+}
+       .hero-sub {
+  margin-top: 26px;
+  font-size: 0.9rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.72);
+  font-weight: 600;
+} 
         .hero-action-group {
           display: flex;
           flex-direction: column;
@@ -236,9 +248,9 @@ export default function Hero() {
           India&apos;s #1 Intelligent Circular Commerce Ecosystem
         </div>
 
-        <p className="hero-sub" style={{ fontSize: 'clamp(0.85rem, 1.8vh, 1.15rem)', maxWidth: '600px', margin: '0 auto 15px', lineHeight: 1.4 }}>
-          Delivering Groceries, Food, Fashion, and Financial Intelligence — all under one unified platform
-        </p>
+        <div className="hero-sub">
+  Groceries • Food • Fashion • Financial Intelligence
+</div>
 
         <div className="hero-action-group">
           <div className="hero-ctas">

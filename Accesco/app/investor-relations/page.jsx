@@ -254,12 +254,26 @@ export default function HomePage() {
               <strong>Email:</strong> info@accescoliving.com 
             </p>
             <p>
-              <strong>Phone:</strong> +91 9022217637
+              <strong>Phone:</strong> +919972706940
             </p>
             <p>
               <strong>Address:</strong> Accesco living,Jaladarshini Layout, Bengaluru -560094, Karnataka, India
             </p>
+            <p>
+  <strong>GSTIN:</strong> 19ABECA4405B1Z6
+</p>
+<p className="business-card-link">
+  <a
+    href="/accesco-business-card.pdf"
+    target="_blank"
+    rel="noopener noreferrer"
+  >
+    Download Digital Business Card
+  </a>
+</p>
+
           </div>
+
         </div>
       </section>
 
