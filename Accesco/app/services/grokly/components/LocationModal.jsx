@@ -5,7 +5,7 @@
 
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import {
   MapPin,
   Search,
@@ -172,6 +172,7 @@ export default function LocationModal() {
   const [detectedLocation, setDetectedLocation] = useState(null);
   const [locationError, setLocationError] = useState(null);
   const abortControllerRef = useRef(null);
+  const autoDetectAttemptedRef = useRef(false);
 
   // Clean up any pending location fetch when the component unmounts
   useEffect(() => {
@@ -204,7 +205,7 @@ export default function LocationModal() {
       loc.area.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const fetchLocationDetails = async (latitude, longitude, accuracy) => {
+  const fetchLocationDetails = useCallback(async (latitude, longitude, accuracy) => {
     try {
       const response = await fetch("/api/location", {
         method: "POST",
@@ -226,20 +227,28 @@ export default function LocationModal() {
         return null;
       }
 
-      if (!payload?.success) {
-        setLocationError(payload?.message || "Unable to resolve location details.");
-        return null;
-      }
+      const resolvedName =
+        payload?.displayAddress ||
+        payload?.city ||
+        payload?.state ||
+        payload?.fullAddress ||
+        "Detected Location";
+
+      const resolvedAddress =
+        payload?.formattedAddress ||
+        payload?.fullAddress ||
+        payload?.displayAddress ||
+        "Address unavailable";
 
       return {
-        name: payload.locationName,
-        fullAddress: payload.display_name || payload.formattedAddress?.full || "Address unavailable",
+        name: resolvedName,
+        fullAddress: resolvedAddress,
         coords: {
-          latitude: payload.coordinates?.latitude ?? latitude,
-          longitude: payload.coordinates?.longitude ?? longitude,
-          accuracy: payload.accuracyMeters ?? Math.round(accuracy),
+          latitude: payload?.latitude ?? latitude,
+          longitude: payload?.longitude ?? longitude,
+          accuracy: Math.round(accuracy),
         },
-        raw: payload.address,
+        raw: payload,
       };
     } catch (error) {
       if (error?.name !== "AbortError") {
@@ -248,12 +257,12 @@ export default function LocationModal() {
       }
       return null;
     }
-  };
+  }, []);
 
-  const detectLocation = async () => {
+  const detectLocation = useCallback(async ({ autoSelect = false } = {}) => {
     // Geolocation requires a secure context (HTTPS) or localhost
-    if (typeof window !== 'undefined' && !window.isSecureContext) {
-      setLocationError('Geolocation requires a secure context (HTTPS or localhost).');
+    if (typeof window !== "undefined" && !window.isSecureContext) {
+      setLocationError("Geolocation requires a secure context (HTTPS or localhost).");
       return;
     }
 
@@ -266,9 +275,11 @@ export default function LocationModal() {
       // If permissions are explicitly denied, provide a helpful message early
       if (navigator.permissions && navigator.permissions.query) {
         try {
-          const perm = await navigator.permissions.query({ name: 'geolocation' });
-          if (perm.state === 'denied') {
-            setLocationError('Location permission is denied. Please enable location for this site in your browser settings.');
+          const perm = await navigator.permissions.query({ name: "geolocation" });
+          if (perm.state === "denied") {
+            setLocationError(
+              "Location permission is denied. Please enable location for this site in your browser settings."
+            );
             return;
           }
         } catch (e) {
@@ -280,17 +291,23 @@ export default function LocationModal() {
 
        const { latitude, longitude, accuracy } = position.coords;
        const roundedAccuracy = Math.round(accuracy);
+       const hasFiniteAccuracy = Number.isFinite(roundedAccuracy);
+       const isAccuracyAcceptable = !hasFiniteAccuracy || roundedAccuracy <= ACCEPTABLE_ACCURACY_METERS;
 
-       if (roundedAccuracy > ACCEPTABLE_ACCURACY_METERS) {
+       if (hasFiniteAccuracy && roundedAccuracy > ACCEPTABLE_ACCURACY_METERS) {
+         // Don't hard-fail: still resolve an address, but avoid auto-selecting/storing unreliable locations.
          setLocationError(
-           `GPS accuracy is ${roundedAccuracy}m. Please move to open sky and retry until it is within ${ACCEPTABLE_ACCURACY_METERS}m.`
+           `GPS accuracy is ${roundedAccuracy}m. We'll still try to detect your area, but for best results move to open sky and retry (target ≤ ${ACCEPTABLE_ACCURACY_METERS}m).`
          );
-         return;
        }
 
       const cached = getCachedLocation(latitude, longitude);
       if (cached) {
         setDetectedLocation(cached);
+        if (autoSelect && isAccuracyAcceptable) {
+          updateLocation(cached.name);
+          closeLocationModal();
+        }
         return;
       }
 
@@ -300,26 +317,41 @@ export default function LocationModal() {
 
       setCachedLocation(latitude, longitude, locationData);
       setDetectedLocation(locationData);
+      if (autoSelect && isAccuracyAcceptable) {
+        updateLocation(locationData.name);
+        closeLocationModal();
+      }
 
-      localStorage.setItem(
-        'userLocation',
-        JSON.stringify({
-          lat: locationData.coords.latitude,
-          lon: locationData.coords.longitude,
-          accuracy: locationData.coords.accuracy,
-          name: locationData.name,
-          address: locationData.fullAddress,
-        })
-      );
+      const rawPayload =
+        locationData?.raw && typeof locationData.raw === "object" ? locationData.raw : {};
+
+      if (isAccuracyAcceptable) {
+        localStorage.setItem(
+          "userLocation",
+          JSON.stringify({
+            ...rawPayload,
+            latitude: rawPayload?.latitude ?? locationData.coords.latitude,
+            longitude: rawPayload?.longitude ?? locationData.coords.longitude,
+            // backward compatibility with existing Grokly usages
+            lat: locationData.coords.latitude,
+            lon: locationData.coords.longitude,
+            fullAddress: rawPayload?.fullAddress || locationData.fullAddress,
+            formattedAddress: rawPayload?.formattedAddress || locationData.fullAddress,
+            displayAddress: rawPayload?.displayAddress || locationData.name,
+            gpsAccuracyMeters: locationData.coords.accuracy,
+            timestamp: rawPayload?.timestamp || new Date().toISOString(),
+          })
+        );
+      }
     } catch (error) {
       const message =
         error?.code === 1
-          ? 'Location permission denied. Please allow location access.'
+          ? "Location permission denied. Please allow location access."
           : error?.code === 2
-          ? 'Location unavailable. Try again after moving to open sky.'
+          ? "Location unavailable. Try again after moving to open sky."
           : error?.code === 3
-          ? 'Location request timed out. Please retry.'
-          : error?.message || 'Failed to detect location.';
+          ? "Location request timed out. Please retry."
+          : error?.message || "Failed to detect location.";
 
       setLocationError(message);
     } finally {
@@ -327,15 +359,130 @@ export default function LocationModal() {
       // clear abort controller reference to avoid stale signal reuse
       abortControllerRef.current = null;
     }
-  };
+  }, [closeLocationModal, fetchLocationDetails, updateLocation]);
+
+  useEffect(() => {
+    if (!isLocationModalOpen) {
+      autoDetectAttemptedRef.current = false;
+      return;
+    }
+
+    try {
+      const stored = localStorage.getItem("userLocation");
+      if (stored) {
+        let parsed = null;
+        try {
+          parsed = JSON.parse(stored);
+        } catch (e) {
+          // backward compatibility: allow plain string storage
+          setDetectedLocation({
+            name: stored,
+            fullAddress: stored,
+            coords: {
+              latitude: undefined,
+              longitude: undefined,
+              accuracy: undefined,
+            },
+          });
+          return;
+        }
+        const storedName =
+          parsed?.displayAddress ||
+          (parsed?.city
+            ? `${parsed.city}${parsed?.state || parsed?.region ? `, ${parsed.state || parsed.region}` : ""}`
+            : "") ||
+          parsed?.name ||
+          parsed?.address ||
+          parsed?.fullAddress;
+
+        const storedAddress =
+          (typeof parsed?.formattedAddress === "string" && parsed.formattedAddress) ||
+          parsed?.formattedAddress?.label ||
+          parsed?.fullAddress ||
+          parsed?.address ||
+          parsed?.displayAddress ||
+          "Address unavailable";
+
+        const storedLatitude = parsed?.latitude ?? parsed?.lat;
+        const storedLongitude = parsed?.longitude ?? parsed?.lon;
+        const storedAccuracy =
+          parsed?.gpsAccuracyMeters ??
+          parsed?.accuracyMeters ??
+          parsed?.accuracy;
+
+        if (storedName) {
+          setDetectedLocation({
+            name: storedName,
+            fullAddress: storedAddress,
+            coords: {
+              latitude: storedLatitude,
+              longitude: storedLongitude,
+              accuracy: Number.isFinite(Number(storedAccuracy))
+                ? Math.round(Number(storedAccuracy))
+                : undefined,
+            },
+          });
+          return;
+        }
+      }
+    } catch (e) {
+      // ignore malformed storage
+    }
+
+    if (autoDetectAttemptedRef.current) return;
+    autoDetectAttemptedRef.current = true;
+    detectLocation({ autoSelect: true });
+  }, [detectLocation, isLocationModalOpen]);
 
   const handleUseDetectedLocation = () => {
     if (!detectedLocation) return;
+
+    try {
+      const existing = localStorage.getItem("userLocation");
+      let parsedExisting = null;
+      try {
+        parsedExisting = existing ? JSON.parse(existing) : null;
+      } catch (e) {
+        parsedExisting = null;
+      }
+
+      const merged = {
+        ...(parsedExisting && typeof parsedExisting === "object" ? parsedExisting : {}),
+        displayAddress: detectedLocation.name,
+        fullAddress: detectedLocation.fullAddress || detectedLocation.name,
+        formattedAddress: detectedLocation.fullAddress || detectedLocation.name,
+        latitude: detectedLocation?.coords?.latitude,
+        longitude: detectedLocation?.coords?.longitude,
+        lat: detectedLocation?.coords?.latitude,
+        lon: detectedLocation?.coords?.longitude,
+        gpsAccuracyMeters: detectedLocation?.coords?.accuracy,
+        timestamp: new Date().toISOString(),
+      };
+
+      localStorage.setItem("userLocation", JSON.stringify(merged));
+    } catch (e) {
+      // ignore storage errors
+    }
+
     updateLocation(detectedLocation.name);
     closeLocationModal();
   };
 
   const handleSelectLocation = (locationName) => {
+    try {
+      localStorage.setItem(
+        "userLocation",
+        JSON.stringify({
+          displayAddress: locationName,
+          fullAddress: locationName,
+          formattedAddress: locationName,
+          name: locationName,
+          timestamp: new Date().toISOString(),
+        })
+      );
+    } catch (e) {
+      // ignore storage errors
+    }
     updateLocation(locationName);
     closeLocationModal();
   };
@@ -397,7 +544,10 @@ export default function LocationModal() {
               <Navigation className={styles.detectedIcon} size={20} aria-hidden="true" />
               <div className={styles.detectedText}>
                 <div className={styles.detectedLabel}>
-                  Detected Location ({detectedLocation.coords.accuracy}m)
+                  Detected Location
+                  {Number.isFinite(Number(detectedLocation?.coords?.accuracy))
+                    ? ` (${Math.round(Number(detectedLocation.coords.accuracy))}m)`
+                    : ""}
                 </div>
                 <div className={styles.detectedName}>{detectedLocation.name}</div>
                 <div className={styles.detectedAddress}>{detectedLocation.fullAddress}</div>

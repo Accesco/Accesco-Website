@@ -21,7 +21,7 @@ export default function SwadishttHeader() {
   const [manualArea, setManualArea] = useState('');
   const [manualCity, setManualCity] = useState('');
 
-  const { location, updateLocation, getCartCount, searchQuery, setSearchQuery } = useSwadishtt();
+  const { location, updateLocation, detectLocation, getCartCount, searchQuery, setSearchQuery } = useSwadishtt();
   
   const cartCount = getCartCount();
 
@@ -102,62 +102,21 @@ export default function SwadishttHeader() {
                     <button
                       className={styles.locationItem}
                       onClick={() => {
-                        if (navigator.geolocation) {
-                          setDetectingLocation(true);
-                          navigator.geolocation.getCurrentPosition(
-                            async (position) => {
-                              const { latitude, longitude, accuracy } = position.coords;
-                              try {
-                                const response = await fetch('/api/location', {
-                                  method: 'POST',
-                                  headers: { 'Content-Type': 'application/json' },
-                                  body: JSON.stringify({ latitude, longitude, accuracy }),
-                                });
-                                
-                                const data = await response.json();
-                                
-                                if (!response.ok || !data.success) {
-                                  throw new Error(data.message || 'Location API returned an error.');
-                                }
-                                
-                                const addr = data.formattedAddress || {};
-                                
-                                const area = addr.area || addr.road || 'Location';
-                                const city = addr.city || addr.state || 'Detected';
-                                
-                                updateLocation({ 
-                                  area, 
-                                  city, 
-                                  coordinates: { lat: latitude, lng: longitude }
-                                });
-                                
-                                setLocationDropdown(false);
-                              } catch (error) {
-                                console.error('Error fetching from /api/location:', error);
-                                updateLocation({ 
-                                  area: `${latitude.toFixed(4)}°`, 
-                                  city: `${longitude.toFixed(4)}°`,
-                                  coordinates: { lat: latitude, lng: longitude }
-                                });
-                                setLocationDropdown(false);
-                              } finally {
-                                setDetectingLocation(false);
-                              }
-                            },
-                            (error) => {
-                              console.error('Geolocation error:', error);
-                              setDetectingLocation(false);
-                              alert('Unable to access your location. Please check browser permissions and try again, or enter manually.');
-                            },
-                            {
-                              enableHighAccuracy: true,
-                              timeout: 10000,
-                              maximumAge: 0
-                            }
-                          );
-                        } else {
-                          alert('Geolocation is not supported by your browser. Please enter location manually.');
-                        }
+                        setDetectingLocation(true);
+                        detectLocation()
+                          .then(() => {
+                            setLocationDropdown(false);
+                          })
+                          .catch((error) => {
+                            console.error('Error detecting location:', error);
+                            alert(
+                              error?.message ||
+                                'Unable to access your location. Please check browser permissions and try again, or enter manually.'
+                            );
+                          })
+                          .finally(() => {
+                            setDetectingLocation(false);
+                          });
                       }}
                       disabled={detectingLocation}
                     >
@@ -168,7 +127,7 @@ export default function SwadishttHeader() {
                         <div className={styles.locationItemArea}>
                           {detectingLocation ? 'Detecting...' : 'Use Current Location'}
                         </div>
-                        <div className={styles.locationItemCity}>
+                        <div className={styles.locationItemCity}> 
                           {detectingLocation ? 'Please wait' : 'Detect automatically'}
                         </div>
                       </div>
