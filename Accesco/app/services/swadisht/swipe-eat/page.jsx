@@ -8,7 +8,7 @@
 
 import { useState, useRef } from 'react';
 import Link from 'next/link';
-import { SwadishttProvider, useSwadishtt } from '../contexts/SwadishttContext';
+import { useSwadishtt } from '../contexts/SwadishttContext';
 import SwadishttHeader from '../components/SwadishttHeader';
 import styles from './swipe-eat.module.css';
 
@@ -291,9 +291,5 @@ function SwipeEatContent() {
 }
 
 export default function SwipeEatPage() {
-  return (
-    <SwadishttProvider>
-      <SwipeEatContent />
-    </SwadishttProvider>
-  );
+  return <SwipeEatContent />;
 }

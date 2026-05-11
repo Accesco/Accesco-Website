@@ -8,7 +8,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { SwadishttProvider, useSwadishtt } from './contexts/SwadishttContext';
+import { useSwadishtt } from './contexts/SwadishttContext';
 import SwadishttHeader from './components/SwadishttHeader';
 import { RESTAURANTS, filterRestaurants } from './lib/swadishttData';
 import { SwadishttHero } from '../../../components/HeroBanners';
@@ -225,17 +225,15 @@ function MainContent() {
 // Main Page Component
 export default function SwadishttPage() {
   return (
-    <SwadishttProvider>
-      <div className={styles.page}>
-        {/* Premium Brand Hero Banner */}
-        <SwadishttHero />
-        <SwadishttHeader />
-        <div className={styles.pageContent}>
-          <CategorySection />
-          <HeroSection />           
-          <MainContent />
-        </div>
+    <div className={styles.page}>
+      {/* Premium Brand Hero Banner */}
+      <SwadishttHero />
+      <SwadishttHeader />
+      <div className={styles.pageContent}>
+        <CategorySection />
+        <HeroSection />           
+        <MainContent />
       </div>
-    </SwadishttProvider>
+    </div>
   );
 }

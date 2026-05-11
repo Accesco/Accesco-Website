@@ -8,7 +8,6 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { SwadishttProvider } from '../contexts/SwadishttContext';
 import SwadishttHeader from '../components/SwadishttHeader';
 import styles from './subscription.module.css';
 
@@ -216,65 +215,63 @@ export default function SubscriptionPage() {
   };
 
   return (
-    <SwadishttProvider>
-      <div className={styles.page}>
-        <SwadishttHeader />
-        
-        <div className={styles.hero}>
-          <div className={styles.container}>
-            <h1 className={styles.heroTitle}>Save More with Swadishtt Subscription</h1>
-            <p className={styles.heroSubtitle}>
-              Enjoy exclusive benefits, discounts, and free delivery on every order
-            </p>
-            <div className={styles.heroBadges}>
-              <span className={styles.heroBadge}>💰 Save up to ₹1500/month</span>
-              <span className={styles.heroBadge}>🚚 Free Delivery</span>
-              <span className={styles.heroBadge}>⭐ Exclusive Access</span>
-            </div>
-          </div>
-        </div>
-        
+    <div className={styles.page}>
+      <SwadishttHeader />
+      
+      <div className={styles.hero}>
         <div className={styles.container}>
-          <div className={styles.plansSection}>
-            <h2 className={styles.sectionTitle}>Choose Your Plan</h2>
-            <div className={styles.plansGrid}>
-              {SUBSCRIPTION_PLANS.map(plan => (
-                <PlanCard key={plan.id} plan={plan} onSubscribe={handleSubscribe} />
-              ))}
-            </div>
+          <h1 className={styles.heroTitle}>Save More with Swadishtt Subscription</h1>
+          <p className={styles.heroSubtitle}>
+            Enjoy exclusive benefits, discounts, and free delivery on every order
+          </p>
+          <div className={styles.heroBadges}>
+            <span className={styles.heroBadge}>💰 Save up to ₹1500/month</span>
+            <span className={styles.heroBadge}>🚚 Free Delivery</span>
+            <span className={styles.heroBadge}>⭐ Exclusive Access</span>
           </div>
-          
-          <ComparisonTable />
-          
-          <div className={styles.howItWorks}>
-            <h2 className={styles.sectionTitle}>How It Works</h2>
-            <div className={styles.stepsGrid}>
-              <div className={styles.step}>
-                <div className={styles.stepNumber}>1</div>
-                <h3 className={styles.stepTitle}>Choose a Plan</h3>
-                <p className={styles.stepDesc}>Select the subscription that fits your needs</p>
-              </div>
-              <div className={styles.step}>
-                <div className={styles.stepNumber}>2</div>
-                <h3 className={styles.stepTitle}>Subscribe</h3>
-                <p className={styles.stepDesc}>Complete payment and activate instantly</p>
-              </div>
-              <div className={styles.step}>
-                <div className={styles.stepNumber}>3</div>
-                <h3 className={styles.stepTitle}>Start Saving</h3>
-                <p className={styles.stepDesc}>Enjoy benefits on every order immediately</p>
-              </div>
-              <div className={styles.step}>
-                <div className={styles.stepNumber}>4</div>
-                <h3 className={styles.stepTitle}>Manage Anytime</h3>
-                <p className={styles.stepDesc}>Upgrade, downgrade, or cancel from your account</p>
-              </div>
-            </div>
-          </div>
-          
-          <FAQSection />
         </div>
       </div>
-    </SwadishttProvider>
+      
+      <div className={styles.container}>
+        <div className={styles.plansSection}>
+          <h2 className={styles.sectionTitle}>Choose Your Plan</h2>
+          <div className={styles.plansGrid}>
+            {SUBSCRIPTION_PLANS.map(plan => (
+              <PlanCard key={plan.id} plan={plan} onSubscribe={handleSubscribe} />
+            ))}
+          </div>
+        </div>
+        
+        <ComparisonTable />
+        
+        <div className={styles.howItWorks}>
+          <h2 className={styles.sectionTitle}>How It Works</h2>
+          <div className={styles.stepsGrid}>
+            <div className={styles.step}>
+              <div className={styles.stepNumber}>1</div>
+              <h3 className={styles.stepTitle}>Choose a Plan</h3>
+              <p className={styles.stepDesc}>Select the subscription that fits your needs</p>
+            </div>
+            <div className={styles.step}>
+              <div className={styles.stepNumber}>2</div>
+              <h3 className={styles.stepTitle}>Subscribe</h3>
+              <p className={styles.stepDesc}>Complete payment and activate instantly</p>
+            </div>
+            <div className={styles.step}>
+              <div className={styles.stepNumber}>3</div>
+              <h3 className={styles.stepTitle}>Start Saving</h3>
+              <p className={styles.stepDesc}>Enjoy benefits on every order immediately</p>
+            </div>
+            <div className={styles.step}>
+              <div className={styles.stepNumber}>4</div>
+              <h3 className={styles.stepTitle}>Manage Anytime</h3>
+              <p className={styles.stepDesc}>Upgrade, downgrade, or cancel from your account</p>
+            </div>
+          </div>
+        </div>
+        
+        <FAQSection />
+      </div>
+    </div>
   );
 }

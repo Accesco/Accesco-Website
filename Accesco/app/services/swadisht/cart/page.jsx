@@ -9,7 +9,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { SwadishttProvider, useSwadishtt } from '../contexts/SwadishttContext';
+import { useSwadishtt } from '../contexts/SwadishttContext';
 import SwadishttHeader from '../components/SwadishttHeader';
 import styles from './cart.module.css';
 
@@ -254,9 +254,5 @@ function CartContent() {
 }
 
 export default function CartPage() {
-  return (
-    <SwadishttProvider>
-      <CartContent />
-    </SwadishttProvider>
-  );
+  return <CartContent />;
 }

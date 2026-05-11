@@ -7,7 +7,7 @@
  */
 
 import { useState } from 'react';
-import { SwadishttProvider, useSwadishtt } from '../contexts/SwadishttContext';
+import { useSwadishtt } from '../contexts/SwadishttContext';
 import SwadishttHeader from '../components/SwadishttHeader';
 import styles from './regional-soul.module.css';
 
@@ -217,9 +217,5 @@ function RegionalSoulContent() {
 }
 
 export default function RegionalSoulPage() {
-  return (
-    <SwadishttProvider>
-      <RegionalSoulContent />
-    </SwadishttProvider>
-  );
+  return <RegionalSoulContent />;
 }

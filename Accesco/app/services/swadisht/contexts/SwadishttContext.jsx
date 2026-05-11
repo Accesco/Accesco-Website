@@ -10,6 +10,8 @@ import { createContext, useContext, useState, useEffect, useCallback, useRef } f
 
 const SwadishttContext = createContext(undefined);
 
+const CART_STORAGE_KEY = 'swadishtt-cart';
+
 const TARGET_ACCURACY_METERS = 50;
 const ACCEPTABLE_ACCURACY_METERS = 100;
 const CLIENT_CACHE_DURATION_MS = 10 * 60 * 1000; // 10 minutes
@@ -275,6 +277,7 @@ export function SwadishttProvider({ children }) {
   // Cart State
   const [cart, setCart] = useState([]);
   const [cartOpen, setCartOpen] = useState(false);
+  const [cartHydrated, setCartHydrated] = useState(false);
 
   // User State
   const [user, setUser] = useState(null);
@@ -526,20 +529,37 @@ export function SwadishttProvider({ children }) {
 
   // Load cart from localStorage
   useEffect(() => {
-    const savedCart = localStorage.getItem('swadishtt-cart');
-    if (savedCart) {
-      try {
-        setCart(JSON.parse(savedCart));
-      } catch (error) {
-        console.error('Error loading cart:', error);
+    if (typeof window === 'undefined') return;
+
+    // Edited Jabez: hydrate cart before any save writes to prevent overwriting storage.
+    try {
+      const savedCart = localStorage.getItem(CART_STORAGE_KEY);
+      if (savedCart) {
+        const parsed = JSON.parse(savedCart);
+        if (Array.isArray(parsed)) {
+          setCart(parsed);
+        } else {
+          localStorage.removeItem(CART_STORAGE_KEY);
+        }
       }
+    } catch (error) {
+      console.error('Error loading cart:', error);
+    } finally {
+      setCartHydrated(true);
     }
   }, []);
 
   // Save cart to localStorage
   useEffect(() => {
-    localStorage.setItem('swadishtt-cart', JSON.stringify(cart));
-  }, [cart]);
+    if (!cartHydrated || typeof window === 'undefined') return;
+
+    // Edited Jabez: skip initial save until hydration completes to keep cart intact.
+    try {
+      localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cart));
+    } catch (error) {
+      console.error('Error saving cart:', error);
+    }
+  }, [cart, cartHydrated]);
 
   // Cart Functions
   const addToCart = (item, customizations = {}) => {

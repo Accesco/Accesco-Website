@@ -7,7 +7,7 @@
  */
 
 import { useState } from 'react';
-import { SwadishttProvider, useSwadishtt } from '../contexts/SwadishttContext';
+import { useSwadishtt } from '../contexts/SwadishttContext';
 import SwadishttHeader from '../components/SwadishttHeader';
 import styles from './instant-catering.module.css';
 
@@ -391,9 +391,5 @@ function InstantCateringContent() {
 }
 
 export default function InstantCateringPage() {
-  return (
-    <SwadishttProvider>
-      <InstantCateringContent />
-    </SwadishttProvider>
-  );
+  return <InstantCateringContent />;
 }

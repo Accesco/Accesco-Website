@@ -8,7 +8,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { SwadishttProvider, useSwadishtt } from '../contexts/SwadishttContext';
+import { useSwadishtt } from '../contexts/SwadishttContext';
 import SwadishttHeader from '../components/SwadishttHeader';
 import { THALI_RECIPES, getThalisByCategory } from '../lib/thaliData';
 import styles from './thali-engine.module.css';
@@ -240,11 +240,7 @@ function ThaliEngineContent() {
 }
 
 
-// Wrap with Provider
+// Edited Jabez: SwadishttProvider now lives in the layout for shared state.
 export default function ThaliEnginePage() {
-  return (
-    <SwadishttProvider>
-      <ThaliEngineContent />
-    </SwadishttProvider>
-  );
+  return <ThaliEngineContent />;
 }

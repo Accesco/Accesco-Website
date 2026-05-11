@@ -9,11 +9,13 @@
 // Force dynamic rendering to avoid SSR issues with geolocation
 export const dynamic = 'force-dynamic';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { SwadishttProvider, useSwadishtt } from '../contexts/SwadishttContext';
+import { useSwadishtt } from '../contexts/SwadishttContext';
 import SwadishttHeader from '../components/SwadishttHeader';
 import styles from './checkout.module.css';
+
+const ORDERS_STORAGE_KEY = 'swadishtt-orders';
 
 function CheckoutContent() {
   const router = useRouter();
@@ -29,12 +31,73 @@ function CheckoutContent() {
   });
   const [paymentMethod, setPaymentMethod] = useState('');
   const [orderPlaced, setOrderPlaced] = useState(false);
+  const [lastOrderId, setLastOrderId] = useState('');
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    // Edited Jabez: prefill checkout fields from localStorage (user + location).
+    let storedUser = null;
+    let storedLocation = null;
+
+    try {
+      const rawUser = localStorage.getItem('accesco_user');
+      if (rawUser) storedUser = JSON.parse(rawUser);
+    } catch (error) {
+      console.error('Error reading accesco_user from localStorage:', error);
+    }
+
+    try {
+      const rawLocation = localStorage.getItem('userLocation');
+      if (rawLocation) storedLocation = JSON.parse(rawLocation);
+    } catch (error) {
+      console.error('Error reading userLocation from localStorage:', error);
+    }
+
+    const resolvedName = typeof storedUser?.name === 'string' ? storedUser.name : '';
+    const resolvedPhone = typeof storedUser?.phone === 'string' ? storedUser.phone : '';
+    const resolvedCity =
+      (typeof storedLocation?.city === 'string' && storedLocation.city) ||
+      (typeof storedLocation?.state === 'string' && storedLocation.state) ||
+      (typeof storedLocation?.region === 'string' && storedLocation.region) ||
+      '';
+    const resolvedAddress =
+      (typeof storedLocation?.fullAddress === 'string' && storedLocation.fullAddress) ||
+      (typeof storedLocation?.formattedAddress === 'string' && storedLocation.formattedAddress) ||
+      (typeof storedLocation?.displayAddress === 'string' && storedLocation.displayAddress) ||
+      (typeof storedLocation?.area === 'string' && resolvedCity
+        ? `${storedLocation.area}, ${resolvedCity}`
+        : (typeof storedLocation?.area === 'string' ? storedLocation.area : '')) ||
+      '';
+
+    setDeliveryAddress((prev) => ({
+      ...prev,
+      name: prev.name || resolvedName,
+      phone: prev.phone || resolvedPhone,
+      address: prev.address || resolvedAddress,
+      city: prev.city || resolvedCity,
+    }));
+  }, []);
 
   const subtotal = cart.reduce((sum, item) => sum + (item.price * (item.quantity || 1)), 0);
   const deliveryFee = subtotal >= 300 ? 0 : 40;
   const platformFee = 5;
   const gst = Math.round(subtotal * 0.05);
   const total = subtotal + deliveryFee + platformFee + gst;
+
+  const persistOrder = (nextOrder) => {
+    if (typeof window === 'undefined') return;
+
+    // Edited Jabez: persist Swadishtt orders to localStorage for the /orders page.
+    try {
+      const raw = localStorage.getItem(ORDERS_STORAGE_KEY);
+      const parsed = raw ? JSON.parse(raw) : [];
+      const existing = Array.isArray(parsed) ? parsed : [];
+      localStorage.setItem(ORDERS_STORAGE_KEY, JSON.stringify([nextOrder, ...existing]));
+    } catch (error) {
+      console.error('Error saving Swadishtt orders:', error);
+    }
+  };
 
   const handleAddressSubmit = (e) => {
     e.preventDefault();
@@ -46,6 +109,33 @@ function CheckoutContent() {
       alert('Please select a payment method');
       return;
     }
+
+    const orderId = `SW${Date.now().toString(36).toUpperCase()}`;
+    const nextOrder = {
+      id: orderId,
+      status: 'Placed',
+      placedAt: new Date().toISOString(),
+      paymentMethod,
+      delivery: { ...deliveryAddress },
+      totals: {
+        subtotal,
+        deliveryFee,
+        platformFee,
+        gst,
+        total,
+      },
+      items: cart.map((item) => ({
+        id: item.id,
+        name: item.name,
+        price: item.price,
+        quantity: item.quantity || 1,
+        image: item.image,
+        restaurant: item.restaurant || '',
+      })),
+    };
+
+    persistOrder(nextOrder);
+    setLastOrderId(orderId);
     
     // Simulate order placement
     setOrderPlaced(true);
@@ -71,7 +161,7 @@ function CheckoutContent() {
             Your order has been confirmed and will be delivered soon.
           </p>
           <div className={styles.orderNumber}>
-            Order #SW{Math.floor(Math.random() * 100000)}
+            Order #{lastOrderId || `SW${Math.floor(Math.random() * 100000)}`}
           </div>
           <p className={styles.redirectText}>Redirecting to orders page...</p>
         </div>
@@ -310,9 +400,5 @@ function CheckoutContent() {
 }
 
 export default function CheckoutPage() {
-  return (
-    <SwadishttProvider>
-      <CheckoutContent />
-    </SwadishttProvider>
-  );
+  return <CheckoutContent />;
 }
