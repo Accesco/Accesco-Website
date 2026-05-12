@@ -8,7 +8,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { SwadishttProvider, useSwadishtt } from '../contexts/SwadishttContext';
+import { useSwadishtt } from '../contexts/SwadishttContext';
 import SwadishttHeader from '../components/SwadishttHeader';
 import styles from './healthy-mode.module.css';
 
@@ -417,9 +417,5 @@ function HealthyModeContent() {
 }
 
 export default function HealthyModePage() {
-  return (
-    <SwadishttProvider>
-      <HealthyModeContent />
-    </SwadishttProvider>
-  );
+  return <HealthyModeContent />;
 }

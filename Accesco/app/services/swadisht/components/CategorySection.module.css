@@ -1,0 +1,133 @@
+.categorySection {
+  width: 100%;
+  max-width: 1500px;
+  margin: 0 auto;
+  padding: 0px 24px 48px;
+  background:
+    linear-gradient(
+      to bottom,
+      rgba(255, 245, 245, 0.95),
+      #ffffff
+    );
+}
+
+.sectionHeader {
+  margin-bottom: 24px;
+}
+
+.sectionHeader h2 {
+  font-family: 'Sora', sans-serif;
+  font-size: clamp(1.35rem, 2vw, 2rem);
+  font-weight: 800;
+  color: #111827;
+  margin: 0 0 6px;
+  letter-spacing: -0.04em;
+}
+
+.sectionHeader p {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.95rem;
+  color: #6b7280;
+  margin: 0;
+}
+
+.categoryScroller {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  padding: 4px 2px 14px;
+  scrollbar-width: none;
+}
+
+.categoryScroller::-webkit-scrollbar {
+  display: none;
+}
+
+.categoryCard {
+  flex: 0 0 132px;
+  scroll-snap-align: start;
+  text-decoration: none;
+  color: #111827;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  transition: transform 0.25s ease;
+}
+.categoryCard:hover .imageWrap {
+  transform: scale(1.05);
+}
+.categoryCard:hover {
+  transform: translateY(-6px);
+}
+
+.imageWrap {
+  width: 132px;
+  height: 132px;
+  border-radius: 28px;
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.09);
+  border: 1px solid rgba(0, 0, 0, 0.04);
+  transition: transform 0.25s ease;
+}
+
+.imageWrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.categoryCard span {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.92rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+@media (min-width: 1200px) {
+  .categoryScroller {
+    justify-content: space-between;
+    overflow-x: visible;
+  }
+
+  .categoryCard {
+    flex: 0 0 auto;
+  }
+}
+
+@media (max-width: 768px) {
+  .categorySection {
+    padding: 0 16px 36px;
+    margin-top: -70px;
+  }
+
+  .sectionHeader {
+    margin-bottom: 10px;
+  }
+
+  .categoryScroller {
+    gap: 16px;
+    padding-bottom: 12px;
+  }
+
+  .categoryCard {
+    flex: 0 0 92px;
+    gap: 9px;
+  }
+
+  .imageWrap {
+    width: 86px;
+    height: 86px;
+    border-radius: 22px;
+  }
+
+  .categoryCard span {
+    font-size: 0.78rem;
+  }
+}

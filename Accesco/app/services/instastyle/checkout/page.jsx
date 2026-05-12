@@ -34,6 +34,84 @@ export default function CheckoutPage() {
   // Dynamic ETA state
   const [deliveryETA, setDeliveryETA] = useState(null);
 
+  const STATE_OPTIONS = [
+    'Delhi',
+    'Maharashtra',
+    'Karnataka',
+    'Tamil Nadu',
+    'Gujarat',
+    'Rajasthan',
+    'Uttar Pradesh',
+  ];
+
+  const safeReadJson = async (response) => {
+    try {
+      return await response.json();
+    } catch {
+      return null;
+    }
+  };
+
+  const coerceStateForSelect = (stateValue) => {
+    const raw = (stateValue || '').trim();
+    if (!raw) return '';
+
+    const lower = raw.toLowerCase();
+    const normalized = lower.includes('delhi')
+      ? 'Delhi'
+      : lower.includes('maharashtra')
+        ? 'Maharashtra'
+        : lower.includes('karnataka')
+          ? 'Karnataka'
+          : lower.includes('tamil')
+            ? 'Tamil Nadu'
+            : lower.includes('gujarat')
+              ? 'Gujarat'
+              : lower.includes('rajasthan')
+                ? 'Rajasthan'
+                : lower.includes('uttar pradesh')
+                  ? 'Uttar Pradesh'
+                  : raw;
+
+    return STATE_OPTIONS.includes(normalized) ? normalized : '';
+  };
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    try {
+      const storedUser = localStorage.getItem('accesco_user');
+      if (!storedUser) return;
+
+      const parsed = JSON.parse(storedUser);
+      const name = typeof parsed?.name === 'string' ? parsed.name.trim() : '';
+      const email = typeof parsed?.email === 'string' ? parsed.email.trim() : '';
+
+      let phoneRaw =
+        typeof parsed?.phone === 'string' || typeof parsed?.phone === 'number'
+          ? String(parsed.phone)
+          : '';
+      let digitsOnly = phoneRaw.replace(/\D/g, '');
+      if (digitsOnly.length > 10) digitsOnly = digitsOnly.slice(-10);
+
+      setFormData((prev) => ({
+        ...prev,
+        fullName: prev.fullName || name,
+        phone: prev.phone || digitsOnly,
+        email: prev.email || email,
+      }));
+
+      setErrors((prev) => ({
+        ...prev,
+        fullName: '',
+        phone: '',
+        email: '',
+      }));
+    } catch {
+      // ignore malformed storage
+    }
+  }, []);
+
   useEffect(() => {
     if (cart.length === 0) {
       router.push('/services/instastyle/catalog');
@@ -89,8 +167,8 @@ export default function CheckoutPage() {
         const { latitude, longitude, accuracy } = position.coords;
 
         try {
-          // Execute API calls concurrently to optimize loading time
-          const [locationResponse, darkStoreResponse] = await Promise.all([
+          // Run requests concurrently, but don't let ETA failure block address autofill.
+          const [locationResult, darkStoreResult] = await Promise.allSettled([
             fetch('/api/location', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
@@ -100,50 +178,85 @@ export default function CheckoutPage() {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({ latitude, longitude }),
-            })
+            }),
           ]);
 
-          const locationData = await locationResponse.json();
-          const storeData = await darkStoreResponse.json();
+          if (locationResult.status !== 'fulfilled') {
+            throw new Error('Failed to contact location service.');
+          }
+
+          const locationResponse = locationResult.value;
+          const locationData = await safeReadJson(locationResponse);
 
           if (!locationResponse.ok) {
-            throw new Error(locationData.message || 'Failed to detect location.');
+            throw new Error(
+              locationData?.message || locationData?.error || 'Failed to detect location.'
+            );
           }
 
-          // Handle Address Autofill
-          if (locationData.success && locationData.formattedAddress) {
-            const addr = locationData.formattedAddress;
-            setFormData(prev => ({
-              ...prev,
-              addressLine1: [addr.houseNumber, addr.road].filter(Boolean).join(', ') || addr.area || '',
-              addressLine2: addr.area || '',
-              city: addr.city || '',
-              state: addr.state || '',
-              pincode: addr.postalCode || '',
-            }));
+          // Map API payload fields into the checkout form.
+          const streetNumber = locationData?.streetNumber || '';
+          const street = locationData?.street || '';
+          const area = locationData?.area || locationData?.neighbourhood || '';
+          const landmark = locationData?.landmark || '';
+          const city = locationData?.city || '';
+          const state = coerceStateForSelect(locationData?.state);
+          const pincode = locationData?.postalCode || '';
 
-            setErrors(prev => ({
-              ...prev,
-              addressLine1: '',
-              city: '',
-              state: '',
-              pincode: ''
-            }));
-          }
+          const primaryLine = [streetNumber, street].filter(Boolean).join(' ').trim();
+          const fallbackAddress =
+            locationData?.fullAddress ||
+            locationData?.formattedAddress ||
+            locationData?.displayAddress ||
+            '';
 
-          // Handle Dynamic ETA
-          if (storeData.success && storeData.eta_minutes) {
-            setDeliveryETA(storeData.eta_minutes);
+          setFormData((prev) => ({
+            ...prev,
+            addressLine1: primaryLine || area || fallbackAddress,
+            addressLine2: primaryLine ? area : locationData?.neighbourhood || '',
+            landmark: landmark || prev.landmark,
+            city,
+            state,
+            pincode,
+          }));
+
+          setErrors((prev) => ({
+            ...prev,
+            addressLine1: '',
+            city: '',
+            state: '',
+            pincode: '',
+          }));
+
+          if (darkStoreResult.status === 'fulfilled') {
+            const darkStoreResponse = darkStoreResult.value;
+            const storeData = await safeReadJson(darkStoreResponse);
+
+            if (
+              darkStoreResponse.ok &&
+              storeData?.success &&
+              typeof storeData?.eta_minutes === 'number'
+            ) {
+              setDeliveryETA(storeData.eta_minutes);
+            }
           }
 
         } catch (error) {
-          setLocationError(error.message);
+          setLocationError(error?.message || 'Failed to detect location.');
         } finally {
           setIsLocating(false);
         }
       },
       (error) => {
-        setLocationError(error.message);
+        if (error?.code === 1) {
+          setLocationError('Location permission denied. Please enable it and try again.');
+        } else if (error?.code === 2) {
+          setLocationError('Location information is unavailable.');
+        } else if (error?.code === 3) {
+          setLocationError('Location request timed out. Please try again.');
+        } else {
+          setLocationError(error?.message || 'Failed to detect location.');
+        }
         setIsLocating(false);
       },
       { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 } 

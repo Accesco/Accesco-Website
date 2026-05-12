@@ -7,7 +7,7 @@ import { usePathname } from 'next/navigation';
 import { useAuth } from '@/app/components/AuthProvider';
 import AuthModal from '@/app/components/AuthModal';
 import styles from './AccescoHeader.module.css';
-import { getPersonCity } from '@/lib/locationService';
+
 
 export default function AccescoHeader() {
   const pathname = usePathname();
@@ -37,12 +37,40 @@ export default function AccescoHeader() {
     'Pune, Maharashtra',
   ];
 
-  // Location detection — preserved exactly from original
+  // Location detection — handles both old string format and new JSON format
   useEffect(() => {
-    const savedLocation = localStorage.getItem('location');
-    if (savedLocation) {
-      setSelectedLocation(savedLocation);
-      return;
+    const savedLocation = localStorage.getItem('userLocation');
+    if (!savedLocation) return;
+
+    const applyLabel = (label) => {
+      const normalized = typeof label === 'string' ? label.trim() : '';
+      if (!normalized) return false;
+      const matched = locations.find((loc) => loc.toLowerCase() === normalized.toLowerCase());
+      setSelectedLocation(matched || normalized);
+      return true;
+    };
+
+    try {
+      // Try JSON format first (new format)
+      const parsed = JSON.parse(savedLocation);
+      if (parsed && typeof parsed === 'object') {
+        const city = typeof parsed.city === 'string' ? parsed.city.trim() : '';
+        const region =
+          (typeof parsed.state === 'string' ? parsed.state.trim() : '') ||
+          (typeof parsed.region === 'string' ? parsed.region.trim() : '');
+
+        const label = city && region
+          ? `${city}, ${region}`
+          : city ||
+            (typeof parsed.displayAddress === 'string' ? parsed.displayAddress.trim() : '') ||
+            (typeof parsed.fullAddress === 'string' ? parsed.fullAddress.trim() : '') ||
+            (typeof parsed.formattedAddress === 'string' ? parsed.formattedAddress.trim() : '');
+
+        if (applyLabel(label)) return;
+      }
+    } catch (e) {
+      // If not JSON, treat as plain string (legacy format)
+      applyLabel(savedLocation);
     }
   }, []);
 
@@ -254,52 +282,212 @@ export default function AccescoHeader() {
           {/* ── Right side actions ── */}
           <div className={styles.actions}>
 
-            {/* Location Selector
-            <div className={styles.locationSelector} ref={locationDropdownRef}>
-              <button
-                className={styles.locationButton}
-                onClick={() => setIsLocationOpen(!isLocationOpen)}
-                aria-expanded={isLocationOpen}
-              >
-                <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
-                  <path d="M8 1C5.24 1 3 3.24 3 6C3 9.5 8 15 8 15C8 15 13 9.5 13 6C13 3.24 10.76 1 8 1ZM8 7.5C7.17 7.5 6.5 6.83 6.5 6C6.5 5.17 7.17 4.5 8 4.5C8.83 4.5 9.5 5.17 9.5 6C9.5 6.83 8.83 7.5 8 7.5Z" fill="currentColor" />
-                </svg>
-                <span className={styles.locationText}>{displayLocation}</span>
-                <svg
-                  width="12" height="12" viewBox="0 0 12 12" fill="none"
-                  className={styles.locationIcon}
-                  style={{ transform: isLocationOpen ? 'rotate(180deg)' : 'rotate(0deg)' }}
-                >
-                  <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
-              </button>
+          
+          <div className={styles.locationSelector} ref={locationDropdownRef}>
+            <button
+              className={styles.locationButton}
+              onClick={() => setIsLocationOpen(!isLocationOpen)}
+              aria-expanded={isLocationOpen}
+            >
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+                <path d="M8 1C5.24 1 3 3.24 3 6C3 9.5 8 15 8 15C8 15 13 9.5 13 6C13 3.24 10.76 1 8 1ZM8 7.5C7.17 7.5 6.5 6.83 6.5 6C6.5 5.17 7.17 4.5 8 4.5C8.83 4.5 9.5 5.17 9.5 6C9.5 6.83 8.83 7.5 8 7.5Z" fill="currentColor" />
+              </svg>
 
-              {isLocationOpen && (
-                <div className={styles.locationDropdown}>
-                  <div className={styles.locationDropdownHeader}>
-                    <h4>Select Your Location</h4>
-                  </div>
-                  <div className={styles.locationList}>
-                    {locations.map((location) => (
-                      <button
-                        key={location}
-                        className={`${styles.locationItem} ${selectedLocation === location ? styles.selectedLocation : ''}`}
-                        onClick={() => {
-                          setSelectedLocation(location);
-                          localStorage.setItem('userLocation', location);
-                          setIsLocationOpen(false);
-                        }}
-                      >
-                        <svg width="12" height="12" viewBox="0 0 16 16" fill="none">
-                          <path d="M8 1C5.24 1 3 3.24 3 6C3 9.5 8 15 8 15C8 15 13 9.5 13 6C13 3.24 10.76 1 8 1ZM8 7.5C7.17 7.5 6.5 6.83 6.5 6C6.5 5.17 7.17 4.5 8 4.5C8.83 4.5 9.5 5.17 9.5 6C9.5 6.83 8.83 7.5 8 7.5Z" fill="currentColor" />
-                        </svg>
-                        {location}
-                      </button>
-                    ))}
-                  </div>
+              <span className={styles.locationText}>{displayLocation}</span>
+
+              <svg
+                width="12"
+                height="12"
+                viewBox="0 0 12 12"
+                fill="none"
+                className={styles.locationIcon}
+                style={{
+                  transform: isLocationOpen ? 'rotate(180deg)' : 'rotate(0deg)',
+                }}
+              >
+                <path
+                  d="M3 4.5L6 7.5L9 4.5"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </button>
+
+            {isLocationOpen && (
+              <div className={styles.locationDropdown}>
+                <div className={styles.locationDropdownHeader}>
+                  <h4>Select Your Location</h4>
                 </div>
-              )}
-            </div> */}
+
+                <div className={styles.locationList}>
+
+                
+                <button
+                  className={styles.locationItem}
+                  onClick={async () => {
+                    try {
+                      // Check localStorage first
+                      const savedLocation = localStorage.getItem('userLocation');
+
+                      if (savedLocation) {
+                        try {
+                          // Try to parse as JSON (new format)
+                          const parsedLocation = JSON.parse(savedLocation);
+                          if (parsedLocation && typeof parsedLocation === 'object') {
+                            const city = typeof parsedLocation.city === 'string' ? parsedLocation.city.trim() : '';
+                            const region =
+                              (typeof parsedLocation.state === 'string' ? parsedLocation.state.trim() : '') ||
+                              (typeof parsedLocation.region === 'string' ? parsedLocation.region.trim() : '');
+
+                            const label = city && region
+                              ? `${city}, ${region}`
+                              : city ||
+                                (typeof parsedLocation.displayAddress === 'string' ? parsedLocation.displayAddress.trim() : '') ||
+                                (typeof parsedLocation.fullAddress === 'string' ? parsedLocation.fullAddress.trim() : '') ||
+                                (typeof parsedLocation.formattedAddress === 'string' ? parsedLocation.formattedAddress.trim() : '');
+
+                            if (label) {
+                              const matchedLocation = locations.find(
+                                (loc) => loc.toLowerCase() === label.toLowerCase()
+                              );
+                              setSelectedLocation(matchedLocation || label);
+                              setIsLocationOpen(false);
+                              return;
+                            }
+                          }
+                        } catch (e) {
+                          // If not JSON, treat as plain string (legacy format)
+                          const matchedLocation = locations.find(
+                            (loc) => loc.toLowerCase() === savedLocation.toLowerCase()
+                          );
+                          const normalized = savedLocation?.trim?.() || '';
+                          setSelectedLocation(matchedLocation || normalized);
+                          setIsLocationOpen(false);
+                          return;
+                        }
+                      }
+
+                      // Get User Coordinates
+                      if (!navigator.geolocation) {
+                        alert('Geolocation is not supported by your browser.');
+                        return;
+                      }
+
+                      navigator.geolocation.getCurrentPosition(
+                        async (position) => {
+                          try {
+                            const latitude = position.coords.latitude;
+                            const longitude = position.coords.longitude;
+
+                            // Send coordinates to backend API
+                            const response = await fetch('/api/location', {
+                              method: 'POST',
+                              headers: {
+                                'Content-Type': 'application/json',
+                              },
+                              body: JSON.stringify({
+                                latitude,
+                                longitude,
+                              }),
+                            });
+
+                            if (!response.ok) {
+                              throw new Error(`API returned ${response.status}`);
+                            }
+
+                            const data = await response.json();
+
+                            // Validate API response
+                            if (!data || typeof data !== 'object' || !data.street || !data.city) {
+                              console.error('Invalid API response:', data);
+                              alert('Could not determine exact address. Please check browser console.');
+                              return;
+                            }
+
+                            // Store FULL address data as JSON for delivery operations
+                            localStorage.setItem('userLocation', JSON.stringify(data));
+
+                            // Show only City for display
+                            const displayLocation = `${data.city}, ${data.state}`;
+                            const matchedLocation = locations.find(
+                              (loc) =>
+                                loc.toLowerCase() === displayLocation.toLowerCase()
+                            );
+
+                            setSelectedLocation(matchedLocation || displayLocation);
+                            setIsLocationOpen(false);
+                          } catch (error) {
+                            console.error('Location API Error:', error);
+                            alert('Failed to fetch location. Please try again or select manually.');
+                          }
+                        },
+
+                        (error) => {
+                          console.error('Geolocation Error:', error);
+                          if (error.code === 1) {
+                            alert('Location permission denied. Please enable location access in your browser settings.');
+                          } else if (error.code === 2) {
+                            alert('Location information is unavailable.');
+                          } else {
+                            alert('Failed to detect location.');
+                          }
+                        }
+                      );
+                    } catch (error) {
+                      console.error('Failed to detect location:', error);
+                      alert('An unexpected error occurred. Please try again.');
+                    }
+                  }}
+                >
+                  <svg width="12" height="12" viewBox="0 0 16 16" fill="none">
+                    <path
+                      d="M8 1V3M8 13V15M15 8H13M3 8H1M12.95 3.05L11.54 4.46M4.46 11.54L3.05 12.95M12.95 12.95L11.54 11.54M4.46 4.46L3.05 3.05M8 11C6.34 11 5 9.66 5 8C5 6.34 6.34 5 8 5C9.66 5 11 6.34 11 8C11 9.66 9.66 11 8 11Z"
+                      stroke="currentColor"
+                      strokeWidth="1.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+
+                  Detect My Location
+                </button>
+
+                  {locations.map((location) => (
+                    <button
+                      key={location}
+                      className={`${styles.locationItem} ${
+                        selectedLocation === location
+                          ? styles.selectedLocation
+                          : ''
+                      }`}
+                      onClick={() => {
+                        setSelectedLocation(location);
+                        // Store complete address data as JSON object for future use
+                        const addressData = {
+                          city: location.split(',')[0].trim(),
+                          region: location.split(',')[1]?.trim() || '',
+                          country: 'India', // Default country
+                          fullAddress: location,
+                          countryCode: 'IN',
+                          timestamp: new Date().toISOString(),
+                        };
+                        localStorage.setItem('userLocation', JSON.stringify(addressData));
+                        setIsLocationOpen(false);
+                      }}
+                    >
+                      <svg width="12" height="12" viewBox="0 0 16 16" fill="none">
+                        <path d="M8 1C5.24 1 3 3.24 3 6C3 9.5 8 15 8 15C8 15 13 9.5 13 6C13 3.24 10.76 1 8 1ZM8 7.5C7.17 7.5 6.5 6.83 6.5 6C6.5 5.17 7.17 4.5 8 4.5C8.83 4.5 9.5 5.17 9.5 6C9.5 6.83 8.83 7.5 8 7.5Z" fill="currentColor" />
+                      </svg>
+
+                      {location}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
 
             {/* Login / User */}
             {user ? (
@@ -443,7 +631,16 @@ export default function AccescoHeader() {
                       className={`${styles.mobileLocationItem} ${selectedLocation === loc ? styles.activeLocation : ''}`}
                       onClick={() => {
                         setSelectedLocation(loc);
-                        localStorage.setItem('userLocation', loc);
+                        // Store complete address data as JSON object for future use
+                        const addressData = {
+                          city: loc.split(',')[0].trim(),
+                          region: loc.split(',')[1]?.trim() || '',
+                          country: 'India', // Default country
+                          fullAddress: loc,
+                          countryCode: 'IN',
+                          timestamp: new Date().toISOString(),
+                        };
+                        localStorage.setItem('userLocation', JSON.stringify(addressData));
                         setIsMobileLocationOpen(false);
                       }}
                     >

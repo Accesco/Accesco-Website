@@ -6,6 +6,7 @@ const GroklyContext = createContext();
 
 const CART_STORAGE_KEY = 'grokly_cart';
 const ORDERS_STORAGE_KEY = 'grokly_orders';
+const LOCATION_STORAGE_KEY = 'userLocation';
 
 export function GroklyProvider({ children }) {
   const [cart, setCart] = useState({}); // id -> quantity mapping for compatibility
@@ -19,9 +20,32 @@ export function GroklyProvider({ children }) {
     try {
       const savedCart = localStorage.getItem(CART_STORAGE_KEY);
       const savedOrders = localStorage.getItem(ORDERS_STORAGE_KEY);
+      const savedLocation = localStorage.getItem(LOCATION_STORAGE_KEY);
       
       if (savedCart) setCart(JSON.parse(savedCart));
       if (savedOrders) setOrders(JSON.parse(savedOrders));
+      if (savedLocation) {
+        let parsedLocation = null;
+        try {
+          parsedLocation = JSON.parse(savedLocation);
+        } catch (e) {
+          // backward compatibility: allow plain string storage
+          setLocation(savedLocation);
+          return;
+        }
+        const resolvedName =
+          parsedLocation?.displayAddress ||
+          (parsedLocation?.city
+            ? `${parsedLocation.city}${parsedLocation?.state || parsedLocation?.region ? `, ${parsedLocation.state || parsedLocation.region}` : ''}`
+            : '') ||
+          parsedLocation?.name ||
+          parsedLocation?.address ||
+          parsedLocation?.fullAddress;
+        if (resolvedName) setLocation(resolvedName);
+        else setIsLocationModalOpen(true);
+      } else {
+        setIsLocationModalOpen(true);
+      }
     } catch (e) {
       console.error('Failed to load Grokly data:', e);
     }

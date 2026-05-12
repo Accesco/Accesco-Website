@@ -90,11 +90,11 @@ a {
   min-height: 760px;
   display: flex;
   align-items: center;
-  background:
-    radial-gradient(circle at 75% 30%, rgba(226, 55, 68, 0.13), transparent 30%),
-    linear-gradient(135deg, #fffaf5 0%, #ffffff 55%, #f6efe7 100%);
+  background: url("/images/investor-bg.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 }
-
 .hero-content {
   display: grid;
   grid-template-columns: 1.15fr 0.85fr;
@@ -108,13 +108,14 @@ a {
   font-size: clamp(42px, 7vw, 82px);
   line-height: 0.98;
   letter-spacing: -0.07em;
+  color:white;
 }
 
 .hero-copy p {
   max-width: 620px;
   font-size: 20px;
   line-height: 1.7;
-  color: var(--muted);
+  color: white;
   margin: 0 0 34px;
 }
 
@@ -174,10 +175,10 @@ a {
 }
 
 .hero-card-topline {
-  color: var(--muted);
-  font-size: 14px;
-  margin-bottom: 20px;
+  color: rgba(0, 0, 0, 0.55);
+  font-weight: 600;
 }
+
 
 .hero-stat {
   display: flex;
@@ -198,7 +199,8 @@ a {
 }
 
 .hero-stat span {
-  color: var(--muted);
+  color: rgba(0, 0, 0, 0.58);
+  font-weight: 500;
 }
 
 .section {
@@ -509,6 +511,7 @@ a {
 
   .hero-stat strong {
     font-size: 36px;
+    color: white;
   }
 }
 /* Integrity Pledge */
@@ -811,4 +814,49 @@ a {
 .incorporation-date {
   margin-top: 20px;
   color: rgba(255, 255, 255, 0.7);
+}
+@media (max-width: 640px) {
+  .hero {
+  min-height: auto !important;
+  padding: 32px 0 90px !important;
+}
+
+  .hero-content {
+    gap: 28px !important;
+  }
+
+  .hero-card {
+    margin-top: 0 !important;
+    padding: 24px !important;
+    border-radius: 26px !important;
+  }
+
+  .hero-stat {
+    padding: 16px 0 !important;
+  }
+
+  .hero-stat strong {
+    font-size: 34px !important;
+  }
+
+  .hero-stat span {
+    font-size: 14px !important;
+  }
+
+  .hero-card-topline {
+    margin-bottom: 8px !important;
+  }
+}
+.business-card-link {
+  margin-top: 14px;
+}
+
+.business-card-link a {
+  color: var(--brand);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.business-card-link a:hover {
+  text-decoration: underline;
 }

@@ -280,8 +280,10 @@ img { max-width: 100%; display: block; }
 
 /* ─── RESPONSIVE HELPERS ─────────────────────────────────────────────── */
 @media (max-width: 768px) {
-  .ac-hide-mobile { display: none !important; }
-  
+  .ac-hide-mobile {
+    display: none !important;
+  }
+
   /* Universal Mobile Padding Fix */
   section {
     padding-left: 20px !important;
@@ -289,41 +291,87 @@ img { max-width: 100%; display: block; }
     padding-top: 60px !important;
     padding-bottom: 60px !important;
   }
-  
+
   /* Typography Scaling */
-  h1 { font-size: 2.2rem !important; line-height: 1.1 !important; }
-  h2 { font-size: 1.6rem !important; line-height: 1.2 !important; }
-  p { font-size: 0.9rem !important; line-height: 1.6 !important; }
-  
+  h1 {
+    font-size: 2.2rem !important;
+    line-height: 1.1 !important;
+  }
+
+  h2 {
+    font-size: 1.6rem !important;
+    line-height: 1.2 !important;
+  }
+
+  p {
+    font-size: 0.9rem !important;
+    line-height: 1.6 !important;
+  }
+
   .container {
     padding-left: 15px !important;
     padding-right: 15px !important;
   }
 
-  /* Xpense Meter Mobile Stack */
+  /* Xpense Meter Mobile Fix */
+
   .xpense-grid {
     grid-template-columns: 1fr !important;
-    gap: 40px !important;
+    gap: 28px !important;
     text-align: center;
+    padding: 0 4px !important;
+
+    width: 100vw !important;
+max-width: 100vw !important;
+    margin-left: calc(50% - 50vw) !important;
   }
+
   .xpense-grid > div:first-child {
     display: flex;
     flex-direction: column;
     align-items: center;
   }
+
   .xpense-visual-wrap {
-    min-height: auto !important;
-    margin-top: 20px;
-    width: 100% !important;
+    width: 100vw !important;
+max-width: 100vw !important;
+
+    display: flex !important;
+
+    justify-content: center !important;
+
+    overflow: visible !important;
+    margin-top: 10px !important;
+
+    margin-left: calc(50% - 50vw) !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
   }
-  .xpense-card {
-    padding: 24px !important;
-    border-radius: 20px !important;
-    max-width: 100% !important;
-    margin: 0 auto;
-  }
+
+.xpense-card {
+  width: 94vw !important;
+  max-width: 94vw !important;
+
+  margin: 0 auto !important;
+
+  padding: 28px !important;
+  border-radius: 28px !important;
+
+  transform: scaleX(1.08);
+  transform-origin: center center;
+}
+.xpense-card > * {
+  width: 100% !important;
+  max-width: 100% !important;
 }
 
+.xpense-card canvas,
+.xpense-card svg,
+.xpense-card img {
+  width: 100% !important;
+  max-width: 100% !important;
+}
+}
 @media (max-width: 480px) {
   h1 { font-size: 1.8rem !important; }
   h2 { font-size: 1.4rem !important; }

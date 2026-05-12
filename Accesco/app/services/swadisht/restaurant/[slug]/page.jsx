@@ -9,7 +9,7 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
-import { SwadishttProvider, useSwadishtt } from '../../contexts/SwadishttContext';
+import { useSwadishtt } from '../../contexts/SwadishttContext';
 import SwadishttHeader from '../../components/SwadishttHeader';
 import { RESTAURANTS } from '../../lib/swadishttData';
 import styles from './restaurant.module.css';
@@ -207,9 +207,5 @@ function RestaurantDetailContent() {
 }
 
 export default function RestaurantDetailPage() {
-  return (
-    <SwadishttProvider>
-      <RestaurantDetailContent />
-    </SwadishttProvider>
-  );
+  return <RestaurantDetailContent />;
 }
