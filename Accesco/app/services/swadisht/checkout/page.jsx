@@ -154,6 +154,7 @@ function CheckoutContent() {
   };
 
   if (cart.length === 0 && !orderPlaced) {
+    router.push('/services/swadisht/cart');
     return null;
   }
 

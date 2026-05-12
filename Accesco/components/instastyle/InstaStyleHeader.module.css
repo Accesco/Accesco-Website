@@ -200,6 +200,27 @@
   padding: 2px;
 }
 
+.accountLink {
+  text-decoration: none;
+  color: inherit;
+}
+
+.userInitials {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba(217, 176, 97, 0.25);
+  border: 1px solid rgba(217, 176, 97, 0.45);
+  font-family: 'Syne', sans-serif;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: #0d0d0d;
+}
+
 .mobileMenuButton {
   width: 44px;
   height: 44px;
@@ -375,6 +396,75 @@
 .mobileNavLink.active .mobileNavLinkArrow {
   opacity: 1;
   transform: translateX(0);
+}
+
+.mobileAuthBlock {
+  margin-top: 8px;
+  padding: 20px 0 8px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.mobileAuthPrimary {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  width: 100%;
+  padding: 16px 20px;
+  border: 1px solid rgba(217, 176, 97, 0.35);
+  border-radius: 14px;
+  background: rgba(217, 176, 97, 0.08);
+  color: #f5f0e8;
+  font-family: 'Syne', sans-serif;
+  font-size: 14px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  text-decoration: none;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.mobileAuthPrimary:hover {
+  background: rgba(217, 176, 97, 0.15);
+  border-color: rgba(217, 176, 97, 0.55);
+}
+
+.mobileAuthHint {
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  text-transform: none;
+  color: rgba(255, 255, 255, 0.45);
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mobileAuthSecondary {
+  width: 100%;
+  padding: 12px 20px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: transparent;
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  cursor: pointer;
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+
+.mobileAuthSecondary:hover {
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.25);
 }
 
 .mobileFooter {

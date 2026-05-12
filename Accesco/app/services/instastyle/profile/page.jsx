@@ -65,12 +65,25 @@ export default function ProfilePage() {
   );
 
   useEffect(() => {
+    if (typeof window === 'undefined') return;
     try {
+      let next = { ...initialProfile };
       const raw = localStorage.getItem(PROFILE_STORAGE_KEY);
-      if (!raw) return;
-
-      const parsed = JSON.parse(raw);
-      setProfile((prev) => ({ ...prev, ...parsed }));
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        next = { ...next, ...parsed };
+      }
+      const rawUser = localStorage.getItem('accesco_user');
+      if (rawUser) {
+        const u = JSON.parse(rawUser);
+        const name = typeof u.name === 'string' ? u.name.trim() : '';
+        const phone = typeof u.phone === 'string' ? u.phone.trim() : '';
+        const email = typeof u.email === 'string' ? u.email.trim() : '';
+        if (name) next.fullName = name;
+        if (phone) next.phone = phone;
+        if (email) next.email = email;
+      }
+      setProfile(next);
     } catch (error) {
       console.warn('Profile storage read failed:', error);
     }
