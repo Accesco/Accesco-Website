@@ -27,11 +27,15 @@ export default function AuthModal({ isOpen, onClose, onSuccess }) {
     if (!n) { setError('Please enter your full name'); return }
     if (!p) { setError('Please enter your phone number'); return }
     if (!/^[+\d\s\-()]{7,20}$/.test(p)) { setError('Enter a valid phone number with country code'); return }
+    const docId = p.replace(/[^\d]/g, '')
+    if (docId.length < 7) {
+      setError('Enter a valid phone number including digits (e.g. +91 98765 43210)')
+      return
+    }
     if (em && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)) { setError('Enter a valid email address'); return }
 
     setLoading(true)
     try {
-      const docId = p.replace(/[^\d]/g, '')
       await setDoc(doc(db, 'users', docId), {
         name: n, phone: p, email: em || null,
         createdAt: serverTimestamp(), updatedAt: serverTimestamp(),

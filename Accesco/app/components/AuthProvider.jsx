@@ -2,11 +2,11 @@
 
 import { createContext, useContext, useEffect, useState } from 'react'
 
-const AuthContext = createContext({})
+const AuthContext = createContext(null)
 
 export const useAuth = () => {
   const context = useContext(AuthContext)
-  if (!context) throw new Error('useAuth must be used within AuthProvider')
+  if (context == null) throw new Error('useAuth must be used within AuthProvider')
   return context
 }
 
@@ -28,8 +28,11 @@ export function AuthProvider({ children }) {
     setUser(null)
   }
 
-  // Called by AuthModal after successful Firestore save
+  // Called after successful login; keep localStorage in sync with React state
   const signIn = (userData) => {
+    try {
+      localStorage.setItem('accesco_user', JSON.stringify(userData))
+    } catch (_) {}
     setUser(userData)
   }
 

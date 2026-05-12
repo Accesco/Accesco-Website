@@ -4,17 +4,43 @@ import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useCart } from '@/contexts/CartContext';
+import { useAuth } from '@/app/components/AuthProvider';
+import AuthModal from '@/app/components/AuthModal';
 import InstaStyleLogo from './InstaStyleLogo';
 import styles from './InstaStyleHeader.module.css';
 
 export default function InstaStyleHeader() {
   const pathname = usePathname();
   const { cart, toggleCart } = useCart();
+  const { user, signIn, signOut } = useAuth();
+  const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isMobileViewport, setIsMobileViewport] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearchFocused, setIsSearchFocused] = useState(false);
+
+  const handleAuthSuccess = useCallback(
+    (userData) => {
+      signIn(userData);
+      setIsAuthOpen(false);
+    },
+    [signIn]
+  );
+
+  const handleSignOut = useCallback(() => {
+    signOut();
+    setIsMobileMenuOpen(false);
+  }, [signOut]);
+
+  const initials = user?.name
+    ? user.name
+        .split(' ')
+        .map((n) => n[0])
+        .slice(0, 2)
+        .join('')
+        .toUpperCase()
+    : '';
 
   // Optimized scroll handler with RAF throttling
   useEffect(() => {
@@ -372,19 +398,34 @@ export default function InstaStyleHeader() {
             )}
           </button>
 
-          {/* User Menu */}
-          <Link
-            href="/services/instastyle/profile"
-            className={`instaHeaderActionButton ${styles.actionButton}`}
-            style={fallback.actionButton}
-            aria-label="Account"
-            title="Account"
-          >
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-              <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
-              <circle cx="12" cy="7" r="4" />
-            </svg>
-          </Link>
+          {/* Account — same Accesco session via AuthModal */}
+          {user ? (
+            <Link
+              href="/services/instastyle/profile"
+              className={`instaHeaderActionButton ${styles.actionButton} ${styles.accountLink}`}
+              style={fallback.actionButton}
+              aria-label={`Account, signed in as ${user.name}`}
+              title="Your profile"
+            >
+              <span className={styles.userInitials} aria-hidden="true">
+                {initials}
+              </span>
+            </Link>
+          ) : (
+            <button
+              type="button"
+              onClick={() => setIsAuthOpen(true)}
+              className={`instaHeaderActionButton ${styles.actionButton}`}
+              style={fallback.actionButton}
+              aria-label="Sign in or create an account"
+              title="Login / Sign up"
+            >
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+                <circle cx="12" cy="7" r="4" />
+              </svg>
+            </button>
+          )}
 
           {/* Mobile Menu Toggle */}
           {isMobileViewport && (
@@ -457,6 +498,35 @@ export default function InstaStyleHeader() {
             ))}
           </ul>
 
+          <div className={styles.mobileAuthBlock}>
+            {user ? (
+              <>
+                <Link
+                  href="/services/instastyle/profile"
+                  className={styles.mobileAuthPrimary}
+                  onClick={toggleMobileMenu}
+                >
+                  Profile
+                  <span className={styles.mobileAuthHint}>{user.name}</span>
+                </Link>
+                <button type="button" className={styles.mobileAuthSecondary} onClick={handleSignOut}>
+                  Sign out
+                </button>
+              </>
+            ) : (
+              <button
+                type="button"
+                className={styles.mobileAuthPrimary}
+                onClick={() => {
+                  setIsMobileMenuOpen(false);
+                  setIsAuthOpen(true);
+                }}
+              >
+                Login / Sign up
+              </button>
+            )}
+          </div>
+
           <div className={styles.mobileFooter}>
             <div className={styles.mobileSocials}>
               <a href="#" className={styles.socialLink}>Instagram</a>
@@ -477,6 +547,8 @@ export default function InstaStyleHeader() {
           aria-hidden="true"
         />
       )}
+
+      <AuthModal isOpen={isAuthOpen} onClose={() => setIsAuthOpen(false)} onSuccess={handleAuthSuccess} />
     </>
   );
 }
