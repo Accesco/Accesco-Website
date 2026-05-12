@@ -5,8 +5,8 @@ import CartDrawer from '@/components/instastyle/CartDrawer';
 import './instastyle-shell.css';
 
 export const metadata = {
-  title: "InstaStyle | Fashion Delivered in 15-20 Minutes",
-  description: "Shop InstaStyle for instant fashion delivery in 15-20 minutes. Try before you buy at your doorstep, virtual try-on, thrift marketplace and a Reverse Fashion Loop.",
+  title: "InstaStyle | The Editorial Curation",
+  description: "A meticulously curated boutique experience. Discover artisanal labels, premium craftsmanship, and a circular fashion ecosystem designed for the modern connoisseur.",
 };
 
 export default function Layout({ children }) {

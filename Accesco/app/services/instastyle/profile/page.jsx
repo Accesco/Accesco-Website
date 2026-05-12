@@ -6,6 +6,7 @@ import styles from './profile.module.css';
 import { useCart } from '@/contexts/CartContext';
 import { products } from '@/lib/mockData';
 import ActiveOrdersWidget from '@/components/ActiveOrdersWidget';
+import Select from '@/components/instastyle/Select';
 
 const PROFILE_STORAGE_KEY = 'instastyle_profile';
 
@@ -167,35 +168,24 @@ export default function ProfilePage() {
               <span>Phone</span>
               <input value={profile.phone} onChange={(e) => updateField('phone', e.target.value)} />
             </label>
-            <label>
-              <span>Gender</span>
-              <select value={profile.gender} onChange={(e) => updateField('gender', e.target.value)}>
-                <option>Prefer not to say</option>
-                <option>Women</option>
-                <option>Men</option>
-                <option>Non-binary</option>
-              </select>
-            </label>
-            <label>
-              <span>Top size</span>
-              <select value={profile.sizeTop} onChange={(e) => updateField('sizeTop', e.target.value)}>
-                <option>XS</option>
-                <option>S</option>
-                <option>M</option>
-                <option>L</option>
-                <option>XL</option>
-              </select>
-            </label>
-            <label>
-              <span>Bottom size</span>
-              <select value={profile.sizeBottom} onChange={(e) => updateField('sizeBottom', e.target.value)}>
-                <option>28</option>
-                <option>30</option>
-                <option>32</option>
-                <option>34</option>
-                <option>36</option>
-              </select>
-            </label>
+            <Select 
+              label="Gender"
+              value={profile.gender}
+              options={['Prefer not to say', 'Women', 'Men', 'Non-binary']}
+              onChange={(val) => updateField('gender', val)}
+            />
+            <Select 
+              label="Top size"
+              value={profile.sizeTop}
+              options={['XS', 'S', 'M', 'L', 'XL']}
+              onChange={(val) => updateField('sizeTop', val)}
+            />
+            <Select 
+              label="Bottom size"
+              value={profile.sizeBottom}
+              options={['28', '30', '32', '34', '36']}
+              onChange={(val) => updateField('sizeBottom', val)}
+            />
           </div>
 
           <label className={styles.notesField}>

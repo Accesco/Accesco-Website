@@ -44,16 +44,6 @@ export default function FeatureAccordion() {
 
   const handleItemClick = (index) => {
     setActiveIndex(index);
-    
-    // Trigger the Vibe Check fill animation if it's the Vibe Check section
-    const pollFill = sectionRef.current.querySelector('.is-poll-fill');
-    if (pollFill) {
-      if (index === 2) { // "The Vibe Check" is at index 2 (01, 02, 03...)
-        pollFill.classList.add('is-filled');
-      } else {
-        pollFill.classList.remove('is-filled');
-      }
-    }
   };
 
   return (
@@ -74,11 +64,11 @@ export default function FeatureAccordion() {
             {/* Progress dots — highlight active box */}
             <div className="is-progress-dots">
               {[
-                '15-20 Min Outfit Delivery',
-                'Trial at Doorstep',
-                'THE VIBE CHECK',
-                'Instant Outfit Builder',
-                'Size memory engine',
+                'Artisanal Curation',
+                'Home Fitting Service',
+                'The Style Council',
+                'Outfit Curator',
+                'Fit Memory Engine',
                 'Thrift Marketplace',
                 'Virtual Try-On',
                 'SwipeStyle Discovery'
@@ -111,20 +101,20 @@ export default function FeatureAccordion() {
 
           <div className="is-acc-stack">
             {[
-              { title: '15-20 Min Outfit Delivery', desc: 'High-demand outfits pre-stocked inside integrated dark stores enabling near-instant delivery for events and last-minute plans.' },
-              { title: 'Trial at Doorstep', desc: 'Try selected outfits at home while the rider waits up to 15 minutes. Customers only pay for items they keep.' },
-              { title: 'THE VIBE CHECK', desc: 'Shopping is a team sport. Turn every purchase into a group decision. Share outfit options with friends, create instant polls, compare looks together, and get your squad\'s approval before you confidently check out.', isVibe: true },
-              { title: 'Instant Outfit Builder', desc: 'Select an occasion and InstaStyle instantly curates a complete ready-to-wear outfit set delivered from the dark store within minutes.' },
-              { title: 'Size memory engine', desc: 'Learns your exact fit preference per brand and category. Never wrong-sizes an order again.' },
+              { title: 'Artisanal Curation', desc: 'Meticulously selected collections from global heritage labels and local artisanal brands, ensuring every piece meets our standards of excellence.' },
+              { title: 'Home Fitting Service', desc: 'Experience the luxury of a private fitting. Try your selected pieces in the comfort of your home with our dedicated concierge service.' },
+              { title: 'The Style Council', desc: 'Fashion is an shared experience. Invite your inner circle to curate your looks, share instant polls, and finalize your selections with collective wisdom.', isCouncil: true },
+              { title: 'Curated Outfits', desc: 'Our editorial team creates complete, ready-to-wear ensembles for any occasion, ensuring you have the perfect look for your next event.' },
+              { title: 'Fit Memory Engine', desc: 'Our intelligent fit system understands your unique silhouette and style preferences across all our partner brands for a tailored shopping experience.' },
               { title: 'Thrift Marketplace', desc: 'Curated resale marketplace where users and vendors sell verified pre-owned fashion, enabling affordability and circular fashion.' },
               { title: 'Virtual Try-On', desc: 'Digital body-mapping previews that let users visualise fit, fall, and proportions before ordering, reducing size confusion and returns.' },
               { title: 'SwipeStyle Discovery', desc: 'Swipe-based fashion exploration that learns style preferences instantly and builds a personalised SwipeStyle Cart.' }
             ].map((feature, idx) => {
-              if (feature.isVibe) {
+              if (feature.isCouncil) {
                 return (
                 <div 
                   key={idx} 
-                  className={`is-acc-item is-vibe ${activeIndex === idx ? 'is-active' : ''}`}
+                  className={`is-acc-item is-premium-detail ${activeIndex === idx ? 'is-active' : ''}`}
                   onClick={() => handleItemClick(idx)}
                   style={{ cursor: 'pointer' }}
                 >
@@ -135,11 +125,11 @@ export default function FeatureAccordion() {
                       <span className="is-acc-title">{feature.title}</span>
                       <div className="is-acc-preview" style={{ backgroundImage: `url('${PHOTOS[idx]}')` }} />
                     </div>
-                    <div className="is-vibe-overlay" style={{ opacity: activeIndex === idx ? 1 : 0, transition: 'opacity 0.4s' }}></div>
-                    <div className="is-vibe-content" style={{ opacity: activeIndex === idx ? 1 : 0, pointerEvents: activeIndex === idx ? 'auto' : 'none', transition: 'opacity 0.4s 0.2s' }}>
-                      <span className="is-vibe-label">Featured</span>
-                      <h3 className="is-vibe-heading">{feature.title}</h3>
-                      <p className="is-vibe-desc">{feature.desc}</p>
+                    <div className="is-council-overlay" style={{ opacity: activeIndex === idx ? 1 : 0, transition: 'opacity 0.4s' }}></div>
+                    <div className="is-council-content" style={{ opacity: activeIndex === idx ? 1 : 0, pointerEvents: activeIndex === idx ? 'auto' : 'none', transition: 'opacity 0.4s 0.2s' }}>
+                      <span className="is-council-label">Featured</span>
+                      <h3 className="is-council-heading">{feature.title}</h3>
+                      <p className="is-council-desc">{feature.desc}</p>
                       <div className="is-squad-row">
                         <div className="is-avatars">
                           <div className="is-av av-y">P</div>
@@ -152,7 +142,7 @@ export default function FeatureAccordion() {
                         <span className="is-poll-opt poll-a">A 68%</span>
                         <span className="is-poll-opt poll-b">B 20%</span>
                         <span className="is-poll-opt poll-c">C 12%</span>
-                        <div className="is-poll-bar"><div className="is-poll-fill"></div></div>
+                        <div className="is-poll-bar"><div className={`is-poll-fill ${activeIndex === idx ? 'is-filled' : ''}`}></div></div>
                       </div>
                     </div>
                   </div>

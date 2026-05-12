@@ -5,6 +5,7 @@ import { useSearchParams } from 'next/navigation';
 import ProductCard from '@/components/instastyle/ProductCard';
 import { products, categories, sortProducts } from '@/lib/mockData';
 import styles from './catalog.module.css';
+import Select from '@/components/instastyle/Select';
 
 // ✅ Inner component that uses useSearchParams
 function CatalogContent() {
@@ -49,12 +50,6 @@ function CatalogContent() {
   const activeFilterCount =
     filters.size.length + (filters.priceRange[1] < 10000 ? 1 : 0);
 
-  const averageRating = useMemo(() => {
-    if (displayedProducts.length === 0) return 0;
-    const total = displayedProducts.reduce((sum, item) => sum + (item.rating || 0), 0);
-    return (total / displayedProducts.length).toFixed(1);
-  }, [displayedProducts]);
-
   const handleSizeFilter = (size) => {
     setFilters(prev => ({
       ...prev,
@@ -77,12 +72,14 @@ function CatalogContent() {
       {/* Header */}
       <div className={styles.catalogHeader}>
         <div className={styles.container}>
+          <p className={styles.kicker}>The Curation</p>
           <h1>Shop the Edit</h1>
-          <p>Category-first shopping with a fashion-magazine feel</p>
-          <div className={styles.headerMetrics}>
-            <span className={styles.metricPill}>{displayedProducts.length} curated pieces</span>
-            <span className={styles.metricPill}>Avg rating {averageRating}</span>
-            <span className={styles.metricPill}>Fast dispatch available</span>
+          <p className={styles.description}>
+            A meticulously curated selection of premium pieces, balanced by timeless design 
+            and superior craftsmanship.
+          </p>
+          <div className={styles.headerInfo}>
+            <span className={styles.countInfo}>{displayedProducts.length} items found</span>
           </div>
         </div>
       </div>
@@ -173,16 +170,19 @@ function CatalogContent() {
                 {displayedProducts.length} Products
                 {activeFilterCount > 0 ? ` • ${activeFilterCount} active filters` : ''}
               </div>
-              <select
-                className={styles.sortSelect}
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value)}
-              >
-                <option value="newest">Newest</option>
-                <option value="price-low-high">Price: Low to High</option>
-                <option value="price-high-low">Price: High to Low</option>
-                <option value="rating">Top Rated</option>
-              </select>
+              <div className={styles.sortWrapper}>
+                <Select
+                  value={sortBy}
+                  options={[
+                    { value: 'newest', label: 'Newest' },
+                    { value: 'price-low-high', label: 'Price: Low to High' },
+                    { value: 'price-high-low', label: 'Price: High to Low' },
+                    { value: 'rating', label: 'Top Rated' },
+                  ]}
+                  onChange={setSortBy}
+                  placeholder="Sort by"
+                />
+              </div>
             </div>
 
             {activeFilterCount > 0 && (

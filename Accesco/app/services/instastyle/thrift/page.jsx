@@ -101,13 +101,47 @@ export default function ThriftMarketplace() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
+            className={styles.heroActions}
           >
             <Link href="#collection" className={styles.heroBtn}>
-              Shop the Collection
+              Shop Collection
+            </Link>
+            <Link href="#sell" className={styles.heroBtnSecondary}>
+              Sell Your Old Clothes
             </Link>
           </motion.div>
         </div>
       </header>
+
+      <section id="sell" className={styles.sellSection}>
+        <div className={styles.container}>
+          <div className={styles.sellContent}>
+            <h2 className={styles.sellTitle}>Give Your Closet a Second Life</h2>
+            <p className={styles.sellDescription}>
+              Send us your pre-loved premium clothes and accessories. Our experts will authenticate, 
+              list, and find them a new home. You get paid, and the planet wins.
+            </p>
+            <div className={styles.sellSteps}>
+              <div className={styles.step}>
+                <span className={styles.stepNumber}>01</span>
+                <h3>Clean & Prep</h3>
+                <p>Pick out the pieces you no longer wear.</p>
+              </div>
+              <div className={styles.step}>
+                <span className={styles.stepNumber}>02</span>
+                <h3>Ship to Us</h3>
+                <p>We'll handle the logistics and authentication.</p>
+              </div>
+              <div className={styles.step}>
+                <span className={styles.stepNumber}>03</span>
+                <h3>Get Paid</h3>
+                <p>Receive payment once your item is verified.</p>
+              </div>
+            </div>
+            <button className={styles.sellBtn}>Start Selling Now</button>
+          </div>
+        </div>
+      </section>
 
       <main id="collection" className={styles.container}>
         <div className={styles.sectionHeader}>

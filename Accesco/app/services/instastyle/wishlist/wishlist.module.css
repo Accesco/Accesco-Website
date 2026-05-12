@@ -12,6 +12,13 @@
   padding-right: var(--gutter);
   border-bottom: 1px solid rgba(26, 17, 8, 0.06);
   background: transparent !important;
+  position: relative;
+}
+
+/* Override global hero overlay from globals.css */
+.hero::before {
+  content: none !important;
+  display: none !important;
 }
 
 .kicker {

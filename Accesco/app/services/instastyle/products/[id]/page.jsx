@@ -134,11 +134,6 @@ export default function ProductDetailPage() {
               <p className={styles.taxInfo}>Inclusive of all taxes</p>
             </div>
 
-            {/* Delivery Badge */}
-            <div className={styles.deliveryBadge}>
-              <span className={styles.deliveryIcon}>⚡</span>
-              <span>Delivered in 15-20 minutes</span>
-            </div>
 
             {/* Color Selector */}
             <ColorSelector

@@ -22,7 +22,7 @@ export const brands = [
   'ClassicWear',
   'ModernFit',
   'ElegantTouch',
-  'CasualVibes',
+  'Aura Atelier',
   'PremiumLine',
 ];
 
@@ -131,7 +131,7 @@ export const products = [
   {
     id: 'prod_006',
     name: 'Casual Polo Shirt',
-    brand: 'CasualVibes',
+    brand: 'Aura Atelier',
     category: 'men',
     subcategory: 'Shirts',
     price: 1299,

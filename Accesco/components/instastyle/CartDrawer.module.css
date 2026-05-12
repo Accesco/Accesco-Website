@@ -2,10 +2,10 @@
 .overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.4);
+  background: rgba(0, 0, 0, 0.3);
   z-index: 1999;
   animation: fadeIn 0.4s ease;
-  backdrop-filter: blur(20px);
+  backdrop-filter: blur(8px);
 }
 
 @keyframes fadeIn {
@@ -20,16 +20,13 @@
   right: 0;
   bottom: 0;
   width: 100%;
-  max-width: 480px;
-  background: rgba(255, 255, 255, 0.82);
-  backdrop-filter: blur(32px) saturate(180%);
-  -webkit-backdrop-filter: blur(32px) saturate(180%);
+  max-width: 440px;
+  background: #ffffff;
   z-index: 2000;
   display: flex;
   flex-direction: column;
-  animation: slideIn 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-  box-shadow: -20px 0 60px rgba(0, 0, 0, 0.1);
-  border-left: 1px solid rgba(255, 255, 255, 0.3);
+  animation: slideIn 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+  box-shadow: -10px 0 50px rgba(0, 0, 0, 0.05);
 }
 
 @keyframes slideIn {
@@ -42,29 +39,27 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 32px;
-  border-bottom: 1px solid rgba(26, 17, 8, 0.06);
+  padding: 24px 32px;
+  border-bottom: 1px solid #f5f5f5;
 }
 
 .title {
-  font-family: 'Syne', sans-serif;
-  font-size: 28px;
-  font-weight: 800;
-  color: #0D0D0D;
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 600;
+  color: #111;
   margin: 0;
   display: flex;
   align-items: center;
-  gap: 16px;
-  letter-spacing: -0.02em;
+  gap: 12px;
+  letter-spacing: -0.01em;
 }
 
 .count {
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-body);
   font-size: 13px;
-  color: #c99639; /* High-contrast gold */
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
+  color: #888;
+  font-weight: 400;
 }
 
 .closeButton {
@@ -72,19 +67,18 @@
   height: 32px;
   border: none;
   background: transparent;
-  color: var(--is-black);
-  font-size: 18px;
+  color: #111;
+  font-size: 16px;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
   display: flex;
   align-items: center;
   justify-content: center;
-  opacity: 0.6;
 }
 
 .closeButton:hover {
-  opacity: 1;
-  transform: rotate(90deg);
+  transform: scale(1.1);
+  opacity: 0.7;
 }
 
 /* Content */
@@ -92,8 +86,11 @@
   flex: 1;
   overflow-y: auto;
   padding: 32px;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(26, 17, 8, 0.1) transparent;
+  scrollbar-width: none;
+}
+
+.content::-webkit-scrollbar {
+  display: none;
 }
 
 /* Empty Cart */
@@ -103,38 +100,34 @@
   align-items: center;
   justify-content: center;
   text-align: center;
-  padding: 80px 20px;
+  padding: 100px 20px;
 }
 
 .emptyIcon {
-  font-size: 48px;
+  font-size: 40px;
   margin-bottom: 24px;
-  filter: grayscale(1) opacity(0.3);
+  opacity: 0.2;
 }
 
 .emptyCart h3 {
-  font-family: var(--font-display);
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 600;
   margin: 0 0 12px 0;
-  color: var(--is-black);
+  color: #111;
 }
 
 .emptyCart p {
-  font-family: var(--font-body);
-  font-size: 15px;
-  color: var(--is-brown-light);
+  font-size: 14px;
+  color: #888;
   margin: 0 0 32px 0;
 }
 
 .shopButton {
-  padding: 16px 40px;
-  background: var(--is-black);
-  color: var(--is-white);
-  border-radius: var(--r-pill);
+  padding: 14px 32px;
+  background: #111;
+  color: #fff;
   text-decoration: none;
-  font-family: var(--font-body);
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.1em;
@@ -142,33 +135,28 @@
 }
 
 .shopButton:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 20px rgba(26, 17, 8, 0.1);
+  background: #333;
 }
 
 /* Items */
 .items {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 32px;
 }
 
 .item {
-  display: grid;
-  grid-template-columns: 80px 1fr auto;
+  display: flex;
   gap: 20px;
-  padding-bottom: 24px;
-  border-bottom: 1px solid rgba(26, 17, 8, 0.04);
 }
 
 /* Item Image */
 .itemImage {
   position: relative;
   width: 80px;
-  height: 108px;
-  border-radius: 4px;
+  height: 110px;
   overflow: hidden;
-  background: #F8F8F8;
+  background: #f9f9f9;
   flex-shrink: 0;
 }
 
@@ -178,79 +166,64 @@
 
 /* Item Details */
 .itemDetails {
+  flex: 1;
   display: flex;
   flex-direction: column;
   gap: 4px;
 }
 
 .itemName {
-  font-family: var(--font-display);
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 600;
-  color: var(--is-black);
+  color: #111;
   text-decoration: none;
-  line-height: 1.3;
-  transition: color 0.2s ease;
-}
-
-.itemName:hover {
-  color: var(--is-brown);
+  line-height: 1.4;
 }
 
 .itemBrand {
-  font-family: 'Inter', sans-serif;
   font-size: 10px;
-  color: rgba(0, 0, 0, 0.5);
-  margin: 0;
+  color: #888;
   text-transform: uppercase;
   letter-spacing: 0.1em;
   font-weight: 700;
+  margin-bottom: 4px;
 }
 
 .itemMeta {
   display: flex;
   align-items: center;
   gap: 8px;
-  font-family: var(--font-body);
-  font-size: 12px;
-  color: var(--is-brown-light);
-  margin-top: 4px;
+  font-size: 11px;
+  color: #999;
 }
 
 /* Quantity Controls */
 .quantityControls {
   display: inline-flex;
   align-items: center;
-  border: 1px solid rgba(26, 17, 8, 0.08);
-  border-radius: 4px;
-  margin-top: 12px;
+  border: 1px solid #eee;
+  margin-top: auto;
   width: fit-content;
 }
 
 .quantityButton {
-  width: 28px;
-  height: 28px;
+  width: 24px;
+  height: 24px;
   border: none;
   background: transparent;
-  color: var(--is-black);
-  font-size: 14px;
+  color: #111;
+  font-size: 12px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.quantityButton:hover {
-  background: rgba(26, 17, 8, 0.03);
-}
-
 .quantity {
-  min-width: 32px;
+  min-width: 28px;
   text-align: center;
-  font-family: var(--font-body);
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 600;
-  padding: 0 4px;
 }
 
 /* Item Actions */
@@ -262,35 +235,34 @@
 }
 
 .itemPrice {
-  font-family: var(--font-body);
-  font-size: 15px;
-  font-weight: 700;
-  color: var(--is-black);
+  font-size: 14px;
+  font-weight: 600;
+  color: #111;
 }
 
 .removeButton {
-  width: 32px;
-  height: 32px;
+  width: 24px;
+  height: 24px;
   border: none;
   background: transparent;
-  filter: grayscale(1) opacity(0.4);
+  opacity: 0.3;
   cursor: pointer;
   transition: all 0.2s ease;
   display: flex;
   align-items: center;
   justify-content: center;
+  font-size: 14px;
 }
 
 .removeButton:hover {
-  filter: none;
   opacity: 1;
 }
 
 /* Footer */
 .footer {
   padding: 32px;
-  background: rgba(26, 17, 8, 0.02);
-  border-top: 1px solid rgba(26, 17, 8, 0.06);
+  background: #fff;
+  border-top: 1px solid #f5f5f5;
 }
 
 /* Summary */
@@ -298,30 +270,28 @@
   display: flex;
   flex-direction: column;
   gap: 12px;
-  margin-bottom: 32px;
+  margin-bottom: 24px;
 }
 
 .summaryRow {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-family: var(--font-body);
-  font-size: 14px;
-  color: var(--is-brown-light);
+  font-size: 13px;
+  color: #888;
 }
 
 .summaryRow.total {
   padding-top: 16px;
-  border-top: 1px solid rgba(26, 17, 8, 0.08);
-  font-family: var(--font-display);
-  font-size: 20px;
-  font-weight: 700;
-  color: var(--is-black);
+  border-top: 1px solid #f5f5f5;
+  font-size: 18px;
+  font-weight: 600;
+  color: #111;
   margin-top: 8px;
 }
 
 .free {
-  color: var(--is-sage);
+  color: #111;
   font-weight: 700;
 }
 
@@ -330,47 +300,39 @@
   display: block;
   width: 100%;
   padding: 18px;
-  background: var(--is-black);
-  color: var(--is-white);
-  border: none;
-  border-radius: var(--r-pill);
-  font-family: var(--font-body);
-  font-size: 13px;
+  background: #111;
+  color: #fff;
+  text-decoration: none;
+  font-size: 12px;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.15em;
   text-align: center;
-  text-decoration: none;
-  cursor: pointer;
   transition: all 0.3s ease;
   margin-bottom: 12px;
 }
 
 .checkoutButton:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 12px 24px rgba(26, 17, 8, 0.15);
+  background: #333;
 }
 
 .continueButton {
   display: block;
   width: 100%;
-  padding: 14px;
+  padding: 12px;
   background: transparent;
-  color: var(--is-black);
-  border: 1px solid rgba(26, 17, 8, 0.1);
-  border-radius: var(--r-pill);
-  font-family: var(--font-body);
-  font-size: 12px;
-  font-weight: 700;
+  color: #111;
+  border: 1px solid #eee;
+  font-size: 11px;
+  font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.1em;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .continueButton:hover {
-  border-color: var(--is-black);
-  background: var(--is-white);
+  border-color: #111;
 }
 
 @media (max-width: 480px) {

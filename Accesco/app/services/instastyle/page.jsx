@@ -7,7 +7,6 @@ import styles from './landing.module.css';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useGSAP } from '@gsap/react';
-import SplitType from 'split-type';
 import FeatureAccordion from '@/components/instastyle/FeatureAccordion';
 import FashionCollections from '@/components/instastyle/FashionCollections';
 import SwipeStyleShowcase from '@/components/instastyle/SwipeStyleShowcase';
@@ -19,11 +18,6 @@ if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger);
 }
 
-// ── Marquee content (doubled for seamless loop)
-const MARQUEE_ITEMS = [
-  'Free Delivery', 'Try Before You Buy', '200+ Brands',
-  '15 Min Delivery', 'AI Styled', 'Squad Vibe Check', 'Zero Wrong Sizes',
-];
 
 export default function InstaStyleLanding() {
   const pageRef    = useRef(null);
@@ -61,31 +55,30 @@ export default function InstaStyleLanding() {
       href: '/services/instastyle/catalog?category=men',
     },
   ];
-
   const instastyleFeatures = [
     {
-      title: '15-20 Min Outfit Delivery',
-      description: 'High-demand outfits pre-stocked inside integrated dark stores enabling near-instant delivery for events and last-minute plans.',
+      title: 'Curated Delivery',
+      description: 'High-demand outfits delivered to your doorstep with precision and care, ensuring you have the perfect look for any occasion.',
     },
     {
-      title: 'Trial at Doorstep',
-      description: 'Try selected outfits at home while the rider waits up to 15 minutes. Customers only pay for items they keep.',
+      title: 'Trial at Home',
+      description: 'Experience the perfect fit in the comfort of your home. Keep only what you love and feel confident in.',
     },
     {
-      title: 'THE VIBE CHECK',
-      description: 'Shopping is a team sport. Turn every purchase into a group decision. Share outfit options with friends, create instant polls, compare looks together, and get your squad\'s approval before you confidently check out.',
+      title: 'THE STYLE COUNCIL',
+      description: 'Share your finds with friends and get immediate feedback on your looks. Elevate your shopping experience into a collaborative journey.',
     },
     {
-      title: 'Instant Outfit Builder',
-      description: 'Select an occasion and InstaStyle instantly curates a complete ready-to-wear outfit set delivered from the dark store within minutes.',
+      title: 'Outfit Curator',
+      description: 'Select an occasion and receive a hand-picked, ready-to-wear outfit set curated for your specific style and event.',
     },
     {
-      title: 'Size memory engine',
-      description: 'Learns your exact fit preference per brand and category. Never wrong-sizes an order again.',
+      title: 'Fit Perfection',
+      description: 'Our engine learns your fit preferences across all brands to ensure every order is perfectly sized for you.',
     },
     {
       title: 'Thrift Marketplace',
-      description: 'Curated resale marketplace where users and vendors sell verified pre-owned fashion, enabling affordability and circular fashion.',
+      description: 'A dedicated space for pre-owned luxury, promoting a circular economy and sustainable fashion choices.',
     },
     {
       title: 'Virtual Try-On',
@@ -108,11 +101,11 @@ export default function InstaStyleLanding() {
   });
 
   const reviews = [
-    { text: 'The 15-minute delivery is a game changer! Ordered a dress for a party and it arrived before I finished my makeup.', name: 'Priya Sharma', location: 'Mumbai', initial: 'P' },
-    { text: 'Virtual try-on feature is incredible — no more wrong sizes. The quality of products is top-notch too.', name: 'Rahul Verma', location: 'Delhi', initial: 'R' },
-    { text: 'Love the thrift marketplace! Sold my old clothes and bought new ones. Sustainable and affordable fashion.', name: 'Ananya Patel', location: 'Bangalore', initial: 'A' },
-    { text: 'Best fashion shopping experience ever! The try before you buy option saved me from so many returns.', name: 'Karan Singh', location: 'Pune', initial: 'K' },
-    { text: 'Lightning fast delivery and amazing quality. InstaStyle has become my go-to for all fashion needs!', name: 'Sneha Reddy', location: 'Hyderabad', initial: 'S' },
+    { text: 'The delivery speed is incredible. Ordered a dress for a dinner and it arrived perfectly on time.', name: 'Priya Sharma', location: 'Mumbai', initial: 'P' },
+    { text: 'The fit recommendations are spot on — no more returns due to sizing issues. The quality is exceptional.', name: 'Rahul Verma', location: 'Delhi', initial: 'R' },
+    { text: 'I love the thrift marketplace! A sustainable way to refresh my wardrobe with authenticated luxury.', name: 'Ananya Patel', location: 'Bangalore', initial: 'A' },
+    { text: 'The try-on experience is seamless. It takes the guesswork out of online shopping.', name: 'Karan Singh', location: 'Pune', initial: 'K' },
+    { text: 'A premium fashion destination with impeccable service and a curated selection of brands.', name: 'Sneha Reddy', location: 'Hyderabad', initial: 'S' },
   ];
 
   // ── GSAP Reveal Animations
@@ -129,17 +122,12 @@ export default function InstaStyleLanding() {
       { trigger: '#instastyle-how-it-works', bg: '#FAF9F6', text: '#0D0D0D' }
     ];
 
-    // 1. Text Splitting for Hero
-    const heroTitle = new SplitType(`.${styles.heroTitle}`, { types: 'chars,words' });
-    
-    // 2. Timeline for Hero Entrance
+    // 2. Hero Entrance Timeline
     const heroTl = gsap.timeline();
     heroTl
-      .from(heroTitle.chars, {
+      .from(`.${styles.heroTitle}`, {
         opacity: 0,
-        y: 40, // Reduced from 80 to prevent excessive gap
-        rotateX: -30,
-        stagger: 0.02,
+        y: 40,
         duration: 0.8,
         ease: 'power3.out',
       })
@@ -173,14 +161,12 @@ export default function InstaStyleLanding() {
       });
     });
 
-    // 3.5 RevealText Character Animations (Awwwards staple)
+    // 3.5 RevealText Animations
     const sectionTitles = pageRef.current.querySelectorAll(`.${styles.sectionTitle}`);
     sectionTitles.forEach((title) => {
-      const split = new SplitType(title, { types: 'chars' });
-      gsap.from(split.chars, {
+      gsap.from(title, {
         opacity: 0,
-        y: 25,
-        stagger: 0.02,
+        y: 20,
         duration: 0.8,
         ease: 'power2.out',
         scrollTrigger: {
@@ -190,13 +176,6 @@ export default function InstaStyleLanding() {
       });
     });
 
-    // 4. Parquee logic
-    gsap.to(`.${styles.marqueeTrack}`, {
-      xPercent: -50,
-      repeat: -1,
-      duration: 20,
-      ease: 'none',
-    });
 
     // 5. Hero Parallax
     gsap.to(`.${styles.hero}`, {
@@ -254,7 +233,6 @@ export default function InstaStyleLanding() {
     });
 
     return () => {
-      heroTitle.revert();
       ScrollTrigger.getAll().forEach(t => t.kill());
     };
   }, { scope: pageRef, dependencies: [] });
@@ -327,7 +305,7 @@ export default function InstaStyleLanding() {
       >
         {/* ── Announcement Bar (Floating over video) ── */}
         <div className={styles.announcementBar} style={{ position: 'absolute', top: 0, left: 0, width: '100%', zIndex: 20 }}>
-          Accesco InstaStyle is live in preview — faster discovery, curated edits, try before you buy.
+          Accesco InstaStyle — Curated fashion, artisanal labels, and a seamless shopping experience.
         </div>
         {/* Video background — DO NOT CHANGE */}
         <video
@@ -343,18 +321,14 @@ export default function InstaStyleLanding() {
         <div className={styles.heroOverlay} aria-hidden="true" />
 
         <div className={styles.heroContent}>
-          <div className={styles.heroBadge}>
-            <span className={styles.heroBadgeDot} />
-            Define your look
-          </div>
 
           <h1 className={styles.heroTitle}>
             INSTA<span className={styles.heroTitleAccent}>STYLE</span>
           </h1>
 
           <p className={styles.heroSubtitle}>
-            AI-curated fashion from 200+ brands. Delivered in 15–20 minutes.
-            Try before you buy — keep what you love.
+            Curated fashion from global and local labels. 
+            Impeccable service, refined discovery, and quality that speaks for itself.
           </p>
 
           <div className={styles.heroButtons}>
@@ -378,25 +352,10 @@ export default function InstaStyleLanding() {
             </Link>
           </div>
 
-          <div className={styles.heroChips}>
-            <span className={styles.heroChip}>15 min delivery</span>
-            <span className={styles.heroChip}>Try before you buy</span>
-            <span className={styles.heroChip}>Thrift marketplace</span>
-          </div>
+
         </div>
       </section>
 
-      {/* ── Marquee Ticker ── */}
-      <div className={styles.marqueeStrip} aria-hidden="true">
-        <div className={styles.marqueeTrack}>
-          {[...MARQUEE_ITEMS, ...MARQUEE_ITEMS].map((item, i) => (
-            <span key={i} className={styles.marqueeItem}>
-              <span className={styles.marqueeDot} />
-              {item}
-            </span>
-          ))}
-        </div>
-      </div>
 
       <div id="why-instastyle" className="w-full overflow-x-hidden">
         <FeatureAccordion />

@@ -545,13 +545,13 @@
 
 
 /* ============================================================
-   VIBE CHECK CARD — Custom internal content
+   PREMIUM DETAIL CARD — Custom internal content
    ============================================================ */
-.is-acc-item.is-vibe {
+.is-acc-item.is-premium-detail {
   cursor: default;
 }
 
-.is-vibe-overlay {
+.is-council-overlay {
   position: absolute;
   inset: 0;
   background: linear-gradient(180deg,
@@ -560,7 +560,7 @@
       rgba(255, 255, 255, 0.88) 100%);
 }
 
-.is-vibe-content {
+.is-council-content {
   position: absolute;
   bottom: 0;
   left: 0;
@@ -570,12 +570,12 @@
 }
 
 @media (max-width: 899px) {
-  .is-vibe-content {
+  .is-council-content {
     padding: 16px 20px 22px;
   }
 }
 
-.is-vibe-label {
+.is-council-label {
   display: inline-block;
   font-size: 10px;
   font-weight: 700;
@@ -585,7 +585,7 @@
   margin-bottom: 8px;
 }
 
-.is-vibe-heading {
+.is-council-heading {
   font-size: clamp(1.5rem, 3vw, 2rem);
   font-weight: 800;
   color: var(--is-black, #1a1108);
@@ -594,7 +594,7 @@
   margin-bottom: 8px;
 }
 
-.is-vibe-desc {
+.is-council-desc {
   font-size: 13px;
   color: rgba(26, 17, 8, 0.7);
   line-height: 1.4;
@@ -637,15 +637,15 @@
 }
 
 .av-y {
-  background: #e8ff5a;
+  background: #f3e5ab; /* Champagne */
 }
 
 .av-g {
-  background: #4ade80;
+  background: #a7c49e; /* Sage */
 }
 
 .av-p {
-  background: #f472b6;
+  background: #d4a3a3; /* Dusty Rose */
 }
 
 .is-squad-text {
@@ -688,9 +688,9 @@
 }
 
 .poll-c {
-  background: rgba(74, 222, 128, 0.1);
-  border-color: rgba(74, 222, 128, 0.3);
-  color: #22c55e;
+  background: rgba(124, 154, 124, 0.1);
+  border-color: rgba(124, 154, 124, 0.3);
+  color: #7c9a7c; /* Muted Forest Green */
 }
 
 .is-poll-bar {

@@ -1,65 +1,72 @@
 .page {
   min-height: 100vh;
-  background: var(--is-white) !important;
+  background: #ffffff !important;
   padding-bottom: 120px;
 }
 
 .hero {
-  padding: 120px 0 60px;
-  max-width: var(--container);
+  padding: 120px 0 80px;
+  max-width: 1200px;
   margin: 0 auto;
-  padding-left: var(--gutter);
-  padding-right: var(--gutter);
+  padding-left: 24px;
+  padding-right: 24px;
   display: grid;
   grid-template-columns: 1fr 400px;
-  gap: 80px;
-  border-bottom: 1px solid rgba(26, 17, 8, 0.06);
+  gap: 60px;
+  border-bottom: 1px solid #f5f5f5;
   align-items: center;
-  background: transparent !important;
+  position: relative;
+}
+
+/* Override global hero overlay from globals.css */
+.hero::before {
+  content: none !important;
+  display: none !important;
+}
+
+.heroCopy {
+  display: flex;
+  flex-direction: column;
 }
 
 .kicker {
-  font-family: var(--font-body);
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 700;
-  color: var(--is-brown-light);
+  color: #888;
   text-transform: uppercase;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.2em;
   margin-bottom: 16px;
 }
 
 .hero h1 {
   font-family: var(--font-display);
-  font-size: clamp(40px, 8vw, 72px);
-  font-weight: 700;
-  color: var(--is-black);
-  margin: 0 0 16px 0;
-  letter-spacing: -0.04em;
-  line-height: 1;
+  font-size: clamp(32px, 6vw, 56px);
+  font-weight: 600;
+  color: #111;
+  margin: 0 0 20px 0;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
 }
 
 .subtitle {
-  font-family: var(--font-body);
-  font-size: 18px;
-  color: var(--is-brown-light);
-  max-width: 600px;
+  font-size: 16px;
+  color: #666;
+  max-width: 500px;
   line-height: 1.6;
-  margin-bottom: 32px;
+  margin-bottom: 40px;
 }
 
 .actions {
   display: flex;
-  gap: 16px;
+  gap: 12px;
   margin-bottom: 60px;
 }
 
 .primaryAction {
-  padding: 16px 40px;
-  background: var(--is-black);
-  color: var(--is-white);
-  border-radius: var(--r-pill);
-  font-family: var(--font-body);
-  font-size: 13px;
+  padding: 14px 32px;
+  background: #111;
+  color: #fff;
+  font-size: 12px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.1em;
@@ -70,18 +77,15 @@
 }
 
 .primaryAction:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 20px rgba(26, 17, 8, 0.1);
+  background: #333;
 }
 
 .secondaryAction {
-  padding: 16px 40px;
+  padding: 14px 32px;
   background: transparent;
-  border: 1px solid rgba(26, 17, 8, 0.1);
-  color: var(--is-black);
-  border-radius: var(--r-pill);
-  font-family: var(--font-body);
-  font-size: 13px;
+  border: 1px solid #eee;
+  color: #111;
+  font-size: 12px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.1em;
@@ -89,129 +93,130 @@
   transition: all 0.3s ease;
 }
 
+.secondaryAction:hover {
+  border-color: #111;
+}
+
 .quickStats {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 16px;
+  gap: 12px;
 }
 
 .statCard {
-  padding: 24px;
-  background: rgba(26, 17, 8, 0.02);
-  border: 1px solid rgba(26, 17, 8, 0.04);
-  border-radius: 12px;
+  padding: 20px;
+  background: #fcfcfc;
+  border: 1px solid #f5f5f5;
+  border-radius: 4px;
 }
 
 .statCard span {
-  font-family: var(--font-body);
-  font-size: 10px;
+  font-size: 9px;
   font-weight: 700;
-  color: var(--is-brown-light);
+  color: #999;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.1em;
   display: block;
-  margin-bottom: 4px;
+  margin-bottom: 6px;
 }
 
 .statCard strong {
   font-family: var(--font-display);
-  font-size: 24px;
+  font-size: 20px;
   font-weight: 600;
-  color: var(--is-black);
+  color: #111;
 }
 
 /* ── PROFILE CARD ── */
 .profileCard {
-  background: var(--is-white);
-  border: 1px solid rgba(26, 17, 8, 0.08);
-  border-radius: 24px;
+  background: #ffffff;
+  border: 1px solid #f5f5f5;
   padding: 40px;
-  box-shadow: 0 20px 50px rgba(26, 17, 8, 0.05);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.02);
   display: flex;
   flex-direction: column;
   gap: 24px;
 }
 
 .avatar {
-  width: 80px;
-  height: 80px;
-  background: var(--is-brown);
-  color: var(--is-white);
+  width: 64px;
+  height: 64px;
+  background: #f9f9f9;
+  color: #111;
+  border: 1px solid #eee;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   font-family: var(--font-display);
-  font-size: 32px;
-  font-weight: 600;
+  font-size: 24px;
+  font-weight: 500;
 }
 
 .profileCard h2 {
   font-family: var(--font-display);
-  font-size: 24px;
+  font-size: 22px;
   font-weight: 600;
   margin: 0 0 8px 0;
 }
 
 .profileCard p {
-  font-family: var(--font-body);
   font-size: 13px;
-  color: var(--is-brown-light);
+  color: #888;
   line-height: 1.5;
   margin: 0;
 }
 
 .completionWrap {
   padding: 20px 0;
-  border-top: 1px solid rgba(26, 17, 8, 0.06);
+  border-top: 1px solid #f5f5f5;
 }
 
 .completionHeader {
   display: flex;
   justify-content: space-between;
   margin-bottom: 12px;
-  font-family: var(--font-body);
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #999;
 }
 
 .completionTrack {
-  height: 4px;
-  background: rgba(26, 17, 8, 0.05);
-  border-radius: 2px;
+  height: 2px;
+  background: #f5f5f5;
   overflow: hidden;
 }
 
 .completionBar {
   height: 100%;
-  background: var(--is-brown);
+  background: #111;
   transition: width 1s ease;
 }
 
 .cardMeta {
   display: flex;
   justify-content: space-between;
-  font-family: var(--font-body);
-  font-size: 11px;
+  font-size: 10px;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--is-brown-light);
+  letter-spacing: 0.1em;
+  color: #bbb;
 }
 
 /* ── GRID ── */
 .grid {
-  max-width: var(--container);
+  max-width: 1200px;
   margin: 0 auto;
-  padding: 60px var(--gutter);
+  padding: 60px 24px;
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 40px;
 }
 
 .panel {
-  background: var(--is-white);
-  border: 1px solid rgba(26, 17, 8, 0.06);
-  border-radius: 20px;
+  background: #ffffff;
+  border: 1px solid #f5f5f5;
   padding: 40px;
 }
 
@@ -221,23 +226,22 @@
   align-items: baseline;
   margin-bottom: 32px;
   padding-bottom: 16px;
-  border-bottom: 1px solid rgba(26, 17, 8, 0.06);
+  border-bottom: 1px solid #f5f5f5;
 }
 
 .panelHeader h3 {
   font-family: var(--font-display);
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 600;
   margin: 0;
 }
 
 .panelHeader span {
-  font-family: var(--font-body);
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--is-brown-light);
+  letter-spacing: 0.1em;
+  color: #bbb;
 }
 
 /* ── FORMS ── */
@@ -254,159 +258,139 @@
 }
 
 .formGrid span, .notesField span {
-  font-family: var(--font-body);
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 700;
-  color: var(--is-black);
+  color: #111;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.1em;
 }
 
 .formGrid input, .formGrid select, .notesField textarea {
-  padding: 12px 16px;
-  border: 1px solid rgba(26, 17, 8, 0.1);
-  border-radius: 8px;
+  padding: 14px 16px;
+  border: 1px solid #eee;
   font-family: var(--font-body);
   font-size: 14px;
-  background: transparent;
+  background: #fafafa;
   outline: none;
-  transition: border-color 0.2s ease;
+  transition: all 0.3s ease;
+  border-radius: 8px;
+  color: #111;
+  width: 100%;
+}
+
+.formGrid select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23111' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 16px center;
+  padding-right: 40px;
+  cursor: pointer;
 }
 
 .formGrid input:focus, .formGrid select:focus, .notesField textarea:focus {
-  border-color: var(--is-black);
+  border-color: #111;
+  background: #fff;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
 }
 
 .notesField {
-  margin-top: 20px;
+  margin-top: 32px;
 }
 
 .panelActions {
-  margin-top: 32px;
+  margin-top: 40px;
 }
 
 /* ── ADDRESSES ── */
 .addressList {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 24px;
 }
 
 .addressCard {
-  padding: 24px;
-  border: 1px solid rgba(26, 17, 8, 0.06);
-  border-radius: 12px;
-  background: rgba(26, 17, 8, 0.01);
+  padding: 0;
 }
 
 .addressCard strong {
   display: block;
   font-family: var(--font-display);
-  font-size: 16px;
+  font-size: 15px;
+  font-weight: 600;
   margin-bottom: 8px;
 }
 
 .addressCard p {
-  font-family: var(--font-body);
-  font-size: 14px;
-  color: var(--is-brown-light);
+  font-size: 13px;
+  color: #666;
   margin: 0 0 4px 0;
+}
+
+.addressCard span {
+  font-size: 12px;
+  color: #999;
 }
 
 /* ── ORDERS ── */
 .ordersSection, .timelineSection {
-  max-width: var(--container);
+  max-width: 1200px;
   margin: 0 auto;
-  padding: 0 var(--gutter) 60px;
+  padding: 0 24px 80px;
 }
 
-.ordersList {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.orderRow {
-  display: flex;
-  justify-content: space-between;
-  padding: 24px;
-  background: var(--is-white);
-  border: 1px solid rgba(26, 17, 8, 0.06);
-  border-radius: 12px;
-  transition: all 0.3s ease;
-}
-
-.orderRow:hover {
-  background: rgba(26, 17, 8, 0.01);
-  border-color: rgba(26, 17, 8, 0.1);
-}
-
-.orderRow strong {
-  display: block;
-  font-family: var(--font-display);
-  font-size: 16px;
-  margin-bottom: 4px;
-}
-
-.orderRow span {
-  font-family: var(--font-body);
-  font-size: 12px;
-  color: var(--is-brown-light);
-}
-
-/* ── TIMELINE ── */
 .timelineList {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 32px;
 }
 
 .timelineItem {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  padding-left: 24px;
-  border-left: 2px solid var(--is-brown);
+  padding-left: 20px;
+  border-left: 1px solid #eee;
   position: relative;
 }
 
 .timelineItem::before {
   content: '';
   position: absolute;
-  left: -6px;
+  left: -4px;
   top: 0;
-  width: 10px;
-  height: 10px;
-  background: var(--is-brown);
+  width: 7px;
+  height: 7px;
+  background: #111;
   border-radius: 50%;
 }
 
 .timelineItem strong {
   font-family: var(--font-display);
-  font-size: 16px;
-  margin-bottom: 4px;
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 6px;
+  display: block;
 }
 
 .timelineItem p {
-  font-family: var(--font-body);
-  font-size: 14px;
-  color: var(--is-brown-light);
+  font-size: 13px;
+  color: #888;
   margin: 0;
 }
 
 .timelineItem span {
-  font-family: var(--font-body);
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 600;
   text-transform: uppercase;
-  color: var(--is-brown-light);
+  color: #bbb;
+  letter-spacing: 0.05em;
 }
 
 @media (max-width: 1024px) {
   .hero {
     grid-template-columns: 1fr;
     gap: 40px;
-    padding: 80px var(--gutter) 40px;
+    padding: 100px 24px 60px;
   }
   
   .profileCard {

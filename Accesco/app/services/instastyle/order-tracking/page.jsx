@@ -20,7 +20,6 @@ function OrderTrackingContent() {
   const orderId = searchParams.get('id');
   
   const order = useMemo(() => orders.find(o => o.id === orderId), [orders, orderId]);
-  const [countdown, setCountdown] = useState(20);
   const [deliveryProgress, setDeliveryProgress] = useState(0);
 
   useEffect(() => {
@@ -33,7 +32,7 @@ function OrderTrackingContent() {
       if (currentIndex < flow.length - 1) {
         updateOrderStatus(orderId, flow[currentIndex + 1]);
       }
-    }, 25000);
+    }, 45000); // Slower, more deliberate status updates
 
     return () => clearInterval(timer);
   }, [order, orderId, updateOrderStatus]);
@@ -46,20 +45,12 @@ function OrderTrackingContent() {
             clearInterval(animationTimer);
             return 100;
           }
-          return prev + 1;
+          return prev + 0.5;
         });
-      }, 250);
+      }, 500);
       return () => clearInterval(animationTimer);
     }
   }, [order?.status]);
-
-  useEffect(() => {
-    if (countdown <= 1) return;
-    const timer = setInterval(() => {
-      setCountdown(prev => prev - 1);
-    }, 60000);
-    return () => clearInterval(timer);
-  }, [countdown]);
 
   if (!order) {
     return (
@@ -82,8 +73,8 @@ function OrderTrackingContent() {
       <div className={styles.card}>
         <div className={styles.header}>
           <h2 className={styles.etaTitle}>Scheduled Arrival</h2>
-          <p className={styles.etaValue}>{order.status === 'DELIVERED' ? 'Arrived' : `${countdown} mins`}</p>
-          <p className={styles.etaSub}>Reference: {order.id}</p>
+          <p className={styles.etaValue}>{order.status === 'DELIVERED' ? 'Arrived' : 'In Transit'}</p>
+          <p className={styles.etaSub}>Consignment Ref: {order.id}</p>
         </div>
 
         <div className={styles.statusContainer}>

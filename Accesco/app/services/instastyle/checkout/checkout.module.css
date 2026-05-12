@@ -1,33 +1,41 @@
 .checkoutPage {
   min-height: 100vh;
-  background: var(--is-off-white);
-  padding-top: calc(72px + clamp(40px, 8vw, 80px));
-  padding-bottom: clamp(40px, 8vw, 80px);
-  color: var(--is-text-primary);
+  background: #ffffff;
+  padding-top: 140px;
+  padding-bottom: 100px;
+  position: relative;
+}
+
+/* Override global hero overlay from globals.css */
+.checkoutPage::before {
+  content: none !important;
+  display: none !important;
 }
 
 .container {
-  max-width: 1400px;
+  max-width: 1200px;
   margin: 0 auto;
-  padding: 0 20px;
+  padding: 0 24px;
 }
 
 .pageTitle {
   font-family: var(--font-display);
-  font-size: clamp(32px, 5vw, 56px);
-  font-weight: 700;
-  margin: 0 0 48px 0;
-  color: var(--is-black);
-  letter-spacing: -0.04em;
+  font-size: clamp(32px, 5vw, 48px);
+  font-weight: 600;
+  margin: 0 0 60px 0;
+  color: #111;
+  letter-spacing: -0.02em;
 }
 
 /* Step Indicator */
 .stepIndicator {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 16px;
-  margin-bottom: 60px;
+  justify-content: flex-start;
+  gap: 24px;
+  margin-bottom: 80px;
+  border-bottom: 1px solid #f5f5f5;
+  padding-bottom: 24px;
 }
 
 .step {
@@ -35,7 +43,6 @@
   align-items: center;
   gap: 12px;
   opacity: 0.3;
-  transition: opacity 0.3s ease;
 }
 
 .step.active {
@@ -43,75 +50,54 @@
 }
 
 .stepNum {
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  background: var(--is-black);
-  color: #fff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 13px;
-  font-weight: 800;
+  font-size: 11px;
+  font-weight: 700;
+  color: #111;
 }
 
 .stepLabel {
-  font-family: var(--font-body);
-  font-size: 13px;
-  font-weight: 800;
+  font-size: 11px;
+  font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  color: var(--is-black);
+  color: #111;
 }
 
 .stepLine {
   width: 40px;
   height: 1px;
-  background: rgba(0,0,0,0.1);
+  background: #eee;
 }
 
 /* Checkout Grid */
 .checkoutGrid {
   display: grid;
-  grid-template-columns: 1fr 480px;
-  gap: 40px;
-  align-items: start;
+  grid-template-columns: 1fr 400px;
+  gap: 80px;
 }
 
 /* Forms Section */
 .formsSection {
-  background: var(--is-white);
-  border-radius: var(--r-lg);
-  padding: 40px;
-  border: 1px solid var(--is-border);
+  background: transparent;
 }
 
 .section {
-  margin-bottom: 40px;
-  padding-bottom: 40px;
-  border-bottom: 1px solid #e5e5e5;
-}
-
-.section:last-of-type {
-  border-bottom: none;
-  margin-bottom: 0;
-  padding-bottom: 0;
+  margin-bottom: 60px;
 }
 
 .sectionTitle {
   font-family: var(--font-display);
-  font-size: 22px;
-  font-weight: 700;
-  margin: 0 0 28px 0;
-  color: var(--is-black);
-  letter-spacing: -0.02em;
+  font-size: 20px;
+  font-weight: 600;
+  margin: 0 0 32px 0;
+  color: #111;
 }
 
 /* Form Grid */
 .formGrid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 20px;
+  gap: 32px 24px;
 }
 
 .formGroup {
@@ -125,48 +111,60 @@
 }
 
 .formGroup label {
-  font-family: var(--font-body);
-  font-size: 13px;
+  font-size: 10px;
   font-weight: 700;
-  color: var(--is-text-secondary);
+  color: #111;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.1em;
 }
 
 .formGroup input,
 .formGroup select {
-  padding: 16px 18px;
-  border: 1px solid var(--is-border);
-  border-radius: 12px;
-  font-size: 15px;
-  transition: all 0.3s var(--ease-out);
+  padding: 14px 16px;
+  border: 1px solid #eee;
   font-family: var(--font-body);
-  background: var(--is-white);
+  font-size: 15px;
+  background: #fafafa;
+  outline: none;
+  transition: all 0.3s ease;
+  border-radius: 8px;
+  color: #111;
+  width: 100%;
+}
+
+.formGroup select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23111' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 16px center;
+  padding-right: 40px;
+  cursor: pointer;
 }
 
 .formGroup input:focus,
 .formGroup select:focus {
-  outline: none;
-  border-color: var(--is-brown);
-  box-shadow: 0 0 0 4px rgba(124, 74, 45, 0.08);
+  border-color: #111;
+  background: #fff;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
 }
 
 .formGroup input.error,
 .formGroup select.error {
   border-color: #EF4444;
+  background: #FEF2F2;
 }
 
 .errorText {
-  font-size: 13px;
+  font-size: 11px;
   color: #EF4444;
-  font-weight: 500;
+  margin-top: 4px;
 }
 
 /* Payment Methods */
 .paymentMethods {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 24px;
 }
 
 .paymentOption {
@@ -174,23 +172,20 @@
   align-items: center;
   gap: 20px;
   padding: 24px;
-  border: 1px solid var(--is-border);
-  border-radius: var(--r-md);
+  border: 1px solid #eee;
   cursor: pointer;
-  transition: all 0.3s var(--ease-out);
-  background: var(--is-white);
+  transition: all 0.3s ease;
 }
 
 .paymentOption:hover {
-  border-color: var(--is-brown-light);
-  background: var(--is-off-white);
+  border-color: #111;
 }
 
 .paymentOption input[type="radio"] {
-  width: 18px;
-  height: 18px;
+  width: 16px;
+  height: 16px;
   cursor: pointer;
-  accent-color: var(--is-brown);
+  accent-color: #111;
 }
 
 .paymentInfo {
@@ -202,45 +197,40 @@
 
 .paymentName {
   font-family: var(--font-display);
-  font-size: 17px;
-  font-weight: 700;
-  color: var(--is-black);
+  font-size: 16px;
+  font-weight: 600;
+  color: #111;
 }
 
 .paymentDesc {
-  font-family: var(--font-body);
-  font-size: 13px;
-  color: var(--is-text-secondary);
+  font-size: 12px;
+  color: #888;
 }
 
 /* Place Order Button */
 .placeOrderBtn {
   width: 100%;
-  padding: 22px 32px;
-  background: var(--is-black);
-  color: var(--is-white);
+  padding: 20px;
+  background: #111;
+  color: #fff;
   border: none;
-  border-radius: var(--r-pill);
-  font-family: var(--font-body);
-  font-size: 16px;
+  font-size: 12px;
   font-weight: 700;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.15em;
   text-transform: uppercase;
   cursor: pointer;
-  transition: all 0.4s var(--ease-out);
-  margin-top: 40px;
+  transition: all 0.3s ease;
+  margin-top: 20px;
 }
 
 .placeOrderBtn:hover:not(:disabled) {
-  background: var(--is-brown);
-  transform: translateY(-3px);
-  box-shadow: 0 12px 32px rgba(124, 74, 45, 0.25);
+  background: #333;
 }
 
 .placeOrderBtn:disabled {
-  background: var(--is-text-muted);
+  background: #eee;
+  color: #bbb;
   cursor: not-allowed;
-  transform: none;
 }
 
 /* Summary Section */
@@ -250,49 +240,41 @@
 
 .summarySticky {
   position: sticky;
-  top: 100px;
-  background: var(--is-white);
-  border-radius: var(--r-lg);
+  top: 120px;
+  background: #fcfcfc;
   padding: 32px;
-  border: 1px solid var(--is-border);
-  backdrop-filter: blur(20px);
+  border: 1px solid #f5f5f5;
 }
 
 .summaryTitle {
   font-family: var(--font-display);
-  font-size: 22px;
-  font-weight: 700;
-  margin: 0 0 28px 0;
-  color: var(--is-black);
-  letter-spacing: -0.02em;
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0 0 32px 0;
+  color: #111;
 }
 
 /* Summary Items */
 .summaryItems {
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  margin-bottom: 24px;
-  padding-bottom: 24px;
-  border-bottom: 1px solid #e5e5e5;
-  max-height: 400px;
-  overflow-y: auto;
+  gap: 20px;
+  margin-bottom: 32px;
+  padding-bottom: 32px;
+  border-bottom: 1px solid #f0f0f0;
 }
 
 .summaryItem {
-  display: grid;
-  grid-template-columns: 60px 1fr auto;
-  gap: 12px;
-  align-items: start;
+  display: flex;
+  gap: 16px;
 }
 
 .itemImage {
   position: relative;
   width: 60px;
   height: 80px;
-  border-radius: 8px;
   overflow: hidden;
-  background: #f5f5f5;
+  background: #fff;
 }
 
 .image {
@@ -300,28 +282,29 @@
 }
 
 .itemInfo {
+  flex: 1;
   display: flex;
   flex-direction: column;
   gap: 4px;
 }
 
 .itemName {
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
   color: #111;
   margin: 0;
-  line-height: 1.3;
+  line-height: 1.4;
 }
 
 .itemMeta {
-  font-size: 12px;
-  color: #666;
+  font-size: 11px;
+  color: #888;
   margin: 0;
 }
 
 .itemPrice {
-  font-size: 14px;
-  font-weight: 700;
+  font-size: 13px;
+  font-weight: 600;
   color: #111;
 }
 
@@ -330,66 +313,57 @@
   display: flex;
   flex-direction: column;
   gap: 12px;
-  margin-bottom: 20px;
+  margin-bottom: 32px;
 }
 
 .totalRow {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 15px;
-  color: #666;
+  font-size: 13px;
+  color: #888;
 }
 
 .totalRow.grandTotal {
-  padding-top: 12px;
-  border-top: 2px solid #e5e5e5;
-  font-size: 20px;
-  font-weight: 800;
+  padding-top: 20px;
+  border-top: 1px solid #f0f0f0;
+  font-size: 18px;
+  font-weight: 600;
   color: #111;
   margin-top: 8px;
 }
 
 .free {
-  color: #10B981;
-  font-weight: 600;
+  color: #111;
+  font-weight: 700;
 }
 
 /* Delivery Info */
 .deliveryInfo {
   display: flex;
   align-items: center;
-  justify-content: center;
   gap: 12px;
-  padding: 20px;
-  background: var(--is-off-white);
-  color: var(--is-black);
-  border: 1px solid var(--is-border);
-  border-radius: 12px;
-  font-family: var(--font-body);
-  font-size: 14px;
+  padding: 16px;
+  background: #fff;
+  border: 1px solid #eee;
+  font-size: 11px;
   font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #111;
 }
 
 .deliveryDot {
-  width: 8px;
-  height: 8px;
-  background: var(--is-amber);
+  width: 6px;
+  height: 6px;
+  background: #111;
   border-radius: 50%;
-  box-shadow: 0 0 12px var(--is-amber);
-  animation: pulse 2s infinite;
 }
 
-@keyframes pulse {
-  0% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.5; transform: scale(1.2); }
-  100% { opacity: 1; transform: scale(1); }
-}
-
-/* Responsive */
 @media (max-width: 1024px) {
   .checkoutGrid {
     grid-template-columns: 1fr;
+    gap: 60px;
   }
 
   .summarySticky {
@@ -399,35 +373,16 @@
 
 @media (max-width: 768px) {
   .checkoutPage {
-    padding-top: calc(72px + 24px);
+    padding-top: 100px;
     padding-bottom: 60px;
   }
 
-  .pageTitle {
-    margin-bottom: 24px;
-  }
-
-  .formsSection {
-    padding: 24px;
+  .stepIndicator {
+    margin-bottom: 40px;
+    gap: 16px;
   }
 
   .formGrid {
-    grid-template-columns: 1fr;
-  }
-
-  .formGroup.fullWidth {
-    grid-column: 1;
-  }
-
-  .summarySticky {
-    padding: 24px;
-  }
-
-  .summaryItems {
-    max-height: 300px;
-  }
-
-  .placeOrderBtn {
-    font-size: 16px;
+    gap: 20px;
   }
 }

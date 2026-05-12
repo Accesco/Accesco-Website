@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { useCart } from '@/contexts/CartContext';
 import styles from './checkout.module.css';
+import Select from '@/components/instastyle/Select';
 
 export default function CheckoutPage() {
   const router = useRouter();
@@ -320,23 +321,16 @@ export default function CheckoutPage() {
                   </div>
 
                   <div className={styles.formGroup}>
-                    <label htmlFor="state">State *</label>
-                    <select
-                      id="state"
-                      name="state"
+                    <Select 
+                      label="State *"
                       value={formData.state}
-                      onChange={handleInputChange}
-                      className={errors.state ? styles.error : ''}
-                    >
-                      <option value="">Select State</option>
-                      <option value="Delhi">Delhi</option>
-                      <option value="Maharashtra">Maharashtra</option>
-                      <option value="Karnataka">Karnataka</option>
-                      <option value="Tamil Nadu">Tamil Nadu</option>
-                      <option value="Gujarat">Gujarat</option>
-                      <option value="Rajasthan">Rajasthan</option>
-                      <option value="Uttar Pradesh">Uttar Pradesh</option>
-                    </select>
+                      options={[
+                        'Delhi', 'Maharashtra', 'Karnataka', 'Tamil Nadu', 
+                        'Gujarat', 'Rajasthan', 'Uttar Pradesh'
+                      ]}
+                      onChange={(val) => handleInputChange({ target: { name: 'state', value: val } })}
+                      placeholder="Select State"
+                    />
                     {errors.state && <span className={styles.errorText}>{errors.state}</span>}
                   </div>
 
@@ -453,9 +447,7 @@ export default function CheckoutPage() {
               <div className={styles.deliveryInfo}>
                 <div className={styles.deliveryDot} />
                 <span>
-                  {deliveryETA 
-                    ? `Express Delivery in ${deliveryETA} minutes` 
-                    : 'Express Delivery in 15-20 minutes'}
+                  Standard Priority Shipping
                 </span>
               </div>
             </div>
