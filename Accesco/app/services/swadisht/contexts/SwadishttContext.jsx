@@ -673,6 +673,7 @@ export function SwadishttProvider({ children }) {
   const value = {
     // Cart
     cart,
+    cartHydrated,
     cartOpen,
     setCartOpen,
     addToCart,

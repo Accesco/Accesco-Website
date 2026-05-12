@@ -19,7 +19,7 @@ const ORDERS_STORAGE_KEY = 'swadishtt-orders';
 
 function CheckoutContent() {
   const router = useRouter();
-  const { cart, clearCart } = useSwadishtt();
+  const { cart, cartHydrated, clearCart } = useSwadishtt();
   const [step, setStep] = useState(1);
   const [deliveryAddress, setDeliveryAddress] = useState({
     name: '',
@@ -32,6 +32,14 @@ function CheckoutContent() {
   const [paymentMethod, setPaymentMethod] = useState('');
   const [orderPlaced, setOrderPlaced] = useState(false);
   const [lastOrderId, setLastOrderId] = useState('');
+
+  useEffect(() => {
+    if (!cartHydrated) return;
+    if (orderPlaced) return;
+    if (cart.length > 0) return;
+
+    router.replace('/services/swadisht/cart');
+  }, [cartHydrated, cart.length, orderPlaced, router]);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -146,7 +154,6 @@ function CheckoutContent() {
   };
 
   if (cart.length === 0 && !orderPlaced) {
-    router.push('/services/swadisht/cart');
     return null;
   }
 

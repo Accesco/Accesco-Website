@@ -7,6 +7,9 @@ import { NextResponse } from 'next/server';
 import { db } from '../../../../lib/firebase';
 import { collection, query, where, getDocs, doc, runTransaction, addDoc } from 'firebase/firestore';
 
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
+
 export async function POST(request) {
   try {
     const { refereeEmail, referredBy } = await request.json();

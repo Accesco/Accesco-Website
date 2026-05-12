@@ -216,7 +216,7 @@ export async function getPersonCity() {
   return getDisplayAddress() || 'Bengaluru, Karnataka';
 }
 
-export default {
+const locationService = {
   getUserLocation,
   getLocationField,
   getStreetAddress,
@@ -232,3 +232,5 @@ export default {
   getDistanceToPoint,
   getPersonCity,
 };
+
+export default locationService;
