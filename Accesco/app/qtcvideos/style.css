@@ -225,16 +225,16 @@
 .qtc-play-overlay {
   position: absolute;
   inset: 0;
-  background: rgba(0,0,0,0.3);
+  background: rgba(0,0,0,0.18);
   display: flex;
   align-items: center;
   justify-content: center;
-  opacity: 0;
-  transition: opacity 0.3s ease;
+  opacity: 1;
+  transition: all 0.3s ease;
 }
 
 .qtc-video-card:hover .qtc-play-overlay {
-  opacity: 1;
+  background: rgba(0,0,0,0.28);
 }
 
 .qtc-play-icon {
@@ -396,10 +396,46 @@
 
 /* ===== RESPONSIVE ===== */
 @media (max-width: 768px) {
-  .qtc-hero {
-    padding: 80px 24px 48px;
-    min-height: 360px;
+
+.qtc-hero {
+  min-height: 280px !important;
+  height: auto !important;
+  padding: 48px 20px 36px !important;
+  align-items: center !important;
+
+  background: url('/images/QTC8.jpeg') center center / cover no-repeat !important;
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 32px !important;
+}
+
+  .qtc-hero-video {
+    display: none !important;
   }
+
+  .qtc-hero-overlay {
+    display: none !important;
+  }
+
+  .qtc-hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    backdrop-filter: blur(10px);
+    background: rgba(0,0,0,0.45);
+    z-index: 1;
+  }
+
+  .qtc-hero-content {
+    position: relative;
+    z-index: 3;
+  }
+
+ .qtc-title {
+  font-size: 1.65rem !important;
+  line-height: 1.12 !important;
+  text-shadow: 0 4px 18px rgba(0,0,0,0.6);
+}
 
   .qtc-header {
     flex-direction: column;

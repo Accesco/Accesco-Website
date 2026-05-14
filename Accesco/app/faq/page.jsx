@@ -803,6 +803,127 @@ const faqSchema = {
     "text": "Logistics. Because our riders are already in your neighborhood for groceries and food, fashion returns or rotations become zero-cost movements. It makes sustainable fashion as convenient as fast fashion."
   }
 }
+,
+{
+  "@type": "Question",
+  "name": "How does Accesco Living make everyday shopping easier?",
+  "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "Accesco Living combines groceries, food, fashion, and essentials into one smart platform, helping users save time and manage household shopping more efficiently."
+  }
+},
+{
+  "@type": "Question",
+  "name": "Why are users choosing Accesco Living over regular shopping apps?",
+  "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "Users prefer Accesco Living because it offers a personalized and connected shopping experience instead of managing multiple apps separately."
+  }
+},
+{
+  "@type": "Question",
+  "name": "Can Accesco Living help families control monthly expenses?",
+  "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "Yes, Accesco Living helps users organize purchases smarter, making it easier to track spending and avoid unnecessary expenses."
+  }
+},
+{
+  "@type": "Question",
+  "name": "How does Accesco Living personalize the customer experience?",
+  "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "The platform recommends products based on shopping habits and preferences, creating a faster and more convenient user experience."
+  }
+},
+{
+  "@type": "Question",
+  "name": "Why is Accesco Living popular among modern urban families?",
+  "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "Urban families prefer Accesco Living for its convenience, smart shopping features, and ability to simplify daily lifestyle management."
+  }
+},
+{
+  "@type": "Question",
+  "name": "What is Accesco Living's intelligence app and how does it work?",
+  "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "Accesco Living is India's first intelligence app combining groceries, food, fashion, and finance under one platform."
+  }
+},
+{
+  "@type": "Question",
+  "name": "How does Accesco work as an expense tracker for groceries?",
+  "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "Accesco doubles as an expense tracker for groceries by auto-categorizing purchases and tracking monthly spending patterns."
+  }
+},
+{
+  "@type": "Question",
+  "name": "What makes Accesco a circular commerce platform?",
+  "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "Accesco uses direct sourcing, reverse logistics, and waste reduction systems to create a circular commerce ecosystem."
+  }
+},
+{
+  "@type": "Question",
+  "name": "Is there one app for groceries, food, and fashion in India?",
+  "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "Yes. Accesco Living combines groceries, food, fashion, dining, and medicines into one unified platform."
+  }
+},
+{
+  "@type": "Question",
+  "name": "What is the best AI budget tracker for quick commerce shoppers?",
+  "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "Accesco's Xpense Meter helps users track household spending and make smarter budget decisions."
+  }
+},
+{
+  "@type": "Question",
+  "name": "Can I order groceries and fashion together on Accesco Living?",
+  "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "Yes. Accesco Living allows users to combine grocery and fashion shopping in one app experience."
+  }
+},
+{
+  "@type": "Question",
+  "name": "Which areas in Bengaluru are currently covered under Accesco Living's delivery network?",
+  "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "Accesco Living is expanding delivery coverage across key Bengaluru neighbourhoods during its beta launch."
+  }
+},
+{
+  "@type": "Question",
+  "name": "Is InstaStyle a rental service or does Accesco Living sell fashion outright?",
+  "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "InstaStyle supports both fashion rentals and direct purchases."
+  }
+},
+{
+  "@type": "Question",
+  "name": "How does Accesco Living keep prices lower than other quick commerce apps?",
+  "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "Accesco Living reduces middlemen costs through direct sourcing and optimized logistics."
+  }
+},
+{
+  "@type": "Question",
+  "name": "Can I use Accesco Living's Xpense Meter if I only use Swadisht?",
+  "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "Yes. Xpense Meter works even if you use only one Accesco vertical like Swadisht."
+  }
+}
   ]
 };
 
