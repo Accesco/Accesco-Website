@@ -1,13 +1,14 @@
 'use client';
 
+// Force dynamic rendering to prevent prerendering
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 /**
  * Checkout Page
  * @page /services/swadisht/checkout
  * @description Order checkout with address and payment
  */
-
-// Force dynamic rendering to avoid SSR issues with geolocation
-export const dynamic = 'force-dynamic';
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -408,5 +409,9 @@ function CheckoutContent() {
 }
 
 export default function CheckoutPage() {
+  // Prevent rendering during build/prerendering
+  if (typeof window === 'undefined') {
+    return null;
+  }
   return <CheckoutContent />;
 }

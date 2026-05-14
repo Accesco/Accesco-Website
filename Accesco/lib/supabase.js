@@ -57,10 +57,14 @@ export const updatePassword = async (newPassword) => {
 
 // Google OAuth
 export const signInWithGoogle = async () => {
+  const redirectTo = typeof window !== 'undefined' 
+    ? `${window.location.origin}/auth/callback`
+    : `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/auth/callback`
+  
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: 'google',
     options: {
-      redirectTo: `${window.location.origin}/auth/callback`
+      redirectTo
     }
   })
   return { data, error }
