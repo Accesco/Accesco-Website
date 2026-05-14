@@ -285,7 +285,492 @@ export const RESTAURANTS = [
         isBestseller: false
       }
     ]
+  },
+  {
+  id: 4,
+  name: 'Dosa Point',
+  slug: 'dosa-point',
+  coverImage: 'https://images.unsplash.com/photo-1630383249896-424e482df921?w=800&h=400&fit=crop',
+  cuisines: ['South Indian', 'Breakfast', 'Pure Veg'],
+  rating: 4.4,
+  ratingCount: 850,
+  deliveryTime: '20-25 mins',
+  priceForTwo: 250,
+  location: {
+    area: 'Whitefield',
+    city: 'Bangalore'
+  },
+  features: {
+    pureVeg: true,
+    outdoorSeating: false,
+    openNow: true
+  },
+  offers: [
+    {
+      title: '40% OFF',
+      description: 'Up to ₹100'
+    }
+  ],
+  menu: [
+  {
+    id: 'dish-301',
+    name: 'Masala Dosa',
+    category: 'South Indian',
+    description: 'Crispy dosa with spicy potato filling',
+    price: 140,
+    image: 'https://images.unsplash.com/photo-1630383249896-424e482df921?w=400&h=300&fit=crop',
+    isVeg: true,
+    isBestseller: true
+  },
+  {
+    id: 'dish-302',
+    name: 'Ghee Roast Dosa',
+    category: 'South Indian',
+    description: 'Golden crispy dosa roasted in ghee',
+    price: 170,
+    image: 'https://images.unsplash.com/photo-1668236543090-82eba5ee5976?w=400&h=300&fit=crop',
+    isVeg: true,
+    isBestseller: true
+  },
+  {
+    id: 'dish-303',
+    name: 'Filter Coffee',
+    category: 'Beverages',
+    description: 'Authentic South Indian filter coffee',
+    price: 60,
+    image: 'https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=400&h=300&fit=crop',
+    isVeg: true,
+    isBestseller: false
   }
+]
+},
+{
+  id: 5,
+  name: 'Pizza Corner',
+  slug: 'pizza-corner',
+  coverImage: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=800&h=400&fit=crop',
+  cuisines: ['Pizza', 'Fast Food', 'Italian'],
+  rating: 4.2,
+  ratingCount: 620,
+  deliveryTime: '30-35 mins',
+  priceForTwo: 450,
+  location: {
+    area: 'Indiranagar',
+    city: 'Bangalore'
+  },
+  features: {
+    pureVeg: false,
+    outdoorSeating: true,
+    openNow: true
+  },
+  offers: [
+    {
+      title: '50% OFF',
+      description: 'Up to ₹150'
+    }
+  ],
+  menu: [
+  {
+    id: 'dish-401',
+    name: 'Margherita Pizza',
+    category: 'Pizza',
+    description: 'Classic cheese pizza with basil',
+    price: 280,
+    image: 'https://images.unsplash.com/photo-1513104890138-7c749659a591?w=400&h=300&fit=crop',
+    isVeg: true,
+    isBestseller: true
+  },
+  {
+    id: 'dish-402',
+    name: 'Pepperoni Pizza',
+    category: 'Pizza',
+    description: 'Loaded with spicy pepperoni slices',
+    price: 420,
+    image: 'https://images.unsplash.com/photo-1628840042765-356cda07504e?w=400&h=300&fit=crop',
+    isVeg: false,
+    isBestseller: true
+  },
+  {
+    id: 'dish-403',
+    name: 'Farmhouse Pizza',
+    category: 'Pizza',
+    description: 'Loaded with fresh veggies and cheese',
+    price: 360,
+    image: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=400&h=300&fit=crop',
+    isVeg: true,
+    isBestseller: true
+  },
+  {
+    id: 'dish-404',
+    name: 'Garlic Bread',
+    category: 'Sides',
+    description: 'Toasted garlic bread with cheesy dip',
+    price: 160,
+    image: 'https://images.unsplash.com/photo-1619535860434-ba1d8fa12536?w=400&h=300&fit=crop',
+    isVeg: true,
+    isBestseller: false
+  },
+  {
+    id: 'dish-405',
+    name: 'Choco Lava Cake',
+    category: 'Desserts',
+    description: 'Warm chocolate cake with molten center',
+    price: 140,
+    image: 'https://images.unsplash.com/photo-1606313564200-e75d5e30476c?w=400&h=300&fit=crop',
+    isVeg: true,
+    isBestseller: true
+  }
+]
+},
+{
+  id: 6,
+  name: 'Sweet Treats',
+  slug: 'sweet-treats',
+  coverImage: 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=800&h=400&fit=crop',
+  cuisines: ['Desserts', 'Bakery', 'Ice Cream'],
+  rating: 4.5,
+  ratingCount: 740,
+  deliveryTime: '25-30 mins',
+  priceForTwo: 300,
+  location: {
+    area: 'Koramangala',
+    city: 'Bangalore'
+  },
+  features: {
+    pureVeg: true,
+    outdoorSeating: false,
+    openNow: true
+  },
+  offers: [
+    {
+      title: '30% OFF',
+      description: 'On desserts'
+    }
+  ],
+  menu: [
+  {
+    id: 'dish-501',
+    name: 'Chocolate Truffle Cake',
+    category: 'Desserts',
+    description: 'Rich chocolate layered cake',
+    price: 220,
+    image: 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=400&h=300&fit=crop',
+    isVeg: true,
+    isBestseller: true
+  },
+  {
+    id: 'dish-502',
+    name: 'Belgian Waffle',
+    category: 'Desserts',
+    description: 'Warm waffle served with chocolate sauce',
+    price: 190,
+    image: 'https://images.unsplash.com/photo-1562376552-0d160a2f238d?w=400&h=300&fit=crop',
+    isVeg: true,
+    isBestseller: true
+  },
+  {
+    id: 'dish-503',
+    name: 'Cold Coffee',
+    category: 'Beverages',
+    description: 'Creamy chilled coffee drink',
+    price: 140,
+    image: 'https://images.unsplash.com/photo-1461023058943-07fcbe16d735?w=400&h=300&fit=crop',
+    isVeg: true,
+    isBestseller: false
+  }
+]
+}
+,
+{
+  id: 7,
+  name: 'Burger Junction',
+  slug: 'burger-junction',
+  coverImage: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=800&h=400&fit=crop',
+  cuisines: ['Burgers', 'Fast Food', 'American'],
+  rating: 4.3,
+  ratingCount: 980,
+  deliveryTime: '25-30 mins',
+  priceForTwo: 350,
+  location: {
+    area: 'BTM Layout',
+    city: 'Bangalore'
+  },
+  features: {
+    pureVeg: false,
+    outdoorSeating: true,
+    openNow: true
+  },
+  offers: [
+    {
+      title: '45% OFF',
+      description: 'Up to ₹120'
+    }
+  ],
+  menu: [
+  {
+    id: 'dish-601',
+    name: 'Classic Chicken Burger',
+    category: 'Burgers',
+    description: 'Juicy grilled chicken burger with fries',
+    price: 260,
+    image: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400&h=300&fit=crop',
+    isVeg: false,
+    isBestseller: true
+  },
+  {
+    id: 'dish-602',
+    name: 'Veg Cheese Burger',
+    category: 'Burgers',
+    description: 'Loaded veg patty with melted cheese',
+    price: 220,
+    image: 'https://images.unsplash.com/photo-1585238342024-78d387f4a707?w=400&h=300&fit=crop',
+    isVeg: true,
+    isBestseller: true
+  },
+  {
+    id: 'dish-603',
+    name: 'Peri Peri Fries',
+    category: 'Sides',
+    description: 'Crispy fries tossed in peri peri seasoning',
+    price: 140,
+    image: 'https://images.unsplash.com/photo-1576107232684-1279f390859f?w=400&h=300&fit=crop',
+    isVeg: true,
+    isBestseller: false
+  }
+]
+},
+{
+  id: 8,
+  name: 'Royal Tandoor',
+  slug: 'royal-tandoor',
+  coverImage: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800&h=400&fit=crop',
+  cuisines: ['North Indian', 'Tandoor', 'Mughlai'],
+  rating: 4.6,
+  ratingCount: 1500,
+  deliveryTime: '35-40 mins',
+  priceForTwo: 600,
+  location: {
+    area: 'Jayanagar',
+    city: 'Bangalore'
+  },
+  features: {
+    pureVeg: false,
+    outdoorSeating: true,
+    openNow: true
+  },
+  offers: [
+    {
+      title: '55% OFF',
+      description: 'Flat ₹150 off'
+    }
+  ],
+  menu: [
+  {
+    id: 'dish-701',
+    name: 'Butter Naan',
+    category: 'Breads',
+    description: 'Soft naan brushed with butter',
+    price: 70,
+    image: 'https://placehold.co/400x300/F4D7A1/5A2E0C/png?text=Butter+Naan',
+    isVeg: true,
+    isBestseller: false
+  },
+  {
+    id: 'dish-702',
+    name: 'Chicken Tikka',
+    category: 'Starters',
+    description: 'Tandoor grilled spicy chicken tikka',
+    price: 340,
+    image: 'https://images.unsplash.com/photo-1603894584373-5ac82b2ae398?w=400&h=300&fit=crop',
+    isVeg: false,
+    isBestseller: true
+  },
+  {
+    id: 'dish-703',
+    name: 'Paneer Butter Masala',
+    category: 'Main Course',
+    description: 'Paneer cubes in creamy tomato gravy',
+    price: 290,
+    image: 'https://images.unsplash.com/photo-1631452180519-c014fe946bc7?w=400&h=300&fit=crop',
+    isVeg: true,
+    isBestseller: true
+  }
+]
+},
+{
+  id: 9,
+  name: 'China Wok Express',
+  slug: 'china-wok-express',
+  coverImage: 'https://images.unsplash.com/photo-1585032226651-759b368d7246?w=800&h=400&fit=crop',
+  cuisines: ['Chinese', 'Asian', 'Noodles'],
+  rating: 4.1,
+  ratingCount: 720,
+  deliveryTime: '30-35 mins',
+  priceForTwo: 400,
+  location: {
+    area: 'Marathahalli',
+    city: 'Bangalore'
+  },
+  features: {
+    pureVeg: false,
+    outdoorSeating: false,
+    openNow: true
+  },
+  offers: [
+    {
+      title: '30% OFF',
+      description: 'On Chinese combos'
+    }
+  ],
+  menu: [
+  {
+    id: 'dish-801',
+    name: 'Hakka Noodles',
+    category: 'Chinese',
+    description: 'Stir-fried noodles with vegetables',
+    price: 210,
+    image: 'https://images.unsplash.com/photo-1612929633738-8fe44f7ec841?w=400&h=300&fit=crop',
+    isVeg: true,
+    isBestseller: true
+  },
+  {
+    id: 'dish-802',
+    name: 'Chicken Manchurian',
+    category: 'Chinese',
+    description: 'Crispy chicken tossed in spicy sauce',
+    price: 280,
+    image: 'https://images.unsplash.com/photo-1525755662778-989d0524087e?w=400&h=300&fit=crop',
+    isVeg: false,
+    isBestseller: true
+  },
+  {
+    id: 'dish-803',
+    name: 'Spring Rolls',
+    category: 'Starters',
+    description: 'Crunchy vegetable spring rolls',
+    price: 180,
+    image: 'https://images.unsplash.com/photo-1603133872878-684f208fb84b?w=400&h=300&fit=crop',
+    isVeg: true,
+    isBestseller: false
+  }
+]
+},
+{
+  id: 10,
+  name: 'Cafe Mocha',
+  slug: 'cafe-mocha',
+  coverImage: 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=800&h=400&fit=crop',
+  cuisines: ['Cafe', 'Beverages', 'Desserts'],
+  rating: 4.7,
+  ratingCount: 1800,
+  deliveryTime: '20-25 mins',
+  priceForTwo: 550,
+  location: {
+    area: 'Indiranagar',
+    city: 'Bangalore'
+  },
+  features: {
+    pureVeg: true,
+    outdoorSeating: true,
+    openNow: true
+  },
+  offers: [
+    {
+      title: 'Buy 1 Get 1',
+      description: 'On beverages'
+    }
+  ],
+  menu: [
+  {
+    id: 'dish-901',
+    name: 'Cappuccino',
+    category: 'Beverages',
+    description: 'Freshly brewed cappuccino coffee',
+    price: 180,
+    image: 'https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=400&h=300&fit=crop',
+    isVeg: true,
+    isBestseller: true
+  },
+  {
+    id: 'dish-902',
+    name: 'Red Velvet Pastry',
+    category: 'Desserts',
+    description: 'Soft red velvet cake slice',
+    price: 160,
+    image: 'https://images.unsplash.com/photo-1621303837174-89787a7d4729?w=400&h=300&fit=crop',
+    isVeg: true,
+    isBestseller: true
+  },
+  {
+    id: 'dish-903',
+    name: 'Pasta Alfredo',
+    category: 'Italian',
+    description: 'Creamy white sauce pasta',
+    price: 320,
+    image: 'https://images.unsplash.com/photo-1645112411341-6c4fd023882c?w=400&h=300&fit=crop',
+    isVeg: true,
+    isBestseller: false
+  }
+]
+},
+{
+  id: 11,
+  name: 'Andhra Spice',
+  slug: 'andhra-spice',
+  coverImage: 'https://images.unsplash.com/photo-1606491956689-2ea866880c84?w=800&h=400&fit=crop',
+  cuisines: ['Andhra', 'South Indian', 'Spicy'],
+  rating: 4.5,
+  ratingCount: 1120,
+  deliveryTime: '30-40 mins',
+  priceForTwo: 450,
+  location: {
+    area: 'Electronic City',
+    city: 'Bangalore'
+  },
+  features: {
+    pureVeg: false,
+    outdoorSeating: false,
+    openNow: true
+  },
+  offers: [
+    {
+      title: '50% OFF',
+      description: 'Up to ₹100'
+    }
+  ],
+  menu: [
+  {
+    id: 'dish-1001',
+    name: 'Andhra Chicken Curry',
+    category: 'Main Course',
+    description: 'Spicy Andhra-style chicken curry',
+    price: 340,
+    image: 'https://images.unsplash.com/photo-1606491956689-2ea866880c84?w=400&h=300&fit=crop',
+    isVeg: false,
+    isBestseller: true
+  },
+  {
+    id: 'dish-1002',
+    name: 'Gongura Mutton',
+    category: 'Main Course',
+    description: 'Tangy gongura leaves with mutton',
+    price: 420,
+    image: 'https://images.unsplash.com/photo-1544025162-d76694265947?w=400&h=300&fit=crop',
+    isVeg: false,
+    isBestseller: true
+  },
+  {
+    id: 'dish-1003',
+    name: 'Andhra Meals',
+    category: 'Meals',
+    description: 'Traditional Andhra thali with curries',
+    price: 260,
+    image: 'https://images.unsplash.com/photo-1512058564366-18510be2db19?w=400&h=300&fit=crop',
+    isVeg: true,
+    isBestseller: false
+  }
+]
+}
 ];
 
 export const MENU_ITEMS = [
