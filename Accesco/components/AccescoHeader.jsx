@@ -169,17 +169,20 @@ export default function AccescoHeader() {
           {/* ── Logo ── */}
           <Link href="/" className={styles.logo}>
             <Image
-              src={isScrolled || pathname !== '/' ? "/images/accesco-logo-black.PNG" : "/images/accesco_white.png"}
-              alt="Accesco Living"
+              src="/images/accesco_white.png"
+              alt="Accesco Living White"
               width={36}
               height={36}
               priority
-              style={{ 
-                width: '36px', 
-                height: '36px', 
-                objectFit: 'contain',
-                filter: (isScrolled || pathname !== '/') ? 'invert(15%) sepia(85%) saturate(4529%) hue-rotate(316deg) brightness(85%) contrast(101%)' : 'none'
-              }}
+              className={styles.logoWhiteImage}
+            />
+            <Image
+              src="/images/accesco-logo-black.PNG"
+              alt="Accesco Living Dark"
+              width={36}
+              height={36}
+              priority
+              className={styles.logoDarkImage}
             />
             <div className={styles.logoText}>
               <span className={styles.logoName}>Accesco</span>

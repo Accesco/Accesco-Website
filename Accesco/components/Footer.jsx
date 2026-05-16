@@ -2,116 +2,99 @@
 
 import Link from 'next/link';
 import './Footer.css';
+import { useEffect, useState } from 'react';
 
 export default function Footer() {
+  const currentYear = new Date().getFullYear();
+  const [pulse, setPulse] = useState(false);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setPulse(prev => !prev);
+    }, 3000);
+    return () => clearInterval(interval);
+  }, []);
+
   return (
-    <footer className="footer-wrapper">
-      <div className="footer-container">
-
-        {/* Top Section */}
-        <div className="footer-top">
-
-          {/* Brand Column */}
-          <div className="footer-brand">
-            <Link href="/" className="brand-logo" style={{ textDecoration: 'none' }}>
-              <img src="/images/accesco_white.png" alt="Accesco Logo" style={{ height: '32px', width: 'auto', marginRight: '10px' }} />
-              <span className="logo-ac">Accesco</span>
-              <span className="logo-living">Living</span>
+    <footer className="accesco-footer-root">
+      <div className="footer-main-content">
+        
+        <div className="footer-grid-layout">
+          {/* Left Brand Column */}
+          <div className="footer-brand-col">
+            <Link href="/" className="logo-component">
+              <img src="/images/ac-logo.png" alt="AC" style={{ width: '32px', height: 'auto' }} />
+              <span className="logo-wordmark">Accesco Living</span>
             </Link>
+            
             <p className="brand-desc">
-              India's first intelligent circular commerce ecosystem. 
-              Delivering Groceries, Food, Fashion, and Financial Intelligence — all under one unified platform.
+              India's first intelligent circular commerce ecosystem. Delivering Groceries, Food, Fashion, and Financial Intelligence — all under one unified platform.
             </p>
-
-            {/* Social Icons */}
-            <div className="social-links">
-              <a href="https://twitter.com/accescoliving" aria-label="Twitter (X)">
-                <i className="ri-twitter-x-line"></i>
-              </a>
-              <a href="https://instagram.com/accescoliving" aria-label="Instagram">
-                <i className="ri-instagram-line"></i>
-              </a>
-              <a href="https://linkedin.com/company/accescoliving" aria-label="LinkedIn">
-                <i className="ri-linkedin-fill"></i>
-              </a>
-              <a href="https://facebook.com/accescoliving" aria-label="Facebook">
-                <i className="ri-facebook-fill"></i>
-              </a>
-              <a href="https://youtube.com/@accescoliving" aria-label="YouTube">
-                <i className="ri-youtube-fill"></i>
-              </a>
-              <a href="https://threads.net/@accescoliving" aria-label="Threads">
-                <i className="ri-at-line"></i>
-              </a>
+            
+            <div className="social-row">
+              <a href="#" className="social-icon"><i className="ri-twitter-x-line"></i></a>
+              <a href="#" className="social-icon"><i className="ri-instagram-line"></i></a>
+              <a href="#" className="social-icon"><i className="ri-linkedin-fill"></i></a>
+              <a href="#" className="social-icon"><i className="ri-facebook-fill"></i></a>
+              <a href="#" className="social-icon"><i className="ri-youtube-fill"></i></a>
+              <a href="#" className="social-icon"><i className="ri-mail-send-line"></i></a>
             </div>
-
-            {/* App Badges */}
-            <div className="footer-app-badges">
-              <a href="#" className="footer-badge-link">
-                <img
-                  src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg"
-                  alt="Get it on Google Play"
-                />
+            
+            <div className="app-badges">
+              <a href="#" className="app-badge">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg" alt="Google Play" className="badge-img" />
               </a>
-              <a href="#" className="footer-badge-link">
-                <img
-                  src="https://upload.wikimedia.org/wikipedia/commons/3/3c/Download_on_the_App_Store_Badge.svg"
-                  alt="Download on the App Store"
-                />
+              <a href="#" className="app-badge">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/3/3c/Download_on_the_App_Store_Badge.svg" alt="App Store" className="badge-img" />
               </a>
             </div>
           </div>
 
-          {/* Links Grid */}
-          <div className="footer-links-grid">
-            <div className="footer-column">
-              <h4>Services</h4>
-              <ul>
-                <li><Link href="/services/grokly">Grokly</Link></li>
-                <li><Link href="/services/swadisht">Swadishtt</Link></li>
-                <li><Link href="/services/instastyle">InstaStyle</Link></li>
-                <li><Link href="/services/dinex">DineX</Link></li>
-                <li><Link href="/services/localmeds">LocalMeds</Link></li>
-              </ul>
+          {/* Right Links Columns */}
+          <div className="footer-links-col">
+            <div className="link-group">
+              <h4 className="col-title">SERVICES</h4>
+              <Link href="/services/grokly" className="link-item">Grokly</Link>
+              <Link href="/services/swadisht" className="link-item">Swadishtt</Link>
+              <Link href="/services/instastyle" className="link-item">InstaStyle</Link>
+              <Link href="/services/dinex" className="link-item">DineX</Link>
+              <Link href="/services/localmeds" className="link-item">LocalMeds</Link>
+            </div>
+            
+            <div className="link-group">
+              <h4 className="col-title">COMPANY</h4>
+              <Link href="/about" className="link-item">About Us</Link>
+              <Link href="/qtcvideos" className="link-item">QTC Videos</Link>
+              <Link href="/press" className="link-item">Press & Media</Link>
+              <Link href="/blogs" className="link-item">Blogs</Link>
+              <Link href="/terms" className="link-item">Terms of Service</Link>
+              <Link href="/privacy" className="link-item">Privacy Policy</Link>
+              <Link href="/refund" className="link-item">Refund & Cancellation Policy</Link>
+            </div>
+            
+            <div className="link-group">
+              <h4 className="col-title">RESOURCES</h4>
+              <Link href="/contact" className="link-item">Help & Support</Link>
+              <Link href="/faq" className="link-item">FAQ</Link>
+              <Link href="/referral" className="link-item">Referral Program</Link>
+              <Link href="/investor-relations" className="link-item">Investor Relations</Link>
             </div>
 
-            <div className="footer-column">
-              <h4>Company</h4>
-              <ul>
-                <li><Link href="/about">About Us</Link></li>
-                <li><Link href="/qtcvideos">QTC Videos</Link></li>
-                <li><Link href="/press">Press &amp; Media</Link></li>
-                <li><Link href="/blogs">Blogs</Link></li>
-              </ul>
-            </div>
-
-            <div className="footer-column">
-              <h4>Resources</h4>
-              <ul>
-                <li><Link href="/contact">Help &amp; Support</Link></li>
-                <li><Link href="/partner">Partner with Us</Link></li>
-                <li><Link href="/faq">FAQ</Link></li>
-                <li><Link href="/referral">Referral Program</Link></li>
-                <li><Link href="/investor-relations">Investor Relations</Link></li>
-              </ul>
+            <div className="link-group">
+              <h4 className="col-title">FOR DELIVERY PARTNERS</h4>
+              <Link href="/partner" className="link-item">Partner with us</Link>
+              <Link href="/apps-for-you" className="link-item">Apps for you</Link>
             </div>
           </div>
         </div>
 
-        <div className="footer-divider"></div>
+        <div className="footer-divider-faint"></div>
 
         {/* Bottom Bar */}
-        <div className="footer-bottom">
-          <p className="footer-copyright">
-            &copy; {new Date().getFullYear()} Accesco Living. All rights reserved.
-          </p>
-          <div className="footer-legal">
-            <Link href="/privacy">Privacy Policy</Link>
-            <Link href="/terms">Terms of Service</Link>
-            <Link href="/cookies">Cookie Policy</Link>
-          </div>
+        <div className="bottom-bar">
+          <span className="copyright-text">© {currentYear} Accesco Living. All rights reserved.</span>
         </div>
-
+        
       </div>
     </footer>
   );

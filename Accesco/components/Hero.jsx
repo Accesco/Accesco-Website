@@ -18,16 +18,18 @@ export default function Hero() {
     <section className="hero" id="home">
       <style jsx>{`
         .hero {
+          position: relative;
+          width: 100%;
           height: 100vh;
           height: 100svh;
           background: #000;
           display: flex;
           flex-direction: column;
           align-items: center;
-          justify-content: center;
-          position: relative;
-          overflow: hidden;
           box-sizing: border-box;
+          font-family: 'DM Sans', sans-serif;
+          padding: 130px 20px 20px 20px; /* Reduced bottom padding to keep scroll button visible */
+          overflow: hidden;
         }
 
         .hero-bg-video {
@@ -37,183 +39,218 @@ export default function Hero() {
           width: 100%;
           height: 100%;
           object-fit: cover;
-          opacity: 0.65;
+          opacity: 0.85;
           z-index: 0;
         }
-.hero::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background:
-    linear-gradient(
-      to bottom,
-      rgba(0,0,0,0.45),
-      rgba(0,0,0,0.22),
-      rgba(0,0,0,0.62)
-    );
-  z-index: 1;
-}
-        .hero-grid {
+
+        .hero::after {
+          content: '';
+          position: absolute;
+          inset: 0;
+          background: linear-gradient(
+            to bottom,
+            rgba(0,0,0,0.3) 0%,
+            rgba(0,0,0,0.5) 50%,
+            rgba(0,0,0,0.9) 100%
+          );
+          z-index: 1;
+        }
+
+        .hero-main-content {
           position: relative;
           z-index: 2;
           text-align: center;
-          max-width: 900px;
-          margin: 0 auto;
-          color: #fff;
+          max-width: 1000px;
           width: 100%;
           display: flex;
           flex-direction: column;
           align-items: center;
-          flex-shrink: 0;
-          padding: 80px 20px 40px;
+          justify-content: center;
+          gap: 20px;
+          /* Removed margin: auto so flexGrow spacers handle vertical centering perfectly */
+        }
+
+        .hero-top-spacer {
+          flex-grow: 1;
+          min-height: 20px;
+        }
+
+        .hero-bottom-spacer {
+          flex-grow: 1;
+          min-height: 20px;
         }
 
         .hero-logo-img {
-          width: clamp(60px, 10vw, 120px);
+          width: clamp(120px, 16vw, 170px);
           height: auto;
-          filter: drop-shadow(0 10px 30px rgba(255, 255, 255, 0.3));
-          margin-bottom: clamp(10px, 2vh, 20px);
+          object-fit: contain;
+          /* Removed margin-bottom to ensure gap provides equal spacing */
         }
-.hero-title {
-  font-size: clamp(42px, 7vw, 88px);
-  font-weight: 900;
-  margin-bottom: 14px;
-  letter-spacing: -0.06em;
-  line-height: 0.95;
-  text-shadow:
-    0 6px 30px rgba(0,0,0,0.45),
-    0 2px 10px rgba(0,0,0,0.35);
-}
+
+        .hero-title {
+          font-family: 'Sora', sans-serif;
+          font-size: clamp(32px, 5.5vw, 54px);
+          font-weight: 900;
+          margin: 0;
+          letter-spacing: -0.02em;
+          line-height: 1.1;
+          color: #fff;
+          text-shadow: 0 4px 25px rgba(0,0,0,0.7);
+        }
 
         .hero-kicker {
-  display: block;
-  color: rgba(255,255,255,0.95);
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  text-transform: none;
-  font-size: clamp(22px, 4vw, 38px);
-  line-height: 1.15;
-  text-align: center;
-  margin-bottom: 20px;
-  text-shadow: 0 4px 20px rgba(0,0,0,0.35);
-}
-       .hero-sub {
-  margin-top: 26px;
-  font-size: 0.9rem;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: rgba(255,255,255,0.72);
-  font-weight: 600;
-} 
-        .hero-action-group {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          gap: clamp(12px, 2vh, 20px);
-          margin-top: 10px;
-          width: 100%;
+          display: block;
+          color: #fff;
+          font-family: 'Sora', sans-serif;
+          font-weight: 700;
+          letter-spacing: -0.01em;
+          font-size: clamp(18px, 3.8vw, 30px);
+          line-height: 1.2;
+          text-align: center;
+          margin: 0;
+          text-shadow: 0 4px 20px rgba(0,0,0,0.6);
         }
 
-        .hero-ctas {
-          display: flex;
-          justify-content: center;
-          width: 100%;
+        .hero-sub {
+          font-size: clamp(14px, 2vw, 18px);
+          color: rgba(255, 255, 255, 0.9);
+          font-weight: 400;
+          line-height: 1.6;
+          max-width: 750px;
+          margin: 0;
+          text-shadow: 0 2px 12px rgba(0,0,0,0.6);
         }
 
-        .cta-pill {
-          background: white;
-          color: #1f0f12;
-          height: 64px;
-          padding: 0 56px;
-          border-radius: 60px;
-          font-weight: 900;
-          font-size: clamp(18px, 2.5vw, 22px);
-          border: none;
-          cursor: pointer;
-          transition: all 0.3s ease;
-          box-shadow: 0 8px 32px rgba(245,184,0,0.35);
-          text-transform: uppercase;
-          letter-spacing: 1.5px;
-          white-space: nowrap;
+        .join-waitlist-btn {
           display: inline-flex;
           align-items: center;
           justify-content: center;
-          line-height: 1;
+          background: #FFF;
+          color: #1A0A0F;
+          font-family: 'Sora', sans-serif;
+          font-weight: 900;
+          font-size: clamp(15px, 2.5vw, 18px);
+          letter-spacing: 2px;
+          padding: 14px 48px;
+          border-radius: 9999px;
+          text-decoration: none;
+          box-shadow: 0 12px 35px rgba(255,255,255,0.25);
+          transition: all 0.3s ease;
+          margin-top: 10px;
         }
 
-        .cta-pill:hover {
+        .join-waitlist-btn:hover {
           transform: translateY(-3px);
-          box-shadow: 0 16px 48px rgba(245,184,0,0.5);
+          box-shadow: 0 18px 50px rgba(255,255,255,0.4);
         }
 
         .hero-app-buttons {
           display: flex;
-          gap: 12px;
+          gap: 16px;
           justify-content: center;
-          flex-wrap: nowrap;
           align-items: center;
+          flex-wrap: wrap;
+          margin-top: 10px;
+        }
+
+        .app-btn-link {
+          display: inline-block;
+          transition: transform 0.2s ease;
         }
 
         .app-btn-link img {
-          height: clamp(30px, 5vh, 44px);
+          height: clamp(36px, 6vw, 48px);
           width: auto;
-          transition: transform 0.2s ease;
           display: block;
         }
 
-        .app-btn-link:hover img {
-          transform: translateY(-3px);
+        .app-btn-link:hover {
+          transform: translateY(-2px);
         }
 
         .scroll-down-btn {
-          display: inline-flex;
+          position: relative;
+          z-index: 2;
+          display: flex;
+          flex-direction: column;
           align-items: center;
-          gap: 10px;
-          color: #FFFDF8;
-          font-size: 12px;
+          gap: 4px;
+          color: #fff;
+          font-size: 13px;
           font-weight: 800;
-          text-transform: uppercase;
-          letter-spacing: 2px;
-          animation: bounce 2s infinite;
+          letter-spacing: 3px;
           text-decoration: none;
-          margin-top: clamp(25px, 6vh, 45px);
-          opacity: 0.9;
+          opacity: 0.8;
+          transition: all 0.3s ease;
+          margin-top: 30px;
+          margin-bottom: 0;
+          padding-top: 0;
         }
 
-        @keyframes bounce {
-          0%, 100% { transform: translateY(0); }
-          50%       { transform: translateY(-10px); }
+        .scroll-down-btn:hover {
+          opacity: 1;
+          transform: translateY(4px);
+        }
+        
+        .scroll-down-btn i {
+          font-size: 24px;
+          line-height: 1;
+        }
+
+        @media (max-width: 1024px) {
+          .hero {
+            padding: 120px 20px 40px 20px;
+          }
+          .hero-main-content {
+            gap: 12px;
+          }
+          .hero-logo-img {
+            width: 140px;
+          }
+          .hero-title {
+            font-size: 32px;
+          }
+          .hero-kicker {
+            font-size: 20px;
+          }
+          .hero-sub {
+            font-size: 13px;
+          }
         }
 
         @media (max-width: 768px) {
-          .hero { 
-            min-height: auto !important; 
-            padding: 100px 20px 60px !important; 
+          .hero {
+            padding: 90px 15px 40px 15px; /* Added padding top to avoid overlapping header */
           }
-          .hero-action-group { gap: 16px; }
-          .hero-app-buttons { 
-            display: flex !important; 
-            flex-direction: row !important;
-            justify-content: center !important;
-            gap: 8px !important;
-            width: 100% !important;
-            max-width: 320px !important;
-            margin: 0 auto !important;
+          .hero-bottom-spacer {
+            display: none; /* Removes bottom spacer on mobile to push content down like Zomato */
           }
-          .hero-app-buttons .app-btn-link { flex: 1; max-width: 140px; }
-          .hero-app-buttons .app-btn-link img { 
-            height: 38px !important; 
-            width: 100% !important;
-            object-fit: contain;
+          .hero-main-content {
+            gap: 12px;
           }
-          .cta-pill { width: 100%; max-width: 240px; }
-          .scroll-down-btn { margin-top: 15px; }
-        }
-        
-        @media (max-height: 700px), (max-width: 768px) {
-          .hero { height: 100svh !important; justify-content: center !important; }
-          .hero-grid { transform: scale(1); margin-top: 10px; padding: 60px 20px 20px; }
-          .scroll-down-btn { display: inline-flex !important; margin-top: 15px; }
+          .hero-logo-img {
+            width: 90px; /* Reduced to fit all content within viewport */
+          }
+          .hero-title {
+            font-size: 24px;
+          }
+          .hero-kicker {
+            font-size: 16px;
+          }
+          .hero-sub {
+            font-size: 12px;
+          }
+          .join-waitlist-btn {
+            padding: 12px 36px;
+            font-size: 14px;
+            margin-top: 5px;
+          }
+          .app-btn-link img { 
+            height: 32px;
+          }
+          .hero-app-buttons {
+            margin-top: 5px;
+          }
         }
       `}</style>
 
@@ -225,62 +262,55 @@ export default function Hero() {
         loop 
         playsInline 
         preload="auto"
-        style={{ pointerEvents: 'none' }}
       >
         <source src="/images/start.mp4" type="video/mp4" />
         Your browser does not support the video tag.
       </video>
 
-      <div className="hero-grid">
-        <Image
+      {/* Top Spacer */}
+      <div className="hero-top-spacer"></div>
+
+      <div className="hero-main-content">
+        <img
           src="/images/accesco_white.png"
           className="hero-logo-img"
-          alt="accesco logo"
-          width={100}
-          height={100}
-          priority
-          style={{ width: 'clamp(70px, 10vh, 100px)', height: 'clamp(70px, 10vh, 100px)', objectFit: 'contain', marginBottom: '8px' }}
+          alt="Accesco Original White Logo"
         />
 
-        <h1 className="hero-title" style={{ fontSize: 'clamp(2.4rem, 7vh, 4.8rem)', marginBottom: '10px' }}>Accesco Living</h1>
+        <h1 className="hero-title">Accesco Living</h1>
 
-        <div className="hero-kicker" style={{ fontSize: 'clamp(1.2rem, 3.2vh, 2rem)', marginBottom: '15px', fontWeight: 800 }}>
-          India&apos;s #1 Intelligent Circular Commerce Ecosystem
+        <div className="hero-kicker">
+          India's #1 Intelligent Circular Commerce Ecosystem
         </div>
 
         <div className="hero-sub">
-  Groceries • Food • Fashion • Financial Intelligence
-</div>
-
-        <div className="hero-action-group">
-          <div className="hero-ctas">
-            <a href="#app-showcase">
-              <button className="cta-pill">
-                Join Waitlist
-              </button>
-            </a>
-          </div>
-
-          <div className="hero-app-buttons">
-            <a href="#" className="app-btn-link">
-              <img
-                src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg"
-                alt="Get it on Google Play"
-              />
-            </a>
-            <a href="#" className="app-btn-link">
-              <img
-                src="https://upload.wikimedia.org/wikipedia/commons/3/3c/Download_on_the_App_Store_Badge.svg"
-                alt="Download on the App Store"
-              />
-            </a>
-          </div>
+          Delivering Groceries, Food, Fashion, and Financial Intelligence — all under one unified platform
         </div>
 
-        <a href="#services" className="scroll-down-btn">
-          Scroll down <i className="ri-arrow-down-s-line"></i>
-        </a>
+        <a href="#waitlist" className="join-waitlist-btn">JOIN WAITLIST</a>
+        
+        <div className="hero-app-buttons">
+          <a href="#" className="app-btn-link">
+            <img
+              src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg"
+              alt="Get it on Google Play"
+            />
+          </a>
+          <a href="#" className="app-btn-link">
+            <img
+              src="https://upload.wikimedia.org/wikipedia/commons/3/3c/Download_on_the_App_Store_Badge.svg"
+              alt="Download on the App Store"
+            />
+          </a>
+        </div>
       </div>
+      
+      <a href="#services" className="scroll-down-btn">
+        SCROLL DOWN <i className="ri-arrow-down-s-line"></i>
+      </a>
+
+      {/* Bottom Spacer */}
+      <div className="hero-bottom-spacer"></div>
     </section>
   );
 }

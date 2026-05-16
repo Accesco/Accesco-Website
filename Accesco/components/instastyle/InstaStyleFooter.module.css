@@ -1,245 +1,448 @@
-/* ============================================================
-   INSTASTYLE FOOTER — WHITE / BLACK / BROWN REDESIGN
-   ============================================================ */
+/* ==========================================
+   INSTASTYLE - DARK FOOTER
+   Snabbit inspired layout, dark theme
+   ========================================== */
 
-.footer {
-  background: #1A1108;
-  color: #FFFFFF;
-}
-
-/* ── CONTAINER ── */
-.container {
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 0 clamp(16px, 3vw, 48px);
-}
-
-/* ── MAIN FOOTER BODY ── */
-.main {
-  padding: clamp(20px, 3vw, 32px) clamp(16px, 3vw, 48px);
-}
-
-.grid {
-  display: grid;
-  grid-template-columns: 2fr repeat(4, 1fr);
-  gap: 24px;
-  align-items: start;
-}
-
-/* ── BRAND COLUMN ── */
-.brandColumn {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  align-items: flex-start;
-}
-
-.footerLogo {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  text-decoration: none;
-  color: #FFFFFF;
-  transition: opacity 0.2s;
-  width: fit-content;
-}
-
-.footerLogo:hover { opacity: 0.75; }
-
-.logoMark {
-  width: 38px;
-  height: 38px;
-  flex: 0 0 auto;
-}
-
-.logoText {
-  font-family: 'Syne', Georgia, sans-serif;
-  font-size: 20px;
-  font-weight: 700;
-  letter-spacing: -0.03em;
-  color: #FFFFFF;
-}
-
-.brandDescription {
-  font-family: 'DM Sans', 'Segoe UI', sans-serif;
-  font-size: 14px;
-  line-height: 1.7;
-  color: rgba(255,255,255,0.56);
-  margin: 0;
-  max-width: 300px;
-}
-
-/* ── SOCIAL LINKS ── */
-.social {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
-.socialLink {
-  width: 38px;
-  height: 38px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: rgba(255,255,255,0.55);
-  background: rgba(255,255,255,0.06);
-  border: 1px solid rgba(255,255,255,0.1);
-  border-radius: 50%;
-  transition: color 0.2s, background 0.2s, border-color 0.2s, transform 0.2s;
-  text-decoration: none;
-}
-
-.socialLink svg { width: 16px; height: 16px; }
-
-.socialLink:hover {
-  color: #FFFFFF;
-  background: rgba(255,255,255,0.12);
-  border-color: rgba(255,255,255,0.24);
-  transform: translateY(-2px);
-}
-
-/* ── LINK COLUMNS ── */
-.linksColumn {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  align-items: flex-start;
-}
-
-.columnTitle {
-  font-family: 'DM Sans', 'Segoe UI', sans-serif;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: rgba(255,255,255,0.85);
-  margin: 0;
-}
-
-.linksList {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  align-items: flex-start;
-}
-
-.link {
-  font-family: 'DM Sans', 'Segoe UI', sans-serif;
-  font-size: 14px;
-  color: rgba(255,255,255,0.52);
-  text-decoration: none;
-  transition: color 0.2s;
-  display: inline-block;
-}
-
-.link:hover { color: #FFFFFF; }
-
-/* ── BOTTOM BAR ── */
-.bottom {
-  padding: 12px clamp(16px, 3vw, 48px);
-  border-top: 1px solid rgba(255,255,255,0.08);
-}
-
-.bottomContent {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 24px;
-  flex-wrap: wrap;
-}
-
-.copyright {
-  font-family: 'DM Sans', 'Segoe UI', sans-serif;
-  font-size: 13px;
-  color: rgba(255,255,255,0.38);
-  margin: 0;
-}
-
-.paymentMethods {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
-.paymentLabel {
-  font-family: 'DM Sans', 'Segoe UI', sans-serif;
-  font-size: 12px;
-  color: rgba(255,255,255,0.38);
-}
-
-.paymentMethod {
-  font-family: 'DM Sans', 'Segoe UI', sans-serif;
-  font-size: 11px;
-  font-weight: 600;
-  color: rgba(255,255,255,0.52);
-  background: rgba(255,255,255,0.06);
-  border: 1px solid rgba(255,255,255,0.1);
-  padding: 4px 10px;
-  border-radius: 6px;
-}
-
-
-
-/* ══════════════════════════════════════════
-   RESPONSIVE
-══════════════════════════════════════════ */
-@media (max-width: 1200px) {
-  .grid {
-    grid-template-columns: 1fr 1fr 1fr;
+   .footerRoot {
+    position: relative;
+    width: 100%;
+    background: #0a0a0a;
+    overflow: hidden;
+    color: #fff;
+    font-family: 'DM Sans', sans-serif;
+  }
+  
+  /* Wave Background SVG */
+  .waveBgContainer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+  }
+  
+  .waveSvg {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    opacity: 0.3;
+  }
+  
+  .bgGradientOverlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: 
+      radial-gradient(80% 80% at 50% 0%, rgba(26,26,26,0.8) 0%, transparent 100%),
+      radial-gradient(40% 40% at 0% 100%, rgba(255,255,255,0.02) 0%, transparent 100%);
+    z-index: 1;
+  }
+  
+  /* Ventures Ticker Strip */
+  .venturesTicker {
+    position: relative;
+    z-index: 2;
+    height: 44px;
+    background: #111;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    mask-image: linear-gradient(90deg, transparent 0%, #000 80px, #000 calc(100% - 80px), transparent 100%);
+    -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 80px, #000 calc(100% - 80px), transparent 100%);
+  }
+  
+  .tickerTrack {
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+    animation: tickerScroll 20s linear infinite;
+  }
+  
+  .tickerItem {
+    display: inline-flex;
+    align-items: center;
+    padding: 0 28px;
+  }
+  
+  .tickerText {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 12px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.55);
+    letter-spacing: 0.05em;
+  }
+  
+  .tickerDot {
+    width: 4px;
+    height: 4px;
+    background: #fff;
+    border-radius: 50%;
+    margin-left: 56px;
+  }
+  
+  @keyframes tickerScroll {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+  
+  /* Main Content Wrapper */
+  .footerMainContent {
+    position: relative;
+    z-index: 2;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 64px 64px 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 48px;
+  }
+  
+  /* Top Section (Brand + Social) */
+  .footerTopSection {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
     gap: 40px;
   }
-  .brandColumn { grid-column: 1 / -1; }
-}
-
-
-@media (max-width: 768px) {
-  .grid {
-    grid-template-columns: 1fr 1fr;
-    gap: 36px;
+  
+  .brandBlock {
+    display: flex;
+    flex-direction: column;
+    max-width: 420px;
   }
-  .brandColumn { grid-column: 1 / -1; }
-  .brandColumn { border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 28px; }
-  .bottomContent { flex-direction: column; align-items: flex-start; gap: 14px; }
-
-}
-
-@media (max-width: 480px) {
-  .grid { grid-template-columns: 1fr 1fr; gap: 32px 16px; }
-  .brandColumn { text-align: left; }
-  .social { justify-content: flex-start; }
-  .linksColumn { gap: 12px; }
-  .columnTitle { font-size: 10px; }
-  .link { font-size: 13px; }
-  .paymentMethods { flex-wrap: wrap; }
-}
-
-
-/* ── ACCESS HOOKS ── */
-@media (prefers-reduced-motion: reduce) {
-  .socialLink, .link {
-    transition: none;
+  
+  .logoComponent {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+    margin-bottom: 32px;
   }
-}
-
-.footerLogo:focus-visible,
-.socialLink:focus-visible,
-.link:focus-visible {
-  outline: 2px solid #C8956A;
-  outline-offset: 2px;
-}
-
-/* ── NEWSLETTER FORM (used in old footer, kept for compat) ── */
-.newsletter { display: none; }
-.newsletterContent { display: none; }
-.newsletterForm { display: none; }
-.inputWrapper { display: none; }
-.newsletterInput { display: none; }
-.newsletterButton { display: none; }
-.successMessage { display: none; }
-.newsletterTitle { display: none; }
-.newsletterDescription { display: none; }
+  
+  .logoMark {
+    width: 44px;
+    height: 44px;
+    background: #222;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .logoTextGroup {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .logoWordmark {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 16px;
+    color: #fff;
+    letter-spacing: 0.05em;
+    line-height: 1.2;
+  }
+  
+  .logoSub {
+    font-family: 'Syne', sans-serif;
+    font-size: 11px;
+    font-weight: 400;
+    color: rgba(255,255,255,0.60);
+    letter-spacing: 0.15em;
+    line-height: 1.2;
+  }
+  
+  .footerHeadline {
+    font-family: 'Playfair Display', serif;
+    font-weight: 900;
+    font-size: 44px;
+    line-height: 1.05;
+    margin: 0 0 16px 0;
+  }
+  
+  .headlineEm {
+    font-style: italic;
+    font-weight: 700;
+    color: #888;
+  }
+  
+  .footerSubtext {
+    font-size: 14px;
+    font-weight: 300;
+    line-height: 1.6;
+    color: rgba(255,255,255,0.6);
+    margin: 0 0 32px 0;
+    max-width: 320px;
+  }
+  
+  .appBadges {
+    display: flex;
+    gap: 12px;
+  }
+  
+  .appBadge {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 10px;
+    height: 44px;
+    padding: 0 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+  }
+  
+  .badgeImg {
+    height: 24px;
+    width: auto;
+  }
+  
+  .appBadge:hover {
+    background: rgba(255,255,255,0.08);
+    border-color: rgba(255,255,255,0.2);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+  }
+  
+  /* Social Block */
+  .socialBlock {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+  }
+  
+  .socialLabel {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 10px;
+    color: #fff;
+    margin-bottom: 16px;
+    letter-spacing: 0.05em;
+  }
+  
+  .socialIcons {
+    display: flex;
+    gap: 10px;
+  }
+  
+  .socialIcon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(255,255,255,0.6);
+    text-decoration: none;
+    transition: all 0.3s ease;
+  }
+  
+  .socialIcon i {
+    font-size: 16px;
+  }
+  
+  .socialIcon:hover {
+    background: #fff;
+    border-color: #fff;
+    color: #000;
+    transform: translateY(-3px);
+  }
+  
+  /* Links Grid */
+  .linksGrid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 48px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255,255,255,0.1);
+  }
+  
+  .linkColumn {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .colTitle {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 10px;
+    color: #888;
+    margin: 0 0 20px 0;
+    letter-spacing: 0.05em;
+  }
+  
+  .linkItem {
+    font-size: 14px;
+    font-weight: 300;
+    line-height: 1.5;
+    color: rgba(255,255,255,0.6);
+    text-decoration: none;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+  }
+  
+  .pinkDot {
+    width: 4px;
+    height: 4px;
+    background: #fff;
+    border-radius: 50%;
+    margin-right: 8px;
+    opacity: 0;
+    transform: translateX(-4px);
+    transition: all 0.3s ease;
+  }
+  
+  .linkItem:hover {
+    color: #fff;
+    transform: translateX(4px);
+  }
+  
+  .linkItem:hover .pinkDot {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  
+  /* Policy Strip */
+  .policyStrip {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-top: 20px;
+  }
+  
+  .policyLink {
+    font-size: 12px;
+    font-weight: 400;
+    color: rgba(255,255,255,0.3);
+    text-decoration: none;
+    transition: color 0.3s;
+  }
+  
+  .policyLink:hover {
+    color: #fff;
+  }
+  
+  .policyDot {
+    width: 3px;
+    height: 3px;
+    background: rgba(255,255,255,0.3);
+    border-radius: 50%;
+  }
+  
+  .footerDividerFaint {
+    height: 1px;
+    background: rgba(255,255,255,0.05);
+    margin: 10px 0;
+  }
+  
+  /* Bottom Bar */
+  .bottomBar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  
+  .copyrightGroup {
+    font-size: 12px;
+    line-height: 1.4;
+  }
+  
+  .copyrightB {
+    font-weight: 500;
+    color: #fff;
+    margin-right: 6px;
+  }
+  
+  .copyrightR {
+    font-weight: 300;
+    color: rgba(255,255,255,0.3);
+  }
+  
+  .tagline {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 11px;
+    color: #888;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+  
+  /* AI Chatbot Bubble */
+  .chatbotBubble {
+    position: absolute;
+    bottom: 80px;
+    right: 40px;
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #333 0%, #111 100%);
+    border: 1px solid rgba(255,255,255,0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 10;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.8), inset 0 0 20px rgba(255,255,255,0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .chatbotBubble:hover {
+    transform: scale(1.1);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.9), inset 0 0 20px rgba(255,255,255,0.1);
+  }
+  
+  .chatbotBubble.pulse {
+    box-shadow: 0 8px 48px rgba(0,0,0,0.9), inset 0 0 20px rgba(255,255,255,0.05);
+  }
+  
+  /* Responsive Breakpoints */
+  @media (max-width: 1023px) {
+    .footerMainContent {
+      padding: 40px 24px 30px;
+    }
+    .linksGrid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .footerTopSection {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    .socialBlock {
+      align-items: flex-start;
+    }
+  }
+  
+  @media (max-width: 767px) {
+    .linksGrid {
+      grid-template-columns: 1fr;
+      gap: 32px;
+    }
+    .footerHeadline {
+      font-size: 32px;
+    }
+    .bottomBar {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    .chatbotBubble {
+      bottom: 30px;
+      right: 24px;
+    }
+  }

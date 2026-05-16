@@ -2,11 +2,10 @@ import Image from 'next/image';
 
 export default function InstaStyleLogo({ className = '', ...props }) {
   return (
-    <Image
+    <img
       src="/images/instastyle-logo.png"
-      alt=""
-      width={40}
-      height={40}
+      alt="InstaStyle"
+      style={{ width: '40px', height: '40px', objectFit: 'contain' }}
       className={className}
       aria-hidden="true"
       {...props}

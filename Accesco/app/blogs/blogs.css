@@ -250,12 +250,14 @@ header {
 .hero-viewport {
   position: relative;
   width: 100%;
-  height: clamp(550px, 65vh, 750px);
+  height: 56.25vw; /* 16:9 aspect ratio */
+  min-height: 400px;
+  max-height: 85vh;
   overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: #000;
 }
 
 .hero-viewport video {
@@ -265,12 +267,11 @@ header {
   transform: translate(-50%, -50%);
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
   object-position: center center;
   opacity: 0.85;
   z-index: 1;
   filter: brightness(0.9);
-  scale: 1.01;
 }
 
 .hero-shimmer {

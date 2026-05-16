@@ -52,6 +52,23 @@
   object-fit: contain;
 }
 
+.logoWhiteImage {
+  display: block;
+}
+
+.logoDarkImage {
+  display: none;
+  filter: invert(15%) sepia(85%) saturate(4529%) hue-rotate(316deg) brightness(85%) contrast(101%);
+}
+
+.header.scrolled .logoWhiteImage {
+  display: none;
+}
+
+.header.scrolled .logoDarkImage {
+  display: block;
+}
+
 .logoText {
   display: flex;
   align-items: baseline;

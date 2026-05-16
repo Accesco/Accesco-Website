@@ -251,7 +251,6 @@ export default function HomePage() {
           width: 100%;
           display: flex;
           align-items: center;
-          overflow: hidden;
         }
 
         .servicesWrap {
@@ -290,10 +289,11 @@ export default function HomePage() {
           }
 
           .services-grid > a {
-            flex: 0 0 270px;
-            min-width: 270px;
-            max-width: 270px;
+            flex: 0 0 100%;
+            min-width: 100%;
+            max-width: 100%;
             scroll-snap-align: center;
+            scroll-snap-stop: always;
             padding: 0;
             box-sizing: border-box;
           }
@@ -438,6 +438,14 @@ export default function HomePage() {
           opacity: 0;
           overflow: hidden;
           transition: all 0.4s ease;
+        }
+
+        .xpense-card-float {
+          transition: all 0.4s ease;
+        }
+
+        .xpense-card-float:hover {
+          z-index: 10 !important;
         }
 
         .xpense-card-float:hover .xpense-details {
