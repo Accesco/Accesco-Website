@@ -132,7 +132,7 @@
 }
 
 .qtc-search-input::placeholder {
-  color: #aaa;
+  color: #8b8b8b;
 }
 
 .qtc-filters {
@@ -238,25 +238,41 @@
 }
 
 .qtc-play-icon {
-  width: 56px;
-  height: 56px;
-  background: rgba(255,255,255,0.95);
+  width: 64px;
+  height: 64px;
+
   border-radius: 50%;
+
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 24px;
-  color: #050505;
-  transform: scale(0.8);
-  transition: transform 0.3s ease;
+
+  background: rgba(10,10,10,0.72);
+
+  backdrop-filter: blur(14px);
+
+  border: 1px solid rgba(255,255,255,0.08);
+
+  color: #ffffff;
+
+  font-size: 22px;
+
+  box-shadow:
+    0 10px 30px rgba(0,0,0,0.35);
+
+  transition: all 0.3s ease;
 }
 
 .qtc-video-card:hover .qtc-play-icon {
-  transform: scale(1);
-}
+  transform: scale(1.08);
 
+  background: rgba(0,0,0,0.82);
+
+  box-shadow:
+    0 16px 40px rgba(0,0,0,0.45);
+}
 .qtc-card-body {
-  padding: 24px;
+  padding: 16px;
 }
 
 .qtc-video-tag {
@@ -398,15 +414,21 @@
 @media (max-width: 768px) {
 
 .qtc-hero {
-  min-height: 280px !important;
-  height: auto !important;
-  padding: 48px 20px 36px !important;
-  align-items: center !important;
+  min-height: 360px !important;
+  padding: 42px 22px 28px !important;
+  justify-content: flex-end !important;
 
-  background: url('/images/QTC8.jpeg') center center / cover no-repeat !important;
-  position: relative;
-  overflow: hidden;
-  margin-bottom: 32px !important;
+  background:
+    linear-gradient(
+      to top,
+      rgba(0,0,0,0.78),
+      rgba(0,0,0,0.38),
+      rgba(0,0,0,0.18)
+    ),
+    url('/images/qtc-mobile-hero.jpg') center center / cover no-repeat !important;
+
+  border-radius: 0 0 34px 34px;
+  margin-bottom: 18px !important;
 }
 
   .qtc-hero-video {
@@ -417,14 +439,7 @@
     display: none !important;
   }
 
-  .qtc-hero::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    backdrop-filter: blur(10px);
-    background: rgba(0,0,0,0.45);
-    z-index: 1;
-  }
+  
 
   .qtc-hero-content {
     position: relative;
@@ -438,10 +453,17 @@
 }
 
   .qtc-header {
-    flex-direction: column;
-    align-items: flex-start;
-    padding: 0 20px 24px;
-  }
+  background: rgba(255,255,255,0.55);
+  backdrop-filter: blur(14px);
+
+  border: 1px solid rgba(255,255,255,0.4);
+
+  border-radius: 28px;
+
+  padding: 24px 20px !important;
+
+  margin: 0 16px 28px !important;
+}
 
   .qtc-grid {
     grid-template-columns: 1fr;
@@ -452,13 +474,25 @@
     width: 100%;
   }
 
-  .qtc-search-wrap {
-    flex: 1;
-  }
+ .qtc-search-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  background: rgba(255,255,255,0.9);
+
+  border: 1px solid #ece3dd;
+
+  border-radius: 999px;
+
+  padding: 12px 18px;
+
+  width: 100%;
+}
 
   .qtc-search-input {
-    width: 100%;
-  }
+  font-size: 15px;
+}
 
   .qtc-modal-inner {
     border-radius: 16px;
