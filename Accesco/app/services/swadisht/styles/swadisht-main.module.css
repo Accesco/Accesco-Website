@@ -263,6 +263,9 @@
   object-fit: cover;
   transition: transform 0.3s ease;
 }
+.restaurantImage {
+  object-fit: cover;
+}
 
 .restaurantCard:hover .cardImage img {
   transform: scale(1.03);

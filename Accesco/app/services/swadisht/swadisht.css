@@ -1652,3 +1652,27 @@ html {
   color: white;
   box-shadow: 0 2px 6px rgba(156, 39, 176, 0.4);
 }
+/* MOBILE HORIZONTAL RESTAURANT SCROLL */
+@media (max-width: 768px) {
+
+  .restaurantGrid {
+    display: flex !important;
+    overflow-x: auto;
+    gap: 16px;
+    padding: 0 20px 20px;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+  }
+
+  .restaurantGrid::-webkit-scrollbar {
+    display: none;
+  }
+
+  .restaurantCard {
+    flex: 0 0 82% !important;
+    min-width: 82% !important;
+    max-width: 82% !important;
+    scroll-snap-align: start;
+  }
+
+}

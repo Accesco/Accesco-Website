@@ -13,6 +13,55 @@ import { useSwadishtt } from '../../contexts/SwadishttContext';
 import SwadishttHeader from '../../components/SwadishttHeader';
 import { RESTAURANTS } from '../../lib/swadishttData';
 import styles from './restaurant.module.css';
+function DishModal({ dish, onClose, onAddToCart }) {
+  if (!dish) return null;
+
+  return (
+    <div className={styles.modalOverlay} onClick={onClose}>
+      <div 
+        className={styles.modalContent}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <button 
+          className={styles.modalClose}
+          onClick={onClose}
+        >
+          ←
+        </button>
+
+        <img
+          src={dish.image}
+          alt={dish.name}
+          className={styles.modalImage}
+        />
+
+        <div className={styles.modalBody}>
+          <div className={styles.modalTop}>
+            <h2>{dish.name}</h2>
+
+            <div className={styles.modalPriceRow}>
+              <span className={styles.modalPrice}>
+                ₹{dish.price}
+              </span>
+
+              <button
+                className={styles.modalAddBtn}
+                onClick={() => onAddToCart(dish)}
+              >
+                ADD
+              </button>
+            </div>
+          </div>
+
+          <p className={styles.modalDesc}>
+            {dish.description}
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 
 function RestaurantDetailContent() {
   const params = useParams();
@@ -151,7 +200,11 @@ function RestaurantDetailContent() {
               
               <div className={styles.menuGrid}>
                 {filteredMenu.map(dish => (
-                  <div key={dish.id} className={styles.dishCard}>
+                  <div 
+  key={dish.id} 
+  className={styles.dishCard}
+  onClick={() => setSelectedDish(dish)}
+>
                     <div className={styles.dishImage}>
                       <img 
                         src={dish.image} 
@@ -176,7 +229,10 @@ function RestaurantDetailContent() {
                         <span className={styles.dishPrice}>₹{dish.price}</span>
                         <button 
                           className={styles.addBtn}
-                          onClick={() => handleAddToCart(dish)}
+                          onClick={(e) => {
+  e.stopPropagation();
+  handleAddToCart(dish);
+}}
                         >
                           Add
                         </button>
@@ -189,7 +245,11 @@ function RestaurantDetailContent() {
           </div>
         </div>
       </div>
-      
+      <DishModal
+  dish={selectedDish}
+  onClose={() => setSelectedDish(null)}
+  onAddToCart={handleAddToCart}
+/>
       {/* Cart Float */}
       {cart.length > 0 && (
         <Link href="/services/swadisht/cart" className={styles.cartFloat}>

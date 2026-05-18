@@ -51,67 +51,67 @@ export const RESTAURANTS = [
       days: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
     },
     menu: [
-      {
-        id: 'dish-001',
-        name: 'Butter Chicken',
-        category: 'Main Course',
-        description: 'Tender chicken in rich tomato gravy',
-        price: 350,
-        image: 'https://images.unsplash.com/photo-1603894584373-5ac82b2ae398?w=400&h=300&fit=crop',
-        isVeg: false,
-        isBestseller: true
-      },
-      {
-        id: 'dish-002',
-        name: 'Paneer Tikka Masala',
-        category: 'Main Course',
-        description: 'Grilled cottage cheese in spicy gravy',
-        price: 280,
-        image: 'https://images.unsplash.com/photo-1631452180519-c014fe946bc7?w=400&h=300&fit=crop',
-        isVeg: true,
-        isBestseller: true
-      },
-      {
-        id: 'dish-003',
-        name: 'Dal Makhani',
-        category: 'Main Course',
-        description: 'Creamy black lentils slow-cooked overnight',
-        price: 220,
-        image: 'https://images.unsplash.com/photo-1546833999-b9f581a1996d?w=400&h=300&fit=crop',
-        isVeg: true,
-        isBestseller: false
-      },
-      {
-        id: 'dish-004',
-        name: 'Tandoori Chicken',
-        category: 'Starters',
-        description: 'Smoky grilled chicken from tandoor',
-        price: 320,
-        image: 'https://images.unsplash.com/photo-1599487488170-d11ec9c172f0?w=400&h=300&fit=crop',
-        isVeg: false,
-        isBestseller: true
-      },
-      {
-        id: 'dish-005',
-        name: 'Garlic Naan',
-        category: 'Breads',
-        description: 'Soft naan with garlic butter',
-        price: 60,
-        image: 'https://images.unsplash.com/photo-1601050690597-df0568f70950?w=400&h=300&fit=crop',
-        isVeg: true,
-        isBestseller: false
-      },
-      {
-        id: 'dish-006',
-        name: 'Biryani',
-        category: 'Rice',
-        description: 'Aromatic basmati rice with spices',
-        price: 380,
-        image: 'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=400&h=300&fit=crop',
-        isVeg: false,
-        isBestseller: true
-      }
-    ]
+  {
+    id: 'dish-001',
+    name: 'Butter Chicken',
+    category: 'Main Course',
+    description: 'Tender tandoori chicken simmered in a rich buttery tomato gravy finished with fresh cream and aromatic Indian spices.',
+    price: 350,
+    image: 'https://images.unsplash.com/photo-1603894584373-5ac82b2ae398?w=600&h=400&fit=crop&auto=format&q=60',
+    isVeg: false,
+    isBestseller: true
+  },
+  {
+    id: 'dish-002',
+    name: 'Paneer Tikka Masala',
+    category: 'Main Course',
+    description: 'Smoky grilled paneer cubes cooked in a creamy onion tomato gravy with bold North Indian spices and herbs.',
+    price: 280,
+    image: 'https://images.unsplash.com/photo-1631452180519-c014fe946bc7?w=600&h=400&fit=crop&auto=format&q=60',
+    isVeg: true,
+    isBestseller: true
+  },
+  {
+    id: 'dish-003',
+    name: 'Dal Makhani',
+    category: 'Main Course',
+    description: 'Slow-cooked black lentils and kidney beans blended with butter, cream, and traditional Punjabi flavors.',
+    price: 220,
+    image: 'https://images.unsplash.com/photo-1546833999-b9f581a1996d?w=400&h=300&fit=crop',
+    isVeg: true,
+    isBestseller: false
+  },
+  {
+    id: 'dish-004',
+    name: 'Tandoori Chicken',
+    category: 'Starters',
+    description: 'Juicy chicken marinated overnight in yogurt and spices, then flame-grilled in a traditional clay tandoor.',
+    price: 320,
+    image: 'https://images.unsplash.com/photo-1599487488170-d11ec9c172f0?w=400&h=300&fit=crop',
+    isVeg: false,
+    isBestseller: true
+  },
+  {
+    id: 'dish-005',
+    name: 'Garlic Naan',
+    category: 'Breads',
+    description: 'Soft freshly baked naan brushed with melted garlic butter and topped with coriander for extra flavor.',
+    price: 60,
+    image: 'https://images.unsplash.com/photo-1601050690597-df0568f70950?w=400&h=300&fit=crop',
+    isVeg: true,
+    isBestseller: false
+  },
+  {
+    id: 'dish-006',
+    name: 'Biryani',
+    category: 'Rice',
+    description: 'Fragrant basmati rice layered with spiced meat, caramelized onions, saffron, and slow-cooked dum flavors.',
+    price: 380,
+    image: 'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=400&h=300&fit=crop',
+    isVeg: false,
+    isBestseller: true
+  }
+]
   },
   {
     id: 'rest-002',
@@ -152,47 +152,47 @@ export const RESTAURANTS = [
       days: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
     },
     menu: [
-      {
-        id: 'dish-101',
-        name: 'Masala Dosa',
-        category: 'South Indian',
-        description: 'Crispy rice crepe with potato filling',
-        price: 120,
-        image: 'https://images.unsplash.com/photo-1630383249896-424e482df921?w=400&h=300&fit=crop',
-        isVeg: true,
-        isBestseller: true
-      },
-      {
-        id: 'dish-102',
-        name: 'Idli Sambar',
-        category: 'South Indian',
-        description: 'Steamed rice cakes with lentil stew',
-        price: 80,
-        image: 'https://images.unsplash.com/photo-1589301760014-d929f3979dbc?w=400&h=300&fit=crop',
-        isVeg: true,
-        isBestseller: true
-      },
-      {
-        id: 'dish-103',
-        name: 'Veg Fried Rice',
-        category: 'Chinese',
-        description: 'Stir-fried rice with vegetables',
-        price: 150,
-        image: 'https://images.unsplash.com/photo-1603133872878-684f208fb84b?w=400&h=300&fit=crop',
-        isVeg: true,
-        isBestseller: false
-      },
-      {
-        id: 'dish-104',
-        name: 'Paneer Manchurian',
-        category: 'Chinese',
-        description: 'Cottage cheese in spicy sauce',
-        price: 200,
-        image: 'https://images.unsplash.com/photo-1631452180519-c014fe946bc7?w=400&h=300&fit=crop',
-        isVeg: true,
-        isBestseller: false
-      }
-    ]
+  {
+    id: 'dish-101',
+    name: 'Masala Dosa',
+    category: 'South Indian',
+    description: 'Golden crispy dosa filled with flavorful potato masala and served with coconut chutney and hot sambar.',
+    price: 120,
+    image: 'https://images.unsplash.com/photo-1630383249896-424e482df921?w=400&h=300&fit=crop',
+    isVeg: true,
+    isBestseller: true
+  },
+  {
+    id: 'dish-102',
+    name: 'Idli Sambar',
+    category: 'South Indian',
+    description: 'Soft fluffy idlis served with authentic South Indian sambar and freshly prepared coconut chutney.',
+    price: 80,
+    image: 'https://images.unsplash.com/photo-1589301760014-d929f3979dbc?w=400&h=300&fit=crop',
+    isVeg: true,
+    isBestseller: true
+  },
+  {
+    id: 'dish-103',
+    name: 'Veg Fried Rice',
+    category: 'Chinese',
+    description: 'Wok-tossed fried rice loaded with fresh vegetables, sauces, spring onions, and Indo-Chinese flavors.',
+    price: 150,
+    image: 'https://images.unsplash.com/photo-1603133872878-684f208fb84b?w=400&h=300&fit=crop',
+    isVeg: true,
+    isBestseller: false
+  },
+  {
+    id: 'dish-104',
+    name: 'Paneer Manchurian',
+    category: 'Chinese',
+    description: 'Crispy paneer cubes tossed in spicy garlic soy sauce with onions, capsicum, and spring onions.',
+    price: 200,
+    image: 'https://images.unsplash.com/photo-1631452180519-c014fe946bc7?w=400&h=300&fit=crop',
+    isVeg: true,
+    isBestseller: false
+  }
+]
   },
   {
     id: 'rest-003',
@@ -234,57 +234,57 @@ export const RESTAURANTS = [
       days: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
     },
     menu: [
-      {
-        id: 'dish-201',
-        name: 'Hyderabadi Chicken Biryani',
-        category: 'Biryani',
-        description: 'Aromatic basmati rice with tender chicken',
-        price: 380,
-        image: 'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=400&h=300&fit=crop',
-        isVeg: false,
-        isBestseller: true
-      },
-      {
-        id: 'dish-202',
-        name: 'Mutton Biryani',
-        category: 'Biryani',
-        description: 'Slow-cooked mutton with fragrant rice',
-        price: 450,
-        image: 'https://images.unsplash.com/photo-1633945274309-7ae8a0f4c9b7?w=400&h=300&fit=crop',
-        isVeg: false,
-        isBestseller: true
-      },
-      {
-        id: 'dish-203',
-        name: 'Veg Biryani',
-        category: 'Biryani',
-        description: 'Mixed vegetables with aromatic rice',
-        price: 280,
-        image: 'https://images.unsplash.com/photo-1645177628172-a94c1f96e6db?w=400&h=300&fit=crop',
-        isVeg: true,
-        isBestseller: false
-      },
-      {
-        id: 'dish-204',
-        name: 'Chicken 65',
-        category: 'Starters',
-        description: 'Spicy fried chicken appetizer',
-        price: 250,
-        image: 'https://images.unsplash.com/photo-1599487488170-d11ec9c172f0?w=400&h=300&fit=crop',
-        isVeg: false,
-        isBestseller: true
-      },
-      {
-        id: 'dish-205',
-        name: 'Raita',
-        category: 'Sides',
-        description: 'Cooling yogurt with cucumber',
-        price: 60,
-        image: 'https://images.unsplash.com/photo-1623428187969-5da2dcea5ebf?w=400&h=300&fit=crop',
-        isVeg: true,
-        isBestseller: false
-      }
-    ]
+  {
+    id: 'dish-201',
+    name: 'Hyderabadi Chicken Biryani',
+    category: 'Biryani',
+    description: 'Authentic Hyderabadi dum biryani layered with fragrant basmati rice, tender chicken, saffron, and slow-cooked spices.',
+    price: 380,
+    image: 'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=400&h=300&fit=crop',
+    isVeg: false,
+    isBestseller: true
+  },
+  {
+    id: 'dish-202',
+    name: 'Mutton Biryani',
+    category: 'Biryani',
+    description: 'Rich and flavorful biryani prepared with juicy slow-cooked mutton, aromatic spices, and long-grain basmati rice.',
+    price: 450,
+    image: 'https://images.unsplash.com/photo-1633945274309-7ae8a0f4c9b7?w=400&h=300&fit=crop',
+    isVeg: false,
+    isBestseller: true
+  },
+  {
+    id: 'dish-203',
+    name: 'Veg Biryani',
+    category: 'Biryani',
+    description: 'Fragrant basmati rice cooked with fresh vegetables, herbs, saffron, and traditional biryani masala spices.',
+    price: 280,
+    image: 'https://images.unsplash.com/photo-1645177628172-a94c1f96e6db?w=400&h=300&fit=crop',
+    isVeg: true,
+    isBestseller: false
+  },
+  {
+    id: 'dish-204',
+    name: 'Chicken 65',
+    category: 'Starters',
+    description: 'Crispy spicy fried chicken tossed with curry leaves, garlic, green chilies, and South Indian seasonings.',
+    price: 250,
+    image: 'https://images.unsplash.com/photo-1599487488170-d11ec9c172f0?w=400&h=300&fit=crop',
+    isVeg: false,
+    isBestseller: true
+  },
+  {
+    id: 'dish-205',
+    name: 'Raita',
+    category: 'Sides',
+    description: 'Refreshing chilled yogurt mixed with cucumber, onions, herbs, and mild spices to complement your biryani.',
+    price: 60,
+    image: 'https://images.unsplash.com/photo-1623428187969-5da2dcea5ebf?w=400&h=300&fit=crop',
+    isVeg: true,
+    isBestseller: false
+  }
+]
   },
   {
   id: 4,
@@ -316,7 +316,7 @@ export const RESTAURANTS = [
     id: 'dish-301',
     name: 'Masala Dosa',
     category: 'South Indian',
-    description: 'Crispy dosa with spicy potato filling',
+    description: 'Crispy golden dosa stuffed with flavorful potato masala and served with coconut chutney and hot sambar.',
     price: 140,
     image: 'https://images.unsplash.com/photo-1630383249896-424e482df921?w=400&h=300&fit=crop',
     isVeg: true,
@@ -326,7 +326,7 @@ export const RESTAURANTS = [
     id: 'dish-302',
     name: 'Ghee Roast Dosa',
     category: 'South Indian',
-    description: 'Golden crispy dosa roasted in ghee',
+    description: 'Thin crispy dosa roasted generously in pure ghee for a rich aroma and authentic South Indian flavor.',
     price: 170,
     image: 'https://images.unsplash.com/photo-1668236543090-82eba5ee5976?w=400&h=300&fit=crop',
     isVeg: true,
@@ -336,7 +336,7 @@ export const RESTAURANTS = [
     id: 'dish-303',
     name: 'Filter Coffee',
     category: 'Beverages',
-    description: 'Authentic South Indian filter coffee',
+    description: 'Traditional South Indian filter coffee brewed strong with freshly ground beans and frothy hot milk.',
     price: 60,
     image: 'https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=400&h=300&fit=crop',
     isVeg: true,
@@ -369,12 +369,12 @@ export const RESTAURANTS = [
       description: 'Up to ₹150'
     }
   ],
-  menu: [
+ menu: [
   {
     id: 'dish-401',
     name: 'Margherita Pizza',
     category: 'Pizza',
-    description: 'Classic cheese pizza with basil',
+    description: 'Classic Italian-style pizza topped with mozzarella cheese, fresh basil leaves, and rich tomato sauce.',
     price: 280,
     image: 'https://images.unsplash.com/photo-1513104890138-7c749659a591?w=400&h=300&fit=crop',
     isVeg: true,
@@ -384,7 +384,7 @@ export const RESTAURANTS = [
     id: 'dish-402',
     name: 'Pepperoni Pizza',
     category: 'Pizza',
-    description: 'Loaded with spicy pepperoni slices',
+    description: 'Loaded with spicy pepperoni slices, mozzarella cheese, and signature pizza sauce on a crispy crust.',
     price: 420,
     image: 'https://images.unsplash.com/photo-1628840042765-356cda07504e?w=400&h=300&fit=crop',
     isVeg: false,
@@ -394,7 +394,7 @@ export const RESTAURANTS = [
     id: 'dish-403',
     name: 'Farmhouse Pizza',
     category: 'Pizza',
-    description: 'Loaded with fresh veggies and cheese',
+    description: 'Cheesy pizza generously topped with onions, capsicum, tomatoes, mushrooms, and fresh vegetables.',
     price: 360,
     image: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=400&h=300&fit=crop',
     isVeg: true,
@@ -404,7 +404,7 @@ export const RESTAURANTS = [
     id: 'dish-404',
     name: 'Garlic Bread',
     category: 'Sides',
-    description: 'Toasted garlic bread with cheesy dip',
+    description: 'Freshly baked garlic bread brushed with butter and herbs, served with creamy cheesy dip.',
     price: 160,
     image: 'https://images.unsplash.com/photo-1619535860434-ba1d8fa12536?w=400&h=300&fit=crop',
     isVeg: true,
@@ -414,7 +414,7 @@ export const RESTAURANTS = [
     id: 'dish-405',
     name: 'Choco Lava Cake',
     category: 'Desserts',
-    description: 'Warm chocolate cake with molten center',
+    description: 'Warm chocolate cake with a rich molten chocolate center served fresh for the perfect dessert experience.',
     price: 140,
     image: 'https://images.unsplash.com/photo-1606313564200-e75d5e30476c?w=400&h=300&fit=crop',
     isVeg: true,
@@ -452,7 +452,7 @@ export const RESTAURANTS = [
     id: 'dish-501',
     name: 'Chocolate Truffle Cake',
     category: 'Desserts',
-    description: 'Rich chocolate layered cake',
+    description: 'Decadent layered chocolate truffle cake made with rich cocoa, smooth ganache, and creamy chocolate frosting.',
     price: 220,
     image: 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=400&h=300&fit=crop',
     isVeg: true,
@@ -462,7 +462,7 @@ export const RESTAURANTS = [
     id: 'dish-502',
     name: 'Belgian Waffle',
     category: 'Desserts',
-    description: 'Warm waffle served with chocolate sauce',
+    description: 'Freshly baked Belgian waffle served warm with chocolate sauce, whipped cream, and sweet toppings.',
     price: 190,
     image: 'https://images.unsplash.com/photo-1562376552-0d160a2f238d?w=400&h=300&fit=crop',
     isVeg: true,
@@ -472,7 +472,7 @@ export const RESTAURANTS = [
     id: 'dish-503',
     name: 'Cold Coffee',
     category: 'Beverages',
-    description: 'Creamy chilled coffee drink',
+    description: 'Creamy chilled coffee blended with milk, ice cream, and rich coffee flavors for a refreshing drink.',
     price: 140,
     image: 'https://images.unsplash.com/photo-1461023058943-07fcbe16d735?w=400&h=300&fit=crop',
     isVeg: true,
@@ -511,7 +511,7 @@ export const RESTAURANTS = [
     id: 'dish-601',
     name: 'Classic Chicken Burger',
     category: 'Burgers',
-    description: 'Juicy grilled chicken burger with fries',
+    description: 'Juicy grilled chicken burger layered with fresh lettuce, cheese, signature sauce, and crispy fries on the side.',
     price: 260,
     image: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400&h=300&fit=crop',
     isVeg: false,
@@ -521,7 +521,7 @@ export const RESTAURANTS = [
     id: 'dish-602',
     name: 'Veg Cheese Burger',
     category: 'Burgers',
-    description: 'Loaded veg patty with melted cheese',
+    description: 'Loaded vegetable patty burger with melted cheese, crunchy lettuce, fresh veggies, and creamy burger sauce.',
     price: 220,
     image: 'https://images.unsplash.com/photo-1585238342024-78d387f4a707?w=400&h=300&fit=crop',
     isVeg: true,
@@ -531,7 +531,7 @@ export const RESTAURANTS = [
     id: 'dish-603',
     name: 'Peri Peri Fries',
     category: 'Sides',
-    description: 'Crispy fries tossed in peri peri seasoning',
+    description: 'Crispy golden fries tossed with spicy peri peri seasoning and served hot with creamy dipping sauce.',
     price: 140,
     image: 'https://images.unsplash.com/photo-1576107232684-1279f390859f?w=400&h=300&fit=crop',
     isVeg: true,
@@ -569,7 +569,7 @@ export const RESTAURANTS = [
     id: 'dish-701',
     name: 'Butter Naan',
     category: 'Breads',
-    description: 'Soft naan brushed with butter',
+    description: 'Soft freshly baked naan brushed generously with melted butter and served warm from the tandoor.',
     price: 70,
     image: 'https://placehold.co/400x300/F4D7A1/5A2E0C/png?text=Butter+Naan',
     isVeg: true,
@@ -579,7 +579,7 @@ export const RESTAURANTS = [
     id: 'dish-702',
     name: 'Chicken Tikka',
     category: 'Starters',
-    description: 'Tandoor grilled spicy chicken tikka',
+    description: 'Juicy chicken tikka marinated in yogurt and spices, then flame-grilled in a traditional tandoor oven.',
     price: 340,
     image: 'https://images.unsplash.com/photo-1603894584373-5ac82b2ae398?w=400&h=300&fit=crop',
     isVeg: false,
@@ -589,7 +589,7 @@ export const RESTAURANTS = [
     id: 'dish-703',
     name: 'Paneer Butter Masala',
     category: 'Main Course',
-    description: 'Paneer cubes in creamy tomato gravy',
+    description: 'Soft paneer cubes cooked in a creamy buttery tomato gravy with rich North Indian spices and herbs.',
     price: 290,
     image: 'https://images.unsplash.com/photo-1631452180519-c014fe946bc7?w=400&h=300&fit=crop',
     isVeg: true,
@@ -627,7 +627,7 @@ export const RESTAURANTS = [
     id: 'dish-801',
     name: 'Hakka Noodles',
     category: 'Chinese',
-    description: 'Stir-fried noodles with vegetables',
+    description: 'Wok-tossed hakka noodles stir-fried with fresh vegetables, sauces, and bold Indo-Chinese flavors.',
     price: 210,
     image: 'https://images.unsplash.com/photo-1612929633738-8fe44f7ec841?w=400&h=300&fit=crop',
     isVeg: true,
@@ -637,7 +637,7 @@ export const RESTAURANTS = [
     id: 'dish-802',
     name: 'Chicken Manchurian',
     category: 'Chinese',
-    description: 'Crispy chicken tossed in spicy sauce',
+    description: 'Crispy chicken pieces tossed in spicy garlic soy sauce with onions, capsicum, and spring onions.',
     price: 280,
     image: 'https://images.unsplash.com/photo-1525755662778-989d0524087e?w=400&h=300&fit=crop',
     isVeg: false,
@@ -647,7 +647,7 @@ export const RESTAURANTS = [
     id: 'dish-803',
     name: 'Spring Rolls',
     category: 'Starters',
-    description: 'Crunchy vegetable spring rolls',
+    description: 'Crunchy golden spring rolls stuffed with seasoned vegetables and served with spicy dipping sauce.',
     price: 180,
     image: 'https://images.unsplash.com/photo-1603133872878-684f208fb84b?w=400&h=300&fit=crop',
     isVeg: true,
@@ -685,7 +685,7 @@ export const RESTAURANTS = [
     id: 'dish-901',
     name: 'Cappuccino',
     category: 'Beverages',
-    description: 'Freshly brewed cappuccino coffee',
+    description: 'Freshly brewed cappuccino topped with rich milk foam and crafted using premium roasted coffee beans.',
     price: 180,
     image: 'https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=400&h=300&fit=crop',
     isVeg: true,
@@ -695,7 +695,7 @@ export const RESTAURANTS = [
     id: 'dish-902',
     name: 'Red Velvet Pastry',
     category: 'Desserts',
-    description: 'Soft red velvet cake slice',
+    description: 'Soft and moist red velvet pastry layered with smooth cream cheese frosting and chocolate garnish.',
     price: 160,
     image: 'https://images.unsplash.com/photo-1621303837174-89787a7d4729?w=400&h=300&fit=crop',
     isVeg: true,
@@ -705,7 +705,7 @@ export const RESTAURANTS = [
     id: 'dish-903',
     name: 'Pasta Alfredo',
     category: 'Italian',
-    description: 'Creamy white sauce pasta',
+    description: 'Creamy Alfredo pasta tossed with white sauce, herbs, garlic, parmesan cheese, and fresh vegetables.',
     price: 320,
     image: 'https://images.unsplash.com/photo-1645112411341-6c4fd023882c?w=400&h=300&fit=crop',
     isVeg: true,
@@ -743,7 +743,7 @@ export const RESTAURANTS = [
     id: 'dish-1001',
     name: 'Andhra Chicken Curry',
     category: 'Main Course',
-    description: 'Spicy Andhra-style chicken curry',
+    description: 'Fiery Andhra-style chicken curry slow-cooked with roasted spices, curry leaves, and traditional regional flavors.',
     price: 340,
     image: 'https://images.unsplash.com/photo-1606491956689-2ea866880c84?w=400&h=300&fit=crop',
     isVeg: false,
@@ -753,7 +753,7 @@ export const RESTAURANTS = [
     id: 'dish-1002',
     name: 'Gongura Mutton',
     category: 'Main Course',
-    description: 'Tangy gongura leaves with mutton',
+    description: 'Tender mutton cooked with tangy gongura leaves, aromatic spices, and authentic Andhra-style seasoning.',
     price: 420,
     image: 'https://images.unsplash.com/photo-1544025162-d76694265947?w=400&h=300&fit=crop',
     isVeg: false,
@@ -763,7 +763,7 @@ export const RESTAURANTS = [
     id: 'dish-1003',
     name: 'Andhra Meals',
     category: 'Meals',
-    description: 'Traditional Andhra thali with curries',
+    description: 'Traditional Andhra-style thali served with rice, curries, dal, chutneys, papad, and regional specialties.',
     price: 260,
     image: 'https://images.unsplash.com/photo-1512058564366-18510be2db19?w=400&h=300&fit=crop',
     isVeg: true,
@@ -778,7 +778,7 @@ export const MENU_ITEMS = [
     id: 'dish-001',
     restaurantId: 'rest-001',
     name: 'Butter Chicken',
-    description: 'Tender chicken in rich tomato-butter gravy',
+    description: 'Tender tandoori chicken simmered in a rich buttery tomato gravy finished with cream and aromatic Indian spices.',
     price: 350,
     image: '/images/swadisht/menu/butter-chicken.jpg',
     category: 'Main Course',
@@ -791,7 +791,7 @@ export const MENU_ITEMS = [
     id: 'dish-002',
     restaurantId: 'rest-001',
     name: 'Paneer Tikka Masala',
-    description: 'Grilled cottage cheese in spiced tomato gravy',
+    description: 'Smoky grilled paneer cubes cooked in creamy tomato gravy with bold North Indian spices and herbs.',
     price: 280,
     image: '/images/swadisht/menu/paneer-tikka.jpg',
     category: 'Main Course',
@@ -804,7 +804,7 @@ export const MENU_ITEMS = [
     id: 'dish-003',
     restaurantId: 'rest-003',
     name: 'Hyderabadi Chicken Biryani',
-    description: 'Aromatic basmati rice with tender chicken',
+    description: 'Authentic dum biryani layered with fragrant basmati rice, tender chicken, saffron, and slow-cooked spices.',
     price: 320,
     image: '/images/swadisht/menu/chicken-biryani.jpg',
     category: 'Biryani',
@@ -817,7 +817,7 @@ export const MENU_ITEMS = [
     id: 'dish-004',
     restaurantId: 'rest-002',
     name: 'Masala Dosa',
-    description: 'Crispy rice crepe with spiced potato filling',
+    description: 'Golden crispy dosa stuffed with flavorful potato masala and served with coconut chutney and hot sambar.',
     price: 120,
     image: '/images/swadisht/menu/masala-dosa.jpg',
     category: 'South Indian',
@@ -827,7 +827,6 @@ export const MENU_ITEMS = [
     deliveryTime: '20-25 mins'
   }
 ];
-
 export const CATEGORIES = [
   { id: 'all', name: 'All', icon: '🍽️' },
   { id: 'biryani', name: 'Biryani', icon: '🍚' },

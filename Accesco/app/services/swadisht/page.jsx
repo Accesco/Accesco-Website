@@ -14,7 +14,7 @@ import { RESTAURANTS, filterRestaurants } from './lib/swadishttData';
 import { SwadishttHero } from '../../../components/HeroBanners';
 import styles from './styles/swadisht-main.module.css';
 import CategorySection from './components/CategorySection';
-
+import Image from 'next/image';
 // Hero Section Component
 function HeroSection() {
   const [activeTab, setActiveTab] = useState('delivery');
@@ -93,16 +93,16 @@ function RestaurantCard({ restaurant }) {
       <div className={styles.cardImageWrapper}>
         <div className={styles.cardImage}>
           {!imageLoaded && <div className={styles.imageSkeleton}></div>}
-          <img 
-            src={restaurant.coverImage} 
-            alt={restaurant.name}
-            onLoad={() => setImageLoaded(true)}
-            onError={(e) => {
-              e.target.src = `https://placehold.co/400x240/E23744/FFFFFF/png?text=${encodeURIComponent(restaurant.name)}`;
-              setImageLoaded(true);
-            }}
-            style={{ opacity: imageLoaded ? 1 : 0 }}
-          />
+          <Image
+  src={restaurant.coverImage}
+  alt={restaurant.name}
+  fill
+  sizes="(max-width: 768px) 100vw, 33vw"
+  className={styles.restaurantImage}
+  loading="lazy"
+  onLoad={() => setImageLoaded(true)}
+  style={{ opacity: imageLoaded ? 1 : 0 }}
+/>
           <div className={styles.imageOverlay}></div>
         </div>
         
