@@ -52,12 +52,31 @@ export default function SwadishttProfilePage() {
     city: '',
   });
   const [orders, setOrders] = useState([]);
+  const [healthMode, setHealthMode] = useState(false);
+
+const handleHealthModeToggle = () => {
+  const nextValue = !healthMode;
+
+  setHealthMode(nextValue);
+  localStorage.setItem('swadishtt-health-mode', JSON.stringify(nextValue));
+
+  if (nextValue) {
+    window.location.href = '/services/swadisht/healthy-mode';
+  }
+};
 
   useEffect(() => {
-    if (typeof window === 'undefined') return;
+  if (typeof window === 'undefined') return;
 
-    // Edited Jabez: hydrate profile details from localStorage.
-    let storedUser = null;
+  try {
+    const rawHealthMode = localStorage.getItem('swadishtt-health-mode');
+    if (rawHealthMode) setHealthMode(JSON.parse(rawHealthMode));
+  } catch (error) {
+    console.error('Error reading health mode:', error);
+  }
+
+  // Edited Jabez: hydrate profile details from localStorage.
+  let storedUser = null;
     let storedLocation = null;
 
     try {
@@ -152,6 +171,7 @@ export default function SwadishttProfilePage() {
                     {profile.email ? ` | ${profile.email}` : ''}
                   </p>
                 </div>
+
               </div>
               <div className={styles.profileActions}>
                 <Link href="/services/swadisht" className={styles.primaryBtn}>
@@ -161,6 +181,25 @@ export default function SwadishttProfilePage() {
                   View orders
                 </Link>
               </div>
+              <div className={styles.healthModeCard}>
+  <div>
+    <span className={styles.healthModeLabel}>Health Mode</span>
+    <p className={styles.healthModeText}>
+      {healthMode
+        ? 'We will prioritise healthier meal suggestions.'
+        : 'Turn on for healthier food recommendations.'}
+    </p>
+  </div>
+
+  <button
+    type="button"
+    className={`${styles.healthToggle} ${healthMode ? styles.healthToggleOn : ''}`}
+    onClick={handleHealthModeToggle}
+    aria-pressed={healthMode}
+  >
+    <span />
+  </button>
+</div>
               <div className={styles.profileInfo}>
                 <div className={styles.infoRow}>
                   <span>Delivery hub</span>

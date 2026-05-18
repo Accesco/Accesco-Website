@@ -6,11 +6,12 @@
  * @description Calorie, nutrition & vitamin-aware meal recommendations
  */
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useSwadishtt } from '../contexts/SwadishttContext';
 import SwadishttHeader from '../components/SwadishttHeader';
 import styles from './healthy-mode.module.css';
+
 
 const HEALTH_GOALS = [
   { 
@@ -340,6 +341,111 @@ function HealthyModeContent() {
   const { addToCart } = useSwadishtt();
   const [selectedGoal, setSelectedGoal] = useState(HEALTH_GOALS[0]);
   const [consumed, setConsumed] = useState(820);
+  const [showHealthForm, setShowHealthForm] = useState(true);
+const [healthProfile, setHealthProfile] = useState({
+  age: '',
+  gender: '',
+  weightRange: '',
+  activityLevel: '',
+  preferences: [],
+});
+const [healthApiResult, setHealthApiResult] = useState(null);
+const [submittingProfile, setSubmittingProfile] = useState(false);
+const [healthInsights, setHealthInsights] = useState(null);
+const [loadingInsights, setLoadingInsights] = useState(false);
+const handleHealthInputChange = (field, value) => {
+  setHealthProfile((prev) => ({
+    ...prev,
+    [field]: value,
+  }));
+};
+
+const handlePreferenceToggle = (preference) => {
+  setHealthProfile((prev) => {
+    const exists = prev.preferences.includes(preference);
+
+    return {
+      ...prev,
+      preferences: exists
+        ? prev.preferences.filter((item) => item !== preference)
+        : [...prev.preferences, preference],
+    };
+  });
+};
+
+const handleSubmitHealthProfile = async () => {
+  try {
+    setSubmittingProfile(true);
+
+    const response = await fetch('/api/health-profile', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        goal: selectedGoal.id,
+        profile: healthProfile,
+      }),
+    });
+
+    const data = await response.json();
+localStorage.setItem(
+  'swadishtt-health-profile',
+  JSON.stringify(healthProfile)
+);
+    setHealthApiResult(data);
+    setShowHealthForm(false);
+  } catch (error) {
+    console.error('Health profile submit error:', error);
+  } finally {
+    setSubmittingProfile(false);
+  }
+};
+  useEffect(() => {
+  try {
+    const savedProfile = localStorage.getItem('swadishtt-health-profile');
+
+    if (savedProfile) {
+      const parsed = JSON.parse(savedProfile);
+
+      setHealthProfile(parsed);
+      setShowHealthForm(false);
+    }
+  } catch (error) {
+    console.error('Health profile restore error:', error);
+  }
+}, []);
+
+useEffect(() => {
+  const fetchHealthInsights = async () => {
+    try {
+      setLoadingInsights(true);
+
+      const response = await fetch('/api/health-profile', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          goal: selectedGoal.id,
+          profile: healthProfile,
+        }),
+      });
+
+      const data = await response.json();
+
+      console.log('Health API Response:', data);
+
+      setHealthInsights(data);
+    } catch (error) {
+      console.error('Health insights error:', error);
+    } finally {
+      setLoadingInsights(false);
+    }
+  };
+
+  if (!showHealthForm) {
+    fetchHealthInsights();
+  }
+}, [selectedGoal, showHealthForm, healthProfile]);
 
   const filteredDishes = HEALTHY_DISHES.filter((d) =>
     d.goals.includes(selectedGoal.id)
@@ -355,6 +461,17 @@ function HealthyModeContent() {
       <SwadishttHeader />
 
       <div className={styles.hero}>
+        <div className={styles.healthTopBar}>
+  <button
+    className={styles.exitHealthBtn}
+    onClick={() => {
+      localStorage.setItem('swadishtt-health-mode', JSON.stringify(false));
+      window.location.href = '/services/swadisht/profile';
+    }}
+  >
+    Health Mode ON
+  </button>
+</div>
         <h1 className={styles.heroTitle}>Healthy Mode</h1>
         <p className={styles.heroSub}>
           Calorie-aware, nutrition-tracked meals tailored to your health goals
@@ -363,8 +480,127 @@ function HealthyModeContent() {
 
       <div className={styles.container}>
         <GoalSelector selectedGoal={selectedGoal} onSelect={setSelectedGoal} />
-        <CalorieTracker goal={selectedGoal} consumed={consumed} />
 
+{showHealthForm ? (
+  <div className={styles.formOverlay}>
+    <section className={styles.healthFormCard}>
+    <div className={styles.formHeader}>
+  <div className={styles.formHeaderTop}>
+    <span className={styles.formBadge}>Health Mode Setup</span>
+
+    <button
+      type="button"
+      className={styles.closeFormBtn}
+      onClick={() => setShowHealthForm(false)}
+    >
+      ×
+    </button>
+  </div>
+
+  <h2>Share your nutrition profile</h2>
+  <p>Tell us your lifestyle and food preferences so we can suggest better meals.</p>
+</div>
+
+    <div className={styles.formGrid}>
+      <div className={styles.formGroup}>
+        <label>Age</label>
+        <input
+          type="number"
+          placeholder="25"
+          value={healthProfile.age}
+          onChange={(e) => handleHealthInputChange('age', e.target.value)}
+        />
+      </div>
+
+      <div className={styles.formGroup}>
+        <label>Gender</label>
+        <select
+          value={healthProfile.gender}
+          onChange={(e) => handleHealthInputChange('gender', e.target.value)}
+        >
+          <option value="">Select gender</option>
+          <option value="female">Female</option>
+          <option value="male">Male</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+
+      <div className={styles.formGroup}>
+        <label>Weight range</label>
+        <input
+          placeholder="60-70"
+          value={healthProfile.weightRange}
+          onChange={(e) => handleHealthInputChange('weightRange', e.target.value)}
+        />
+      </div>
+
+      <div className={styles.formGroup}>
+        <label>Activity level</label>
+        <select
+          value={healthProfile.activityLevel}
+          onChange={(e) => handleHealthInputChange('activityLevel', e.target.value)}
+        >
+          <option value="">Select activity level</option>
+          <option value="low">Low</option>
+          <option value="moderate">Moderate</option>
+          <option value="high">High</option>
+        </select>
+      </div>
+    </div>
+
+    <div className={styles.preferenceSection}>
+      <h3>Dietary preferences</h3>
+
+      <div className={styles.preferenceGrid}>
+        {['vegetarian', 'vegan', 'keto', 'diabetic-friendly', 'gluten-free', 'low-sodium', 'high-protein'].map((item) => (
+          <label key={item} className={styles.preferenceOption}>
+            <input
+              type="checkbox"
+              checked={healthProfile.preferences.includes(item)}
+              onChange={() => handlePreferenceToggle(item)}
+            />
+            <span>{item}</span>
+          </label>
+        ))}
+      </div>
+    </div>
+
+    <div className={styles.formActions}>
+      <button
+  type="button"
+  className={styles.submitHealthBtn}
+  onClick={handleSubmitHealthProfile}
+  disabled={submittingProfile}
+>
+  {submittingProfile ? 'Submitting...' : 'Submit Health Profile'}
+</button>
+    </div>
+      </section>
+  </div>
+) : (
+ <>
+  <div className={styles.healthActionRow}>
+    <button
+      type="button"
+      className={styles.editProfileBtn}
+      onClick={() => setShowHealthForm(true)}
+    >
+      Edit Health Profile
+    </button>
+  </div>
+
+  <CalorieTracker goal={selectedGoal} consumed={consumed} />
+
+  {loadingInsights ? (
+    <p className={styles.insightLoading}>Preparing your health insights...</p>
+  ) : healthInsights ? (
+    <section className={styles.insightCard}>
+      <span className={styles.insightBadge}>API Connected</span>
+      <pre>{JSON.stringify(healthInsights, null, 2)}</pre>
+    </section>
+  ) : null}
+</>
+)}
         <div className={styles.dishesSection}>
           <h2 className={styles.sectionTitle}>
             Recommended for {selectedGoal.label}

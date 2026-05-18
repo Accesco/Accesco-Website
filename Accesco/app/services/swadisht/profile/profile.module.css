@@ -507,7 +507,59 @@
     transform: translateY(0);
   }
 }
+.healthModeCard {
+  background: #fff4f5;
+  border: 1px solid rgba(226, 55, 68, 0.25);
+  border-radius: 14px;
+  padding: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
 
+.healthModeLabel {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--sw-red);
+}
+
+.healthModeText {
+  margin: 4px 0 0;
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--sw-muted);
+}
+
+.healthToggle {
+  width: 52px;
+  height: 30px;
+  border: none;
+  border-radius: 999px;
+  background: #d1d5db;
+  padding: 3px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  flex-shrink: 0;
+}
+
+.healthToggle span {
+  width: 24px;
+  height: 24px;
+  background: #ffffff;
+  border-radius: 50%;
+  display: block;
+  transition: transform 0.25s ease;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.18);
+}
+
+.healthToggleOn {
+  background: var(--sw-red);
+}
+
+.healthToggleOn span {
+  transform: translateX(22px);
+}
 @media (prefers-reduced-motion: reduce) {
   .profileBoard {
     animation: none;

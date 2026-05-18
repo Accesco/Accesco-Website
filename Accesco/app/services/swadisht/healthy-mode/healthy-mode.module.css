@@ -565,7 +565,259 @@
   line-height: 1.7;
   margin: 0;
 }
+.healthTopBar {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 20px;
+}
 
+.exitHealthBtn {
+  background: #E23744;
+  color: #ffffff;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 14px rgba(226, 55, 68, 0.25);
+}
+
+.exitHealthBtn:hover {
+  background: #C62828;
+  transform: translateY(-2px);
+}
+.healthFormCard {
+  background: #ffffff;
+  border: 1px solid rgba(226, 55, 68, 0.18);
+  border-radius: 24px;
+  padding: 28px;
+  margin-bottom: 42px;
+  box-shadow: 0 18px 45px rgba(226, 55, 68, 0.08);
+}
+
+.formHeader {
+  margin-bottom: 24px;
+}
+
+.formBadge {
+  display: inline-flex;
+  background: rgba(226, 55, 68, 0.12);
+  color: #e23744;
+  padding: 7px 14px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 800;
+  margin-bottom: 12px;
+}
+
+.formHeader h2 {
+  font-size: 32px;
+  margin: 0 0 8px;
+  color: #1c1c1c;
+}
+
+.formHeader p {
+  margin: 0;
+  font-size: 15px;
+  color: #696969;
+}
+
+.formGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+  margin-bottom: 24px;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.formGroup label {
+  font-size: 14px;
+  font-weight: 700;
+  color: #1c1c1c;
+}
+
+.formGroup input,
+.formGroup select {
+  width: 100%;
+  height: 52px;
+  border: 1px solid #e8e8e8;
+  border-radius: 14px;
+  padding: 0 14px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #1c1c1c;
+  background: #ffffff;
+  outline: none;
+}
+
+.formGroup input:focus,
+.formGroup select:focus {
+  border-color: #e23744;
+  box-shadow: 0 0 0 4px rgba(226, 55, 68, 0.1);
+}
+
+.preferenceSection {
+  margin-top: 8px;
+}
+
+.preferenceSection h3 {
+  font-size: 18px;
+  margin: 0 0 14px;
+  color: #1c1c1c;
+}
+
+.preferenceGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.preferenceOption {
+  min-height: 52px;
+  border: 1px solid #e8e8e8;
+  border-radius: 14px;
+  padding: 0 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #fff;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+  text-transform: capitalize;
+}
+
+.preferenceOption:hover {
+  border-color: rgba(226, 55, 68, 0.45);
+  background: #fff4f5;
+}
+
+.preferenceOption input {
+  accent-color: #e23744;
+}
+
+.formActions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 24px;
+}
+
+.submitHealthBtn {
+  background: #e23744;
+  color: #ffffff;
+  border: none;
+  border-radius: 14px;
+  padding: 14px 24px;
+  font-size: 14px;
+  font-weight: 800;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  box-shadow: 0 10px 24px rgba(226, 55, 68, 0.25);
+}
+
+.submitHealthBtn:hover {
+  background: #c62828;
+  transform: translateY(-2px);
+}
+.formOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(28, 28, 28, 0.45);
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.formOverlay .healthFormCard {
+  width: min(100%, 980px);
+  max-height: 90vh;
+  overflow-y: auto;
+  margin-bottom: 0;
+}
+.submitHealthBtn:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+  transform: none;
+}
+.healthActionRow {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 16px;
+}
+
+.editProfileBtn {
+  background: #fff4f5;
+  color: #e23744;
+  border: 1px solid rgba(226, 55, 68, 0.25);
+  padding: 10px 16px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.editProfileBtn:hover {
+  background: #e23744;
+  color: #ffffff;
+}
+.healthActionRow {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 16px;
+}
+
+.editProfileBtn {
+  background: #fff4f5;
+  color: #e23744;
+  border: 1px solid rgba(226, 55, 68, 0.25);
+  padding: 10px 16px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.insightLoading {
+  color: #696969;
+  font-size: 14px;
+  margin-bottom: 20px;
+}
+
+.insightCard {
+  background: #fff4f5;
+  border: 1px solid rgba(226, 55, 68, 0.2);
+  border-radius: 18px;
+  padding: 18px;
+  margin-bottom: 28px;
+}
+
+.insightBadge {
+  display: inline-flex;
+  background: #e23744;
+  color: #fff;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 800;
+  margin-bottom: 12px;
+}
+
+.insightCard pre {
+  white-space: pre-wrap;
+  font-size: 13px;
+  color: #1c1c1c;
+}
 /* Responsive Design */
 @media (max-width: 768px) {
   .pageContent {
@@ -744,4 +996,25 @@
   .macroVal {
     font-size: 14px;
   }
+  .healthFormCard {
+  padding: 20px;
+  border-radius: 20px;
+}
+
+.formHeader h2 {
+  font-size: 24px;
+}
+
+.formGrid,
+.preferenceGrid {
+  grid-template-columns: 1fr;
+}
+
+.formActions {
+  justify-content: stretch;
+}
+
+.submitHealthBtn {
+  width: 100%;
+}
 }
