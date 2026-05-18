@@ -749,14 +749,6 @@ const faqSchema = {
 },
 {
   "@type": "Question",
-  "name": "How Is Accesco Living Redefining Smart Living in India?",
-  "acceptedAnswer": {
-    "@type": "Answer",
-    "text": "By combining quick commerce, AI-powered services, hyperlocal delivery, and intelligent lifestyle management, Accesco Living is shaping the future of connected living for modern Indian households."
-  }
-},
-{
-  "@type": "Question",
   "name": "What is the future of Accesco Living?",
   "acceptedAnswer": {
     "@type": "Answer",
@@ -923,7 +915,80 @@ const faqSchema = {
     "@type": "Answer",
     "text": "Yes. Xpense Meter works even if you use only one Accesco vertical like Swadisht."
   }
+},
+{
+  "@type": "Question",
+  "name": "How Is Accesco Living Redefining Smart Living in India?",
+  "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "By combining quick commerce, AI-powered services, hyperlocal delivery, and intelligent lifestyle management, Accesco Living is shaping the future of connected living for modern Indian households."
+  }
+},
+{
+    "@type": "Question",
+    "name": "Where is Accesco Living currently available?",
+    "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "Accesco Living has launched in Bengaluru for its beta phase. We’re starting in select neighborhoods and expanding coverage rapidly. Enter your pincode in the app to check live serviceability in your area."
+    }
+  },{
+    "@type": "Question",
+    "name": "What is FarmChain and how does it benefit me?",
+    "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "FarmChain is Accesco Living’s direct farm-to-home supply chain. Instead of produce passing through 4–5 intermediaries (and markups at each step), FarmChain sources directly from Karnataka-based FPOs. This means a tomato that costs ₹40 in a regular supply chain reaches you at a significantly lower price — without compromising quality."
+    }
+  },{
+    "@type": "Question",
+    "name": "What is Xpense Meter?",
+    "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "Xpense Meter is Accesco Living’s AI budget intelligence layer — the feature that truly sets us apart. It tracks your spending across all four verticals in real time, compares it against your monthly income and fixed expenses, and tells you where your money is going, what you’re saving, and how to spend smarter going forward."
+    }
+  },{
+    "@type": "Question",
+    "name": "Is Xpense Meter like a regular expense tracker?",
+    "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "No — it’s much more. A regular expense tracker just logs what you’ve spent. Xpense Meter actively analyzes your spending patterns using AI, accounts for Indian seasonal spending habits (festivals, salary cycles), and gives you forward-looking budget guidance — not just a report of the past. Think of it as a financial co-pilot built into your shopping app."
+    }
+  },{
+    "@type": "Question",
+    "name": "Do I need to manually enter my expenses in Xpense Meter?",
+    "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "No manual entry needed for purchases made within the Accesco Living ecosystem. Every transaction across Grokly, Swadisht, DineX, and InstaStyle is automatically captured and analyzed by Xpense Meter."
+    }
+  },{
+    "@type": "Question",
+    "name": "Is my financial data safe with Xpense Meter?",
+    "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "Your data privacy is a core commitment at Accesco Living. Xpense Meter processes your spending data to deliver personalized insights — we do not sell your personal or financial data to third parties. Detailed data privacy policies are available in the app."
+    }
+  },{
+    "@type": "Question",
+    "name": "Is Accesco Living free to use?",
+    "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "Yes — downloading and using the Accesco Living app is free. You pay only for the products and services you order. There are no subscription fees during the beta phase."
+    }
+  },{
+    "@type": "Question",
+    "name": "Who is Accesco Living built for?",
+    "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "Accesco Living is built for the modern urban Indian — the salaried professional, the young family, the budget-conscious millennial who wants quality without overspending. If you’ve ever felt that your salary disappears before the month ends, Accesco Living was built for you."
+    }
+  },
+  {
+    "@type": "Question",
+    "name": "What if I receive a wrong or damaged item?",
+    "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "Customer satisfaction is our priority. Report any issue directly through the app within the order window, and our support team will resolve it — through a replacement, refund, or credit."
 }
+  }
   ]
 };
 
@@ -938,7 +1003,7 @@ const faqSchema = {
       <AccescoHeader />
       <main className="faq-page">
         <section className="faq-section">
-          <div className="faq-container">
+          <div className="faq-container"> 
             <div className="faq-header">
               <div className="faq-pretitle">FREQUENTLY ASKED QUESTIONS</div>
               <h1 className="faq-title">Everything You Need to Know</h1>

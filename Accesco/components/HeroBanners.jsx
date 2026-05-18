@@ -621,7 +621,7 @@ export function AccescoHero() {
     margin: '0 auto 28px',
     maxWidth: 640,
   }}>
-    Groceries, Food, Fashion, and Financial Intelligence — all under one unified platform.
+  Delivering Groceries, Food, Fashion, and Financial Independence — all under one unified platform.
   </p>
 </div>
     </section>
