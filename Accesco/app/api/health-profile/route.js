@@ -19,25 +19,22 @@ export async function POST(request) {
   const body = await request.json();
   const { profile } = body;
 
-  // Build the payload your FastAPI /v1/health/analyze expects
-  const payload = {
-    household: [
-      {
-        age:                Number(profile.age)                          || 25,
-        gender:             profile.gender                               || 'other',
-        weightRange:        profile.weightRange                          || '60-70',
-        activityLevel:      ACTIVITY_MAP[profile.activityLevel]          || 'moderate',
-        dietaryPreferences: profile.preferences                          || [],
-      },
-    ],
-  };
+  // profile is now an array of members
+  const household = profile.map((member) => ({
+    age:                Number(member.age)                 || 25,
+    gender:             member.gender                      || 'other',
+    weightRange:        member.weightRange                 || '60-70',
+    activityLevel:      ACTIVITY_MAP[member.activityLevel] || 'moderate',
+    dietaryPreferences: member.preferences                 || [],
+  }));
 
-  const res  = await fetch(`${FASTAPI_URL}/v1/health/analyze`, {
+  const res = await fetch(`${FASTAPI_URL}/v1/health/analyze`, {
     method:  'POST',
     headers: { 'Content-Type': 'application/json' },
-    body:    JSON.stringify(payload),
+    body:    JSON.stringify({ household }),
   });
 
   const data = await res.json();
   return Response.json(data);
 }
+

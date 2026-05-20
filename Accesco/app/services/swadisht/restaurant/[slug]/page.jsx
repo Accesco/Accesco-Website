@@ -89,15 +89,20 @@ function RestaurantDetailContent() {
     ? restaurant.menu 
     : restaurant.menu.filter(item => item.category === activeCategory);
 
-  const handleAddToCart = (dish) => {
-    addToCart({
-      id: dish.id,
-      name: dish.name,
-      price: dish.price,
-      image: dish.image,
-      restaurant: restaurant.name
-    });
-  };
+ const handleAddToCart = (dish) => {
+  addToCart({
+    id: dish.id,
+    name: dish.name,
+    price: dish.price,
+    image: dish.image,
+    restaurant: restaurant.name,
+
+    calories: dish.calories || 0,
+    protein: dish.protein || 0,
+    carbs: dish.carbs || 0,
+    fats: dish.fats || 0,
+  });
+};
 
   return (
     <div className={styles.page}>

@@ -40,7 +40,7 @@ const ACTIVITY_MAP = {
 // HealthyModeContent
 // ---------------------------------------------------------------------------
 function HealthyModeContent() {
-  const { addToCart } = useSwadishtt();
+  const { addToCart, cart } = useSwadishtt();
 
   const [showHealthForm, setShowHealthForm]       = useState(true);
   const [submittingProfile, setSubmittingProfile] = useState(false);
@@ -48,20 +48,41 @@ function HealthyModeContent() {
   const [loadingInsights, setLoadingInsights]     = useState(false);
   const [error, setError]                         = useState(null);
 
-  const [healthProfile, setHealthProfile] = useState({
-    age:           '',
-    gender:        '',
-    weightRange:   '',
-    activityLevel: '',
-    preferences:   [],
-  });
+const emptyMember = {
+  age: '',
+  gender: '',
+  weightRange: '',
+  activityLevel: '',
+  preferences: [],
+};
+
+const [members, setMembers] = useState([emptyMember]);
+  const consumedCalories = cart?.reduce(
+  (sum, item) => sum + (item.calories || 0),
+  0
+) || 0;
+
+const consumedProtein = cart?.reduce(
+  (sum, item) => sum + (item.protein || 0),
+  0
+) || 0;
+
+const consumedCarbs = cart?.reduce(
+  (sum, item) => sum + (item.carbs || 0),
+  0
+) || 0;
+
+const consumedFats = cart?.reduce(
+  (sum, item) => sum + (item.fats || 0),
+  0
+) || 0;
 
   // ── Restore saved profile from localStorage on mount ──
   useEffect(() => {
     try {
       const saved = localStorage.getItem('swadishtt-health-profile');
       if (saved) {
-        setHealthProfile(JSON.parse(saved));
+        setMembers(JSON.parse(saved));
         setShowHealthForm(false);
       }
     } catch (e) {
@@ -80,34 +101,64 @@ function HealthyModeContent() {
         const res  = await fetch('/api/health-profile', {
           method:  'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ profile: healthProfile }),
+          body: JSON.stringify({ profile: getMappedMembers() }),
         });
         const data = await res.json();
         setHealthInsights(data);
       } catch (e) {
-        console.error('Health insights error:', e);
-        setError('Failed to fetch nutrition data. Is the backend running?');
-      } finally {
+  console.error(e);
+  setError(e.message || 'Something went wrong');
+}finally {
         setLoadingInsights(false);
       }
     };
 
     fetchInsights();
-  }, [showHealthForm, healthProfile]);
+  }, [showHealthForm, members]);
 
   // ── Form handlers ──
-  const handleInput = (field, value) =>
-    setHealthProfile((prev) => ({ ...prev, [field]: value }));
+  const handleInput = (index, field, value) => {
+  setMembers((prev) =>
+    prev.map((member, i) =>
+      i === index ? { ...member, [field]: value } : member
+    )
+  );
+};
 
-  const handlePreferenceToggle = (pref) =>
-    setHealthProfile((prev) => ({
-      ...prev,
-      preferences: prev.preferences.includes(pref)
-        ? prev.preferences.filter((p) => p !== pref)
-        : [...prev.preferences, pref],
-    }));
+  const handlePreferenceToggle = (index, pref) => {
+  setMembers((prev) =>
+    prev.map((member, i) =>
+      i === index
+        ? {
+            ...member,
+            preferences: member.preferences.includes(pref)
+              ? member.preferences.filter((p) => p !== pref)
+              : [...member.preferences, pref],
+          }
+        : member
+    )
+  );
+};
+const addMember = () => {
+  setMembers((prev) => [...prev, emptyMember]);
+};
 
   // ── Submit → POST to Next.js API route → forwarded to your FastAPI ──
+  const getMappedMembers = () => {
+  const activityMap = {
+    low: 'sedentary',
+    moderate: 'moderate',
+    high: 'active',
+  };
+
+  return members.map((member) => ({
+    age: member.age,
+    gender: member.gender,
+    weightRange: member.weightRange,
+    activityLevel: activityMap[member.activityLevel] || member.activityLevel,
+    dietaryPreferences: member.preferences || [],
+  }));
+};
   const handleSubmit = async () => {
     setSubmittingProfile(true);
     setError(null);
@@ -115,10 +166,10 @@ function HealthyModeContent() {
       const res  = await fetch('/api/health-profile', {
         method:  'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ profile: healthProfile }),
+        body: JSON.stringify({ profile: getMappedMembers() }),
       });
       const data = await res.json();
-      localStorage.setItem('swadishtt-health-profile', JSON.stringify(healthProfile));
+      localStorage.setItem('swadishtt-health-profile', JSON.stringify(members));
       setHealthInsights(data);
       setShowHealthForm(false);
     } catch (e) {
@@ -176,68 +227,82 @@ function HealthyModeContent() {
                 <p>Tell us your lifestyle and food preferences so we can suggest better meals.</p>
               </div>
 
-              <div className={styles.formGrid}>
-                <div className={styles.formGroup}>
-                  <label>Age</label>
-                  <input
-                    type="number"
-                    placeholder="25"
-                    value={healthProfile.age}
-                    onChange={(e) => handleInput('age', e.target.value)}
-                  />
-                </div>
+              {members.map((member, index) => (
+  <div key={index} className={styles.memberBlock}>
+    <h3>Family Member {index + 1}</h3>
 
-                <div className={styles.formGroup}>
-                  <label>Gender</label>
-                  <select
-                    value={healthProfile.gender}
-                    onChange={(e) => handleInput('gender', e.target.value)}
-                  >
-                    <option value="">Select gender</option>
-                    <option value="female">Female</option>
-                    <option value="male">Male</option>
-                    <option value="other">Other</option>
-                  </select>
-                </div>
+    <div className={styles.formGrid}>
+      <div className={styles.formGroup}>
+        <label>Age</label>
+        <input
+          type="number"
+          placeholder="25"
+          value={member.age}
+          onChange={(e) => handleInput(index, 'age', e.target.value)}
+        />
+      </div>
 
-                <div className={styles.formGroup}>
-                  <label>Weight range (kg)</label>
-                  <input
-                    placeholder="60-70"
-                    value={healthProfile.weightRange}
-                    onChange={(e) => handleInput('weightRange', e.target.value)}
-                  />
-                </div>
+      <div className={styles.formGroup}>
+        <label>Gender</label>
+        <select
+          value={member.gender}
+          onChange={(e) => handleInput(index, 'gender', e.target.value)}
+        >
+          <option value="">Select gender</option>
+          <option value="female">Female</option>
+          <option value="male">Male</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
 
-                <div className={styles.formGroup}>
-                  <label>Activity level</label>
-                  <select
-                    value={healthProfile.activityLevel}
-                    onChange={(e) => handleInput('activityLevel', e.target.value)}
-                  >
-                    <option value="">Select activity level</option>
-                    <option value="low">Low</option>
-                    <option value="moderate">Moderate</option>
-                    <option value="high">High</option>
-                  </select>
-                </div>
-              </div>
+      <div className={styles.formGroup}>
+        <label>Weight range (kg)</label>
+        <input
+          placeholder="60-70"
+          value={member.weightRange}
+          onChange={(e) => handleInput(index, 'weightRange', e.target.value)}
+        />
+      </div>
 
-              <div className={styles.preferenceSection}>
-                <h3>Dietary preferences</h3>
-                <div className={styles.preferenceGrid}>
-                  {['vegetarian', 'vegan', 'keto', 'diabetic-friendly', 'gluten-free', 'low-sodium'].map((item) => (
-                    <label key={item} className={styles.preferenceOption}>
-                      <input
-                        type="checkbox"
-                        checked={healthProfile.preferences.includes(item)}
-                        onChange={() => handlePreferenceToggle(item)}
-                      />
-                      <span>{item}</span>
-                    </label>
-                  ))}
-                </div>
-              </div>
+      <div className={styles.formGroup}>
+        <label>Activity level</label>
+        <select
+          value={member.activityLevel}
+          onChange={(e) => handleInput(index, 'activityLevel', e.target.value)}
+        >
+          <option value="">Select activity level</option>
+          <option value="low">Low</option>
+          <option value="moderate">Moderate</option>
+          <option value="high">High</option>
+        </select>
+      </div>
+    </div>
+
+    <div className={styles.preferenceSection}>
+      <h3>Dietary preferences</h3>
+      <div className={styles.preferenceGrid}>
+        {['vegetarian', 'vegan', 'keto', 'diabetic-friendly', 'gluten-free', 'low-sodium'].map((item) => (
+          <label key={item} className={styles.preferenceOption}>
+            <input
+              type="checkbox"
+              checked={member.preferences.includes(item)}
+              onChange={() => handlePreferenceToggle(index, item)}
+            />
+            <span>{item}</span>
+          </label>
+        ))}
+      </div>
+    </div>
+  </div>
+))}
+
+<button
+  type="button"
+  className={styles.addMemberBtn}
+  onClick={addMember}
+>
+  + Add Another Family Member
+</button>
 
               {error && <p style={{ color: 'red', marginTop: '8px' }}>{error}</p>}
 
@@ -273,10 +338,72 @@ function HealthyModeContent() {
             ) : error ? (
               <p style={{ color: 'red' }}>{error}</p>
             ) : healthInsights ? (
-              <section className={styles.insightCard}>
-                <span className={styles.insightBadge}>API Connected</span>
-                <pre>{JSON.stringify(healthInsights, null, 2)}</pre>
-              </section>
+              
+              <section className={styles.trackerCard}>
+  <div className={styles.trackerHeader}>
+    <div>
+      <h2 className={styles.trackerTitle}>Today’s Intake</h2>
+      <p className={styles.trackerGoal}>Based on your health profile</p>
+    </div>
+
+    <div className={styles.trackerNumbers}>
+      <span className={styles.consumed}>
+  {consumedCalories}
+</span>
+      <span className={styles.trackerSep}>/</span>
+      <span className={styles.total}>
+        {healthInsights?.householdSummary?.totalCalories}
+      </span>
+      <span className={styles.calLabel}>cal</span>
+    </div>
+  </div>
+
+  <div className={styles.progressBar}>
+    <div
+      className={styles.progressFill}
+      style={{ width: '0%' }}
+    />
+  </div>
+
+  <div className={styles.trackerStats}>
+    <div className={styles.trackerStat}>
+      <span className={styles.statValue}>
+  {consumedProtein}g
+</span>
+      <span className={styles.statLabel}>
+        Protein / {healthInsights?.householdSummary?.macroSplit?.protein}g
+      </span>
+    </div>
+
+    <div className={styles.trackerStat}>
+      <span className={styles.statValue}>
+  {consumedCarbs}g
+</span>
+      <span className={styles.statLabel}>
+        Carbs / {healthInsights?.householdSummary?.macroSplit?.carbs}g
+      </span>
+    </div>
+
+    <div className={styles.trackerStat}>
+      <span className={styles.statValue}>
+  {consumedFats}g
+</span>
+      <span className={styles.statLabel}>
+        Fats / {healthInsights?.householdSummary?.macroSplit?.fats}g
+      </span>
+    </div>
+  </div>
+  {healthInsights?.members?.length > 0 && (
+  <div className={styles.memberCaloriesList}>
+    {healthInsights.members.map((member, index) => (
+      <div key={index} className={styles.memberCaloriesCard}>
+        <span>Family Member {index + 1}</span>
+        <strong>{member.calories} cal</strong>
+      </div>
+    ))}
+  </div>
+)}
+</section>
             ) : null}
           </>
         )}

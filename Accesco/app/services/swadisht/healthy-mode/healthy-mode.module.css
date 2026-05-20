@@ -1018,3 +1018,61 @@
   width: 100%;
 }
 }
+.memberBlock {
+  border: 1px solid #e8e8e8;
+  border-radius: 18px;
+  padding: 18px;
+  margin-bottom: 20px;
+  background: #fff;
+}
+
+.memberBlock h3 {
+  margin: 0 0 16px;
+  font-size: 18px;
+  color: #1c1c1c;
+}
+
+.addMemberBtn {
+  background: #fff4f5;
+  color: #e23744;
+  border: 1px dashed rgba(226, 55, 68, 0.45);
+  border-radius: 14px;
+  padding: 13px 18px;
+  font-size: 14px;
+  font-weight: 800;
+  cursor: pointer;
+  width: 100%;
+  margin-top: 8px;
+}
+
+.addMemberBtn:hover {
+  background: #e23744;
+  color: #fff;
+}
+.memberCaloriesList {
+  margin-top: 22px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 14px;
+}
+
+.memberCaloriesCard {
+  background: #fff4f5;
+  border: 1px solid rgba(226, 55, 68, 0.18);
+  border-radius: 14px;
+  padding: 14px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.memberCaloriesCard span {
+  font-size: 14px;
+  font-weight: 700;
+  color: #1c1c1c;
+}
+
+.memberCaloriesCard strong {
+  font-size: 18px;
+  color: #e23744;
+}
