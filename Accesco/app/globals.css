@@ -391,10 +391,10 @@ section[class*="hero"] {
   overflow: hidden;
 }
 
-.hero *,
-.hero-section *,
-.hero-banner *,
-section[class*="hero"] * {
+.hero *:not([class*="background"]):not([class*="orb"]):not([class*="video"]):not([class*="overlay"]):not([class*="inner"]),
+.hero-section *:not([class*="background"]):not([class*="orb"]):not([class*="video"]):not([class*="overlay"]):not([class*="inner"]),
+.hero-banner *:not([class*="background"]):not([class*="orb"]):not([class*="video"]):not([class*="overlay"]):not([class*="inner"]),
+section[class*="hero"] *:not([class*="background"]):not([class*="orb"]):not([class*="video"]):not([class*="overlay"]):not([class*="inner"]) {
   position: relative;
   z-index: 2;
 }

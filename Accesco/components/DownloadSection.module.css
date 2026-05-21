@@ -1,10 +1,17 @@
 .dlGrid {
   display: grid;
-  grid-template-columns: 1fr auto;
+  grid-template-columns: 1.2fr 1fr;
   gap: 60px;
   align-items: center;
   position: relative;
   z-index: 1;
+}
+
+.posterContainer {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  flex-shrink: 0;
 }
 
 @media (max-width: 900px) {
@@ -31,5 +38,9 @@
     justify-content: center !important;
     width: 100% !important;
     display: flex !important;
+  }
+  .posterContainer {
+    justify-content: center !important;
+    margin-top: 20px;
   }
 }

@@ -38,7 +38,8 @@ export default function DownloadSection() {
           <div>
             <div className="ac-chip" style={{
               background: 'rgba(200,150,62,0.12)', border: '1px solid rgba(200,150,62,0.22)',
-              color: '#C8963E', marginBottom: '20px',
+              color: '#C8963E', marginBottom: '20px', display: 'inline-flex', padding: '5px 14px', borderRadius: '9999px',
+              fontFamily: "'Sora', sans-serif", fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase'
             }}>
               Download Now
             </div>
@@ -107,29 +108,36 @@ export default function DownloadSection() {
             </div>
           </div>
 
-          {/* Right — QR Box */}
-          <div className={styles.dlQr} style={{
-            display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '14px', flexShrink: 0,
-          }}>
+          {/* Right — Premium Stadium Poster Mockup */}
+          <div className={styles.posterContainer}>
             <div style={{
-              background: '#FFFDF8', borderRadius: '20px', padding: '20px',
-              boxShadow: '0 0 0 1px rgba(122,0,66,0.1), 0 20px 50px rgba(0,0,0,0.4)',
-            }}>
+              width: '100%',
+              maxWidth: '380px',
+              borderRadius: '24px',
+              overflow: 'hidden',
+              boxShadow: '0 20px 50px rgba(0,0,0,0.45)',
+              border: '1px solid rgba(255,255,255,0.15)',
+              background: '#1A0A0F',
+              transform: 'rotate(2deg)',
+              transition: 'transform 0.4s ease',
+            }}
+            onMouseEnter={(e) => e.currentTarget.style.transform = 'rotate(0deg) scale(1.02)'}
+            onMouseLeave={(e) => e.currentTarget.style.transform = 'rotate(2deg)'}
+            >
               <Image
-                src="/images/QR.png"
-                alt="Scan QR Code to Download"
-                width={140}
-                height={140}
-                loading="lazy"
+                src="/images/banners/launchsoon.png"
+                alt="Accesco Living - Launching Soon"
+                width={380}
+                height={480}
+                style={{
+                  width: '100%',
+                  height: 'auto',
+                  display: 'block',
+                  objectFit: 'contain',
+                }}
+                priority
               />
             </div>
-            <span style={{
-              fontFamily: "'DM Sans', sans-serif",
-              fontSize: '0.8rem', color: 'rgba(255,253,248,0.4)',
-              letterSpacing: '0.06em',
-            }}>
-              Scan to Download
-            </span>
           </div>
         </div>
       </div>

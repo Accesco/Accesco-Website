@@ -156,8 +156,27 @@ export default function QTCPage() {
               Featured Session
             </div>
             <h1 className="qtc-title">
-              Turning your expectations into everyday convenience.
+              Turning your expectations into <span className="gradient-text">everyday convenience.</span>
             </h1>
+            <p className="qtc-hero-subtitle">
+              Explore our exclusive QTC digital repository. High-definition walkthroughs, internal operations blueprints, and step-by-step masterclasses designed for the Accesco Living community.
+            </p>
+            <div className="qtc-stats-bar">
+              <div className="qtc-stat-item">
+                <span className="qtc-stat-num">11</span>
+                <span className="qtc-stat-label">Walkthroughs</span>
+              </div>
+              <div className="qtc-stat-divider" />
+              <div className="qtc-stat-item">
+                <span className="qtc-stat-num">1080p</span>
+                <span className="qtc-stat-label">Ultra-HD</span>
+              </div>
+              <div className="qtc-stat-divider" />
+              <div className="qtc-stat-item">
+                <span className="qtc-stat-num">100%</span>
+                <span className="qtc-stat-label">Transcripts</span>
+              </div>
+            </div>
           </div>
         </section>
 

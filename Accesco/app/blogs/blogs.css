@@ -250,9 +250,9 @@ header {
 .hero-viewport {
   position: relative;
   width: 100%;
-  height: 56.25vw; /* 16:9 aspect ratio */
-  min-height: 400px;
-  max-height: 85vh;
+  height: 55vh; /* Premium balanced cinematic height */
+  min-height: 580px; /* Increased min-height to 580px to reduce vertical cropping on wide screens */
+  max-height: 80vh;
   overflow: hidden;
   display: flex;
   align-items: center;
@@ -260,26 +260,27 @@ header {
   background: #000;
 }
 
-.hero-viewport video {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  object-position: center center;
-  opacity: 0.85;
-  z-index: 1;
-  filter: brightness(0.9);
+.hero-viewport video,
+.hero-viewport video.blog-hero-video {
+  position: absolute !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  object-position: center 58% !important; /* Perfect sweet spot: 58% vertical alignment to keep both the top logo horns and bottom INSIDER text 100% visible */
+  opacity: 1 !important;
+  z-index: 1 !important;
 }
 
-.hero-shimmer {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(180deg, rgba(0, 0, 0, 0.45) 0%, rgba(0, 0, 0, 0.75) 100%);
-  z-index: 2;
-  pointer-events: none;
+.hero-shimmer,
+.hero-shimmer-overlay {
+  position: absolute !important;
+  inset: 0 !important;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.25) 0%, rgba(0, 0, 0, 0) 40%, rgba(0, 0, 0, 0) 70%, rgba(0, 0, 0, 0.4) 100%) !important;
+  z-index: 2 !important;
+  pointer-events: none !important;
 }
 
 .hero-text-box {

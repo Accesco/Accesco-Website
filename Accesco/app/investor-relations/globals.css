@@ -375,8 +375,8 @@ a {
 
 .dark-section {
   background:
-    radial-gradient(circle at 80% 10%, rgba(226, 55, 68, 0.2), transparent 24%),
-    linear-gradient(135deg, var(--dark) 0%, var(--dark-2) 100%);
+    radial-gradient(circle at 80% 10%, rgba(255, 255, 255, 0.15), transparent 40%),
+    linear-gradient(135deg, #7A0042 0%, #3d0021 100%);
 }
 
 .governance-card {

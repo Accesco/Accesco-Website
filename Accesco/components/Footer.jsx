@@ -57,8 +57,6 @@ export default function Footer() {
               <Link href="/services/grokly" className="link-item">Grokly</Link>
               <Link href="/services/swadisht" className="link-item">Swadishtt</Link>
               <Link href="/services/instastyle" className="link-item">InstaStyle</Link>
-              <Link href="/services/dinex" className="link-item">DineX</Link>
-              <Link href="/services/localmeds" className="link-item">LocalMeds</Link>
             </div>
             
             <div className="link-group">

@@ -383,6 +383,10 @@
   .waitlistInfo {
     max-width: 100%;
   }
+  .waitlistPosterWrap {
+    max-width: 420px;
+    margin: 0 auto 30px;
+  }
 }
 
 @media (max-width: 640px) {

@@ -225,8 +225,8 @@
   width: 100%;
   height: auto;
   display: block;
-  object-fit: cover;
-  max-height: 450px;
+  object-fit: contain;
+  max-height: none;
 }
 
 /* ===== VENTURES SECTION ===== */
@@ -570,7 +570,8 @@
   }
   
   .content-image img {
-    max-height: 350px;
+    max-height: none;
+    object-fit: contain;
   }
 }
 
@@ -718,8 +719,8 @@
   }
   
   .content-image img {
-    max-height: 250px;
-    object-fit: cover;
+    max-height: none;
+    object-fit: contain;
     object-position: center;
   }
   

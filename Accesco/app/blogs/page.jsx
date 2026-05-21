@@ -313,10 +313,10 @@ export default function BlogsPage() {
       {/* Hero Section */}
       <div className="hero-canvas">
         <section className="hero-viewport">
-          <video autoPlay muted loop playsInline poster="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072&auto=format&fit=crop">
-            <source src="/uploads/Blog-Hero.MP4" type="video/mp4" />
+          <video className="blog-hero-video" autoPlay muted loop playsInline poster="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072&auto=format&fit=crop">
+            <source src="/uploads/blogherovideo.MP4" type="video/mp4" />
           </video>
-          <div className="hero-shimmer"></div>
+          <div className="hero-shimmer-overlay"></div>
           <div className="hero-text-box">
           </div>
         </section>
