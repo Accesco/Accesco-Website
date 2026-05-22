@@ -5,16 +5,24 @@ import CookieConsent from './components/CookieConsent';
 
 export const metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'),
+
+  alternates: {
+    canonical: '/',
+  },
+
   title: {
     default: "Accesco Living | India's Intelligent Circular Commerce Ecosystem",
     template: "%s | Accesco Living",
   },
-  description: "Accesco Living is India's first intelligent circular commerce ecosystem — delivering fresh groceries via Grokly, food via Swadishtt, and instant fashion via InstaStyle. One app. One cart. Bengaluru, India.",
+
+  description:
+  "India’s intelligent commerce ecosystem for groceries, food, fashion, and finance — all in one unified platform.",
   icons: {
     icon: '/images/ac-logo.png',
     shortcut: '/images/ac-logo.png',
     apple: '/images/ac-logo.png',
   },
+
   openGraph: {
     title: "Accesco Living | India's First Intelligence Commerce Ecosystem",
     description: "Groceries, fashion, food, finance & more — all in one intelligent ecosystem. Bengaluru, India.",
@@ -30,6 +38,7 @@ export const metadata = {
     type: 'website',
     siteName: 'Accesco Living',
   },
+
   twitter: {
     card: 'summary',
     title: "Accesco Living | India's Intelligence Commerce Ecosystem",
@@ -37,7 +46,6 @@ export const metadata = {
     images: ['/images/ac-logo.png'],
   },
 };
-
 export default function RootLayout({ children }) {
   const faqSchema = {
     "@context": "https://schema.org",

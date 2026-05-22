@@ -6,7 +6,25 @@ const nextConfig = {
     unoptimized: true,
     domains: ['images.unsplash.com'],
   },
+
   reactStrictMode: false,
+
+  async redirects() {
+    return [
+      {
+        source: '/:path*',
+        has: [
+          {
+            type: 'host',
+            value: 'www.accescoliving.com',
+          },
+        ],
+        destination: 'https://accescoliving.com/:path*',
+        permanent: true,
+      },
+    ];
+  },
+
   async headers() {
     return [
       {
@@ -28,6 +46,7 @@ const nextConfig = {
       },
     ];
   },
+
   webpack: (config) => {
     config.resolve.alias['@'] = path.resolve(__dirname)
     return config
