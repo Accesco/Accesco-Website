@@ -158,10 +158,8 @@ export default function AppShowcase() {
   return (
     <section id="app-showcase" style={{ padding: '64px 20px', background: '#FFFDF8', position: 'relative' }}>
       {/* Waitlist Section Header */}
-      <div style={{ maxWidth: '1200px', margin: '0 auto 40px', padding: '0' }}>
-        <div className="ac-chip ac-chip-maroon" style={{ marginBottom: '20px' }}>
-          ✦ Early Access Program
-        </div>
+      <div style={{ maxWidth: '1200px', margin: '0 auto 40px', padding: '0', textAlign: 'center' }}>
+
 
         <h2 className={styles.waitlistTitle}>
           Join the <span className={styles.highlight}>Revolution</span>

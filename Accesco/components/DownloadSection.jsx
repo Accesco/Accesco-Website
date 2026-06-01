@@ -71,24 +71,35 @@ export default function DownloadSection() {
 
             {/* Store buttons */}
             <div className="dl-buttons-wrap" style={{ display: 'flex', gap: '12px', flexWrap: 'nowrap', marginBottom: '32px', alignItems: 'center', flexDirection: 'row' }}>
-              <a href="#" style={{ textDecoration: 'none', display: 'block' }}>
-                <Image
+              <style>{`
+                .dl-store-btn {
+                  display: inline-block;
+                  transition: transform 0.2s ease;
+                  text-decoration: none;
+                }
+                .dl-store-btn:hover {
+                  transform: translateY(-2px);
+                }
+                .dl-store-btn img {
+                  height: 40px;
+                  width: auto;
+                  display: block;
+                  border-radius: 0 !important;
+                  border: none !important;
+                  box-shadow: none !important;
+                  background: transparent !important;
+                }
+              `}</style>
+              <a href="#" className="dl-store-btn">
+                <img
                   src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg"
                   alt="Get it on Google Play"
-                  width={135}
-                  height={40}
-                  loading="lazy"
-                  style={{ display: 'block', borderRadius: '6px', height: '36px', width: 'auto' }}
                 />
               </a>
-              <a href="#" style={{ textDecoration: 'none', display: 'block' }}>
-                <Image
+              <a href="#" className="dl-store-btn">
+                <img
                   src="https://upload.wikimedia.org/wikipedia/commons/3/3c/Download_on_the_App_Store_Badge.svg"
                   alt="Download on the App Store"
-                  width={120}
-                  height={40}
-                  loading="lazy"
-                  style={{ display: 'block', borderRadius: '6px', height: '36px', width: 'auto' }}
                 />
               </a>
             </div>
@@ -118,11 +129,10 @@ export default function DownloadSection() {
               boxShadow: '0 20px 50px rgba(0,0,0,0.45)',
               border: '1px solid rgba(255,255,255,0.15)',
               background: '#1A0A0F',
-              transform: 'rotate(2deg)',
               transition: 'transform 0.4s ease',
             }}
-            onMouseEnter={(e) => e.currentTarget.style.transform = 'rotate(0deg) scale(1.02)'}
-            onMouseLeave={(e) => e.currentTarget.style.transform = 'rotate(2deg)'}
+            onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.02)'}
+            onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
             >
               <Image
                 src="/images/banners/launchsoon.png"

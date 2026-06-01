@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import styles from './thrift.module.css';
@@ -72,8 +72,60 @@ const CATEGORIES = ['All', 'Outerwear', 'Accessories', 'Full Look', 'Topwear', '
 
 export default function ThriftMarketplace() {
   const [activeCategory, setActiveCategory] = useState('All');
+  const [customThriftProducts, setCustomThriftProducts] = useState([]);
 
-  const filteredProducts = THRIFT_PRODUCTS.filter((product) => 
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const saved = localStorage.getItem('instastyle_custom_products');
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (Array.isArray(parsed)) {
+            // Select custom products that are marked as thrift or have 'thrift' tag
+            const thrifts = parsed.filter(p => p.isThrift || (p.tags && p.tags.includes('thrift')));
+            setCustomThriftProducts(thrifts);
+          }
+        }
+      } catch (error) {
+        console.error("Failed to load custom thrifts:", error);
+      }
+    }
+  }, []);
+
+  const combinedThrift = [
+    ...THRIFT_PRODUCTS,
+    ...customThriftProducts.map(p => {
+      // Map catalog subcategories to thrift categories
+      let mappedCategory = 'Topwear';
+      const sub = (p.subcategory || '').toLowerCase();
+      const cat = (p.category || '').toLowerCase();
+
+      if (sub.includes('jacket') || sub.includes('coat') || sub.includes('outer') || sub.includes('blazer')) {
+        mappedCategory = 'Outerwear';
+      } else if (cat.includes('accessories') || sub.includes('bag') || sub.includes('sunglasses') || sub.includes('belt') || sub.includes('watch')) {
+        mappedCategory = 'Accessories';
+      } else if (sub.includes('dress') || sub.includes('suit') || sub.includes('set')) {
+        mappedCategory = 'Full Look';
+      } else if (sub.includes('shirt') || sub.includes('t-shirt') || sub.includes('top') || sub.includes('sweater') || sub.includes('knit')) {
+        mappedCategory = 'Topwear';
+      } else if (sub.includes('jeans') || sub.includes('trouser') || sub.includes('skirt') || sub.includes('short') || sub.includes('pants')) {
+        mappedCategory = 'Bottomwear';
+      }
+
+      return {
+        id: p.id,
+        name: p.name,
+        brand: p.brand,
+        price: p.price,
+        originalPrice: p.originalPrice || (p.price * 2), // Mock original price as 2x if missing
+        condition: p.condition || 'Excellent',
+        category: mappedCategory,
+        image: p.images?.[0]?.url || p.image || 'https://images.unsplash.com/photo-1551028719-00167b16eac5?w=800&q=80',
+      };
+    })
+  ];
+
+  const filteredProducts = combinedThrift.filter((product) => 
     activeCategory === 'All' ? true : product.category === activeCategory
   );
 
@@ -106,7 +158,7 @@ export default function ThriftMarketplace() {
             <Link href="#collection" className={styles.heroBtn}>
               Shop Collection
             </Link>
-            <Link href="#sell" className={styles.heroBtnSecondary}>
+            <Link href="/services/instastyle/add-sku" className={styles.heroBtnSecondary}>
               Sell Your Old Clothes
             </Link>
           </motion.div>
@@ -138,7 +190,13 @@ export default function ThriftMarketplace() {
                 <p>Receive payment once your item is verified.</p>
               </div>
             </div>
-            <button className={styles.sellBtn}>Start Selling Now</button>
+            <Link 
+              href="/services/instastyle/add-sku" 
+              className={styles.sellBtn}
+              style={{ textDecoration: 'none', display: 'inline-block', textAlign: 'center' }}
+            >
+              Start Selling Now
+            </Link>
           </div>
         </div>
       </section>

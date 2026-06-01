@@ -7,6 +7,18 @@ import './press.css';
 
 const pressReleases = [
   {
+    id: 0,
+    title: "The Argha Sengupta Story: From Cycling Through Siliguri Markets to Building India's Intelligent Commerce Platform",
+    date: 'May 25, 2026',
+    category: 'Featured Article',
+    excerpt: "While most 19-year-olds are figuring out college majors, Argha Sengupta is preparing to launch Accesco Living, India's first circular commerce ecosystem.",
+    image: '/images/entrepreneur-pioneer-argha.jpg',
+    readTime: '6 min read',
+    url: 'https://entrepreneurpioneer.com/the-argha-sengupta-story-from-cycling-through-siliguri-markets/',
+    logo: '/images/entrepreneur-pioneer-logo.png',
+    isFeatured: true,
+  },
+  {
     id: 1,
     title: 'Accesco Living Announces India\'s First Intelligent Circular Commerce Ecosystem',
     date: 'May 10, 2026',
@@ -35,32 +47,7 @@ const pressReleases = [
   },
 ];
 
-const mediaKitItems = [
-  {
-    title: 'Official Logos',
-    description: 'High-res transparent PNGs and vectors.',
-    size: '4.2 MB',
-    href: '#',
-  },
-  {
-    title: 'Executive Bios & Photos',
-    description: 'Founders\' profiles and corporate portrait headshots.',
-    size: '18.5 MB',
-    href: '#',
-  },
-  {
-    title: 'Brand Deck & Story',
-    description: 'Core concepts, values, and visual brand guidelines.',
-    size: '8.1 MB',
-    href: '/pdfs/Accesco_deck.pdf',
-  },
-  {
-    title: 'Platform Screenshots',
-    description: 'Curated high-res screenshots of the mobile/desktop app.',
-    size: '14.2 MB',
-    href: '#',
-  },
-];
+
 
 export default function PressPage() {
   return (
@@ -71,7 +58,7 @@ export default function PressPage() {
         {/* Hero Section */}
         <section className="press-hero">
           <div className="press-container">
-            <span className="press-hero-chip">✦ Media Relations</span>
+
             <h1 className="press-hero-title">Press & Media Center</h1>
             <p className="press-hero-description">
               Discover the latest announcements, media resources, brand assets, 
@@ -92,7 +79,7 @@ export default function PressPage() {
 
             <div className="press-grid">
               {pressReleases.map((release) => (
-                <article key={release.id} className="press-card">
+                <article key={release.id} className={`press-card ${release.isFeatured ? 'featured' : ''}`}>
                   <div className="press-card-image-wrap">
                     <img 
                       src={release.image} 
@@ -103,6 +90,11 @@ export default function PressPage() {
                       }}
                     />
                     <span className="press-card-badge">{release.category}</span>
+                    {release.logo && (
+                      <div className="pioneer-logo-badge">
+                        <img src={release.logo} alt="Publisher Logo" />
+                      </div>
+                    )}
                   </div>
                   
                   <div className="press-card-body">
@@ -115,8 +107,13 @@ export default function PressPage() {
                     <h3 className="press-card-title">{release.title}</h3>
                     <p className="press-card-excerpt">{release.excerpt}</p>
                     
-                    <a href="/blogs" className="press-card-link">
-                      Read Release
+                    <a 
+                      href={release.url || "/blogs"} 
+                      target={release.url ? "_blank" : undefined}
+                      rel={release.url ? "noopener noreferrer" : undefined}
+                      className="press-card-link"
+                    >
+                      {release.url ? "Read Article" : "Read Release"}
                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                         <line x1="5" y1="12" x2="19" y2="12"></line>
                         <polyline points="12 5 19 12 12 19"></polyline>
@@ -129,42 +126,7 @@ export default function PressPage() {
           </div>
         </section>
 
-        {/* Media Brand Kit Section */}
-        <section className="press-kit-section">
-          <div className="press-container">
-            <div className="press-kit-grid">
-              <div className="press-kit-content">
-                <h2>Official Brand & Media Assets</h2>
-                <p>
-                  We are building India\'s first quiet-luxury daily lifestyle platform. 
-                  Download our official visual assets, brand identity materials, executive profiles, 
-                  and screenshot kits to ensure consistent coverage.
-                </p>
-              </div>
 
-              <div className="press-kit-cards">
-                {mediaKitItems.map((item, index) => (
-                  <div key={index} className="press-kit-card">
-                    <div className="press-kit-icon">
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                        <polyline points="7 10 12 15 17 10"></polyline>
-                        <line x1="12" y1="15" x2="12" y2="3"></line>
-                      </svg>
-                    </div>
-                    
-                    <h3>{item.title}</h3>
-                    <span>ZIP • {item.size}</span>
-                    
-                    <a href={item.href} target="_blank" rel="noopener noreferrer" className="press-kit-download-btn">
-                      Download
-                    </a>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </section>
 
         {/* Press Contact Section */}
         <section className="press-contact-section">

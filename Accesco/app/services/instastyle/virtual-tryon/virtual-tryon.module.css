@@ -48,7 +48,7 @@
   background: #fff;
   border-bottom: 1px solid #e0e0e0;
   position: sticky;
-  top: 0;
+  top: 70px;
   z-index: 100;
 }
 
@@ -784,6 +784,7 @@
   .header {
     flex-wrap: wrap;
     gap: 12px;
+    top: 64px;
   }
 
   .headerActions {

@@ -20,6 +20,7 @@
   margin: 0 0 20px;
   letter-spacing: -0.04em;
   line-height: 1.08;
+  text-align: center;
 }
 
 .waitlistTitle .highlight {
@@ -33,8 +34,10 @@
   font-family: 'DM Sans', sans-serif;
   font-size: 1.05rem;
   color: #6B5B65;
-  margin: 0 0 36px;
+  margin: 0 auto 36px;
   line-height: 1.7;
+  text-align: center;
+  max-width: 640px;
 }
 
 .waitlistFeatures {

@@ -686,3 +686,22 @@ export function sortProducts(products, sortBy) {
   }
 }
 
+// Hydrate custom products from localStorage dynamically on client side initialization
+if (typeof window !== 'undefined') {
+  try {
+    const saved = localStorage.getItem('instastyle_custom_products');
+    if (saved) {
+      const custom = JSON.parse(saved);
+      if (Array.isArray(custom)) {
+        custom.forEach(cp => {
+          if (!products.some(p => p.id === cp.id)) {
+            products.push(cp);
+          }
+        });
+      }
+    }
+  } catch (error) {
+    console.error("Failed to hydrate custom products in mockData:", error);
+  }
+}
+

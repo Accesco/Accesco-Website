@@ -535,7 +535,7 @@ img {
   align-items: center;
   justify-content: center;
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
-  transform: rotate(-3deg);
+  transform: rotate(0deg);
   transition: transform 0.3s ease;
 }
 

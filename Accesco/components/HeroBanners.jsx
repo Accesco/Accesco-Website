@@ -571,59 +571,63 @@ export function AccescoHero() {
       <div className="hero-inner-ac">
         <img src="/images/banners/hero-main.jpg" alt="Accesco Living" />
       </div>
-<div style={{
-  position: 'absolute',
-  inset: 0,
-  background: `
-    linear-gradient(to bottom, rgba(0,0,0,0.55), rgba(0,0,0,0.35), rgba(0,0,0,0.75)),
-    radial-gradient(circle at center, rgba(122,0,66,0.22), transparent 55%)
-  `,
-}} />
-     <div style={{
-  position: 'relative',
-  zIndex: 2,
-  width: '100%',
-  maxWidth: 1000,
-  margin: '0 auto',
-  padding: '120px clamp(20px, 4vw, 48px) 40px',
-  textAlign: 'center',
-}}>
-  <p style={{
-    fontFamily: "'DM Sans', sans-serif",
-    fontSize: '0.78rem',
-    fontWeight: 800,
-    letterSpacing: '0.18em',
-    textTransform: 'uppercase',
-    color: '#c8963e',
-    margin: '0 0 14px',
-  }}>
-    India’s Intelligent Commerce Ecosystem
-  </p>
+      <div style={{
+        position: 'absolute',
+        inset: 0,
+        background: `
+          linear-gradient(to bottom, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.3) 50%, rgba(0,0,0,0.6) 100%),
+          radial-gradient(circle at center, rgba(122,0,66,0.15), transparent 60%)
+        `,
+      }} />
+      <div style={{
+        position: 'relative',
+        zIndex: 2,
+        width: '100%',
+        maxWidth: 1000,
+        margin: '0 auto',
+        padding: '120px clamp(20px, 4vw, 48px) 40px',
+        textAlign: 'center',
+      }}>
+        
+        {/* White Logo centered above the title */}
+        <div style={{ marginBottom: '16px' }}>
+          <img
+            src="/images/accesco_white.png"
+            alt="Accesco White Logo"
+            style={{
+              height: 'clamp(50px, 8vw, 70px)',
+              width: 'auto',
+              display: 'inline-block',
+              filter: 'drop-shadow(0 4px 12px rgba(0,0,0,0.3))'
+            }}
+          />
+        </div>
 
-  <h1 style={{
-    fontFamily: "'Sora', sans-serif",
-    fontWeight: 900,
-    fontSize: 'clamp(2.4rem, 6vw, 5rem)',
-    color: '#fff',
-    letterSpacing: '-0.06em',
-    lineHeight: 0.95,
-    margin: '0 0 20px',
-    textShadow: '0 6px 28px rgba(0,0,0,0.55)',
-  }}>
-    Accesco Living
-  </h1>
+        <h1 style={{
+          fontFamily: "'Sora', sans-serif",
+          fontWeight: 900,
+          fontSize: 'clamp(2.4rem, 6vw, 5rem)',
+          color: '#fff',
+          letterSpacing: '-0.06em',
+          lineHeight: 0.95,
+          margin: '0 0 20px',
+          textShadow: '0 6px 28px rgba(0,0,0,0.55)',
+        }}>
+          Accesco Living
+        </h1>
 
-  <p style={{
-    fontFamily: "'DM Sans', sans-serif",
-    fontSize: 'clamp(1rem, 1.6vw, 1.2rem)',
-    lineHeight: 1.7,
-    color: 'rgba(255,255,255,0.82)',
-    margin: '0 auto 28px',
-    maxWidth: 640,
-  }}>
-  Delivering Groceries, Food, Fashion, and Financial Independence — all under one unified platform.
-  </p>
-</div>
+        <p style={{
+          fontFamily: "'DM Sans', sans-serif",
+          fontSize: 'clamp(1rem, 1.6vw, 1.2rem)',
+          lineHeight: 1.7,
+          color: 'rgba(255,255,255,0.85)',
+          margin: '0 auto 28px',
+          maxWidth: 640,
+          textShadow: '0 2px 10px rgba(0,0,0,0.4)',
+        }}>
+          Delivering Groceries, Food, Fashion, and Financial Independence — all under one unified platform.
+        </p>
+      </div>
     </section>
   );
 }

@@ -45,9 +45,7 @@ export default function HomePage() {
 
           <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 clamp(20px, 4vw, 40px)', position: 'relative' }}>
             <div style={{ marginBottom: '60px' }}>
-              <div className="ac-chip ac-chip-maroon" style={{ marginBottom: '18px' }}>
-                Your Daily Services
-              </div>
+
               <h2 style={{
                 fontFamily: "'Sora', sans-serif",
                 fontWeight: 800, fontSize: 'clamp(2rem, 4vw, 3rem)',
@@ -143,87 +141,155 @@ export default function HomePage() {
         <section style={{ padding: '80px 0', background: '#FFFDF8', position: 'relative', overflow: 'hidden' }}>
           <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 40px', position: 'relative', zIndex: 1 }}>
             <div className="xpense-box-container" style={{
-              background: '#FFF5F7', borderRadius: '48px', padding: '100px 80px',
-              border: '1px solid #FFE5E9', display: 'grid',
+              background: 'linear-gradient(135deg, #0A0305 0%, #1D0E15 100%)', borderRadius: '48px', padding: '100px 80px',
+              border: '1.5px solid rgba(200, 150, 62, 0.45)', display: 'grid',
               gridTemplateColumns: '1fr 1.2fr', gap: '80px', alignItems: 'center',
-              position: 'relative', overflow: 'hidden'
+              position: 'relative', overflow: 'hidden',
+              boxShadow: '0 30px 80px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.05)'
             }}>
-              <div style={{ position: 'absolute', top: '-20%', right: '-10%', width: '600px', height: '600px', background: 'radial-gradient(circle, rgba(122, 0, 66, 0.04) 0%, transparent 70%)', zIndex: 0, pointerEvents: 'none' }} />
-              <div>
-                <div className="ac-chip ac-chip-maroon" style={{ marginBottom: '20px' }}>Financial Intelligence</div>
-                <h2 style={{ fontFamily: "'Sora', sans-serif", fontWeight: 800, fontSize: 'clamp(2rem, 5vw, 3.2rem)', color: '#1A0A0F', margin: '0 0 20px', lineHeight: 1.1 }}>
-                  Xpense<br /><span className="ac-gradient-text">Meter</span>
+              {/* Premium 3D Golden-Bronze Sphere Background */}
+              <div style={{
+                position: 'absolute',
+                top: '5%',
+                right: '8%',
+                width: '380px',
+                height: '380px',
+                borderRadius: '50%',
+                background: 'radial-gradient(circle at 35% 35%, #FFF0D0 0%, #E8C37C 25%, #C8963E 50%, #7A5314 75%, #2A1C05 100%)',
+                boxShadow: 'inset -20px -20px 50px rgba(0,0,0,0.85), 0 30px 60px rgba(0,0,0,0.5)',
+                opacity: 0.85,
+                zIndex: 1,
+                pointerEvents: 'none',
+              }} />
+
+              {/* Glowing Background Glows */}
+              <div style={{ position: 'absolute', top: '-20%', right: '-10%', width: '600px', height: '600px', background: 'radial-gradient(circle, rgba(200, 150, 62, 0.08) 0%, transparent 70%)', zIndex: 0, pointerEvents: 'none' }} />
+              
+              <div style={{ position: 'relative', zIndex: 2 }}>
+                <div className="ac-chip" style={{
+                  marginBottom: '20px',
+                  background: 'rgba(200, 150, 62, 0.15)',
+                  border: '1px solid rgba(200, 150, 62, 0.35)',
+                  color: '#E8C37C',
+                  display: 'inline-flex',
+                  padding: '5px 14px',
+                  borderRadius: '9999px',
+                  fontFamily: "'Sora', sans-serif",
+                  fontSize: '0.72rem',
+                  fontWeight: 700,
+                  letterSpacing: '0.08em',
+                  textTransform: 'uppercase'
+                }}>
+                  Financial Intelligence
+                </div>
+                <h2 style={{ fontFamily: "'Sora', sans-serif", fontWeight: 800, fontSize: 'clamp(2rem, 5vw, 3.2rem)', color: '#FFFDF8', margin: '0 0 20px', lineHeight: 1.1 }}>
+                  Xpense<br />
+                  <span style={{
+                    background: 'linear-gradient(135deg, #C8963E 0%, #F5D79B 100%)',
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent'
+                  }}>
+                    Meter
+                  </span>
                 </h2>
-                <p style={{ fontSize: '1.05rem', color: '#6B5B65', lineHeight: 1.75, marginBottom: '36px' }}>
+                <p style={{ fontSize: '1.05rem', color: 'rgba(255, 255, 255, 0.75)', lineHeight: 1.75, marginBottom: '36px' }}>
                   Transform your financial habits with intelligent expense tracking and predictive analytics.
                 </p>
-                <Link href="/calculator" style={{ display: 'inline-block', padding: '14px 32px', background: '#1A0A0F', color: '#FFFDF8', borderRadius: '9999px', fontWeight: 700, textDecoration: 'none', boxShadow: '0 10px 20px rgba(0,0,0,0.1)', position: 'relative', zIndex: 2 }}>
+                <Link href="/calculator" style={{
+                  display: 'inline-block',
+                  padding: '16px 36px',
+                  background: 'linear-gradient(135deg, #C8963E 0%, #A27221 100%)',
+                  color: '#0A0305',
+                  borderRadius: '9999px',
+                  fontWeight: 800,
+                  textDecoration: 'none',
+                  boxShadow: '0 10px 25px rgba(200, 150, 62, 0.35)',
+                  position: 'relative',
+                  zIndex: 3,
+                  transition: 'transform 0.2s ease, box-shadow 0.2s ease'
+                }}
+                className="xpense-launch-btn">
                   Launch Calculator →
                 </Link>
               </div>
 
-              <div className="xpense-visual-wrap" style={{ position: 'relative', height: '480px', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', maxWidth: '340px', margin: '0 auto' }}>
-                {/* Floating Card 1 */}
-                <div className="xpense-card-float" style={{ position: 'absolute', top: '5%', right: '-10%', width: '100%', maxWidth: '240px', background: '#FFFDF8', padding: '24px', borderRadius: '24px', boxShadow: '0 20px 40px rgba(122,0,66,0.12)', border: '2px solid #FFE5E9', zIndex: 3, transform: 'rotate(2deg)', color: '#000' }}>
-                  <div style={{ color: '#7A0042', fontWeight: 900, marginBottom: '8px', fontSize: '1rem' }}>✦ Smart Categorization</div>
-                  <div style={{ fontSize: '0.85rem', color: '#1A0A0F', fontWeight: 600 }}>AI-powered automatic expense sorting</div>
+              <div className="xpense-visual-wrap" style={{ position: 'relative', height: '480px', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', maxWidth: '340px', margin: '0 auto', zIndex: 2 }}>
+                {/* Floating Card 1 (Dark Glassmorphic + Gold Border) */}
+                <div className="xpense-card-float" style={{
+                  position: 'absolute', top: '5%', right: '-10%', width: '100%', maxWidth: '240px',
+                  background: 'rgba(10, 5, 8, 0.88)', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)',
+                  padding: '24px', borderRadius: '24px', boxShadow: '0 25px 50px rgba(0, 0, 0, 0.5)',
+                  border: '1.5px solid rgba(200, 150, 62, 0.45)', zIndex: 3, transform: 'rotate(2deg)', color: '#FFFDF8'
+                }}>
+                  <div style={{ color: '#E8C37C', fontWeight: 900, marginBottom: '8px', fontSize: '1rem' }}>✦ Smart Categorization</div>
+                  <div style={{ fontSize: '0.85rem', color: 'rgba(255, 255, 255, 0.8)', fontWeight: 500 }}>AI-powered automatic expense sorting</div>
                   <div className="xpense-details">
-                    <div style={{ background: '#FDF2F5', padding: '12px', borderRadius: '12px', border: '1px solid rgba(122,0,66,0.1)', marginTop: '12px' }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', fontSize: '0.8rem' }}><span style={{ color: '#1A0A0F', fontWeight: 500 }}>Groceries</span><span style={{ fontWeight: 800, color: '#7A0042' }}>45%</span></div>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8rem' }}><span style={{ color: '#1A0A0F', fontWeight: 500 }}>Dining</span><span style={{ fontWeight: 800, color: '#7A0042' }}>25%</span></div>
+                    <div style={{ background: 'rgba(200, 150, 62, 0.08)', padding: '12px', borderRadius: '12px', border: '1px solid rgba(200, 150, 62, 0.25)', marginTop: '12px' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', fontSize: '0.8rem' }}><span style={{ color: 'rgba(255,255,255,0.9)', fontWeight: 500 }}>Groceries</span><span style={{ fontWeight: 800, color: '#E8C37C' }}>45%</span></div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8rem' }}><span style={{ color: 'rgba(255,255,255,0.9)', fontWeight: 500 }}>Dining</span><span style={{ fontWeight: 800, color: '#E8C37C' }}>25%</span></div>
                     </div>
                   </div>
                 </div>
 
-                {/* Main Dark Card */}
-                <div style={{ width: '100%', maxWidth: '280px', background: '#1A0A0F', boxShadow: '0 40px 100px rgba(26,10,15,0.2)', borderRadius: '32px', padding: '32px', position: 'relative', zIndex: 2, color: '#FFFDF8' }}>
+                {/* Main Dark Card (High Contrast Gold Accented) */}
+                <div style={{
+                  width: '100%', maxWidth: '280px',
+                  background: 'linear-gradient(135deg, #120509 0%, #200C16 100%)',
+                  boxShadow: '0 40px 90px rgba(0,0,0,0.65)',
+                  borderRadius: '32px', padding: '32px', position: 'relative', zIndex: 2, color: '#FFFDF8',
+                  border: '1.5px solid rgba(200, 150, 62, 0.65)'
+                }}>
                   <div style={{ marginBottom: '24px' }}>
-                    <div style={{ opacity: 0.6, fontSize: '0.7rem', marginBottom: '4px' }}>Monthly Overview</div>
+                    <div style={{ opacity: 0.65, fontSize: '0.7rem', marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Monthly Overview</div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <div style={{ fontSize: '1.8rem', fontWeight: 900 }}>₹45,280</div>
-                      <div style={{ background: 'rgba(46,125,50,0.15)', color: '#4ADE80', padding: '2px 6px', borderRadius: '6px', fontSize: '0.7rem', fontWeight: 700 }}>+12.5%</div>
+                      <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#FFFDF8' }}>₹45,280</div>
+                      <div style={{ background: 'rgba(74,222,128,0.15)', color: '#4ADE80', padding: '2px 6px', borderRadius: '6px', fontSize: '0.7rem', fontWeight: 700 }}>+12.5%</div>
                     </div>
                   </div>
                   <div style={{ marginBottom: '24px' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-                      <div style={{ fontSize: '0.85rem', fontWeight: 700 }}>Savings Goal</div>
-                      <div style={{ fontSize: '0.85rem', opacity: 0.8 }}>68% Complete</div>
+                      <div style={{ fontSize: '0.85rem', fontWeight: 700, color: 'rgba(255,255,255,0.95)' }}>Savings Goal</div>
+                      <div style={{ fontSize: '0.85rem', opacity: 0.8, color: '#E8C37C' }}>68% Complete</div>
                     </div>
                     <div style={{ height: '6px', background: 'rgba(255,255,255,0.1)', borderRadius: '10px', overflow: 'hidden' }}>
                       <div style={{ width: '68%', height: '100%', background: '#C8963E', borderRadius: '10px' }} />
                     </div>
                   </div>
-                  <div style={{ padding: '16px', background: 'rgba(255,255,255,0.05)', borderRadius: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <div style={{ padding: '16px', background: 'rgba(255,255,255,0.04)', borderRadius: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', border: '1px solid rgba(255,255,255,0.06)' }}>
                     <div>
-                      <div style={{ opacity: 0.6, fontSize: '0.7rem', marginBottom: '2px' }}>Top Category</div>
-                      <div style={{ fontWeight: 700, fontSize: '0.9rem' }}>Food &amp; Dining</div>
+                      <div style={{ opacity: 0.65, fontSize: '0.7rem', marginBottom: '2px' }}>Top Category</div>
+                      <div style={{ fontWeight: 700, fontSize: '0.9rem', color: '#FFFDF8' }}>Food &amp; Dining</div>
                     </div>
-                    <div style={{ width: '32px', height: '32px', background: '#7A0042', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FFFDF8" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m19 9-7 7-7-7"/></svg>
+                    <div style={{ width: '32px', height: '32px', background: '#C8963E', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0A0305" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m19 9-7 7-7-7"/></svg>
                     </div>
                   </div>
                 </div>
 
-                {/* Floating Card 2 */}
-                <div className="xpense-card-float" style={{ position: 'absolute', bottom: '5%', right: '-10%', width: '100%', maxWidth: '240px', background: '#C8963E', padding: '24px', borderRadius: '24px', boxShadow: '0 20px 40px rgba(200,150,62,0.2)', zIndex: 1, color: '#000', transform: 'rotate(-3deg)' }}>
-                  <div style={{ fontWeight: 900, marginBottom: '8px', fontSize: '1rem' }}>✦ Goal Tracking</div>
-                  <div style={{ fontSize: '0.85rem', fontWeight: 600, opacity: 0.9, marginBottom: '16px' }}>Achieve milestones faster</div>
+                {/* Floating Card 2 (Golden Gradient + Black Text) */}
+                <div className="xpense-card-float" style={{
+                  position: 'absolute', bottom: '5%', right: '-10%', width: '100%', maxWidth: '240px',
+                  background: 'linear-gradient(135deg, #C8963E 0%, #F5D79B 100%)', padding: '24px', borderRadius: '24px',
+                  boxShadow: '0 20px 45px rgba(200, 150, 62, 0.35)', zIndex: 4, color: '#0A0305', transform: 'rotate(-3deg)'
+                }}>
+                  <div style={{ fontWeight: 900, marginBottom: '8px', fontSize: '1rem', color: '#0A0305' }}>✦ Goal Tracking</div>
+                  <div style={{ fontSize: '0.85rem', fontWeight: 700, opacity: 0.95, marginBottom: '16px', color: 'rgba(10,3,5,0.85)' }}>Achieve milestones faster</div>
                   <div className="xpense-details">
-                    <div style={{ padding: '12px', background: 'rgba(0,0,0,0.1)', borderRadius: '12px' }}>
+                    <div style={{ padding: '12px', background: 'rgba(0,0,0,0.07)', borderRadius: '12px' }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
                         <div style={{ fontSize: '0.8rem', fontWeight: 800 }}>Investment</div>
                         <div style={{ fontSize: '0.8rem', fontWeight: 700 }}>68% Complete</div>
                       </div>
-                      <div style={{ height: '6px', background: 'rgba(0,0,0,0.15)', borderRadius: '10px', overflow: 'hidden' }}>
-                        <div style={{ width: '68%', height: '100%', background: '#000', borderRadius: '10px' }} />
+                      <div style={{ height: '6px', background: 'rgba(0,0,0,0.12)', borderRadius: '10px', overflow: 'hidden' }}>
+                        <div style={{ width: '68%', height: '100%', background: '#0A0305', borderRadius: '10px' }} />
                       </div>
                     </div>
-                  </div>
-                </div>
-              </div>
             </div>
           </div>
-        </section>
+        </div>
+      </div>
+    </div>
+  </section>
 
         {/* ── Waitlist / App Showcase ── */}
         <AppShowcase />

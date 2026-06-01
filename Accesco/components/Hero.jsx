@@ -20,15 +20,15 @@ export default function Hero() {
         .hero {
           position: relative;
           width: 100%;
-          height: 100vh;
-          height: 100svh;
+          min-height: 100vh;
+          min-height: 100svh;
           background: #000;
           display: flex;
           flex-direction: column;
           align-items: center;
           box-sizing: border-box;
           font-family: 'DM Sans', sans-serif;
-          padding: 130px 20px 20px 20px; /* Reduced bottom padding to keep scroll button visible */
+          padding: 130px 20px 40px 20px; /* Leave room at the bottom for the scroll down button */
           overflow: hidden;
         }
 
@@ -49,9 +49,9 @@ export default function Hero() {
           inset: 0;
           background: linear-gradient(
             to bottom,
-            rgba(0,0,0,0.3) 0%,
-            rgba(0,0,0,0.5) 50%,
-            rgba(0,0,0,0.9) 100%
+            rgba(0,0,0,0.15) 0%,
+            rgba(0,0,0,0.25) 50%,
+            rgba(0,0,0,0.6) 100%
           );
           z-index: 1;
         }
@@ -162,6 +162,10 @@ export default function Hero() {
           height: clamp(36px, 6vw, 48px);
           width: auto;
           display: block;
+          border-radius: 0 !important;
+          border: none !important;
+          box-shadow: none !important;
+          background: transparent !important;
         }
 
         .app-btn-link:hover {
@@ -169,8 +173,6 @@ export default function Hero() {
         }
 
         .scroll-down-btn {
-          position: relative;
-          z-index: 2;
           display: flex;
           flex-direction: column;
           align-items: center;
@@ -182,9 +184,8 @@ export default function Hero() {
           text-decoration: none;
           opacity: 0.8;
           transition: all 0.3s ease;
-          margin-top: 30px;
-          margin-bottom: 0;
-          padding-top: 0;
+          margin-top: 32px;
+          z-index: 10;
         }
 
         .scroll-down-btn:hover {
@@ -195,6 +196,21 @@ export default function Hero() {
         .scroll-down-btn i {
           font-size: 24px;
           line-height: 1;
+          margin-top: 6px;
+          animation: hero-bounce 2s infinite;
+          display: inline-block;
+        }
+
+        @keyframes hero-bounce {
+          0%, 20%, 50%, 80%, 100% {
+            transform: translateY(0);
+          }
+          40% {
+            transform: translateY(6px);
+          }
+          60% {
+            transform: translateY(3px);
+          }
         }
 
         @media (max-width: 1024px) {
@@ -303,11 +319,14 @@ export default function Hero() {
             />
           </a>
         </div>
+
+        <a 
+          href="#services" 
+          className="scroll-down-btn"
+        >
+          SCROLL DOWN <i className="ri-arrow-down-s-line"></i>
+        </a>
       </div>
-      
-      <a href="#services" className="scroll-down-btn">
-        SCROLL DOWN <i className="ri-arrow-down-s-line"></i>
-      </a>
 
       {/* Bottom Spacer */}
       <div className="hero-bottom-spacer"></div>
