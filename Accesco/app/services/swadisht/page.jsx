@@ -148,6 +148,39 @@ function RestaurantCard({ restaurant }) {
 }
 
 // Main Content Component
+function DiscoverFeatures() {
+  return (
+    <section className={styles.discoverSection}>
+      <div className={styles.featureGrid}>
+        
+        <Link href="/services/swadisht/swipe-eat" className={styles.featureCard}>
+          <h3>🍽️ SwipeEat Discovery</h3>
+          <p>Swipe through dishes and discover your next favourite meal.</p>
+          <span>Try SwipeEat →</span>
+        </Link>
+
+        <Link href="/services/swadisht/thali-engine" className={styles.featureCard}>
+          <h3>🍛 Thali Engine</h3>
+          <p>Create festive, regional and family-style thalis.</p>
+          <span>Build Your Thali →</span>
+        </Link>
+
+        <Link href="/services/swadisht/instant-catering" className={styles.featureCard}>
+          <h3>🚚 Instant Catering</h3>
+          <p>Pre-book catering packs for events and office gatherings.</p>
+          <span>Plan Catering →</span>
+        </Link>
+
+        <Link href="/services/swadisht/regional-soul" className={styles.featureCard}>
+          <h3>🌾 Regional Soul</h3>
+          <p>Explore authentic cuisines from across India.</p>
+          <span>Explore Regions →</span>
+        </Link>
+
+      </div>
+    </section>
+  );
+}
 function MainContent() {
   const { filters, updateFilters } = useSwadishtt();
   const [restaurants, setRestaurants] = useState(RESTAURANTS);
@@ -229,10 +262,12 @@ export default function SwadishttPage() {
       {/* Premium Brand Hero Banner */}
       <SwadishttHero />
       <SwadishttHeader />
+
       <div className={styles.pageContent}>
-        <CategorySection />
-        <HeroSection />           
-        <MainContent />
+       <CategorySection />
+<DiscoverFeatures />
+<HeroSection />
+<MainContent />
       </div>
     </div>
   );

@@ -54,7 +54,7 @@
 .brandName {
   font-size: 22px;
   font-weight: 700;
-  color: #E23744;
+  color: #6B1D3A;
   letter-spacing: -0.02em;
 }
 
@@ -85,7 +85,7 @@
 .locationIcon {
   width: 20px;
   height: 20px;
-  color: #E23744;
+  color: #6B1D3A;
   flex-shrink: 0;
 }
 
@@ -265,8 +265,8 @@
 .searchInput:focus {
   outline: none;
   background: #ffffff;
-  border-color: #E23744;
-  box-shadow: 0 0 0 3px rgba(226,55,68,0.1);
+  border-color: #6B1D3A;
+  box-shadow: 0 0 0 3px rgba(107,29,58,0.15);
 }
 
 /* Navigation */
@@ -307,14 +307,14 @@
 }
 
 .cartButton {
-  background: #E23744;
+  background: #6B1D3A;
   color: #ffffff;
   padding: 0 18px;
   height: 52px;
 }
 
 .cartButton:hover {
-  background: #C62828;
+  background: #542030;
   color: #ffffff;
 }
 
@@ -322,7 +322,7 @@
   position: absolute;
   top: 4px;
   right: 4px;
-  background: #FBBF24;
+  background: #D4A017;
   color: #111827;
   font-size: 11px;
   font-weight: 700;

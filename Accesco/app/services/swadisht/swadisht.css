@@ -26,6 +26,10 @@
   --bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   --card-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
   --card-hover-shadow: 0 16px 48px rgba(0, 0, 0, 0.18);
+    --sw-maroon: #6B1D3A;
+  --sw-gold: #D4A017;
+  --sw-amber: #FFB347;
+  --sw-warm-white: #FFF9F0;
 }
 
 body {
@@ -137,7 +141,13 @@ html {
 .brand-name {
   font-size: 28px;
   font-weight: 800;
-  background: linear-gradient(135deg, var(--primary-orange) 0%, var(--accent-orange) 50%, var(--purple) 100%);
+.brand-name {
+  background: linear-gradient(
+    135deg,
+    var(--sw-maroon) 0%,
+    var(--sw-gold) 100%
+  );
+}
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -298,8 +308,12 @@ html {
 
 .restaurant-title {
   font-size: 42px;
-  font-weight: 800;
-  background: linear-gradient(135deg, var(--primary-orange), var(--purple));
+  font-weight: 800; 
+  background: linear-gradient(
+    135deg,
+    var(--sw-maroon),
+    var(--sw-gold)
+  );
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -436,7 +450,11 @@ html {
 .section-title {
   font-size: 32px;
   font-weight: 800;
-  background: linear-gradient(135deg, var(--primary-orange), var(--purple));
+  background: linear-gradient(
+    135deg,
+    var(--sw-maroon),
+    var(--sw-gold)
+  );
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -453,7 +471,11 @@ html {
   left: 0;
   width: 60px;
   height: 4px;
-  background: linear-gradient(90deg, var(--primary-orange), var(--accent-orange));
+  background: linear-gradient(
+    90deg,
+    var(--sw-maroon),
+    var(--sw-gold)
+  );
   border-radius: 2px;
 }
 
@@ -1675,4 +1697,137 @@ html {
     scroll-snap-align: start;
   }
 
+}
+/* =====================================
+   SWADI SHTT FEATURES
+===================================== */
+
+.swipeEatSection {
+  padding: 4rem 0;
+  background: var(--sw-warm-white);
+}
+
+.smartMenuSection {
+  padding: 4rem 0;
+  background: #fff;
+}
+
+.thaliEngineSection {
+  padding: 4rem 0;
+  background: var(--sw-warm-white);
+}
+
+.featuresSection {
+  padding: 4rem 0;
+  background: #fff;
+}
+.swipeEatContainer {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.swipeEatTitle {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--sw-maroon);
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.swipeCard {
+  max-width: 340px;
+  margin: 0 auto;
+  background: white;
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.12);
+}
+
+.swipeCard img {
+  width: 100%;
+  height: 260px;
+  object-fit: cover;
+}
+
+.swipeCardContent {
+  padding: 20px;
+}
+
+.swipeActions {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.swipeBtn {
+  border: none;
+  padding: 12px 20px;
+  border-radius: 999px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.swipeBtn.like {
+  background: var(--sw-maroon);
+  color: white;
+}
+
+.swipeBtn.skip {
+  background: #f3f3f3;
+}
+.swipeEatPromo {
+  padding: 32px 24px;
+  background: #FFF9F0;
+}
+
+.swipeEatPromoCard {
+  max-width: 1200px;
+  margin: 0 auto;
+  background: linear-gradient(135deg, #6B1D3A, #8A2A4D);
+  color: white;
+  border-radius: 24px;
+  padding: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.swipeEatBadge {
+  display: inline-block;
+  background: #D4A017;
+  color: #1C1C1C;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 800;
+  margin-bottom: 12px;
+}
+
+.swipeEatPromoCard h2 {
+  font-size: 28px;
+  margin-bottom: 8px;
+}
+
+.swipeEatPromoCard p {
+  color: rgba(255,255,255,0.85);
+}
+
+.swipeEatButton {
+  background: #FFB347;
+  color: #1C1C1C;
+  text-decoration: none;
+  padding: 14px 22px;
+  border-radius: 999px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+  .swipeEatPromoCard {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 }
