@@ -303,10 +303,6 @@ export default function InstaStyleLanding() {
         data-reveal
         aria-label="Hero"
       >
-        {/* ── Announcement Bar (Floating over video) ── */}
-        <div className={styles.announcementBar} style={{ position: 'absolute', top: 0, left: 0, width: '100%', zIndex: 20 }}>
-          Accesco InstaStyle — Curated fashion, artisanal labels, and a seamless shopping experience.
-        </div>
         {/* Video background — DO NOT CHANGE */}
         <video
           className={styles.heroVideo}
