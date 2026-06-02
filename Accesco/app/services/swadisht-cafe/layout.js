@@ -1,8 +1,19 @@
+import SwadishttCafeLayoutClient from './layout-client';
+
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 export const metadata = {
-  title: "Swadishtt Cafe | Cloud Kitchen Inside Every Dark Store",
-  description: "Swadishtt Cafe is Accesco Living's micro-kitchen concept embedded inside every dark store — serving fresh FarmChain-sourced meals for fast delivery across Bengaluru.",
+  title: 'Swadishtt Cafe | Cafe Experiences by Accesco Living',
+  description:
+    'Explore artisan coffee, beverages, baked goods and curated cafe experiences with Swadishtt Cafe.',
+  openGraph: {
+    title: 'Swadishtt Cafe | Cafe Experiences by Accesco Living',
+    description:
+      'Cafe experiences featuring artisan coffee, baked goods, beverages and curated cafe dining.',
+  },
 };
 
-export default function Layout({ children }) {
-  return children;
+export default function SwadishttCafeLayout({ children }) {
+  return <SwadishttCafeLayoutClient>{children}</SwadishttCafeLayoutClient>;
 }

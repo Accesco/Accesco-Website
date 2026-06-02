@@ -21,6 +21,7 @@ import BottomNav from './components/BottomNav';
 import { categories, products, getProductsByCategory, searchProducts } from './lib/groklyData';
 import './styles/variables.css';
 import './styles/globals.css';
+import JsonLd from '../../../components/JsonLd';
 
 /**
  * Grokly Page Component
@@ -150,12 +151,51 @@ function GroklyPageContent() {
   const handleSearchClear = () => {
     setSearchQuery('');
   };
-
+const serviceSchema = {
+  "@context": "https://schema.org",
+  "@type": "Service",
+  serviceType: "Grocery Delivery",
+  name: "Grokly by Accesco Living",
+  description:
+    "Farm-direct fresh groceries delivered in minutes, sourced directly from Karnataka farms via FarmChain with QR traceability.",
+  url: "https://www.accescoliving.com/services/grokly",
+  provider: {
+    "@type": "Organization",
+    name: "Accesco Living",
+    url: "https://www.accescoliving.com",
+  },
+  areaServed: {
+    "@type": "City",
+    name: "Bengaluru",
+  },
+};
+const productListSchema = {
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  name: "Fresh Groceries on Grokly",
+  itemListElement: products.slice(0, 50).map((p, i) => ({
+    "@type": "ListItem",
+    position: i + 1,
+item: {
+  "@type": "Product",
+  name: p.name,
+  offers: {
+        "@type": "Offer",
+        price: String(p.price),
+        priceCurrency: "INR",
+        availability: "https://schema.org/InStock",
+      },
+    },
+  })),
+};
   // ═══════════════════════════════════════════════
   // RENDER
   // ═══════════════════════════════════════════════
   
   return (
+     <>
+    <JsonLd data={serviceSchema} />
+    <JsonLd data={productListSchema} />
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', background: 'var(--grokly-bg)' }}>
       {/* Desktop Header */}
       <GroklyHeader 
@@ -461,10 +501,10 @@ function GroklyPageContent() {
 
       {/* Bottom Navigation (Mobile) */}
       <BottomNav />
-    </div>
-  );
+     </div>
+  </>
+);
 }
-
 /**
  * Main Export with Provider
  */

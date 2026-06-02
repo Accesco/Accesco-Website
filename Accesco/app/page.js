@@ -9,11 +9,23 @@ import Hero from '../components/Hero';
 import AppShowcase from '../components/AppShowcase';
 import DownloadSection from '../components/DownloadSection';
 import Footer from '../components/Footer';
-
+import JsonLd from '../components/JsonLd';
 export default function HomePage() {
   const [isClient, setIsClient] = useState(false);
   const scrollRef = useRef(null);
-
+const softwareApplicationSchema = {
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Accesco Living",
+  "operatingSystem": "Android, iOS",
+  "applicationCategory": "ShoppingApplication",
+  "url": "https://www.accescoliving.com",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "INR"
+  }
+};
   useEffect(() => {
     setIsClient(true);
   }, []);
@@ -27,10 +39,10 @@ export default function HomePage() {
   }
 };
 
-  return (
-    <>
-      <AccescoHeader />
-
+ return (
+  <>
+    <JsonLd data={softwareApplicationSchema} />
+    <AccescoHeader />
       <main>
         {/* ── Hero Section ── */}
         <Hero />

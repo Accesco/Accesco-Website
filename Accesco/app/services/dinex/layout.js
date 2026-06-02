@@ -1,8 +1,19 @@
+import DineXLayoutClient from './layout-client';
+
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 export const metadata = {
-  title: "DineX | Smart Dining, Table Reservations & Hosted Events",
-  description: "Book smart savings dining, assured table reservations and hosted dining events with DineX — Accesco Living's dining sub-category under Swadishtt.",
+  title: 'DineX | Restaurant Reservations by Accesco Living',
+  description:
+    'Reserve tables and discover premium dining experiences with DineX by Accesco Living.',
+  openGraph: {
+    title: 'DineX | Restaurant Reservations by Accesco Living',
+    description:
+      'Premium restaurant reservations, curated dining experiences and exclusive table bookings with DineX.',
+  },
 };
 
-export default function Layout({ children }) {
-  return children;
+export default function DineXLayout({ children }) {
+  return <DineXLayoutClient>{children}</DineXLayoutClient>;
 }

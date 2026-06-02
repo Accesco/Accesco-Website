@@ -15,6 +15,7 @@ import { SwadishttHero } from '../../../components/HeroBanners';
 import styles from './styles/swadisht-main.module.css';
 import CategorySection from './components/CategorySection';
 import Image from 'next/image';
+import JsonLd from '../../../components/JsonLd';
 // Hero Section Component
 function HeroSection() {
   const [activeTab, setActiveTab] = useState('delivery');
@@ -256,8 +257,28 @@ function MainContent() {
 }
 
 // Main Page Component
+const serviceSchema = {
+  "@context": "https://schema.org",
+  "@type": "Service",
+  serviceType: "Food Delivery",
+  name: "Swadishtt by Accesco Living",
+  description:
+    "Food delivery platform featuring restaurants, regional cuisines, catering, thali experiences and curated meal discovery.",
+  url: "https://www.accescoliving.com/services/swadisht",
+  provider: {
+    "@type": "Organization",
+    name: "Accesco Living",
+    url: "https://www.accescoliving.com",
+  },
+  areaServed: {
+    "@type": "City",
+    name: "Bengaluru",
+  },
+};
 export default function SwadishttPage() {
   return (
+    <>
+      <JsonLd data={serviceSchema} />
     <div className={styles.page}>
       {/* Premium Brand Hero Banner */}
       <SwadishttHero />
@@ -270,5 +291,6 @@ export default function SwadishttPage() {
 <MainContent />
       </div>
     </div>
+    </>
   );
 }

@@ -2,7 +2,25 @@
 
 
 import './swadisht-cafe.css'
-
+import JsonLd from '../../../components/JsonLd';
+const serviceSchema = {
+  "@context": "https://schema.org",
+  "@type": "Service",
+  serviceType: "Cafe",
+  name: "Swadishtt Cafe by Accesco Living",
+  description:
+    "Cafe experiences featuring artisan coffee, baked goods, beverages and curated cafe dining.",
+  url: "https://www.accescoliving.com/services/swadisht-cafe",
+  provider: {
+    "@type": "Organization",
+    name: "Accesco Living",
+    url: "https://www.accescoliving.com",
+  },
+  areaServed: {
+    "@type": "City",
+    name: "Bengaluru",
+  },
+};
 export default function SwadisshtCafePage() {
 
   return (

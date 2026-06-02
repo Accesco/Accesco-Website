@@ -2,10 +2,30 @@
 
 
 import './dinex.css'
-
+import JsonLd from '../../../components/JsonLd';
+const serviceSchema = {
+  "@context": "https://schema.org",
+  "@type": "Service",
+  serviceType: "Restaurant Reservation",
+  name: "DineX by Accesco Living",
+  description:
+    "Premium restaurant reservations, curated dining experiences and exclusive table bookings.",
+  url: "https://www.accescoliving.com/services/dinex",
+  provider: {
+    "@type": "Organization",
+    name: "Accesco Living",
+    url: "https://www.accescoliving.com",
+  },
+  areaServed: {
+    "@type": "City",
+    name: "Bengaluru",
+  },
+};
 export default function DineXPage() {
 
   return (
+      <>
+    <JsonLd data={serviceSchema} />
     <div className="dx-wrapper">
       {/* Background blobs */}
       <div className="dx-blob dx-blob-1" />
@@ -69,5 +89,6 @@ export default function DineXPage() {
         <p className="dx-footer-sub">Premium dining, coming soon.</p>
       </footer>
     </div>
+  </>
   )
 }
