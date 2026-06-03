@@ -14,6 +14,7 @@ const mediaLogos = [
   { name: "Hindustan Metro", src: "/logos/hindustan-metro.jpeg" },
   { name: "The Weekly Mail", src: "/logos/weekly-mail.jpeg" },
   { name: "Achieve Times", src: "/logos/achieve-times.jpeg" },
+  { name: "Achieve Times", src: "/logos/Successaga.jpeg" },
 ];
 const ecosystemLogos = [
   { name: "AWS Startups", src: "/logos/aws-startups.png" },
