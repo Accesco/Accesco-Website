@@ -111,13 +111,26 @@ function RestaurantDetailContent() {
       {/* Hero Section */}
       <div className={styles.hero}>
         <div className={styles.heroImage}>
-          <img 
-            src={restaurant.coverImage} 
-            alt={restaurant.name}
-            onError={(e) => {
-              e.target.src = `https://placehold.co/1200x400/E23744/FFFFFF/png?text=${encodeURIComponent(restaurant.name)}`;
-            }}
-          />
+         {restaurant.video ? (
+    <video
+      className={styles.heroVideo}
+      autoPlay
+      muted
+      loop
+      playsInline
+      poster={restaurant.coverImage}
+    >
+      <source src={restaurant.video} type="video/mp4" />
+    </video>
+  ) : (
+    <img
+      src={restaurant.coverImage}
+      alt={restaurant.name}
+      onError={(e) => {
+        e.target.src = `https://placehold.co/1200x400/E23744/FFFFFF/png?text=${encodeURIComponent(restaurant.name)}`;
+      }}
+    />
+  )}
           <div className={styles.heroOverlay}></div>
         </div>
         
