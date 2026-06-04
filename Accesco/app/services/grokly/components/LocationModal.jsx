@@ -6,6 +6,7 @@
 "use client";
 
 import { useEffect, useState, useRef, useCallback } from "react";
+import dynamic from "next/dynamic";
 import {
   MapPin,
   Search,
@@ -19,28 +20,35 @@ import {
 import styles from "./LocationModal.module.css";
 import { useGrokly } from "../contexts/GroklyContext";
 
+// Dynamically import Map to prevent Next.js SSR errors with Leaflet
+const Map = dynamic(() => import('./Map'), { 
+  ssr: false, 
+  loading: () => <div className={styles.mapLoading}>Loading Map...</div> 
+});
+
 const TARGET_ACCURACY_METERS = 50;
 const ACCEPTABLE_ACCURACY_METERS = 100;
 const CLIENT_CACHE_DURATION_MS = 10 * 60 * 1000; // 10 minutes
 
-// Client-side cache for detected locations
-const locationCache = new Map();
+// Replace the existing locationCache Map and its helper functions with this:
+
+const locationCache = {};
 
 function getCachedLocation(latitude, longitude) {
   const key = `${latitude.toFixed(4)},${longitude.toFixed(4)}`;
-  const cached = locationCache.get(key);
+  const cached = locationCache[key];
   
   if (cached && Date.now() - cached.timestamp < CLIENT_CACHE_DURATION_MS) {
     const cachedAccuracy = Number(cached?.data?.coords?.accuracy);
     if (Number.isFinite(cachedAccuracy) && cachedAccuracy <= ACCEPTABLE_ACCURACY_METERS) {
       return cached.data;
     }
-    locationCache.delete(key);
+    delete locationCache[key];
     return null;
   }
   
   if (cached) {
-    locationCache.delete(key);
+    delete locationCache[key];
   }
   
   return null;
@@ -52,11 +60,12 @@ function setCachedLocation(latitude, longitude, data) {
     return;
   }
   const key = `${latitude.toFixed(4)},${longitude.toFixed(4)}`;
-  locationCache.set(key, {
+  locationCache[key] = {
     data,
     timestamp: Date.now(),
-  });
+  };
 }
+
 
 function getDeliveryGradePosition({
   targetAccuracy = TARGET_ACCURACY_METERS,
@@ -94,7 +103,6 @@ function getDeliveryGradePosition({
       reject(error);
     };
 
-    // First, try getCurrentPosition for fast initial result
     navigator.geolocation.getCurrentPosition(
       (position) => {
         const accuracy = Number(position?.coords?.accuracy);
@@ -106,32 +114,21 @@ function getDeliveryGradePosition({
         }
 
         if (Number.isFinite(accuracy) && accuracy <= acceptableAccuracy) {
-          // If acceptable but not target, give the hardware 3 more seconds to find a better lock.
-          // If it can't, resolve early so the user isn't stuck waiting.
           acceptableTimeoutId = setTimeout(() => {
             finishSuccess(bestPosition);
           }, 3000);
         }
       },
-      () => {}, // Ignore fast-fail, rely on watchPosition
-      {
-        enableHighAccuracy: true,
-        timeout: 5000,
-        maximumAge: maxAgeMs,
-      }
+      () => {}, 
+      { enableHighAccuracy: true, timeout: 5000, maximumAge: maxAgeMs }
     );
 
-    // Use watchPosition for continuous updates
     watchId = navigator.geolocation.watchPosition(
       (position) => {
         const currentAccuracy = Number(position?.coords?.accuracy);
         const bestAccuracy = Number(bestPosition?.coords?.accuracy);
 
-        if (
-          !bestPosition ||
-          (Number.isFinite(currentAccuracy) &&
-            (!Number.isFinite(bestAccuracy) || currentAccuracy < bestAccuracy))
-        ) {
+        if (!bestPosition || (Number.isFinite(currentAccuracy) && (!Number.isFinite(bestAccuracy) || currentAccuracy < bestAccuracy))) {
           bestPosition = position;
         }
 
@@ -140,18 +137,11 @@ function getDeliveryGradePosition({
         }
       },
       (error) => {
-        if (!bestPosition) {
-          finishError(error);
-        }
+        if (!bestPosition) finishError(error);
       },
-      {
-        enableHighAccuracy: true,
-        timeout: 8000,
-        maximumAge: maxAgeMs,
-      }
+      { enableHighAccuracy: true, timeout: 8000, maximumAge: maxAgeMs }
     );
 
-    // Total fallback timeout
     timeoutId = setTimeout(() => {
       if (finished) return;
       if (bestPosition) {
@@ -164,28 +154,23 @@ function getDeliveryGradePosition({
 }
 
 export default function LocationModal() {
-  const { location, updateLocation, isLocationModalOpen, closeLocationModal } =
-    useGrokly();
+  const { location, updateLocation, isLocationModalOpen, closeLocationModal } = useGrokly();
 
   const [searchQuery, setSearchQuery] = useState("");
   const [isDetecting, setIsDetecting] = useState(false);
   const [detectedLocation, setDetectedLocation] = useState(null);
   const [locationError, setLocationError] = useState(null);
+  const [mapCenter, setMapCenter] = useState({ lat: 12.9716, lng: 77.5946 }); // Default Bangalore
+  
   const abortControllerRef = useRef(null);
   const autoDetectAttemptedRef = useRef(false);
 
-  // Clean up any pending location fetch when the component unmounts
   useEffect(() => {
     return () => {
-      try {
-        abortControllerRef.current?.abort?.();
-      } catch (e) {
-        // ignore
-      }
+      try { abortControllerRef.current?.abort?.(); } catch (e) {}
     };
   }, []);
 
-  // ... (POPULAR_LOCATIONS array remains unchanged) ...
   const POPULAR_LOCATIONS = [
     { name: "Koramangala", area: "Bangalore", time: "11 mins" },
     { name: "Indiranagar", area: "Bangalore", time: "12 mins" },
@@ -215,30 +200,15 @@ export default function LocationModal() {
       });
 
       let payload = null;
-      try {
-        payload = await response.json();
-      } catch (e) {
-        // Non-JSON response
-      }
+      try { payload = await response.json(); } catch (e) {}
 
       if (!response.ok) {
-        const serverMessage = payload?.message || payload?.error || "Location service returned an error.";
-        setLocationError(serverMessage);
+        setLocationError(payload?.message || payload?.error || "Location service returned an error.");
         return null;
       }
 
-      const resolvedName =
-        payload?.displayAddress ||
-        payload?.city ||
-        payload?.state ||
-        payload?.fullAddress ||
-        "Detected Location";
-
-      const resolvedAddress =
-        payload?.formattedAddress ||
-        payload?.fullAddress ||
-        payload?.displayAddress ||
-        "Address unavailable";
+      const resolvedName = payload?.displayAddress || payload?.city || payload?.state || payload?.fullAddress || "Detected Location";
+      const resolvedAddress = payload?.formattedAddress || payload?.fullAddress || payload?.displayAddress || "Address unavailable";
 
       return {
         name: resolvedName,
@@ -252,15 +222,24 @@ export default function LocationModal() {
       };
     } catch (error) {
       if (error?.name !== "AbortError") {
-        console.error("API fetch error:", error);
         setLocationError("Failed to contact location service.");
       }
       return null;
     }
   }, []);
 
+  const handleMapDrag = useCallback(async (lat, lng) => {
+    setMapCenter({ lat, lng });
+    setIsDetecting(true);
+    setLocationError(null);
+    const locationData = await fetchLocationDetails(lat, lng, 10); // Pass high accuracy for manual pin drop
+    if (locationData) {
+      setDetectedLocation(locationData);
+    }
+    setIsDetecting(false);
+  }, [fetchLocationDetails]);
+
   const detectLocation = useCallback(async ({ autoSelect = false } = {}) => {
-    // Geolocation requires a secure context (HTTPS) or localhost
     if (typeof window !== "undefined" && !window.isSecureContext) {
       setLocationError("Geolocation requires a secure context (HTTPS or localhost).");
       return;
@@ -272,34 +251,27 @@ export default function LocationModal() {
     abortControllerRef.current = new AbortController();
 
     try {
-      // If permissions are explicitly denied, provide a helpful message early
       if (navigator.permissions && navigator.permissions.query) {
         try {
           const perm = await navigator.permissions.query({ name: "geolocation" });
           if (perm.state === "denied") {
-            setLocationError(
-              "Location permission is denied. Please enable location for this site in your browser settings."
-            );
+            setLocationError("Location permission is denied. Please enable location for this site in your browser settings.");
             return;
           }
-        } catch (e) {
-          // ignore permission query errors and proceed
-        }
+        } catch (e) {}
       }
 
       const position = await getDeliveryGradePosition();
+      const { latitude, longitude, accuracy } = position.coords;
+      const roundedAccuracy = Math.round(accuracy);
+      const hasFiniteAccuracy = Number.isFinite(roundedAccuracy);
+      const isAccuracyAcceptable = !hasFiniteAccuracy || roundedAccuracy <= ACCEPTABLE_ACCURACY_METERS;
 
-       const { latitude, longitude, accuracy } = position.coords;
-       const roundedAccuracy = Math.round(accuracy);
-       const hasFiniteAccuracy = Number.isFinite(roundedAccuracy);
-       const isAccuracyAcceptable = !hasFiniteAccuracy || roundedAccuracy <= ACCEPTABLE_ACCURACY_METERS;
+      setMapCenter({ lat: latitude, lng: longitude });
 
-       if (hasFiniteAccuracy && roundedAccuracy > ACCEPTABLE_ACCURACY_METERS) {
-         // Don't hard-fail: still resolve an address, but avoid auto-selecting/storing unreliable locations.
-         setLocationError(
-           `GPS accuracy is ${roundedAccuracy}m. We'll still try to detect your area, but for best results move to open sky and retry (target ≤ ${ACCEPTABLE_ACCURACY_METERS}m).`
-         );
-       }
+      if (hasFiniteAccuracy && roundedAccuracy > ACCEPTABLE_ACCURACY_METERS) {
+        setLocationError(`GPS accuracy is ${roundedAccuracy}m. We'll still try to detect your area, but for best results move to open sky and retry.`);
+      }
 
       const cached = getCachedLocation(latitude, longitude);
       if (cached) {
@@ -317,46 +289,31 @@ export default function LocationModal() {
 
       setCachedLocation(latitude, longitude, locationData);
       setDetectedLocation(locationData);
+      
       if (autoSelect && isAccuracyAcceptable) {
         updateLocation(locationData.name);
         closeLocationModal();
       }
 
-      const rawPayload =
-        locationData?.raw && typeof locationData.raw === "object" ? locationData.raw : {};
-
       if (isAccuracyAcceptable) {
+        const rawPayload = locationData?.raw || {};
         localStorage.setItem(
           "userLocation",
           JSON.stringify({
             ...rawPayload,
-            latitude: rawPayload?.latitude ?? locationData.coords.latitude,
-            longitude: rawPayload?.longitude ?? locationData.coords.longitude,
-            // backward compatibility with existing Grokly usages
-            lat: locationData.coords.latitude,
-            lon: locationData.coords.longitude,
-            fullAddress: rawPayload?.fullAddress || locationData.fullAddress,
-            formattedAddress: rawPayload?.formattedAddress || locationData.fullAddress,
-            displayAddress: rawPayload?.displayAddress || locationData.name,
+            latitude: locationData.coords.latitude,
+            longitude: locationData.coords.longitude,
+            fullAddress: locationData.fullAddress,
+            displayAddress: locationData.name,
             gpsAccuracyMeters: locationData.coords.accuracy,
-            timestamp: rawPayload?.timestamp || new Date().toISOString(),
+            timestamp: new Date().toISOString(),
           })
         );
       }
     } catch (error) {
-      const message =
-        error?.code === 1
-          ? "Location permission denied. Please allow location access."
-          : error?.code === 2
-          ? "Location unavailable. Try again after moving to open sky."
-          : error?.code === 3
-          ? "Location request timed out. Please retry."
-          : error?.message || "Failed to detect location.";
-
-      setLocationError(message);
+      setLocationError(error?.message || "Failed to detect location.");
     } finally {
       setIsDetecting(false);
-      // clear abort controller reference to avoid stale signal reuse
       abortControllerRef.current = null;
     }
   }, [closeLocationModal, fetchLocationDetails, updateLocation]);
@@ -371,138 +328,54 @@ export default function LocationModal() {
       const stored = localStorage.getItem("userLocation");
       if (stored) {
         let parsed = null;
-        try {
-          parsed = JSON.parse(stored);
-        } catch (e) {
-          // backward compatibility: allow plain string storage
-          setDetectedLocation({
-            name: stored,
-            fullAddress: stored,
-            coords: {
-              latitude: undefined,
-              longitude: undefined,
-              accuracy: undefined,
-            },
-          });
-          return;
-        }
-        const storedName =
-          parsed?.displayAddress ||
-          (parsed?.city
-            ? `${parsed.city}${parsed?.state || parsed?.region ? `, ${parsed.state || parsed.region}` : ""}`
-            : "") ||
-          parsed?.name ||
-          parsed?.address ||
-          parsed?.fullAddress;
-
-        const storedAddress =
-          (typeof parsed?.formattedAddress === "string" && parsed.formattedAddress) ||
-          parsed?.formattedAddress?.label ||
-          parsed?.fullAddress ||
-          parsed?.address ||
-          parsed?.displayAddress ||
-          "Address unavailable";
-
+        try { parsed = JSON.parse(stored); } catch (e) { return; }
+        
         const storedLatitude = parsed?.latitude ?? parsed?.lat;
         const storedLongitude = parsed?.longitude ?? parsed?.lon;
-        const storedAccuracy =
-          parsed?.gpsAccuracyMeters ??
-          parsed?.accuracyMeters ??
-          parsed?.accuracy;
-
-        if (storedName) {
-          setDetectedLocation({
-            name: storedName,
-            fullAddress: storedAddress,
-            coords: {
-              latitude: storedLatitude,
-              longitude: storedLongitude,
-              accuracy: Number.isFinite(Number(storedAccuracy))
-                ? Math.round(Number(storedAccuracy))
-                : undefined,
-            },
-          });
-          return;
+        
+        if (storedLatitude && storedLongitude) {
+          setMapCenter({ lat: Number(storedLatitude), lng: Number(storedLongitude) });
         }
       }
-    } catch (e) {
-      // ignore malformed storage
-    }
+    } catch (e) {}
 
     if (autoDetectAttemptedRef.current) return;
     autoDetectAttemptedRef.current = true;
-    detectLocation({ autoSelect: true });
+    detectLocation({ autoSelect: false }); // Changed to false so map stays open for user verification
   }, [detectLocation, isLocationModalOpen]);
 
   const handleUseDetectedLocation = () => {
     if (!detectedLocation) return;
-
     try {
       const existing = localStorage.getItem("userLocation");
-      let parsedExisting = null;
-      try {
-        parsedExisting = existing ? JSON.parse(existing) : null;
-      } catch (e) {
-        parsedExisting = null;
-      }
-
-      const merged = {
-        ...(parsedExisting && typeof parsedExisting === "object" ? parsedExisting : {}),
+      const parsedExisting = existing ? JSON.parse(existing) : {};
+      localStorage.setItem("userLocation", JSON.stringify({
+        ...parsedExisting,
         displayAddress: detectedLocation.name,
         fullAddress: detectedLocation.fullAddress || detectedLocation.name,
-        formattedAddress: detectedLocation.fullAddress || detectedLocation.name,
         latitude: detectedLocation?.coords?.latitude,
         longitude: detectedLocation?.coords?.longitude,
-        lat: detectedLocation?.coords?.latitude,
-        lon: detectedLocation?.coords?.longitude,
-        gpsAccuracyMeters: detectedLocation?.coords?.accuracy,
-        timestamp: new Date().toISOString(),
-      };
-
-      localStorage.setItem("userLocation", JSON.stringify(merged));
-    } catch (e) {
-      // ignore storage errors
-    }
-
+      }));
+    } catch (e) {}
     updateLocation(detectedLocation.name);
     closeLocationModal();
   };
 
   const handleSelectLocation = (locationName) => {
     try {
-      localStorage.setItem(
-        "userLocation",
-        JSON.stringify({
-          displayAddress: locationName,
-          fullAddress: locationName,
-          formattedAddress: locationName,
-          name: locationName,
-          timestamp: new Date().toISOString(),
-        })
-      );
-    } catch (e) {
-      // ignore storage errors
-    }
+      localStorage.setItem("userLocation", JSON.stringify({ displayAddress: locationName, fullAddress: locationName }));
+    } catch (e) {}
     updateLocation(locationName);
     closeLocationModal();
-  };
-
-  const handleOverlayClick = (e) => {
-    if (e.target === e.currentTarget) closeLocationModal();
   };
 
   if (!isLocationModalOpen) return null;
 
   return (
     <>
-      <div className={styles.overlay} onClick={handleOverlayClick} aria-label="Close modal" />
+      <div className={styles.overlay} onClick={closeLocationModal} aria-label="Close modal" />
 
-      <div
-        className={styles.modal}
-        role="dialog"
-        aria-label="Select delivery location"
-        aria-modal="true"
-      >
+      <div className={styles.modal} role="dialog" aria-label="Select delivery location" aria-modal="true">
         <div className={styles.header}>
           <h2 className={styles.title}>Select Location</h2>
           <button className={styles.closeBtn} onClick={closeLocationModal} aria-label="Close modal">
@@ -513,14 +386,13 @@ export default function LocationModal() {
         <div className={styles.body}>
           <button
             className={styles.detectBtn}
-            onClick={detectLocation}
+            onClick={() => detectLocation({ autoSelect: false })}
             disabled={isDetecting}
-            aria-label="Detect my current location"
           >
             {isDetecting ? (
-              <Clock className={styles.detectIcon} size={20} aria-hidden="true" />
+              <Clock className={styles.detectIcon} size={20} />
             ) : (
-              <Target className={styles.detectIcon} size={20} aria-hidden="true" />
+              <Target className={styles.detectIcon} size={20} />
             )}
             <div className={styles.detectText}>
               <div className={styles.detectLabel}>
@@ -534,20 +406,22 @@ export default function LocationModal() {
 
           {locationError && (
             <div className={styles.errorBox}>
-              <AlertTriangle size={18} aria-hidden="true" />
+              <AlertTriangle size={18} />
               <span>{locationError}</span>
             </div>
           )}
 
+          {/* Map Feature Integration */}
+          <div className={styles.mapContainer}>
+            <Map center={mapCenter} onLocationChange={handleMapDrag} />
+          </div>
+
           {detectedLocation && (
             <button className={styles.detectedLocation} onClick={handleUseDetectedLocation}>
-              <Navigation className={styles.detectedIcon} size={20} aria-hidden="true" />
+              <Navigation className={styles.detectedIcon} size={20} />
               <div className={styles.detectedText}>
                 <div className={styles.detectedLabel}>
-                  Detected Location
-                  {Number.isFinite(Number(detectedLocation?.coords?.accuracy))
-                    ? ` (${Math.round(Number(detectedLocation.coords.accuracy))}m)`
-                    : ""}
+                  Confirm Location
                 </div>
                 <div className={styles.detectedName}>{detectedLocation.name}</div>
                 <div className={styles.detectedAddress}>{detectedLocation.fullAddress}</div>
@@ -557,23 +431,14 @@ export default function LocationModal() {
           )}
 
           <div className={styles.searchBox}>
-            <Search className={styles.searchIcon} size={18} aria-hidden="true" />
+            <Search className={styles.searchIcon} size={18} />
             <input
               type="search"
-              placeholder="Search for your location..."
+              placeholder="Search popular areas..."
               className={styles.searchInput}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              aria-label="Search locations"
             />
-          </div>
-
-          <div className={styles.currentLocation}>
-            <MapPin className={styles.currentIcon} size={18} aria-hidden="true" />
-            <div className={styles.currentText}>
-              <div className={styles.currentLabel}>Current Location</div>
-              <div className={styles.currentName}>{location}</div>
-            </div>
           </div>
 
           <h3 className={styles.sectionTitle}>Popular Locations</h3>
@@ -584,22 +449,21 @@ export default function LocationModal() {
                   key={index}
                   className={styles.locationItem}
                   onClick={() => handleSelectLocation(loc.name)}
-                  aria-label={`Select ${loc.name}, delivery in ${loc.time}`}
                 >
-                  <MapPin className={styles.locationIcon} size={18} aria-hidden="true" />
+                  <MapPin className={styles.locationIcon} size={18} />
                   <div className={styles.locationInfo}>
                     <div className={styles.locationName}>{loc.name}</div>
                     <div className={styles.locationArea}>{loc.area}</div>
                   </div>
                   <div className={styles.locationTime}>
-                    <Zap className={styles.timeIcon} size={14} aria-hidden="true" />
+                    <Zap className={styles.timeIcon} size={14} />
                     {loc.time}
                   </div>
                 </button>
               ))
             ) : (
               <div className={styles.noResults}>
-                <Search size={32} aria-hidden="true" />
+                <Search size={32} />
                 <p>No locations found</p>
               </div>
             )}

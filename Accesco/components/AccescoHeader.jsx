@@ -9,6 +9,8 @@ import AuthModal from '../app/components/AuthModal';
 import styles from './AccescoHeader.module.css';
 import { getPersonCity } from '../lib/locationService';
 
+import LocationModal from './LocationModal';
+
 export default function AccescoHeader() {
   const pathname = usePathname();
   const { user, signOut, signIn } = useAuth();
@@ -26,6 +28,7 @@ export default function AccescoHeader() {
   const locationDropdownRef = useRef(null);
   const timeoutRef = useRef(null);
   const partnersTimeoutRef = useRef(null);
+  const [isLocationModalOpen, setIsLocationModalOpen] = useState(false);
 
   const locations = [
     'Bengaluru, Karnataka',
@@ -283,8 +286,8 @@ export default function AccescoHeader() {
                     <path d="M8 1C5.24 1 3 3.24 3 6C3 9.5 8 15 8 15C8 15 13 9.5 13 6C13 3.24 10.76 1 8 1ZM8 7.5C7.17 7.5 6.5 6.83 6.5 6C6.5 5.17 7.17 4.5 8 4.5C8.83 4.5 9.5 5.17 9.5 6C9.5 6.83 8.83 7.5 8 7.5Z" fill="currentColor"/>
                   </svg>
 
-                  <span className={styles.locationText}>
-                    {selectedLocation}
+                 <span className={styles.locationText}>
+                    {selectedLocation ? selectedLocation.split(',')[0].trim() : 'Select Location'}
                   </span>
 
                   <svg 
@@ -310,6 +313,16 @@ export default function AccescoHeader() {
                     <div className={styles.locationDropdownHeader}>
                       <h4>Select Your Location</h4>
                     </div>
+                    
+                    <button 
+                      className={styles.detectLocationBtn} // Style this button in your CSS
+                      onClick={() => {
+                        setIsLocationOpen(false);
+                        setIsLocationModalOpen(true);
+                      }}
+                    >
+                      📍 Detect my Location
+                    </button>
 
                     <div className={styles.locationList}>
                       {locations.map((location) => (
@@ -324,9 +337,6 @@ export default function AccescoHeader() {
                             setIsLocationOpen(false);
                           }}
                         >
-                          <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
-                            <path d="M8 1C5.24 1 3 3.24 3 6C3 9.5 8 15 8 15C8 15 13 9.5 13 6C13 3.24 10.76 1 8 1ZM8 7.5C7.17 7.5 6.5 6.83 6.5 6C6.5 5.17 7.17 4.5 8 4.5C8.83 4.5 9.5 5.17 9.5 6C9.5 6.83 8.83 7.5 8 7.5Z" fill="currentColor"/>
-                          </svg>
                           {location}
                         </button>
                       ))}
@@ -469,6 +479,14 @@ export default function AccescoHeader() {
       {isMobileMenuOpen && <div className={styles.overlay} onClick={() => setIsMobileMenuOpen(false)} />}
 
       <AuthModal isOpen={isAuthOpen} onClose={() => setIsAuthOpen(false)} onSuccess={handleAuthSuccess} />
+      <LocationModal 
+        isOpen={isLocationModalOpen} 
+        onClose={() => setIsLocationModalOpen(false)}
+        onLocationSelect={(newAddress) => {
+          setSelectedLocation(newAddress);
+          localStorage.setItem('userLocation', newAddress);
+        }}
+      />
     </>
   );
 }

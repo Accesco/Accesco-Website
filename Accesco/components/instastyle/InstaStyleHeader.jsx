@@ -8,6 +8,8 @@ import { useAuth } from '@/app/components/AuthProvider';
 import AuthModal from '@/app/components/AuthModal';
 import InstaStyleLogo from './InstaStyleLogo';
 import styles from './InstaStyleHeader.module.css';
+import { MapPin } from 'lucide-react';
+import LocationModal from '../LocationModal';
 
 export default function InstaStyleHeader() {
   const pathname = usePathname();
@@ -19,6 +21,8 @@ export default function InstaStyleHeader() {
   const [isMobileViewport, setIsMobileViewport] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearchFocused, setIsSearchFocused] = useState(false);
+  const [isLocationModalOpen, setIsLocationModalOpen] = useState(false);
+  const [selectedLocation, setSelectedLocation] = useState('Select Location');
 
   const handleAuthSuccess = useCallback(
     (userData) => {
@@ -98,6 +102,23 @@ export default function InstaStyleHeader() {
       mediaQuery.removeEventListener('change', updateViewport);
     };
   }, []);
+
+  // Locatoion usEffect
+  useEffect(() => {
+  const saved = localStorage.getItem('instastyle_location');
+
+  if (saved) {
+    try {
+      const parsed = JSON.parse(saved);
+
+      if (parsed.location) {
+        setSelectedLocation(parsed.location);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  }
+}, []);
 
   const handleSearch = useCallback((e) => {
     e.preventDefault();
@@ -364,6 +385,30 @@ export default function InstaStyleHeader() {
         </form>
 
         {/* Actions */}
+        <button
+          type="button"
+          onClick={() => setIsLocationModalOpen(true)}
+          className={`instaHeaderActionButton ${styles.actionButton}`}
+          style={{
+            ...fallback.actionButton,
+            width: 'auto',
+            padding: '0 12px',
+            gap: '6px'
+          }}
+        >
+          <MapPin size={18} />
+          <span
+            style={{
+              maxWidth: '140px',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+              fontSize: '14px'
+            }}
+          >
+            {selectedLocation}
+          </span>
+        </button>
         <div className={`instaHeaderActions ${styles.actions}`} style={fallback.actions}>
           {/* Wishlist */}
           <Link
@@ -547,6 +592,21 @@ export default function InstaStyleHeader() {
           aria-hidden="true"
         />
       )}
+      <LocationModal
+        isOpen={isLocationModalOpen}
+        onClose={() => setIsLocationModalOpen(false)}
+        onLocationSelect={(location) => {
+          setSelectedLocation(location);
+
+          localStorage.setItem(
+            'instastyle_location',
+            JSON.stringify({
+              location,
+              timestamp: Date.now(),
+            })
+          );
+        }}
+      />
 
       <AuthModal isOpen={isAuthOpen} onClose={() => setIsAuthOpen(false)} onSuccess={handleAuthSuccess} />
     </>
