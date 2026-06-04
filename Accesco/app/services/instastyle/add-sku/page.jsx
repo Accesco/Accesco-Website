@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -139,12 +139,16 @@ export default function AddSKUPage() {
   // Image handling
   const [selectedImagePreset, setSelectedImagePreset] = useState(IMAGE_PRESETS[0].url);
   const [customImageUrl, setCustomImageUrl] = useState('');
-  const [activeImageTab, setActiveImageTab] = useState('presets'); // 'presets' or 'custom'
+  const [activeImageTab, setActiveImageTab] = useState('presets'); // 'presets' | 'custom' | 'upload'
+  const [uploadedImageUrl, setUploadedImageUrl] = useState('');
+  const [uploadStatus, setUploadStatus] = useState('idle'); // 'idle' | 'uploading' | 'done' | 'error'
+  const fileInputRef = useRef(null);
 
   // Wizard/Status
   const [currentStep, setCurrentStep] = useState(1); // 1: edit, 2: success
   const [skuId, setSkuId] = useState('');
   const [errors, setErrors] = useState({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Help tooltip states
   const [showThriftHelp, setShowThriftHelp] = useState(false);
@@ -200,14 +204,42 @@ export default function AddSKUPage() {
     return Object.keys(tempErrors).length === 0;
   };
 
-  const handleSubmit = (e) => {
+  // ── Handle file upload to Firebase Storage via API route
+  const handleFileUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploadStatus('uploading');
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      const res = await fetch('/api/instastyle/upload', { method: 'POST', body: formData });
+      const data = await res.json();
+      if (data.success) {
+        setUploadedImageUrl(data.url);
+        setUploadStatus('done');
+      } else {
+        setUploadStatus('error');
+        console.error('Upload failed:', data.error);
+      }
+    } catch (err) {
+      setUploadStatus('error');
+      console.error('Upload error:', err);
+    }
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateForm()) return;
+    setIsSubmitting(true);
 
     const generatedId = `custom_prod_${Date.now()}`;
     setSkuId(generatedId);
 
-    const finalImageUrl = activeImageTab === 'presets' ? selectedImagePreset : (customImageUrl || IMAGE_PRESETS[0].url);
+    let finalImageUrl;
+    if (activeImageTab === 'presets') finalImageUrl = selectedImagePreset;
+    else if (activeImageTab === 'upload') finalImageUrl = uploadedImageUrl || IMAGE_PRESETS[0].url;
+    else finalImageUrl = customImageUrl || IMAGE_PRESETS[0].url;
+
     const finalFeatures = featuresText.split('\n').filter(f => f.trim().length > 0);
 
     const finalProduct = {
@@ -236,7 +268,7 @@ export default function AddSKUPage() {
       features: finalFeatures.length > 0 ? finalFeatures : ['Premium material', 'Comfortable fit'],
       inStock: true,
       inventory: selectedSizes.reduce((acc, curr) => {
-        acc[curr] = listingType === 'thrift' ? 1 : 12; // Thrift items are usually single stock (qty 1)
+        acc[curr] = listingType === 'thrift' ? 1 : 12;
         return acc;
       }, {}),
       rating: 5.0,
@@ -250,19 +282,36 @@ export default function AddSKUPage() {
       timestamp: Date.now(),
     };
 
-    // Save product to localStorage for persistence across pages
+    // 1. Optimistic local save
     if (typeof window !== 'undefined') {
       try {
         const saved = localStorage.getItem('instastyle_custom_products');
-        const customProductsList = saved ? JSON.parse(saved) : [];
-        customProductsList.push(finalProduct);
-        localStorage.setItem('instastyle_custom_products', JSON.stringify(customProductsList));
-      } catch (error) {
-        console.error('Failed to persist custom product:', error);
+        const list = saved ? JSON.parse(saved) : [];
+        list.push(finalProduct);
+        localStorage.setItem('instastyle_custom_products', JSON.stringify(list));
+      } catch (err) {
+        console.error('localStorage save failed:', err);
       }
     }
 
-    // Go to success page
+    // 2. Persist via server-side API route (writes to Firestore)
+    try {
+      const res = await fetch('/api/instastyle/products', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(finalProduct),
+      });
+      const data = await res.json();
+      if (data.success) {
+        console.log('SKU saved to Firestore via API. DocID:', data.docId);
+      } else {
+        console.error('API save failed:', data.error);
+      }
+    } catch (err) {
+      console.error('API call failed, product saved locally only:', err);
+    }
+
+    setIsSubmitting(false);
     setCurrentStep(2);
   };
 
@@ -641,6 +690,13 @@ export default function AddSKUPage() {
                     </button>
                     <button
                       type="button"
+                      className={`${styles.imageTabBtn} ${activeImageTab === 'upload' ? styles.activeImageTab : ''}`}
+                      onClick={() => setActiveImageTab('upload')}
+                    >
+                      Upload Photo
+                    </button>
+                    <button
+                      type="button"
                       className={`${styles.imageTabBtn} ${activeImageTab === 'custom' ? styles.activeImageTab : ''}`}
                       onClick={() => setActiveImageTab('custom')}
                     >
@@ -670,6 +726,43 @@ export default function AddSKUPage() {
                           </div>
                         );
                       })}
+                    </div>
+                  ) : activeImageTab === 'upload' ? (
+                    <div className={styles.uploadZone}>
+                      <input
+                        ref={fileInputRef}
+                        type="file"
+                        accept="image/*"
+                        style={{ display: 'none' }}
+                        onChange={handleFileUpload}
+                      />
+                      {uploadStatus === 'done' && uploadedImageUrl ? (
+                        <div className={styles.uploadPreviewWrap}>
+                          <img src={uploadedImageUrl} alt="Uploaded product" className={styles.uploadPreviewImg} />
+                          <button
+                            type="button"
+                            className={styles.reuploadBtn}
+                            onClick={() => { setUploadedImageUrl(''); setUploadStatus('idle'); fileInputRef.current?.click(); }}
+                          >
+                            <RefreshCw size={12} /> Change Photo
+                          </button>
+                        </div>
+                      ) : (
+                        <button
+                          type="button"
+                          className={styles.uploadTriggerBtn}
+                          onClick={() => fileInputRef.current?.click()}
+                          disabled={uploadStatus === 'uploading'}
+                        >
+                          {uploadStatus === 'uploading' ? (
+                            <><RefreshCw size={18} className={styles.spinIcon} /> Uploading to storage&hellip;</>
+                          ) : uploadStatus === 'error' ? (
+                            <><AlertCircle size={18} /> Upload failed &mdash; tap to retry</>
+                          ) : (
+                            <><ImageIcon size={18} /> Click to select product photo<br /><span style={{fontSize:'11px',opacity:.6}}>JPG · PNG · WEBP up to 8 MB</span></>
+                          )}
+                        </button>
+                      )}
                     </div>
                   ) : (
                     <div className={styles.customUrlInputRow}>
@@ -745,8 +838,12 @@ export default function AddSKUPage() {
                   <p className={styles.sectionHint}>✦ Each line becomes a bullet on the product detail page</p>
                 </div>
 
-                <button type="submit" className={styles.submitBtn}>
-                  Publish to InstaStyle Catalog
+                <button type="submit" className={styles.submitBtn} disabled={isSubmitting}>
+                  {isSubmitting ? (
+                    <><RefreshCw size={15} className={styles.spinIcon} style={{ marginRight: 8 }} /> Saving SKU&hellip;</>
+                  ) : (
+                    'Publish to InstaStyle Catalog'
+                  )}
                 </button>
               </form>
             </motion.div>
@@ -773,7 +870,11 @@ export default function AddSKUPage() {
                         discountedPrice && <span className={styles.badge}>On Sale</span>
                       )}
                       <img 
-                        src={activeImageTab === 'presets' ? selectedImagePreset : (customImageUrl || 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=600&h=800&fit=crop')} 
+                        src={
+                          activeImageTab === 'presets' ? selectedImagePreset
+                          : activeImageTab === 'upload' ? (uploadedImageUrl || 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=600&h=800&fit=crop')
+                          : (customImageUrl || 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=600&h=800&fit=crop')
+                        } 
                         alt={name || "Preview Product"} 
                         className={styles.image} 
                       />

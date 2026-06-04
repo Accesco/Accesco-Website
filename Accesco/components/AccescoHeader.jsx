@@ -144,7 +144,20 @@ export default function AccescoHeader() {
     { name: 'Partner as Delivery', href: '/partner/delivery', description: 'Earn flexible income' },
   ];
 
-  const forceScrolled = pathname.startsWith('/partner') || pathname.startsWith('/help') || pathname.startsWith('/blogs') || pathname === '/calculator';
+  const forceScrolled = (
+    pathname.startsWith('/partner') ||
+    pathname.startsWith('/blogs') ||
+    pathname.startsWith('/qtcvideos') ||
+    pathname.startsWith('/faq') ||
+    pathname.startsWith('/terms') ||
+    pathname.startsWith('/about') ||
+    pathname.startsWith('/investor-relations') ||
+    pathname.startsWith('/contact') ||
+    pathname.startsWith('/referral') ||
+    pathname.startsWith('/profile') ||
+    pathname.startsWith('/press') ||
+    pathname === '/calculator'
+  );
   const shouldBeScrolled = isScrolled || forceScrolled;
 
   return (

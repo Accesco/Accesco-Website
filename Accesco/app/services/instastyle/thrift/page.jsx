@@ -75,21 +75,54 @@ export default function ThriftMarketplace() {
   const [customThriftProducts, setCustomThriftProducts] = useState([]);
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      try {
-        const saved = localStorage.getItem('instastyle_custom_products');
-        if (saved) {
-          const parsed = JSON.parse(saved);
-          if (Array.isArray(parsed)) {
-            // Select custom products that are marked as thrift or have 'thrift' tag
-            const thrifts = parsed.filter(p => p.isThrift || (p.tags && p.tags.includes('thrift')));
-            setCustomThriftProducts(thrifts);
+    const loadThrifts = async () => {
+      // 1. Hydrate from localStorage for instant user experience
+      let localThrifts = [];
+      if (typeof window !== 'undefined') {
+        try {
+          const saved = localStorage.getItem('instastyle_custom_products');
+          if (saved) {
+            const parsed = JSON.parse(saved);
+            if (Array.isArray(parsed)) {
+              localThrifts = parsed.filter(p => p.isThrift || (p.tags && p.tags.includes('thrift')));
+              setCustomThriftProducts(localThrifts);
+            }
           }
+        } catch (error) {
+          console.error("Failed to load local thrifts:", error);
         }
-      } catch (error) {
-        console.error("Failed to load custom thrifts:", error);
       }
-    }
+
+      // 2. Fetch from Firebase Firestore for persistent storage
+      try {
+        const { db } = await import('@/lib/firebase');
+        const { collection, getDocs, query } = await import('firebase/firestore');
+        const q = query(collection(db, 'instastyle_products'));
+        const snapshot = await getDocs(q);
+        const fbThrifts = [];
+        snapshot.forEach((doc) => {
+          const data = doc.data();
+          if (data.isThrift || (data.tags && data.tags.includes('thrift'))) {
+            fbThrifts.push(data);
+          }
+        });
+
+        if (fbThrifts.length > 0) {
+          setCustomThriftProducts(() => {
+            const merged = [...localThrifts];
+            fbThrifts.forEach(ft => {
+              if (!merged.some(p => p.id === ft.id)) {
+                merged.push(ft);
+              }
+            });
+            return merged;
+          });
+        }
+      } catch (err) {
+        console.error("Failed to load thrifts from Firestore:", err);
+      }
+    };
+    loadThrifts();
   }, []);
 
   const combinedThrift = [
@@ -132,7 +165,12 @@ export default function ThriftMarketplace() {
   return (
     <div className={styles.page}>
       <header className={styles.hero}>
+        <div className={styles.heroOverlay} aria-hidden="true" />
         <div className={styles.heroContent}>
+          <div className={styles.heroBadge}>
+            <span className={styles.heroBadgeDot}></span>
+            Thrift Market
+          </div>
           <motion.h1 
             className={styles.heroTitle}
             initial={{ opacity: 0, y: 20 }}
@@ -162,6 +200,19 @@ export default function ThriftMarketplace() {
               Sell Your Old Clothes
             </Link>
           </motion.div>
+        </div>
+
+        {/* Floating portrait video card */}
+        <div className={styles.floatingVideoCard}>
+          <video
+            autoPlay
+            muted
+            loop
+            playsInline
+            aria-hidden="true"
+          >
+            <source src="/images/instastyle.mp4" type="video/mp4" />
+          </video>
         </div>
       </header>
 

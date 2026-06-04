@@ -88,7 +88,7 @@ export default function InstaStyleFooter() {
 
         {/* Bottom Bar */}
         <div className="bottom-bar">
-          <span className="copyright-text">© {currentYear} InstaStyle by Accesco Living. All rights reserved.</span>
+          <span className="copyright-text" suppressHydrationWarning>© {currentYear} InstaStyle by Accesco Living. All rights reserved.</span>
         </div>
         
       </div>

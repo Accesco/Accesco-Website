@@ -19,6 +19,17 @@ const pressReleases = [
     isFeatured: true,
   },
   {
+    id: 4,
+    title: 'Is Your Delivery App Fast Enough But Never Smart Enough?',
+    date: 'June 2, 2026',
+    category: 'Media Coverage',
+    excerpt: 'At 9pm you have no milk left. You open an app order it. It takes 10 minutes. Problem solved. However, there is something to be noted here...',
+    image: '/images/banners/hero-main.jpg',
+    readTime: '5 min read',
+    url: 'https://successsaga.com/is-your-delivery-app-fast-enough-but-never-smart-enough/',
+    logo: '/logos/successsaga.png',
+  },
+  {
     id: 1,
     title: 'Accesco Living Announces India\'s First Intelligent Circular Commerce Ecosystem',
     date: 'May 10, 2026',

@@ -91,7 +91,7 @@ export default function Footer() {
 
         {/* Bottom Bar */}
         <div className="bottom-bar">
-          <span className="copyright-text">© {currentYear} Accesco Living. All rights reserved.</span>
+          <span className="copyright-text" suppressHydrationWarning>© {currentYear} Accesco Living. All rights reserved.</span>
         </div>
         
       </div>

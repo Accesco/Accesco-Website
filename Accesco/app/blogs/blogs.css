@@ -244,6 +244,7 @@ header {
   max-width: 100%;
   margin: 0;
   padding: 0;
+  padding-top: 64px; /* Offset for fixed AccescoHeader (height: 64px) */
   overflow: hidden;
 }
 

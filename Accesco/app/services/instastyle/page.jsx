@@ -365,8 +365,6 @@ export default function InstaStyleLanding() {
               SwipeStyle
             </Link>
           </div>
-
-
         </div>
       </section>
 

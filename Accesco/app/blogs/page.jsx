@@ -19,6 +19,7 @@ export default function BlogsPage() {
   const [showWriter, setShowWriter] = useState(false);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
+  const [mounted, setMounted] = useState(false);
   const [bookmarkedPosts, setBookmarkedPosts] = useState([]);
 
   // Form states — matches Firestore field structure
@@ -27,12 +28,14 @@ export default function BlogsPage() {
   const [postCategory, setPostCategory] = useState('Business');
   const [postAuthor, setPostAuthor] = useState('');
   const [postImgUrl, setPostImgUrl] = useState('');
-  const [postDate, setPostDate] = useState(() => new Date().toISOString().split('T')[0]);
+  const [postDate, setPostDate] = useState('');
   const [publishing, setPublishing] = useState(false);
   const [uploadingImage, setUploadingImage] = useState(false);
 
   // ── Load blogs from Firestore on mount ──────────────────────────────────────
   useEffect(() => {
+    setMounted(true);
+    setPostDate(new Date().toISOString().split('T')[0]);
     loadBlogs();
     loadBookmarks();
   }, [user]);
@@ -357,11 +360,15 @@ export default function BlogsPage() {
         <div className="archive-header">
           <div>
             <h2 id="activeCategory">{searchQuery ? 'Search Results' : activeCategory === 'All' ? 'Latest Stories' : activeCategory}</h2>
-            <p className="archive-subtitle">
-              {searchQuery ? `Found ${filteredPosts.length} results for "${searchQuery}"` : 'Discover insights and stories from our community'}
+            <p className="archive-subtitle" suppressHydrationWarning>
+              {mounted
+                ? (searchQuery ? `Found ${filteredPosts.length} results for "${searchQuery}"` : 'Discover insights and stories from our community')
+                : 'Discover insights and stories from our community'}
             </p>
           </div>
-          <span className="count">{filteredPosts.length} {filteredPosts.length === 1 ? 'Story' : 'Stories'}</span>
+          <span className="count" suppressHydrationWarning>
+            {mounted ? `${filteredPosts.length} ${filteredPosts.length === 1 ? 'Story' : 'Stories'}` : 'Stories'}
+          </span>
         </div>
 
         {filteredPosts.length === 0 ? (
