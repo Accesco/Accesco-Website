@@ -634,13 +634,29 @@ a {
   gap: 24px;
   flex-wrap: wrap;
 }
-
 .certification-card {
   width: 240px;
   padding: 26px;
   border-radius: 26px;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: #ffffff;
+  border: 1px solid #e7ded5;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+}
+
+.certification-box {
+  margin-top: 46px;
+  padding: 36px;
+  border-radius: 32px;
+  background: transparent;
+  color: #171717;
+  text-align: center;
+}
+
+.certification-box h3 {
+  margin: 0 0 26px;
+  font-size: 30px;
+  letter-spacing: -0.035em;
+  color: #171717;
 }
 
 .certification-card img {
@@ -682,8 +698,10 @@ a {
   gap: 28px;
   padding: 34px;
   border-radius: 32px;
-  background: linear-gradient(135deg, #1e1510, #2a1d16);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+
+  background: #000000; /* pure black */
+
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .dpiit-card img {
