@@ -934,10 +934,11 @@ a {
 .media-heading {
   margin-top: 34px;
   margin-bottom: 18px;
-  color: #555;
-  font-size: 16px;
-  font-weight: 800;
-  letter-spacing: 0.2em;
+  color: #111827;
+  font-family: "Helvetica Neue", Arial, sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
 }
   .media-logo img[alt="Hindustan Metro"] {
