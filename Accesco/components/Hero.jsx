@@ -39,20 +39,16 @@ export default function Hero() {
           width: 100%;
           height: 100%;
           object-fit: cover;
-          opacity: 0.85;
+          opacity: 1;
           z-index: 0;
+            filter: brightness(1.45);
         }
 
         .hero::after {
           content: '';
           position: absolute;
           inset: 0;
-          background: linear-gradient(
-            to bottom,
-            rgba(0,0,0,0.15) 0%,
-            rgba(0,0,0,0.25) 50%,
-            rgba(0,0,0,0.6) 100%
-          );
+     background: rgba(0, 0, 0, 0.12);
           z-index: 1;
         }
 
@@ -144,33 +140,48 @@ export default function Hero() {
           box-shadow: 0 18px 50px rgba(255,255,255,0.4);
         }
 
-        .hero-app-buttons {
-          display: flex;
-          gap: 16px;
-          justify-content: center;
-          align-items: center;
-          flex-wrap: wrap;
-          margin-top: 10px;
-        }
+.hero-app-buttons {
+  display: flex;
+  gap: 22px;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-top: 16px;
+}
 
-        .app-btn-link {
-          display: inline-block;
-          transition: transform 0.2s ease;
-        }
+.hero-app-buttons {
+  display: flex;
+  gap: 18px;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-top: 16px;
+}
 
-        .app-btn-link img {
-          height: clamp(36px, 6vw, 48px);
-          width: auto;
-          display: block;
-          border-radius: 0 !important;
-          border: none !important;
-          box-shadow: none !important;
-          background: transparent !important;
-        }
+.app-btn-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  border-radius: 12px;
+  background: #fff;
+  border: 1px solid rgba(255,255,255,0.55);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.22);
+  transition: all 0.3s ease;
+}
 
-        .app-btn-link:hover {
-          transform: none;
-        }
+.app-btn-link img {
+  height: clamp(44px, 6.5vw, 56px);
+  width: auto;
+  display: block;
+  border-radius: 8px !important;
+  background: transparent !important;
+}
+
+.app-btn-link:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 14px 34px rgba(0,0,0,0.32);
+}
 
         .scroll-down-btn {
           display: flex;
@@ -261,9 +272,15 @@ export default function Hero() {
             font-size: 14px;
             margin-top: 5px;
           }
-          .app-btn-link img { 
-            height: 32px;
-          }
+         .app-btn-link {
+  border-radius: 12px;
+  padding: 2px;
+}
+
+.app-btn-link img { 
+  height: 38px;
+  border-radius: 10px !important;
+}
           .hero-app-buttons {
             margin-top: 5px;
           }
@@ -279,7 +296,7 @@ export default function Hero() {
         playsInline 
         preload="auto"
       >
-        <source src="/images/start.mp4" type="video/mp4" />
+        <source src="/images/start.MP4" type="video/mp4" />
         Your browser does not support the video tag.
       </video>
 
