@@ -1,22 +1,30 @@
+
 from gradio_client import Client, handle_file
-import httpx
+import sys
 import shutil
 import os
 
-HF_TOKEN = ""       #hugging Face API Key #model: IDM-VTON
+# Read token from environment variable (set HF_TOKEN in .env.local)
+HF_TOKEN = os.environ.get("HF_TOKEN", "")
 
-print("Connecting...")
+person_path = sys.argv[1]
+shirt_path  = sys.argv[2]
+output_path = sys.argv[3]
+
 client = Client(
     "yisol/IDM-VTON",
-    headers={"Authorization": f"Bearer {HF_TOKEN}"},
-    httpx_kwargs={"timeout": 300}  # 5 minutes timeout
+    headers={"Authorization": f"Bearer {HF_TOKEN}"} if HF_TOKEN else {},
+    httpx_kwargs={"timeout": 300}
 )
 
-print("Running try-on... (60-90 seconds)")
 result = client.predict(
-    dict={"background": handle_file("person.jpg"), "layers": [], "composite": None},
-    garm_img=handle_file("shirt.jpg"),
-    garment_des="red casual t-shirt",
+    dict={
+        "background": handle_file(person_path),
+        "layers": [],
+        "composite": None
+    },
+    garm_img=handle_file(shirt_path),
+    garment_des="try on",
     is_checked=True,
     is_checked_crop=False,
     denoise_steps=30,
@@ -24,9 +32,5 @@ result = client.predict(
     api_name="/tryon"
 )
 
-print(f"Result: {result}")
-shutil.copy(result[0], "tryon_result.jpg")
-print("Saved: tryon_result.jpg")
-
-from PIL import Image
-Image.open("tryon_result.jpg").show()
+shutil.copy(result[0], output_path)
+print(output_path)
