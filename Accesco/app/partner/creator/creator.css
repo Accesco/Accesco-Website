@@ -1,4 +1,4 @@
-/* ===== ACCESCO CREATOR PARTNERSHIP STYLES ===== */
+﻿/* ===== ACCESCO CREATOR PARTNERSHIP STYLES ===== */
 
 :root {
   --brand-primary: #7A0042;
@@ -211,7 +211,7 @@
 }
 
 .cta-primary:hover {
-  transform: translateY(-2px);
+  transform: translateY(0);
   box-shadow: 0 15px 40px rgba(200, 150, 62, 0.4);
 }
 
@@ -224,7 +224,7 @@
 
 .cta-secondary:hover {
   background: rgba(255, 255, 255, 0.15);
-  transform: translateY(-2px);
+  transform: translateY(0);
 }
 
 @keyframes fadeInUp {
@@ -318,7 +318,7 @@
 }
 
 .benefit-card:hover {
-  transform: translateY(-8px);
+  transform: translateY(0);
   box-shadow: 0 20px 45px rgba(122, 0, 66, 0.08);
   border-color: rgba(122, 0, 66, 0.12);
 }
@@ -410,7 +410,7 @@
 
 .step-card:hover {
   border-color: var(--brand-primary);
-  transform: translateY(-4px);
+  transform: translateY(0);
   box-shadow: 0 10px 30px rgba(122, 0, 66, 0.05);
 }
 
@@ -649,7 +649,7 @@
 }
 
 .submit-button:hover:not(:disabled) {
-  transform: translateY(-2px);
+  transform: translateY(0);
   box-shadow: 0 15px 40px rgba(122, 0, 66, 0.35);
 }
 

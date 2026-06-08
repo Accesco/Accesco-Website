@@ -110,9 +110,6 @@ export default function PartnerAsCreator() {
             <div className="hero-cta">
               <button className="cta-primary" onClick={() => document.getElementById('application-form').scrollIntoView({ behavior: 'smooth' })}>
                 Start Your Journey
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                  <path d="M7.5 15L12.5 10L7.5 5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
               </button>
               
             </div>
@@ -192,7 +189,6 @@ export default function PartnerAsCreator() {
                 <h3>Apply & Get Verified</h3>
                 <p>Fill out the application form and our team will review your profile within 48 hours</p>
               </div>
-              <div className="step-arrow">→</div>
             </div>
 
             <div className="step-card">
@@ -201,7 +197,6 @@ export default function PartnerAsCreator() {
                 <h3>Create Content</h3>
                 <p>Start creating amazing content and collaborate with top brands on our platform</p>
               </div>
-              <div className="step-arrow">→</div>
             </div>
 
             <div className="step-card">
@@ -406,9 +401,6 @@ export default function PartnerAsCreator() {
                 ) : (
                   <>
                     Submit Application
-                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                      <path d="M7.5 15L12.5 10L7.5 5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    </svg>
                   </>
                 )}
               </button>

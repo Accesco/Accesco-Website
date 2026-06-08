@@ -1,4 +1,4 @@
-:root {
+﻿:root {
     --brand-color: #7A0042;
     --brand-hover: #55002D;
     --accent-soft: #FFF5F7;
@@ -178,7 +178,7 @@ button {
 
 button:hover:not(:disabled) {
     background-color: var(--brand-hover);
-    transform: translateY(-2px);
+    transform: translateY(0);
     box-shadow: 0 15px 25px rgba(112, 4, 87, 0.2);
 }
 
@@ -273,7 +273,7 @@ button:disabled {
 
 .partner-dropdown-btn:hover {
     background: var(--brand-hover);
-    transform: translateY(-2px);
+    transform: translateY(0);
 }
 
 .partner-dropdown-menu {
@@ -291,7 +291,7 @@ button:disabled {
 @keyframes dropdownFade {
     from {
         opacity: 0;
-        transform: translateY(-10px);
+        transform: translateY(0);
     }
     to {
         opacity: 1;

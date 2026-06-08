@@ -113,9 +113,6 @@ export default function PartnerAsDelivery() {
             <div className="delivery-hero-cta">
               <button className="delivery-cta-primary" onClick={() => document.getElementById('delivery-application-form').scrollIntoView({ behavior: 'smooth' })}>
                 Start Earning Today
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                  <path d="M7.5 15L12.5 10L7.5 5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
               </button>
             </div>
           </div>
@@ -195,7 +192,6 @@ export default function PartnerAsDelivery() {
                 <h3>Apply & Get Verified</h3>
                 <p>Fill out the application form and our team will verify your documents within 24-48 hours</p>
               </div>
-              <div className="delivery-step-arrow">→</div>
             </div>
 
             <div className="delivery-step-card">
@@ -204,7 +200,6 @@ export default function PartnerAsDelivery() {
                 <h3>Start Delivering</h3>
                 <p>Download the app, go online, and start accepting delivery orders in your area</p>
               </div>
-              <div className="delivery-step-arrow">→</div>
             </div>
 
             <div className="delivery-step-card">
@@ -508,9 +503,6 @@ export default function PartnerAsDelivery() {
                 ) : (
                   <>
                     Submit Application
-                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                      <path d="M7.5 15L12.5 10L7.5 5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    </svg>
                   </>
                 )}
               </button>

@@ -209,7 +209,7 @@
 }
 
 .delivery-cta-primary:hover {
-  transform: translateY(-2px);
+  transform: translateY(0);
   box-shadow: 0 15px 40px rgba(200, 150, 62, 0.4);
 }
 
@@ -304,7 +304,7 @@
 }
 
 .delivery-benefit-card:hover {
-  transform: translateY(-8px);
+  transform: translateY(0);
   box-shadow: 0 20px 45px rgba(122, 0, 66, 0.08);
   border-color: rgba(122, 0, 66, 0.12);
 }
@@ -396,7 +396,7 @@
 
 .delivery-step-card:hover {
   border-color: var(--delivery-primary);
-  transform: translateY(-4px);
+  transform: translateY(0);
   box-shadow: 0 10px 30px rgba(10, 138, 92, 0.05);
 }
 
@@ -466,7 +466,7 @@
 }
 
 .delivery-extra-benefit-card:hover {
-  transform: translateY(-4px);
+  transform: translateY(0);
   border-color: var(--delivery-primary);
   background: white;
   box-shadow: 0 10px 30px rgba(10, 138, 92, 0.08);
@@ -519,7 +519,7 @@
 }
 
 .delivery-requirement-card:hover {
-  transform: translateY(-4px);
+  transform: translateY(0);
   box-shadow: 0 15px 40px rgba(26, 10, 15, 0.08);
 }
 
@@ -558,7 +558,7 @@
 }
 
 .delivery-requirement-card li:before {
-  content: "✓";
+  content: "\2713";
   color: var(--delivery-primary);
   font-weight: 800;
   margin-right: 10px;
@@ -753,7 +753,7 @@
 }
 
 .delivery-submit-button:hover:not(:disabled) {
-  transform: translateY(-2px);
+  transform: translateY(0);
   box-shadow: 0 15px 40px rgba(10, 138, 92, 0.35);
 }
 

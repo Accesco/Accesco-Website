@@ -169,7 +169,7 @@ export default function Hero() {
         }
 
         .app-btn-link:hover {
-          transform: translateY(-2px);
+          transform: none;
         }
 
         .scroll-down-btn {
@@ -300,7 +300,7 @@ export default function Hero() {
         </div>
 
         <div className="hero-sub">
-          Delivering Groceries, Food, Fashion, and Financial Intelligence — all under one unified platform
+          Delivering Groceries, Food, and Fashion under one unified platform
         </div>
 
         <a href="#waitlist" className="join-waitlist-btn">JOIN WAITLIST</a>
