@@ -104,7 +104,7 @@ export default function LocationModal({ isOpen, onClose, onLocationSelect }) {
         </div>
 
         <button onClick={detectLocation} className={styles.detectBtn} disabled={loading}>
-          📍 Detect my Location
+          Detect my location
         </button>
 
         <form onSubmit={handleManualSubmit} className={styles.manualForm}>

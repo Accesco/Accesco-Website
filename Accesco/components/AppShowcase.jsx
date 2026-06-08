@@ -156,7 +156,7 @@ export default function AppShowcase() {
   }, []);
 
   return (
-    <section id="app-showcase" style={{ padding: '64px 20px', background: '#FFFDF8', position: 'relative' }}>
+    <section id="waitlist" style={{ padding: '64px 20px', background: '#FFFDF8', position: 'relative' }}>
       {/* Waitlist Section Header */}
       <div style={{ maxWidth: '1200px', margin: '0 auto 40px', padding: '0', textAlign: 'center' }}>
 

@@ -42,12 +42,15 @@ export default function BlogsPage() {
 
   async function loadBlogs() {
     setLoading(true);
+    const minTimer = new Promise((resolve) => setTimeout(resolve, 2500));
     try {
-      const data = await fetchBlogs();
+      const fetchPromise = fetchBlogs();
+      const [data] = await Promise.all([fetchPromise, minTimer]);
       setPosts(data);
       setFilteredPosts(data);
     } catch (err) {
       console.error('Failed to load blogs:', err);
+      await minTimer;
     } finally {
       setLoading(false);
     }
@@ -303,7 +306,7 @@ export default function BlogsPage() {
         <div id="loadingScreen" className="loading-screen">
           <div className="loader-video-wrap">
             <video autoPlay muted loop playsInline>
-              <source src="/images/loading.mp4" type="video/mp4" />
+              <source src="/images/blog-video-animation.MP4" type="video/mp4" />
             </video>
           </div>
           <span className="loader-text">Curating Collection...</span>
@@ -317,7 +320,7 @@ export default function BlogsPage() {
       <div className="hero-canvas">
         <section className="hero-viewport">
           <video className="blog-hero-video" autoPlay muted loop playsInline poster="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072&auto=format&fit=crop">
-            <source src="/uploads/blogherovideo.MP4" type="video/mp4" />
+            <source src="/uploads/blogs/bloghero.MP4" type="video/mp4" />
           </video>
           <div className="hero-shimmer-overlay"></div>
           <div className="hero-text-box">

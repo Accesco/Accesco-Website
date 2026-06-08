@@ -328,13 +328,14 @@ export default function AccescoHeader() {
                     </div>
                     
                     <button 
-                      className={styles.detectLocationBtn} // Style this button in your CSS
+                      type="button"
+                      className={styles.detectLocationBtn}
                       onClick={() => {
                         setIsLocationOpen(false);
                         setIsLocationModalOpen(true);
                       }}
                     >
-                      📍 Detect my Location
+                      Detect my location
                     </button>
 
                     <div className={styles.locationList}>
