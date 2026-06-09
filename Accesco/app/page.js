@@ -258,8 +258,8 @@ const softwareApplicationSchema = {
 
         {/* ── Waitlist / App Showcase ── */}
         <AppShowcase />
-      </main>
 
+</main>
       <Footer />
 
       {isClient && (
@@ -274,6 +274,7 @@ const softwareApplicationSchema = {
 
       {/* ── Combined & Optimized Styles ── */}
             <style dangerouslySetInnerHTML={{ __html: `
+            
         .services-container-wrapper {
           position: relative;
           width: 100%;
@@ -476,7 +477,7 @@ const softwareApplicationSchema = {
         }
 
         /* xpense-card hover interactions removed */
-      ` }} />
+      `} } />
       </>
   );
 }

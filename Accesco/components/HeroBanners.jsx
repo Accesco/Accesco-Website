@@ -566,18 +566,25 @@ export function AccescoHero() {
         overflow: 'hidden',
       }}
     >
-      <img
-        src="/images/banners/hero-main.jpg"
-        alt="Accesco Living"
-        style={{
-          position: 'absolute',
-          inset: 0,
-          width: '100%',
-          height: '100%',
-          objectFit: 'cover',
-          objectPosition: 'center 20%',
-        }}
-      />
+      <picture>
+        <source
+          media="(max-width: 768px)"
+          srcSet="/images/banners/join-mobile.jpg"
+        />
+
+        <img
+          src="/images/banners/join-desktop.jpg"
+          alt="Accesco Living"
+          style={{
+            position: 'absolute',
+            inset: 0,
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
+            objectPosition: 'center 10%',
+          }}
+        />
+      </picture>
     </section>
   );
 }
