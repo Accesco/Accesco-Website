@@ -28,7 +28,7 @@ export default function Footer() {
             </Link>
             
             <p className="brand-desc">
-              India's first intelligent circular commerce ecosystem. Delivering Groceries, Food, Fashion, and Financial Intelligence — all under one unified platform.
+              India's first intelligent circular commerce ecosystem. Delivering Groceries, Food, and Fashion under one unified platform.
             </p>
             
             <div className="social-row">
