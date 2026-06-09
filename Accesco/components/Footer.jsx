@@ -64,7 +64,7 @@ export default function Footer() {
             <div className="link-group">
               <h4 className="col-title">COMPANY</h4>
               <Link href="/about" className="link-item">About Us</Link>
-              <Link href="/qtcvideos" className="link-item">QTC Videos</Link>
+              <Link href="/accesco-library" className="link-item">Accesco Library</Link>
               <Link href="/press" className="link-item">Press & Media</Link>
               <Link href="/blogs" className="link-item">Blogs</Link>
               <Link href="/terms" className="link-item">Terms of Service</Link>
