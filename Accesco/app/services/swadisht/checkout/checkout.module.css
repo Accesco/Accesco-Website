@@ -881,3 +881,133 @@
     font-size: 12px;
   }
 }
+/* Delivery Speed Selection */
+.deliverySpeedBox {
+  background: #1c0d15; /* Dark maroon-black background matching Swadishtt */
+  border-radius: 8px;
+  padding: 24px;
+  color: #fff;
+  margin: 24px 0;
+  font-family: inherit;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  border: 1px solid rgba(122, 0, 66, 0.15);
+}
+
+.speedHeading {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0;
+  color: #fbbf24; /* Yellow/Gold */
+  text-align: center;
+  line-height: 1.3;
+}
+
+.speedSubheading {
+  font-size: 13px;
+  color: #d1c5cb;
+  margin: 6px 0 20px;
+  text-align: center;
+}
+
+.speedOptions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.speedOption {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-radius: 8px;
+  border: 2px solid #3d2230;
+  background: #2b1421;
+  cursor: pointer;
+  transition: all 0.22s ease;
+}
+
+.speedOptionActive {
+  border-color: #f59e0b !important; /* Yellow border for patience */
+  background: #35251d !important;
+}
+
+.speedOptionInstantActive {
+  border-color: #7a0042 !important; /* Maroon border for instant */
+  background: #381226 !important;
+}
+
+.speedOptionLeft {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.speedIcon {
+  font-size: 20px;
+}
+
+.speedInfo {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+}
+
+.speedTitle {
+  font-size: 15px;
+  font-weight: 600;
+  color: #fff;
+}
+
+.speedDesc {
+  font-size: 12px;
+  color: #d1c5cb;
+  margin-top: 3px;
+}
+
+.speedOffText {
+  font-size: 13px;
+  color: #d1c5cb;
+  font-weight: 700;
+}
+
+.saveBadge {
+  background: #f59e0b;
+  color: #000;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 4px;
+  text-transform: uppercase;
+}
+
+.speedFooter {
+  font-size: 12px;
+  color: #d1c5cb;
+  text-align: center;
+  margin: 18px 0 10px;
+}
+
+.speedTagline {
+  font-size: 15px;
+  font-weight: 600;
+  text-align: center;
+  color: #fff;
+  margin: 0;
+}
+
+.speedTagline span {
+  color: #fbbf24;
+}
+
+@media (max-width: 768px) {
+  .speedOption {
+    padding: 12px 14px;
+  }
+  .speedTitle {
+    font-size: 13px;
+  }
+  .speedDesc {
+    font-size: 11px;
+  }
+}

@@ -58,8 +58,7 @@ export default function BottomNav() {
         break;
         
       case 'showAccount':
-        // Show account/profile options (placeholder for now)
-        alert('Account section - Coming soon!\n\nFeatures:\n• View Profile\n• Order History\n• Saved Addresses\n• Payment Methods\n• Settings');
+        window.location.href = '/services/grokly/profile';
         break;
         
       default:

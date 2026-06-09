@@ -534,6 +534,54 @@ export const products = [
     image: 'https://cdn.grofers.com/cdn-cgi/image/f=auto,fit=scale-down,q=70,metadata=none,w=270/app/images/products/sliding_image/483672a.jpg',
     inStock: true, rating: 4.4, reviews: 1230
   },
+  {
+    id: 'gym-001', name: 'Yoga Bar 26g Protein Milk Shake - Chocolate', brand: 'Yogabar', category: 'organic-healthy',
+    price: 98, mrp: 131, discount: 25, unit: '250 ml', deliveryTime: '11 MINS',
+    image: 'https://images.unsplash.com/photo-1553530979-7ee52a2670c4?w=270&h=270&fit=crop',
+    inStock: true, tags: ['Premium'], rating: 4.6, reviews: 320
+  },
+  {
+    id: 'gym-002', name: 'Yogabar 10 grams Protein Bars - Blueberry Blast', brand: 'Yogabar', category: 'organic-healthy',
+    price: 44, mrp: 65, discount: 32, unit: '50 g', deliveryTime: '11 MINS',
+    image: 'https://images.unsplash.com/photo-1568254183919-78a4f43a2877?w=270&h=270&fit=crop',
+    inStock: true, rating: 4.4, reviews: 150
+  },
+  {
+    id: 'gym-003', name: 'Yogabar Multigrain Energy Bars - Chocolate Chunk', brand: 'Yogabar', category: 'organic-healthy',
+    price: 30, mrp: 45, discount: 33, unit: '35 g', deliveryTime: '11 MINS',
+    image: 'https://images.unsplash.com/photo-1568254183919-78a4f43a2877?w=270&h=270&fit=crop',
+    inStock: true, rating: 4.3, reviews: 110
+  },
+  {
+    id: 'gym-004', name: 'RiteBite Max Protein Barbeque - Multigrain', brand: 'RiteBite', category: 'organic-healthy',
+    price: 42, mrp: 45, discount: 6, unit: '60 g', deliveryTime: '11 MINS',
+    image: 'https://images.unsplash.com/photo-1568254183919-78a4f43a2877?w=270&h=270&fit=crop',
+    inStock: true, rating: 4.1, reviews: 90
+  },
+  {
+    id: 'gym-005', name: 'GNC Pro Performance Complete Whey Protein Powder', brand: 'GNC', category: 'organic-healthy',
+    price: 4527, mrp: 5689, discount: 20, unit: '1.81 kg', deliveryTime: '11 MINS',
+    image: 'https://images.unsplash.com/photo-1579758629938-03607ccdbaba?w=270&h=270&fit=crop',
+    inStock: true, tags: ['Premium', 'Bestseller'], rating: 4.7, reviews: 880
+  },
+  {
+    id: 'gym-006', name: 'Oziva Bioactive Plant Protein - Vanilla', brand: 'Oziva', category: 'organic-healthy',
+    price: 1559, mrp: 2799, discount: 44, unit: '1 kg', deliveryTime: '11 MINS',
+    image: 'https://images.unsplash.com/photo-1593095948071-474c5cc2989d?w=270&h=270&fit=crop',
+    inStock: true, rating: 4.5, reviews: 460
+  },
+  {
+    id: 'gym-007', name: 'Yoga Bar Power Up 20g - Coffee Crush', brand: 'Yogabar', category: 'organic-healthy',
+    price: 94, mrp: 125, discount: 24, unit: '70 g', deliveryTime: '11 MINS',
+    image: 'https://images.unsplash.com/photo-1568254183919-78a4f43a2877?w=270&h=270&fit=crop',
+    inStock: true, rating: 4.4, reviews: 180
+  },
+  {
+    id: 'gym-008', name: 'Yoga Bar Protein Minis - Choco Peanut Butter', brand: 'Yogabar', category: 'organic-healthy',
+    price: 121, mrp: 175, discount: 30, unit: '7 x 20 g', deliveryTime: '11 MINS',
+    image: 'https://images.unsplash.com/photo-1568254183919-78a4f43a2877?w=270&h=270&fit=crop',
+    inStock: true, rating: 4.5, reviews: 220
+  },
 ];
 
 // Helper functions

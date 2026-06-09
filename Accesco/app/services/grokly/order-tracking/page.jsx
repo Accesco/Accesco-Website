@@ -53,7 +53,7 @@ function GroklyTrackingContent() {
               className={`${styles.step} ${index <= currentStepIndex ? styles.active : ''} ${index === currentStepIndex ? styles.current : ''}`}
             >
               <div className={styles.stepDot}>
-                {index < currentStepIndex ? '✓' : index + 1}
+                {index < currentStepIndex ? <i className="ri-check-line" style={{ fontSize: '14px' }}></i> : index + 1}
               </div>
               <div className={styles.stepLabel}>{step.label}</div>
               {index < steps.length - 1 && <div className={styles.stepLine} />}

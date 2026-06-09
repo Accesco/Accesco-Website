@@ -31,6 +31,7 @@ function CheckoutContent() {
     pincode: ''
   });
   const [paymentMethod, setPaymentMethod] = useState('');
+  const [deliverySpeed, setDeliverySpeed] = useState('instant');
   const [orderPlaced, setOrderPlaced] = useState(false);
   const [lastOrderId, setLastOrderId] = useState('');
 
@@ -92,7 +93,8 @@ function CheckoutContent() {
   const deliveryFee = subtotal >= 300 ? 0 : 40;
   const platformFee = 5;
   const gst = Math.round(subtotal * 0.05);
-  const total = subtotal + deliveryFee + platformFee + gst;
+  const discount = deliverySpeed === 'batched' ? 20 : 0;
+  const total = Math.max(0, subtotal + deliveryFee + platformFee + gst - discount);
 
   const persistOrder = (nextOrder) => {
     if (typeof window === 'undefined') return;
@@ -278,6 +280,47 @@ function CheckoutContent() {
               </div>
             )}
 
+            {/* Step 1.5: Delivery Speed Selector */}
+            {step === 1 && (
+              <section className={styles.deliverySpeedBox}>
+                <h3 className={styles.speedHeading}>Would you wait 15 minutes to save ₹20?</h3>
+                <p className={styles.speedSubheading}>A checkout toggle quick-commerce apps are missing</p>
+                
+                <div className={styles.speedOptions}>
+                  <div 
+                    className={`${styles.speedOption} ${deliverySpeed === 'instant' ? styles.speedOptionInstantActive : ''}`}
+                    onClick={() => setDeliverySpeed('instant')}
+                  >
+                    <div className={styles.speedOptionLeft}>
+                      <span className={styles.speedIcon}>⚡</span>
+                      <div className={styles.speedInfo}>
+                        <span className={styles.speedTitle}>Get it in 10 min</span>
+                        <span className={styles.speedDesc}>Standard — a rider just for you</span>
+                      </div>
+                    </div>
+                    <span className={styles.speedOffText}>₹0 off</span>
+                  </div>
+
+                  <div 
+                    className={`${styles.speedOption} ${deliverySpeed === 'batched' ? styles.speedOptionActive : ''}`}
+                    onClick={() => setDeliverySpeed('batched')}
+                  >
+                    <div className={styles.speedOptionLeft}>
+                      <span className={styles.speedIcon}>🕒</span>
+                      <div className={styles.speedInfo}>
+                        <span className={styles.speedTitle}>I can wait · ~25 min</span>
+                        <span className={styles.speedDesc}>We'll batch you with a nearby order</span>
+                      </div>
+                    </div>
+                    <span className={styles.saveBadge}>SAVE ₹20</span>
+                  </div>
+                </div>
+
+                <p className={styles.speedFooter}>One rider · two nearby orders · lower cost for everyone</p>
+                <h4 className={styles.speedTagline}>Speed is a feature. So is <span>patience.</span></h4>
+              </section>
+            )}
+
             {/* Step 2: Payment */}
             {step === 2 && (
               <div className={styles.stepContent}>
@@ -393,6 +436,12 @@ function CheckoutContent() {
                 <span>GST</span>
                 <span>₹{gst}</span>
               </div>
+              {deliverySpeed === 'batched' && (
+                <div className={styles.summaryRow} style={{ color: '#059669', fontWeight: 'bold' }}>
+                  <span>Delivery Discount (Batched)</span>
+                  <span>-₹20</span>
+                </div>
+              )}
 
               <div className={styles.summaryDivider}></div>
 

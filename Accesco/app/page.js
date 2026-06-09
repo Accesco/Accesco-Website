@@ -60,12 +60,12 @@ const softwareApplicationSchema = {
 
               <h2 style={{
                 fontFamily: "'Sora', sans-serif",
-                fontWeight: 800, fontSize: 'clamp(2rem, 4vw, 3rem)',
-                color: '#1A0A0F', letterSpacing: '-0.03em',
-                margin: '0 0 16px', lineHeight: 1.12,
+                fontWeight: 900, fontSize: 'clamp(1.85rem, 3.8vw, 2.9rem)',
+                color: '#1A0A0F', letterSpacing: '-0.04em',
+                margin: '0 0 16px', lineHeight: 1.1,
               }}>
                 India solved delivery in 10 minutes.<br />
-                <span className="ac-gradient-text">Nobody solved the household in 10 years.</span>
+                <span style={{ color: '#7A0042', fontStyle: 'italic' }}>Nobody solved the household in 10 years.</span>
               </h2>
               <p style={{
                 fontFamily: "'DM Sans', sans-serif",
@@ -347,23 +347,21 @@ const softwareApplicationSchema = {
           display: none;
         }
 
+        /* ── Mobile: show all 3 cards simultaneously, no scroll ── */
         @media (max-width: 960px) {
           .services-container-wrapper {
-            overflow: visible;
+            overflow: visible !important;
           }
 
           .services-grid {
-            display: flex;
-            overflow-x: auto;
-            scroll-snap-type: x mandatory;
-            padding: 0 20px;
-            gap: 16px;
-            scrollbar-width: none;
-            scroll-behavior: smooth;
-          }
-
-          .services-grid::-webkit-scrollbar {
-            display: none;
+            display: grid !important;
+            grid-template-columns: repeat(3, 1fr) !important;
+            gap: 8px !important;
+            width: 100% !important;
+            overflow: visible !important;
+            scroll-snap-type: none !important;
+            padding-bottom: 0 !important;
+            margin: 0 !important;
           }
 
           .services-grid > a {
@@ -374,6 +372,13 @@ const softwareApplicationSchema = {
             scroll-snap-stop: always;
             padding: 0;
             box-sizing: border-box;
+          }
+
+          .services-grid > div {
+            width: 100% !important;
+            min-width: 0 !important;
+            max-width: none !important;
+            flex-shrink: 0 !important;
           }
 
           .servicesArrow {
@@ -404,6 +409,38 @@ const softwareApplicationSchema = {
             right: -6px;
           }
 
+          .service-card-visual {
+            height: 120px !important;
+          }
+
+          .service-card-body {
+            padding: 10px 10px 14px !important;
+          }
+
+          .service-card-name {
+            font-size: 0.9rem !important;
+            margin-bottom: 4px !important;
+          }
+
+          .service-card-desc {
+            font-size: 0.7rem !important;
+            line-height: 1.3 !important;
+          }
+
+          .service-card-cta {
+            padding: 9px 6px !important;
+            font-size: 0.65rem !important;
+            border-radius: 8px !important;
+          }
+
+          .service-icon-circle {
+            width: 40px !important;
+            height: 40px !important;
+            top: 100px !important;
+            right: 8px !important;
+            padding: 6px !important;
+          }
+
           .xpense-box-container {
             grid-template-columns: 1fr !important;
             padding: 48px 20px !important;
@@ -427,6 +464,49 @@ const softwareApplicationSchema = {
             margin: 0 auto !important;
             width: 100% !important;
             max-width: 280px !important;
+          }
+        }
+
+        @media (max-width: 480px) {
+          .services-grid {
+            gap: 6px !important;
+            display: grid !important;
+            grid-template-columns: repeat(3, 1fr) !important;
+            overflow: visible !important;
+            scroll-snap-type: none !important;
+            padding-bottom: 0 !important;
+            margin: 0 !important;
+          }
+          .services-grid > div {
+            width: 100% !important;
+            min-width: 0 !important;
+            max-width: none !important;
+            flex-shrink: 0 !important;
+          }
+          .service-card-visual {
+            height: 85px !important;
+          }
+          .service-card-body {
+            padding: 6px 6px 8px !important;
+          }
+          .service-card-name {
+            font-size: 0.72rem !important;
+            margin-bottom: 2px !important;
+          }
+          .service-card-desc {
+            display: none !important;
+          }
+          .service-card-cta {
+            padding: 6px 2px !important;
+            font-size: 0.55rem !important;
+            border-radius: 6px !important;
+          }
+          .service-icon-circle {
+            width: 26px !important;
+            height: 26px !important;
+            top: 72px !important;
+            right: 4px !important;
+            padding: 3px !important;
           }
         }
 

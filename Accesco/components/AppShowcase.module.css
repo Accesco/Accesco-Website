@@ -1,15 +1,11 @@
-/* ── Waitlist premium skin ── */
 .waitlistContainer {
-  max-width: 1200px;
+  max-width: 580px;
   margin: 0 auto;
-  display: grid;
-  grid-template-columns: 0.85fr 1.15fr;
-  gap: 80px;
-  align-items: center;
+  display: block;
 }
 
 .waitlistInfo {
-  max-width: 540px;
+  display: none;
 }
 
 .waitlistTitle {
@@ -45,17 +41,20 @@
 }
 
 .waitlistPosterWrap {
-  margin-bottom: 40px;
+  flex: 1;
   border-radius: 24px;
   overflow: hidden;
   box-shadow: 0 30px 60px rgba(26, 10, 15, 0.15);
   border: 1px solid rgba(122, 0, 66, 0.1);
+  min-height: 400px;
 }
 
 .waitlistPosterImg {
   width: 100%;
-  height: auto;
+  height: 100%;
   display: block;
+  object-fit: cover;
+  object-position: center;
 }
 
 .featureText h4 {
@@ -379,17 +378,7 @@
 
 /* Responsive */
 @media (max-width: 900px) {
-  .waitlistContainer {
-    grid-template-columns: 1fr;
-    gap: 50px;
-  }
-  .waitlistInfo {
-    max-width: 100%;
-  }
-  .waitlistPosterWrap {
-    max-width: 420px;
-    margin: 0 auto 30px;
-  }
+  /* Removed poster overrides to keep form centered and rounded */
 }
 
 @media (max-width: 640px) {
@@ -401,5 +390,6 @@
   }
   .waitlistFormWrapper {
     padding: 28px 20px;
+    border-radius: 20px !important;
   }
 }
