@@ -308,7 +308,7 @@ item: {
                     e.target.style.transform = 'translateY(0)';
                   }}
                 >
-                  Shop Now →
+                  Shop Now
                 </button>
                 <span style={{
                   padding: '14px 24px',
@@ -433,7 +433,7 @@ item: {
               onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 12px 32px rgba(74,222,128,0.45)'; }}
               onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 8px 24px rgba(74,222,128,0.3)'; }}
             >
-              Try Dish Cart →
+              Try Dish Cart
             </button>
           </div>
 
@@ -571,7 +571,7 @@ item: {
               ))}
               <div style={{ padding: '8px 12px' }}>
                 <div style={{ fontSize: '8px', color: '#16a34a', fontWeight: 700, textAlign: 'center' }}>
-                  See all recipes with Paneer →
+                  See all recipes with Paneer
                 </div>
               </div>
             </div>
@@ -681,7 +681,6 @@ item: {
                     onMouseLeave={(e) => e.target.style.background = 'none'}
                   >
                     See All
-                    <span style={{ fontSize: '16px' }}>→</span>
                   </button>
                 </div>
 

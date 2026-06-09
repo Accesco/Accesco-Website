@@ -426,7 +426,6 @@ export default function LocationModal() {
                 <div className={styles.detectedName}>{detectedLocation.name}</div>
                 <div className={styles.detectedAddress}>{detectedLocation.fullAddress}</div>
               </div>
-              <span className={styles.detectedArrow}>→</span>
             </button>
           )}
 

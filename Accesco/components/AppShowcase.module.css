@@ -1,11 +1,15 @@
 .waitlistContainer {
-  max-width: 580px;
+  max-width: 1200px;
   margin: 0 auto;
-  display: block;
+  display: grid;
+  grid-template-columns: 0.85fr 1.15fr;
+  gap: 80px;
+  align-items: center;
 }
 
 .waitlistInfo {
-  display: none;
+  max-width: 540px;
+  display: block;
 }
 
 .waitlistTitle {
@@ -81,6 +85,9 @@
   border: 1px solid rgba(122, 0, 66, 0.09);
   position: relative;
   overflow: hidden;
+  max-width: 580px;
+  width: 100%;
+  margin: 0 auto;
 }
 
 .waitlistFormWrapper::before {
@@ -376,9 +383,18 @@
   border: 1px solid rgba(220, 38, 38, 0.2);
 }
 
-/* Responsive */
 @media (max-width: 900px) {
-  /* Removed poster overrides to keep form centered and rounded */
+  .waitlistContainer {
+    grid-template-columns: 1fr;
+    gap: 50px;
+  }
+  .waitlistInfo {
+    max-width: 100%;
+  }
+  .waitlistPosterWrap {
+    max-width: 420px;
+    margin: 0 auto 30px;
+  }
 }
 
 @media (max-width: 640px) {

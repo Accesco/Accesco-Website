@@ -359,7 +359,7 @@ export default function GroklyProfile() {
                       {order.status.replace(/_/g, ' ')}
                     </div>
                     <Link href={`/services/grokly/order-tracking?id=${order.id}`} className={styles.trackLink}>
-                      Track →
+                      Track Order
                     </Link>
                   </div>
                 ))}
