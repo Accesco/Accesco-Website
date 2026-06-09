@@ -29,33 +29,7 @@ const pressReleases = [
     url: 'https://successsaga.com/is-your-delivery-app-fast-enough-but-never-smart-enough/',
     logo: '/logos/successsaga.png',
   },
-  {
-    id: 1,
-    title: 'Accesco Living Announces India\'s First Intelligent Circular Commerce Ecosystem',
-    date: 'May 10, 2026',
-    category: 'Company News',
-    excerpt: 'Combining three distinct ventures—Grokly for essentials, Swadishtt for dining, and InstaStyle for instant fashion—into a single, coordinated budget-first ecosystem.',
-    image: '/images/banners/hero-main.jpg',
-    readTime: '4 min read',
-  },
-  {
-    id: 2,
-    title: 'FarmChain Network Direct Sourcing Scale Expansion Across Karnataka',
-    date: 'April 28, 2026',
-    category: 'Ecosystem',
-    excerpt: 'Accesco Living announces direct sourcing contracts with over 1500 local Karnataka farmers, bypassing mandi intermediaries and tripling producer income.',
-    image: '/images/banners/hero-grokly.jpg',
-    readTime: '3 min read',
-  },
-  {
-    id: 3,
-    title: 'InstaStyle Launches 20-Minute Instant Trial & Reverse Fashion Loop in Bengaluru',
-    date: 'April 15, 2026',
-    category: 'Product Launch',
-    excerpt: 'Redefining fast-commerce with trial-at-doorstep fitting and a carbon-credit reverse commerce loop for apparel recycling and zero-waste fashion.',
-    image: '/images/banners/hero-swadishtt.png',
-    readTime: '5 min read',
-  },
+  
 ];
 
 const pressKitItems = [

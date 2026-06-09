@@ -2,7 +2,7 @@
 :root {
   --primary: #1c1c1c;
   --secondary: #696969;
-  --accent: #e23744;
+  --accent: #c2185b;
   --bg: #ffffff;
   --card-bg: #ffffff;
   --border: #e8e8e8;
@@ -225,7 +225,7 @@ header {
 .btn-pill:hover {
   transform: translateY(-2px);
   box-shadow: var(--shadow-md);
-  background: #d32f3c;
+  background: #880e4f
 }
 
 .btn-pill.light {
@@ -696,7 +696,7 @@ object-position: center center !important;
   transform: rotate(90deg) scale(1.1);
   background: var(--accent);
   color: #fff;
-  box-shadow: 0 12px 48px rgba(226, 55, 68, 0.4);
+  box-shadow: 0 12px 48px rgba(173, 20, 87, 0.4);
 }
 
 .modal-close i {

@@ -388,7 +388,24 @@ export default function BlogsPage() {
             {filteredPosts.map((post, index) => (
               <article key={post.id} className="story-card" onClick={() => openReader(post)} style={{ animationDelay: `${index * 0.05}s` }}>
                 <div className="story-visual">
-                  <Image src={post.image || '/images/download (2).png'} alt={post.title} fill style={{ objectFit: 'cover' }} unoptimized />
+                 
+<Image
+  src={
+    post.title?.includes('Dark Stores')
+      ? '/images/blogs/dark-stores.jpg'
+      : post.title?.includes('Sunday Meal Prep')
+      ? '/images/blogs/meal-prep.jpg'
+      : post.title?.includes('All-in-One Smart Lifestyle Ecosystem')
+      ? '/images/blogs/accesco-ecosystem.jpg'
+      : post.title?.includes('Best Grocery Delivery Service')
+      ? '/images/blogs/grocery-delivery.jpg'
+      : post.image || '/images/download (2).png'
+  }
+  alt={post.title}
+  fill
+  style={{ objectFit: 'cover' }}
+  unoptimized
+/>
                   <div className="story-overlay">
                     <span className="read-time"><i className="ri-time-line"></i> 5 min read</span>
                   </div>
