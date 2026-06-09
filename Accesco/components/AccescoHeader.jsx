@@ -165,14 +165,14 @@ export default function AccescoHeader() {
       <header className={`${styles.header} ${shouldBeScrolled ? styles.scrolled : ''}`}>
         <div className={styles.container}>
           <Link href="/" className={styles.logo}>
-            <Image 
-              src={shouldBeScrolled ? "/images/accesco_original.png" : "/images/accesco_white.png"} 
-              alt="AccesCo" 
-              width={36} 
-              height={36} 
-              priority 
-              style={{ objectFit: 'contain' }}
-            />
+           <Image 
+  src="/images/accesco_original.png"
+  alt="AccesCo" 
+  width={36} 
+  height={36} 
+  priority 
+  style={{ objectFit: 'contain' }}
+/>
             <div className={styles.logoText}>
               <span className={styles.logoName}>Accesco</span>
               <span className={styles.logoTagline}>Living</span>
@@ -228,62 +228,14 @@ export default function AccescoHeader() {
                   </div>
                 </div>
               )}
+              <a href="#waitlist" className={styles.navLink}>
+  JOIN WAITLIST
+</a>
+              
             </div>
             
-            {/* Partners Dropdown */}
-            <div 
-              className={styles.servicesDropdown}
-              ref={partnersDropdownRef}
-              onMouseEnter={handlePartnersMouseEnter}
-              onMouseLeave={handlePartnersMouseLeave}
-            >
-              <button 
-                className={`${styles.navLink} ${styles.servicesButton} ${pathname.startsWith('/partner') ? styles.active : ''}`}
-                aria-expanded={isPartnersOpen}
-                aria-haspopup="true"
-              >
-                Become a Partner
-                <svg 
-                  width="12" 
-                  height="12" 
-                  viewBox="0 0 12 12" 
-                  fill="none"
-                  className={styles.dropdownIcon}
-                  style={{ transform: isPartnersOpen ? 'rotate(180deg)' : 'rotate(0deg)' }}
-                >
-                  <path 
-                    d="M3 4.5L6 7.5L9 4.5" 
-                    stroke="currentColor" 
-                    strokeWidth="1.5" 
-                    strokeLinecap="round" 
-                    strokeLinejoin="round"
-                  />
-                </svg>
-              </button>
-
-              {isPartnersOpen && (
-                <div className={styles.dropdownMenu}>
-                  <div className={styles.dropdownContent}>
-                    {partnerOptions.map((option) => (
-                      <Link
-                        key={option.href}
-                        href={option.href}
-                        className={`${styles.dropdownItem} ${pathname === option.href ? styles.activeDropdown : ''}`}
-                        onClick={() => setIsPartnersOpen(false)}
-                      >
-                        <div className={styles.dropdownItemName}>{option.name}</div>
-                        <div className={styles.dropdownItemDesc}>{option.description}</div>
-                      </Link>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-            
-            <Link href="/blogs" className={`${styles.navLink} ${pathname === '/blogs' ? styles.active : ''}`}>Blogs</Link>
-            <Link href="/contact" className={`${styles.navLink} ${pathname === '/contact' ? styles.active : ''}`}>Help & Support</Link>
-          </nav>
-
+           
+</nav>
           <div className={styles.actions}>
             {/* Location Selector */}
               <div 
@@ -367,7 +319,11 @@ export default function AccescoHeader() {
               <button className={styles.loginButton} onClick={() => setIsAuthOpen(true)}>
                 Login
               </button>
+              
             )}
+            <a href="#" className={styles.loginButton}>
+  Get App
+</a>
 
             <button className={styles.mobileMenuButton} onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
               <span className={`${styles.hamburger} ${isMobileMenuOpen ? styles.open : ''}`}>

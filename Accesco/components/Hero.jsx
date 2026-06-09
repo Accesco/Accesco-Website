@@ -320,22 +320,9 @@ export default function Hero() {
           Delivering Groceries, Food, and Fashion under one unified platform
         </div>
 
-        <a href="#waitlist" className="join-waitlist-btn">JOIN WAITLIST</a>
         
-        <div className="hero-app-buttons">
-          <a href="#" className="app-btn-link">
-            <img
-              src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg"
-              alt="Get it on Google Play"
-            />
-          </a>
-          <a href="#" className="app-btn-link">
-            <img
-              src="https://upload.wikimedia.org/wikipedia/commons/3/3c/Download_on_the_App_Store_Badge.svg"
-              alt="Download on the App Store"
-            />
-          </a>
-        </div>
+        
+        
 
         <a 
           href="#services" 

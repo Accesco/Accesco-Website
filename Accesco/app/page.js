@@ -95,7 +95,7 @@ const softwareApplicationSchema = {
                   <div style={{ textDecoration: 'none', display: 'block' }}>
                     <div className="service-premium-card grokly-card">
                       <div className="service-card-visual">
-                        <Image src="/images/grokly-new.png" alt="Grokly Groceries" fill style={{ objectFit: 'cover' }} />
+                        <Image src="/images/grokly-new1.png" alt="Grokly Groceries" fill style={{ objectFit: 'cover' }} />
                       </div>
                       <div className="service-icon-circle">
                         <Image src="/images/grokly-icon.png" alt="Grokly" width={40} height={40} style={{ objectFit: 'contain', width: '100%', height: '100%' }} />
@@ -112,7 +112,7 @@ const softwareApplicationSchema = {
                   <div style={{ textDecoration: 'none', display: 'block' }}>
                     <div className="service-premium-card swadisht-card">
                       <div className="service-card-visual">
-                        <Image src="/images/swadisht-new.png" alt="Swadishtt Meals" fill style={{ objectFit: 'cover' }} />
+                        <Image src="/images/swadisht-new1.png" alt="Swadishtt Meals" fill style={{ objectFit: 'cover' }} />
                       </div>
                       <div className="service-icon-circle">
                         <Image src="/images/swadisht/swadisht_logo.JPG" alt="Swadishtt" width={40} height={40} style={{ objectFit: 'contain', width: '100%', height: '100%' }} />
@@ -129,7 +129,7 @@ const softwareApplicationSchema = {
                   <div style={{ textDecoration: 'none', display: 'block' }}>
                     <div className="service-premium-card instastyle-card">
                       <div className="service-card-visual">
-                        <Image src="/images/fashion-new.png" alt="InstaStyle Fashion" fill style={{ objectFit: 'cover' }} />
+                        <Image src="/images/fashion-new1.png" alt="InstaStyle Fashion" fill style={{ objectFit: 'cover' }} />
                       </div>
                       <div className="service-icon-circle">
                         <Image src="/images/instastyle-logo.png" alt="InstaStyle" width={40} height={40} style={{ objectFit: 'contain', width: '100%', height: '100%' }} />
@@ -461,7 +461,7 @@ const softwareApplicationSchema = {
         }
 
         .instastyle-btn {
-          background: #4A148C;
+          background:  #8B5E3C;
           color: #fff;
         }
 
