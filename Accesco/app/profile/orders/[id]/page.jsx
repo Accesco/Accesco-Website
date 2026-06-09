@@ -1,8 +1,11 @@
+'/* eslint-disable */
 'use client';
 
 import { useState, useEffect } from 'react';
 import { useParams, useSearchParams, useRouter } from 'next/navigation';
 import styles from '../orders.module.css';
+import RiderInfo from '@/components/RiderInfo';
+import { mockRiderData } from '@/lib/mockRiderData';
 
 export default function OrderDetailPage() {
   const params = useParams();
@@ -91,6 +94,13 @@ export default function OrderDetailPage() {
             </button>
           )}
         </div>
+
+        </div>
+
+        <RiderInfo
+          rider={mockRiderData.rider}
+          assignment={mockRiderData.assignment}
+        />
 
         <div style={{ marginBottom: '40px' }}>
           <h2 style={{ fontSize: '18px', fontWeight: 800, marginBottom: '16px' }}>Items</h2>

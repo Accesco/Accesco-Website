@@ -2,126 +2,782 @@
   max-width: 900px;
   margin: 40px auto;
   padding: 0 20px;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  color: #1e293b;
+  min-height: 100vh;
 }
 
 .header {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 40px;
+  align-items: center;
+  margin-bottom: 32px;
+  gap: 16px;
 }
 
 .orderInfo h1 {
-  font-size: 28px;
+  font-size: 26px;
   font-weight: 800;
   margin: 0;
+  color: #0f172a;
+  letter-spacing: -0.025em;
 }
 
 .orderInfo p {
-  color: #666;
-  margin: 4px 0 0;
+  color: #64748b;
+  margin: 6px 0 0;
+  font-size: 14px;
+  font-weight: 500;
 }
 
 .statusBadge {
-  padding: 8px 16px;
-  background: #e8f5e9;
-  color: #2e7d32;
+  padding: 8px 18px;
+  background: rgba(12, 131, 31, 0.08); /* Grokly Green Accent */
+  color: #0c831f;
   border-radius: 99px;
   font-weight: 700;
-  font-size: 14px;
+  font-size: 12px;
   text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border: 1px solid rgba(12, 131, 31, 0.15);
 }
 
-.trackingCard {
-  background: white;
-  padding: 40px;
+/* ETA & Live Map Card styled in Grokly Green Gradient */
+.topCard {
+  background: linear-gradient(135deg, #0c831f 0%, #119825 100%);
+  color: #ffffff;
   border-radius: 24px;
-  border: 1px solid #eee;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.05);
-  margin-bottom: 40px;
-}
-
-.timeline {
+  padding: 28px;
+  margin-bottom: 24px;
   display: flex;
   justify-content: space-between;
-}
-
-.step {
-  display: flex;
-  flex-direction: column;
   align-items: center;
-  position: relative;
-  flex: 1;
+  gap: 32px;
+  box-shadow: 0 10px 25px rgba(12, 131, 31, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.15);
 }
 
-.stepDot {
-  width: 32px;
-  height: 32px;
-  background: #f0f0f0;
-  color: #999;
+.etaCol {
+  flex: 1;
+  min-width: 200px;
+}
+
+.packingStatus {
+  display: block;
+  font-size: 15px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.85);
+  margin-bottom: 6px;
+}
+
+.arrivingEta {
+  font-size: 32px;
+  font-weight: 800;
+  color: #ffffff;
+  line-height: 1.2;
+  margin: 0;
+  letter-spacing: -0.02em;
+}
+
+.arrivingEta span {
+  font-weight: 900;
+}
+
+.miniMapCol {
+  width: 320px;
+  height: 180px;
+  position: relative;
+  border-radius: 20px;
+  overflow: hidden;
+  border: 1.5px solid rgba(255, 255, 255, 0.25);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+@media (max-width: 680px) {
+  .topCard {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 20px;
+  }
+  .miniMapCol {
+    width: 100%;
+    height: 160px;
+  }
+}
+
+.miniMapSkeleton {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #f1f5f9;
+  z-index: 5;
+  animation: pulseBg 1.5s infinite;
+}
+
+@keyframes pulseBg {
+  0% { opacity: 0.6; }
+  50% { opacity: 0.9; }
+  100% { opacity: 0.6; }
+}
+
+.expandBtn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 28px;
+  height: 28px;
+  background: #ffffff;
+  border: none;
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 50%;
-  font-weight: 700;
-  z-index: 2;
-  transition: all 0.3s ease;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+  z-index: 10;
+  color: #0c831f;
+  transition: transform 0.2s;
 }
 
-.stepLabel {
-  margin-top: 12px;
+.expandBtn:hover {
+  transform: scale(1.1);
+}
+
+/* Side-by-side Parallel Grid for action cards */
+.parallelGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+@media (max-width: 768px) {
+  .parallelGrid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+}
+
+/* Forgot Card styled in Grokly Green Accent */
+.forgotCard {
+  background: #ffffff;
+  border: 1px solid rgba(12, 131, 31, 0.15);
+  border-radius: 24px;
+  padding: 24px;
+  box-shadow: 0 4px 15px rgba(12, 131, 31, 0.02);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+}
+
+.forgotBody {
+  margin-bottom: 20px;
+}
+
+.forgotHeader {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+.bagIcon {
+  width: 44px;
+  height: 44px;
+  background: rgba(12, 131, 31, 0.05);
+  border: 1px solid rgba(12, 131, 31, 0.1);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.forgotText h2 {
+  font-size: 16px;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0 0 4px 0;
+  letter-spacing: -0.01em;
+}
+
+.forgotText p {
+  font-size: 13px;
+  color: #64748b;
+  font-weight: 500;
+  margin: 0;
+  line-height: 1.4;
+}
+
+.addItemsBtn {
+  background: linear-gradient(135deg, #0c831f 0%, #119825 100%);
+  color: #ffffff;
+  width: 100%;
+  padding: 14px 20px;
+  border-radius: 14px;
+  font-weight: 700;
+  font-size: 15px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.1s, box-shadow 0.2s;
+  box-shadow: 0 4px 12px rgba(12, 131, 31, 0.15);
+}
+
+.addItemsBtn:hover {
+  transform: translateY(-1.5px);
+  box-shadow: 0 6px 16px rgba(12, 131, 31, 0.25);
+}
+
+.countdownPill {
+  background: rgba(0, 0, 0, 0.25);
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  font-family: monospace;
+}
+
+/* Payment Card styled in Grokly Green Accent */
+.paymentCard {
+  background: #ffffff;
+  border-radius: 24px;
+  border: 1px solid rgba(12, 131, 31, 0.12);
+  box-shadow: 0 4px 20px rgba(12, 131, 31, 0.02);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+}
+
+.paymentBody {
+  padding: 24px;
+}
+
+.cardIcon {
+  width: 44px;
+  height: 44px;
+  background: rgba(12, 131, 31, 0.05);
+  border: 1px solid rgba(12, 131, 31, 0.1);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.paymentText h2 {
+  font-size: 16px;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0 0 4px 0;
+  letter-spacing: -0.01em;
+}
+
+.paymentText p {
+  font-size: 13px;
+  color: #64748b;
+  font-weight: 500;
+  margin: 0;
+  line-height: 1.4;
+}
+
+.payActionRow {
+  padding: 0 24px 24px 24px;
+}
+
+.payOnlineBtn {
+  background: #ffffff;
+  color: #0c831f;
+  border: 1.5px solid #0c831f;
+  width: 100%;
+  padding: 13px 20px;
+  border-radius: 14px;
+  font-weight: 700;
+  font-size: 15px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.payOnlineBtn:hover {
+  background: rgba(12, 131, 31, 0.04);
+  transform: translateY(-1.5px);
+  box-shadow: 0 4px 12px rgba(12, 131, 31, 0.05);
+}
+
+.paySuccessState {
+  color: #22c55e;
+  font-weight: 700;
+  font-size: 15px;
+  display: block;
+  text-align: center;
+  padding: 10px 0;
+}
+
+/* Premium Hero Rider Card with Glassmorphism */
+.heroRiderCard {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  box-shadow: 0 10px 30px rgba(12, 131, 31, 0.03), 0 1px 3px rgba(0, 0, 0, 0.02);
+  border-radius: 24px;
+  padding: 28px;
+  margin-bottom: 24px;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease;
+}
+
+.heroRiderCard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 40px rgba(12, 131, 31, 0.06), 0 1px 3px rgba(0, 0, 0, 0.02);
+}
+
+.heroRiderCard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #0c831f, #119825);
+}
+
+.heroRiderHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.riderMainInfo {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+
+.riderAvatarWrapper {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.riderAvatar {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #fff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.riderOnlineBadge {
+  position: absolute;
+  bottom: 2px;
+  right: 2px;
+  width: 14px;
+  height: 14px;
+  background-color: #22c55e;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.3);
+  animation: pulseGreen 2s infinite;
+}
+
+@keyframes pulseGreen {
+  0% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.5); }
+  70% { box-shadow: 0 0 0 6px rgba(34, 197, 94, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
+}
+
+.riderMeta {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.riderName {
+  font-size: 18px;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0;
+}
+
+.riderRating {
+  background: rgba(245, 158, 11, 0.1);
+  color: #d97706;
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  width: fit-content;
+}
+
+.vehicleBadge {
+  background: #f1f5f9;
+  color: #475569;
   font-size: 12px;
   font-weight: 600;
-  color: #999;
+  padding: 4px 10px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 4px;
+  width: fit-content;
+  border: 1px solid #e2e8f0;
+}
+
+.vehicleNo {
+  text-transform: uppercase;
+  font-family: monospace;
+  letter-spacing: 0.5px;
+  color: #334155;
+  background: #fff;
+  padding: 1px 6px;
+  border-radius: 4px;
+  border: 1px solid #cbd5e1;
+}
+
+.etaContainer {
+  text-align: right;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.etaTime {
+  font-size: 32px;
+  font-weight: 900;
+  color: #0c831f;
+  line-height: 1;
+}
+
+.etaLabel {
+  font-size: 11px;
+  text-transform: uppercase;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: #64748b;
+}
+
+.distanceRemaining {
+  font-size: 12px;
+  color: #166534;
+  font-weight: 700;
+  background: #f0fdf4;
+  padding: 4px 10px;
+  border-radius: 8px;
+  margin-top: 6px;
   text-align: center;
 }
 
-.stepLine {
+.heroRiderActions {
+  display: flex;
+  gap: 12px;
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px dashed #e2e8f0;
+}
+
+.callRiderBtn, .msgRiderBtn {
+  flex: 1;
+  padding: 12px 20px;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  text-decoration: none;
+}
+
+.callRiderBtn {
+  background: #0c831f;
+  color: #fff;
+  border: none;
+  box-shadow: 0 4px 12px rgba(12, 131, 31, 0.15);
+}
+
+.callRiderBtn:hover {
+  background: #0a6f1a;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(12, 131, 31, 0.25);
+}
+
+.msgRiderBtn {
+  background: #fff;
+  color: #0c831f;
+  border: 1.5px solid #0c831f;
+}
+
+.msgRiderBtn:hover {
+  background: rgba(12, 131, 31, 0.04);
+  transform: translateY(-2px);
+}
+
+/* Customer Focused Live Delivery Status Card */
+.deliveryStatusCard {
+  background: #fff;
+  border-radius: 24px;
+  border: 1px solid #e2e8f0;
+  padding: 28px;
+  height: 100%;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.01);
+}
+
+.deliveryStatusCard h2 {
+  font-size: 18px;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0 0 24px;
+}
+
+.progressContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  position: relative;
+}
+
+.progressContainer::before {
+  content: '';
   position: absolute;
-  top: 16px;
-  left: 50%;
-  width: 100%;
-  height: 2px;
-  background: #f0f0f0;
+  top: 12px;
+  bottom: 12px;
+  left: 13px;
+  width: 2px;
+  background: #e2e8f0;
+}
+
+.progressStep {
+  display: flex;
+  gap: 20px;
+  position: relative;
   z-index: 1;
 }
 
-.active .stepDot {
-  background: #2e7d32;
+.progressBullet {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #f1f5f9;
+  border: 2px solid #e2e8f0;
+  color: #94a3b8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 800;
+  flex-shrink: 0;
+  transition: all 0.3s ease;
+  background: white;
+}
+
+.progressStepCompleted .progressBullet {
+  background: #0c831f;
+  border-color: #0c831f;
   color: white;
 }
 
-.active .stepLabel {
-  color: #2e7d32;
+.progressStepActive .progressBullet {
+  background: #22c55e;
+  border-color: #22c55e;
+  color: white;
+  box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.2);
+  animation: pulseActive 2s infinite;
 }
 
-.active .stepLine {
-  background: #2e7d32;
+@keyframes pulseActive {
+  0% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.4); }
+  70% { box-shadow: 0 0 0 8px rgba(34, 197, 94, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
 }
 
-.current .stepDot {
-  box-shadow: 0 0 0 4px rgba(46,125,50,0.2);
+.progressContent {
+  flex: 1;
 }
 
+.progressTitle {
+  font-size: 15px;
+  font-weight: 700;
+  color: #334155;
+  margin: 0;
+}
+
+.progressStepActive .progressTitle {
+  color: #22c55e;
+}
+
+.progressTime {
+  font-size: 11px;
+  color: #64748b;
+  font-weight: 600;
+  margin-top: 4px;
+}
+
+.progressDesc {
+  font-size: 13px;
+  color: #64748b;
+  margin: 4px 0 0;
+  line-height: 1.4;
+}
+
+.progressStepActive .progressDesc {
+  color: #475569;
+  font-weight: 500;
+}
+
+/* Chat overlay interaction */
+.chatOverlay {
+  background: #f8fafc;
+  border-top: 1px solid #e2e8f0;
+  padding: 18px;
+  margin-top: 20px;
+  border-radius: 16px;
+  animation: slideDown 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.chatHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.chatTitle {
+  font-size: 13px;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.chatClose {
+  background: none;
+  border: none;
+  font-size: 18px;
+  color: #64748b;
+  cursor: pointer;
+}
+
+.chatQuickReplies {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+
+.quickReplyBtn {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 11px;
+  color: #475569;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s;
+}
+
+.quickReplyBtn:hover {
+  border-color: #0c831f;
+  color: #0c831f;
+  background: rgba(12, 131, 31, 0.02);
+}
+
+.chatInputWrapper {
+  display: flex;
+  gap: 8px;
+}
+
+.chatInput {
+  flex: 1;
+  padding: 10px 14px;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  font-size: 13px;
+  outline: none;
+  font-family: inherit;
+  transition: border-color 0.2s;
+}
+
+.chatInput:focus {
+  border-color: #0c831f;
+}
+
+.chatSendBtn {
+  background: #0c831f;
+  color: #fff;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.chatSendBtn:hover {
+  background: #0a6f1a;
+}
+
+.chatSent {
+  font-size: 12px;
+  color: #22c55e;
+  font-weight: 600;
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Grid layout columns balancing heights */
 .grid {
   display: grid;
-  grid-template-columns: 1.2fr 1fr;
-  gap: 32px;
-  margin-bottom: 40px;
+  grid-template-columns: 1.15fr 1fr;
+  gap: 24px;
+  margin-bottom: 24px;
 }
 
-.detailSection {
-  margin-bottom: 32px;
+@media (max-width: 868px) {
+  .grid {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+}
+
+.detailsColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
 .detailSection h2 {
-  font-size: 16px;
+  font-size: 13px;
   font-weight: 700;
-  color: #666;
+  color: #64748b;
   text-transform: uppercase;
-  letter-spacing: 1px;
-  margin-bottom: 12px;
+  letter-spacing: 0.05em;
+  margin: 0 0 12px;
 }
 
 .detailCard {
@@ -129,15 +785,15 @@
   gap: 16px;
   padding: 20px;
   background: white;
-  border: 1px solid #eee;
+  border: 1px solid #e2e8f0;
   border-radius: 16px;
 }
 
 .iconBox {
   width: 44px;
   height: 44px;
-  background: #f0fdf4;
-  color: #2e7d32;
+  background: rgba(12, 131, 31, 0.05);
+  color: #0c831f;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -148,80 +804,87 @@
 
 .detailCard strong {
   display: block;
-  font-size: 16px;
+  font-size: 15px;
+  color: #0f172a;
   margin-bottom: 4px;
 }
 
 .detailCard p {
   margin: 0;
-  font-size: 14px;
-  color: #555;
+  font-size: 13px;
+  color: #475569;
   line-height: 1.4;
 }
 
 .phone {
-  margin-top: 4px !important;
-  font-weight: 600;
-  color: #111 !important;
+  margin-top: 6px !important;
+  font-weight: 700;
+  color: #0f172a !important;
+}
+
+/* Invoice Order Summary Column */
+.orderItems {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 24px;
+  padding: 28px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.01);
+  height: 100%;
+}
+
+.orderItems h2 {
+  font-size: 18px;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0 0 20px;
 }
 
 .itemsList {
-  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.item {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  color: #334155;
+  font-weight: 500;
 }
 
 .divider {
   border: none;
-  border-top: 1px solid #eee;
+  border-top: 1px dashed #e2e8f0;
   margin: 20px 0;
 }
 
 .billRow {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
   font-size: 14px;
-  color: #555;
-}
-
-.partnerCard {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  padding: 20px;
-  background: #f9f9f9;
-  border: 1px solid #eee;
-  border-radius: 16px;
-}
-
-.avatar {
-  width: 48px;
-  height: 48px;
-  background: #ddd;
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 700;
-}
-
-.item {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 8px;
-  font-size: 14px;
+  color: #64748b;
+  font-weight: 500;
 }
 
 .total {
   display: flex;
   justify-content: space-between;
-  font-weight: 700;
-  font-size: 16px;
-  color: #2e7d32;
+  font-weight: 800;
+  font-size: 18px;
+  color: #0c831f;
+  padding-top: 16px;
+  border-top: 1px solid #f1f5f9;
+  margin-top: 16px;
 }
 
+/* Footer bottom button actions */
 .actions {
   display: flex;
   gap: 16px;
+  margin-top: 40px;
+  flex-wrap: wrap;
 }
 
 .profileBtn, .shopBtn {
@@ -229,17 +892,33 @@
   padding: 16px;
   text-align: center;
   text-decoration: none;
-  border-radius: 12px;
+  border-radius: 14px;
   font-weight: 700;
+  font-size: 15px;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  min-width: 200px;
 }
 
 .profileBtn {
   background: white;
-  border: 1px solid #ddd;
-  color: #1a1a1a;
+  border: 1.5px solid #cbd5e1;
+  color: #475569;
+}
+
+.profileBtn:hover {
+  background: #f8fafc;
+  border-color: #94a3b8;
+  transform: translateY(-2px);
 }
 
 .shopBtn {
-  background: #2e7d32;
+  background: #0c831f;
   color: white;
+  box-shadow: 0 4px 14px rgba(12, 131, 31, 0.15);
+}
+
+.shopBtn:hover {
+  background: #0a6f1a;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(12, 131, 31, 0.25);
 }
