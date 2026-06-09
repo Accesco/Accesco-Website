@@ -17,6 +17,7 @@ export default function Footer() {
 
   return (
     <footer className="accesco-footer-root">
+      <h1>TEST FOOTER 123</h1>
       <div className="footer-main-content">
         
         <div className="footer-grid-layout">
