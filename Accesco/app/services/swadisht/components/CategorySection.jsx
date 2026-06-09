@@ -30,7 +30,7 @@ const categories = [
   {
     name: 'Dessert',
     image: '/images/swadisht/categories/dessert.png',
-    href: '/services/swadisht/category/dessert',
+    href: '/services/swadisht/category/desserts',
   },
   {
     name: 'Snacks',
