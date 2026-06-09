@@ -8,128 +8,332 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
 
     <style>
-        body {
-            background: #ffffff;
-            font-family: 'Inter', sans-serif;
+        :root {
+            --primary-color: #700457;
+            --primary-light: #fff4fb;
+            --text-dark: #2d232b;
+            --text-muted: #625760;
+            --bg-main: #fcfbfe;
+            --bg-card: #ffffff;
+            --border-color: #f1eaf0;
+            --radius-lg: 16px;
+            --radius-md: 12px;
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            box-sizing: border-box;
             margin: 0;
+            padding: 0;
         }
 
-        .policy-container {
-            max-width: 1100px;
-            margin: 70px auto;
-            padding: 50px;
-            background: #ffffff;
-            border-radius: 24px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.08);
+        body {
+            background-color: var(--bg-main);
+            font-family: 'Inter', sans-serif;
+            color: var(--text-dark);
+            line-height: 1.7;
+            -webkit-font-smoothing: antialiased;
         }
 
-        .policy-header {
-            text-align: center;
-            margin-bottom: 60px;
-        }
-
-        .policy-header h1 {
-            font-family: 'Poppins', sans-serif;
-            font-size: 58px;
-            color: #700457;
-            margin-bottom: 10px;
-            font-weight: 900;
-        }
-
-        .policy-header p {
-            color: #666;
-        }
-
-        .policy-container h2 {
-            color: #700457;
-            font-family: 'Poppins', sans-serif;
-            margin-top: 50px;
-            margin-bottom: 15px;
-            font-size: 28px;
-        }
-
-        .policy-container h3 {
-            margin-top: 25px;
-            color: #111;
-            font-weight: 700;
-        }
-
-        .policy-container p,
-        .policy-container li {
-            font-size: 16px;
-            line-height: 1.9;
-            color: #444;
-        }
-
-        .policy-container ul {
-            padding-left: 25px;
-        }
-
-        .contact-card {
-            background: #fff4fb;
-            border-left: 5px solid #700457;
-            padding: 25px;
-            border-radius: 15px;
-            margin-top: 20px;
-        }
-
+        /* --- Header Styles --- */
         header {
-            background: #ffffff;
-            padding: 20px;
-            border-bottom: 1px solid #eee;
+            background: var(--bg-card);
+            padding: 18px 24px;
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
 
         .top-bar {
-            max-width: 1200px;
+            max-width: 1280px;
             margin: auto;
         }
 
         .logo-area {
-            display: flex;
+            display: inline-flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
             text-decoration: none;
         }
 
         .logo-area img {
-            height: 42px;
+            height: 36px;
+            width: auto;
         }
 
         .logo-area span {
             font-family: 'Poppins', sans-serif;
-            font-weight: 900;
-            color: #700457;
-            font-size: 22px;
+            font-weight: 800;
+            color: var(--primary-color);
+            font-size: 18px;
+            letter-spacing: 0.5px;
         }
 
-        footer {
-            background: #111;
-            color: #fff;
+        /* --- Custom Policy Banner --- */
+        .policy-banner {
+            background-color: var(--primary-color);
+            color: #ffffff;
             text-align: center;
-            padding: 25px;
-            margin-top: 60px;
+            padding: 60px 24px 80px 24px;
+            position: relative;
+        }
+
+        .policy-banner h1 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 48px;
+            font-weight: 800;
+            margin-bottom: 16px;
+            letter-spacing: -1px;
+        }
+
+        .policy-banner p {
+            max-width: 700px;
+            margin: 0 auto;
+            font-size: 16px;
+            opacity: 0.9;
+            line-height: 1.6;
+        }
+
+        .effective-date-card {
+            background: var(--bg-card);
+            border-radius: var(--radius-md);
+            padding: 16px 32px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            max-width: 600px;
+            margin: -35px auto 0 auto;
+            text-align: center;
+            position: relative;
+            z-index: 10;
+            border: 1px solid var(--border-color);
+            font-family: 'Inter', sans-serif;
+            font-size: 15px;
+            color: var(--text-dark);
+        }
+
+        .effective-date-card strong {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        /* --- Main Layout --- */
+        .policy-wrapper {
+            max-width: 1280px;
+            margin: 40px auto;
+            padding: 0 24px;
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 40px;
+        }
+
+        /* Sticky Sidebar Navigation */
+        .policy-sidebar {
+            position: sticky;
+            top: 100px;
+            height: fit-content;
+        }
+
+        .policy-sidebar h4 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            margin-bottom: 16px;
+            padding-left: 8px;
+        }
+
+        .policy-nav {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            border-left: 2px solid var(--border-color);
+        }
+
+        .policy-nav a {
+            display: block;
+            padding: 8px 16px;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            border-radius: 0 var(--radius-md) var(--radius-md) 0;
+            margin-left: -2px;
+            transition: var(--transition);
+        }
+
+        .policy-nav a:hover {
+            color: var(--primary-color);
+            background: var(--primary-light);
+        }
+
+        /* Content Container */
+        .policy-container {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        /* Section Cards */
+        .policy-section {
+            background: var(--bg-card);
+            padding: 40px;
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-color);
+            scroll-margin-top: 100px;
+            transition: var(--transition);
+        }
+
+        .policy-section:hover {
+            box-shadow: 0 10px 30px rgba(112, 4, 87, 0.03);
+        }
+
+        .policy-section h2 {
+            color: var(--primary-color);
+            font-family: 'Poppins', sans-serif;
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--primary-light);
+            padding-bottom: 8px;
+        }
+
+        .policy-section h3 {
+            margin-top: 24px;
+            margin-bottom: 8px;
+            color: var(--text-dark);
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .policy-section p {
+            font-size: 15px;
+            color: var(--text-dark);
+            margin-bottom: 16px;
+        }
+
+        /* Styled Lists */
+        .policy-section ul {
+            list-style: none;
+            margin-bottom: 16px;
+        }
+
+        .policy-section li {
+            font-size: 15px;
+            color: var(--text-dark);
+            position: relative;
+            padding-left: 24px;
+            margin-bottom: 10px;
+        }
+
+        .policy-section li::before {
+            content: "•";
+            color: var(--primary-color);
+            font-weight: bold;
+            font-size: 18px;
+            position: absolute;
+            left: 6px;
+            top: -2px;
+        }
+
+        .important-note {
+            background: var(--primary-light);
+            border-radius: var(--radius-md);
+            padding: 16px 20px;
+            color: var(--primary-color) !important;
+            font-weight: 600;
+            display: inline-block;
+            margin-top: 12px;
+        }
+
+        /* Modernized Contact Card */
+        .contact-card {
+            background: linear-gradient(135deg, var(--bg-card) 0%, var(--primary-light) 100%);
+            border: 1px solid var(--border-color);
+            border-left: 4px solid var(--primary-color);
+            padding: 30px;
+            border-radius: var(--radius-md);
+            margin-top: 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 16px;
+        }
+
+        .contact-field p {
+            margin-bottom: 0 !important;
+            font-size: 14px;
+        }
+
+        .contact-field strong {
+            color: var(--text-muted);
+            text-transform: uppercase;
+            font-size: 11px;
+            letter-spacing: 0.5px;
+            display: block;
+            margin-bottom: 2px;
+        }
+
+        .contact-field span {
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .contact-field a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        /* --- Footer --- */
+        footer {
+            background: var(--text-dark);
+            color: #ffffff;
+            text-align: center;
+            padding: 30px;
+            margin-top: 80px;
         }
 
         .footer-bottom {
             font-size: 13px;
-            letter-spacing: 1px;
+            letter-spacing: 0.5px;
+            opacity: 0.8;
         }
 
-        @media(max-width:768px) {
-            .policy-container {
-                margin: 20px;
-                padding: 25px;
+        /* --- Responsive Queries --- */
+        @media(max-width: 992px) {
+            .policy-wrapper {
+                grid-template-columns: 1fr;
             }
-
-            .policy-header h1 {
-                font-size: 40px;
+            .policy-sidebar {
+                display: none;
             }
+            .policy-banner h1 {
+                font-size: 36px;
+            }
+        }
 
-            .policy-container h2 {
-                font-size: 22px;
+        @media(max-width: 576px) {
+            .policy-wrapper {
+                padding: 0 16px;
+                margin: 20px auto;
+            }
+            .policy-banner {
+                padding: 40px 16px 60px 16px;
+            }
+            .effective-date-card {
+                margin: -25px 16px 0 16px;
+                padding: 12px 20px;
+            }
+            .policy-section {
+                padding: 24px;
+            }
+            .contact-card {
+                grid-template-columns: 1fr;
+                padding: 20px;
             }
         }
     </style>
@@ -146,209 +350,212 @@
     </div>
 </header>
 
-<main class="policy-container">
+<section class="policy-banner">
+    <h1>Privacy Policy</h1>
+    <p>At ACCESCO Living, we strive to provide a transparent and customer-friendly experience. This policy outlines the terms governing cancellations, refunds, and related requests.</p>
+</section>
 
-    <div class="policy-header">
-        <h1>Privacy Policy</h1>
-        <p>Last Updated: June 2026</p>
-    </div>
+<div class="effective-date-card">
+    <strong>Effective Date:</strong> January 1, 2026
+</div>
 
-    <section>
-        <h2> PRIVACY POLICY</h2>
+<div class="policy-wrapper">
+    <aside class="policy-sidebar">
+        <h4>Contents</h4>
+        <nav class="policy-nav">
+            <a href="#overview">Overview</a>
+            <a href="#section1">1. Scope</a>
+            <a href="#section2">2. Info We Collect</a>
+            <a href="#section3">3. How We Use It</a>
+            <a href="#section4">4. Data Sharing</a>
+            <a href="#section5">5. Security & Retention</a>
+            <a href="#section6">6. Your Rights</a>
+            <a href="#section7">7. Cookies</a>
+            <a href="#section8">8. Children's Privacy</a>
+            <a href="#section9">9. Data Transfers</a>
+            <a href="#section10">10. Policy Changes</a>
+            <a href="#section11">11. Contact Info</a>
+        </nav>
+    </aside>
 
-        <p>
-            This Privacy Policy describes how Accesco Living Private Limited
-            ("Accesco Living", "we", "our", or "us") collects, uses, stores,
-            and protects the personal information you provide when you use our
-            platform, including our mobile application, website
-            (accescoliving.in), and all associated services including Grokly,
-            Swadisht, DineX, InstaStyle, LocalMeds, FarmChain, and Xpense Meter.
-        </p>
+    <main class="policy-container">
+        <section class="policy-section" id="overview">
+            <h2>Privacy Policy</h2>
+            <p>
+                This Privacy Policy applies to all orders placed on the Accesco Living platform across all verticals — Grokly (grocery), Swadisht, DineX, InstaStyle, LocalMeds, FarmChain, and Xpense Meter.
+            </p>
+            <p>
+                This policy outlines conditions under which cancellations are permitted, timeline parameters, and execution workflows for refunds processed through domestic banking networks.
+            </p>
+        </section>
 
-        <p>
-            This policy is published in accordance with Rule 3(1) of the
-            Information Technology (Intermediaries Guidelines) Rules, 2011 and
-            the Information Technology (Reasonable Security Practices and
-            Procedures and Sensitive Personal Data or Information) Rules, 2011.
-        </p>
-    </section>
+        <section class="policy-section" id="section1">
+            <h2>1. Company Information & Scope</h2>
+            <h3>1.1 Who We Are</h3>
+            <p>
+                Accesco Living Private Limited is a company incorporated under the
+                Companies Act, 2013, with its registered office in West Bengal and
+                primary operations based in Bengaluru, Karnataka, India.
+            </p>
+            <h3>1.2 Scope of This Policy</h3>
+            <p>
+                This policy applies to all users of the Accesco Living platform,
+                including registered customers, guest users, delivery partners,
+                dark store staff, and any individual whose personal data is
+                processed by us.
+            </p>
+            <h3>1.3 Consent</h3>
+            <p>
+                By creating an account, placing an order, or otherwise using our
+                services, you expressly consent to the collection, use, storage,
+                and disclosure of your personal information as described in this
+                policy.
+            </p>
+        </section>
 
-    <section>
-        <h2>1. Company Information & Scope</h2>
+        <section class="policy-section" id="section2">
+            <h2>2. Information We Collect</h2>
+            <h3>2.1 Information You Provide Directly</h3>
+            <ul>
+                <li>Account registration details.</li>
+                <li>Delivery addresses.</li>
+                <li>Payment information.</li>
+                <li>Identity verification documents.</li>
+                <li>Health and dietary preferences.</li>
+                <li>Support communications and feedback.</li>
+            </ul>
 
-        <h3>1.1 Who We Are</h3>
-        <p>
-            Accesco Living Private Limited is a company incorporated under the
-            Companies Act, 2013, with its registered office in West Bengal and
-            primary operations based in Bengaluru, Karnataka, India.
-        </p>
+            <h3>2.2 Information Collected Automatically</h3>
+            <ul>
+                <li>Device information.</li>
+                <li>Location data.</li>
+                <li>Usage history and interactions.</li>
+                <li>App performance logs.</li>
+                <li>Network and browser information.</li>
+            </ul>
 
-        <h3>1.2 Scope of This Policy</h3>
-        <p>
-            This policy applies to all users of the Accesco Living platform,
-            including registered customers, guest users, delivery partners,
-            dark store staff, and any individual whose personal data is
-            processed by us.
-        </p>
+            <h3>2.3 Information from Third Parties</h3>
+            <ul>
+                <li>Payment gateway confirmations.</li>
+                <li>Google and Facebook login information.</li>
+                <li>FarmChain supplier information.</li>
+                <li>Analytics providers.</li>
+            </ul>
+        </section>
 
-        <h3>1.3 Consent</h3>
-        <p>
-            By creating an account, placing an order, or otherwise using our
-            services, you expressly consent to the collection, use, storage,
-            and disclosure of your personal information as described in this
-            policy.
-        </p>
-    </section>
+        <section class="policy-section" id="section3">
+            <h2>3. How We Use Your Information</h2>
+            <ul>
+                <li>To process and fulfil orders.</li>
+                <li>To personalise recommendations.</li>
+                <li>To improve platform services.</li>
+                <li>To send notifications and updates.</li>
+                <li>To detect fraud and abuse.</li>
+                <li>To comply with legal obligations.</li>
+            </ul>
+        </section>
 
-    <section>
-        <h2>2. Information We Collect</h2>
-
-        <h3>2.1 Information You Provide Directly</h3>
-
-        <ul>
-            <li>Account registration details.</li>
-            <li>Delivery addresses.</li>
-            <li>Payment information.</li>
-            <li>Identity verification documents.</li>
-            <li>Health and dietary preferences.</li>
-            <li>Support communications and feedback.</li>
-        </ul>
-
-        <h3>2.2 Information Collected Automatically</h3>
-
-        <ul>
-            <li>Device information.</li>
-            <li>Location data.</li>
-            <li>Usage history and interactions.</li>
-            <li>App performance logs.</li>
-            <li>Network and browser information.</li>
-        </ul>
-
-        <h3>2.3 Information from Third Parties</h3>
-
-        <ul>
-            <li>Payment gateway confirmations.</li>
-            <li>Google and Facebook login information.</li>
-            <li>FarmChain supplier information.</li>
-            <li>Analytics providers.</li>
-        </ul>
-    </section>
-
-    <section>
-        <h2>3. How We Use Your Information</h2>
-
-        <ul>
-            <li>To process and fulfil orders.</li>
-            <li>To personalise recommendations.</li>
-            <li>To improve platform services.</li>
-            <li>To send notifications and updates.</li>
-            <li>To detect fraud and abuse.</li>
-            <li>To comply with legal obligations.</li>
-        </ul>
-    </section>
-
-    <section>
-        <h2>4. Data Sharing & Third Parties</h2>
-
-        <ul>
-            <li>Delivery partners.</li>
-            <li>Payment gateways.</li>
-            <li>Cloud infrastructure providers.</li>
-            <li>Analytics services.</li>
-            <li>Government authorities when legally required.</li>
-        </ul>
-
-        <p>
-            <strong>
+        <section class="policy-section" id="section4">
+            <h2>4. Data Sharing & Third Parties</h2>
+            <ul>
+                <li>Delivery partners.</li>
+                <li>Payment gateways.</li>
+                <li>Cloud infrastructure providers.</li>
+                <li>Analytics services.</li>
+                <li>Government authorities when legally required.</li>
+            </ul>
+            <p class="important-note">
                 We do not sell, rent, or trade your personal information.
-            </strong>
-        </p>
-    </section>
+            </p>
+        </section>
 
-    <section>
-        <h2>5. Data Storage, Security & Retention</h2>
+        <section class="policy-section" id="section5">
+            <h2>5. Data Storage, Security & Retention</h2>
+            <ul>
+                <li>AES-256 encryption at rest.</li>
+                <li>TLS 1.3 encryption in transit.</li>
+                <li>Tokenized payment security.</li>
+                <li>Role-based access control.</li>
+                <li>Regular security testing.</li>
+            </ul>
+        </section>
 
-        <ul>
-            <li>AES-256 encryption at rest.</li>
-            <li>TLS 1.3 encryption in transit.</li>
-            <li>Tokenized payment security.</li>
-            <li>Role-based access control.</li>
-            <li>Regular security testing.</li>
-        </ul>
-    </section>
+        <section class="policy-section" id="section6">
+            <h2>6. Your Rights & Choices</h2>
+            <ul>
+                <li>Right to access data.</li>
+                <li>Right to correction.</li>
+                <li>Right to deletion.</li>
+                <li>Right to withdraw consent.</li>
+                <li>Right to data portability.</li>
+                <li>Right to object to profiling.</li>
+            </ul>
+        </section>
 
-    <section>
-        <h2>6. Your Rights & Choices</h2>
+        <section class="policy-section" id="section7">
+            <h2>7. Cookies & Tracking Technologies</h2>
+            <p>
+                We use essential, analytics, marketing, and performance cookies to
+                improve user experience and platform functionality.
+            </p>
+        </section>
 
-        <ul>
-            <li>Right to access data.</li>
-            <li>Right to correction.</li>
-            <li>Right to deletion.</li>
-            <li>Right to withdraw consent.</li>
-            <li>Right to data portability.</li>
-            <li>Right to object to profiling.</li>
-        </ul>
+        <section class="policy-section" id="section8">
+            <h2>8. Children's Privacy</h2>
+            <p>
+                Accesco Living services are not intended for users under 18 years
+                of age. We do not knowingly collect information from children.
+            </p>
+        </section>
 
-        <p>
-            Contact:
-            <strong>grievance@accescoliving.in</strong>
-        </p>
-    </section>
+        <section class="policy-section" id="section9">
+            <h2>9. Cross-Border Data Transfers</h2>
+            <p>
+                Data is primarily stored within India. Any international transfers
+                are protected through contractual and technical safeguards.
+            </p>
+        </section>
 
-    <section>
-        <h2>7. Cookies & Tracking Technologies</h2>
+        <section class="policy-section" id="section10">
+            <h2>10. Changes to This Privacy Policy</h2>
+            <p>
+                We may revise this Privacy Policy from time to time. Material
+                updates will be communicated through email, push notifications,
+                or notices on the platform.
+            </p>
+        </section>
 
-        <p>
-            We use essential, analytics, marketing, and performance cookies to
-            improve user experience and platform functionality.
-        </p>
-    </section>
-
-    <section>
-        <h2>8. Children's Privacy</h2>
-
-        <p>
-            Accesco Living services are not intended for users under 18 years
-            of age. We do not knowingly collect information from children.
-        </p>
-    </section>
-
-    <section>
-        <h2>9. Cross-Border Data Transfers</h2>
-
-        <p>
-            Data is primarily stored within India. Any international transfers
-            are protected through contractual and technical safeguards.
-        </p>
-    </section>
-
-    <section>
-        <h2>10. Changes to This Privacy Policy</h2>
-
-        <p>
-            We may revise this Privacy Policy from time to time. Material
-            updates will be communicated through email, push notifications,
-            or notices on the platform.
-        </p>
-    </section>
-
-    <section>
-        <h2>11. Grievance Officer & Contact</h2>
-
-        <div class="contact-card">
-            <p><strong>Name:</strong> Grievance Officer</p>
-            <p><strong>Designation:</strong> Data Protection & Compliance Officer</p>
-            <p><strong>Email:</strong> grievance@accescoliving.com</p>
-            <p><strong>Address:</strong> Bengaluru, Karnataka, India</p>
-            <p><strong>Response Time:</strong> 48 Hours Acknowledgement, 30 Days Resolution</p>
-        </div>
-    </section>
-
-</main>
+        <section class="policy-section" id="section11">
+            <h2>11. Grievance Officer & Contact</h2>
+            <div class="contact-card">
+                <div class="contact-field">
+                    <strong>Name</strong>
+                    <span>Grievance Officer</span>
+                </div>
+                <div class="contact-field">
+                    <strong>Designation</strong>
+                    <span>Data Protection & Compliance Officer</span>
+                </div>
+                <div class="contact-field">
+                    <strong>Email</strong>
+                    <span><a href="mailto:grievance@accescoliving.com">grievance@accescoliving.com</a></span>
+                </div>
+                <div class="contact-field">
+                    <strong>Address</strong>
+                    <span>Bengaluru, Karnataka, India</span>
+                </div>
+                <div class="contact-field" style="grid-column: 1 / -1;">
+                    <strong>Response Time</strong>
+                    <span>48 Hours Acknowledgement, 30 Days Resolution</span>
+                </div>
+            </div>
+        </section>
+    </main>
+</div>
 
 <footer>
     <div class="footer-bottom">
-        © 2026 ACCESCO LIVING. All Rights Reserved.
+        &copy; 2026 ACCESCO LIVING. All Rights Reserved.
     </div>
 </footer>
 
