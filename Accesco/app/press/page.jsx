@@ -80,6 +80,7 @@ const pressKitItems = [
       { name: 'Founder 1', url: '/Press/Founder1.jpeg', type: 'IMG' },
       { name: 'Founder 2', url: '/Press/Founder2.jpeg', type: 'IMG' },
       { name: 'Founder 3', url: '/Press/Founder3.PNG', type: 'IMG' },
+      { name: 'Founder 4', url: '/Press/FoundersPIC4.jpeg', type: 'IMG' },
     ],
   },
   {
