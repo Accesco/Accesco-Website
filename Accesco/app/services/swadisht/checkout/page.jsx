@@ -147,11 +147,16 @@ function CheckoutContent() {
     setLastOrderId(orderId);
     
     // Simulate order placement
-    setOrderPlaced(true);
-    setTimeout(() => {
-      clearCart();
-      router.push('/services/swadisht/orders');
-    }, 3000);
+  setOrderPlaced(true);
+
+  setTimeout(() => {
+    clearCart();
+
+    router.push(
+      `/services/swadisht/order-tracking?id=${orderId}`
+    );
+  }, 3000); 
+
   };
 
   if (cart.length === 0 && !orderPlaced) {

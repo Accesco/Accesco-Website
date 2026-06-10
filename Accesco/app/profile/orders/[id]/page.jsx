@@ -1,4 +1,4 @@
-'/* eslint-disable */
+/* eslint-disable */
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -93,8 +93,6 @@ export default function OrderDetailPage() {
               Track Live Order
             </button>
           )}
-        </div>
-
         </div>
 
         <RiderInfo
