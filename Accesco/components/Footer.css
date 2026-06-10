@@ -31,6 +31,13 @@
 .accesco-footer-root {
   position: relative;
   width: 100%;
+<<<<<<< HEAD
+=======
+  background-image: url('/images/hero.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+>>>>>>> 3a4ba2b2ebdd84572d2c94aae81278880dc476a4
   overflow: hidden;
   color: var(--footer-text-primary);
   font-family: 'DM Sans', sans-serif;

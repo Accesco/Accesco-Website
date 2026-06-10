@@ -16,6 +16,7 @@
   z-index: 1000;
 
   background: rgba(255, 255, 255, 0.92);
+  background: rgba(255, 255, 255, 0.72);
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
 
@@ -29,6 +30,7 @@
 }
 .header.scrolled {
   background: rgba(255,255,255,0.95);
+  background: rgba(255,255,255,0.82);
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
   box-shadow: 0 12px 40px rgba(0,0,0,0.15);
@@ -859,4 +861,22 @@
     padding: 9px 18px;
     font-size: 0.8rem;
   }
+}
+.logoDivider {
+  width: 1px;
+  height: 22px;
+  background: rgba(122, 0, 66, 0.2);
+  margin-left: -8px;
+  margin-right: -8px;
+}
+
+.waitlistLink {
+  font-family: 'Sora', sans-serif;
+  font-size: 0.92rem;
+  font-weight: 500;
+  color: #7A0042;
+  text-decoration: none;
+
+  margin-left: 0;
+  margin-right: -2px; /* tweak this */
 }

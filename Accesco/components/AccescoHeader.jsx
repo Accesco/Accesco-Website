@@ -178,37 +178,22 @@ export default function AccescoHeader() {
               <span className={styles.logoTagline}>Living</span>
             </div>
           </Link>
+          <div className={styles.logoDivider}></div>
 
           <nav className={styles.nav}>
-            {/* Services Dropdown */}
-            <div 
+            <div
               className={styles.servicesDropdown}
               ref={dropdownRef}
               onMouseEnter={handleMouseEnter}
               onMouseLeave={handleMouseLeave}
             >
-              <button 
-                className={`${styles.navLink} ${styles.servicesButton} ${pathname.startsWith('/services') ? styles.active : ''}`}
+              <button
+                type="button"
+                className={`${styles.navLink} ${pathname.startsWith('/services') ? styles.active : ''}`}
+                onClick={() => setIsServicesOpen(!isServicesOpen)}
                 aria-expanded={isServicesOpen}
-                aria-haspopup="true"
               >
                 Services
-                <svg 
-                  width="12" 
-                  height="12" 
-                  viewBox="0 0 12 12" 
-                  fill="none"
-                  className={styles.dropdownIcon}
-                  style={{ transform: isServicesOpen ? 'rotate(180deg)' : 'rotate(0deg)' }}
-                >
-                  <path 
-                    d="M3 4.5L6 7.5L9 4.5" 
-                    stroke="currentColor" 
-                    strokeWidth="1.5" 
-                    strokeLinecap="round" 
-                    strokeLinejoin="round"
-                  />
-                </svg>
               </button>
 
               {isServicesOpen && (
@@ -228,14 +213,47 @@ export default function AccescoHeader() {
                   </div>
                 </div>
               )}
-              <a href="#waitlist" className={styles.navLink}>
-  JOIN WAITLIST
-</a>
-              
             </div>
-            
-           
-</nav>
+
+            <div
+              className={styles.servicesDropdown}
+              ref={partnersDropdownRef}
+              onMouseEnter={handlePartnersMouseEnter}
+              onMouseLeave={handlePartnersMouseLeave}
+            >
+              <button
+                type="button"
+                className={`${styles.navLink} ${pathname.startsWith('/partner') ? styles.active : ''}`}
+                onClick={() => setIsPartnersOpen(!isPartnersOpen)}
+                aria-expanded={isPartnersOpen}
+              >
+                Partner
+              </button>
+
+              {isPartnersOpen && (
+                <div className={styles.dropdownMenu}>
+                  <div className={styles.dropdownContent}>
+                    {partnerOptions.map((option) => (
+                      <Link
+                        key={option.href}
+                        href={option.href}
+                        className={`${styles.dropdownItem} ${pathname === option.href ? styles.activeDropdown : ''}`}
+                        onClick={() => setIsPartnersOpen(false)}
+                      >
+                        <div className={styles.dropdownItemName}>{option.name}</div>
+                        <div className={styles.dropdownItemDesc}>{option.description}</div>
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <Link href="/blogs" className={`${styles.navLink} ${pathname === '/blogs' ? styles.active : ''}`}>Blogs</Link>
+            <Link href="/contact" className={`${styles.navLink} ${pathname === '/contact' ? styles.active : ''}`}>Contact</Link>
+            <a href="#waitlist" className={styles.waitlistLink}>JOIN WAITLIST</a>
+          </nav>
+
           <div className={styles.actions}>
             {/* Location Selector */}
               <div 

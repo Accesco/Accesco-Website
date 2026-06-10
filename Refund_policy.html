@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cancellation & Refund Policy | ACCESCO Living</title>
+
+    <link rel="preconnect" href="[https://fonts.googleapis.com](https://fonts.googleapis.com)">
+    <link rel="preconnect" href="[https://fonts.gstatic.com](https://fonts.gstatic.com)" crossorigin>
+    <link href="[https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@600;700;800;900&display=swap](https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@600;700;800;900&display=swap)" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #1e1e24;
+            --accent: #700457;
+            --accent-light: #fdf5fc;
+            --accent-gradient: linear-gradient(135deg, #700457, #450035);
+            --bg: #f9fbfd;
+            --card: #ffffff;
+            --border: #eef2f6;
+            --text-muted: #64748b;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--primary);
+            line-height: 1.7;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* HERO SECTION */
+        .header {
+            background: var(--accent-gradient);
+            color: white;
+            text-align: center;
+            padding: 100px 20px 140px;
+            position: relative;
+        }
+
+        .header h1 {
+            font-family: 'Poppins', sans-serif;
+            font-size: clamp(32px, 5vw, 56px);
+            font-weight: 800;
+            letter-spacing: -1px;
+            margin-bottom: 20px;
+            line-height: 1.2;
+        }
+
+        .header p {
+            max-width: 700px;
+            margin: auto;
+            font-size: 18px;
+            opacity: 0.9;
+            font-weight: 300;
+        }
+
+        /* EFFECTIVE DATE CARD */
+        .date-card-wrap {
+            max-width: 1200px;
+            margin: -60px auto 40px;
+            padding: 0 24px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .date-card {
+            background: var(--card);
+            border-radius: 16px;
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            border: 1px solid var(--border);
+            box-shadow: 0 10px 30px rgba(112, 4, 87, 0.05);
+        }
+
+        .date-card span {
+            font-size: 15px;
+            color: var(--text-muted);
+        }
+
+        .date-card strong {
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        /* MAIN CONTENT LAYOUT */
+        .main-wrapper {
+            max-width: 1200px;
+            margin: auto;
+            padding: 0 24px 60px;
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 40px;
+        }
+
+        /* STICKY SIDEBAR NAV */
+        .sidebar {
+            position: sticky;
+            top: 40px;
+            height: fit-content;
+        }
+
+        .sidebar h4 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            margin-bottom: 15px;
+        }
+
+        .sidebar ul {
+            list-style: none;
+        }
+
+        .sidebar ul li a {
+            display: block;
+            padding: 10px 15px;
+            color: var(--primary);
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 500;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+            margin-bottom: 4px;
+        }
+
+        .sidebar ul li a:hover {
+            background: var(--accent-light);
+            color: var(--accent);
+            padding-left: 20px;
+        }
+
+        /* CONTENT CARDS */
+        .content-body {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .policy-card {
+            background: var(--card);
+            border-radius: 20px;
+            padding: 40px;
+            border: 1px solid var(--border);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+        }
+
+        .policy-card h2 {
+            font-family: 'Poppins', sans-serif;
+            color: var(--accent);
+            margin-bottom: 25px;
+            font-size: 24px;
+            font-weight: 700;
+            border-bottom: 2px solid var(--accent-light);
+            padding-bottom: 12px;
+        }
+
+        .policy-card h3 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 18px;
+            color: var(--primary);
+            margin: 25px 0 12px;
+            font-weight: 600;
+        }
+
+        .policy-card h3:first-of-type {
+            margin-top: 0;
+        }
+
+        .policy-card p {
+            color: #4a5568;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+
+        /* LIST STYLING */
+        .policy-card ul, .policy-card ol {
+            padding-left: 20px;
+            margin-bottom: 20px;
+        }
+
+        .policy-card ul li, .policy-card ol li {
+            color: #4a5568;
+            font-size: 15px;
+            margin-bottom: 10px;
+        }
+
+        .policy-card ul li strong {
+            color: var(--primary);
+        }
+
+        /* GRID BADGES FOR WINDOWS */
+        .grid-badges {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .badge-box {
+            background: var(--accent-light);
+            border: 1px solid rgba(112, 4, 87, 0.1);
+            padding: 15px;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .badge-box .title {
+            font-weight: 700;
+            color: var(--accent);
+            font-family: 'Poppins', sans-serif;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .badge-box .time {
+            font-size: 15px;
+            color: var(--primary);
+            font-weight: 500;
+        }
+
+        /* MODERN DATA TABLE */
+        .table-responsive {
+            overflow-x: auto;
+            margin: 20px 0;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 15px;
+        }
+
+        th {
+            background: #f8fafc;
+            color: var(--primary);
+            font-weight: 600;
+            padding: 14px 20px;
+            border-bottom: 2px solid var(--border);
+        }
+
+        td {
+            padding: 14px 20px;
+            border-bottom: 1px solid var(--border);
+            color: #4a5568;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover td {
+            background: #fafbfe;
+        }
+
+        /* OFFICIAL DECLARATION CARD */
+        .contact-card {
+            background: #f8fafc;
+            border-radius: 16px;
+            padding: 30px;
+            border: 1px solid var(--border);
+            margin-top: 15px;
+        }
+
+        .contact-card hr {
+            border: 0;
+            height: 1px;
+            background: var(--border);
+            margin: 20px 0;
+        }
+
+        .contact-card p {
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .contact-card p:last-child {
+            margin-bottom: 0;
+        }
+
+        /* FOOTER */
+        .footer {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-muted);
+            font-size: 14px;
+            border-top: 1px solid var(--border);
+            background: #ffffff;
+        }
+
+        /* RESPONSIVE DESIGN */
+        @media(max-width: 992px) {
+            .main-wrapper {
+                grid-template-columns: 1fr;
+            }
+            .sidebar {
+                display: none; /* Hides sticky navigation on smaller tablets/mobile for UI clarity */
+            }
+        }
+
+        @media(max-width: 768px) {
+            .header {
+                padding: 60px 20px 100px;
+            }
+            .date-card {
+                padding: 20px;
+                flex-direction: column;
+                text-align: center;
+            }
+            .policy-card {
+                padding: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- HERO SECTION -->
+    <header class="header">
+        <h1>Cancellation & Refund Policy</h1>
+        <p>At ACCESCO Living, we strive to provide a transparent and customer-friendly experience. This policy outlines the terms governing cancellations, refunds, and related requests across our ecosystems.</p>
+    </header>
+
+    <!-- EFFECTIVE DATE CARD -->
+    <div class="date-card-wrap">
+        <div class="date-card">
+            <span>Platform Regulations & Guidelines</span>
+            <div><strong>Effective Date:</strong> January 1, 2026</div>
+        </div>
+    </div>
+
+    <!-- MAIN WRAPPER CONTAINER -->
+    <div class="main-wrapper">
+        
+        <!-- SIDEBAR NAVIGATION -->
+        <nav class="sidebar">
+            <h4>Policy Sections</h4>
+            <ul>
+                <li><a href="#overview">Overview</a></li>
+                <li><a href="#customer-cancellation">1. Customer Cancellation</a></li>
+                <li><a href="#platform-cancellation">2. Accesco Cancellation</a></li>
+                <li><a href="#eligibility">3. Refund Eligibility</a></li>
+                <li><a href="#timelines">4. Process & Timelines</a></li>
+                <li><a href="#non-refundable">5. Non-Refundable</a></li>
+                <li><a href="#reporting">6. Reporting Claims</a></li>
+                <li><a href="#instastyle">7. InstaStyle Returns</a></li>
+                <li><a href="#localmeds">8. LocalMeds Returns</a></li>
+                <li><a href="#subscriptions">9. Subscriptions</a></li>
+                <li><a href="#disputes">10. Disputes & Law</a></li>
+            </ul>
+        </nav>
+
+        <!-- CONTENT BODY -->
+        <main class="content-body">
+
+            <!-- OVERVIEW -->
+            <section class="policy-card" id="overview">
+                <h2>Refund & Cancellation Policy Overview</h2>
+                <p>This Refund and Cancellation Policy applies to all orders placed on the Accesco Living platform across all verticals — Grokly (grocery), Swadisht (food / cloud kitchen), DineX (dining), InstaStyle (fashion), and LocalMeds (pharmacy). This policy is designed to be fair, transparent, and fully compliant with the Consumer Protection Act, 2019.</p>
+            </section>
+
+            <!-- SECTION 1 -->
+            <section class="policy-card" id="customer-cancellation">
+                <h2>1. Order Cancellation — By Customer</h2>
+                
+                <h3>1.1 Cancellation Window</h3>
+                <p>To keep ecosystem dynamics optimal, cancellation conditions vary dynamically across vertical delivery channels:</p>
+                
+                <div class="grid-badges">
+                    <div class="badge-box"><span class="title">Grokly</span><span class="time">Within 60s before store acceptance</span></div>
+                    <div class="badge-box"><span class="title">Swadisht</span><span class="time">Within 60s before preparation begins</span></div>
+                    <div class="badge-box"><span class="title">DineX</span><span class="time">Up to 2 hours before reservation</span></div>
+                    <div class="badge-box"><span class="title">InstaStyle</span><span class="time">Within 10 minutes before dispatch</span></div>
+                    <div class="badge-box"><span class="title">LocalMeds</span><span class="time">Within 60s before Rx processing</span></div>
+                    <div class="badge-box"><span class="title">Subscriptions</span><span class="time">Up to 24h before next billing cycle</span></div>
+                </div>
+
+                <h3>1.2 How to Cancel</h3>
+                <ul>
+                    <li>Open Accesco Living App &rarr; <strong>My Orders</strong> &rarr; <strong>Select Order</strong> &rarr; <strong>Cancel Order</strong>.</li>
+                    <li>Cancellation requests within the allowed window are processed instantly.</li>
+                    <li>Confirmation will be sent via SMS and Push Notification.</li>
+                    <li>DineX reservations may also be cancelled via email confirmation links.</li>
+                </ul>
+
+                <h3>1.3 Late Cancellation</h3>
+                <p>Orders cancelled after the permitted window are generally not eligible for cancellation refunds unless covered under specific Refund Eligibility provisions.</p>
+            </section>
+
+            <!-- SECTION 2 -->
+            <section class="policy-card" id="platform-cancellation">
+                <h2>2. Order Cancellation — By Accesco Living</h2>
+                <h3>2.1 When We May Cancel Your Order</h3>
+                <ul>
+                    <li>Item unavailability at inventory touchpoints.</li>
+                    <li>Unforeseeable rider delivery constraints.</li>
+                    <li>Unreachable or unserviceable delivery locations.</li>
+                    <li>Payment gateway verification failures.</li>
+                    <li>Force majeure events or regulatory restrictions.</li>
+                    <li>Systemic fraud detection algorithms triggered.</li>
+                </ul>
+
+                <h3>2.2 Notification</h3>
+                <p>Customers will receive immediate notifications through SMS, Email, and Push Notifications. Full refunds are processed automatically into original modes.</p>
+            </section>
+
+            <!-- SECTION 3 -->
+            <section class="policy-card" id="eligibility">
+                <h2>3. Refund Eligibility</h2>
+                <h3>3.1 Full Refund Eligibility</h3>
+                <ul>
+                    <li>Order cancelled within permitted cancellation window.</li>
+                    <li>Order cancelled by Accesco Living.</li>
+                    <li>Order completely failed or not delivered.</li>
+                    <li>Incorrect or completely different item delivered.</li>
+                    <li>Damaged, spilled, or spoiled products.</li>
+                    <li>Quantity delivered is less than the billed quantity.</li>
+                    <li>Food hygiene or verifiable quality issues.</li>
+                    <li>Expired or incorrect pharmacy items.</li>
+                </ul>
+
+                <h3>3.2 Partial Refund Eligibility</h3>
+                <ul>
+                    <li>Partial order line-item missing issues.</li>
+                    <li>Significant service execution delays.</li>
+                    <li>Manufacturing defects discovered in eligible fashion items.</li>
+                </ul>
+
+                <h3>3.3 Refund Amount</h3>
+                <p>Refund calculations precisely include the affected product core value, applied dynamic taxes, and proportional delivery charges where validly relevant.</p>
+            </section>
+
+            <!-- SECTION 4 -->
+            <section class="policy-card" id="timelines">
+                <h2>4. Refund Process & Timelines</h2>
+                <h3>4.1 Refund Processing</h3>
+                <ul>
+                    <li>Refunds are systematically initiated within 24 hours post-internal approval validation.</li>
+                    <li>Original gateway payment methods are utilized by secure engineering default.</li>
+                    <li>Accesco Living Wallet refunds are available instantly upon selection.</li>
+                </ul>
+
+                <h3>Refund Timelines by Channel</h3>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Payment Method</th>
+                                <th>Estimated Timeline</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><strong>UPI</strong></td><td>Instant to 2 Business Days</td></tr>
+                            <tr><td><strong>Credit Card</strong></td><td>5–7 Business Days</td></tr>
+                            <tr><td><strong>Debit Card</strong></td><td>5–7 Business Days</td></tr>
+                            <tr><td><strong>Net Banking</strong></td><td>3–5 Business Days</td></tr>
+                            <tr><td><strong>Wallet</strong></td><td>Instant Settlement</td></tr>
+                            <tr><td><strong>COD (Cash on Delivery)</strong></td><td>Wallet or Bank Transfer within 5–7 Days</td></tr>
+                            <tr><td><strong>BNPL / EMI Modes</strong></td><td>5–7 Business Days</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3>4.2 Refund Tracking</h3>
+                <p>Refund processes can be monitored transparently via: <strong>My Orders</strong> &rarr; <strong>Refund Status</strong>.</p>
+            </section>
+
+            <!-- SECTION 5 -->
+            <section class="policy-card" id="non-refundable">
+                <h2>5. Non-Refundable Situations</h2>
+                <p>Refunds will not be entertained under the following clear circumstances:</p>
+                <ul>
+                    <li>Change of mind after the allotted cancellation window closes.</li>
+                    <li>Incorrect or un-contactable address parameters provided by customer.</li>
+                    <li>Customer availability collapse during actual physical delivery window.</li>
+                    <li>Partially consumed/used products or opened hygiene seals.</li>
+                    <li>Promotional loyalty credits, campaign tokens, and vouchers.</li>
+                    <li>Products explicitly marked as non-returnable in app fields.</li>
+                    <li>Opened prescription medicines or activated digital micro-services.</li>
+                </ul>
+            </section>
+
+            <!-- SECTION 6 -->
+            <section class="policy-card" id="reporting">
+                <h2>6. Damaged, Incorrect & Missing Items</h2>
+                <h3>6.1 Reporting Window</h3>
+                <p>Incidents must be registered strictly within the structured legal windows below:</p>
+                
+                <div class="grid-badges">
+                    <div class="badge-box"><span class="title">Grokly</span><span class="time">Within 6 Hours</span></div>
+                    <div class="badge-box"><span class="title">Swadisht</span><span class="time">Within 2 Hours</span></div>
+                    <div class="badge-box"><span class="title">InstaStyle</span><span class="time">Within 48 Hours</span></div>
+                    <div class="badge-box"><span class="title">LocalMeds</span><span class="time">Within 24 Hours</span></div>
+                    <div class="badge-box"><span class="title">DineX</span><span class="time">During Experience Window</span></div>
+                </div>
+
+                <h3>6.2 Evidence Required</h3>
+                <ul>
+                    <li>Clear unedited cryptographic photo or video proof of anomalies.</li>
+                    <li>Original barcode sticker and outer shipping packaging.</li>
+                    <li>Associated unique Order ID validation variables.</li>
+                </ul>
+                <h3>6.3 Resolution</h3>
+                <p>Resolutions include instant standard replacement, clean system source refund, or structured wallet credit allocations with additional goodwill considerations.</p>
+            </section>
+
+            <!-- SECTION 7 -->
+            <section class="policy-card" id="instastyle">
+                <h2>7. Returns — InstaStyle</h2>
+                <h3>7.1 Return Eligibility</h3>
+                <ul>
+                    <li>Return execution triggers inside 7 absolute calendar days from delivery.</li>
+                    <li>Unused, completely unwashed, and mint-conditioned returns only.</li>
+                    <li>Original price tags, accessory loops, and branded boxing must remain intact.</li>
+                </ul>
+
+                <h3>7.2 Non-Returnable Items</h3>
+                <p>Innerwear, intimate wear, shapewear, cosmetics, final clearance sales, and personalized custom apparel fabrications.</p>
+
+                <h3>7.3 Trial at Your Doorstep</h3>
+                <p>Customers are securely charged strictly for verified elements they choose to officially keep post-doorstep physical trials.</p>
+
+                <h3>7.4 Return Pickup</h3>
+                <p>Physical collection operations map within 24–48 hours post-approval. Financial refunds cycle strictly following backward facility automated quality controls inspection.</p>
+            </section>
+
+            <!-- SECTION 8 -->
+            <section class="policy-card" id="localmeds">
+                <h2>8. Returns — LocalMeds</h2>
+                <h3>8.1 General Rule</h3>
+                <p>Due to therapeutic clinical safety parameters and rigorous pharmaceutical tracking codes, medicines cannot arbitrarily be returned post-delivery.</p>
+
+                <h3>8.2 Exception Configurations</h3>
+                <ul>
+                    <li>Verifiably expired pharmaceutical goods.</li>
+                    <li>Mismatched drug supply configurations vs prescription.</li>
+                    <li>Compromised primary structural packaging or seal damage.</li>
+                    <li>Systemic prescription verification workflow cancellation.</li>
+                </ul>
+            </section>
+
+            <!-- SECTION 9 -->
+            <section class="policy-card" id="subscriptions">
+                <h2>9. Subscription & Membership Cancellation</h2>
+                <ul>
+                    <li>Users can toggle off recurring cycles via: <strong>Settings</strong> &rarr; <strong>Subscription</strong>.</li>
+                    <li>Premium benefit paths remain fully active until the active billing cycle naturally expires.</li>
+                    <li>No partial pro-rata refunds are calculated except within an exclusive 24-hour purchase window.</li>
+                    <li>Automated warning notification updates route 3 days prior to payment execution.</li>
+                </ul>
+            </section>
+
+            <!-- SECTION 10 & 11 -->
+            <section class="policy-card" id="disputes">
+                <h2>10. Dispute Resolution & Governing Law</h2>
+                <ol>
+                    <li>Raise immediate resolution tickets inside the secure In-App Support interface.</li>
+                    <li>Escalate unresolved tracking items directly to: <strong>support@accescoliving.in</strong></li>
+                    <li>Grievance Officer point contact: <strong>grievance@accescoliving.in</strong></li>
+                    <li>Unresolved corporate disputes follow statutory routes under the Consumer Disputes Redressal Commission frameworks.</li>
+                </ol>
+                <p>Unwarranted chargebacks or fraudulent claims may result in immediate permanent suspension of ecosystem account access privileges.</p>
+
+                <h3>11. Governing Law</h3>
+                <p>These policies are configured, processed, and governed in strict adherence with the laws of the Republic of India. Judicial courts operating in Bengaluru, Karnataka maintain exclusive operational jurisdiction.</p>
+            </section>
+
+            <!-- OFFICIAL DECLARATION -->
+            <section class="policy-card">
+                <h2>Official Declaration</h2>
+                <div class="contact-card">
+                    <p><strong>FOR ACCESCO LIVING PRIVATE LIMITED</strong></p>
+                    <p style="color: var(--text-muted);">Authorised Signatory | Founder & CEO</p>
+                    <p>Bengaluru, Karnataka</p>
+
+                    <hr>
+
+                    <p><strong>Effective Date:</strong> 02 June 2026</p>
+                    <p><strong>Next Review Date:</strong> 02 June 2027</p>
+                    <p><strong>Document Version:</strong> Version 1.0 (Compliant)</p>
+
+                    <hr>
+
+                    <p style="font-size: 13px; color: var(--text-muted); line-height: 1.6;">
+                        Accesco Living Private Limited<br>
+                        CIN: U47912WB2025PTC285309<br>
+                        Corporate HQ: Bengaluru, Karnataka, India<br>
+                        Support Node: support@accescoliving.com<br>
+                        <em>Your Life Simplified.</em>
+                    </p>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        © 2026 ACCESCO Living. All Rights Reserved. Built with safety and legal trust protocols.
+    </footer>
+
+</body>
+</html>
