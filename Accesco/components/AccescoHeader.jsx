@@ -147,7 +147,6 @@ export default function AccescoHeader() {
   const forceScrolled = (
     pathname.startsWith('/partner') ||
     pathname.startsWith('/blogs') ||
-    pathname.startsWith('/qtcvideos') ||
     pathname.startsWith('/faq') ||
     pathname.startsWith('/terms') ||
     pathname.startsWith('/about') ||
@@ -181,76 +180,6 @@ export default function AccescoHeader() {
           <div className={styles.logoDivider}></div>
 
           <nav className={styles.nav}>
-            <div
-              className={styles.servicesDropdown}
-              ref={dropdownRef}
-              onMouseEnter={handleMouseEnter}
-              onMouseLeave={handleMouseLeave}
-            >
-              <button
-                type="button"
-                className={`${styles.navLink} ${pathname.startsWith('/services') ? styles.active : ''}`}
-                onClick={() => setIsServicesOpen(!isServicesOpen)}
-                aria-expanded={isServicesOpen}
-              >
-                Services
-              </button>
-
-              {isServicesOpen && (
-                <div className={styles.dropdownMenu}>
-                  <div className={styles.dropdownContent}>
-                    {services.map((service) => (
-                      <Link
-                        key={service.href}
-                        href={service.href}
-                        className={`${styles.dropdownItem} ${pathname === service.href ? styles.activeDropdown : ''}`}
-                        onClick={() => setIsServicesOpen(false)}
-                      >
-                        <div className={styles.dropdownItemName}>{service.name}</div>
-                        <div className={styles.dropdownItemDesc}>{service.description}</div>
-                      </Link>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-
-            <div
-              className={styles.servicesDropdown}
-              ref={partnersDropdownRef}
-              onMouseEnter={handlePartnersMouseEnter}
-              onMouseLeave={handlePartnersMouseLeave}
-            >
-              <button
-                type="button"
-                className={`${styles.navLink} ${pathname.startsWith('/partner') ? styles.active : ''}`}
-                onClick={() => setIsPartnersOpen(!isPartnersOpen)}
-                aria-expanded={isPartnersOpen}
-              >
-                Partner
-              </button>
-
-              {isPartnersOpen && (
-                <div className={styles.dropdownMenu}>
-                  <div className={styles.dropdownContent}>
-                    {partnerOptions.map((option) => (
-                      <Link
-                        key={option.href}
-                        href={option.href}
-                        className={`${styles.dropdownItem} ${pathname === option.href ? styles.activeDropdown : ''}`}
-                        onClick={() => setIsPartnersOpen(false)}
-                      >
-                        <div className={styles.dropdownItemName}>{option.name}</div>
-                        <div className={styles.dropdownItemDesc}>{option.description}</div>
-                      </Link>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-
-            <Link href="/blogs" className={`${styles.navLink} ${pathname === '/blogs' ? styles.active : ''}`}>Blogs</Link>
-            <Link href="/contact" className={`${styles.navLink} ${pathname === '/contact' ? styles.active : ''}`}>Contact</Link>
             <a href="#waitlist" className={styles.waitlistLink}>JOIN WAITLIST</a>
           </nav>
 
