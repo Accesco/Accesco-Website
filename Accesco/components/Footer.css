@@ -31,13 +31,20 @@
 .accesco-footer-root {
   position: relative;
   width: 100%;
-  background-image: url('/images/hero.jpg');
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
   overflow: hidden;
   color: var(--footer-text-primary);
   font-family: 'DM Sans', sans-serif;
+
+  background-image:
+    linear-gradient(
+    rgba(90, 0, 49, 0.65),
+    rgba(90, 0, 49, 0.75)
+  ),
+  url('/images/investor-bg.jpg');
+
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
 /* Wave Background SVG */

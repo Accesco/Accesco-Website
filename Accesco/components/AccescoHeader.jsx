@@ -165,50 +165,35 @@ export default function AccescoHeader() {
       <header className={`${styles.header} ${shouldBeScrolled ? styles.scrolled : ''}`}>
         <div className={styles.container}>
           <Link href="/" className={styles.logo}>
-            <Image 
-              src={shouldBeScrolled ? "/images/accesco_original.png" : "/images/accesco_white.png"} 
-              alt="AccesCo" 
-              width={36} 
-              height={36} 
-              priority 
-              style={{ objectFit: 'contain' }}
-            />
+           <Image 
+  src="/images/accesco_original.png"
+  alt="AccesCo" 
+  width={36} 
+  height={36} 
+  priority 
+  style={{ objectFit: 'contain' }}
+/>
             <div className={styles.logoText}>
               <span className={styles.logoName}>Accesco</span>
               <span className={styles.logoTagline}>Living</span>
             </div>
           </Link>
+          <div className={styles.logoDivider}></div>
 
           <nav className={styles.nav}>
-            {/* Services Dropdown */}
-            <div 
+            <div
               className={styles.servicesDropdown}
               ref={dropdownRef}
               onMouseEnter={handleMouseEnter}
               onMouseLeave={handleMouseLeave}
             >
-              <button 
-                className={`${styles.navLink} ${styles.servicesButton} ${pathname.startsWith('/services') ? styles.active : ''}`}
+              <button
+                type="button"
+                className={`${styles.navLink} ${pathname.startsWith('/services') ? styles.active : ''}`}
+                onClick={() => setIsServicesOpen(!isServicesOpen)}
                 aria-expanded={isServicesOpen}
-                aria-haspopup="true"
               >
                 Services
-                <svg 
-                  width="12" 
-                  height="12" 
-                  viewBox="0 0 12 12" 
-                  fill="none"
-                  className={styles.dropdownIcon}
-                  style={{ transform: isServicesOpen ? 'rotate(180deg)' : 'rotate(0deg)' }}
-                >
-                  <path 
-                    d="M3 4.5L6 7.5L9 4.5" 
-                    stroke="currentColor" 
-                    strokeWidth="1.5" 
-                    strokeLinecap="round" 
-                    strokeLinejoin="round"
-                  />
-                </svg>
               </button>
 
               {isServicesOpen && (
@@ -229,36 +214,20 @@ export default function AccescoHeader() {
                 </div>
               )}
             </div>
-            
-            {/* Partners Dropdown */}
-            <div 
+
+            <div
               className={styles.servicesDropdown}
               ref={partnersDropdownRef}
               onMouseEnter={handlePartnersMouseEnter}
               onMouseLeave={handlePartnersMouseLeave}
             >
-              <button 
-                className={`${styles.navLink} ${styles.servicesButton} ${pathname.startsWith('/partner') ? styles.active : ''}`}
+              <button
+                type="button"
+                className={`${styles.navLink} ${pathname.startsWith('/partner') ? styles.active : ''}`}
+                onClick={() => setIsPartnersOpen(!isPartnersOpen)}
                 aria-expanded={isPartnersOpen}
-                aria-haspopup="true"
               >
-                Become a Partner
-                <svg 
-                  width="12" 
-                  height="12" 
-                  viewBox="0 0 12 12" 
-                  fill="none"
-                  className={styles.dropdownIcon}
-                  style={{ transform: isPartnersOpen ? 'rotate(180deg)' : 'rotate(0deg)' }}
-                >
-                  <path 
-                    d="M3 4.5L6 7.5L9 4.5" 
-                    stroke="currentColor" 
-                    strokeWidth="1.5" 
-                    strokeLinecap="round" 
-                    strokeLinejoin="round"
-                  />
-                </svg>
+                Partner
               </button>
 
               {isPartnersOpen && (
@@ -279,9 +248,10 @@ export default function AccescoHeader() {
                 </div>
               )}
             </div>
-            
+
             <Link href="/blogs" className={`${styles.navLink} ${pathname === '/blogs' ? styles.active : ''}`}>Blogs</Link>
-            <Link href="/contact" className={`${styles.navLink} ${pathname === '/contact' ? styles.active : ''}`}>Help & Support</Link>
+            <Link href="/contact" className={`${styles.navLink} ${pathname === '/contact' ? styles.active : ''}`}>Contact</Link>
+            <a href="#waitlist" className={styles.waitlistLink}>JOIN WAITLIST</a>
           </nav>
 
           <div className={styles.actions}>
@@ -367,7 +337,11 @@ export default function AccescoHeader() {
               <button className={styles.loginButton} onClick={() => setIsAuthOpen(true)}>
                 Login
               </button>
+              
             )}
+            <a href="#" className={styles.loginButton}>
+  Get App
+</a>
 
             <button className={styles.mobileMenuButton} onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
               <span className={`${styles.hamburger} ${isMobileMenuOpen ? styles.open : ''}`}>

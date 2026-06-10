@@ -1,178 +1,962 @@
-'use client';
+.container {
+  max-width: 660px;
+  margin: 30px auto;
+  padding: 0 16px;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  color: #1e293b;
+  min-height: 100vh;
+  background-color: #f7f1eb; /* Styled warm luxury latte-brown background */
+}
 
-import { useState, useEffect } from 'react';
-import { useParams, useRouter } from 'next/navigation';
-import Image from 'next/image';
-import { useCart } from '@/contexts/CartContext';
-import styles from '../../../../profile/orders/orders.module.css';
+.card {
+  max-width: 600px;
+  margin: 0 auto;
+}
 
-export default function InstaStyleOrderDetailPage() {
-  const params = useParams();
-  const router = useRouter();
-  const { orders: contextOrders, addToCart, toggleCart } = useCart();
-  const [order, setOrder] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
+/* Header tracking details panel styling */
+.pageHeader {
+  background: transparent;
+  padding: 12px 4px;
+  margin-bottom: 20px;
+}
 
-  const orderId = params.id;
+.headerInfoWrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
 
-  useEffect(() => {
-    const loadOrder = () => {
-      setIsLoading(true);
-      try {
-        const raw = localStorage.getItem('instastyle_orders');
-        let allOrders = contextOrders || [];
-        if (raw) {
-          allOrders = JSON.parse(raw);
-        }
-        const found = allOrders.find(o => o.id === orderId);
-        setOrder(found);
-      } catch (error) {
-        console.error('Error loading order details:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+.orderLabel {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  color: #88746a;
+  letter-spacing: 0.05em;
+  margin-bottom: 2px;
+}
 
-    loadOrder();
-  }, [orderId, contextOrders]);
+.orderIdTitle {
+  font-size: 24px;
+  font-weight: 800;
+  color: #2b1710;
+  margin: 0;
+  letter-spacing: -0.02em;
+}
 
-  const handleReorder = () => {
-    if (!order || !order.items) return;
-    
-    // Add all items back to cart
-    if (Array.isArray(order.items)) {
-      order.items.forEach(item => {
-        addToCart({
-          id: item.id,
-          name: item.name,
-          brand: item.brand,
-          price: item.price,
-          discountedPrice: item.discountedPrice,
-          images: [{ url: item.image }],
-        }, item.selectedSize || 'M', item.selectedColor || 'Black', item.quantity);
-      });
-    }
-    toggleCart();
-  };
+.deliveredBadge {
+  background: #f3e9e1;
+  color: #3e211b;
+  padding: 6px 14px;
+  border-radius: 99px;
+  font-weight: 700;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid rgba(62, 33, 27, 0.12);
+}
 
-  if (isLoading) return <div className={styles.container}>Loading...</div>;
-  if (!order) return <div className={styles.container}>Order not found</div>;
+.greenPulseDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #3e211b;
+  display: inline-block;
+  box-shadow: 0 0 0 2px rgba(62, 33, 27, 0.25);
+  animation: pulseBeacon 2s infinite;
+}
 
-  const formatDate = (isoString) => {
-    return new Date(isoString).toLocaleString('en-IN', {
-      day: 'numeric', month: 'long', year: 'numeric',
-      hour: '2-digit', minute: '2-digit'
-    });
-  };
+@keyframes pulseBeacon {
+  0% { transform: scale(0.9); opacity: 0.8; }
+  50% { transform: scale(1.1); opacity: 1; }
+  100% { transform: scale(0.9); opacity: 0.8; }
+}
 
-  return (
-    <div style={{ background: '#f8f9fa', minHeight: '100vh', fontFamily: "'Inter', sans-serif" }}>
-      <div style={{ maxWidth: '800px', margin: '40px auto', padding: '0 20px' }}>
-        <button 
-          style={{ marginBottom: '24px', border: 'none', background: 'none', cursor: 'pointer', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '8px', padding: 0 }}
-          onClick={() => router.push('/services/instastyle/orders')}
-        >
-          ← Back to Orders
-        </button>
+.progressBarBg {
+  width: 100%;
+  height: 6px;
+  background: #cbd5e1;
+  border-radius: 99px;
+  margin-top: 16px;
+  overflow: hidden;
+}
 
-        <div style={{ background: 'white', padding: '32px', borderRadius: '24px', border: '1px solid #eee', boxShadow: '0 4px 20px rgba(0,0,0,0.03)' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '32px', flexWrap: 'wrap', gap: '16px' }}>
-            <div>
-              <h1 style={{ fontSize: '24px', fontWeight: 800, margin: '0 0 8px' }}>Order Details</h1>
-              <p style={{ color: '#666', margin: 0 }}>Order ID: {order.id}</p>
-              <p style={{ color: '#666', margin: 0 }}>Placed on: {formatDate(order.timestamp)}</p>
-            </div>
-            <div className={`${styles.orderStatus} ${styles[`status-${order.status}`]}`} style={{ height: 'fit-content' }}>
-              {order.status.replace(/_/g, ' ')}
-            </div>
-          </div>
+.progressBarFill {
+  height: 100%;
+  background: linear-gradient(90deg, #3e211b, #8b5a2b); /* Modern luxury brown gradient fill */
+  border-radius: 99px;
+  transition: width 0.8s ease;
+}
 
-          <div style={{ display: 'flex', gap: '12px', marginBottom: '40px' }}>
-            <button 
-              style={{ flex: 1, padding: '14px', borderRadius: '12px', border: '1px solid #eee', background: 'white', fontWeight: 700, cursor: 'pointer', transition: 'all 0.2s' }}
-              onClick={handleReorder}
-              onMouseOver={(e) => e.target.style.background = '#fcfcfc'}
-              onMouseOut={(e) => e.target.style.background = 'white'}
-            >
-              Reorder All Items
-            </button>
-            {order.status !== 'DELIVERED' && (
-              <button 
-                style={{ flex: 1, padding: '14px', borderRadius: '12px', border: 'none', background: '#111', color: 'white', fontWeight: 700, cursor: 'pointer' }}
-                onClick={() => router.push(`/services/instastyle/order-tracking?id=${order.id}`)}
-              >
-                Track Live Order
-              </button>
-            )}
-          </div>
+.progressLabels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: #88746a;
+  margin-top: 8px;
+}
 
-          <div style={{ marginBottom: '40px' }}>
-            <h2 style={{ fontSize: '18px', fontWeight: 800, marginBottom: '20px' }}>Items Ordered</h2>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-              {Array.isArray(order.items) && order.items.map((item, idx) => (
-                <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: '16px', padding: '12px', border: '1px solid #eee', borderRadius: '12px' }}>
-                  <div style={{ width: '64px', height: '64px', position: 'relative', borderRadius: '8px', overflow: 'hidden', background: '#f5f5f5' }}>
-                    {item.image && (
-                      <Image src={item.image} alt={item.name} fill style={{ objectFit: 'cover' }} />
-                    )}
-                  </div>
-                  <div style={{ flex: 1 }}>
-                    <div style={{ fontWeight: 600, fontSize: '15px' }}>{item.brand} {item.name}</div>
-                    <div style={{ color: '#666', fontSize: '13px', marginTop: '4px' }}>
-                      Size: {item.selectedSize} | Color: {item.selectedColor} | Qty: {item.quantity}
-                    </div>
-                  </div>
-                  <div style={{ fontWeight: 700 }}>
-                    ₹{(item.discountedPrice || item.price) * item.quantity}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
+/* Premium Estimated Arrival Hero Card with High-End CSS Gradients & Soft Inner Highlights */
+.heroRiderCard {
+  background: linear-gradient(145deg, #3e211b 0%, #200f0a 100%); /* Rich premium Espresso Brown Gradient */
+  color: #ffffff;
+  border-radius: 24px;
+  padding: 24px;
+  box-shadow: 0 10px 30px rgba(62, 33, 27, 0.18), inset 0 1px 1px rgba(255, 255, 255, 0.25); /* Subtle inner light reflection */
+  margin-bottom: 16px;
+  border: 1px solid rgba(62, 33, 27, 0.2);
+  position: relative;
+  overflow: hidden;
+}
 
-          <div style={{ borderTop: '1px solid #eee', paddingTop: '24px' }}>
-            <h2 style={{ fontSize: '18px', fontWeight: 800, marginBottom: '16px' }}>Bill Summary</h2>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', color: '#666' }}>
-                <span>Item Total</span>
-                <span>₹{order.subtotal || order.total - (order.deliveryFee || 0) - (order.tax || 0)}</span>
-              </div>
-              {order.deliveryFee > 0 && (
-                <div style={{ display: 'flex', justifyContent: 'space-between', color: '#666' }}>
-                  <span>Delivery Fee</span>
-                  <span>₹{order.deliveryFee}</span>
-                </div>
-              )}
-              {order.tax > 0 && (
-                <div style={{ display: 'flex', justifyContent: 'space-between', color: '#666' }}>
-                  <span>Taxes</span>
-                  <span>₹{order.tax}</span>
-                </div>
-              )}
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 800, fontSize: '18px', marginTop: '12px', paddingTop: '12px', borderTop: '1px solid #eee' }}>
-                <span>Grand Total</span>
-                <span>₹{order.total}</span>
-              </div>
-            </div>
-          </div>
+/* Glassmorphism reflection background */
+.heroRiderCard::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -20%;
+  width: 180px;
+  height: 180px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0) 100%);
+  border-radius: 50%;
+  pointer-events: none;
+}
 
-          <div style={{ marginTop: '40px', background: '#f9f9f9', padding: '24px', borderRadius: '16px' }}>
-            <h3 style={{ fontSize: '16px', fontWeight: 700, marginBottom: '8px' }}>Delivery Address</h3>
-            <p style={{ color: '#555', margin: 0, lineHeight: 1.5 }}>
-              {(order.shippingAddress || order.address) ? (
-                <>
-                  {(order.shippingAddress || order.address).fullName || (order.shippingAddress || order.address).name}<br/>
-                  {(order.shippingAddress || order.address).street || (order.shippingAddress || order.address).address}<br/>
-                  {(order.shippingAddress || order.address).city}, {(order.shippingAddress || order.address).state} {(order.shippingAddress || order.address).pincode || (order.shippingAddress || order.address).zipCode}<br/>
-                  Phone: {(order.shippingAddress || order.address).phone}
-                </>
-              ) : (
-                'Standard Delivery'
-              )}
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
+.heroRiderHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  position: relative;
+  z-index: 2;
+}
+
+.arrivalHeading {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.75);
+  letter-spacing: 0.05em;
+  margin-bottom: 4px;
+}
+
+.etaDisplay {
+  font-size: 44px;
+  font-weight: 900;
+  color: #ffffff;
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+.etaMinLabel {
+  font-size: 19px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.arrivalSubtext {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.9);
+  margin: 6px 0 12px 0;
+  font-weight: 600;
+}
+
+.vehiclePill {
+  background: rgba(0, 0, 0, 0.25);
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 5px 14px;
+  border-radius: 99px;
+  width: fit-content;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  font-family: monospace;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.vehiclePillIcon {
+  width: 13px;
+  height: 13px;
+}
+
+.riderProfileBox {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  min-width: 110px;
+}
+
+.initialsAvatar {
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  font-weight: bold;
+  color: #ffffff;
+  margin-bottom: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+.riderName {
+  font-size: 14.5px;
+  font-weight: 700;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.riderStats {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.85);
+  margin-top: 2px;
+}
+
+/* Call / Message action row buttons */
+.actionButtonsRow {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.callRiderBtn, .msgRiderBtn {
+  flex: 1;
+  padding: 14px 20px;
+  border-radius: 16px;
+  font-weight: 700;
+  font-size: 14.5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  text-decoration: none;
+}
+
+.callRiderBtn {
+  background: linear-gradient(135deg, #3e211b 0%, #1c0e0b 100%);
+  color: #ffffff;
+  border: none;
+  box-shadow: 0 6px 18px rgba(62, 33, 27, 0.25);
+}
+
+.callRiderBtn:hover {
+  transform: translateY(-1.5px);
+  box-shadow: 0 8px 24px rgba(62, 33, 27, 0.35);
+  filter: brightness(1.08);
+}
+
+.msgRiderBtn {
+  background: #ffffff;
+  color: #3e211b;
+  border: 1.5px solid rgba(62, 33, 27, 0.3);
+  box-shadow: 0 4px 12px rgba(62, 33, 27, 0.03);
+}
+
+.msgRiderBtn:hover {
+  background: rgba(62, 33, 27, 0.02);
+  transform: translateY(-1.5px);
+}
+
+/* Quick chat overlay style */
+.chatOverlay {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 16px;
+  margin-bottom: 16px;
+  border: 1px solid #cbd5e1;
+}
+
+.chatHeader {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.chatTitle {
+  font-size: 12px;
+  font-weight: bold;
+  color: #475569;
+}
+
+.chatClose {
+  background: none;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.chatQuickReplies {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.quickReplyBtn {
+  background: #f1f5f9;
+  border: none;
+  border-radius: 99px;
+  padding: 4px 10px;
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.chatInputWrapper {
+  display: flex;
+  gap: 6px;
+}
+
+.chatInput {
+  flex: 1;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-size: 13px;
+}
+
+.chatSendBtn {
+  background: #3e211b;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 6px 12px;
+  cursor: pointer;
+}
+
+.chatSent {
+  font-size: 11px;
+  color: #22c55e;
+  margin-top: 4px;
+}
+
+/* 3. Live Tracking Map Card */
+.liveMapTrackingCard {
+  background: #ffffff;
+  border-radius: 24px;
+  padding: 24px;
+  margin-bottom: 24px;
+  border: 1px solid #eef2ef;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+}
+
+.mapLabelRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 16px;
+}
+
+.smallSectionLabel {
+  font-size: 11px;
+  font-weight: 700;
+  color: #88746a;
+  letter-spacing: 0.05em;
+  display: block;
+  margin-bottom: 2px;
+}
+
+.mapStatusHeading {
+  font-size: 18px;
+  font-weight: 800;
+  color: #2b1710;
+  margin: 0;
+}
+
+.mapLiveIndicator {
+  background: rgba(62, 33, 27, 0.06);
+  color: #3e211b;
+  border: 1px solid rgba(62, 33, 27, 0.15);
+  font-size: 10.5px;
+  font-weight: 800;
+  padding: 4px 10px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.greenPulseDotMini {
+  width: 6px;
+  height: 6px;
+  background: #3e211b;
+  border-radius: 50%;
+  display: inline-block;
+  animation: pulseBeacon 1.5s infinite;
+}
+
+/* Map visual layout container holding real-time tiles */
+.mapVisualContainer {
+  height: 220px;
+  border-radius: 20px;
+  overflow: hidden;
+  border: 1px solid #e2e8f0;
+  background: #f8fafc;
+  position: relative;
+}
+
+.miniMapSkeleton {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #f8fafc;
+  z-index: 10;
+}
+
+.spinner {
+  width: 24px;
+  height: 24px;
+  border: 2.5px solid rgba(62, 33, 27, 0.1);
+  border-top-color: #3e211b;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Dotted visual timeline at map base - Production-ready SVG/CSS bullets replacing emojis */
+.dotRoadTracker {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 16px;
+  padding: 0 4px;
+}
+
+.dotLabel {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: #475569;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.bulletNodeStore {
+  width: 10px;
+  height: 10px;
+  background: #3e211b;
+  border-radius: 50%;
+  border: 2px solid white;
+  box-shadow: 0 0 0 1px #3e211b;
+}
+
+.bulletNodeHome {
+  width: 10px;
+  height: 10px;
+  background: #8b5a2b;
+  border-radius: 50%;
+  border: 2px solid white;
+  box-shadow: 0 0 0 1px #8b5a2b;
+  margin-left: 8px;
+}
+
+.dotLine {
+  flex: 1;
+  text-align: center;
+  color: #cbd5e1;
+  font-weight: bold;
+  letter-spacing: 2px;
+  font-size: 10px;
+  margin: 0 10px;
+}
+
+/* Parallel Action cards */
+.parallelGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+@media (max-width: 600px) {
+  .parallelGrid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+}
+
+.forgotCard, .paymentCard {
+  background: #ffffff;
+  border: 1px solid #eef2ef;
+  border-radius: 24px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.01);
+}
+
+.forgotBody {
+  margin-bottom: 16px;
+}
+
+.forgotHeader {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+}
+
+.bagIcon, .cardIcon {
+  width: 40px;
+  height: 40px;
+  background: rgba(62, 33, 27, 0.05);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.productionVectorIcon {
+  color: #3e211b;
+}
+
+.forgotText h2, .paymentText h2 {
+  font-size: 15px;
+  font-weight: 800;
+  color: #2b1710;
+  margin: 0 0 2px 0;
+}
+
+.forgotText p, .paymentText p {
+  font-size: 12.5px;
+  color: #64748b;
+  font-weight: 500;
+  margin: 0;
+  line-height: 1.3;
+}
+
+.addItemsBtn {
+  background: linear-gradient(135deg, #3e211b 0%, #8b5a2b 100%);
+  color: #ffffff;
+  text-align: center;
+  padding: 11px 14px;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 13.5px;
+  text-decoration: none;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(62, 33, 27, 0.2);
+  display: block;
+}
+
+.addItemsBtn:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.08);
+}
+
+.payActionRow {
+  margin-top: 16px;
+}
+
+.payOnlineBtn {
+  background: #ffffff;
+  color: #ff5f3e; /* Standard premium alert/orange tone from screenshot */
+  border: 1.5px solid #ff5f3e;
+  width: 100%;
+  padding: 9px 14px;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 13.5px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.payOnlineBtn:hover {
+  background: rgba(255, 95, 62, 0.04);
+  transform: translateY(-1px);
+}
+
+.paySuccessState {
+  color: #3e211b;
+  font-weight: 700;
+  font-size: 13.5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px 0;
+}
+
+.inlineCheck {
+  width: 14px;
+  height: 14px;
+}
+
+/* 5. Clicking Side-by-side Tab Card */
+.unifiedTabbedCard {
+  background: #ffffff;
+  border-radius: 24px;
+  padding: 24px;
+  margin-bottom: 24px;
+  border: 1px solid #eef2ef;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+}
+
+.tabButtonsContainer {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  background: #f1f5f1;
+  padding: 4px;
+  border-radius: 14px;
+  margin-bottom: 24px;
+}
+
+.tabBtn {
+  background: transparent;
+  border: none;
+  padding: 10px;
+  font-size: 14px;
+  font-weight: 700;
+  color: #64748b;
+  cursor: pointer;
+  border-radius: 11px;
+  transition: all 0.2s ease;
+  outline: none;
+}
+
+.tabBtnActive {
+  background: rgba(62, 33, 27, 0.08);
+  color: #3e211b;
+  box-shadow: 0 2px 6px rgba(62, 33, 27, 0.05);
+  border: 1.5px solid rgba(62, 33, 27, 0.18);
+}
+
+/* Timeline status lists styles */
+.progressContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  position: relative;
+}
+
+.progressContainer::before {
+  content: '';
+  position: absolute;
+  top: 12px;
+  bottom: 12px;
+  left: 13px;
+  width: 2px;
+  background: #cbd5e1;
+}
+
+.progressStep {
+  display: flex;
+  gap: 20px;
+  position: relative;
+  z-index: 1;
+}
+
+.progressBullet {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 2.5px solid #cbd5e1;
+  color: #94a3b8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 800;
+  flex-shrink: 0;
+  transition: all 0.3s ease;
+}
+
+.timelineCheckSvg {
+  width: 12px;
+  height: 12px;
+}
+
+.progressBulletActive {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba(62, 33, 27, 0.08);
+  border: 2.5px solid #3e211b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 0 0 4px rgba(62, 33, 27, 0.15);
+  animation: pulseActive 2s infinite;
+}
+
+.activePulsingCenterDot {
+  width: 8px;
+  height: 8px;
+  background: #3e211b;
+  border-radius: 50%;
+}
+
+.progressStepCompleted .progressBullet {
+  background: #3e211b;
+  border-color: #3e211b;
+  color: white;
+}
+
+.progressStepActive .progressBullet {
+  background: rgba(62, 33, 27, 0.08);
+  border-color: #3e211b;
+  color: #3e211b;
+  box-shadow: 0 0 0 4px rgba(62, 33, 27, 0.15);
+  animation: pulseActive 2s infinite;
+}
+
+@keyframes pulseActive {
+  0% { box-shadow: 0 0 0 0 rgba(62, 33, 27, 0.3); }
+  70% { box-shadow: 0 0 0 8px rgba(62, 33, 27, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(62, 33, 27, 0); }
+}
+
+.progressContent {
+  flex: 1;
+}
+
+.stepTitleRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.progressTitle {
+  font-size: 14.5px;
+  font-weight: 700;
+  color: #2b1710;
+  margin: 0;
+}
+
+.progressStepCompleted .progressTitle {
+  color: #2b1710;
+}
+
+.stepTime {
+  font-size: 11px;
+  color: #64748b;
+  font-weight: 600;
+}
+
+.arrivingLabelTag {
+  background: rgba(62, 33, 27, 0.08);
+  color: #3e211b;
+  border: 1px solid rgba(62, 33, 27, 0.12);
+  font-size: 11.5px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 6px;
+}
+
+.progressDesc {
+  font-size: 12.5px;
+  color: #64748b;
+  margin: 4px 0 0 0;
+  line-height: 1.4;
+}
+
+/* Order Summary Tab Specific contents style */
+.orderSummaryTabContent {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.summaryItemRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
+  color: #475569;
+  font-weight: 500;
+}
+
+.summaryLabelWithIcon {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.summaryRowIcon {
+  color: #88746a;
+}
+
+.summaryItemRow strong {
+  color: #2b1710;
+}
+
+.summaryTotalPaidRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1.5px solid #f1f5f9;
+  padding-top: 18px;
+  margin-top: 4px;
+}
+
+.totalPaidTextLabel {
+  font-size: 16px;
+  font-weight: 800;
+  color: #2b1710;
+}
+
+.totalPaidBadgeWrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.totalAmountValue {
+  font-size: 20px;
+  font-weight: 900;
+  color: #3e211b;
+}
+
+.paidCheckBadge {
+  background: rgba(62, 33, 27, 0.08);
+  color: #3e211b;
+  font-size: 11px;
+  font-weight: 800;
+  padding: 3px 10px;
+  border-radius: 6px;
+  letter-spacing: 0.5px;
+  border: 1px solid rgba(62, 33, 27, 0.12);
+}
+
+/* Flat Metadata detail blocks */
+.metaLabelHeader {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: #88746a;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 20px 0 8px 4px;
+}
+
+.metaCardWrapper {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: #ffffff;
+  border: 1px solid #eef2ef;
+  border-radius: 20px;
+  padding: 16px;
+  position: relative;
+}
+
+.metaIconPink, .metaIconBlue {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.metaIconPink {
+  background: #ffeef2;
+}
+
+.metaIconBlue {
+  background: #eef2ff;
+}
+
+.pinkPinIcon {
+  color: #e11d48;
+}
+
+.blueCardIcon {
+  color: #2563eb;
+}
+
+.metaCardContent {
+  flex: 1;
+}
+
+.metaCardContent strong {
+  display: block;
+  font-size: 14.5px;
+  color: #0f172a;
+  margin-bottom: 2px;
+}
+
+.metaCardContent p {
+  font-size: 12.5px;
+  color: #64748b;
+  margin: 0;
+  line-height: 1.3;
+}
+
+.metaSubtext {
+  font-weight: 600;
+  color: #0f172a !important;
+  margin-top: 2px !important;
+}
+
+.successBadge {
+  background: rgba(62, 33, 27, 0.08);
+  color: #3e211b;
+  border: 1px solid rgba(62, 33, 27, 0.12);
+  font-size: 10.5px;
+  font-weight: 800;
+  padding: 4px 10px;
+  border-radius: 6px;
+  letter-spacing: 0.5px;
+}
+
+/* Footer layout actions buttons */
+.footerActionsRow {
+  display: flex;
+  gap: 12px;
+  margin-top: 32px;
+  margin-bottom: 40px;
+}
+
+.footerProfileBtn, .footerShopBtn {
+  flex: 1;
+  padding: 14px;
+  text-align: center;
+  text-decoration: none;
+  border-radius: 16px;
+  font-weight: 700;
+  font-size: 14.5px;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.footerProfileBtn {
+  background: #ffffff;
+  border: 1.5px solid #cbd5e1;
+  color: #475569;
+}
+
+.footerProfileBtn:hover {
+  background: #fafafb;
+  border-color: #94a3b8;
+  transform: translateY(-1px);
+}
+
+.footerShopBtn {
+  background: linear-gradient(135deg, #3e211b 0%, #8b5a2b 100%);
+  color: #ffffff;
+  box-shadow: 0 6px 18px rgba(62, 33, 27, 0.2);
+}
+
+.footerShopBtn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 24px rgba(62, 33, 27, 0.3);
+  filter: brightness(1.08);
 }

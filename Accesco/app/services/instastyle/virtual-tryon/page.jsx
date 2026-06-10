@@ -589,7 +589,7 @@ export default function VirtualTryOnPage() {
   </div>
 
   <Link
-    href="/services/instastyle/virtual-tryon/ai-tryon"
+    href={`/services/instastyle/virtual-tryon/ai-tryon?img=${encodeURIComponent(selectedProduct?.image || '')}`}
     className={styles.aiTryOnCardBtn}
   >
     Open AI Upload Try-On →
