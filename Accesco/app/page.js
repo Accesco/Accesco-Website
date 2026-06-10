@@ -336,37 +336,7 @@ const softwareApplicationSchema = {
           }
 
           .servicesArrow {
-            display: flex !important;
-            position: absolute;
-            top: 42%;
-            transform: translateY(-50%);
-            z-index: 999;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            border: 1px solid rgba(122,0,66,0.1);
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-            font-weight: 700;
-            background: white;
-            color: #7A0042;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            cursor: pointer;
-            transition: all 0.2s ease;
-          }
-
-          .servicesArrow:hover {
-            background: #7A0042;
-            color: white;
-          }
-
-          .servicesArrowLeft {
-            left: 4px;
-          }
-
-          .servicesArrowRight {
-            right: 4px;
+            display: none !important;
           }
 
           .service-card-visual {

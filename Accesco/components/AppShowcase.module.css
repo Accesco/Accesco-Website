@@ -4,12 +4,14 @@
   display: grid;
   grid-template-columns: 0.85fr 1.15fr;
   gap: 80px;
-  align-items: center;
+  align-items: stretch;
 }
 
 .waitlistInfo {
   max-width: 540px;
-  display: block;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
 
 .waitlistTitle {
@@ -50,7 +52,9 @@
   overflow: hidden;
   box-shadow: 0 30px 60px rgba(26, 10, 15, 0.15);
   border: 1px solid rgba(122, 0, 66, 0.1);
-  min-height: 400px;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
 
 .waitlistPosterImg {
@@ -59,6 +63,7 @@
   display: block;
   object-fit: cover;
   object-position: center;
+  flex: 1;
 }
 
 .featureText h4 {
@@ -88,6 +93,16 @@
   max-width: 580px;
   width: 100%;
   margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 100%;
+  box-sizing: border-box;
+}
+
+.waitlistFormWrapper form {
+  display: flex;
+  flex-direction: column;
 }
 
 .waitlistFormWrapper::before {
@@ -310,6 +325,7 @@
   letter-spacing: 0.08em;
   text-transform: uppercase;
   box-shadow: 0 4px 22px rgba(122, 0, 66, 0.3);
+  margin-top: 20px;
 }
 
 .submitButton::before {
