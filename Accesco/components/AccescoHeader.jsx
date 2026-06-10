@@ -165,7 +165,7 @@ export default function AccescoHeader() {
         <div className={styles.container}>
           <Link href="/" className={styles.logo}>
             <Image 
-              src={shouldBeScrolled ? "/images/accesco_original.png" : "/images/accesco_white.png"} 
+              src="/images/apple-touch-icon.png"
               alt="AccesCo" 
               width={36} 
               height={36} 
