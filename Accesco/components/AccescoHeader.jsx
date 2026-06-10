@@ -165,14 +165,14 @@ export default function AccescoHeader() {
       <header className={`${styles.header} ${shouldBeScrolled ? styles.scrolled : ''}`}>
         <div className={styles.container}>
           <Link href="/" className={styles.logo}>
-           <Image 
-  src="/images/accesco_original.png"
-  alt="AccesCo" 
-  width={36} 
-  height={36} 
-  priority 
-  style={{ objectFit: 'contain' }}
-/>
+            <Image 
+              src={shouldBeScrolled ? "/images/accesco_original.png" : "/images/accesco_white.png"} 
+              alt="AccesCo" 
+              width={36} 
+              height={36} 
+              priority 
+              style={{ objectFit: 'contain' }}
+            />
             <div className={styles.logoText}>
               <span className={styles.logoName}>Accesco</span>
               <span className={styles.logoTagline}>Living</span>
