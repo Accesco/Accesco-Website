@@ -1,0 +1,42 @@
+name: PR Checks
+
+# Run this workflow whenever a Pull Request targets main
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    # GitHub-hosted Ubuntu runner
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout the PR code
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Install the required Node.js version
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      # Install dependencies using package-lock.json
+      - name: Install dependencies
+        run: npm ci
+
+      # Run ESLint checks
+      - name: Run linting
+        run: npm run lint
+
+      # Run TypeScript type checking
+      # Remove if your project is JavaScript-only
+      - name: Run type check
+        run: npx tsc --noEmit
+
+      # Create a production build
+      # This catches build-time errors before merging
+      - name: Build application
+        run: npm run build
