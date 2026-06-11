@@ -46,8 +46,19 @@ export default function BlogsPage() {
     try {
       const fetchPromise = fetchBlogs();
       const [data] = await Promise.all([fetchPromise, minTimer]);
+<<<<<<< HEAD
       setPosts(data);
       setFilteredPosts(data);
+=======
+      const hiddenTitles = ['AccesGo: Moving People, Respecting Lives\n'];
+
+const visibleBlogs = data.filter(
+  (blog) => !hiddenTitles.includes(blog.title)
+);
+
+setPosts(visibleBlogs);
+setFilteredPosts(visibleBlogs);
+>>>>>>> 26b20ea (recommiting changes)
     } catch (err) {
       console.error('Failed to load blogs:', err);
       await minTimer;
@@ -319,9 +330,9 @@ export default function BlogsPage() {
       {/* Hero Section */}
       <div className="hero-canvas">
         <section className="hero-viewport">
-          <video className="blog-hero-video" autoPlay muted loop playsInline poster="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072&auto=format&fit=crop">
-            <source src="/uploads/blogs/bloghero.MP4" type="video/mp4" />
-          </video>
+         <video className="blog-hero-video" autoPlay muted loop playsInline poster="https://images.unsplash.com/...">
+  <source src="/images/bloghero.mp4" type="video/mp4" />
+</video>
           <div className="hero-shimmer-overlay"></div>
           <div className="hero-text-box">
           </div>

@@ -15,7 +15,6 @@
 
   z-index: 1000;
 
-  background: rgba(255, 255, 255, 0.92);
   background: rgba(255, 255, 255, 0.72);
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
@@ -29,7 +28,6 @@
   overflow: visible;
 }
 .header.scrolled {
-  background: rgba(255,255,255,0.95);
   background: rgba(255,255,255,0.82);
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
@@ -879,4 +877,7 @@
 
   margin-left: 0;
   margin-right: -2px; /* tweak this */
+
 }
+
+
