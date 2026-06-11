@@ -451,10 +451,11 @@
   order: 10;
   height: 44px;
 }
-  .searchInput {
-    font-size: 14px;
-    padding: 10px 12px 10px 40px;
-  }
+ .searchInput {
+  height: 30px;
+  font-size: 13px;
+  padding: 8px 12px 8px 38px;
+}
   
   .searchIcon {
     left: 12px;

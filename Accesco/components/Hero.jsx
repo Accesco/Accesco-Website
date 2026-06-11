@@ -177,7 +177,27 @@ export default function Hero() {
   transform: translateY(-3px);
   box-shadow: 0 14px 34px rgba(0,0,0,0.32);
 }
+.mobile-waitlist-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #8B1E4D; /* dark pink */
+  color: #fff;
+  font-family: 'Sora', sans-serif;
+  font-weight: 700;
+  font-size: 14px;
+  padding: 12px 28px;
+  border-radius: 9px;
+  text-decoration: none;
+  margin-top: 8px;
+  box-shadow: 0 8px 24px rgba(139, 30, 77, 0.35);
+}
 
+@media (min-width: 769px) {
+  .mobile-waitlist-btn {
+    display: none;
+  }
+}
 
         .scroll-down-btn {
           display: flex;
@@ -317,7 +337,9 @@ export default function Hero() {
         </div>
 
         
-        
+        <a href="#waitlist" className="mobile-waitlist-btn">
+  JOIN WAITLIST
+</a>
         
 
         <a 

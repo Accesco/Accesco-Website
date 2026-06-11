@@ -6,7 +6,7 @@
 }
 
 .pageContent {
-  padding-top: 72px;
+  padding-top: 100px;
 }
 
 /* Hero Section - Zomato Tab Style */
@@ -539,9 +539,9 @@
 }
 
 @media (max-width: 768px) {
-  .pageContent {
-    padding-top: 116px; /* Header + Search bar */
-  }
+ .pageContent {
+  padding-top: 120px;
+}
   
   .hero {
     padding: 20px 0 0;
@@ -664,7 +664,7 @@
 
 @media (max-width: 640px) {
   .pageContent {
-    padding-top: 106px; /* Adjusted for smaller header */
+    padding-top: 110px; /* Adjusted for smaller header */
   }
   
   .heroContent {
@@ -792,12 +792,34 @@
 
 @media (max-width: 768px) {
   .featureGrid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  .featureCard {
+    padding: 16px;
+    border-radius: 18px;
+  }
+
+  .featureCard h3 {
+    font-size: 15px;
+    margin-bottom: 8px;
+    line-height: 1.15;
+  }
+
+  .featureCard p {
+    font-size: 12px;
+    line-height: 1.35;
+    margin-bottom: 10px;
+  }
+
+  .featureCard span {
+    font-size: 12px;
   }
 }
 @media (max-width: 768px) {
   .mainContent {
-    padding-top: 112px;
+    padding-top: 0; /* was 112px */
   }
 }
 @media (max-width: 768px) {
@@ -805,3 +827,5 @@
     padding-top: 80px;
   }
 }
+
+ 
