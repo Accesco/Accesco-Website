@@ -46,4 +46,3 @@ Create a `.env.local` in `Accesco/` from the provided template or the `Accesco/R
 This project does not include a license file; add one (for example, `LICENSE.md`) before publishing. For questions or support, open an issue or contact the maintainers.
 
 ---
-
