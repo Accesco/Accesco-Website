@@ -46,10 +46,6 @@ export default function BlogsPage() {
     try {
       const fetchPromise = fetchBlogs();
       const [data] = await Promise.all([fetchPromise, minTimer]);
-<<<<<<< HEAD
-      setPosts(data);
-      setFilteredPosts(data);
-=======
       const hiddenTitles = ['AccesGo: Moving People, Respecting Lives\n'];
 
 const visibleBlogs = data.filter(
@@ -58,7 +54,6 @@ const visibleBlogs = data.filter(
 
 setPosts(visibleBlogs);
 setFilteredPosts(visibleBlogs);
->>>>>>> 26b20ea (recommiting changes)
     } catch (err) {
       console.error('Failed to load blogs:', err);
       await minTimer;
