@@ -1,0 +1,11 @@
+# Dependencies
+node_modules/
+
+# Next.js build output
+.next/
+
+# Local env files
+.env.local
+
+# External/Parent directory path
+../Integrated/
