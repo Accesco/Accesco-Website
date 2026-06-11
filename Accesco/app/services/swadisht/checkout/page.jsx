@@ -289,7 +289,7 @@ function CheckoutContent() {
             {step === 1 && (
               <section className={styles.deliverySpeedBox}>
                 <h3 className={styles.speedHeading}>Would you wait 15 minutes to save ₹20?</h3>
-                <p className={styles.speedSubheading}>A checkout toggle quick-commerce apps are missing</p>
+                
                 
                 <div className={styles.speedOptions}>
                   <div 
