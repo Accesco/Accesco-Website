@@ -1,42 +1,49 @@
 # ACCESCO Living Platform
-Welcome to the **ACCESCO Living** repository. This project contains the source code, static pages, and web applications that power the ACCESCO services.
-## Repository Structure
-The repository is organized into the following main directories and files:
-*   **[Accesco/](file:///C:/Users/21par/OneDrive/Desktop/accesco/ACCESCO-Living-/Accesco)**: The core web application built with Next.js, featuring integrated services such as Grokly marketplace, Instastyle order tracking, Swadisht services, CalcIQ, and more.
-*   **[index.html](file:///C:/Users/21par/OneDrive/Desktop/accesco/ACCESCO-Living-/index.html)**: The main landing page for the ACCESCO Living web portal.
-*   **[Privacy_policy.html](file:///C:/Users/21par/OneDrive/Desktop/accesco/ACCESCO-Living-/Privacy_policy.html)**: Static privacy policy document.
-*   **[Refund_policy.html](file:///C:/Users/21par/OneDrive/Desktop/accesco/ACCESCO-Living-/Refund_policy.html)**: Static refund and cancellation policy document.
+
+ACCESCO Living is a collection of web assets and applications that power the ACCESCO services and marketing site. This repository contains the public static pages and the primary Next.js application used in production.
+
+**Contents**
+- **Accesco/** — Primary Next.js application and microservices (see [Accesco/](Accesco/)).
+- **index.html** — Landing page for the ACCESCO Living portal ([index.html](index.html)).
+- **Privacy_policy.html** — Privacy policy ([Privacy_policy.html](Privacy_policy.html)).
+- **Refund_policy.html** — Refund & cancellation policy ([Refund_policy.html](Refund_policy.html)).
+
+## Quickstart (developer)
+Requirements: Node.js 16+ and npm or Yarn.
+
+1. Open the `Accesco` application:
+
+```bash
+cd Accesco
+```
+
+2. Install dependencies and run the development server:
+
+```bash
+npm install
+npm run dev
+```
+
+3. Build for production and start:
+
+```bash
+npm run build
+npm start
+```
+
+Create a `.env.local` in `Accesco/` from the provided template or the `Accesco/README.md` configuration notes before running in production.
+
+## Repository highlights
+- Grokly: marketplace & storefront integrations
+- Instastyle: order tracking and mapping integrations
+- Swadisht: dining, subscriptions, and food services
+
+## Contributing
+- Fork the repo, create a feature branch, and submit a pull request to `main`.
+- Follow existing code style for JS/TS and React components.
+
+## License & Contact
+This project does not include a license file; add one (for example, `LICENSE.md`) before publishing. For questions or support, open an issue or contact the maintainers.
+
 ---
-## Core Applications
-### 1. Accesco Next.js Web App
-The subfolder `Accesco` contains the primary dynamic application.
-#### Features:
-*   **Grokly**: Real-time grocery and product marketplace.
-*   **Instastyle**: Custom order tracking with live Leaflet map integrations.
-*   **Swadisht**: Smart dining, subscription service, and catering engine.
-*   **Dinex, Localmeds, Grokly checkout/profile**: Fully responsive modules.
-#### Get Started in `Accesco/`:
-1.  Navigate into the directory:
-    ```bash
-    cd Accesco
-    ```
-2.  Install dependencies:
-    ```bash
-    npm install
-    ```
-3.  Set up environment variables (create `.env.local` based on the configuration guide in [Accesco/README.md](file:///C:/Users/21par/OneDrive/Desktop/accesco/ACCESCO-Living-/Accesco/README.md)).
-4.  Run the development server:
-    ```bash
-    npm run dev
-    ```
-5.  Build for production:
-    ```bash
-    npm run build
-    npm start
-    ```
----
-## Git Configuration
-A `.gitignore` configuration is set up at both the root directory and the `Accesco/` sub-project to ensure local build artifacts, secrets, and transient dependencies are not committed:
-*   `node_modules/` (Dependencies)
-*   `.next/` (Next.js build output)
-*   `.env.local` (Local configuration and credentials)
+
