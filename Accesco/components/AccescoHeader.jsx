@@ -268,132 +268,27 @@ export default function AccescoHeader() {
               </button>
               
             )}
-            <a href="#" className={styles.loginButton}>
-  Get App
+  <a href="#" className={`${styles.loginButton} ${styles.getAppButton}`}>
+  <span className={styles.desktopText}>Get App</span>
+  <span className={styles.mobileText}>Download</span>
+
+  <img
+    src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/googleplay.svg"
+    alt="Google Play"
+    className={styles.storeIcon}
+  />
+
+  <img
+    src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/apple.svg"
+    alt="App Store"
+    className={styles.storeIcon}
+  />
 </a>
 
-            <button className={styles.mobileMenuButton} onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
-              <span className={`${styles.hamburger} ${isMobileMenuOpen ? styles.open : ''}`}>
-                <span></span>
-                <span></span>
-                <span></span>
-              </span>
-            </button>
+           
           </div>
         </div>
       </header>
-
-      <div className={`${styles.mobileMenu} ${isMobileMenuOpen ? styles.open : ''}`}>
-        <div className={styles.mobileMenuContent}>
-          
-
-          <nav className={styles.mobileNav}>
-            {/* Mobile Services Dropdown */}
-            <div className={styles.mobileServicesDropdown}>
-              <button 
-                className={`${styles.mobileServicesButton} ${pathname.startsWith('/services') ? styles.active : ''}`}
-                onClick={() => setIsMobileServicesOpen(!isMobileServicesOpen)}
-                aria-expanded={isMobileServicesOpen}
-              >
-                <span>Services</span>
-                <svg 
-                  width="12" 
-                  height="12" 
-                  viewBox="0 0 12 12" 
-                  fill="none"
-                  className={styles.mobileDropdownIcon}
-                  style={{ transform: isMobileServicesOpen ? 'rotate(180deg)' : 'rotate(0deg)' }}
-                >
-                  <path 
-                    d="M3 4.5L6 7.5L9 4.5" 
-                    stroke="currentColor" 
-                    strokeWidth="1.5" 
-                    strokeLinecap="round" 
-                    strokeLinejoin="round"
-                  />
-                </svg>
-              </button>
-
-              <div 
-                className={`${styles.mobileServicesContent} ${isMobileServicesOpen ? styles.open : ''}`}
-              >
-                {services.map((service) => (
-                  <Link 
-                    key={service.href} 
-                    href={service.href} 
-                    className={`${styles.mobileServiceLink} ${pathname === service.href ? styles.activeMobile : ''}`}
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
-                    <div className={styles.mobileServiceName}>{service.name}</div>
-                    <div className={styles.mobileServiceDesc}>{service.description}</div>
-                  </Link>
-                ))}
-              </div>
-            </div>
-            
-            {/* Mobile Partners Dropdown */}
-            <div className={styles.mobileServicesDropdown}>
-              <button 
-                className={`${styles.mobileServicesButton} ${pathname.startsWith('/partner') ? styles.active : ''}`}
-                onClick={() => setIsMobilePartnersOpen(!isMobilePartnersOpen)}
-                aria-expanded={isMobilePartnersOpen}
-              >
-                <span>Partner</span>
-                <svg 
-                  width="12" 
-                  height="12" 
-                  viewBox="0 0 12 12" 
-                  fill="none"
-                  className={styles.mobileDropdownIcon}
-                  style={{ transform: isMobilePartnersOpen ? 'rotate(180deg)' : 'rotate(0deg)' }}
-                >
-                  <path 
-                    d="M3 4.5L6 7.5L9 4.5" 
-                    stroke="currentColor" 
-                    strokeWidth="1.5" 
-                    strokeLinecap="round" 
-                    strokeLinejoin="round"
-                  />
-                </svg>
-              </button>
-
-              <div 
-                className={`${styles.mobileServicesContent} ${isMobilePartnersOpen ? styles.open : ''}`}
-              >
-                {partnerOptions.map((option) => (
-                  <Link 
-                    key={option.href} 
-                    href={option.href} 
-                    className={`${styles.mobileServiceLink} ${pathname === option.href ? styles.activeMobile : ''}`}
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
-                    <div className={styles.mobileServiceName}>{option.name}</div>
-                    <div className={styles.mobileServiceDesc}>{option.description}</div>
-                  </Link>
-                ))}
-              </div>
-            </div>
-            
-            <Link href="/blogs" className={`${styles.mobileNavLink} ${pathname === '/blogs' ? styles.active : ''}`}>Blogs</Link>
-            <Link href="/contact" className={`${styles.mobileNavLink} ${pathname === '/contact' ? styles.active : ''}`}>Contact</Link>
-          
-          {user ? (
-            <div className={styles.mobileUserCard}>
-              <div className={styles.mobileAvatar}>{initials}</div>
-              <div className={styles.mobileUserName}>{user.name}</div>
-              <button className={styles.mobileSignOut} onClick={handleSignOut}>Sign Out</button>
-            </div>
-          ) : (
-            <button className={styles.mobileLoginButton} onClick={() => { setIsMobileMenuOpen(false); setIsAuthOpen(true); }}>
-              Login / Sign Up
-            </button>
-          )}
-          
-          </nav>
-        </div>
-      </div>
-
-      {isMobileMenuOpen && <div className={styles.overlay} onClick={() => setIsMobileMenuOpen(false)} />}
 
       <AuthModal isOpen={isAuthOpen} onClose={() => setIsAuthOpen(false)} onSuccess={handleAuthSuccess} />
       <LocationModal 

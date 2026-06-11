@@ -397,7 +397,7 @@
   background: #7A0042;
   color: #FFFDF8;
   border: none;
-  border-radius: 9999px;
+  border-radius: 9px;
   font-family: 'Sora', sans-serif;
   font-weight: 700;
   font-size: 0.85rem;
@@ -879,5 +879,49 @@
   margin-right: -2px; /* tweak this */
 
 }
+.storeIcon {
+  width: 14px;
+  height: 14px;
+  filter: brightness(0) invert(1);
+  flex-shrink: 0;
+}
 
+.desktopText {
+  display: inline;
+}
 
+.mobileText {
+  display: none;
+}
+
+@media (max-width: 1250px) {
+  .desktopText {
+    display: none;
+  }
+
+  .mobileText {
+    display: inline;
+  }
+}
+@media (max-width: 1250px) {
+  .actions > button.loginButton {
+    display: none;
+  }
+
+  .actions > a.loginButton {
+    display: inline-flex;
+  }
+}
+@media (max-width: 1250px) {
+  .nav,
+  .servicesDropdown,
+  .mobileServicesDropdown {
+    display: none !important;
+  }
+} 
+@media (max-width: 768px) {
+  .logoDivider,
+  .waitlistLink {
+    display: none !important;
+  }
+}
