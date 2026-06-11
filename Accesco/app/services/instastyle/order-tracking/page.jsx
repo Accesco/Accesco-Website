@@ -79,17 +79,6 @@ function OrderTrackingContent() {
   
   const order = useMemo(() => orders.find(o => o.id === orderId), [orders, orderId]);
 
-  // Safe fallback loading state integrated right after useMemo
-  if (!order) {
-    return (
-      <div className={styles.container}>
-        <div style={{ padding: '40px', textAlign: 'center' }}>
-          Loading order...
-        </div>
-      </div>
-    );
-  }
-
   const [deliveryProgress, setDeliveryProgress] = useState(0);
 
   // States for interactive custom features
@@ -330,6 +319,17 @@ function OrderTrackingContent() {
       }
     };
   }, [mapResetKey]);
+
+  // Safe fallback loading state
+  if (!order) {
+    return (
+      <div className={styles.container}>
+        <div style={{ padding: '40px', textAlign: 'center' }}>
+          Loading order...
+        </div>
+      </div>
+    );
+  }
 
   // Inserted definitions to fix unhandled runtime ReferenceErrors:
 
