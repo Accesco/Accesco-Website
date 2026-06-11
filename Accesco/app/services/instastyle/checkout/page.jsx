@@ -26,6 +26,9 @@ export default function CheckoutPage() {
 
   const [errors, setErrors] = useState({});
   const [isProcessing, setIsProcessing] = useState(false);
+
+  // Delivery speed selector
+  const [deliverySpeed, setDeliverySpeed] = useState('instant');
   
   // Location detection states
   const [isLocating, setIsLocating] = useState(false);
@@ -33,6 +36,11 @@ export default function CheckoutPage() {
   
   // Dynamic ETA state
   const [deliveryETA, setDeliveryETA] = useState(null);
+
+  // Delivery speed discount — applied locally on top of CartContext totals
+  const speedDiscount = deliverySpeed === 'batched' ? 20 : 0;
+  const finalTotal = Math.max(0, total - speedDiscount);
+  const batchedETA = deliveryETA ? deliveryETA + 15 : 25;
 
   const STATE_OPTIONS = [
     'Delhi',
@@ -273,13 +281,15 @@ export default function CheckoutPage() {
     setIsProcessing(true);
 
     const order = placeOrder({
-      total,
+      total: finalTotal,
       subtotal,
       tax,
       deliveryFee,
+      deliverySpeed,
+      speedDiscount,
       address: formData,
       paymentMethod: formData.paymentMethod,
-      eta: deliveryETA // Optional: Passing the ETA to the order payload
+      eta: deliverySpeed === 'batched' ? batchedETA : (deliveryETA || null),
     });
 
     setTimeout(() => {
@@ -463,6 +473,47 @@ export default function CheckoutPage() {
                 </div>
               </section>
 
+              {/* ── Delivery Speed Selector ── */}
+              <section className={styles.deliverySpeedBox}>
+                <h3 className={styles.speedHeading}>Would you wait 15 minutes to save ₹20?</h3>
+                <p className={styles.speedSubheading}>A checkout toggle quick-commerce apps are missing</p>
+
+                <div className={styles.speedOptions}>
+                  <div
+                    className={`${styles.speedOption} ${deliverySpeed === 'instant' ? styles.speedOptionInstantActive : ''}`}
+                    onClick={() => setDeliverySpeed('instant')}
+                  >
+                    <div className={styles.speedOptionLeft}>
+                      <span className={styles.speedIcon}>⚡</span>
+                      <div className={styles.speedInfo}>
+                        <span className={styles.speedTitle}>
+                          Get it in {deliveryETA ? `${deliveryETA} min` : '15–20 min'}
+                        </span>
+                        <span className={styles.speedDesc}>Express — a courier just for you</span>
+                      </div>
+                    </div>
+                    <span className={styles.speedOffText}>₹0 off</span>
+                  </div>
+
+                  <div
+                    className={`${styles.speedOption} ${deliverySpeed === 'batched' ? styles.speedOptionActive : ''}`}
+                    onClick={() => setDeliverySpeed('batched')}
+                  >
+                    <div className={styles.speedOptionLeft}>
+                      <span className={styles.speedIcon}>🕒</span>
+                      <div className={styles.speedInfo}>
+                        <span className={styles.speedTitle}>I can wait · ~{batchedETA} min</span>
+                        <span className={styles.speedDesc}>We&apos;ll batch you with a nearby order</span>
+                      </div>
+                    </div>
+                    <span className={styles.saveBadge}>SAVE ₹20</span>
+                  </div>
+                </div>
+
+                <p className={styles.speedFooter}>One courier · two nearby orders · lower cost for everyone</p>
+                <h4 className={styles.speedTagline}>Speed is a feature. So is <span>patience.</span></h4>
+              </section>
+
               <section className={styles.section}>
                 <h2 className={styles.sectionTitle}>Payment Method</h2>
                 
@@ -502,7 +553,7 @@ export default function CheckoutPage() {
                 className={styles.placeOrderBtn}
                 disabled={isProcessing}
               >
-                {isProcessing ? 'Processing...' : `Place Order - ₹${total.toLocaleString()}`}
+                {isProcessing ? 'Processing...' : `Place Order - ₹${finalTotal.toLocaleString()}`}
               </button>
             </form>
           </div>
@@ -551,9 +602,15 @@ export default function CheckoutPage() {
                   <span>Tax (5%)</span>
                   <span>₹{tax.toFixed(0)}</span>
                 </div>
+                {speedDiscount > 0 && (
+                  <div className={styles.totalRow} style={{ color: '#7c3aed', fontWeight: '700' }}>
+                    <span>Batched Delivery Discount</span>
+                    <span>-₹{speedDiscount}</span>
+                  </div>
+                )}
                 <div className={`${styles.totalRow} ${styles.grandTotal}`}>
                   <span>Total</span>
-                  <span>₹{total.toLocaleString()}</span>
+                  <span>₹{finalTotal.toLocaleString()}</span>
                 </div>
               </div>
 

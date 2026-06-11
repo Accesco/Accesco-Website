@@ -10,6 +10,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useSwadishtt } from '../contexts/SwadishttContext';
 import styles from './SwadishttHeader.module.css';
+import LocationModal from '@/components/LocationModal';
 
 export default function SwadishttHeader() {
   const [scrolled, setScrolled] = useState(false);
@@ -17,7 +18,7 @@ export default function SwadishttHeader() {
   const [detectingLocation, setDetectingLocation] = useState(false);
   
   // Custom Modal States
-  const [showManualModal, setShowManualModal] = useState(false);
+  const [showLocationModal, setShowLocationModal] = useState(false);
   const [manualArea, setManualArea] = useState('');
   const [manualCity, setManualCity] = useState('');
 
@@ -137,7 +138,7 @@ export default function SwadishttHeader() {
                       className={styles.locationItem}
                       onClick={() => {
                         setLocationDropdown(false);
-                        setShowManualModal(true);
+                        setShowLocationModal(true);
                       }}
                     >
                       <svg className={styles.locationItemIcon} viewBox="0 0 20 20" fill="currentColor">
@@ -194,101 +195,28 @@ export default function SwadishttHeader() {
       </header>
 
       {/* Manual Location Modal Overlay */}
-      {showManualModal && (
-        <div style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          backgroundColor: 'rgba(0, 0, 0, 0.6)',
-          zIndex: 9999,
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          backdropFilter: 'blur(2px)'
-        }}>
-          <div style={{
-            backgroundColor: '#fff',
-            padding: '24px',
-            borderRadius: '12px',
-            width: '90%',
-            maxWidth: '400px',
-            boxShadow: '0 10px 25px rgba(0,0,0,0.2)',
-            color: '#333'
-          }}>
-            <h3 style={{ margin: '0 0 16px 0', fontSize: '1.25rem', fontWeight: '600' }}>Enter Details</h3>
-            
-            <div style={{ marginBottom: '16px' }}>
-              <label style={{ display: 'block', marginBottom: '6px', fontSize: '0.875rem', fontWeight: '500' }}>Area / Locality</label>
-              <input 
-                type="text" 
-                value={manualArea} 
-                onChange={(e) => setManualArea(e.target.value)} 
-                placeholder="e.g. Anna Nagar"
-                autoFocus
-                style={{
-                  width: '100%',
-                  padding: '10px 12px',
-                  border: '1px solid #ddd',
-                  borderRadius: '6px',
-                  fontSize: '1rem',
-                  outline: 'none'
-                }}
-              />
-            </div>
-            
-            <div style={{ marginBottom: '24px' }}>
-              <label style={{ display: 'block', marginBottom: '6px', fontSize: '0.875rem', fontWeight: '500' }}>City</label>
-              <input 
-                type="text" 
-                value={manualCity} 
-                onChange={(e) => setManualCity(e.target.value)} 
-                placeholder="e.g. Chennai"
-                style={{
-                  width: '100%',
-                  padding: '10px 12px',
-                  border: '1px solid #ddd',
-                  borderRadius: '6px',
-                  fontSize: '1rem',
-                  outline: 'none'
-                }}
-              />
-            </div>
-            
-            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px' }}>
-              <button 
-                onClick={() => setShowManualModal(false)}
-                style={{
-                  padding: '8px 16px',
-                  backgroundColor: 'transparent',
-                  border: 'none',
-                  color: '#666',
-                  cursor: 'pointer',
-                  fontWeight: '500',
-                  borderRadius: '6px'
-                }}
-              >
-                Cancel
-              </button>
-              <button 
-                onClick={handleManualLocationSubmit}
-                style={{
-                  padding: '8px 16px',
-                  backgroundColor: '#E23744', /* Zomato-style red */
-                  color: '#fff',
-                  border: 'none',
-                  borderRadius: '6px',
-                  cursor: 'pointer',
-                  fontWeight: '500'
-                }}
-              >
-                Save Location
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      <LocationModal
+  isOpen={showLocationModal}
+  onClose={() => setShowLocationModal(false)}
+  onLocationSelect={(address) => {
+    const parts = address.split(',');
+
+    updateLocation({
+      area: parts[0]?.trim() || address,
+      city: parts[1]?.trim() || '',
+    });
+
+    localStorage.setItem(
+      'swadishtt_location',
+      JSON.stringify({
+        address,
+        timestamp: Date.now(),
+      })
+    );
+
+    setShowLocationModal(false);
+  }}
+/>
     </>
   );
 }

@@ -881,3 +881,130 @@
     font-size: 12px;
   }
 }
+/* Delivery Speed Selection */
+.deliverySpeedBox {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 24px;
+  margin: 20px 0;
+  color: #111827;
+  box-shadow: 0 10px 28px rgba(17, 24, 39, 0.06);
+  font-family: Inter, "SF Pro Display", "Segoe UI", sans-serif;
+}
+
+.speedHeading {
+  font-size: 20px;
+  font-weight: 750;
+  letter-spacing: -0.04em;
+  line-height: 1.2;
+  margin: 0 0 18px;
+  color: #111827;
+}
+
+.speedOptions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.speedOption {
+  position: relative;
+  min-height: 118px;
+  padding: 16px;
+  border-radius: 10px;
+  border: 1px solid #ead7b7;
+  background: #fffaf2;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.speedOptionActive,
+.speedOptionInstantActive {
+  border-color: #9b6a00 !important;
+  background: #fff7e8 !important;
+  box-shadow: inset 0 0 0 1px rgba(155, 106, 0, 0.18);
+}
+
+.speedOptionLeft {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 18px;
+}
+
+.speedIcon {
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  background: #fff0cf;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+}
+
+.speedInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.speedTitle {
+  font-size: 15px;
+  font-weight: 750;
+  letter-spacing: -0.03em;
+  color: #111827;
+  line-height: 1.15;
+}
+
+.speedDesc {
+  font-size: 12px;
+  font-weight: 500;
+  color: #6b7280;
+  line-height: 1.35;
+}
+
+.speedOffText {
+  display: none;
+}
+
+.saveBadge {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: #f5b400;
+  color: #111827;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  padding: 6px 10px;
+  border-radius: 0 9px 0 8px;
+  text-transform: uppercase;
+}
+
+.speedFooter {
+  display: none;
+}
+
+.speedTagline {
+  margin: 16px 0 0;
+  font-size: 12px;
+  font-style: italic;
+  font-weight: 500;
+  color: #9ca3af;
+  letter-spacing: -0.01em;
+}
+
+.speedTagline span {
+  color: #9ca3af;
+}
+
+@media (max-width: 640px) {
+  .deliverySpeedBox {
+    padding: 20px;
+  }
+
+  .speedOptions {
+    grid-template-columns: 1fr;
+  }
+}

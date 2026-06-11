@@ -224,7 +224,7 @@
 }
 
 .vendor-type-card:hover {
-  transform: translateY(-8px);
+  transform: translateY(0);
   border-color: var(--vendor-primary);
   box-shadow: 0 20px 45px rgba(122, 0, 66, 0.1);
 }
@@ -296,7 +296,7 @@
 }
 
 .vendor-type-btn:hover {
-  transform: translateY(-2px);
+  transform: translateY(0);
   box-shadow: 0 8px 24px rgba(122, 0, 66, 0.35);
 }
 
@@ -325,7 +325,7 @@
 }
 
 .d2c-platform-card:hover {
-  transform: translateY(-12px);
+  transform: translateY(0);
   border-color: var(--vendor-primary);
   box-shadow: 0 20px 50px rgba(122, 0, 66, 0.12);
 }
@@ -392,7 +392,7 @@
 }
 
 .d2c-platform-btn:hover {
-  transform: translateY(-2px);
+  transform: translateY(0);
   box-shadow: 0 8px 24px rgba(122, 0, 66, 0.35);
 }
 
@@ -435,7 +435,7 @@
 
 .d2c-platform-mini:hover {
   border-color: var(--vendor-primary);
-  transform: translateY(-4px);
+  transform: translateY(0);
   box-shadow: 0 10px 24px rgba(122, 0, 66, 0.08);
 }
 
@@ -646,7 +646,7 @@
 }
 
 .vendor-submit-button:hover:not(:disabled) {
-  transform: translateY(-2px);
+  transform: translateY(0);
   box-shadow: 0 15px 40px rgba(122, 0, 66, 0.35);
 }
 
@@ -692,7 +692,7 @@
 }
 
 .vendor-benefit-card:hover {
-  transform: translateY(-8px);
+  transform: translateY(0);
   box-shadow: 0 20px 45px rgba(122, 0, 66, 0.08);
   border-color: rgba(122, 0, 66, 0.12);
   background: white;

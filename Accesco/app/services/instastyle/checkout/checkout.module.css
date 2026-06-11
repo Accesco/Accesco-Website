@@ -386,3 +386,156 @@
     gap: 20px;
   }
 }
+
+/* ═══════════════════════════════════════════
+   DELIVERY SPEED SELECTOR — InstaStyle Theme
+   Dark luxury: deep obsidian bg, purple/gold accents
+═══════════════════════════════════════════ */
+.deliverySpeedBox {
+  background: #0a0a10;
+  border-radius: 20px;
+  padding: 28px 24px;
+  color: #fff;
+  margin-bottom: 48px;
+  font-family: var(--font-body);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.22), 0 0 0 1px rgba(139, 92, 246, 0.12);
+  border: 1px solid rgba(139, 92, 246, 0.18);
+}
+
+.speedHeading {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin: 0;
+  color: #fbbf24;
+  text-align: center;
+  line-height: 1.4;
+  letter-spacing: -0.01em;
+}
+
+.speedSubheading {
+  font-size: 0.78rem;
+  color: #6b7280;
+  margin: 6px 0 22px;
+  text-align: center;
+  letter-spacing: 0.02em;
+}
+
+.speedOptions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.speedOption {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-radius: 14px;
+  border: 1.5px solid #1a1a2e;
+  background: #111122;
+  cursor: pointer;
+  transition: border-color 0.2s ease, background 0.2s ease, transform 0.15s ease;
+}
+
+.speedOption:hover {
+  transform: translateY(-1px);
+}
+
+.speedOptionActive {
+  border-color: #fbbf24 !important;
+  background: #1a1508 !important;
+  box-shadow: 0 0 0 1px rgba(251, 191, 36, 0.15);
+}
+
+.speedOptionInstantActive {
+  border-color: #8b5cf6 !important;
+  background: #110e1f !important;
+  box-shadow: 0 0 0 1px rgba(139, 92, 246, 0.15);
+}
+
+.speedOptionLeft {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.speedIcon {
+  font-size: 20px;
+  line-height: 1;
+}
+
+.speedInfo {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+}
+
+.speedTitle {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: #f3f4f6;
+  letter-spacing: -0.01em;
+}
+
+.speedDesc {
+  font-size: 0.74rem;
+  color: #6b7280;
+  margin-top: 3px;
+}
+
+.speedOffText {
+  font-size: 0.82rem;
+  color: #6b7280;
+  font-weight: 600;
+}
+
+.saveBadge {
+  background: #fbbf24;
+  color: #000;
+  font-size: 0.68rem;
+  font-weight: 900;
+  padding: 4px 10px;
+  border-radius: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.speedFooter {
+  font-size: 0.74rem;
+  color: #6b7280;
+  text-align: center;
+  margin: 20px 0 10px;
+  letter-spacing: 0.01em;
+}
+
+.speedTagline {
+  font-family: var(--font-display);
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-align: center;
+  color: #d1d5db;
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+.speedTagline span {
+  color: #fbbf24;
+  font-style: italic;
+}
+
+@media (max-width: 480px) {
+  .deliverySpeedBox {
+    padding: 20px 16px;
+  }
+  .speedOption {
+    padding: 13px 14px;
+  }
+  .speedTitle {
+    font-size: 0.82rem;
+  }
+  .speedDesc {
+    font-size: 0.68rem;
+  }
+}

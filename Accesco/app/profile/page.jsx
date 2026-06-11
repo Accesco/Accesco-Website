@@ -131,7 +131,7 @@ export default function ProfilePage() {
                   </div>
                   <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
                     {[
-                      { label: 'QTC Videos', href: '/qtcvideos', icon: 'ri-play-circle-line' },
+                      { label: 'Accesco Library', href: '/accesco-library', icon: 'ri-play-circle-line' },
                       { label: 'Xpense Meter', href: '/calculator', icon: 'ri-calculator-line' },
                       { label: 'Partner with Us', href: '/partner', icon: 'ri-handshake-line' },
                     ].map((item) => (

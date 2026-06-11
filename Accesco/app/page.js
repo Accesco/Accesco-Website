@@ -7,13 +7,24 @@ import './homepage.css';
 import AccescoHeader from '../components/AccescoHeader';
 import Hero from '../components/Hero';
 import AppShowcase from '../components/AppShowcase';
-import DownloadSection from '../components/DownloadSection';
 import Footer from '../components/Footer';
-
+import JsonLd from '../components/JsonLd';
 export default function HomePage() {
   const [isClient, setIsClient] = useState(false);
   const scrollRef = useRef(null);
-
+const softwareApplicationSchema = {
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Accesco Living",
+  "operatingSystem": "Android, iOS",
+  "applicationCategory": "ShoppingApplication",
+  "url": "https://www.accescoliving.com",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "INR"
+  }
+};
   useEffect(() => {
     setIsClient(true);
   }, []);
@@ -27,10 +38,10 @@ export default function HomePage() {
   }
 };
 
-  return (
-    <>
-      <AccescoHeader />
-
+ return (
+  <>
+    <JsonLd data={softwareApplicationSchema} />
+    <AccescoHeader />
       <main>
         {/* ── Hero Section ── */}
         <Hero />
@@ -45,17 +56,15 @@ export default function HomePage() {
 
           <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 clamp(20px, 4vw, 40px)', position: 'relative' }}>
             <div style={{ marginBottom: '60px' }}>
-              <div className="ac-chip ac-chip-maroon" style={{ marginBottom: '18px' }}>
-                Your Daily Services
-              </div>
+
               <h2 style={{
                 fontFamily: "'Sora', sans-serif",
-                fontWeight: 800, fontSize: 'clamp(2rem, 4vw, 3rem)',
-                color: '#1A0A0F', letterSpacing: '-0.03em',
-                margin: '0 0 16px', lineHeight: 1.12,
+                fontWeight: 900, fontSize: 'clamp(1.85rem, 3.8vw, 2.9rem)',
+                color: '#1A0A0F', letterSpacing: '-0.04em',
+                margin: '0 0 16px', lineHeight: 1.1,
               }}>
                 India solved delivery in 10 minutes.<br />
-                <span className="ac-gradient-text">Nobody solved the household in 10 years.</span>
+                <span style={{ color: '#7A0042', fontStyle: 'italic' }}>Nobody solved the household in 10 years.</span>
               </h2>
               <p style={{
                 fontFamily: "'DM Sans', sans-serif",
@@ -69,23 +78,24 @@ export default function HomePage() {
             <div className="services-container-wrapper">
               <div className="servicesWrap">
                 <button
-  type="button"
-  className="servicesArrow servicesArrowRight"
-  onClick={(e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    scroll('right');
-  }}
->
-  ›
-</button>
+                  type="button"
+                  className="servicesArrow servicesArrowLeft"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    scroll('left');
+                  }}
+                  aria-label="Previous"
+                >
+                  ‹
+                </button>
 
                 <div ref={scrollRef} id="services-scroll-container" className="services-grid">
                   {/* Card 1: Grokly */}
-                  <a href="/services/grokly" style={{ textDecoration: 'none', display: 'block' }}>
+                  <div style={{ textDecoration: 'none', display: 'block' }}>
                     <div className="service-premium-card grokly-card">
                       <div className="service-card-visual">
-                        <Image src="/images/grokly-new.png" alt="Grokly Groceries" fill style={{ objectFit: 'cover' }} />
+                        <Image src="/images/grokly-new1.png" alt="Grokly Groceries" fill style={{ objectFit: 'cover' }} />
                       </div>
                       <div className="service-icon-circle">
                         <Image src="/images/grokly-icon.png" alt="Grokly" width={40} height={40} style={{ objectFit: 'contain', width: '100%', height: '100%' }} />
@@ -93,16 +103,16 @@ export default function HomePage() {
                       <div className="service-card-body">
                         <h3 className="service-card-name">Grokly</h3>
                         <p className="service-card-desc">Fresh groceries & curated essentials at your doorstep</p>
-                        <div className="service-card-cta grokly-btn">Shop Groceries →</div>
+                        <Link href="/services/grokly" className="service-card-cta grokly-btn">Shop Groceries</Link>
                       </div>
                     </div>
-                  </a>
+                  </div>
 
                   {/* Card 2: Swadishtt */}
-                  <a href="/services/swadisht" style={{ textDecoration: 'none', display: 'block' }}>
+                  <div style={{ textDecoration: 'none', display: 'block' }}>
                     <div className="service-premium-card swadisht-card">
                       <div className="service-card-visual">
-                        <Image src="/images/swadisht-new.png" alt="Swadishtt Meals" fill style={{ objectFit: 'cover' }} />
+                        <Image src="/images/swadisht-new1.png" alt="Swadishtt Meals" fill style={{ objectFit: 'cover' }} />
                       </div>
                       <div className="service-icon-circle">
                         <Image src="/images/swadisht/swadisht_logo.JPG" alt="Swadishtt" width={40} height={40} style={{ objectFit: 'contain', width: '100%', height: '100%' }} />
@@ -110,16 +120,16 @@ export default function HomePage() {
                       <div className="service-card-body">
                         <h3 className="service-card-name">Swadishtt</h3>
                         <p className="service-card-desc">Meals made only for you!</p>
-                        <div className="service-card-cta swadishtt-btn">Order Food →</div>
+                        <Link href="/services/swadisht" className="service-card-cta swadishtt-btn">Order Food</Link>
                       </div>
                     </div>
-                  </a>
+                  </div>
 
                   {/* Card 3: InstaStyle */}
-                  <a href="/services/instastyle" style={{ textDecoration: 'none', display: 'block' }}>
+                  <div style={{ textDecoration: 'none', display: 'block' }}>
                     <div className="service-premium-card instastyle-card">
                       <div className="service-card-visual">
-                        <Image src="/images/fashion-new.png" alt="InstaStyle Fashion" fill style={{ objectFit: 'cover' }} />
+                        <Image src="/images/fashion-new1.png" alt="InstaStyle Fashion" fill style={{ objectFit: 'cover' }} />
                       </div>
                       <div className="service-icon-circle">
                         <Image src="/images/instastyle-logo.png" alt="InstaStyle" width={40} height={40} style={{ objectFit: 'contain', width: '100%', height: '100%' }} />
@@ -127,96 +137,117 @@ export default function HomePage() {
                       <div className="service-card-body">
                         <h3 className="service-card-name">InstaStyle</h3>
                         <p className="service-card-desc">Outfit ready, before you are!</p>
-                        <div className="service-card-cta instastyle-btn">Explore Fashion →</div>
+                        <Link href="/services/instastyle" className="service-card-cta instastyle-btn">Explore Fashion</Link>
                       </div>
                     </div>
-                  </a>
+                  </div>
                 </div>
 
-                <button className="servicesArrow servicesArrowRight" onClick={() => scroll('right')}>›</button>
+                <button
+                  type="button"
+                  className="servicesArrow servicesArrowRight"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    scroll('right');
+                  }}
+                  aria-label="Next"
+                >
+                  ›
+                </button>
               </div>
             </div>
           </div>
         </section>
 
         {/* ── Xpense Meter Section ── */}
-        <section style={{ padding: '80px 0', background: '#FFFDF8', position: 'relative', overflow: 'hidden' }}>
-          <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 40px', position: 'relative', zIndex: 1 }}>
-            <div className="xpense-box-container" style={{
-              background: '#FFF5F7', borderRadius: '48px', padding: '100px 80px',
-              border: '1px solid #FFE5E9', display: 'grid',
-              gridTemplateColumns: '1fr 1.2fr', gap: '80px', alignItems: 'center',
-              position: 'relative', overflow: 'hidden'
-            }}>
-              <div style={{ position: 'absolute', top: '-20%', right: '-10%', width: '600px', height: '600px', background: 'radial-gradient(circle, rgba(122, 0, 66, 0.04) 0%, transparent 70%)', zIndex: 0, pointerEvents: 'none' }} />
-              <div>
-                <div className="ac-chip ac-chip-maroon" style={{ marginBottom: '20px' }}>Financial Intelligence</div>
-                <h2 style={{ fontFamily: "'Sora', sans-serif", fontWeight: 800, fontSize: 'clamp(2rem, 5vw, 3.2rem)', color: '#1A0A0F', margin: '0 0 20px', lineHeight: 1.1 }}>
-                  Xpense<br /><span className="ac-gradient-text">Meter</span>
+        <section className="xpense-meter-section">
+          <div className="xpense-container">
+            <div className="xpense-content">
+              <div className="xpense-header">
+                <h2 className="xpense-title">
+                  Smart budgeting built for <span className="xpense-highlight">your income cycle</span>
                 </h2>
-                <p style={{ fontSize: '1.05rem', color: '#6B5B65', lineHeight: 1.75, marginBottom: '36px' }}>
-                  Transform your financial habits with intelligent expense tracking and predictive analytics.
+                <p className="xpense-description">
+                  Track and manage your household expenses dynamically relative to your salary schedule.
                 </p>
-                <Link href="/calculator" style={{ display: 'inline-block', padding: '14px 32px', background: '#1A0A0F', color: '#FFFDF8', borderRadius: '9999px', fontWeight: 700, textDecoration: 'none', boxShadow: '0 10px 20px rgba(0,0,0,0.1)', position: 'relative', zIndex: 2 }}>
-                  Launch Calculator →
-                </Link>
+
+                <div className="xpense-features">
+                  <div className="feature-item">
+                    <span className="feature-icon">
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <rect x="2" y="4" width="20" height="16" rx="2" ry="2" />
+                        <line x1="12" y1="4" x2="12" y2="20" />
+                      </svg>
+                    </span>
+                    <div className="feature-text">
+                      <h4>Salary Sync</h4>
+                      <p>Adapts your monthly budget limits to your payroll cycle.</p>
+                    </div>
+                  </div>
+                  <div className="feature-item">
+                    <span className="feature-icon">
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+                        <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+                      </svg>
+                    </span>
+                    <div className="feature-text">
+                      <h4>Budget Alerts</h4>
+                      <p>Get notified instantly before you exceed category limits.</p>
+                    </div>
+                  </div>
+                  <div className="feature-item">
+                    <span className="feature-icon">
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <circle cx="12" cy="12" r="10" />
+                        <circle cx="12" cy="12" r="6" />
+                        <circle cx="12" cy="12" r="2" />
+                      </svg>
+                    </span>
+                    <div className="feature-text">
+                      <h4>Smart Goals</h4>
+                      <p>Track and secure your savings targets automatically.</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="xpense-actions">
+                  <Link href="/calculator" className="xpense-cta">
+                    Launch calculator
+                  </Link>
+                  <Link href="#waitlist" className="xpense-secondary-cta">
+                    Join waitlist
+                  </Link>
+                </div>
               </div>
 
-              <div className="xpense-visual-wrap" style={{ position: 'relative', height: '480px', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', maxWidth: '340px', margin: '0 auto' }}>
-                {/* Floating Card 1 */}
-                <div className="xpense-card-float" style={{ position: 'absolute', top: '5%', right: '-10%', width: '100%', maxWidth: '240px', background: '#FFFDF8', padding: '24px', borderRadius: '24px', boxShadow: '0 20px 40px rgba(122,0,66,0.12)', border: '2px solid #FFE5E9', zIndex: 3, transform: 'rotate(2deg)', color: '#000' }}>
-                  <div style={{ color: '#7A0042', fontWeight: 900, marginBottom: '8px', fontSize: '1rem' }}>✦ Smart Categorization</div>
-                  <div style={{ fontSize: '0.85rem', color: '#1A0A0F', fontWeight: 600 }}>AI-powered automatic expense sorting</div>
-                  <div className="xpense-details">
-                    <div style={{ background: '#FDF2F5', padding: '12px', borderRadius: '12px', border: '1px solid rgba(122,0,66,0.1)', marginTop: '12px' }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', fontSize: '0.8rem' }}><span style={{ color: '#1A0A0F', fontWeight: 500 }}>Groceries</span><span style={{ fontWeight: 800, color: '#7A0042' }}>45%</span></div>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8rem' }}><span style={{ color: '#1A0A0F', fontWeight: 500 }}>Dining</span><span style={{ fontWeight: 800, color: '#7A0042' }}>25%</span></div>
+              <div className="xpense-visual">
+                <div className="xpense-dashboard-card">
+                  <div className="dashboard-header">
+                    <div className="header-meta">
+                      <span className="dashboard-title">Xpense Meter</span>
+                      <p className="dashboard-subtitle">Transform your financial habits with intelligent expense tracking and predictive analytics.</p>
                     </div>
+                    <Link href="/calculator" className="dashboard-calc-link">
+                      Launch Calculator
+                    </Link>
                   </div>
-                </div>
+                  
+                  <div className="dashboard-grid">
+                    <div className="dashboard-item">
+                      <span className="item-label">Monthly Limit</span>
+                      <span className="item-value">₹50,000</span>
+                    </div>
 
-                {/* Main Dark Card */}
-                <div style={{ width: '100%', maxWidth: '280px', background: '#1A0A0F', boxShadow: '0 40px 100px rgba(26,10,15,0.2)', borderRadius: '32px', padding: '32px', position: 'relative', zIndex: 2, color: '#FFFDF8' }}>
-                  <div style={{ marginBottom: '24px' }}>
-                    <div style={{ opacity: 0.6, fontSize: '0.7rem', marginBottom: '4px' }}>Monthly Overview</div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <div style={{ fontSize: '1.8rem', fontWeight: 900 }}>₹45,280</div>
-                      <div style={{ background: 'rgba(46,125,50,0.15)', color: '#4ADE80', padding: '2px 6px', borderRadius: '6px', fontSize: '0.7rem', fontWeight: 700 }}>+12.5%</div>
+                    <div className="dashboard-item">
+                      <span className="item-label">Current Spent</span>
+                      <span className="item-value" style={{ color: '#7A0042' }}>₹45,280</span>
                     </div>
-                  </div>
-                  <div style={{ marginBottom: '24px' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-                      <div style={{ fontSize: '0.85rem', fontWeight: 700 }}>Savings Goal</div>
-                      <div style={{ fontSize: '0.85rem', opacity: 0.8 }}>68% Complete</div>
-                    </div>
-                    <div style={{ height: '6px', background: 'rgba(255,255,255,0.1)', borderRadius: '10px', overflow: 'hidden' }}>
-                      <div style={{ width: '68%', height: '100%', background: '#C8963E', borderRadius: '10px' }} />
-                    </div>
-                  </div>
-                  <div style={{ padding: '16px', background: 'rgba(255,255,255,0.05)', borderRadius: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <div>
-                      <div style={{ opacity: 0.6, fontSize: '0.7rem', marginBottom: '2px' }}>Top Category</div>
-                      <div style={{ fontWeight: 700, fontSize: '0.9rem' }}>Food &amp; Dining</div>
-                    </div>
-                    <div style={{ width: '32px', height: '32px', background: '#7A0042', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FFFDF8" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m19 9-7 7-7-7"/></svg>
-                    </div>
-                  </div>
-                </div>
 
-                {/* Floating Card 2 */}
-                <div className="xpense-card-float" style={{ position: 'absolute', bottom: '5%', right: '-10%', width: '100%', maxWidth: '240px', background: '#C8963E', padding: '24px', borderRadius: '24px', boxShadow: '0 20px 40px rgba(200,150,62,0.2)', zIndex: 1, color: '#000', transform: 'rotate(-3deg)' }}>
-                  <div style={{ fontWeight: 900, marginBottom: '8px', fontSize: '1rem' }}>✦ Goal Tracking</div>
-                  <div style={{ fontSize: '0.85rem', fontWeight: 600, opacity: 0.9, marginBottom: '16px' }}>Achieve milestones faster</div>
-                  <div className="xpense-details">
-                    <div style={{ padding: '12px', background: 'rgba(0,0,0,0.1)', borderRadius: '12px' }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
-                        <div style={{ fontSize: '0.8rem', fontWeight: 800 }}>Investment</div>
-                        <div style={{ fontSize: '0.8rem', fontWeight: 700 }}>68% Complete</div>
-                      </div>
-                      <div style={{ height: '6px', background: 'rgba(0,0,0,0.15)', borderRadius: '10px', overflow: 'hidden' }}>
-                        <div style={{ width: '68%', height: '100%', background: '#000', borderRadius: '10px' }} />
-                      </div>
+                    <div className="dashboard-item item-full">
+                      <span className="item-label">Remaining Balance</span>
+                      <span className="item-value" style={{ color: '#2E7D32' }}>₹4,720</span>
                     </div>
                   </div>
                 </div>
@@ -227,11 +258,7 @@ export default function HomePage() {
 
         {/* ── Waitlist / App Showcase ── */}
         <AppShowcase />
-
-        {/* ── Download Section ── */}
-        <DownloadSection />
       </main>
-
       <Footer />
 
       {isClient && (
@@ -246,6 +273,7 @@ export default function HomePage() {
 
       {/* ── Combined & Optimized Styles ── */}
             <style dangerouslySetInnerHTML={{ __html: `
+            
         .services-container-wrapper {
           position: relative;
           width: 100%;
@@ -269,26 +297,28 @@ export default function HomePage() {
           display: none;
         }
 
+        /* ── Mobile: show all 3 cards simultaneously, no scroll ── */
         @media (max-width: 960px) {
           .services-container-wrapper {
-            overflow: visible;
+            overflow: visible !important;
           }
 
           .services-grid {
-            display: flex;
-            overflow-x: auto;
-            scroll-snap-type: x mandatory;
-            padding: 0 20px;
-            gap: 16px;
-            scrollbar-width: none;
-            scroll-behavior: smooth;
+            display: grid !important;
+            grid-template-columns: repeat(3, 1fr) !important;
+            gap: 8px !important;
+            width: 100% !important;
+            overflow: visible !important;
+            scroll-snap-type: none !important;
+            padding-bottom: 0 !important;
+            margin: 0 !important;
           }
 
           .services-grid::-webkit-scrollbar {
             display: none;
           }
 
-          .services-grid > a {
+          .services-grid > div {
             flex: 0 0 100%;
             min-width: 100%;
             max-width: 100%;
@@ -298,32 +328,47 @@ export default function HomePage() {
             box-sizing: border-box;
           }
 
+          .services-grid > div {
+            width: 100% !important;
+            min-width: 0 !important;
+            max-width: none !important;
+            flex-shrink: 0 !important;
+          }
+
           .servicesArrow {
-            display: flex !important;
-            position: absolute;
-            top: 42%;
-            transform: translateY(-50%);
-            z-index: 999;
-            width: 42px;
-            height: 42px;
-            border-radius: 50%;
-            border: none;
-            align-items: center;
-            justify-content: center;
-            font-size: 32px;
-            font-weight: 700;
-            background: white;
-            color: #7A0042;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.18);
-            cursor: pointer;
+            display: none !important;
           }
 
-          .servicesArrowLeft {
-            left: -6px;
+          .service-card-visual {
+            height: 120px !important;
           }
 
-          .servicesArrowRight {
-            right: -6px;
+          .service-card-body {
+            padding: 10px 10px 14px !important;
+          }
+
+          .service-card-name {
+            font-size: 0.9rem !important;
+            margin-bottom: 4px !important;
+          }
+
+          .service-card-desc {
+            font-size: 0.7rem !important;
+            line-height: 1.3 !important;
+          }
+
+          .service-card-cta {
+            padding: 9px 6px !important;
+            font-size: 0.65rem !important;
+            border-radius: 8px !important;
+          }
+
+          .service-icon-circle {
+            width: 40px !important;
+            height: 40px !important;
+            top: 100px !important;
+            right: 8px !important;
+            padding: 6px !important;
           }
 
           .xpense-box-container {
@@ -352,6 +397,49 @@ export default function HomePage() {
           }
         }
 
+        @media (max-width: 480px) {
+          .services-grid {
+            gap: 6px !important;
+            display: grid !important;
+            grid-template-columns: repeat(3, 1fr) !important;
+            overflow: visible !important;
+            scroll-snap-type: none !important;
+            padding-bottom: 0 !important;
+            margin: 0 !important;
+          }
+          .services-grid > div {
+            width: 100% !important;
+            min-width: 0 !important;
+            max-width: none !important;
+            flex-shrink: 0 !important;
+          }
+          .service-card-visual {
+            height: 85px !important;
+          }
+          .service-card-body {
+            padding: 6px 6px 8px !important;
+          }
+          .service-card-name {
+            font-size: 0.72rem !important;
+            margin-bottom: 2px !important;
+          }
+          .service-card-desc {
+            display: none !important;
+          }
+          .service-card-cta {
+            padding: 6px 2px !important;
+            font-size: 0.55rem !important;
+            border-radius: 6px !important;
+          }
+          .service-icon-circle {
+            width: 26px !important;
+            height: 26px !important;
+            top: 72px !important;
+            right: 4px !important;
+            padding: 3px !important;
+          }
+        }
+
         .service-premium-card {
           position: relative;
           background: #fff;
@@ -364,10 +452,7 @@ export default function HomePage() {
           flex-direction: column;
         }
 
-        .service-premium-card:hover {
-          transform: translateY(-6px);
-          box-shadow: 0 24px 60px rgba(122,0,66,0.12);
-        }
+        /* hover interaction removed for premium cards per request */
 
         .service-card-visual {
           height: 200px;
@@ -429,7 +514,7 @@ export default function HomePage() {
         }
 
         .instastyle-btn {
-          background: #4A148C;
+          background:  #8B5E3C;
           color: #fff;
         }
 
@@ -444,15 +529,7 @@ export default function HomePage() {
           transition: all 0.4s ease;
         }
 
-        .xpense-card-float:hover {
-          z-index: 10 !important;
-        }
-
-        .xpense-card-float:hover .xpense-details {
-          max-height: 120px;
-          opacity: 1;
-          margin-top: 16px;
-        }
+        /* xpense-card hover interactions removed */
       ` }} />
       </>
   );

@@ -117,6 +117,7 @@ export default function ProfilePage() {
           <div className={styles.actions}>
             <Link href="/services/instastyle/catalog" className={styles.primaryAction}>Shop the catalog</Link>
             <Link href="/services/instastyle/wishlist" className={styles.secondaryAction}>Open wishlist</Link>
+            <Link href="/services/instastyle/add-sku" className={styles.secondaryAction} style={{ border: '1px dashed #E0356A', color: '#E0356A' }}>Add SKU / Sell Clothes</Link>
           </div>
 
           <div className={styles.quickStats}>

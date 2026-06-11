@@ -5,9 +5,19 @@ import ReportCard from "./components/ReportCard";
 import PresentationCard from "./components/PresentationCard";
 import GovernanceCard from "./components/GovernanceCard";
 import Footer from "./components/Footer";
+const mediaLogos = [
+  { name: "Pioneer Entrepreneur", src: "/logos/pioneer-entrepreneur.png" },
+  { name: "Fox Story India", src: "/logos/fox-story.png" },
+  { name: "Entrepreneur Street", src: "/logos/entrepreneur-street.webp" },
+  { name: "Business Pressline", src: "/logos/business-pressline.png" },
+  { name: "Orbit Entrepreneur", src: "/logos/orbit-entrepreneur.webp" },
+  { name: "Hindustan Metro", src: "/logos/hindustan-metro.jpeg" },
+  { name: "The Weekly Mail", src: "/logos/weekly-mail.jpeg" },
+  { name: "Achieve Times", src: "/logos/achieve-times.jpeg" },
+  { name: "Achieve Times", src: "/logos/Successaga.jpeg" },
+];
 const ecosystemLogos = [
   { name: "AWS Startups", src: "/logos/aws-startups.png" },
-  //{ name: "RBL Bank", src: "/logos/rbl-bank.png" },
   { name: "India Startup Club", src: "/logos/india-startup-club.png" },
   { name: "NVIDIA Inception Program", src: "/logos/nvidia-inception.png" },
   { name: "Zoho for Startups", src: "/logos/zoho-startups.png" },
@@ -114,7 +124,21 @@ export default function HomePage() {
       title="Supported by Global Startup Ecosystems & Accelerator"
       description="We are supported by leading startup ecosystems, technology platforms and accelerator networks."
     />
-
+    <div className="media-heading">
+  Featured In • Media Mentions
+</div>
+<div className="media-marquee">
+  <div className="media-track">
+    {[...mediaLogos, ...mediaLogos].map((logo, index) => (
+      <div className="media-logo" key={`${logo.name}-${index}`}>
+        <img src={logo.src} alt={logo.name} />
+      </div>
+    ))}
+  </div>
+</div>
+<div className="media-heading">
+  Startup Ecosystem • Accelerator Network
+</div>
     <div className="logo-marquee">
       <div className="logo-track">
         {[...ecosystemLogos, ...ecosystemLogos].map((logo, index) => (

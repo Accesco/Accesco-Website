@@ -453,6 +453,7 @@ export default function VirtualTryOnPage() {
                 <p>Start your camera to compare looks before you buy</p>
                 <button onClick={startCamera} className={styles.startCameraBtn} disabled={isStartingCamera}>
                   {isStartingCamera ? 'Starting Camera...' : 'Start Camera'}
+                  
                 </button>
                 {error && <p className={styles.errorMessage}>{error}</p>}
               </div>
@@ -573,6 +574,27 @@ export default function VirtualTryOnPage() {
           </div>
 
           {/* Instructions */}
+          <div className={styles.aiTryOnCard}>
+  <div className={styles.aiTryOnContent}>
+    <div className={styles.aiTryOnIcon}>
+      ✦
+    </div>
+
+    <div className={styles.aiTryOnText}>
+      <h3>Want a realistic generated try-on?</h3>
+      <p>
+        Upload your photo and a product image to see how it looks on you.
+      </p>
+    </div>
+  </div>
+
+  <Link
+    href={`/services/instastyle/virtual-tryon/ai-tryon?img=${encodeURIComponent(selectedProduct?.image || '')}`}
+    className={styles.aiTryOnCardBtn}
+  >
+    Open AI Upload Try-On →
+  </Link>
+</div>
           <div className={styles.instructions}>
             <h3>How to Use</h3>
             <ol>

@@ -230,25 +230,37 @@ const handleHealthModeToggle = () => {
               </div>
             </div>
 
-            <div className={styles.supportCard}>
-              <h2>Support</h2>
-              <p>Need help with an order or payment? We respond fast.</p>
-              <div className={styles.supportActions}>
-                <Link href="/contact" className={styles.supportBtn}>
-                  Contact support
-                </Link>
-                <Link href="/services/swadisht/orders" className={styles.supportGhost}>
-                  Track orders
-                </Link>
-              </div>
-            </div>
           </aside>
 
           <main className={styles.mainColumn}>
+          <div className={styles.welcomeBar}>
+  <div>
+    <h1 className={styles.welcomeTitle}>
+      Welcome back, 
+      {profile.name || "User"}
+    </h1>
+
+    <p className={styles.welcomeSubtitle}>
+     Discover your next gourmet experience.
+    </p>
+  </div>
+
+  <div className={styles.headerIcons}>
+  
+
+    <div className={styles.profileMini}>
+      {(profile.name || "S").charAt(0).toUpperCase()}
+    </div>
+  </div>
+</div>
             <section className={styles.bannerCard}>
               <div>
                 <span className={styles.bannerKicker}>Next order</span>
-                <h2 className={styles.bannerTitle}>Ready for your next meal?</h2>
+               <h2 className={styles.bannerTitle}>
+  Ready for your next
+  <br />
+  meal?
+</h2>
                 <p className={styles.bannerCopy}>
                   We keep your favorites close and your delivery fast.
                 </p>
@@ -315,24 +327,33 @@ const handleHealthModeToggle = () => {
                     return (
                       <article key={order.id || index} className={styles.orderRow}>
                         <div className={styles.orderMeta}>
-                          <div className={styles.orderId}>{order.id || `Order ${index + 1}`}</div>
-                          <div className={styles.orderSub}>
-                            {formatDate(order.placedAt)} | {itemCount} items
-                          </div>
-                          <div className={styles.orderItems}>
-                            {previewItems.map((item, itemIndex) => (
-                              <span
-                                key={`${order.id || index}-${item.id || itemIndex}`}
-                                className={styles.itemTag}
-                              >
-                                {item.name}
-                              </span>
-                            ))}
-                            {moreCount > 0 ? (
-                              <span className={styles.itemMore}>+{moreCount} more</span>
-                            ) : null}
-                          </div>
-                        </div>
+  <div className={styles.orderHeader}>
+    <div className={styles.orderId}>
+      {order.id || `Order ${index + 1}`}
+    </div>
+
+    <div className={styles.orderSub}>
+      {formatDate(order.placedAt)} | {itemCount} items
+    </div>
+  </div>
+
+  <div className={styles.orderItems}>
+    {previewItems.map((item, itemIndex) => (
+      <span
+        key={`${order.id || index}-${item.id || itemIndex}`}
+        className={styles.itemTag}
+      >
+        {item.name}
+      </span>
+    ))}
+
+    {moreCount > 0 ? (
+      <span className={styles.itemMore}>
+        +{moreCount} more
+      </span>
+    ) : null}
+  </div>
+</div>
                         <div className={styles.orderSummary}>
                           <span className={styles.statusBadge}>{order.status || 'Placed'}</span>
                           <strong className={styles.orderTotal}>

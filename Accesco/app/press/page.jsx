@@ -7,62 +7,111 @@ import './press.css';
 
 const pressReleases = [
   {
-    id: 1,
-    title: 'Accesco Living Announces India\'s First Intelligent Circular Commerce Ecosystem',
-    date: 'May 10, 2026',
-    category: 'Company News',
-    excerpt: 'Combining three distinct ventures—Grokly for essentials, Swadishtt for dining, and InstaStyle for instant fashion—into a single, coordinated budget-first ecosystem.',
-    image: '/images/banners/hero-main.jpg',
-    readTime: '4 min read',
+    id: 0,
+    title: "The Argha Sengupta Story: From Cycling Through Siliguri Markets to Building India's Intelligent Commerce Platform",
+    date: 'May 25, 2026',
+    category: 'Featured Article',
+    excerpt: "While most 19-year-olds are figuring out college majors, Argha Sengupta is preparing to launch Accesco Living, India's first circular commerce ecosystem.",
+    image: '/images/entrepreneur-pioneer-argha.jpg',
+    readTime: '6 min read',
+    url: 'https://entrepreneurpioneer.com/the-argha-sengupta-story-from-cycling-through-siliguri-markets/',
+    logo: '/images/entrepreneur-pioneer-logo.png',
+    isFeatured: true,
   },
   {
-    id: 2,
-    title: 'FarmChain Network Direct Sourcing Scale Expansion Across Karnataka',
-    date: 'April 28, 2026',
-    category: 'Ecosystem',
-    excerpt: 'Accesco Living announces direct sourcing contracts with over 1500 local Karnataka farmers, bypassing mandi intermediaries and tripling producer income.',
-    image: '/images/banners/hero-grokly.jpg',
-    readTime: '3 min read',
-  },
-  {
-    id: 3,
-    title: 'InstaStyle Launches 20-Minute Instant Trial & Reverse Fashion Loop in Bengaluru',
-    date: 'April 15, 2026',
-    category: 'Product Launch',
-    excerpt: 'Redefining fast-commerce with trial-at-doorstep fitting and a carbon-credit reverse commerce loop for apparel recycling and zero-waste fashion.',
-    image: '/images/banners/hero-swadishtt.png',
+    id: 4,
+    title: 'Is Your Delivery App Fast Enough But Never Smart Enough?',
+    date: 'June 2, 2026',
+    category: 'Media Coverage',
+    excerpt: 'At 9pm you have no milk left. You open an app order it. It takes 10 minutes. Problem solved. However, there is something to be noted here...',
+    image: '/images/successsaga-cover.jpg',
     readTime: '5 min read',
+    url: 'https://successsaga.com/is-your-delivery-app-fast-enough-but-never-smart-enough/',
+    logo: '/logos/successsaga.png',
   },
+  
+
 ];
 
-const mediaKitItems = [
+const pressKitItems = [
   {
-    title: 'Official Logos',
-    description: 'High-res transparent PNGs and vectors.',
-    size: '4.2 MB',
-    href: '#',
+    id: 'about',
+    title: 'About Accesco',
+    description: 'Company overview, mission & pitch deck',
+    icon: (
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+        <polyline points="14 2 14 8 20 8"/>
+        <line x1="16" y1="13" x2="8" y2="13"/>
+        <line x1="16" y1="17" x2="8" y2="17"/>
+        <polyline points="10 9 9 9 8 9"/>
+      </svg>
+    ),
+    files: [{ name: 'Accesco Deck', url: '/pdfs/Accesco_deck.pdf', type: 'PDF' }],
   },
   {
-    title: 'Executive Bios & Photos',
-    description: 'Founders\' profiles and corporate portrait headshots.',
-    size: '18.5 MB',
-    href: '#',
+    id: 'founder-bio',
+    title: 'Founder Bio',
+    description: 'Founding team photos and bios',
+    icon: (
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <rect x="2" y="2" width="9" height="9" rx="1"/>
+        <rect x="13" y="2" width="9" height="9" rx="1"/>
+        <rect x="2" y="13" width="9" height="9" rx="1"/>
+        <rect x="13" y="13" width="9" height="9" rx="1"/>
+      </svg>
+    ),
+    files: [
+      { name: 'Founders Photo 1', url: '/Press/FoundersPIC1.PNG', type: 'IMG' },
+      { name: 'Founders Photo 2', url: '/Press/FoundersPIC2.PNG', type: 'IMG' },
+      { name: 'Founders Photo 3', url: '/Press/FoundersPIC3.PNG', type: 'IMG' },
+    ],
   },
   {
-    title: 'Brand Deck & Story',
-    description: 'Core concepts, values, and visual brand guidelines.',
-    size: '8.1 MB',
-    href: '/pdfs/Accesco_deck.pdf',
+    id: 'founder-photos',
+    title: 'Founder Photos',
+    description: 'Individual hi-res portrait photos',
+    icon: (
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+        <circle cx="12" cy="7" r="4"/>
+      </svg>
+    ),
+    files: [
+      { name: 'Founder 1', url: '/Press/Founder1.jpeg', type: 'IMG' },
+      { name: 'Founder 2', url: '/Press/Founder2.jpeg', type: 'IMG' },
+      { name: 'Founder 3', url: '/Press/Founder3.PNG', type: 'IMG' },
+      { name: 'Founder 4', url: '/Press/FoundersPIC4.jpeg', type: 'IMG' },
+    ],
   },
   {
-    title: 'Platform Screenshots',
-    description: 'Curated high-res screenshots of the mobile/desktop app.',
-    size: '14.2 MB',
-    href: '#',
+    id: 'logo-files',
+    title: 'Logo Files',
+    description: 'Brand logos in multiple formats',
+    icon: (
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+        <circle cx="8.5" cy="8.5" r="1.5"/>
+        <polyline points="21 15 16 10 5 21"/>
+      </svg>
+    ),
+    files: [
+      { name: 'Logo 1', url: '/Press/LOGO1.PNG', type: 'IMG' },
+      { name: 'Logo 2', url: '/Press/LOGO2.PNG', type: 'IMG' },
+      { name: 'Logo 3', url: '/Press/LOGO3.jpeg', type: 'IMG' },
+      { name: 'Logo 4', url: '/Press/LOGO4.jpeg', type: 'IMG' },
+    ],
   },
+
 ];
+
 
 export default function PressPage() {
+  const [activeModal, setActiveModal] = React.useState(null);
+
+  const openModal = (item) => setActiveModal(item);
+  const closeModal = () => setActiveModal(null);
+
   return (
     <>
       <AccescoHeader />
@@ -71,7 +120,7 @@ export default function PressPage() {
         {/* Hero Section */}
         <section className="press-hero">
           <div className="press-container">
-            <span className="press-hero-chip">✦ Media Relations</span>
+
             <h1 className="press-hero-title">Press & Media Center</h1>
             <p className="press-hero-description">
               Discover the latest announcements, media resources, brand assets, 
@@ -92,7 +141,7 @@ export default function PressPage() {
 
             <div className="press-grid">
               {pressReleases.map((release) => (
-                <article key={release.id} className="press-card">
+                <article key={release.id} className={`press-card ${release.isFeatured ? 'featured' : ''}`}>
                   <div className="press-card-image-wrap">
                     <img 
                       src={release.image} 
@@ -102,7 +151,11 @@ export default function PressPage() {
                         e.currentTarget.src = '/images/banners/hero-main.jpg';
                       }}
                     />
-                    <span className="press-card-badge">{release.category}</span>
+                    {release.logo && (
+                      <div className="pioneer-logo-badge">
+                        <img src={release.logo} alt="Publisher Logo" />
+                      </div>
+                    )}
                   </div>
                   
                   <div className="press-card-body">
@@ -115,12 +168,13 @@ export default function PressPage() {
                     <h3 className="press-card-title">{release.title}</h3>
                     <p className="press-card-excerpt">{release.excerpt}</p>
                     
-                    <a href="/blogs" className="press-card-link">
-                      Read Release
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                        <line x1="5" y1="12" x2="19" y2="12"></line>
-                        <polyline points="12 5 19 12 12 19"></polyline>
-                      </svg>
+                    <a 
+                      href={release.url || "/blogs"} 
+                      target={release.url ? "_blank" : undefined}
+                      rel={release.url ? "noopener noreferrer" : undefined}
+                      className="press-card-link"
+                    >
+                      {release.url ? "Read Article" : "Read Release"}
                     </a>
                   </div>
                 </article>
@@ -129,42 +183,81 @@ export default function PressPage() {
           </div>
         </section>
 
-        {/* Media Brand Kit Section */}
+        {/* PRESS KIT Section */}
         <section className="press-kit-section">
           <div className="press-container">
-            <div className="press-kit-grid">
-              <div className="press-kit-content">
-                <h2>Official Brand & Media Assets</h2>
-                <p>
-                  We are building India\'s first quiet-luxury daily lifestyle platform. 
-                  Download our official visual assets, brand identity materials, executive profiles, 
-                  and screenshot kits to ensure consistent coverage.
-                </p>
-              </div>
+            <div className="press-kit-header">
+              <h2 className="press-kit-heading">Brand Assets & Resources</h2>
+              <p className="press-kit-subtext">Download official brand materials, founder bios, and media assets for editorial use.</p>
+            </div>
 
-              <div className="press-kit-cards">
-                {mediaKitItems.map((item, index) => (
-                  <div key={index} className="press-kit-card">
-                    <div className="press-kit-icon">
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                        <polyline points="7 10 12 15 17 10"></polyline>
-                        <line x1="12" y1="15" x2="12" y2="3"></line>
-                      </svg>
-                    </div>
-                    
-                    <h3>{item.title}</h3>
-                    <span>ZIP • {item.size}</span>
-                    
-                    <a href={item.href} target="_blank" rel="noopener noreferrer" className="press-kit-download-btn">
-                      Download
-                    </a>
+            <div className="press-kit-cards-grid">
+              {pressKitItems.map((item) => (
+                <button
+                  key={item.id}
+                  className="press-kit-item-card"
+                  onClick={() => openModal(item)}
+                  aria-label={`Open ${item.title}`}
+                >
+                  <div className="press-kit-item-icon">
+                    {item.icon}
                   </div>
+                  <div className="press-kit-item-body">
+                    <h3 className="press-kit-item-title">{item.title}</h3>
+                    <p className="press-kit-item-desc">{item.description}</p>
+                  </div>
+                  <div className="press-kit-item-arrow">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <line x1="7" y1="17" x2="17" y2="7"/>
+                      <polyline points="7 7 17 7 17 17"/>
+                    </svg>
+                  </div>
+                </button>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Press Kit Modal */}
+        {activeModal && (
+          <div className="press-modal-overlay" onClick={closeModal}>
+            <div className="press-modal" onClick={(e) => e.stopPropagation()}>
+              <div className="press-modal-header">
+                <div className="press-modal-icon">{activeModal.icon}</div>
+                <div>
+                  <h3 className="press-modal-title">{activeModal.title}</h3>
+                  <p className="press-modal-desc">{activeModal.description}</p>
+                </div>
+                <button className="press-modal-close" onClick={closeModal} aria-label="Close">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                    <line x1="18" y1="6" x2="6" y2="18"/>
+                    <line x1="6" y1="6" x2="18" y2="18"/>
+                  </svg>
+                </button>
+              </div>
+              <div className="press-modal-files">
+                {activeModal.files.map((file, idx) => (
+                  <a
+                    key={idx}
+                    href={file.url}
+                    download
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="press-modal-file-row"
+                  >
+                    <span className="press-modal-file-type">{file.type}</span>
+                    <span className="press-modal-file-name">{file.name}</span>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                      <polyline points="7 10 12 15 17 10"/>
+                      <line x1="12" y1="15" x2="12" y2="3"/>
+                    </svg>
+                  </a>
                 ))}
               </div>
             </div>
           </div>
-        </section>
+        )}
 
         {/* Press Contact Section */}
         <section className="press-contact-section">

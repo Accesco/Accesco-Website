@@ -348,12 +348,12 @@ export default function CalculatorPage() {
           gap: '30px'
         }}>
           {[
-            { title: 'Smart Categorization', desc: 'AI-powered automatic expense sorting', icon: '✦' },
-            { title: 'Predictive Budgeting', desc: 'Forecast spending patterns accurately', icon: '✦' },
-            { title: 'Goal Tracking', desc: 'Achieve financial milestones faster', icon: '✦' },
+            { title: 'Smart Categorization', desc: 'AI-powered automatic expense sorting' },
+            { title: 'Predictive Budgeting', desc: 'Forecast spending patterns accurately' },
+            { title: 'Goal Tracking', desc: 'Achieve financial milestones faster' },
           ].map((f, i) => (
             <div key={i} style={{ display: 'flex', gap: '15px', alignItems: 'flex-start' }}>
-              <div style={{ color: '#7A0042', fontSize: '1.5rem', fontWeight: 900 }}>{f.icon}</div>
+              <div style={{ width: '14px', minWidth: '14px', height: '14px', borderRadius: '999px', marginTop: '6px', background: '#7A0042' }} />
               <div>
                 <h3 style={{ margin: '0 0 8px', fontFamily: 'Sora', fontSize: '1.1rem', fontWeight: 800, color: '#1A0A0F' }}>{f.title}</h3>
                 <p style={{ margin: 0, fontFamily: 'DM Sans', fontSize: '0.95rem', color: '#6B5B65', lineHeight: 1.5 }}>{f.desc}</p>

@@ -156,19 +156,17 @@ export default function AppShowcase() {
   }, []);
 
   return (
-    <section id="app-showcase" style={{ padding: '64px 20px', background: '#FFFDF8', position: 'relative' }}>
+    <section id="waitlist" style={{ padding: '64px 20px', background: '#FFFDF8', position: 'relative' }}>
       {/* Waitlist Section Header */}
-      <div style={{ maxWidth: '1200px', margin: '0 auto 40px', padding: '0' }}>
-        <div className="ac-chip ac-chip-maroon" style={{ marginBottom: '20px' }}>
-          ✦ Early Access Program
-        </div>
+      <div style={{ maxWidth: '1200px', margin: '0 auto 40px', padding: '0', textAlign: 'center' }}>
+
 
         <h2 className={styles.waitlistTitle}>
           Join the <span className={styles.highlight}>Revolution</span>
         </h2>
 
         <p className={styles.waitlistSubtitle} style={{ maxWidth: '100%', fontSize: '1.1rem' }}>
-          Be among the first to experience India's most intelligent commerce platform.
+          Be the first to experience India's most intelligent commerce platform.
           Get exclusive early access and special launch benefits.
         </p>
       </div>

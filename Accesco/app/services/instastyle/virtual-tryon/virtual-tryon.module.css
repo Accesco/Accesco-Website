@@ -48,7 +48,7 @@
   background: #fff;
   border-bottom: 1px solid #e0e0e0;
   position: sticky;
-  top: 0;
+  top: 70px;
   z-index: 100;
 }
 
@@ -784,6 +784,7 @@
   .header {
     flex-wrap: wrap;
     gap: 12px;
+    top: 64px;
   }
 
   .headerActions {
@@ -977,4 +978,65 @@
 
 .featureCard p {
   color: rgba(23, 20, 17, 0.68);
+}
+.aiTryOnCard {
+  margin-top: 24px;
+  background: rgba(255,255,255,0.92);
+  border: 1px solid rgba(23,20,17,0.08);
+  border-radius: 24px;
+  padding: 18px 24px;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24px;
+
+  box-shadow: 0 12px 30px rgba(0,0,0,0.05);
+}
+
+.aiTryOnContent {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.aiTryOnIcon {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: rgba(216,193,167,0.35);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 22px;
+}
+
+.aiTryOnText h3 {
+  margin: 0 0 4px;
+  font-size: 18px;
+  color: #171411;
+}
+
+.aiTryOnText p {
+  margin: 0;
+  color: rgba(23,20,17,0.65);
+  font-size: 14px;
+}
+
+.aiTryOnCardBtn {
+  padding: 16px 30px;
+  background: #d8c1a7;
+  color: #171411;
+  border-radius: 999px;
+  text-decoration: none;
+  font-weight: 800;
+  white-space: nowrap;
+  transition: all 0.3s ease;
+}
+
+.aiTryOnCardBtn:hover {
+  transform: translateY(-2px);
+  background: #cfb592;
 }

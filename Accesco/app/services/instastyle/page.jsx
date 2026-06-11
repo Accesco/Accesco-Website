@@ -11,13 +11,30 @@ import FeatureAccordion from '@/components/instastyle/FeatureAccordion';
 import FashionCollections from '@/components/instastyle/FashionCollections';
 import SwipeStyleShowcase from '@/components/instastyle/SwipeStyleShowcase';
 import DeliveryHero from '@/components/instastyle/DeliveryHero';
-
+import JsonLd from '../../../components/JsonLd';
 
 // ── Register GSAP Plugins
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger);
 }
-
+const serviceSchema = {
+  "@context": "https://schema.org",
+  "@type": "Service",
+  serviceType: "Fashion Delivery",
+  name: "InstaStyle by Accesco Living",
+  description:
+    "Fashion discovery, styling, try-at-home experiences, curated collections and premium apparel delivery.",
+  url: "https://www.accescoliving.com/services/instastyle",
+  provider: {
+    "@type": "Organization",
+    name: "Accesco Living",
+    url: "https://www.accescoliving.com",
+  },
+  areaServed: {
+    "@type": "City",
+    name: "Bengaluru",
+  },
+};
 
 export default function InstaStyleLanding() {
   const pageRef    = useRef(null);
@@ -287,7 +304,8 @@ export default function InstaStyleLanding() {
   };
 
   return (
-    <>
+  <>
+    <JsonLd data={serviceSchema} />
 
       <div ref={pageRef} className={styles.landingPage}>
       {/* ── Scroll Progress Bar ── */}
@@ -303,10 +321,6 @@ export default function InstaStyleLanding() {
         data-reveal
         aria-label="Hero"
       >
-        {/* ── Announcement Bar (Floating over video) ── */}
-        <div className={styles.announcementBar} style={{ position: 'absolute', top: 0, left: 0, width: '100%', zIndex: 20 }}>
-          Accesco InstaStyle — Curated fashion, artisanal labels, and a seamless shopping experience.
-        </div>
         {/* Video background — DO NOT CHANGE */}
         <video
           className={styles.heroVideo}
@@ -351,8 +365,6 @@ export default function InstaStyleLanding() {
               SwipeStyle
             </Link>
           </div>
-
-
         </div>
       </section>
 

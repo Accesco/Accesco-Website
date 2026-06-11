@@ -31,10 +31,20 @@
 .accesco-footer-root {
   position: relative;
   width: 100%;
-  background: var(--footer-bg-base);
   overflow: hidden;
   color: var(--footer-text-primary);
   font-family: 'DM Sans', sans-serif;
+
+  background-image:
+    linear-gradient(
+    rgba(90, 0, 49, 0.65),
+    rgba(90, 0, 49, 0.75)
+  ),
+  url('/images/investor-bg.jpg');
+
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
 /* Wave Background SVG */
@@ -94,19 +104,19 @@
   display: inline-flex;
   align-items: center;
   padding: 0 28px;
-  padding: 80px 24px 24px 24px;
 }
 
 .footer-main-content {
   max-width: 1200px;
   margin: 0 auto;
+  padding: 32px 24px 20px;
 }
 
 .footer-grid-layout {
   display: flex;
   justify-content: space-between;
-  gap: 60px;
-  margin-bottom: 60px;
+  gap: 32px;
+  margin-bottom: 32px;
   flex-wrap: wrap;
 }
 
@@ -124,7 +134,7 @@
   align-items: center;
   gap: 12px;
   text-decoration: none;
-  margin-bottom: 24px;
+  margin-bottom: 16px;
 }
 
 .logo-mark {
@@ -148,31 +158,36 @@
   font-size: 14px;
   color: rgba(255,255,255,0.7);
   line-height: 1.6;
-  margin-bottom: 24px;
+  margin-bottom: 16px;
 }
 
 .social-row {
   display: flex;
   gap: 12px;
-  margin-bottom: 32px;
+  margin-bottom: 20px;
 }
 
-.social-icon {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  background: rgba(255,255,255,0.08);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #fff;
-  text-decoration: none;
-  transition: all 0.2s;
+.accesco-footer-root .social-icon {
+  width: 36px !important;
+  height: 36px !important;
+  border-radius: 50% !important;
+  background: rgba(255,255,255,0.08) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  color: #fff !important;
+  border: none !important;
+  box-shadow: none !important;
+  text-decoration: none !important;
+  transition: all 0.2s !important;
 }
 
-.social-icon:hover {
-  background: #E0356A;
-  transform: translateY(-2px);
+.accesco-footer-root .social-icon:hover {
+  background: #E0356A !important;
+  color: #fff !important;
+  border: none !important;
+  transform: none !important;
+  box-shadow: none !important;
 }
 
 .app-badges {
@@ -180,15 +195,24 @@
   gap: 12px;
 }
 
-.app-badge img {
-  height: 40px;
-  border-radius: 6px;
-  border: 1px solid rgba(255,255,255,0.2);
-  transition: transform 0.2s;
+.app-badge {
+  text-decoration: none;
+  display: inline-block;
+  transition: transform 0.2s ease;
 }
 
-.app-badge:hover img {
-  transform: translateY(-2px);
+.app-badge img {
+  height: 40px;
+  width: auto;
+  display: block;
+  border-radius: 0 !important;
+  border: none !important;
+  box-shadow: none !important;
+  background: transparent !important;
+}
+
+.app-badge:hover {
+  transform: none;
 }
 
 /* Right Links Columns */
@@ -202,7 +226,7 @@
 .link-group {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 10px;
 }
 
 .col-title {
@@ -254,10 +278,11 @@
 @media (max-width: 600px) {
   .footer-grid-layout {
     flex-direction: column;
-    gap: 48px;
+    gap: 32px;
   }
   .footer-links-col {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 32px 16px;
   }
   .app-badges {
     flex-wrap: wrap;

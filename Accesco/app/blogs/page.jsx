@@ -19,6 +19,7 @@ export default function BlogsPage() {
   const [showWriter, setShowWriter] = useState(false);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
+  const [mounted, setMounted] = useState(false);
   const [bookmarkedPosts, setBookmarkedPosts] = useState([]);
 
   // Form states — matches Firestore field structure
@@ -27,24 +28,35 @@ export default function BlogsPage() {
   const [postCategory, setPostCategory] = useState('Business');
   const [postAuthor, setPostAuthor] = useState('');
   const [postImgUrl, setPostImgUrl] = useState('');
-  const [postDate, setPostDate] = useState(() => new Date().toISOString().split('T')[0]);
+  const [postDate, setPostDate] = useState('');
   const [publishing, setPublishing] = useState(false);
   const [uploadingImage, setUploadingImage] = useState(false);
 
   // ── Load blogs from Firestore on mount ──────────────────────────────────────
   useEffect(() => {
+    setMounted(true);
+    setPostDate(new Date().toISOString().split('T')[0]);
     loadBlogs();
     loadBookmarks();
   }, [user]);
 
   async function loadBlogs() {
     setLoading(true);
+    const minTimer = new Promise((resolve) => setTimeout(resolve, 2500));
     try {
-      const data = await fetchBlogs();
-      setPosts(data);
-      setFilteredPosts(data);
+      const fetchPromise = fetchBlogs();
+      const [data] = await Promise.all([fetchPromise, minTimer]);
+      const hiddenTitles = ['AccesGo: Moving People, Respecting Lives\n'];
+
+const visibleBlogs = data.filter(
+  (blog) => !hiddenTitles.includes(blog.title)
+);
+
+setPosts(visibleBlogs);
+setFilteredPosts(visibleBlogs);
     } catch (err) {
       console.error('Failed to load blogs:', err);
+      await minTimer;
     } finally {
       setLoading(false);
     }
@@ -300,7 +312,7 @@ export default function BlogsPage() {
         <div id="loadingScreen" className="loading-screen">
           <div className="loader-video-wrap">
             <video autoPlay muted loop playsInline>
-              <source src="/images/loading.mp4" type="video/mp4" />
+              <source src="/images/blog-video-animation.MP4" type="video/mp4" />
             </video>
           </div>
           <span className="loader-text">Curating Collection...</span>
@@ -313,9 +325,9 @@ export default function BlogsPage() {
       {/* Hero Section */}
       <div className="hero-canvas">
         <section className="hero-viewport">
-          <video className="blog-hero-video" autoPlay muted loop playsInline poster="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072&auto=format&fit=crop">
-            <source src="/uploads/blogherovideo.MP4" type="video/mp4" />
-          </video>
+         <video className="blog-hero-video" autoPlay muted loop playsInline poster="https://images.unsplash.com/...">
+  <source src="/images/bloghero.mp4" type="video/mp4" />
+</video>
           <div className="hero-shimmer-overlay"></div>
           <div className="hero-text-box">
           </div>
@@ -357,11 +369,15 @@ export default function BlogsPage() {
         <div className="archive-header">
           <div>
             <h2 id="activeCategory">{searchQuery ? 'Search Results' : activeCategory === 'All' ? 'Latest Stories' : activeCategory}</h2>
-            <p className="archive-subtitle">
-              {searchQuery ? `Found ${filteredPosts.length} results for "${searchQuery}"` : 'Discover insights and stories from our community'}
+            <p className="archive-subtitle" suppressHydrationWarning>
+              {mounted
+                ? (searchQuery ? `Found ${filteredPosts.length} results for "${searchQuery}"` : 'Discover insights and stories from our community')
+                : 'Discover insights and stories from our community'}
             </p>
           </div>
-          <span className="count">{filteredPosts.length} {filteredPosts.length === 1 ? 'Story' : 'Stories'}</span>
+          <span className="count" suppressHydrationWarning>
+            {mounted ? `${filteredPosts.length} ${filteredPosts.length === 1 ? 'Story' : 'Stories'}` : 'Stories'}
+          </span>
         </div>
 
         {filteredPosts.length === 0 ? (
@@ -378,7 +394,24 @@ export default function BlogsPage() {
             {filteredPosts.map((post, index) => (
               <article key={post.id} className="story-card" onClick={() => openReader(post)} style={{ animationDelay: `${index * 0.05}s` }}>
                 <div className="story-visual">
-                  <Image src={post.image || '/images/download (2).png'} alt={post.title} fill style={{ objectFit: 'cover' }} unoptimized />
+                 
+<Image
+  src={
+    post.title?.includes('Dark Stores')
+      ? '/images/blogs/dark-stores.jpg'
+      : post.title?.includes('Sunday Meal Prep')
+      ? '/images/blogs/meal-prep.jpg'
+      : post.title?.includes('All-in-One Smart Lifestyle Ecosystem')
+      ? '/images/blogs/accesco-ecosystem.jpg'
+      : post.title?.includes('Best Grocery Delivery Service')
+      ? '/images/blogs/grocery-delivery.jpg'
+      : post.image || '/images/download (2).png'
+  }
+  alt={post.title}
+  fill
+  style={{ objectFit: 'cover' }}
+  unoptimized
+/>
                   <div className="story-overlay">
                     <span className="read-time"><i className="ri-time-line"></i> 5 min read</span>
                   </div>

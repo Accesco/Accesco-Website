@@ -567,9 +567,9 @@ a {
   margin-top: 30px;
   padding: 24px 0;
   border-radius: 30px;
-  background: white;
-  border: 1px solid var(--line);
-  box-shadow: var(--shadow);
+  background: transparent;
+  border: none;
+  box-shadow: none;
 }
 
 .logo-track {
@@ -592,12 +592,11 @@ a {
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 26px;
-  background: #ffffff;
-  border: 1px solid rgba(231, 222, 213, 0.9);
-  box-shadow: 0 18px 45px rgba(26, 18, 12, 0.12);
+  background: transparent;
+  border: none;
+  box-shadow: none;
   overflow: hidden;
-}
+} 
 
 .floating-logo img {
   max-width: 100%;
@@ -635,13 +634,29 @@ a {
   gap: 24px;
   flex-wrap: wrap;
 }
-
 .certification-card {
   width: 240px;
   padding: 26px;
   border-radius: 26px;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: #ffffff;
+  border: 1px solid #e7ded5;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+}
+
+.certification-box {
+  margin-top: 46px;
+  padding: 36px;
+  border-radius: 32px;
+  background: transparent;
+  color: #171717;
+  text-align: center;
+}
+
+.certification-box h3 {
+  margin: 0 0 26px;
+  font-size: 30px;
+  letter-spacing: -0.035em;
+  color: #171717;
 }
 
 .certification-card img {
@@ -683,8 +698,10 @@ a {
   gap: 28px;
   padding: 34px;
   border-radius: 32px;
-  background: linear-gradient(135deg, #1e1510, #2a1d16);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+
+  background: #000000; /* pure black */
+
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .dpiit-card img {
@@ -859,4 +876,106 @@ a {
 
 .business-card-link a:hover {
   text-decoration: underline;
+}
+  .media-marquee {
+    width: 100%;
+    overflow: hidden;
+    margin-top: 12px;
+    margin-bottom: 42px;
+    padding: 10px 0;
+    background: transparent;
+  }
+
+  .media-track {
+    display: flex;
+    align-items: center;
+    gap: 54px;
+    width: max-content;
+    animation: logoFloat 34s linear infinite;
+  }
+
+  .media-marquee:hover .media-track {
+    animation-play-state: paused;
+  }
+
+.media-logo {
+  flex: 0 0 auto;
+  width: 260px;
+  height: 110px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  padding: 0;
+}
+
+.media-logo img {
+  max-width: 100%;
+  max-height: 82px;
+  object-fit: contain;
+  background: transparent;
+  filter: grayscale(100%);
+  opacity: 0.92;
+  mix-blend-mode: multiply;
+}
+
+  @media (max-width: 640px) {
+    .media-logo {
+      width: 210px;
+      height: 90px;
+    }
+
+    .media-logo img {
+      max-height: 70px;
+    }
+  }
+.media-heading {
+  margin-top: 34px;
+  margin-bottom: 18px;
+  color: #111827;
+  font-family: "Helvetica Neue", Arial, sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+  .media-logo img[alt="Hindustan Metro"] {
+  transform: scale(2.5  );
+}
+.media-logo img[alt="Pioneer Entrepreneur"] {
+  max-height: 100px;
+  transform: scale(1.55);
+}
+.floating-logo img[alt="NVIDIA Inception Program"] {
+  transform: scale(1.44);
+}
+
+.floating-logo img[alt="Google for Startups"] {
+  transform: scale(1.44);
+}
+.floating-logo img[alt="India Startup Club"] {
+  transform: scale(1.44);
+}
+.floating-logo img[alt="Zoho for Startups"] {
+  transform: scale(0.80);
+}
+.floating-logo img[alt="AWS Startups"] {
+  transform: scale(0.92);
+}
+.floating-logo img[alt="AWS Startups"] {
+  transform: scale(0.92);
+}
+.media-logo img {
+  max-width: 100%;
+  max-height: 82px;
+  object-fit: contain;
+  background: transparent;
+  filter: grayscale(100%);
+  opacity: 0.92;
+}
+.media-logo img[alt="Pioneer Entrepreneur"] {
+  mix-blend-mode: darken;
+  background: transparent;
 }

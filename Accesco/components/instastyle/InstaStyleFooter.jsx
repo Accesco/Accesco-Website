@@ -27,11 +27,12 @@ export default function InstaStyleFooter() {
             </p>
             
             <div className="social-row">
-              <a href="https://x.com/accesco_living?s=21" className="social-icon"><i className="ri-twitter-x-line"></i></a>
-              <a href="https://www.instagram.com/accescoliving?igsh=MWI5dHBuOTB4Nm1uYQ==" className="social-icon"><i className="ri-instagram-line"></i></a>
-              <a href="https://www.linkedin.com/company/acceso-living/" className="social-icon"><i className="ri-linkedin-fill"></i></a>
-              <a href="#" className="social-icon"><i className="ri-facebook-fill"></i></a>
-              <a href="https://www.youtube.com/@accescoliving" className="social-icon"><i className="ri-youtube-fill"></i></a>
+              <a href="https://x.com/accesco_living?s=11" target="_blank" rel="noopener noreferrer" className="social-icon"><i className="ri-twitter-x-line"></i></a>
+              <a href="https://www.instagram.com/accescoliving?igsh=MWI5dHBuOTB4Nm1uYQ==" target="_blank" rel="noopener noreferrer" className="social-icon"><i className="ri-instagram-line"></i></a>
+              <a href="https://www.linkedin.com/company/acceso-living/" target="_blank" rel="noopener noreferrer" className="social-icon"><i className="ri-linkedin-fill"></i></a>
+              <a href="https://www.facebook.com/share/1BMyjWcU1B/" target="_blank" rel="noopener noreferrer" className="social-icon"><i className="ri-facebook-fill"></i></a>
+              <a href="https://youtube.com/@accescoliving?si=Xzk9m4vzZqW6-lje" target="_blank" rel="noopener noreferrer" className="social-icon"><i className="ri-youtube-fill"></i></a>
+              <a href="https://pin.it/77fE8R0rC" target="_blank" rel="noopener noreferrer" className="social-icon"><i className="ri-pinterest-fill"></i></a>
               <a href="mailto:support@accescoliving.com" className="social-icon"><i className="ri-mail-send-line"></i></a>
             </div>
             
@@ -87,7 +88,7 @@ export default function InstaStyleFooter() {
 
         {/* Bottom Bar */}
         <div className="bottom-bar">
-          <span className="copyright-text">© {currentYear} InstaStyle by Accesco Living. All rights reserved.</span>
+          <span className="copyright-text" suppressHydrationWarning>© {currentYear} InstaStyle by Accesco Living. All rights reserved.</span>
         </div>
         
       </div>

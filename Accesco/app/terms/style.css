@@ -1,158 +1,331 @@
-/* ================================
-   TERMS PAGE VARIABLES
-================================ */
-:root {
-  --primary: #1a1a1a;
-  --secondary: #4a4a4a;
-  --accent: #0066ff;
-  --border: #e0e0e0;
-  --bg-light: #f9f9f9;
-}
+/* ==========================================================================
+   TERMS & CONDITIONS PAGE — PREMIUM ACCESCO LIVING DESIGN SYSTEM
+   ========================================================================== */
 
-/* ================================
-   BASE
-================================ */
-body {
-  font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  line-height: 1.7;
-  color: var(--primary);
-  margin: 0;
-  background-color: #fff;
-}
-
-/* ================================
-   LAYOUT STRUCTURE
-================================ */
+/* Layout & Base Page styling */
 .page-wrapper {
   display: grid;
   grid-template-columns: 300px 1fr;
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 0 auto;
+  padding-top: 100px;
+  min-height: 100vh;
+  font-family: 'DM Sans', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: radial-gradient(circle at 0% 0%, #fffbfd 0%, #fefbfc 50%, #faf5f8 100%);
+  color: #1a0a0f;
 }
 
-/* ================================
-   SIDEBAR NAVIGATION
-================================ */
+/* ==========================================================================
+   PREMIUM SIDEBAR (GLASSMORPHIC)
+   ========================================================================== */
 .sidebar {
-  padding: 60px 30px;
-  height: 100vh;
+  padding: 60px 32px;
+  height: calc(100vh - 100px);
   position: sticky;
-  top: 0;
-  border-right: 1px solid var(--border);
+  top: 100px;
+  border-right: 1px solid rgba(122, 0, 66, 0.06);
+  background: rgba(255, 255, 255, 0.45);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
 }
 
 .sidebar h4 {
-  font-size: 0.75rem;
+  font-family: 'Sora', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 1px;
-  color: var(--secondary);
-  margin-bottom: 20px;
+  letter-spacing: 0.2em;
+  color: #9c8e96;
+  margin: 0;
+  padding-left: 14px;
+  position: relative;
+}
+
+.sidebar h4::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #7a0042;
 }
 
 .sidebar ul {
   list-style: none;
   padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
-.sidebar li {
-  margin-bottom: 12px;
-}
-
-.sidebar a {
+.sidebar li a {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: 12px;
   text-decoration: none;
-  color: var(--secondary);
+  color: #6b5b65;
   font-size: 0.9rem;
-  transition: color 0.2s;
+  font-weight: 600;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid transparent;
+  background: transparent;
 }
 
-.sidebar a:hover {
-  color: var(--accent);
+.sidebar li a:hover {
+  background: rgba(122, 0, 66, 0.04);
+  color: #7a0042;
+  border-color: rgba(122, 0, 66, 0.08);
+  transform: translateX(4px);
 }
 
-/* ================================
-   MAIN CONTENT
-================================ */
+.sidebar li a::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(122, 0, 66, 0.2);
+  flex-shrink: 0;
+  transition: all 0.3s ease;
+}
+
+.sidebar li a:hover::before {
+  background: #7a0042;
+  transform: scale(1.4);
+}
+
+/* ==========================================================================
+   MAIN CONTENT AREA
+   ========================================================================== */
 .content {
-  padding: 60px 80px;
+  padding: 60px 100px 120px;
+  max-width: 900px;
 }
 
-header {
-  margin-bottom: 60px;
+.content > header {
+  margin-bottom: 64px;
+  padding-bottom: 48px;
+  border-bottom: 1px solid rgba(122, 0, 66, 0.06);
 }
 
-h1 {
-  font-size: 2.5rem;
-  margin-bottom: 10px;
-  font-weight: 700;
+.content > header h1 {
+  font-family: 'Sora', sans-serif;
+  font-size: clamp(2.2rem, 4vw, 3.2rem);
+  font-weight: 800;
+  color: #1a0a0f;
+  margin: 0 0 16px;
+  letter-spacing: -0.04em;
+  line-height: 1.15;
+  background: linear-gradient(135deg, #1a0a0f 0%, #7a0042 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .effective-date {
-  color: var(--secondary);
-  font-size: 0.9rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.8rem;
+  color: #7a0042;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 8px 16px;
+  background: rgba(122, 0, 66, 0.04);
+  border-radius: 99px;
+  border: 1px solid rgba(122, 0, 66, 0.08);
+  margin-bottom: 24px;
 }
 
-section {
-  margin-bottom: 50px;
-  scroll-margin-top: 40px;
+.content > header > p:last-child {
+  font-size: 1.05rem;
+  color: #554850;
+  margin: 0;
+  line-height: 1.7;
+  font-weight: 400;
 }
 
-h2 {
+/* ==========================================================================
+   DOCUMENT SECTIONS
+   ========================================================================== */
+.content section {
+  margin-bottom: 80px;
+  scroll-margin-top: 120px;
+}
+
+.content section h2 {
+  font-family: 'Sora', sans-serif;
   font-size: 1.5rem;
-  margin-bottom: 25px;
-  padding-bottom: 10px;
-  border-bottom: 2px solid var(--primary);
-}
-
-h3 {
-  font-size: 1.1rem;
-  margin-top: 30px;
-  color: var(--accent);
-}
-
-/* ================================
-   LEGAL CLAUSES
-================================ */
-.clause {
+  font-weight: 800;
+  color: #1a0a0f;
+  margin: 0 0 32px;
+  letter-spacing: -0.02em;
   display: flex;
-  gap: 15px;
-  margin-bottom: 15px;
+  align-items: center;
+  gap: 16px;
 }
 
-.clause-num {
-  font-weight: bold;
-  min-width: 45px;
-}
-
-/* ================================
-   DISCLOSURE CARD
-================================ */
-.disclosure-card {
-  background-color: var(--bg-light);
-  border: 1px solid var(--border);
-  padding: 25px;
+.content section h2::before {
+  content: '';
+  display: inline-block;
+  width: 4px;
+  height: 24px;
+  background: linear-gradient(to bottom, #7a0042 0%, #c8963e 100%);
   border-radius: 4px;
-  margin: 20px 0;
+  flex-shrink: 0;
+}
+
+.content section h3 {
+  font-family: 'Sora', sans-serif;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #7a0042;
+  margin: 40px 0 20px;
+  letter-spacing: -0.01em;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* ==========================================================================
+   DISCLOSURE CARD (PREMIUM DECORATIVE BOX)
+   ========================================================================== */
+.disclosure-card {
+  background: linear-gradient(135deg, rgba(122, 0, 66, 0.03) 0%, rgba(200, 150, 62, 0.03) 100%);
+  border: 1px solid rgba(122, 0, 66, 0.12);
+  border-left: 4px solid #7a0042;
+  padding: 28px 32px;
+  border-radius: 20px;
+  margin: 0 0 36px;
+  font-size: 0.95rem;
+  color: #3d1a27;
+  line-height: 1.75;
+  box-shadow: 0 10px 30px rgba(122, 0, 66, 0.02);
 }
 
 .disclosure-card strong {
   display: block;
-  margin-bottom: 10px;
-  color: #d32f2f;
+  font-family: 'Sora', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: #7a0042;
+  margin-bottom: 12px;
 }
 
-/* ================================
-   RESPONSIVE
-================================ */
-@media (max-width: 900px) {
+/* ==========================================================================
+   LEGAL CLAUSES (MODERN CARDS)
+   ========================================================================== */
+.clause {
+  display: flex;
+  gap: 20px;
+  padding: 24px 28px;
+  border: 1px solid rgba(122, 0, 66, 0.06);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.6);
+  margin-bottom: 16px;
+  align-items: flex-start;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 12px rgba(122, 0, 66, 0.01);
+}
+
+.clause:hover {
+  border-color: rgba(122, 0, 66, 0.15);
+  background: #ffffff;
+  box-shadow: 0 12px 32px rgba(122, 0, 66, 0.04);
+  transform: translateY(-1px);
+}
+
+.clause-num {
+  font-family: 'Sora', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: #7a0042;
+  min-width: 44px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(122, 0, 66, 0.06);
+  border: 1px solid rgba(122, 0, 66, 0.04);
+  border-radius: 8px;
+  text-align: center;
+  flex-shrink: 0;
+  letter-spacing: 0.02em;
+}
+
+.clause:hover .clause-num {
+  background: #7a0042;
+  color: #ffffff;
+}
+
+.clause > div:last-child {
+  font-size: 0.95rem;
+  color: #3d1a27;
+  line-height: 1.7;
+  padding-top: 2px;
+}
+
+.clause strong {
+  color: #1a0a0f;
+  font-weight: 700;
+}
+
+/* ==========================================================================
+   RESPONSIVE LAYOUTS
+   ========================================================================== */
+@media (max-width: 1200px) {
+  .content {
+    padding: 60px 60px 100px;
+  }
+}
+
+@media (max-width: 992px) {
   .page-wrapper {
     grid-template-columns: 1fr;
+    padding-top: 80px;
   }
 
   .sidebar {
-    display: none;
+    display: none; /* Auto-hide on mobile - standard clean document flow */
   }
 
   .content {
-    padding: 40px 20px;
+    padding: 48px 32px 80px;
+    margin: 0 auto;
+  }
+}
+
+@media (max-width: 576px) {
+  .content {
+    padding: 32px 20px 60px;
+  }
+  
+  .content > header h1 {
+    font-size: 1.85rem;
+  }
+  
+  .content section h2 {
+    font-size: 1.25rem;
+  }
+
+  .clause {
+    flex-direction: column;
+    gap: 12px;
+    padding: 20px;
+  }
+
+  .clause-num {
+    align-self: flex-start;
   }
 }

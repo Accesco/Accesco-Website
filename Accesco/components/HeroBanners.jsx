@@ -335,10 +335,13 @@ useEffect(() => {
         }
 
 @media (max-width: 768px) {
-  section {
-    height: 300px !important;
-min-height: 300px !important;
+.swadishtt-hero-section {
+    padding: 40px 16px 15px !important;
   }
+  .hero-card-sw {
+  height: 300px !important;
+}
+  
 
 .hero-card-sw {
   width: calc(100% + 8px) !important;
@@ -558,73 +561,33 @@ min-height: 300px !important;
 /* ── Accesco About Hero ───────────────────────────── */
 export function AccescoHero() {
   return (
-    <section style={{
-      ...heroSection,
-      height: '560px',
-      alignItems: 'center',
-    }}>
-      <style>{`
-        .hero-inner-ac { position:absolute;inset:0; }
-        .hero-inner-ac img { width:100%;height:100%;object-fit:cover;object-position:center; }
-      `}</style>
+    <section
+      style={{
+        ...heroSection,
+        height: '650px',
+        position: 'relative',
+        overflow: 'hidden',
+      }}
+    >
+      <picture>
+        <source
+          media="(max-width: 768px)"
+          srcSet="/images/banners/join-mobile.jpg"
+        />
 
-      <div className="hero-inner-ac">
-        <img src="/images/banners/hero-main.jpg" alt="Accesco Living" />
-      </div>
-<div style={{
-  position: 'absolute',
-  inset: 0,
-  background: `
-    linear-gradient(to bottom, rgba(0,0,0,0.55), rgba(0,0,0,0.35), rgba(0,0,0,0.75)),
-    radial-gradient(circle at center, rgba(122,0,66,0.22), transparent 55%)
-  `,
-}} />
-     <div style={{
-  position: 'relative',
-  zIndex: 2,
-  width: '100%',
-  maxWidth: 1000,
-  margin: '0 auto',
-  padding: '120px clamp(20px, 4vw, 48px) 40px',
-  textAlign: 'center',
-}}>
-  <p style={{
-    fontFamily: "'DM Sans', sans-serif",
-    fontSize: '0.78rem',
-    fontWeight: 800,
-    letterSpacing: '0.18em',
-    textTransform: 'uppercase',
-    color: '#c8963e',
-    margin: '0 0 14px',
-  }}>
-    India’s Intelligent Commerce Ecosystem
-  </p>
-
-  <h1 style={{
-    fontFamily: "'Sora', sans-serif",
-    fontWeight: 900,
-    fontSize: 'clamp(2.4rem, 6vw, 5rem)',
-    color: '#fff',
-    letterSpacing: '-0.06em',
-    lineHeight: 0.95,
-    margin: '0 0 20px',
-    textShadow: '0 6px 28px rgba(0,0,0,0.55)',
-  }}>
-    Accesco Living
-  </h1>
-
-  <p style={{
-    fontFamily: "'DM Sans', sans-serif",
-    fontSize: 'clamp(1rem, 1.6vw, 1.2rem)',
-    lineHeight: 1.7,
-    color: 'rgba(255,255,255,0.82)',
-    margin: '0 auto 28px',
-    maxWidth: 640,
-  }}>
-  Delivering Groceries, Food, Fashion, and Financial Independence — all under one unified platform.
-  </p>
-</div>
+        <img
+          src="/images/banners/join-desktop.jpg"
+          alt="Accesco Living"
+          style={{
+            position: 'absolute',
+            inset: 0,
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
+            objectPosition: 'center 10%',
+          }}
+        />
+      </picture>
     </section>
   );
 }
-

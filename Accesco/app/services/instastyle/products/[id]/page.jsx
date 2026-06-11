@@ -31,6 +31,62 @@ export default function ProductDetailPage() {
       if (productData.colors && productData.colors.length > 0) {
         setSelectedColor(productData.colors[0].name);
       }
+    } else {
+      // 1. Fallback to localStorage check first
+      if (typeof window !== 'undefined') {
+        try {
+          const saved = localStorage.getItem('instastyle_custom_products');
+          if (saved) {
+            const parsed = JSON.parse(saved);
+            if (Array.isArray(parsed)) {
+              const localProd = parsed.find(p => p.id === params.id);
+              if (localProd) {
+                setProduct(localProd);
+                if (localProd.colors && localProd.colors.length > 0) {
+                  setSelectedColor(localProd.colors[0].name);
+                }
+                return;
+              }
+            }
+          }
+        } catch (error) {
+          console.error("Error reading product from localStorage:", error);
+        }
+      }
+
+      // 2. Fetch from Firebase Firestore backend database
+      const fetchProductFromFirestore = async () => {
+        try {
+          const { db } = await import('@/lib/firebase');
+          const { doc, getDoc, collection, getDocs, query, where } = await import('firebase/firestore');
+          
+          // Try direct lookup by document ID
+          const docRef = doc(db, 'instastyle_products', params.id);
+          const docSnap = await getDoc(docRef);
+          
+          if (docSnap.exists()) {
+            const data = docSnap.data();
+            setProduct(data);
+            if (data.colors && data.colors.length > 0) {
+              setSelectedColor(data.colors[0].name);
+            }
+          } else {
+            // Fallback: query by id field
+            const q = query(collection(db, 'instastyle_products'), where('id', '==', params.id));
+            const querySnapshot = await getDocs(q);
+            if (!querySnapshot.empty) {
+              const data = querySnapshot.docs[0].data();
+              setProduct(data);
+              if (data.colors && data.colors.length > 0) {
+                setSelectedColor(data.colors[0].name);
+              }
+            }
+          }
+        } catch (err) {
+          console.error("Error fetching product from Firestore:", err);
+        }
+      };
+      fetchProductFromFirestore();
     }
   }, [params.id]);
 

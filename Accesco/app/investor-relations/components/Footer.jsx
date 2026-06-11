@@ -20,7 +20,7 @@ export default function Footer() {
     </div>
 
     <div className="container footer-bottom">
-      <p>© {year} Accesco Living . All rights reserved.</p>
+      <p suppressHydrationWarning>© {year} Accesco Living . All rights reserved.</p>
     </div>
   </footer>
 );

@@ -1,25 +1,19 @@
-import { CartProvider } from '@/contexts/CartContext';
-import InstaStyleHeader from '@/components/instastyle/InstaStyleHeader';
-import InstaStyleFooter from '@/components/instastyle/InstaStyleFooter';
-import CartDrawer from '@/components/instastyle/CartDrawer';
-import './instastyle-shell.css';
+import InstaStyleLayoutClient from './layout-client';
+
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 export const metadata = {
-  title: "InstaStyle | The Editorial Curation",
-  description: "A meticulously curated boutique experience. Discover artisanal labels, premium craftsmanship, and a circular fashion ecosystem designed for the modern connoisseur.",
+  title: 'InstaStyle | Fashion Delivery by Accesco Living',
+  description:
+    'Shop trending fashion, apparel, accessories and lifestyle products with InstaStyle by Accesco Living.',
+  openGraph: {
+    title: 'InstaStyle | Fashion Delivery by Accesco Living',
+    description:
+      'Discover fashion, apparel, accessories and lifestyle products with InstaStyle.',
+  },
 };
 
-export default function Layout({ children }) {
-  return (
-    <div className="instastyle-root">
-      <CartProvider>
-        <InstaStyleHeader />
-        <CartDrawer />
-        <div className="instastyle-content-wrapper">
-          {children}
-        </div>
-        <InstaStyleFooter />
-      </CartProvider>
-    </div>
-  );
+export default function InstaStyleLayout({ children }) {
+  return <InstaStyleLayoutClient>{children}</InstaStyleLayoutClient>;
 }

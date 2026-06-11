@@ -54,7 +54,7 @@
 .brandName {
   font-size: 22px;
   font-weight: 700;
-  color: #E23744;
+  color: #6B1D3A;
   letter-spacing: -0.02em;
 }
 
@@ -85,7 +85,7 @@
 .locationIcon {
   width: 20px;
   height: 20px;
-  color: #E23744;
+  color: #6B1D3A;
   flex-shrink: 0;
 }
 
@@ -265,8 +265,8 @@
 .searchInput:focus {
   outline: none;
   background: #ffffff;
-  border-color: #E23744;
-  box-shadow: 0 0 0 3px rgba(226,55,68,0.1);
+  border-color: #6B1D3A;
+  box-shadow: 0 0 0 3px rgba(107,29,58,0.15);
 }
 
 /* Navigation */
@@ -307,14 +307,14 @@
 }
 
 .cartButton {
-  background: #E23744;
+  background: #6B1D3A;
   color: #ffffff;
   padding: 0 18px;
   height: 52px;
 }
 
 .cartButton:hover {
-  background: #C62828;
+  background: #542030;
   color: #ffffff;
 }
 
@@ -322,7 +322,7 @@
   position: absolute;
   top: 4px;
   right: 4px;
-  background: #FBBF24;
+  background: #D4A017;
   color: #111827;
   font-size: 11px;
   font-weight: 700;
@@ -359,7 +359,8 @@
 
 @media (max-width: 768px) {
   .header {
-    position: fixed;
+    
+    min-height: 112px;
   }
   
   .container {
@@ -367,8 +368,12 @@
   }
   
 .headerContent {
-  height: 64px;
-  gap: 10px;
+  height: auto;
+  min-height: 58px;
+  gap: 8px;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  padding: 8px 0;
 }
   
   /* Logo */
@@ -376,23 +381,21 @@
     gap: 8px;
   }
   
-  .logoImage {
-    width: 28px;
-    height: 28px;
-  }
+.logoImage {
+  width: 24px;
+  height: 24px;
+}
   
-  .brandName {
-    font-size: 15px;
-  max-width: 72px;
-  overflow: hidden;
-  white-space: nowrap;
-  }
-  
+ .brandName {
+  font-size: 16px;
+  color: #6B1D3A;
+  max-width: none;
+}
   /* Location - Compact */
   .locationButton {
-    width: 120px;
-  min-width: 120px;
-  height: 48px;
+    width: 200px;
+  min-width: 200px;
+  height: 40px;
   padding: 0 8px;
   }
   
@@ -405,33 +408,54 @@
     display: none;
   }
   
-  .locationArea {
-    font-size: 11px;
-  max-width: 58px;
-  }
+
+ .locationText {
+  flex: 1;
+  min-width: 0;
+  max-width: none;
+}
+
+.locationArea {
+  font-size: 12px;
+  max-width: none !important;
+  width: 100%;
+}
   
   .dropdownIcon {
     width: 14px;
     height: 14px;
   }
+  .navLink {
+  padding: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  justify-content: center;
+}
+
+.navText {
+  display: none;
+}
+
+.navIcon {
+  width: 20px;
+  height: 20px;
+  color:#6B1D3A;
+}
   
   /* Search - Full width on mobile */
  .searchForm {
-  flex: 1;
-  position: relative;
-  top: auto;
-  left: auto;
-  right: auto;
-  background: transparent;
-  border-bottom: none;
-  padding: 0;
-  max-width: none;
-  order: unset;
+  flex: 0 0 100%;
+  max-width: 100%;
+  width: 100%;
+  order: 10;
+  height: 44px;
 }
-  .searchInput {
-    font-size: 14px;
-    padding: 10px 12px 10px 40px;
-  }
+ .searchInput {
+  height: 30px;
+  font-size: 13px;
+  padding: 8px 12px 8px 38px;
+}
   
   .searchIcon {
     left: 12px;
@@ -457,9 +481,21 @@
     height: 22px;
   }
   
-  .cartButton {
-    padding: 8px 10px;
-  }
+ .cartButton {
+  padding: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  justify-content: center;
+  background: #6B1D3A;
+  color: #ffffff;
+}
+.cartButton .navIcon {
+  color: #ffffff !important;
+  fill: currentColor !important;
+  stroke: currentColor !important;
+  opacity: 1 !important;
+}
   
   .cartBadge {
     top: 2px;
@@ -527,27 +563,6 @@
     font-size: 11px;
     max-width: 60px;
   }
-  
-  .searchForm {
-  flex: 0 0 48px;
-  max-width: 48px;
-  height: 48px;
-}
-
-.searchInput {
-  width: 48px;
-  height: 48px;
-  padding: 0;
-  color: transparent;
-}
-
-.searchInput::placeholder {
-  color: transparent;
-}
-
-.searchIcon {
-  left: 14px;
-}
   
   
   

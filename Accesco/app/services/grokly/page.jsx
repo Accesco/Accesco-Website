@@ -21,6 +21,7 @@ import BottomNav from './components/BottomNav';
 import { categories, products, getProductsByCategory, searchProducts } from './lib/groklyData';
 import './styles/variables.css';
 import './styles/globals.css';
+import JsonLd from '../../../components/JsonLd';
 
 /**
  * Grokly Page Component
@@ -150,12 +151,51 @@ function GroklyPageContent() {
   const handleSearchClear = () => {
     setSearchQuery('');
   };
-
+const serviceSchema = {
+  "@context": "https://schema.org",
+  "@type": "Service",
+  serviceType: "Grocery Delivery",
+  name: "Grokly by Accesco Living",
+  description:
+    "Farm-direct fresh groceries delivered in minutes, sourced directly from Karnataka farms via FarmChain with QR traceability.",
+  url: "https://www.accescoliving.com/services/grokly",
+  provider: {
+    "@type": "Organization",
+    name: "Accesco Living",
+    url: "https://www.accescoliving.com",
+  },
+  areaServed: {
+    "@type": "City",
+    name: "Bengaluru",
+  },
+};
+const productListSchema = {
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  name: "Fresh Groceries on Grokly",
+  itemListElement: products.slice(0, 50).map((p, i) => ({
+    "@type": "ListItem",
+    position: i + 1,
+item: {
+  "@type": "Product",
+  name: p.name,
+  offers: {
+        "@type": "Offer",
+        price: String(p.price),
+        priceCurrency: "INR",
+        availability: "https://schema.org/InStock",
+      },
+    },
+  })),
+};
   // ═══════════════════════════════════════════════
   // RENDER
   // ═══════════════════════════════════════════════
   
   return (
+     <>
+    <JsonLd data={serviceSchema} />
+    <JsonLd data={productListSchema} />
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', background: 'var(--grokly-bg)' }}>
       {/* Desktop Header */}
       <GroklyHeader 
@@ -268,7 +308,7 @@ function GroklyPageContent() {
                     e.target.style.transform = 'translateY(0)';
                   }}
                 >
-                  Shop Now →
+                  Shop Now
                 </button>
                 <span style={{
                   padding: '14px 24px',
@@ -289,6 +329,278 @@ function GroklyPageContent() {
             </div>
           </div>
         </div>
+      </div>
+
+      {/* ── DISH-FIRST GROCERY SHOPPING ── */}
+      <div style={{
+        maxWidth: 'var(--grokly-max-width)',
+        margin: '0 auto',
+        width: '100%',
+        padding: '32px 20px 0',
+      }}>
+        <div style={{
+          background: 'linear-gradient(135deg, #0a1e0a 0%, #0d2d0d 50%, #112e11 100%)',
+          borderRadius: '20px',
+          overflow: 'hidden',
+          position: 'relative',
+          padding: 'clamp(32px, 5vw, 56px)',
+          display: 'grid',
+          gridTemplateColumns: '1fr 1fr',
+          gap: '40px',
+          alignItems: 'center',
+        }} className="dish-first-section">
+
+          {/* Decorative background blobs */}
+          <div style={{
+            position: 'absolute', inset: 0, pointerEvents: 'none', overflow: 'hidden',
+          }}>
+            <div style={{
+              position: 'absolute', top: '-60px', right: '-60px',
+              width: '280px', height: '280px', borderRadius: '50%',
+              background: 'radial-gradient(circle, rgba(74,222,128,0.12) 0%, transparent 70%)',
+            }} />
+            <div style={{
+              position: 'absolute', bottom: '-40px', left: '30%',
+              width: '200px', height: '200px', borderRadius: '50%',
+              background: 'radial-gradient(circle, rgba(74,222,128,0.08) 0%, transparent 70%)',
+            }} />
+          </div>
+
+          {/* Left: Text content */}
+          <div style={{ position: 'relative', zIndex: 1 }}>
+            <div style={{
+              display: 'inline-flex', alignItems: 'center', gap: '8px',
+              background: 'rgba(74,222,128,0.12)', border: '1px solid rgba(74,222,128,0.25)',
+              borderRadius: '9999px', padding: '6px 14px', marginBottom: '20px',
+            }}>
+              <span style={{ width: '7px', height: '7px', borderRadius: '50%', background: '#4ade80', boxShadow: '0 0 8px #4ade80', display: 'inline-block' }} />
+              <span style={{ fontFamily: 'var(--grokly-font-display)', fontSize: '10px', fontWeight: 700, letterSpacing: '2px', textTransform: 'uppercase', color: '#4ade80' }}>
+                New Feature
+              </span>
+            </div>
+
+            <h2 style={{
+              fontFamily: 'var(--grokly-font-display)',
+              fontSize: 'clamp(1.6rem, 3vw, 2.4rem)',
+              fontWeight: 900, color: '#fff', margin: '0 0 8px',
+              letterSpacing: '-0.03em', lineHeight: 1.1,
+            }}>
+              Dish-First<br />
+              <span style={{ color: '#4ade80' }}>Grocery Shopping</span>
+            </h2>
+
+            <p style={{
+              fontFamily: 'var(--grokly-font-body)',
+              fontSize: 'clamp(0.88rem, 1.5vw, 1rem)',
+              color: 'rgba(255,255,255,0.7)', lineHeight: 1.65,
+              margin: '0 0 28px', maxWidth: '420px',
+            }}>
+              Choose a dish first — instantly get all ingredients in your cart. Reduces friction, saves time, and makes grocery shopping feel effortless.
+            </p>
+
+            {/* Feature bullets */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '32px' }}>
+              {[
+                { iconClass: 'ri-shopping-cart-2-line', text: 'Add all ingredients in one tap' },
+                { iconClass: 'ri-restaurant-line', text: 'Search by dish, not ingredient' },
+                { iconClass: 'ri-pencil-line', text: 'Customise ingredients before adding' },
+                { iconClass: 'ri-flashlight-line', text: 'Delivered in 11 minutes flat' },
+              ].map((f) => (
+                <div key={f.text} style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <span style={{
+                    width: '32px', height: '32px', borderRadius: '8px',
+                    background: 'rgba(74,222,128,0.1)', border: '1px solid rgba(74,222,128,0.2)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '16px', flexShrink: 0,
+                    color: '#4ade80'
+                  }}><i className={f.iconClass}></i></span>
+                  <span style={{
+                    fontFamily: 'var(--grokly-font-body)', fontSize: '0.9rem',
+                    color: 'rgba(255,255,255,0.85)', fontWeight: 500,
+                  }}>{f.text}</span>
+                </div>
+              ))}
+            </div>
+
+            <button
+              style={{
+                padding: '14px 32px', borderRadius: '9999px',
+                background: '#4ade80', color: '#0a1e0a',
+                fontFamily: 'var(--grokly-font-display)', fontWeight: 800,
+                fontSize: '15px', border: 'none', cursor: 'pointer',
+                transition: 'all 0.2s', boxShadow: '0 8px 24px rgba(74,222,128,0.3)',
+                display: 'inline-flex', alignItems: 'center', gap: '8px',
+              }}
+              onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 12px 32px rgba(74,222,128,0.45)'; }}
+              onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 8px 24px rgba(74,222,128,0.3)'; }}
+            >
+              Try Dish Cart
+            </button>
+          </div>
+
+          {/* Right: Phone mockups */}
+          <div style={{
+            position: 'relative', zIndex: 1,
+            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px',
+          }} className="dish-mockup-wrap">
+
+            {/* Mockup 1 – Dish search */}
+            <div style={{
+              background: '#fff', borderRadius: '20px',
+              width: 'clamp(140px, 18vw, 190px)', flexShrink: 0,
+              overflow: 'hidden', boxShadow: '0 20px 48px rgba(0,0,0,0.4)',
+              border: '1px solid rgba(255,255,255,0.08)',
+            }}>
+              <div style={{ background: '#f9f9f9', padding: '12px 12px 8px' }}>
+                <div style={{
+                  background: '#fff', borderRadius: '10px', padding: '8px 10px',
+                  display: 'flex', alignItems: 'center', gap: '6px',
+                  border: '1px solid #e5e7eb', fontSize: '10px', color: '#9ca3af',
+                }}>
+                  <i className="ri-search-line" style={{ fontSize: '11px', color: '#9ca3af' }}></i> Search "Paneer Chilli"
+                </div>
+              </div>
+              {/* Introducing Dish Cart banner */}
+              <div style={{
+                margin: '8px 10px', background: '#fff7ed', borderRadius: '10px',
+                padding: '10px', border: '1px solid #fed7aa',
+              }}>
+                <div style={{ fontSize: '9px', fontWeight: 800, color: '#ea580c', marginBottom: '6px' }}>
+                  <i className="ri-shopping-basket-line" style={{ marginRight: '4px', verticalAlign: 'middle' }}></i> Introducing Dish Cart
+                </div>
+                {['Add all ingredients in one tap', 'Search dishes', 'Customise easily'].map(t => (
+                  <div key={t} style={{ fontSize: '8px', color: '#374151', marginBottom: '3px', display: 'flex', alignItems: 'center', gap: '3px' }}>
+                    <i className="ri-checkbox-circle-fill" style={{ color: '#ea580c', fontSize: '9px' }}></i>
+                    {t}
+                  </div>
+                ))}
+              </div>
+              {/* Popular dishes */}
+              <div style={{ padding: '0 10px 10px' }}>
+                <div style={{ fontSize: '9px', fontWeight: 700, color: '#111', marginBottom: '6px' }}>Popular Dishes</div>
+                <div style={{ display: 'flex', gap: '6px' }}>
+                  {['Biryani', 'Tikka', 'Butter'].map(d => (
+                    <div key={d} style={{
+                      flex: 1, background: '#f3f4f6', borderRadius: '8px',
+                      padding: '6px 4px', textAlign: 'center', fontSize: '7px', color: '#374151', fontWeight: 600,
+                    }}><i className="ri-restaurant-line" style={{ fontSize: '10px', display: 'block', marginBottom: '2px' }}></i>{d}</div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Mockup 2 – Ingredient list (highlighted / centre) */}
+            <div style={{
+              background: '#fff', borderRadius: '20px',
+              width: 'clamp(150px, 20vw, 200px)', flexShrink: 0,
+              overflow: 'hidden', boxShadow: '0 28px 64px rgba(0,0,0,0.55)',
+              border: '1px solid rgba(74,222,128,0.25)',
+              transform: 'scale(1.05)',
+              zIndex: 2,
+            }}>
+              <div style={{
+                background: 'linear-gradient(135deg, #0a1e0a, #1a3d1a)',
+                padding: '12px 12px 10px', color: '#fff',
+              }}>
+                <div style={{ fontSize: '10px', fontWeight: 800, marginBottom: '2px' }}>Paneer Tikka Masala</div>
+                <div style={{ fontSize: '8px', color: 'rgba(255,255,255,0.6)' }}>12 items · ₹698</div>
+              </div>
+              {/* Ingredient rows */}
+              {[
+                { name: 'Paneer (200g)', price: '₹82', disc: '₹130' },
+                { name: 'Tikka Marinade', price: '₹52', disc: '₹60' },
+                { name: 'Greek Yogurt', price: '₹35', disc: '₹55' },
+                { name: 'Ginger Garlic', price: '₹17', disc: '₹28' },
+              ].map((item) => (
+                <div key={item.name} style={{
+                  display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                  padding: '7px 10px', borderBottom: '1px solid #f3f4f6',
+                }}>
+                  <div>
+                    <div style={{ fontSize: '8px', fontWeight: 600, color: '#111' }}>{item.name}</div>
+                    <div style={{ fontSize: '7px', color: '#6b7280' }}>
+                      <span style={{ color: '#16a34a', fontWeight: 700 }}>{item.price}</span>
+                      {' '}<span style={{ textDecoration: 'line-through' }}>{item.disc}</span>
+                    </div>
+                  </div>
+                  <button style={{
+                    background: '#e11d48', color: '#fff', border: 'none',
+                    borderRadius: '5px', padding: '3px 8px', fontSize: '7px', fontWeight: 700, cursor: 'pointer',
+                  }}>ADD</button>
+                </div>
+              ))}
+              {/* Add All button */}
+              <div style={{ padding: '8px 10px' }}>
+                <button style={{
+                  width: '100%', background: '#4ade80', color: '#0a1e0a',
+                  border: 'none', borderRadius: '8px', padding: '8px',
+                  fontSize: '9px', fontWeight: 800, cursor: 'pointer',
+                }}>
+                  Add All Ingredients
+                </button>
+              </div>
+            </div>
+
+            {/* Mockup 3 – Dish suggestions list */}
+            <div style={{
+              background: '#fff', borderRadius: '20px',
+              width: 'clamp(140px, 18vw, 190px)', flexShrink: 0,
+              overflow: 'hidden', boxShadow: '0 20px 48px rgba(0,0,0,0.4)',
+              border: '1px solid rgba(255,255,255,0.08)',
+            }}>
+              <div style={{ padding: '12px 12px 8px', background: '#f9f9f9' }}>
+                <div style={{ fontSize: '9px', fontWeight: 800, color: '#111', marginBottom: '6px' }}>Popular Paneer Dishes</div>
+                <div style={{ fontSize: '7px', color: '#6b7280' }}>Add all ingredients in one tap</div>
+              </div>
+              {[
+                { iconClass: 'ri-restaurant-line', name: 'Paneer Biryani' },
+                { iconClass: 'ri-restaurant-2-line', name: 'Paneer Tikka' },
+                { iconClass: 'ri-cup-line', name: 'Butter Masala' },
+                { iconClass: 'ri-restaurant-line', name: 'Kadai Paneer' },
+              ].map((dish) => (
+                <div key={dish.name} style={{
+                  display: 'flex', alignItems: 'center', gap: '8px',
+                  padding: '7px 12px', borderBottom: '1px solid #f3f4f6',
+                }}>
+                  <span style={{
+                    width: '28px', height: '28px', background: '#f0fdf4',
+                    borderRadius: '8px', display: 'flex', alignItems: 'center',
+                    justifyContent: 'center', color: '#16a34a', fontSize: '14px', flexShrink: 0,
+                  }}><i className={dish.iconClass}></i></span>
+                  <span style={{ fontSize: '9px', fontWeight: 600, color: '#111' }}>{dish.name}</span>
+                </div>
+              ))}
+              <div style={{ padding: '8px 12px' }}>
+                <div style={{ fontSize: '8px', color: '#16a34a', fontWeight: 700, textAlign: 'center' }}>
+                  See all recipes with Paneer
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Mobile responsive style injected inline */}
+        <style>{`
+          @media (max-width: 768px) {
+            .dish-first-section {
+              grid-template-columns: 1fr !important;
+              gap: 28px !important;
+              padding: 28px 20px !important;
+            }
+            .dish-mockup-wrap {
+              justify-content: center !important;
+              gap: 8px !important;
+            }
+            .dish-mockup-wrap > div:first-child,
+            .dish-mockup-wrap > div:last-child {
+              display: none !important;
+            }
+            .dish-mockup-wrap > div:nth-child(2) {
+              transform: scale(1) !important;
+              width: 85vw !important;
+              max-width: 320px !important;
+            }
+          }
+        `}</style>
       </div>
 
       {/* Main Content */}
@@ -369,7 +681,6 @@ function GroklyPageContent() {
                     onMouseLeave={(e) => e.target.style.background = 'none'}
                   >
                     See All
-                    <span style={{ fontSize: '16px' }}>→</span>
                   </button>
                 </div>
 
@@ -461,10 +772,10 @@ function GroklyPageContent() {
 
       {/* Bottom Navigation (Mobile) */}
       <BottomNav />
-    </div>
-  );
+     </div>
+  </>
+);
 }
-
 /**
  * Main Export with Provider
  */

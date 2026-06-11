@@ -28,16 +28,17 @@ export default function Footer() {
             </Link>
             
             <p className="brand-desc">
-              India's first intelligent circular commerce ecosystem. Delivering Groceries, Food, Fashion, and Financial Intelligence — all under one unified platform.
+              India's first intelligent circular commerce ecosystem. Delivering Groceries, Food, and Fashion under one unified platform.
             </p>
             
             <div className="social-row">
-              <a href="#" className="social-icon"><i className="ri-twitter-x-line"></i></a>
-              <a href="#" className="social-icon"><i className="ri-instagram-line"></i></a>
-              <a href="#" className="social-icon"><i className="ri-linkedin-fill"></i></a>
-              <a href="#" className="social-icon"><i className="ri-facebook-fill"></i></a>
-              <a href="#" className="social-icon"><i className="ri-youtube-fill"></i></a>
-              <a href="#" className="social-icon"><i className="ri-mail-send-line"></i></a>
+              <a href="https://x.com/accesco_living?s=11" target="_blank" rel="noopener noreferrer" className="social-icon"><i className="ri-twitter-x-line"></i></a>
+              <a href="https://www.instagram.com/accescoliving" target="_blank" rel="noopener noreferrer" className="social-icon"><i className="ri-instagram-line"></i></a>
+              <a href="https://www.linkedin.com/company/acceso-living/" target="_blank" rel="noopener noreferrer" className="social-icon"><i className="ri-linkedin-fill"></i></a>
+              <a href="https://www.facebook.com/share/1BMyjWcU1B/" target="_blank" rel="noopener noreferrer" className="social-icon"><i className="ri-facebook-fill"></i></a>
+              <a href="https://youtube.com/@accescoliving?si=Xzk9m4vzZqW6-lje" target="_blank" rel="noopener noreferrer" className="social-icon"><i className="ri-youtube-fill"></i></a>
+              <a href="https://pin.it/77fE8R0rC" target="_blank" rel="noopener noreferrer" className="social-icon"><i className="ri-pinterest-fill"></i></a>
+              <a href="mailto:support@accescoliving.com" className="social-icon"><i className="ri-mail-send-line"></i></a>
             </div>
             
             <div className="app-badges">
@@ -62,7 +63,7 @@ export default function Footer() {
             <div className="link-group">
               <h4 className="col-title">COMPANY</h4>
               <Link href="/about" className="link-item">About Us</Link>
-              <Link href="/qtcvideos" className="link-item">QTC Videos</Link>
+              <Link href="/accesco-library" className="link-item">Accesco Library</Link>
               <Link href="/press" className="link-item">Press & Media</Link>
               <Link href="/blogs" className="link-item">Blogs</Link>
               <Link href="/terms" className="link-item">Terms of Service</Link>
@@ -90,7 +91,7 @@ export default function Footer() {
 
         {/* Bottom Bar */}
         <div className="bottom-bar">
-          <span className="copyright-text">© {currentYear} Accesco Living. All rights reserved.</span>
+          <span className="copyright-text" suppressHydrationWarning>© {currentYear} Accesco Living. All rights reserved.</span>
         </div>
         
       </div>

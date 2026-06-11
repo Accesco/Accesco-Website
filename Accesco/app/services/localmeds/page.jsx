@@ -2,10 +2,30 @@
 
 
 import './localmeds.css'
-
+import JsonLd from '../../../components/JsonLd';
+const serviceSchema = {
+  "@context": "https://schema.org",
+  "@type": "Service",
+  serviceType: "Pharmacy Delivery",
+  name: "LocalMeds by Accesco Living",
+  description:
+    "Medicine delivery, healthcare access, consultations and lab services delivered quickly to your doorstep.",
+  url: "https://www.accescoliving.com/services/localmeds",
+  provider: {
+    "@type": "Organization",
+    name: "Accesco Living",
+    url: "https://www.accescoliving.com",
+  },
+  areaServed: {
+    "@type": "City",
+    name: "Bengaluru",
+  },
+};
 export default function LocalMedsPage() {
 
   return (
+  <>
+    <JsonLd data={serviceSchema} />
     <div className="lm-wrapper">
       {/* Animated background blobs */}
       <div className="lm-blob lm-blob-1" />
@@ -65,5 +85,6 @@ export default function LocalMedsPage() {
         <p className="lm-footer-sub">Healthcare at your fingertips — coming soon.</p>
       </footer>
     </div>
+  </>
   )
 }

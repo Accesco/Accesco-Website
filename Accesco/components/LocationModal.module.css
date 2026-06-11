@@ -1,0 +1,239 @@
+/* ./components/LocationModal.module.css */
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(4px); /* Modern frosted glass effect */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  padding: 20px;
+}
+
+.modal {
+  background: #ffffff;
+  width: 100%;
+  max-width: 480px;
+  border-radius: 20px; /* Modern, softer corners */
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.15);
+  animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #f0f0f0;
+  padding-bottom: 16px;
+}
+
+.header h3 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+  color: #1a1a1a;
+  letter-spacing: -0.5px;
+}
+
+.header button {
+  background: #f5f5f5;
+  border: none;
+  font-size: 20px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  cursor: pointer;
+  color: #666;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.header button:hover {
+  background: #e0e0e0;
+  color: #000;
+}
+
+.detectBtn {
+  background-color: #f4f8fb;
+  border: 1px solid #e1ecf4;
+  padding: 14px;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 15px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.2s;
+  color: #0066cc; /* Gives it a GPS/Location vibe */
+}
+
+.detectBtn:hover:not(:disabled) {
+  background-color: #e8f2fa;
+  border-color: #cce0f0;
+}
+
+.detectBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Unified Search Bar Look */
+.manualForm {
+  display: flex;
+  position: relative;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  overflow: hidden;
+  transition: border-color 0.2s;
+}
+
+.manualForm:focus-within {
+  border-color: #1a1a1a;
+}
+
+.manualForm input {
+  flex: 1;
+  padding: 14px 16px;
+  border: none;
+  font-size: 15px;
+  background: transparent;
+}
+
+.manualForm input:focus {
+  outline: none;
+}
+
+.manualForm button {
+  padding: 0 24px;
+  background-color: #1a1a1a;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+  transition: background 0.2s;
+}
+
+.manualForm button:hover:not(:disabled) {
+  background-color: #333;
+}
+
+.manualForm button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.error {
+  color: #d32f2f;
+  font-size: 14px;
+  background: #fef0f0;
+  border: 1px solid #fadcdc;
+  padding: 12px;
+  border-radius: 8px;
+  margin: 0;
+  font-weight: 500;
+}
+
+.mapContainer {
+  width: 100%;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid #eaeaea;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.addressDisplay {
+  background-color: #f9f9f9;
+  padding: 16px;
+  border-radius: 12px;
+  border: 1px solid #f0f0f0;
+}
+
+.addressDisplay strong {
+  display: block;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #888;
+  margin-bottom: 6px;
+}
+
+.addressDisplay p {
+  margin: 0;
+  font-size: 15px;
+  color: #1a1a1a;
+  line-height: 1.5;
+  font-weight: 500;
+}
+
+.confirmBtn {
+  background-color: #E23744; /* Standard deep red */
+  color: white;
+  border: none;
+  padding: 16px;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.1s, background 0.2s;
+  box-shadow: 0 4px 12px rgba(226, 55, 68, 0.3);
+}
+
+.confirmBtn:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.confirmBtn:hover:not(:disabled) {
+  background-color: #c9303c;
+}
+
+.confirmBtn:disabled {
+  background-color: #f1a9af;
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
+.detectLocationBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: calc(100% - 24px); /* Keeps it neatly inside the dropdown borders */
+  margin: 0 12px 12px 12px;
+  padding: 10px 16px;
+  background-color: #fff4f4; /* A soft red tint to match your theme */
+  color: #e23744; /* Standard delivery app red */
+  border: 1px solid #f8d7da;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.detectLocationBtn:hover {
+  background-color: #ffebeb;
+  border-color: #f5c2c7;
+}
+
+.detectLocationBtn:active {
+  transform: scale(0.98);
+}
