@@ -43,6 +43,7 @@ export default function AccescoHeader() {
   useEffect(() => {
     // Check localStorage first
     const savedLocation = localStorage.getItem('userLocation');
+    
     if (savedLocation) {
       setSelectedLocation(savedLocation);
       console.log("Loaded location from localStorage:", savedLocation);
@@ -159,6 +160,26 @@ export default function AccescoHeader() {
   );
   const shouldBeScrolled = isScrolled || forceScrolled;
 
+  const getDisplayLocation = (locationStr) => {
+    if (!locationStr) return 'Select Location';
+    
+    try {
+      // Try parsing it as a JSON object (for the local storage object)
+      const parsedLocation = JSON.parse(locationStr);
+      if (parsedLocation && parsedLocation.area) {
+        return parsedLocation.area;
+      }
+      if (parsedLocation && parsedLocation.formattedAddress) {
+        return parsedLocation.formattedAddress.split(',')[0].trim();
+      }
+    } catch (e) {
+      // If JSON.parse fails, it's a plain string like 'Bengaluru, Karnataka'
+      return locationStr.split(',')[0].trim();
+    }
+    
+    return 'Select Location';
+  };
+
   return (
     <>
       <header className={`${styles.header} ${shouldBeScrolled ? styles.scrolled : ''}`}>
@@ -199,7 +220,7 @@ export default function AccescoHeader() {
                   </svg>
 
                  <span className={styles.locationText}>
-                    {selectedLocation ? selectedLocation.split(',')[0].trim() : 'Select Location'}
+                    {getDisplayLocation(selectedLocation)}
                   </span>
 
                   <svg 
