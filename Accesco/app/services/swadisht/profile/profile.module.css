@@ -619,87 +619,175 @@
 .healthToggleOn span {
   transform: translateX(22px);
 }
-@media (prefers-reduced-motion: reduce) {
-  .profileBoard {
-    animation: none;
-  }
-}
+/* ... (Keep all your top CSS variables and desktop classes as they are) ... */
+
+/* MOBILE REFINEMENTS - Targeting Structure based on Inspo */
 
 @media (max-width: 1024px) {
   .profileBoard {
     grid-template-columns: 1fr;
+    gap: 32px;
+  }
+
+  .sidebar {
+    /* On mobile, we treat the sidebar as the top "Header/Profile" section */
+    order: -1; 
   }
 
   .bannerCard {
-    flex-direction: column;
-    align-items: flex-start;
+    min-height: 280px;
+    padding: 30px;
+    background-position: center;
+  }
+
+  .bannerTitle {
+    font-size: 32px;
   }
 }
 
 @media (max-width: 768px) {
   .shell {
-    padding: 24px 16px;
+    padding: 20px 16px;
   }
 
-  .utilityGrid {
-    grid-template-columns: 1fr;
+  /* 1. Welcome Bar Adjustment */
+  .welcomeBar {
+    display: none; /* Usually hidden on mobile if the Header + Banner are present */
   }
 
+  /* 2. Banner Refinement */
+  .bannerCard {
+    min-height: 220px;
+    border-radius: 20px;
+    padding: 24px;
+    margin-bottom: 10px;
+    align-items: flex-start;
+    justify-content: center;
+  }
+
+  .bannerKicker { font-size: 11px; }
+  .bannerTitle { font-size: 26px; margin: 8px 0; }
+  .bannerCopy { font-size: 14px; max-width: 200px; margin-bottom: 20px; }
+  .bannerBtn { 
+    padding: 12px 24px; 
+    font-size: 14px;
+    display: inline-block;
+  }
+
+  /* 3. Metrics Grid - 2x2 Structure from Image 1 */
+  .metricsGrid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-top: 20px;
+  }
+
+  .metricCard {
+    padding: 16px;
+    min-height: 100px;
+    border-radius: 12px;
+  }
+
+  .metricCard strong {
+    font-size: 18px;
+  }
+
+  /* 4. Recent Orders Structure */
+  .sectionTitle { font-size: 22px; }
+  
   .orderRow {
-    grid-template-columns: 1fr;
+    padding: 20px;
+    grid-template-columns: 1fr; /* Stack layout for mobile */
+    gap: 16px;
+    border-radius: 16px;
+    position: relative;
+  }
+
+  .orderHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
   }
 
   .orderSummary {
-    align-items: flex-start;
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    align-items: flex-end;
+  }
+
+  .orderTotal {
+    font-size: 18px;
+    color: var(--sw-ink);
+  }
+
+  .orderId { font-size: 12px; }
+  .orderSub { font-size: 11px; color: var(--sw-muted); }
+
+  .orderItems {
+    margin-top: 8px;
+    flex-wrap: wrap;
+  }
+
+  .itemTag {
+    padding: 4px 12px;
+    font-size: 11px;
+  }
+
+  /* 5. Utility Cards - Full width stacking */
+  .utilityGrid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .utilityCard {
+    padding: 20px;
+    min-height: auto;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    background: #F9F5F1; /* Subtle tint as seen in inspo */
+    border: 1px solid var(--sw-border);
+  }
+
+  .utilityCard h3 { font-size: 12px; margin-bottom: 4px; }
+  .utilityCard p { font-size: 14px; color: var(--sw-ink); font-weight: 500; }
+  
+  .utilityLink {
+    margin-top: 0;
+    padding: 0;
+    border: none;
+    text-decoration: underline;
+    font-size: 13px;
+  }
+
+  /* 6. Mobile Sidebar "Drawer" Look (Image 2) */
+  .profileCard {
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+  }
+
+  .memberName {
+    font-size: 24px;
+  }
+
+  .primaryBtn, .secondaryBtn {
+    border-radius: 6px; /* Matches the "Start new order" button in image 2 */
+  }
+
+  .healthModeCard {
+    background: #FFF9F0;
+    border: 1px solid #F3E0C5;
   }
 }
-.welcomeBar {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: -10px;
-}
 
-.welcomeTitle {
-  font-family: 'Playfair Display', serif;
-  font-size: 36px;
-  line-height: 0.95;
-  color: var(--sw-red);
-  margin: 0;
-}
-
-.welcomeSubtitle {
-  margin-top: 10px;
-  color: var(--sw-muted);
-  font-size: 18px;
-}
-
-.headerIcons {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-}
-
-.iconBtn {
-  width: 52px;
-  height: 52px;
-  border-radius: 12px;
-  border: 1px solid var(--sw-border);
-  background: white;
-  cursor: pointer;
-  font-size: 18px;
-}
-
-.profileMini {
-  width: 52px;
-  height: 52px;
-  border-radius: 12px;
-  background: var(--sw-red);
-  color: white;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  font-weight: 700;
+@keyframes fadeSlide {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
