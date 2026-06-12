@@ -1,8 +1,19 @@
-/* Thali Engine Page - Festival Thalis with Cultural Authenticity */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
 
 .page {
+  --sw-purple: #520B24;       /* Deep Dark Purple */
+  --sw-purple-dark: #3A1524;  /* Ink Purple */
+  --sw-purple-light: #F9F0F2; 
+  --sw-gold: #C9A227;
+  --sw-ink: #1C1C1C;
+  --sw-muted: #696969;
+  --sw-border: #E2D3C8;
+  --sw-bg: #FFF8EF;
+
   min-height: 100vh;
-  background: #F8F9FA;
+  background: var(--sw-bg);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  color: var(--sw-ink);
 }
 
 .pageContent {
@@ -12,594 +23,379 @@
 /* Hero Section */
 .hero {
   background: #ffffff;
-  padding: 40px 24px;
+  padding: 80px 24px;
   text-align: center;
-  border-bottom: 1px solid #E8E8E8;
+  border-bottom: 1px solid var(--sw-border);
 }
 
 .heroContent {
-  max-width: 900px;
+  max-width: 800px;
   margin: 0 auto;
 }
 
 .heroTitle {
-  font-size: 32px;
-  font-weight: 600;
-  margin-bottom: 12px;
-  color: #1C1C1C;
-  letter-spacing: -0.01em;
+  font-family: 'Playfair Display', serif;
+  font-size: 56px;
+  font-weight: 700;
+  margin-bottom: 16px;
+  color: var(--sw-purple);
+  letter-spacing: -0.02em;
 }
 
 .heroTagline {
-  font-size: 18px;
+  font-size: 20px;
   font-style: italic;
-  margin-bottom: 16px;
-  color: #696969;
+  margin-bottom: 24px;
+  color: var(--sw-muted);
 }
 
 .heroDescription {
-  font-size: 15px;
-  line-height: 1.6;
-  color: #696969;
-  margin-bottom: 32px;
-  max-width: 700px;
-  margin-left: auto;
-  margin-right: auto;
+  font-size: 16px;
+  line-height: 1.8;
+  color: var(--sw-muted);
+  margin-bottom: 40px;
 }
 
 .heroFeatures {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: 16px;
-  max-width: 700px;
-  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 12px;
 }
 
 .heroFeature {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: 8px;
-  background: #F8F9FA;
-  padding: 16px;
-  border-radius: 8px;
+  background: var(--sw-bg);
+  border: 1px solid var(--sw-border);
+  padding: 8px 20px;
+  border-radius: 999px;
 }
 
 .featureText {
-  font-size: 13px;
-  font-weight: 500;
-  text-align: center;
-  color: #696969;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--sw-muted);
 }
 
 /* Container */
 .container {
-  max-width: 1200px;
+  max-width: 1300px;
   margin: 0 auto;
-  padding: 40px 24px;
+  padding: 60px 24px;
 }
 
 /* Category Filter */
 .categoryFilter {
   display: flex;
   justify-content: center;
-  gap: 16px;
-  margin-bottom: 40px;
-  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 50px;
 }
 
 .categoryBtn {
-  display: flex;
-  align-items: center;
-  gap: 10px;
   background: #ffffff;
-  border: 2px solid #E8E8E8;
-  border-radius: 12px;
-  padding: 12px 24px;
-  font-size: 15px;
+  border: 1px solid var(--sw-border);
+  border-radius: 8px;
+  padding: 10px 28px;
+  font-size: 14px;
   font-weight: 600;
-  color: #696969;
+  color: var(--sw-muted);
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
-.categoryBtn:hover {
-  border-color: #8E24AA;
-  color: #8E24AA;
-  transform: translateY(-2px);
-}
-
 .categoryBtn.active {
-  background: #8E24AA;
-  border-color: #8E24AA;
+  background: var(--sw-purple);
+  border-color: var(--sw-purple);
   color: #ffffff;
-  box-shadow: 0 4px 16px rgba(142,36,170,0.3);
-}
-
-.categoryIcon {
-  font-size: 20px;
-  font-weight: 700;
-}
-
-.categoryName {
-  font-weight: 600;
 }
 
 /* Thali Grid */
 .thaliGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
-  gap: 32px;
+  grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
+  gap: 40px;
 }
 
 /* Thali Card */
 .thaliCard {
   background: #ffffff;
-  border: 1px solid #E8E8E8;
-  border-radius: 16px;
+  border: 1px solid var(--sw-border);
+  border-radius: 20px;
   overflow: hidden;
-  transition: all 0.3s ease;
-}
-
-.thaliCard:hover {
-  box-shadow: 0 12px 32px rgba(0,0,0,0.12);
-  border-color: #CFCFCF;
-  transform: translateY(-8px);
+  display: flex;
+  flex-direction: column;
 }
 
 .cardImage {
   position: relative;
   width: 100%;
-  height: 240px;
+  aspect-ratio: 16/10;
   overflow: hidden;
-  background: #F8F8F8;
 }
 
 .cardImage img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.3s ease;
-}
-
-.thaliCard:hover .cardImage img {
-  transform: scale(1.05);
 }
 
 .bestsellerBadge {
   position: absolute;
-  top: 12px;
-  left: 12px;
-  background: linear-gradient(135deg, #FFB800 0%, #FF8F00 100%);
+  top: 16px;
+  left: 16px;
+  background: var(--sw-purple-dark);
   color: #ffffff;
-  padding: 6px 14px;
-  border-radius: 20px;
-  font-size: 12px;
+  padding: 4px 12px;
+  border-radius: 4px;
+  font-size: 11px;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-}
-
-.festivalBadge {
-  position: absolute;
-  top: 12px;
-  right: 12px;
-  background: rgba(142,36,170,0.95);
-  color: #ffffff;
-  padding: 6px 14px;
-  border-radius: 20px;
-  font-size: 12px;
-  font-weight: 700;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
 }
 
 .cardContent {
   padding: 24px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
 }
 
+/* --- HEADER: Name and Rating --- */
 .cardHeader {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
+  align-items: center;
+  gap: 12px;
   margin-bottom: 12px;
 }
 
 .thaliName {
-  font-size: 22px;
+  font-family: 'Playfair Display', serif;
+  font-size: 26px;
   font-weight: 700;
-  color: #1C1C1C;
-  letter-spacing: -0.01em;
-  flex: 1;
+  color: var(--sw-purple-dark);
 }
 
 .ratingBadge {
   display: flex;
   align-items: center;
   gap: 4px;
-  background: #0F8A65;
-  color: #ffffff;
-  padding: 6px 10px;
-  border-radius: 20px;
-  font-size: 13px;
+  background: #FFF8EF;
+  color: var(--sw-gold);
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 14px;
   font-weight: 700;
+  border: 1px solid var(--sw-border);
   flex-shrink: 0;
 }
 
 .description {
   font-size: 14px;
-  color: #696969;
+  color: var(--sw-muted);
   line-height: 1.6;
-  margin-bottom: 16px;
+  margin-bottom: 20px;
 }
 
 .cardMeta {
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-size: 13px;
-  color: #696969;
-  margin-bottom: 16px;
+  gap: 16px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--sw-muted);
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--sw-border);
+  margin-bottom: 20px;
+  text-transform: uppercase;
 }
 
-.metaItem {
+/* --- NUTRITION GRID --- */
+.nutrition {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  background: var(--sw-border);
+  border: 1px solid var(--sw-border);
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 24px;
+}
+
+.nutritionItem {
+  background: #ffffff;
+  padding: 12px 4px;
   display: flex;
+  flex-direction: column;
   align-items: center;
   gap: 4px;
-  font-size: 13px;
 }
 
-.metaDivider {
-  color: #CFCFCF;
+.nutritionLabel {
+  font-size: 10px;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: var(--sw-muted);
+  letter-spacing: 0.05em;
 }
 
-/* Components */
-.components {
-  margin-bottom: 16px;
+.nutritionValue {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--sw-purple-dark);
 }
 
+/* --- INCLUDES SECTION --- */
 .componentsTitle {
   font-size: 13px;
-  font-weight: 700;
-  color: #696969;
+  font-weight: 800;
+  color: var(--sw-purple-dark);
   text-transform: uppercase;
-  letter-spacing: 0.5px;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
 }
 
 .componentsList {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 6px;
+  margin-bottom: 24px;
 }
 
 .componentTag {
-  background: #F8F9FA;
-  color: #696969;
-  padding: 6px 12px;
-  border-radius: 16px;
-  font-size: 12px;
-  font-weight: 500;
-  border: 1px solid #E8E8E8;
+  background: var(--sw-bg);
+  font-size: 11px;
+  padding: 4px 10px;
+  border-radius: 4px;
+  color: var(--sw-muted);
+  border: 1px solid var(--sw-border);
 }
 
-/* Nutrition */
-.nutrition {
-  display: flex;
-  gap: 16px;
-  padding: 12px;
-  background: #F8F9FA;
-  border-radius: 8px;
-  margin-bottom: 16px;
-}
-
-.nutritionItem {
-  font-size: 12px;
-  color: #696969;
-  font-weight: 600;
-}
-
-/* Story Button */
+/* --- ACTIONS --- */
 .storyBtn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
   background: none;
-  border: 2px solid #E8E8E8;
-  color: #8E24AA;
-  padding: 12px 20px;
-  border-radius: 12px;
-  font-size: 14px;
-  font-weight: 600;
+  border: none;
+  color: var(--sw-purple);
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
   cursor: pointer;
-  width: 100%;
-  margin-bottom: 16px;
-  transition: all 0.2s ease;
+  padding: 12px 0;
+  margin-bottom: 20px;
+  text-align: center;
+  border-top: 1px solid var(--sw-border);
+  border-bottom: 1px solid var(--sw-border);
 }
 
-.storyBtn:hover {
-  background: #F3E5F5;
-  border-color: #8E24AA;
-}
-
-/* Cultural Story */
-.culturalStory {
-  background: #F3E5F5;
-  border-left: 4px solid #8E24AA;
-  padding: 16px;
-  border-radius: 8px;
-  margin-bottom: 16px;
-}
-
-.storyTitle {
-  font-size: 15px;
-  font-weight: 700;
-  color: #6A1B9A;
-  margin-bottom: 8px;
-}
-
-.storyContent {
-  font-size: 13px;
-  color: #696969;
-  line-height: 1.6;
-  margin-bottom: 12px;
-}
-
-.traditions {
-  font-size: 13px;
-  color: #696969;
-}
-
-.traditions h5 {
-  font-weight: 700;
-  margin-bottom: 6px;
-  color: #6A1B9A;
-}
-
-.traditions ul {
-  margin: 0;
-  padding-left: 20px;
-}
-
-.traditions li {
-  margin-bottom: 4px;
-}
-
-/* Cooking Options */
 .cookingOptions {
-  margin-bottom: 16px;
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
 .optionsTitle {
-  font-size: 14px;
-  font-weight: 700;
-  color: #1C1C1C;
-  margin-bottom: 12px;
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--sw-purple-dark);
+  text-transform: uppercase;
+  margin-bottom: 10px;
 }
 
 .cookingOption {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 14px;
-  background: #F8F9FA;
-  border: 1px solid #E8E8E8;
-  border-radius: 8px;
-  margin-bottom: 10px;
+  padding: 16px;
+  background: #ffffff;
+  border: 1px solid var(--sw-border);
+  border-radius: 12px;
   transition: all 0.2s ease;
 }
 
 .cookingOption:hover {
-  background: #ffffff;
-  border-color: #8E24AA;
-}
-
-.optionInfo {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
+  border-color: var(--sw-purple);
+  box-shadow: 0 4px 12px rgba(82, 11, 36, 0.05);
 }
 
 .optionName {
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 700;
-  color: #1C1C1C;
+  color: var(--sw-ink);
+  margin-bottom: 2px;
 }
 
 .optionDesc {
+  display: block;
   font-size: 12px;
-  color: #696969;
+  color: var(--sw-muted);
+  margin-bottom: 6px;
 }
 
+/* --- DELIVERY STYLE CHANGE --- */
 .optionDelivery {
-  font-size: 11px;
-  color: #0F8A65;
-  font-weight: 600;
+  display: block;
+  font-size: 12px;
+  color: var(--sw-muted);
+  font-style: italic; /* Makes "Delivery:" look elegant */
+}
+
+/* We style the actual time (minutes) separately */
+.optionDelivery strong {
+  font-style: normal;
+  color: var(--sw-purple);
+  font-weight: 800;
+  margin-left: 4px;
 }
 
 .optionPrice {
   display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 8px;
+  align-items: center;
+  gap: 12px;
 }
 
 .price {
   font-size: 18px;
   font-weight: 700;
-  color: #1C1C1C;
+  color: var(--sw-purple-dark);
 }
 
 .addBtn {
-  background: #8E24AA;
+  background: var(--sw-purple);
   color: #ffffff;
   border: none;
-  padding: 10px 24px;
-  border-radius: 10px;
-  font-size: 14px;
+  padding: 8px 18px;
+  border-radius: 8px;
+  font-size: 13px;
   font-weight: 700;
   cursor: pointer;
-  transition: all 0.2s ease;
 }
 
-.addBtn:hover {
-  background: #6A1B9A;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(142,36,170,0.3);
-}
-
-/* View Details Button */
+/* --- VIEW DETAILS (Less Fancy, Clean Version) --- */
 .viewDetailsBtn {
   display: block;
-  width: 100%;
-  background: #ffffff;
-  color: #8E24AA;
-  border: 3px solid #8E24AA;
-  padding: 14px;
-  border-radius: 12px;
-  font-size: 15px;
-  font-weight: 700;
   text-align: center;
+  
+  /* Use the clean sans-serif font instead of the serif one */
+  font-family: 'Plus Jakarta Sans', sans-serif; 
+  
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--sw-purple);
+  text-transform: uppercase; /* Makes it feel like a functional utility link */
+  letter-spacing: 0.05em;
   text-decoration: none;
+  
+  padding: 16px 0;
+  margin-top: 8px;
   transition: all 0.2s ease;
+  border-top: 1px solid rgba(226, 211, 200, 0.4); /* Very faint solid line */
 }
 
 .viewDetailsBtn:hover {
-  background: #8E24AA;
-  color: #ffffff;
-}
-
-/* Empty State */
-.emptyState {
-  text-align: center;
-  padding: 80px 24px;
-}
-
-.emptyIcon {
-  font-size: 96px;
-  margin-bottom: 24px;
-  opacity: 0.4;
-}
-
-.emptyTitle {
-  font-size: 24px;
-  font-weight: 700;
-  color: #1C1C1C;
-  margin-bottom: 12px;
-}
-
-.emptyText {
-  font-size: 16px;
-  color: #696969;
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-  .pageContent {
-    padding-top: 116px;
-  }
-  
-  .hero {
-    padding: 32px 16px;
-  }
-  
-  .heroTitle {
-    font-size: 24px;
-  }
-  
-  .heroTagline {
-    font-size: 16px;
-  }
-  
-  .heroDescription {
-    font-size: 14px;
-  }
-  
-  .heroFeatures {
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-  }
-  
-  .featureText {
-    font-size: 12px;
-  }
-  
-  .container {
-    padding: 32px 16px;
-  }
-  
-  .categoryFilter {
-    gap: 12px;
-  }
-  
-  .categoryBtn {
-    padding: 10px 18px;
-    font-size: 14px;
-  }
-  
-  .thaliGrid {
-    grid-template-columns: 1fr;
-    gap: 24px;
-  }
-  
-  .cardImage {
-    height: 200px;
-  }
-  
-  .cardContent {
-    padding: 20px;
-  }
-  
-  .thaliName {
-    font-size: 20px;
-  }
-}
-
-@media (max-width: 640px) {
-  .pageContent {
-    padding-top: 106px;
-  }
-  
-  .heroTitle {
-    font-size: 28px;
-  }
-  
-  .heroTagline {
-    font-size: 18px;
-  }
-  
-  .heroDescription {
-    font-size: 14px;
-  }
-  
-  .heroFeatures {
-    grid-template-columns: 1fr;
-  }
-  
-  .categoryFilter {
-    flex-direction: column;
-  }
-  
-  .categoryBtn {
-    width: 100%;
-  }
-  
-  .thaliName {
-    font-size: 18px;
-  }
-  
-  .cookingOption {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 12px;
-  }
-  
-  .optionPrice {
-    flex-direction: row;
-    align-items: center;
-    width: 100%;
-    justify-content: space-between;
-  }
+  color: var(--sw-purple-dark);
+  background-color: var(--sw-purple-light); /* Subtle highlight on hover */
 }
