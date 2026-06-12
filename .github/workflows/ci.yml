@@ -1,42 +1,82 @@
 name: PR Checks
 
-# Run this workflow whenever a Pull Request targets main
 on:
   pull_request:
     branches:
       - main
 
 jobs:
-  build:
-    # GitHub-hosted Ubuntu runner
+  lint:
+    name: Lint
     runs-on: ubuntu-latest
 
+    defaults:
+      run:
+        working-directory: ./Accesco
+
     steps:
-      # Checkout the PR code
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # Install the required Node.js version
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: npm
+          cache-dependency-path: ./Accesco/package-lock.json
 
-      # Install dependencies using package-lock.json
       - name: Install dependencies
         run: npm ci
 
-      # Run ESLint checks
-      - name: Run linting
+      - name: Run ESLint
         run: npm run lint
 
-      # Run TypeScript type checking
-      # Remove if your project is JavaScript-only
-      - name: Run type check
+  typecheck:
+    name: Type Check
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: ./Accesco
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: ./Accesco/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run TypeScript Check
         run: npx tsc --noEmit
 
-      # Create a production build
-      # This catches build-time errors before merging
-      - name: Build application
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: ./Accesco
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: ./Accesco/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build Application
         run: npm run build
