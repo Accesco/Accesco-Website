@@ -4,20 +4,12 @@ import { useSearchParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import SwadishttHeader from '../components/SwadishttHeader';
 import styles from './tracking.module.css';
-import dynamic from 'next/dynamic';
-
-const LiveTrackingMap = dynamic(() => import('../components/Map/LiveTrackingMap'), {
-  ssr: false,
-  loading: () => (
-    <div style={{ height: '480px', background: '#F5F3F4', borderRadius: '0' }} />
-  ),
-});
 
 export default function SwadishttTrackingPage() {
   const searchParams = useSearchParams();
   const orderId = searchParams.get('id');
 
-  const [order, setOrder]           = useState(null);
+  const [order, setOrder] = useState(null);
   const [currentUser, setCurrentUser] = useState(null);
 
   useEffect(() => {
@@ -47,12 +39,12 @@ export default function SwadishttTrackingPage() {
   }
 
   /* ── Derived values ── */
-  const isDelivered  = order.status?.toLowerCase() === 'delivered';
-  const totalItems   = order.items?.reduce((acc, item) => acc + item.quantity, 0) ?? 0;
-  const userName     = currentUser?.name || order.delivery?.name || 'Customer';
-  const initials     = userName.substring(0, 2).toUpperCase();
+  const isDelivered = order.status?.toLowerCase() === 'delivered';
+  const totalItems = order.items?.reduce((acc, item) => acc + item.quantity, 0) ?? 0;
+  const userName = currentUser?.name || order.delivery?.name || 'Customer';
+  const initials = userName.substring(0, 2).toUpperCase();
 
-  const orderDate    = order.placedAt ? new Date(order.placedAt) : new Date();
+  const orderDate = order.placedAt ? new Date(order.placedAt) : new Date();
   const formattedDate = orderDate.toLocaleDateString('en-GB', {
     day: 'numeric', month: 'short', year: 'numeric',
     hour: '2-digit', minute: '2-digit',
@@ -196,7 +188,20 @@ export default function SwadishttTrackingPage() {
 
               {/* Map */}
               <div className={styles.mapWrapper}>
-                <LiveTrackingMap />
+                <div
+                  style={{
+                    height: '480px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    background: '#F5F3F4',
+                    color: '#666',
+                    fontSize: '16px',
+                    fontWeight: '500',
+                  }}
+                >
+                  📍 Live Tracking Map Unavailable
+                </div>
               </div>
 
               {/* Delivery address */}
