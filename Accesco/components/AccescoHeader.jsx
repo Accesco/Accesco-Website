@@ -43,6 +43,7 @@ export default function AccescoHeader() {
   useEffect(() => {
     // Check localStorage first
     const savedLocation = localStorage.getItem('userLocation');
+    
     if (savedLocation) {
       setSelectedLocation(savedLocation);
       console.log("Loaded location from localStorage:", savedLocation);
@@ -159,19 +160,39 @@ export default function AccescoHeader() {
   );
   const shouldBeScrolled = isScrolled || forceScrolled;
 
+  const getDisplayLocation = (locationStr) => {
+    if (!locationStr) return 'Select Location';
+    
+    try {
+      // Try parsing it as a JSON object (for the local storage object)
+      const parsedLocation = JSON.parse(locationStr);
+      if (parsedLocation && parsedLocation.area) {
+        return parsedLocation.area;
+      }
+      if (parsedLocation && parsedLocation.formattedAddress) {
+        return parsedLocation.formattedAddress.split(',')[0].trim();
+      }
+    } catch (e) {
+      // If JSON.parse fails, it's a plain string like 'Bengaluru, Karnataka'
+      return locationStr.split(',')[0].trim();
+    }
+    
+    return 'Select Location';
+  };
+
   return (
     <>
       <header className={`${styles.header} ${shouldBeScrolled ? styles.scrolled : ''}`}>
         <div className={styles.container}>
           <Link href="/" className={styles.logo}>
-            <Image 
-              src="/images/apple-touch-icon.png"
-              alt="AccesCo" 
-              width={36} 
-              height={36} 
-              priority 
-              style={{ objectFit: 'contain' }}
-            />
+        <Image
+  src="/images/accesco_original.png"
+  alt="AccesCo"
+  width={36}
+  height={36}
+  priority
+  style={{ objectFit: 'contain' }}
+/>
             <div className={styles.logoText}>
               <span className={styles.logoName}>Accesco</span>
               <span className={styles.logoTagline}>Living</span>
@@ -179,9 +200,9 @@ export default function AccescoHeader() {
           </Link>
           <div className={styles.logoDivider}></div>
 
-          <nav className={styles.nav}>
-            <a href="#waitlist" className={styles.waitlistLink}>JOIN WAITLIST</a>
-          </nav>
+<a href="#waitlist" className={styles.waitlistLink}>
+  JOIN WAITLIST
+</a>
 
           <div className={styles.actions}>
             {/* Location Selector */}
@@ -199,7 +220,7 @@ export default function AccescoHeader() {
                   </svg>
 
                  <span className={styles.locationText}>
-                    {selectedLocation ? selectedLocation.split(',')[0].trim() : 'Select Location'}
+                    {getDisplayLocation(selectedLocation)}
                   </span>
 
                   <svg 
@@ -268,132 +289,27 @@ export default function AccescoHeader() {
               </button>
               
             )}
-            <a href="#" className={styles.loginButton}>
-  Get App
+  <a href="#" className={`${styles.loginButton} ${styles.getAppButton}`}>
+  <span className={styles.desktopText}>Get App</span>
+  <span className={styles.mobileText}>Download</span>
+
+  <img
+    src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/googleplay.svg"
+    alt="Google Play"
+    className={styles.storeIcon}
+  />
+
+  <img
+    src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/apple.svg"
+    alt="App Store"
+    className={styles.storeIcon}
+  />
 </a>
 
-            <button className={styles.mobileMenuButton} onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
-              <span className={`${styles.hamburger} ${isMobileMenuOpen ? styles.open : ''}`}>
-                <span></span>
-                <span></span>
-                <span></span>
-              </span>
-            </button>
+           
           </div>
         </div>
       </header>
-
-      <div className={`${styles.mobileMenu} ${isMobileMenuOpen ? styles.open : ''}`}>
-        <div className={styles.mobileMenuContent}>
-          
-
-          <nav className={styles.mobileNav}>
-            {/* Mobile Services Dropdown */}
-            <div className={styles.mobileServicesDropdown}>
-              <button 
-                className={`${styles.mobileServicesButton} ${pathname.startsWith('/services') ? styles.active : ''}`}
-                onClick={() => setIsMobileServicesOpen(!isMobileServicesOpen)}
-                aria-expanded={isMobileServicesOpen}
-              >
-                <span>Services</span>
-                <svg 
-                  width="12" 
-                  height="12" 
-                  viewBox="0 0 12 12" 
-                  fill="none"
-                  className={styles.mobileDropdownIcon}
-                  style={{ transform: isMobileServicesOpen ? 'rotate(180deg)' : 'rotate(0deg)' }}
-                >
-                  <path 
-                    d="M3 4.5L6 7.5L9 4.5" 
-                    stroke="currentColor" 
-                    strokeWidth="1.5" 
-                    strokeLinecap="round" 
-                    strokeLinejoin="round"
-                  />
-                </svg>
-              </button>
-
-              <div 
-                className={`${styles.mobileServicesContent} ${isMobileServicesOpen ? styles.open : ''}`}
-              >
-                {services.map((service) => (
-                  <Link 
-                    key={service.href} 
-                    href={service.href} 
-                    className={`${styles.mobileServiceLink} ${pathname === service.href ? styles.activeMobile : ''}`}
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
-                    <div className={styles.mobileServiceName}>{service.name}</div>
-                    <div className={styles.mobileServiceDesc}>{service.description}</div>
-                  </Link>
-                ))}
-              </div>
-            </div>
-            
-            {/* Mobile Partners Dropdown */}
-            <div className={styles.mobileServicesDropdown}>
-              <button 
-                className={`${styles.mobileServicesButton} ${pathname.startsWith('/partner') ? styles.active : ''}`}
-                onClick={() => setIsMobilePartnersOpen(!isMobilePartnersOpen)}
-                aria-expanded={isMobilePartnersOpen}
-              >
-                <span>Partner</span>
-                <svg 
-                  width="12" 
-                  height="12" 
-                  viewBox="0 0 12 12" 
-                  fill="none"
-                  className={styles.mobileDropdownIcon}
-                  style={{ transform: isMobilePartnersOpen ? 'rotate(180deg)' : 'rotate(0deg)' }}
-                >
-                  <path 
-                    d="M3 4.5L6 7.5L9 4.5" 
-                    stroke="currentColor" 
-                    strokeWidth="1.5" 
-                    strokeLinecap="round" 
-                    strokeLinejoin="round"
-                  />
-                </svg>
-              </button>
-
-              <div 
-                className={`${styles.mobileServicesContent} ${isMobilePartnersOpen ? styles.open : ''}`}
-              >
-                {partnerOptions.map((option) => (
-                  <Link 
-                    key={option.href} 
-                    href={option.href} 
-                    className={`${styles.mobileServiceLink} ${pathname === option.href ? styles.activeMobile : ''}`}
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
-                    <div className={styles.mobileServiceName}>{option.name}</div>
-                    <div className={styles.mobileServiceDesc}>{option.description}</div>
-                  </Link>
-                ))}
-              </div>
-            </div>
-            
-            <Link href="/blogs" className={`${styles.mobileNavLink} ${pathname === '/blogs' ? styles.active : ''}`}>Blogs</Link>
-            <Link href="/contact" className={`${styles.mobileNavLink} ${pathname === '/contact' ? styles.active : ''}`}>Contact</Link>
-          
-          {user ? (
-            <div className={styles.mobileUserCard}>
-              <div className={styles.mobileAvatar}>{initials}</div>
-              <div className={styles.mobileUserName}>{user.name}</div>
-              <button className={styles.mobileSignOut} onClick={handleSignOut}>Sign Out</button>
-            </div>
-          ) : (
-            <button className={styles.mobileLoginButton} onClick={() => { setIsMobileMenuOpen(false); setIsAuthOpen(true); }}>
-              Login / Sign Up
-            </button>
-          )}
-          
-          </nav>
-        </div>
-      </div>
-
-      {isMobileMenuOpen && <div className={styles.overlay} onClick={() => setIsMobileMenuOpen(false)} />}
 
       <AuthModal isOpen={isAuthOpen} onClose={() => setIsAuthOpen(false)} onSuccess={handleAuthSuccess} />
       <LocationModal 

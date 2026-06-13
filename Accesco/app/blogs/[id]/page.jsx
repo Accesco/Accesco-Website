@@ -26,6 +26,10 @@ export default function BlogPostPage() {
     try {
       const data = await fetchBlogs();
       const foundPost = data.find(p => p.id === params.id);
+      if (foundPost?.title === 'AccesGo: Moving People, Respecting Lives\n') {
+  setPost(null);
+  return;
+}
       setPost(foundPost);
     } catch (err) {
       console.error('Failed to load blog:', err);

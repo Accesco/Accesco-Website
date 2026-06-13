@@ -320,6 +320,17 @@ function OrderTrackingContent() {
     };
   }, [mapResetKey]);
 
+  // Safe fallback loading state
+  if (!order) {
+    return (
+      <div className={styles.container}>
+        <div style={{ padding: '40px', textAlign: 'center' }}>
+          Loading order...
+        </div>
+      </div>
+    );
+  }
+
   // Inserted definitions to fix unhandled runtime ReferenceErrors:
 
   // Current tracking step

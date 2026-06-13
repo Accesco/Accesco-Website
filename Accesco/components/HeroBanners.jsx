@@ -335,10 +335,13 @@ useEffect(() => {
         }
 
 @media (max-width: 768px) {
-  section {
-    height: 300px !important;
-min-height: 300px !important;
+.swadishtt-hero-section {
+    padding: 40px 16px 15px !important;
   }
+  .hero-card-sw {
+  height: 300px !important;
+}
+  
 
 .hero-card-sw {
   width: calc(100% + 8px) !important;
