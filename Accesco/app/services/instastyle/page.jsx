@@ -42,6 +42,8 @@ export default function InstaStyleLanding() {
   const progressRef = useRef(null);
   const stepsSliderRef = useRef(null);
   const reviewsSliderRef = useRef(null);
+  const introVideoRef = useRef(null);
+  const introTimersRef = useRef([]);
 
   const [email, setEmail] = useState('');
   const [isSubscribed, setIsSubscribed] = useState(false);
@@ -52,23 +54,31 @@ export default function InstaStyleLanding() {
   const [introRendered, setIntroRendered] = useState(true);
 
   useEffect(() => {
-    const hideTimer = setTimeout(() => {
-      setIntroVisible(false);
-    }, 9000);
-
-    const unmountTimer = setTimeout(() => {
-      setIntroRendered(false);
-    }, 9800);
-
+    // Fade out at exactly 9s, unmount after fade completes
+    const t1 = setTimeout(() => setIntroVisible(false), 9000);
+    const t2 = setTimeout(() => setIntroRendered(false), 9800);
+    introTimersRef.current = [t1, t2];
     return () => {
-      clearTimeout(hideTimer);
-      clearTimeout(unmountTimer);
+      clearTimeout(t1);
+      clearTimeout(t2);
     };
   }, []);
 
+  // Pause video at 9s so it never plays beyond the intro window
+  const handleVideoTimeUpdate = () => {
+    if (introVideoRef.current && introVideoRef.current.currentTime >= 9) {
+      introVideoRef.current.pause();
+    }
+  };
+
   const handleSkipIntro = () => {
+    // Clear auto-dismiss timers
+    introTimersRef.current.forEach(clearTimeout);
+    // Pause video immediately
+    if (introVideoRef.current) introVideoRef.current.pause();
+    // Fade out, then unmount after animation
     setIntroVisible(false);
-    setIntroRendered(false);
+    setTimeout(() => setIntroRendered(false), 800);
   };
 
   const featuredProducts = getFeaturedProducts().slice(0, 4);
@@ -344,11 +354,13 @@ export default function InstaStyleLanding() {
         transition: 'opacity 0.8s ease-in-out',
         pointerEvents: introVisible ? 'all' : 'none',
       }}>
-        {/* Fullscreen video — no black bars */}
+        {/* Fullscreen video — no black bars, capped at 9s via onTimeUpdate */}
         <video
+          ref={introVideoRef}
           autoPlay
           muted
           playsInline
+          onTimeUpdate={handleVideoTimeUpdate}
           style={{
             position: 'absolute',
             top: 0,
@@ -358,37 +370,40 @@ export default function InstaStyleLanding() {
             objectFit: 'cover',
             objectPosition: 'center',
             display: 'block',
+            zIndex: 0,
           }}
         >
           <source src="/images/instastylevideo.mp4" type="video/mp4" />
         </video>
 
-        {/* Skip button */}
+        {/* Skip button — high zIndex ensures it is always clickable above video */}
         <button
           onClick={handleSkipIntro}
           style={{
             position: 'absolute',
             top: '24px',
             right: '24px',
-            background: 'rgba(255, 255, 255, 0.85)',
-            border: '1px solid rgba(0, 0, 0, 0.1)',
+            background: 'rgba(255, 255, 255, 0.9)',
+            border: 'none',
             color: '#111',
-            padding: '10px 20px',
+            padding: '10px 22px',
             borderRadius: '30px',
             fontSize: '12px',
             fontWeight: 600,
+            letterSpacing: '0.5px',
             cursor: 'pointer',
-            backdropFilter: 'blur(10px)',
-            transition: 'all 0.3s ease',
-            boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
-            zIndex: 1,
+            backdropFilter: 'blur(12px)',
+            WebkitBackdropFilter: 'blur(12px)',
+            transition: 'background 0.2s ease, transform 0.2s ease',
+            boxShadow: '0 4px 20px rgba(0,0,0,0.15)',
+            zIndex: 100000,
           }}
           onMouseEnter={(e) => {
             e.currentTarget.style.background = '#fff';
             e.currentTarget.style.transform = 'translateY(-1px)';
           }}
           onMouseLeave={(e) => {
-            e.currentTarget.style.background = 'rgba(255, 255, 255, 0.85)';
+            e.currentTarget.style.background = 'rgba(255, 255, 255, 0.9)';
             e.currentTarget.style.transform = 'translateY(0)';
           }}
         >
@@ -406,9 +421,10 @@ export default function InstaStyleLanding() {
           fontWeight: 500,
           letterSpacing: '3px',
           textTransform: 'uppercase',
-          textShadow: '0 1px 8px rgba(0,0,0,0.3)',
-          zIndex: 1,
+          textShadow: '0 2px 12px rgba(0,0,0,0.5)',
+          zIndex: 100000,
           whiteSpace: 'nowrap',
+          pointerEvents: 'none',
         }}>
           InstaStyle by Accesco Living
         </div>
