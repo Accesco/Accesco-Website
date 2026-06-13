@@ -1,315 +1,936 @@
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap');
 
 .pageContent {
   min-height: 100vh;
-  background: #fdfdfd;
+  background-color: #fcfbf7;
+  color: #292524;
   font-family: 'Plus Jakarta Sans', sans-serif;
 }
 
-/* Cinematic Hero Section */
-/* regional-soul.module.css */
+/* Cinematic Hero Home Section */
 .hero {
   position: relative;
-  height: 85vh;
+  min-height: 85vh;
   display: flex;
   align-items: center;
-  padding: 0 8%;
+  padding: 0 10%;
   color: white;
-  /* Removed the hardcoded background url here */
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
   margin-bottom: 60px;
-  transition: background-image 0.5s ease-in-out; /* Optional: smooth transition when switching states */
 }
 
 .heroContent {
   max-width: 650px;
   z-index: 2;
+  text-align: left;
 }
 
 .heroKicker {
   text-transform: uppercase;
   letter-spacing: 0.15em;
-  font-size: 13px;
+  font-size: 11px;
   font-weight: 700;
-  color: #c8e6c9;
-  margin-bottom: 12px;
+  color: #fcd34d;
+  margin-bottom: 16px;
   display: block;
 }
 
 .heroTitle {
   font-family: 'Playfair Display', serif;
-  font-size: clamp(48px, 8vw, 72px);
+  font-size: clamp(40px, 6vw, 64px);
   line-height: 1.1;
   margin-bottom: 24px;
 }
 
+.heroItalic {
+  font-style: italic;
+  font-weight: 400;
+  color: #fef08a;
+}
+
 .heroSub {
-  font-size: 18px;
+  font-size: 16px;
   line-height: 1.6;
   margin-bottom: 32px;
   opacity: 0.9;
-}
-
-.heroActions {
-  display: flex;
-  gap: 16px;
+  font-weight: 300;
 }
 
 .heroBtnPrimary {
-  background: #0d2a1c;
+  background: #78350f;
   color: white;
-  padding: 14px 28px;
-  border-radius: 8px;
-  font-weight: 600;
-  border: none;
+  padding: 14px 32px;
+  border-radius: 9999px;
+  font-weight: 750;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border: 1px solid #78350f;
   cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 10px 25px rgba(120, 53, 15, 0.25);
 }
 
-.heroBtnOutline {
-  background: transparent;
-  color: white;
-  padding: 14px 28px;
-  border-radius: 8px;
-  font-weight: 600;
-  border: 1px solid white;
-  cursor: pointer;
+.heroBtnPrimary:hover {
+  background: #92400e;
+  transform: translateY(-2px);
 }
 
-/* Regional Soul Header */
-.sectionHeader {
-  text-align: center;
-  margin-bottom: 40px;
+/* Regional Explorer Catalogue Section */
+.explorerSection {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 24px 80px;
+}
+
+.sectionHeaderRow {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  border-bottom: 1px solid #e7e5e4;
+  padding-bottom: 32px;
+  margin-bottom: 48px;
+}
+
+@media(min-width: 900px) {
+  .sectionHeaderRow {
+    flex-direction: row;
+    align-items: flex-end;
+    justify-content: space-between;
+  }
+}
+
+.sectionTitleBlock {
+  max-width: 550px;
+  text-align: left;
+}
+
+.heritageLabel {
+  display: block;
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: #78350f;
+  margin-bottom: 8px;
 }
 
 .sectionTitle {
   font-family: 'Playfair Display', serif;
-  font-size: 32px;
-  color: #1a1a1a;
-  margin-bottom: 8px;
-}
-
-.sectionQuote {
-  font-size: 14px;
-  font-style: italic;
-  color: #666;
-}
-
-/* State Selector Tabs */
-.stateSelector {
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 12px;
-  margin-bottom: 48px;
-  padding: 0 24px;
-}
-
-.stateBtn {
-  background: #ffffff;
-  border: 1px solid #eee;
-  border-radius: 8px;
-  padding: 12px 24px;
-  cursor: pointer;
-  font-weight: 600;
-  color: #666;
-  text-transform: uppercase;
-  font-size: 13px;
-  letter-spacing: 0.05em;
-  transition: all 0.3s ease;
-}
-
-.stateActive {
-  background: #0d2a1c !important;
-  color: white !important;
-  border-color: #0d2a1c !important;
-}
-
-/* Featured Info Card */
-.featuredSection {
-  max-width: 1200px;
-  margin: 0 auto 60px;
-  background: #f9f9f9;
-  border-radius: 24px;
-  padding: 40px;
-  border: 1px solid #eee;
-}
-
-.featuredHeader {
-  border-left: 3px solid #0d2a1c;
-  padding-left: 24px;
-  margin-bottom: 32px;
-}
-
-.featuredTitle {
-  font-family: 'Playfair Display', serif;
-  font-size: 28px;
+  font-size: 36px;
+  color: #1c1917;
+  font-weight: 700;
   margin-bottom: 12px;
 }
 
-.featuredStory {
-  font-size: 16px;
-  color: #555;
+.sectionDesc {
+  font-size: 14px;
+  color: #57534e;
   line-height: 1.6;
+}
+
+/* Filters Navigation bar */
+.regionSelectorRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.regionTab {
+  background: white;
+  border: 1px solid #e7e5e4;
+  border-radius: 9999px;
+  padding: 10px 22px;
+  cursor: pointer;
+  font-weight: 700;
+  color: #57534e;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  transition: all 0.25s ease;
+}
+
+.regionTab:hover {
+  border-color: #78350f;
+  color: #78350f;
+}
+
+.regionActive {
+  background: #78350f !important;
+  color: white !important;
+  border-color: #78350f !important;
+  box-shadow: 0 4px 12px rgba(120, 53, 15, 0.15);
+}
+
+/* 10 States Grid display */
+.statesGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 24px;
+}
+
+.stateCard {
+  position: relative;
+  height: 380px;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+  cursor: pointer;
+  transition: all 0.4s ease;
+  border: 1px solid rgba(120, 53, 15, 0.05);
+}
+
+.stateCardImg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.stateCard:hover .stateCardImg {
+  transform: scale(1.05);
+}
+
+.stateCardCover {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, #0c0a09 15%, rgba(12, 10, 9, 0.4) 50%, rgba(12, 10, 9, 0.1));
+  transition: background 0.3s ease;
+}
+
+.stateCard:hover .stateCardCover {
+  background: linear-gradient(to top, #090503 20%, rgba(12, 10, 9, 0.5) 55%, rgba(12, 10, 9, 0.15));
+}
+
+.stateCardContent {
+  position: absolute;
+  inset: 0;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  color: white;
+  text-align: left;
+}
+
+.stateCardNative {
+  font-family: 'Playfair Display', serif;
+  font-size: 12px;
+  font-style: italic;
+  color: #fcd34d;
+  margin-bottom: 2px;
+}
+
+.stateCardTitle {
+  font-family: 'Playfair Display', serif;
+  font-size: 22px;
+  font-weight: 700;
+  margin: 0 !important;
+  color: white;
+}
+
+.stateCardHoverInfo {
+  margin-top: 8px;
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: all 0.4s ease;
+}
+
+.stateCard:hover .stateCardHoverInfo {
+  max-height: 80px;
+  opacity: 1;
+}
+
+.stateCardTagline {
+  font-size: 10px;
+  text-transform: uppercase;
+  color: #fef08a;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  margin-bottom: 4px !important;
+}
+
+.stateCardSpecialties {
+  font-size: 11px;
+  color: #d6d3d1;
+  font-weight: 300;
+}
+
+.stateCardFooter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 16px;
+  border-top: 1px solid rgba(255,255,255,0.15);
+  padding-top: 12px;
+  font-size: 11px;
+  color: rgba(255,255,255,0.7);
+  text-transform: uppercase;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+
+/* Join the Collective Subscription Card */
+.collectiveBanner {
+  background: rgba(120, 53, 15, 0.03);
+  border-top: 1px solid rgba(120, 53, 15, 0.08);
+  border-bottom: 1px solid rgba(120, 53, 15, 0.08);
+  padding: 80px 24px;
+  margin-top: 40px;
+}
+
+.collectiveContainer {
   max-width: 800px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.collectiveTitle {
+  font-family: 'Playfair Display', serif;
+  font-size: 32px;
+  color: #1c1917;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+.collectiveDesc {
+  color: #78716c;
+  font-size: 14px;
+  font-weight: 300;
+  max-width: 550px;
+  margin: 0 auto 32px;
+  line-height: 1.6;
+}
+
+.collectiveInputWrap {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 450px;
+  margin: 0 auto;
+}
+
+@media(min-width: 500px) {
+  .collectiveInputWrap {
+    flex-direction: row;
+    gap: 8px;
+    background: white;
+    border: 1px solid #e7e5e4;
+    border-radius: 9999px;
+    padding: 6px;
+  }
+}
+
+.collectiveInput {
+  flex: 1;
+  border: 1px solid #e7e5e4;
+  border-radius: 9999px;
+  padding: 14px 24px;
+  font-size: 13px;
+  outline: none;
+}
+
+@media(min-width: 500px) {
+  .collectiveInput {
+    border: none;
+  }
+}
+
+.collectiveBtn {
+  background: #78350f;
+  color: white;
+  border: none;
+  border-radius: 9999px;
+  padding: 14px 30px;
+  font-weight: 700;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+}
+
+.collectiveSuccess {
+  background: #065f46;
+  color: white;
+  font-weight: 600;
+  padding: 12px 24px;
+  border-radius: 12px;
+  font-size: 13px;
+  display: inline-block;
+}
+
+/* Detail view structural classes */
+.detailWrapper {
+  animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.detailHero {
+  position: relative;
+  min-height: 70vh;
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  align-items: flex-end;
+  padding: 40px 10% 60px;
+  color: white;
+  text-align: left;
+}
+
+.backBtn {
+  position: absolute;
+  top: 140px;
+  left: 10%;
+  background: rgba(0,0,0,0.4);
+  color: white;
+  border: 1px solid rgba(255,255,255,0.25);
+  border-radius: 9999px;
+  padding: 10px 20px;
+  font-size: 11px;
+  text-transform: uppercase;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  backdrop-filter: blur(8px);
+}
+
+.backBtn:hover {
+  background: rgba(0,0,0,0.6);
+  transform: translateX(-4px);
+}
+
+.detailHeroContent {
+  max-width: 800px;
+  z-index: 2;
+}
+
+.detailHeroKicker {
+  background: rgba(120, 53, 15, 0.45);
+  color: #fcd34d;
+  font-size: 10px;
+  font-weight: 800;
+  padding: 4px 10px;
+  text-transform: uppercase;
+  border-radius: 4px;
+  letter-spacing: 0.1em;
+  display: inline-block;
+  margin-bottom: 12px;
+}
+
+.detailHeroTitle {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(34px, 5vw, 52px);
+  font-weight: 700;
+  line-height: 1.15;
   margin-bottom: 16px;
 }
 
-.chefNote {
-  font-size: 14px;
-  color: #8c6e51;
-  font-weight: 500;
+.detailHeroStory {
+  font-size: 15px;
+  font-weight: 300;
+  line-height: 1.6;
+  color: #e7e5e4;
+  margin-bottom: 24px;
 }
 
-/* Specialties Pills */
-.specialtiesRow {
+.detailSpecialtiesContainer {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: 12px;
 }
 
-.specialtiesLabel {
-  font-size: 12px;
-  font-weight: 800;
-  color: #999;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
+.specialtiesPillRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 
-.specialtyTag {
-  padding: 6px 18px;
-  border: 1px solid #ddd;
-  border-radius: 20px;
-  font-size: 13px;
-  background: white;
-  color: #333;
+.specialtyPill {
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255,255,255,0.18);
+  border-radius: 9999px;
+  padding: 6px 14px;
+  font-size: 11px;
+  color: #fef3c7;
+  font-weight: 500;
 }
 
-/* Dish Grid & Cards */
-.container {
+/* History Block columns */
+.tapestrySection {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 24px 80px;
+  padding: 80px 24px;
 }
 
-.dishGrid {
+.tapestryGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: 32px;
+  grid-template-columns: 1fr;
+  gap: 60px;
 }
 
-.dishCard {
-  background: white;
-  border-radius: 20px;
+@media(min-width: 1024px) {
+  .tapestryGrid {
+    grid-template-columns: 7fr 5fr;
+    align-items: start;
+  }
+}
+
+.tapestryColStory {
+  text-align: left;
+}
+
+.tapestryLabel {
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: #78350f;
+  letter-spacing: 0.1em;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.tapestryTitle {
+  font-family: 'Playfair Display', serif;
+  font-size: 28px;
+  color: #1c1917;
+  font-weight: 700;
+  margin-bottom: 16px;
+}
+
+.tapestryText {
+  color: #57534e;
+  font-size: 14px;
+  line-height: 1.6;
+  font-weight: 300;
+  margin-bottom: 32px;
+}
+
+.tapestryPics {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.tapestryPicFrame {
+  border-radius: 16px;
   overflow: hidden;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.04);
-  transition: transform 0.3s ease;
+  aspect-ratio: 4/3;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
 }
 
-.dishCard:hover {
-  transform: translateY(-8px);
-}
-
-.dishImageWrap {
-  position: relative;
-  aspect-ratio: 1/1;
-}
-
-.dishImageWrap img {
+.tapestryPicFrame img {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
-.ratingBadge {
-  position: absolute;
-  top: 12px;
-  left: 12px;
-  background: rgba(0,0,0,0.7);
-  backdrop-filter: blur(4px);
-  color: white;
-  padding: 4px 10px;
-  border-radius: 6px;
-  font-size: 12px;
-  font-weight: 700;
+/* Culinary Alchemist highlight panels */
+.tapestryColCard {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.alchemistBox {
+  background: rgba(120, 53, 15, 0.03);
+  border: 1px solid rgba(120, 53, 15, 0.08);
+  border-radius: 24px;
+  padding: 32px;
+  text-align: left;
+}
+
+.alchemistHeader {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 8px;
+  margin-bottom: 16px;
 }
 
-.vegBadge {
-  position: absolute;
-  top: 12px;
-  right: 12px;
-  background: white;
-  padding: 4px 8px;
-  border-radius: 4px;
-  font-size: 10px;
+.alchemistTitleLabel {
+  font-size: 11px;
   font-weight: 800;
-  color: #666;
+  text-transform: uppercase;
+  color: #92400e;
+  letter-spacing: 0.08em;
 }
 
-.dishContent {
-  padding: 24px;
-}
-
-.dishName {
+.alchemistTitle {
   font-family: 'Playfair Display', serif;
+  font-size: 22px;
+  color: #1c1917;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+.alchemistStory {
+  font-size: 13px;
+  line-height: 1.6;
+  color: #57534e;
+  margin-bottom: 24px;
+}
+
+.chefMessageBox {
+  background: rgba(120, 53, 15, 0.05);
+  border-radius: 16px;
+  padding: 16px;
+  display: flex;
+  gap: 12px;
+}
+
+.chefMessageEmoji {
   font-size: 20px;
+}
+
+.chefMessageTitle {
+  font-weight: 750;
+  font-size: 12px;
+  display: block;
+  color: #444;
+}
+
+.chefMessageText {
+  font-style: italic;
+  font-size: 11px;
+  color: #78350f;
+  margin: 4px 0 0 !important;
+}
+
+.alchemistHeroFrame {
+  position: relative;
+  aspect-ratio: 16/10;
+  border-radius: 24px;
+  overflow: hidden;
+}
+
+.alchemistHeroFrame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.alchemistHeroCover {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, #111e 10%, transparent);
+  display: flex;
+  align-items: flex-end;
+  padding: 24px;
+  text-align: left;
+}
+
+.alchemistHeroTag {
+  font-size: 9px;
+  text-transform: uppercase;
+  color: #fcd34d;
+  font-weight: 700;
+}
+
+.alchemistHeroTitle {
+  font-family: 'Playfair Display', serif;
+  font-size: 18px;
+  color: white;
+  font-weight: 700;
+  margin: 2px 0 0 !important;
+}
+
+/* Taste of state Artisan Menu section */
+.menuContainer {
+  background: rgba(120, 53, 15, 0.02);
+  border-top: 1px solid rgba(120, 53, 15, 0.06);
+  padding: 80px 24px;
+}
+
+.menuHeader {
+  max-width: 650px;
+  margin: 0 auto 56px;
+  text-align: center;
+}
+
+.menuLabel {
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: #78350f;
+  display: inline-block;
   margin-bottom: 8px;
 }
 
-.dishDesc {
-  font-size: 14px;
-  color: #777;
-  line-height: 1.5;
-  margin-bottom: 24px;
-  min-height: 42px;
+.menuTitle {
+  font-family: 'Playfair Display', serif;
+  font-size: 32px;
+  font-weight: 700;
+  color: #171717;
+  margin-bottom: 12px;
 }
 
-.dishFooter {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
+.menuSubtitle {
+  font-size: 13px;
+  color: #666;
+  line-height: 1.6;
 }
 
-.priceCol {
+.dishGridCardRow {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 32px;
+}
+
+.dishCardModern {
+  background: white;
+  border: 1px solid #e7e5e4;
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.03);
+  position: relative;
   display: flex;
   flex-direction: column;
 }
 
-.dishPrice {
+.dishBadgeLabel {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  z-index: 10;
+  background: #78350f;
+  color: white;
+  font-size: 9px;
+  font-weight: 850;
+  text-transform: uppercase;
+  padding: 4px 8px;
+  border-radius: 4px;
+  letter-spacing: 0.05em;
+}
+
+.dishRatingBadge {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  z-index: 10;
+  background: rgba(0,0,0,0.6);
+  color: #fcd34d;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+.dishImgWrapper {
+  aspect-ratio: 1/1;
+  overflow: hidden;
+  position: relative;
+  background: #f5f5f4;
+}
+
+.dishImgWrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.dishVegMarker {
+  position: absolute;
+  bottom: 16px;
+  left: 16px;
+  background: rgba(255,255,255,0.9);
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 9px;
+  font-weight: 800;
+  color: #444;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.vegColorDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+
+.vegDotGreen {
+  background: #059669;
+}
+
+.vegDotRed {
+  background: #dc2626;
+}
+
+.dishContentBlock {
+  padding: 24px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  text-align: left;
+}
+
+.dishNameText {
+  font-family: 'Playfair Display', serif;
   font-size: 18px;
   font-weight: 700;
-  color: #1a1a1a;
+  margin-bottom: 8px !important;
+  color: #171717;
 }
 
-.dishCal {
-  font-size: 11px;
+.dishDescriptionText {
+  font-size: 12px;
+  color: #666;
+  line-height: 1.5;
+  margin-bottom: 24px !important;
+}
+
+.dishFooterRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  border-top: 1px solid #f2f0ed;
+  padding-top: 16px;
+}
+
+.dishPriceText {
+  font-size: 18px;
+  font-weight: 800;
+  color: #111;
+  display: block;
+}
+
+.dishCalText {
+  font-size: 10px;
   color: #999;
+  display: block;
 }
 
-.addBtn {
-  background: #0d2a1c;
+.addTrayBtn {
+  background: #78350f;
   color: white;
   border: none;
-  padding: 10px 24px;
-  border-radius: 8px;
   font-weight: 700;
+  font-size: 11px;
+  text-transform: uppercase;
+  padding: 10px 18px;
+  border-radius: 8px;
   cursor: pointer;
   transition: opacity 0.2s;
 }
 
-.addBtn:hover {
-  opacity: 0.9;
+.addTrayBtn:hover {
+  opacity: 0.95;
+}
+.storyLayout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 32px;
+  align-items: center;
 }
 
-/* Responsive */
-@media (max-width: 768px) {
-  .hero { height: 70vh; padding: 0 5%; }
-  .heroTitle { font-size: 40px; }
-  .featuredSection { padding: 24px; border-radius: 0; }
-  .dishGrid { grid-template-columns: 1fr; }
+.storyTextBlock {
+  text-align: left;
+}
+
+.storyImagesTop {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+}
+
+.storySmallImage {
+  border-radius: 10px;
+  overflow: hidden;
+  aspect-ratio: 4 / 5;
+}
+
+.storySmallImage img,
+.storyMainImage img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.storyMainImage {
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+  min-height: 320px;
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.12);
+}
+
+.storyImageTag {
+  position: absolute;
+  right: 14px;
+  bottom: 14px;
+  background: #fff7d6;
+  color: #78350f;
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-size: 11px;
+  max-width: 160px;
+}
+
+.storyImageTag strong {
+  display: block;
+  font-family: 'Playfair Display', serif;
+  font-size: 13px;
+  margin-bottom: 4px;
+}
+
+.storyImageTag span {
+  display: block;
+  color: #57534e;
+  line-height: 1.4;
+}
+
+.storyCard {
+  background: #f5edc8;
+  border-radius: 12px;
+  padding: 32px;
+  text-align: left;
+}
+
+.storyCard h3 {
+  font-family: 'Playfair Display', serif;
+  color: #78350f;
+  font-size: 20px;
+  margin-bottom: 14px;
+}
+
+.storyCard p {
+  color: #57534e;
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+@media (min-width: 900px) {
+  .storyLayout {
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+  }
+
+  .storyTextBlock {
+    padding-right: 30px;
+  }
+
+  .storyImagesTop {
+    align-items: start;
+  }
+
+  .storyMainImage {
+    min-height: 380px;
+  }
+
+  .storyCard {
+    max-width: 520px;
+  }
 }

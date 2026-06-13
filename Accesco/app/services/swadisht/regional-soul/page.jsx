@@ -1,217 +1,260 @@
 'use client';
 
-/**
- * Regional Soul Page
- * @page /services/swadisht/regional-soul
- * @description Explore India through authentic state-wise cuisine
- */
-
 import { useState } from 'react';
 import { useSwadishtt } from '../contexts/SwadishttContext';
 import SwadishttHeader from '../components/SwadishttHeader';
+import { STATES } from './statesData';
 import styles from './regional-soul.module.css';
-const STATES = [
-  {
-    id: 'kerala',
-    name: 'Kerala',
-    tagline: "God's Own Kitchen",
-    kicker: 'THE SPICE COAST HERITAGE',
-    color: '#0D2A1C', 
-    specialties: ['Appam & Stew', 'Fish Curry', 'Puttu & Kadala', 'Payasam', 'Sadya'],
-    chefNote: 'Prepared by home chefs from Kochi & Thrissur',
-    story: 'Kerala cuisine is defined by its abundant use of coconut, curry leaves, and fresh seafood. Every dish tells the story of a coastal land blessed with spices.',
-    heroImage: 'https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?q=80&w=2000&auto=format&fit=crop',
-    dishes: [
-      { id: 'k1', name: 'Onam Sadya', price: 599, calories: 1440, rating: 4.9, isVeg: true, image: '/images/swadisht/regional/onam-sadya.jpg', desc: '26-dish feast on banana leaf. Sourced from organic farms in Palakkad.' },
-      { id: 'k2', name: 'Kerala Fish Curry', price: 320, calories: 380, rating: 4.7, isVeg: false, image: '/images/swadisht/regional/fish-curry.jpg', desc: 'Tangy coconut milk curry with Kudampuli. Caught fresh from the Vembanad Lake.' },
-      { id: 'k3', name: 'Appam & Stew', price: 180, calories: 280, rating: 4.6, isVeg: true, image: '/images/swadisht/regional/appam-stew.jpg', desc: 'Lacy rice crepes with coconut milk stew. A Christian household recipe from Alleppey.' },
-      { id: 'k4', name: 'Puttu & Kadala', price: 140, calories: 320, rating: 4.5, isVeg: true, image: '/images/swadisht/regional/puttu.jpg', desc: 'Steamed rice cylinders with black chickpea curry.' },
-    ],
-  },
-  {
-    id: 'punjab',
-    name: 'Punjab',
-    tagline: 'Land of Five Rivers',
-    kicker: 'THE REBELS OF THE HARVEST',
-    color: '#3A1524', 
-    specialties: ['Sarson da Saag', 'Makki di Roti', 'Chole Bhature', 'Lassi', 'Amritsari Kulcha'],
-    chefNote: 'Authentic dhaba-style cooking from Amritsar families',
-    heroImage: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=2000&auto=format&fit=crop',
-    story: 'Punjabi food is bold, hearty, and generous — just like its people. From the smoky tandoor to the creamy dal makhani, every bite is a celebration of life.',
-    dishes: [
-      { id: 'p1', name: 'Sarson da Saag', price: 220, calories: 340, rating: 4.8, isVeg: true, image: '/images/swadisht/regional/sarson-saag.jpg', desc: 'Mustard greens with hand-churned white butter and makki roti.' },
-      { id: 'p2', name: 'Amritsari Kulcha', price: 160, calories: 420, rating: 4.7, isVeg: true, image: '/images/swadisht/regional/kulcha.jpg', desc: 'Crispy layered bread stuffed with spiced potatoes and baked in tandoor.' },
-      { id: 'p3', name: 'Lassi', price: 80, calories: 180, rating: 4.9, isVeg: true, image: '/images/swadisht/regional/lassi.jpg', desc: 'Thick sweet yogurt drink served in a traditional clay kullad.' },
-      { id: 'p4', name: 'Dal Makhani', price: 240, calories: 380, rating: 4.8, isVeg: true, image: '/images/swadisht/regional/dal-makhani.jpg', desc: 'Slow-cooked black lentils simmered for 24 hours.' },
-    ],
-  },
-  {
-    id: 'bengal',
-    name: 'Bengal',
-    tagline: 'Sweet & Subtle Flavors',
-    kicker: 'THE NOBILITY OF THE GANGES',
-    color: '#01579B', 
-    specialties: ['Machher Jhol', 'Mishti Doi', 'Rosogolla', 'Kosha Mangsho', 'Luchi'],
-    chefNote: 'Traditional Bengali home cooks from Kolkata',
-    heroImage: 'https://images.unsplash.com/photo-1558431382-27e303142255?q=80&w=2000&auto=format&fit=crop',
+import { Sparkles, MapPin, ArrowLeft, Star, Heart, Flame } from 'lucide-react';
 
-    story: 'Bengali cuisine is a delicate balance of sweet and savory. Fish is the soul of the kitchen, and no meal is complete without a mishti (sweet) at the end.',
-    dishes: [
-      { id: 'b1', name: 'Machher Jhol', price: 280, calories: 320, rating: 4.7, isVeg: false, image: '/images/swadisht/regional/machher-jhol.jpg', desc: 'Light fish curry with potatoes, seasoned with signature Panch Phoron.' },
-      { id: 'b2', name: 'Kosha Mangsho', price: 380, calories: 480, rating: 4.8, isVeg: false, image: '/images/swadisht/regional/kosha-mangsho.jpg', desc: 'Velvety mutton curry slow-cooked for a deep, dark mahogany finish.' },
-      { id: 'b3', name: 'Rosogolla', price: 60, calories: 120, rating: 4.9, isVeg: true, image: '/images/swadisht/regional/rosogolla.jpg', desc: 'Spongy chhena dumplings soaked in a light, fragrant syrup.' },
-      { id: 'b4', name: 'Mishti Doi', price: 80, calories: 160, rating: 4.8, isVeg: true, image: '/images/swadisht/regional/mishti-doi.jpg', desc: 'Earthy, caramelized yogurt fermented in traditional terracotta pots.' },
-    ],
-  },
-  {
-    id: 'rajasthan',
-    name: 'Rajasthan',
-    tagline: 'The Royal Desert Legacy',
-    kicker: 'THE FIRE OF THE RAJPUTS',
-    color: '#BF360C', 
-    specialties: ['Dal Baati Churma', 'Laal Maas', 'Gatte ki Sabzi', 'Ker Sangri', 'Ghevar'],
-    chefNote: 'Royal Rajput kitchen traditions from Jaipur & Jodhpur',
-    heroImage: 'https://images.unsplash.com/photo-1599661046289-e31897846e41?q=80&w=2000&auto=format&fit=crop',
-    story: 'Born from a harsh landscape, Rajasthani food is built for royalty. It reflects the ingenuity of cooking with minimal water and maximum soul.',
-    dishes: [
-      { id: 'r1', name: 'Dal Baati Churma', price: 280, calories: 680, rating: 4.8, isVeg: true, image: '/images/swadisht/regional/dal-baati.jpg', desc: 'Hand-pressed wheat balls baked over embers, served with pure Desi Ghee.' },
-      { id: 'r2', name: 'Laal Maas', price: 420, calories: 560, rating: 4.9, isVeg: false, image: '/images/swadisht/regional/laal-maas.jpg', desc: 'Fiery mutton curry smoked with Mathania chillies.' },
-      { id: 'r3', name: 'Gatte ki Sabzi', price: 200, calories: 320, rating: 4.5, isVeg: true, image: '/images/swadisht/regional/gatte.jpg', desc: 'Gram flour dumplings simmered in a tangy yogurt gravy.' },
-      { id: 'r4', name: 'Ghevar', price: 120, calories: 280, rating: 4.7, isVeg: true, image: '/images/swadisht/regional/ghevar.jpg', desc: 'Disc-shaped honeycomb sweet topped with malai rabri.' },
-    ],
-  },
-  {
-    id: 'tamil-nadu',
-    name: 'Tamil Nadu',
-    tagline: 'The Coromandel Spice Trail',
-    kicker: 'ANCIENT DRAVIDIAN WISDOM',
-    color: '#4E342E', 
-    specialties: ['Chettinad Chicken', 'Idli & Sambar', 'Dosa', 'Filter Coffee', 'Pongal'],
-    chefNote: 'Brahmin & Chettinad home cooks from Chennai & Karaikudi',
-    heroImage: 'https://images.unsplash.com/photo-1582510003544-4d00b7f74220?q=80&w=2000&auto=format&fit=crop',
-    story: 'From mild, sattvic temple foods to complex, aromatic Chettinad spices, Tamil cuisine is a testament to ancient culinary wisdom.',
-    dishes: [
-      { id: 't1', name: 'Chettinad Chicken', price: 360, calories: 520, rating: 4.9, isVeg: false, image: '/images/swadisht/regional/chettinad-chicken.jpg', desc: 'Prepared with 16 varieties of spices including kalpasi and marathi moggu.' },
-      { id: 't2', name: 'Ghee Pongal', price: 120, calories: 380, rating: 4.6, isVeg: true, image: '/images/swadisht/regional/pongal.jpg', desc: 'Temple-style rice porridge tempered with ginger, black pepper, and cashews.' },
-      { id: 't3', name: 'Filter Coffee', price: 60, calories: 80, rating: 4.9, isVeg: true, image: '/images/swadisht/regional/filter-coffee.jpg', desc: 'Hand-picked beans from Nilgiris, brewed in a brass filter.' },
-      { id: 't4', name: 'Idli Sambar', price: 100, calories: 240, rating: 4.7, isVeg: true, image: '/images/swadisht/regional/idli-sambar.jpg', desc: 'Pillow-soft rice cakes with drumstick-infused tiffin sambar.' },
-    ],
-  },
-];
-
-function RegionalSoulContent() {
+export default function RegionalSoulPage() {
   const { addToCart } = useSwadishtt();
+  const [view, setView] = useState('hub');
   const [selectedState, setSelectedState] = useState(STATES[0]);
+  const [selectedRegion, setSelectedRegion] = useState('All Regions');
+  const [wishlist, setWishlist] = useState({});
 
-  const handleAdd = (dish) => {
-    addToCart({ 
-      id: dish.id, 
-      name: dish.name, 
-      price: dish.price, 
-      image: dish.image 
+  const regions = ['All Regions', 'North India', 'South India', 'East India', 'West India', 'Northeast'];
+
+  const filteredStates = selectedRegion === 'All Regions'
+    ? STATES
+    : STATES.filter((state) => state.region === selectedRegion);
+
+  const handleSelectState = (state) => {
+    setSelectedState(state);
+    setView('state-detail');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleAddToCart = (dish) => {
+    addToCart({
+      id: dish.id,
+      name: dish.name,
+      price: dish.price,
+      image: dish.image,
     });
   };
 
+  const toggleWishlist = (dishId) => {
+    setWishlist((prev) => ({ ...prev, [dishId]: !prev[dishId] }));
+  };
+
   return (
-    <div className={styles.pageContent}>
+    <main className={styles.pageContent}>
       <SwadishttHeader />
 
-      {/* Cinematic Hero Section */}
-      <section 
-        className={styles.hero} 
-        style={{ backgroundImage: `linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.5)), url('${selectedState.heroImage}')` }}
-      >
-        <div className={styles.heroContent}>
-          {/* Using the kicker property from the state object */}
-          <span className={styles.heroKicker}>{selectedState.kicker}</span>
-          <h1 className={styles.heroTitle}>{selectedState.name} — {selectedState.tagline}</h1>
-          <p className={styles.heroSub}>{selectedState.story}</p>
-          <div className={styles.heroActions}>
-            <button className={styles.heroBtnPrimary}>Explore the Menu</button>
-            <button className={styles.heroBtnOutline}>Our Provenance</button>
-          </div>
-        </div>
-      </section>
-
-      {/* Regional Soul Header */}
-      <div className={styles.sectionHeader}>
-        <h2 className={styles.sectionTitle}>Regional Soul</h2>
-        <p className={styles.sectionQuote}>"Curated exactly as locals experience it"</p>
-      </div>
-
-      {/* State Tabs Selector */}
-      <nav className={styles.stateSelector}>
-        {STATES.map((state) => (
-          <button
-            key={state.id}
-            className={`${styles.stateBtn} ${selectedState.id === state.id ? styles.stateActive : ''}`}
-            onClick={() => setSelectedState(state)}
+      {view === 'hub' ? (
+        <>
+          <section
+            className={styles.hero}
+            style={{
+           backgroundImage:
+  "linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1587474260584-136574528ed5?auto=format&fit=crop&w=2000&q=80')",
+            }}
           >
-            {state.name}
-          </button>
-        ))}
-      </nav>
+            <div className={styles.heroContent}>
+              <span className={styles.heroKicker}>
+                <Sparkles size={14} /> Curated Culinary Preservation
+              </span>
 
-      {/* State Featured Story Card */}
-      <div className={styles.featuredSection}>
-        <div className={styles.featuredHeader}>
-          <h2 className={styles.featuredTitle}>{selectedState.name} — {selectedState.tagline}</h2>
-          <p className={styles.featuredStory}>{selectedState.story}</p>
-          <p className={styles.chefNote}>🍴 {selectedState.chefNote}</p>
-        </div>
+              <h1 className={styles.heroTitle}>
+                Discover the <br />
+                <span className={styles.heroItalic}>Soul of India</span>
+              </h1>
 
-        <div className={styles.specialtiesRow}>
-          <span className={styles.specialtiesLabel}>SPECIALTIES:</span>
-          {selectedState.specialties.map((s) => (
-            <span key={s} className={styles.specialtyTag}>{s}</span>
-          ))}
-        </div>
-      </div>
+              <p className={styles.heroSub}>
+                A sophisticated journey through regional traditions, timeless craftsmanship,
+                and the vibrant stories that define the Indian subcontinent.
+              </p>
 
-      {/* Dish Grid */}
-      <main className={styles.container}>
-        <div className={styles.dishGrid}>
-          {selectedState.dishes.map((dish) => (
-            <article key={dish.id} className={styles.dishCard}>
-              <div className={styles.dishImageWrap}>
-                <img
-                  src={dish.image}
-                  alt={dish.name}
-                  onError={(e) => {
-                    e.target.src = `https://placehold.co/600x600/1a1a1a/FFFFFF/png?text=${encodeURIComponent(dish.name)}`;
-                  }}
-                />
-                <div className={styles.ratingBadge}>★ {dish.rating}</div>
-                <div className={styles.vegBadge}>{dish.isVeg ? 'VEG' : 'NON-VEG'}</div>
+              <button
+                type="button"
+                className={styles.heroBtnPrimary}
+                onClick={() => document.getElementById('region-explorer-section')?.scrollIntoView({ behavior: 'smooth' })}
+              >
+                Start Your Exploration
+              </button>
+            </div>
+          </section>
+
+          <section id="region-explorer-section" className={styles.explorerSection}>
+            <div className={styles.sectionHeaderRow}>
+              <div className={styles.sectionTitleBlock}>
+                <span className={styles.heritageLabel}>Heritage Catalogue</span>
+                <h2 className={styles.sectionTitle}>Explore Our Heritage</h2>
+                <p className={styles.sectionDesc}>
+                  Traverse the diverse landscape of Indian gastronomy. Click on any state card
+                  to dive into its local stories and order artisanal delicacies.
+                </p>
               </div>
-              
-              <div className={styles.dishContent}>
-                <h3 className={styles.dishName}>{dish.name}</h3>
-                <p className={styles.dishDesc}>{dish.desc}</p>
-                
-                <div className={styles.dishFooter}>
-                  <div className={styles.priceCol}>
-                    <span className={styles.dishPrice}>₹{dish.price}</span>
-                    <span className={styles.dishCal}>{dish.calories} cal</span>
-                  </div>
-                  <button 
-                    className={styles.addBtn} 
-                    onClick={() => handleAdd(dish)}
+
+              <div className={styles.regionSelectorRow}>
+                {regions.map((region) => (
+                  <button
+                    type="button"
+                    key={region}
+                    onClick={() => setSelectedRegion(region)}
+                    className={`${styles.regionTab} ${selectedRegion === region ? styles.regionActive : ''}`}
                   >
-                    Add
+                    {region}
                   </button>
+                ))}
+              </div>
+            </div>
+
+            <div className={styles.statesGrid}>
+              {filteredStates.map((state) => (
+                <article
+                  key={state.id}
+                  onClick={() => handleSelectState(state)}
+                  className={styles.stateCard}
+                >
+                  <img src={state.heroImage} alt={state.name} className={styles.stateCardImg} />
+                  <div className={styles.stateCardCover} />
+
+                  <div className={styles.stateCardContent}>
+                    <span className={styles.stateCardNative}>{state.nativeName}</span>
+                    <h3 className={styles.stateCardTitle}>{state.name}</h3>
+
+                    <div className={styles.stateCardHoverInfo}>
+                      <p className={styles.stateCardTagline}>{state.tagline}</p>
+                      <p className={styles.stateCardSpecialties}>{state.specialties.join(' • ')}</p>
+                    </div>
+
+                    <div className={styles.stateCardFooter}>
+                      <span>{state.region}</span>
+                      <MapPin size={14} />
+                    </div>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </section>
+        </>
+      ) : (
+        <div className={styles.detailWrapper}>
+          <section
+            className={styles.detailHero}
+            style={{
+              backgroundImage: `linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.85)), url('${selectedState.heroImage}')`,
+            }}
+          >
+            <button type="button" onClick={() => setView('hub')} className={styles.backBtn}>
+              <ArrowLeft size={14} /> Back to Explorer
+            </button>
+
+            <div className={styles.detailHeroContent}>
+              <span className={styles.detailHeroKicker}>{selectedState.kicker}</span>
+              <h1 className={styles.detailHeroTitle}>
+                {selectedState.name}: {selectedState.tagline}
+              </h1>
+              <p className={styles.detailHeroStory}>{selectedState.story}</p>
+
+              <div className={styles.detailSpecialtiesContainer}>
+                <div className={styles.specialtiesPillRow}>
+                  {selectedState.specialties.map((specialty) => (
+                    <span key={specialty} className={styles.specialtyPill}>{specialty}</span>
+                  ))}
                 </div>
               </div>
-            </article>
-          ))}
-        </div>
-      </main>
-      
-     
-    </div>
-  );
-}
+            </div>
+          </section>
 
-export default function RegionalSoulPage() {
-  return <RegionalSoulContent />;
+          <section className={styles.tapestrySection}>
+  <div className={styles.storyLayout}>
+    <div className={styles.storyTextBlock}>
+      <h2 className={styles.tapestryTitle}>
+        {selectedState.traditionalCookingTitle}
+      </h2>
+      <p className={styles.tapestryText}>
+        {selectedState.traditionalCookingStory}
+      </p>
+    </div>
+
+    <div className={styles.storyImagesTop}>
+      {selectedState.traditionalImages.map((img, index) => (
+        <div key={index} className={styles.storySmallImage}>
+          <img src={img} alt={`${selectedState.name} tradition ${index + 1}`} />
+        </div>
+      ))}
+    </div>
+
+    <div className={styles.storyMainImage}>
+      <img
+        src={selectedState.specialDishImage || selectedState.heroImage}
+        alt={selectedState.culinaryAlchemistTitle}
+      />
+      <div className={styles.storyImageTag}>
+        <strong>{selectedState.culinaryAlchemistTitle}</strong>
+        <span>{selectedState.chefNote}</span>
+      </div>
+    </div>
+
+    <div className={styles.storyCard}>
+      <h3>{selectedState.culinaryAlchemistTitle}</h3>
+      <p>{selectedState.culinaryAlchemistStory}</p>
+    </div>
+  </div>
+</section>
+          <section className={styles.menuContainer}>
+            <div className={styles.menuHeader}>
+              <span className={styles.menuLabel}>Artisan Specials</span>
+              <h2 className={styles.menuTitle}>Taste of {selectedState.name}</h2>
+              <p className={styles.menuSubtitle}>Handpicked dishes inspired by regional kitchens and local traditions.</p>
+            </div>
+
+            <div className={styles.dishGridCardRow}>
+              {selectedState.dishes.map((dish) => (
+                <article key={dish.id} className={styles.dishCardModern}>
+                  {dish.badge && <span className={styles.dishBadgeLabel}>{dish.badge}</span>}
+
+                  <span className={styles.dishRatingBadge}>
+                    <Star size={12} fill="currentColor" /> {dish.rating}
+                  </span>
+
+                  <div className={styles.dishImgWrapper}>
+                    <img src={dish.image} alt={dish.name} />
+                    <span className={styles.dishVegMarker}>
+                      <span className={`${styles.vegColorDot} ${dish.isVeg ? styles.vegDotGreen : styles.vegDotRed}`} />
+                      {dish.isVeg ? 'Veg' : 'Non-Veg'}
+                    </span>
+                  </div>
+
+                  <div className={styles.dishContentBlock}>
+                    <div>
+                      <h3 className={styles.dishNameText}>{dish.name}</h3>
+                      <p className={styles.dishDescriptionText}>{dish.desc}</p>
+                    </div>
+
+                    <div className={styles.dishFooterRow}>
+                      <div>
+                        <span className={styles.dishPriceText}>₹{dish.price}</span>
+                        <span className={styles.dishCalText}>{dish.calories} cal</span>
+                      </div>
+
+                      <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                        <button
+                          type="button"
+                          onClick={() => toggleWishlist(dish.id)}
+                          aria-label="Toggle wishlist"
+                          className={styles.addTrayBtn}
+                          style={{ padding: '10px 12px' }}
+                        >
+                          <Heart size={14} fill={wishlist[dish.id] ? 'currentColor' : 'none'} />
+                        </button>
+
+                        <button type="button" onClick={() => handleAddToCart(dish)} className={styles.addTrayBtn}>
+                          Add to Cart
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </section>
+        </div>
+      )}
+    </main>
+  );
 }
