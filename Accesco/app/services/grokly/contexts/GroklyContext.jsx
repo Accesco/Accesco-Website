@@ -105,7 +105,6 @@ export function GroklyProvider({ children }) {
   const closeLocationModal = () => setIsLocationModalOpen(false);
 
   const placeOrder = (orderDetails) => {
-    // Note: orderDetails should include the items if they want to snapshot them
     const newOrder = {
       id: `GRK-${Date.now()}`,
       status: 'PLACED',
@@ -115,6 +114,15 @@ export function GroklyProvider({ children }) {
     };
     setOrders(prev => [newOrder, ...prev]);
     setCart({});
+
+    // Persist to backend (non-blocking — local state already updated)
+    const customerEmail = orderDetails.customerEmail || null;
+    fetch('/api/grokly/orders', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ order: newOrder, customerEmail }),
+    }).catch(err => console.error('[GroklyContext] Backend order sync failed:', err));
+
     return newOrder;
   };
 

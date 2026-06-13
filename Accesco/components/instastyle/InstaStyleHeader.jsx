@@ -301,6 +301,7 @@ export default function InstaStyleHeader() {
     { href: '/services/instastyle/virtual-tryon', label: 'Virtual Try-On' },
     { href: '/services/instastyle/swipestyle', label: 'SwipeStyle' },
     { href: '/services/instastyle/thrift', label: 'Thrift' },
+    ...(isMobileViewport ? [{ href: '/services/instastyle/wishlist', label: 'Wishlist' }] : []),
   ];
 
   const isActiveLink = (href, exact = false) => {
@@ -399,7 +400,7 @@ export default function InstaStyleHeader() {
           <MapPin size={18} />
           <span
             style={{
-              maxWidth: '140px',
+              maxWidth: isMobileViewport ? '75px' : '140px',
               overflow: 'hidden',
               textOverflow: 'ellipsis',
               whiteSpace: 'nowrap',
@@ -411,17 +412,19 @@ export default function InstaStyleHeader() {
         </button>
         <div className={`instaHeaderActions ${styles.actions}`} style={fallback.actions}>
           {/* Wishlist */}
-          <Link
-            href="/services/instastyle/wishlist"
-            className={`instaHeaderActionButton ${styles.actionButton}`}
-            style={fallback.actionButton}
-            aria-label="Wishlist"
-            title="Wishlist"
-          >
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-            </svg>
-          </Link>
+          {!isMobileViewport && (
+            <Link
+              href="/services/instastyle/wishlist"
+              className={`instaHeaderActionButton ${styles.actionButton}`}
+              style={fallback.actionButton}
+              aria-label="Wishlist"
+              title="Wishlist"
+            >
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+              </svg>
+            </Link>
+          )}
 
           {/* Cart */}
           <button
@@ -444,32 +447,34 @@ export default function InstaStyleHeader() {
           </button>
 
           {/* Account — same Accesco session via AuthModal */}
-          {user ? (
-            <Link
-              href="/services/instastyle/profile"
-              className={`instaHeaderActionButton ${styles.actionButton} ${styles.accountLink}`}
-              style={fallback.actionButton}
-              aria-label={`Account, signed in as ${user.name}`}
-              title="Your profile"
-            >
-              <span className={styles.userInitials} aria-hidden="true">
-                {initials}
-              </span>
-            </Link>
-          ) : (
-            <button
-              type="button"
-              onClick={() => setIsAuthOpen(true)}
-              className={`instaHeaderActionButton ${styles.actionButton}`}
-              style={fallback.actionButton}
-              aria-label="Sign in or create an account"
-              title="Login / Sign up"
-            >
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
-                <circle cx="12" cy="7" r="4" />
-              </svg>
-            </button>
+          {!isMobileViewport && (
+            user ? (
+              <Link
+                href="/services/instastyle/profile"
+                className={`instaHeaderActionButton ${styles.actionButton} ${styles.accountLink}`}
+                style={fallback.actionButton}
+                aria-label={`Account, signed in as ${user.name}`}
+                title="Your profile"
+              >
+                <span className={styles.userInitials} aria-hidden="true">
+                  {initials}
+                </span>
+              </Link>
+            ) : (
+              <button
+                type="button"
+                onClick={() => setIsAuthOpen(true)}
+                className={`instaHeaderActionButton ${styles.actionButton}`}
+                style={fallback.actionButton}
+                aria-label="Sign in or create an account"
+                title="Login / Sign up"
+              >
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+                  <circle cx="12" cy="7" r="4" />
+                </svg>
+              </button>
+            )
           )}
 
           {/* Mobile Menu Toggle */}

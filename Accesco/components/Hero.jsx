@@ -277,16 +277,16 @@ export default function Hero() {
         }
       `}</style>
 
-      <video 
+      <video
         ref={videoRef}
-        className="hero-bg-video" 
-        autoPlay 
-        muted 
-        loop 
-        playsInline 
+        className="hero-bg-video"
+        autoPlay
+        muted
+        loop
+        playsInline
         preload="auto"
       >
-        <source src="/images/start.MP4" type="video/mp4" />
+        <source src="/images/herovideo.MP4" type="video/mp4" />
         Your browser does not support the video tag.
       </video>
 
@@ -310,12 +310,12 @@ export default function Hero() {
           Delivering Groceries, Food, and Fashion under one unified platform
         </div>
 
-        
-        
-        
 
-        <a 
-          href="#services" 
+
+
+
+        <a
+          href="#services"
           className="scroll-down-btn"
         >
           SCROLL DOWN <i className="ri-arrow-down-s-line"></i>

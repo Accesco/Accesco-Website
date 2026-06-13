@@ -267,7 +267,7 @@ export function CartProvider({ children }) {
       cart.forEach(item => {
         if (!next[item.id]) next[item.id] = {};
         const currentSizeStock = next[item.id][item.selectedSize] !== undefined ? 
-                                next[item.id][item.selectedSize] : 10; // Default 10 if not set
+                                next[item.id][item.selectedSize] : 10;
         next[item.id][item.selectedSize] = Math.max(0, currentSizeStock - item.quantity);
       });
       return next;
@@ -275,6 +275,15 @@ export function CartProvider({ children }) {
 
     setOrders(prev => [newOrder, ...prev]);
     clearCart();
+
+    // Persist to backend (non-blocking — local state already updated)
+    const customerEmail = orderData.customerEmail || null;
+    fetch('/api/instastyle/orders', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ order: newOrder, customerEmail }),
+    }).catch(err => console.error('[CartContext] Backend order sync failed:', err));
+
     return newOrder;
   };
 
