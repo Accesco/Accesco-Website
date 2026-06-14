@@ -1,4 +1,3 @@
-
 'use client';
 
 import React from 'react';
@@ -141,63 +140,38 @@ export default function Hero() {
           box-shadow: 0 18px 50px rgba(255,255,255,0.4);
         }
 
+        .hero-app-buttons {
+          display: flex;
+          gap: 18px;
+          justify-content: center;
+          align-items: center;
+          flex-wrap: wrap;
+          margin-top: 16px;
+        }
 
-      
+        .app-btn-link {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          padding: 4px;
+          border-radius: 12px;
+          background: #fff;
+          border: 1px solid rgba(255,255,255,0.55);
+          box-shadow: 0 8px 24px rgba(0,0,0,0.22);
+          transition: all 0.3s ease;
+        }
 
-.hero-app-buttons {
-  display: flex;
-  gap: 18px;
-  justify-content: center;
-  align-items: center;
-  flex-wrap: wrap;
-  margin-top: 16px;
-}
+        .app-btn-link img {
+          height: clamp(44px, 6.5vw, 56px);
+          width: auto;
+          display: block;
+          border-radius: 8px !important;
+          background: transparent !important;
+        }
 
-.app-btn-link {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 4px;
-  border-radius: 12px;
-  background: #fff;
-  border: 1px solid rgba(255,255,255,0.55);
-  box-shadow: 0 8px 24px rgba(0,0,0,0.22);
-  transition: all 0.3s ease;
-}
-
-.app-btn-link img {
-  height: clamp(44px, 6.5vw, 56px);
-  width: auto;
-  display: block;
-  border-radius: 8px !important;
-  background: transparent !important;
-}
-
-.app-btn-link:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 14px 34px rgba(0,0,0,0.32);
-}
-.mobile-waitlist-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  background: #8B1E4D; /* dark pink */
-  color: #fff;
-  font-family: 'Sora', sans-serif;
-  font-weight: 700;
-  font-size: 14px;
-  padding: 12px 28px;
-  border-radius: 9px;
-  text-decoration: none;
-  margin-top: 8px;
-  box-shadow: 0 8px 24px rgba(139, 30, 77, 0.35);
-}
-
-@media (min-width: 769px) {
-  .mobile-waitlist-btn {
-    display: none;
-  }
-}
+        .app-btn-link:hover {
+          transform: none;
+        }
 
         .scroll-down-btn {
           display: flex;
@@ -303,16 +277,16 @@ export default function Hero() {
         }
       `}</style>
 
-      <video 
+      <video
         ref={videoRef}
-        className="hero-bg-video" 
-        autoPlay 
-        muted 
-        loop 
-        playsInline 
+        className="hero-bg-video"
+        autoPlay
+        muted
+        loop
+        playsInline
         preload="auto"
       >
-        <source src="/images/start.MP4" type="video/mp4" />
+        <source src="/images/herovideo.MP4" type="video/mp4" />
         Your browser does not support the video tag.
       </video>
 
@@ -336,14 +310,12 @@ export default function Hero() {
           Delivering Groceries, Food, and Fashion under one unified platform
         </div>
 
-        
-        <a href="#waitlist" className="mobile-waitlist-btn">
-  JOIN WAITLIST
-</a>
-        
 
-        <a 
-          href="#services" 
+
+
+
+        <a
+          href="#services"
           className="scroll-down-btn"
         >
           SCROLL DOWN <i className="ri-arrow-down-s-line"></i>

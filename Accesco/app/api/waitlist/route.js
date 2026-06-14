@@ -23,7 +23,7 @@ export async function POST(request) {
         Authorization: `Bearer ${apiKey}`,
       },
       body: JSON.stringify({
-        from: 'Accesco <noreply@accescoliving.com>', // replace with your verified domain
+        from: process.env.RESEND_FROM_EMAIL || 'Accesco <noreply@accescoliving.com>',
         to: [email],
         subject: 'You are on the Accesco waitlist!',
         html: `

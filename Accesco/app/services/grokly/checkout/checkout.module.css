@@ -192,71 +192,89 @@
   }
 }
 
-/* Delivery Speed Selection */
+/* Premium Delivery Speed Selection - Redesigned */
 .deliverySpeedBox {
-  background: #101c13; /* Dark green-black background matching Grokly */
-  border-radius: 18px;
-  padding: 24px;
-  color: #fff;
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 32px;
+  color: #111111;
   margin: 24px 0;
-  font-family: 'Sora', sans-serif;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-  border: 1px solid rgba(12, 131, 31, 0.15);
+  font-family: 'Inter', sans-serif;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+  border: 1px solid #eeeeee;
 }
 
 .speedHeading {
-  font-family: 'Sora', sans-serif;
+  font-family: 'Inter', sans-serif;
   font-size: 1.15rem;
-  font-weight: 800;
+  font-weight: 700;
   margin: 0;
-  color: #fbbf24; /* Yellow/Gold */
-  text-align: center;
+  color: #111111;
+  text-align: left;
   line-height: 1.3;
 }
 
 .speedSubheading {
-  font-size: 0.8rem;
-  color: #a3b8a6;
-  margin: 6px 0 20px;
-  text-align: center;
+  font-size: 0.85rem;
+  color: #666666;
+  margin: 6px 0 24px;
+  text-align: left;
 }
 
 .speedOptions {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+@media (max-width: 600px) {
+  .speedOptions {
+    grid-template-columns: 1fr;
+  }
 }
 
 .speedOption {
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  align-items: flex-start;
   justify-content: space-between;
-  padding: 16px 20px;
-  border-radius: 14px;
-  border: 2px solid #233527;
-  background: #17261b;
+  padding: 20px;
+  border-radius: 16px;
+  border: 1.5px solid #eeeeee;
+  background: #fcfcfc;
   cursor: pointer;
-  transition: all 0.22s ease;
+  transition: all 0.2s ease;
+  position: relative;
+  gap: 12px;
+}
+
+.speedOption:hover {
+  border-color: #2e7d32;
+  background: #f9fbf9;
 }
 
 .speedOptionActive {
-  border-color: #f59e0b !important; /* Yellow border for patience */
-  background: #252219 !important;
+  border-color: #2e7d32 !important; /* Green for active */
+  background: #f0fdf4 !important;
+  box-shadow: 0 4px 12px rgba(46, 125, 50, 0.05);
 }
 
 .speedOptionInstantActive {
-  border-color: #10b981 !important; /* Green border for instant */
-  background: #12281a !important;
+  border-color: #2e7d32 !important;
+  background: #f0fdf4 !important;
+  box-shadow: 0 4px 12px rgba(46, 125, 50, 0.05);
 }
 
 .speedOptionLeft {
   display: flex;
-  align-items: center;
-  gap: 14px;
+  align-items: flex-start;
+  gap: 12px;
 }
 
 .speedIcon {
-  font-size: 20px;
+  font-size: 18px;
+  color: #2e7d32;
+  margin-top: 2px;
 }
 
 .speedInfo {
@@ -267,60 +285,45 @@
 
 .speedTitle {
   font-size: 0.95rem;
-  font-weight: 800;
-  color: #fff;
+  font-weight: 700;
+  color: #111111;
 }
 
 .speedDesc {
-  font-size: 0.78rem;
-  color: #a3b8a6;
-  margin-top: 3px;
+  font-size: 0.8rem;
+  color: #666666;
+  margin-top: 4px;
+  line-height: 1.4;
 }
 
 .speedOffText {
   font-size: 0.85rem;
-  color: #a3b8a6;
+  color: #666666;
   font-weight: 700;
+  align-self: flex-end;
 }
 
 .saveBadge {
-  background: #f59e0b;
-  color: #000;
-  font-size: 0.72rem;
-  font-weight: 900;
+  background: #2e7d32;
+  color: #ffffff;
+  font-size: 0.75rem;
+  font-weight: 800;
   padding: 4px 10px;
   border-radius: 6px;
   text-transform: uppercase;
+  letter-spacing: 0.5px;
+  align-self: flex-end;
 }
 
 .speedFooter {
-  font-size: 0.78rem;
-  color: #a3b8a6;
-  text-align: center;
-  margin: 18px 0 10px;
+  font-size: 0.8rem;
+  color: #666666;
+  text-align: left;
+  margin: 18px 0 0px;
+  border-top: 1px solid #eeeeee;
+  padding-top: 16px;
 }
 
 .speedTagline {
-  font-family: 'Sora', sans-serif;
-  font-size: 0.95rem;
-  font-weight: 800;
-  text-align: center;
-  color: #fff;
-  margin: 0;
-}
-
-.speedTagline span {
-  color: #fbbf24;
-}
-
-@media (max-width: 480px) {
-  .speedOption {
-    padding: 12px 14px;
-  }
-  .speedTitle {
-    font-size: 0.85rem;
-  }
-  .speedDesc {
-    font-size: 0.7rem;
-  }
+  display: none;
 }
