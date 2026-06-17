@@ -65,7 +65,7 @@ function DishModal({ dish, onClose, onAddToCart }) {
 
 function RestaurantDetailContent() {
   const params = useParams();
-  const { addToCart, cart } = useSwadishtt();
+const { addToCart, cart, updateQuantity } = useSwadishtt();
   const [restaurant, setRestaurant] = useState(null);
   const [activeCategory, setActiveCategory] = useState('all');
   const [selectedDish, setSelectedDish] = useState(null);
@@ -103,7 +103,10 @@ function RestaurantDetailContent() {
     fats: dish.fats || 0,
   });
 };
-
+const getDishQuantity = (dishId) => {
+  const cartItem = cart.find(item => item.id === dishId);
+  return cartItem ? cartItem.quantity : 0;
+};
   return (
     <div className={styles.page}>
       <SwadishttHeader />
@@ -245,15 +248,40 @@ function RestaurantDetailContent() {
                       
                       <div className={styles.dishFooter}>
                         <span className={styles.dishPrice}>₹{dish.price}</span>
-                        <button 
-                          className={styles.addBtn}
-                          onClick={(e) => {
-  e.stopPropagation();
-  handleAddToCart(dish);
-}}
-                        >
-                          Add
-                        </button>
+                        {getDishQuantity(dish.id) === 0 ? (
+  <button 
+    className={styles.addBtn}
+    onClick={(e) => {
+      e.stopPropagation();
+      handleAddToCart(dish);
+    }}
+  >
+    Add
+  </button>
+) : (
+  <div 
+    className={styles.quantityControl}
+    onClick={(e) => e.stopPropagation()}
+  >
+    <button
+      className={styles.quantityBtn}
+      onClick={() => updateQuantity(dish.id, getDishQuantity(dish.id) - 1)}
+    >
+      -
+    </button>
+
+    <span className={styles.quantityValue}>
+      {getDishQuantity(dish.id)}
+    </span>
+
+    <button
+      className={styles.quantityBtn}
+      onClick={() => handleAddToCart(dish)}
+    >
+      +
+    </button>
+  </div>
+)}
                       </div>
                     </div>
                   </div>
@@ -272,9 +300,11 @@ function RestaurantDetailContent() {
       {cart.length > 0 && (
         <Link href="/services/swadisht/cart" className={styles.cartFloat}>
           <div className={styles.cartFloatContent}>
-            <span className={styles.cartCount}>{cart.length} items</span>
+            <span className={styles.cartCount}>
+  {cart.reduce((count, item) => count + item.quantity, 0)} items
+</span>
             <span className={styles.cartTotal}>
-              ₹{cart.reduce((sum, item) => sum + item.price, 0)}
+              ₹{cart.reduce((sum, item) => sum + item.price * item.quantity, 0)}
             </span>
           </div>
           <span className={styles.cartFloatText}>View Cart →</span>
