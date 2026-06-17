@@ -155,27 +155,55 @@ function DiscoverFeatures() {
       <div className={styles.featureGrid}>
         
         <Link href="/services/swadisht/swipe-eat" className={styles.featureCard}>
-          <h3>🍽️ SwipeEat Discovery</h3>
+          <h3>SwipeEat Discovery</h3>
           <p>Swipe through dishes and discover your next favourite meal.</p>
           <span>Try SwipeEat →</span>
+           <div className={styles.featureImage}>
+    <Image
+      src="/images/swipeeat-biryani.png"
+      alt=""
+      fill
+    />
+  </div>
         </Link>
 
         <Link href="/services/swadisht/thali-engine" className={styles.featureCard}>
-          <h3>🍛 Thali Engine</h3>
+          <h3>Thali Engine</h3>
           <p>Create festive, regional and family-style thalis.</p>
           <span>Build Your Thali →</span>
+            <div className={styles.featureImage}>
+    <Image
+      src="/images/thali-engine.png"
+      alt=""
+      fill
+    />
+  </div>
         </Link>
 
         <Link href="/services/swadisht/instant-catering" className={styles.featureCard}>
-          <h3>🚚 Instant Catering</h3>
+          <h3>Instant Catering</h3>
           <p>Pre-book catering packs for events and office gatherings.</p>
           <span>Plan Catering →</span>
+            <div className={styles.featureImage}>
+    <Image
+      src="/images/catering-trays.png"
+      alt=""
+      fill
+    />
+  </div>
         </Link>
 
         <Link href="/services/swadisht/regional-soul" className={styles.featureCard}>
-          <h3>🌾 Regional Soul</h3>
+          <h3>Regional Soul</h3>
           <p>Explore authentic cuisines from across India.</p>
           <span>Explore Regions →</span>
+           <div   className={`${styles.featureImage} ${styles.regionalImage}`}>
+    <Image
+      src="/images/regional-india.png"
+      alt=""
+      fill
+    />
+  </div>
         </Link>
 
       </div>
