@@ -13,7 +13,7 @@ export default function Footer() {
       <div>
         <h4>Investor Relations</h4>
         <a href="mailto:investors@accescoliving.com">
-          investors@accescoliving.com.com
+          investors@accescoliving.com
         </a>
       </div>
 
