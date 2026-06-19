@@ -63,29 +63,44 @@ function CheckoutContent() {
     } catch (error) {
       console.error('Error reading userLocation from localStorage:', error);
     }
-
+    
     const resolvedName = typeof storedUser?.name === 'string' ? storedUser.name : '';
     const resolvedPhone = typeof storedUser?.phone === 'string' ? storedUser.phone : '';
+    
     const resolvedCity =
       (typeof storedLocation?.city === 'string' && storedLocation.city) ||
       (typeof storedLocation?.state === 'string' && storedLocation.state) ||
       (typeof storedLocation?.region === 'string' && storedLocation.region) ||
       '';
+    
     const resolvedAddress =
       (typeof storedLocation?.fullAddress === 'string' && storedLocation.fullAddress) ||
       (typeof storedLocation?.formattedAddress === 'string' && storedLocation.formattedAddress) ||
       (typeof storedLocation?.displayAddress === 'string' && storedLocation.displayAddress) ||
       (typeof storedLocation?.area === 'string' && resolvedCity
         ? `${storedLocation.area}, ${resolvedCity}`
-        : (typeof storedLocation?.area === 'string' ? storedLocation.area : '')) ||
+        : typeof storedLocation?.area === 'string'
+        ? storedLocation.area
+        : '') ||
       '';
-
+    
+    // Resolving pincode with fallbacks for common naming conventions and types
+    const resolvedPincode =
+      (typeof storedLocation?.pincode === 'string' && storedLocation.pincode) ||
+      (typeof storedLocation?.pinCode === 'string' && storedLocation.pinCode) ||
+      (typeof storedLocation?.postalCode === 'string' && storedLocation.postalCode) ||
+      (typeof storedLocation?.zipCode === 'string' && storedLocation.zipCode) ||
+      (typeof storedLocation?.pincode === 'number' && String(storedLocation.pincode)) ||
+      (typeof storedLocation?.postalCode === 'number' && String(storedLocation.postalCode)) ||
+      '';
+    
     setDeliveryAddress((prev) => ({
       ...prev,
       name: prev.name || resolvedName,
       phone: prev.phone || resolvedPhone,
       address: prev.address || resolvedAddress,
       city: prev.city || resolvedCity,
+      pincode: prev.pincode || resolvedPincode, // Appended to state
     }));
   }, []);
 

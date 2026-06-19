@@ -22,7 +22,7 @@ export default function AccescoHeader() {
   const [isMobileServicesOpen, setIsMobileServicesOpen] = useState(false);
   const [isMobilePartnersOpen, setIsMobilePartnersOpen] = useState(false);
   const [isLocationOpen, setIsLocationOpen] = useState(false);
-  const [selectedLocation, setSelectedLocation] = useState('Bengaluru, Karnataka');
+  const [selectedLocation, setSelectedLocation] = useState('{"city":"Bengaluru, Karnataka"}');
   const dropdownRef = useRef(null);
   const partnersDropdownRef = useRef(null);
   const locationDropdownRef = useRef(null);
@@ -39,28 +39,32 @@ export default function AccescoHeader() {
     'Pune, Maharashtra',
   ];
 
-  // This useEffect is used to fetch the location from "../lib/locationService.js" and set the selected location in the header. It also saves the location in localStorage to avoid fetching it again on every page load. If the location is already saved in localStorage, it will use that instead of fetching it again. T
   useEffect(() => {
-    // Check localStorage first
     const savedLocation = localStorage.getItem('userLocation');
     
     if (savedLocation) {
       setSelectedLocation(savedLocation);
-      console.log("Loaded location from localStorage:", savedLocation);
       return;
     }
 
-    // If not in localStorage, fetch user's city
     getPersonCity()
       .then((city) => {
-        setSelectedLocation(city);
-        localStorage.setItem('userLocation', city);
-        console.log("Auto-detected user city:", city);
+        // Standardize auto-detected location into JSON schema
+        const locationObject = {
+          city: city,
+          area: '',
+          displayAddress: city,
+          fullAddress: city
+        };
+        const locationStr = JSON.stringify(locationObject);
+        setSelectedLocation(locationStr);
+        localStorage.setItem('userLocation', locationStr);
       })
       .catch((err) => {
         console.error("Error:", err);
       });
   }, []);
+
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 50);
     window.addEventListener('scroll', handleScroll, { passive: true });
@@ -76,7 +80,6 @@ export default function AccescoHeader() {
     setIsMobileMenuOpen(false);
   }, [pathname]);
 
-  // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
@@ -130,21 +133,6 @@ export default function AccescoHeader() {
     ? user.name.split(' ').map(n => n[0]).slice(0, 2).join('').toUpperCase()
     : '';
 
-  const services = [
-    { name: 'Grokly', href: '/services/grokly', description: 'Fresh groceries in 22 mins' },
-    { name: 'Swadishtt', href: '/services/swadisht', description: 'Home-style meals delivered' },
-    { name: 'InstaStyle', href: '/services/instastyle', description: 'Fashion delivered fast' },
-    { name: 'DineX', href: '/services/dinex', description: 'Premium dining experience' },
-    { name: 'LocalMeds', href: '/services/localmeds', description: 'Medicines at your doorstep' },
-    { name: 'Swadishtt Cafe', href: '/services/swadisht-cafe', description: 'Cafe experience at home' },
-  ];
-
-  const partnerOptions = [
-    { name: 'Partner as Creator', href: '/partner/creator', description: 'Join as content creator' },
-    { name: 'Partner as Vendor', href: '/partner/vendor', description: 'Grow your business' },
-    { name: 'Partner as Delivery', href: '/partner/delivery', description: 'Earn flexible income' },
-  ];
-
   const forceScrolled = (
     pathname.startsWith('/partner') ||
     pathname.startsWith('/blogs') ||
@@ -161,23 +149,25 @@ export default function AccescoHeader() {
   const shouldBeScrolled = isScrolled || forceScrolled;
 
   const getDisplayLocation = (locationStr) => {
-    if (!locationStr) return 'Select Location';
-    
+    if (!locationStr) return "Select Location";
+
     try {
-      // Try parsing it as a JSON object (for the local storage object)
       const parsedLocation = JSON.parse(locationStr);
-      if (parsedLocation && parsedLocation.area) {
-        return parsedLocation.area;
-      }
-      if (parsedLocation && parsedLocation.formattedAddress) {
-        return parsedLocation.formattedAddress.split(',')[0].trim();
+      
+      if (parsedLocation && typeof parsedLocation === 'object') {
+        if (parsedLocation.area && parsedLocation.city) {
+          return `${parsedLocation.area}, ${parsedLocation.city}`;
+        }
+        return parsedLocation.displayAddress || parsedLocation.city || parsedLocation.fullAddress || "Location Set";
       }
     } catch (e) {
-      // If JSON.parse fails, it's a plain string like 'Bengaluru, Karnataka'
-      return locationStr.split(',')[0].trim();
+      if (typeof locationStr === 'string') {
+        const parts = locationStr.split(',');
+        return parts[0] || locationStr;
+      }
     }
     
-    return 'Select Location';
+    return "Select Location";
   };
 
   return (
@@ -185,14 +175,14 @@ export default function AccescoHeader() {
       <header className={`${styles.header} ${shouldBeScrolled ? styles.scrolled : ''}`}>
         <div className={styles.container}>
           <Link href="/" className={styles.logo}>
-        <Image
-  src="/images/accesco_original.png"
-  alt="AccesCo"
-  width={36}
-  height={36}
-  priority
-  style={{ objectFit: 'contain' }}
-/>
+            <Image
+              src="/images/accesco_original.png"
+              alt="AccesCo"
+              width={36}
+              height={36}
+              priority
+              style={{ objectFit: 'contain' }}
+            />
             <div className={styles.logoText}>
               <span className={styles.logoName}>Accesco</span>
               <span className={styles.logoTagline}>Living</span>
@@ -200,9 +190,9 @@ export default function AccescoHeader() {
           </Link>
           <div className={styles.logoDivider}></div>
 
-<a href="#waitlist" className={styles.waitlistLink}>
-  JOIN WAITLIST
-</a>
+          <a href="#waitlist" className={styles.waitlistLink}>
+            JOIN WAITLIST
+          </a>
 
           <div className={styles.actions}>
             {/* Location Selector */}
@@ -263,11 +253,21 @@ export default function AccescoHeader() {
                         <button
                           key={location}
                           className={`${styles.locationItem} ${
-                            selectedLocation === location ? styles.selectedLocation : ''
+                            getDisplayLocation(selectedLocation) === location ? styles.selectedLocation : ''
                           }`}
                           onClick={() => {
-                            setSelectedLocation(location);
-                            localStorage.setItem('userLocation', location);
+                            // Standardize predefined selection into JSON schema
+                            const parts = location.split(', ');
+                            const locationObject = {
+                              city: parts[1] || location,
+                              area: parts[0] || location,
+                              displayAddress: location,
+                              fullAddress: location
+                            };
+                            
+                            const locationStr = JSON.stringify(locationObject);
+                            setSelectedLocation(locationStr);
+                            localStorage.setItem('userLocation', locationStr);
                             setIsLocationOpen(false);
                           }}
                         >
@@ -289,35 +289,56 @@ export default function AccescoHeader() {
               </button>
               
             )}
-  <a href="#" className={`${styles.loginButton} ${styles.getAppButton}`}>
-  <span className={styles.desktopText}>Get App</span>
-  <span className={styles.mobileText}>Download</span>
+            <a href="#" className={`${styles.loginButton} ${styles.getAppButton}`}>
+              <span className={styles.desktopText}>Get App</span>
+              <span className={styles.mobileText}>Download</span>
 
-  <img
-    src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/googleplay.svg"
-    alt="Google Play"
-    className={styles.storeIcon}
-  />
+              <img
+                src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/googleplay.svg"
+                alt="Google Play"
+                className={styles.storeIcon}
+              />
 
-  <img
-    src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/apple.svg"
-    alt="App Store"
-    className={styles.storeIcon}
-  />
-</a>
-
-           
+              <img
+                src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/apple.svg"
+                alt="App Store"
+                className={styles.storeIcon}
+              />
+            </a>
           </div>
         </div>
       </header>
 
       <AuthModal isOpen={isAuthOpen} onClose={() => setIsAuthOpen(false)} onSuccess={handleAuthSuccess} />
+      
       <LocationModal 
         isOpen={isLocationModalOpen} 
         onClose={() => setIsLocationModalOpen(false)}
-        onLocationSelect={(newAddress) => {
-          setSelectedLocation(newAddress);
-          localStorage.setItem('userLocation', newAddress);
+        onLocationSelect={(locationData) => {
+          // Destructure data correctly from the modal payload
+          const { fullAddress, lat, lng } = locationData; 
+          
+          const parts = fullAddress.split(',');
+          const resolvedArea = parts[0]?.trim() || fullAddress;
+          const resolvedCity = parts[1]?.trim() || '';
+
+          // Construct the exact schema expected by the rest of the application
+          const locationObject = {
+            area: resolvedArea,
+            city: resolvedCity,
+            latitude: lat,
+            longitude: lng,
+            lat: lat,
+            lon: lng,
+            fullAddress: fullAddress,
+            formattedAddress: fullAddress,
+            displayAddress: resolvedCity || resolvedArea,
+            timestamp: new Date().toISOString()
+          };
+
+          const locationStr = JSON.stringify(locationObject);
+          setSelectedLocation(locationStr);
+          localStorage.setItem('userLocation', locationStr);
         }}
       />
     </>
