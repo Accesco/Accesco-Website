@@ -81,7 +81,20 @@ export default function InstaStyleLanding() {
     setTimeout(() => setIntroRendered(false), 800);
   };
 
-  const featuredProducts = getFeaturedProducts().slice(0, 4);
+  const featuredIds = [
+    'prod_027', // Premium Hoodie
+    'prod_039', // Sleek Wool Overcoat
+    'prod_038', // Handcrafted Chelsea Boots
+    'prod_037', // Minimalist Leather Backpack
+    'prod_029', // Chunky Platform Sneakers
+    'prod_023', // Structured Tote Bag
+    'prod_016', // Urban Aviator Sunglasses
+    'prod_045', // Minimalist Leather Cardholder
+  ];
+  const featuredProducts = featuredIds
+    .map((id) => products.find((p) => p.id === id))
+    .filter(Boolean)
+    .slice(0, 4);
   const brandSet = Array.from(new Set(products.map(p => p.brand))).slice(0, 8);
   const loopingBrands = [...brandSet, ...brandSet];
 
@@ -142,10 +155,15 @@ export default function InstaStyleLanding() {
 
   const categoryCards = categories.map(cat => {
     const catProducts = products.filter(p => p.category === cat.id);
+    const newProduct = catProducts.find(p => [
+      'prod_031', 'prod_032', 'prod_033', 'prod_034', 'prod_035', 'prod_036', 'prod_037', 'prod_038',
+      'prod_039', 'prod_040', 'prod_041', 'prod_042', 'prod_043', 'prod_044', 'prod_045', 'prod_046',
+      'prod_013', 'prod_014', 'prod_015', 'prod_016', 'prod_017', 'prod_018', 'prod_019'
+    ].includes(p.id)) || catProducts[0];
     return {
       id: cat.id,
       name: cat.name,
-      image: catProducts[0]?.images?.[0]?.url || '',
+      image: newProduct?.images?.[0]?.url || '',
       count: catProducts.length,
     };
   });
@@ -747,13 +765,18 @@ export default function InstaStyleLanding() {
                 aria-label="Email address"
               />
               <button type="submit" className={styles.newsletterButton}>
-                {isSubscribed ? 'Done ✓' : 'Subscribe'}
+                {isSubscribed ? (
+                  <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                    Done
+                  </span>
+                ) : 'Subscribe'}
               </button>
             </form>
 
             {isSubscribed && (
               <p className={styles.successMessage}>
-                ✓ Thanks! Style drops incoming.
+                Thanks! Style drops incoming.
               </p>
             )}
           </div>

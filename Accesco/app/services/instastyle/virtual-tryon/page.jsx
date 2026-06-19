@@ -421,27 +421,6 @@ export default function VirtualTryOnPage() {
 
   return (
     <div className={styles.virtualTryOnPage}>
-      {/* Header */}
-      <div className={styles.header}>
-        <Link href="/services/instastyle/catalog" className={styles.backButton}>
-          ← Catalog
-        </Link>
-        <div className={styles.headerTitleGroup}>
-          <h1 className={styles.title}>Style Preview</h1>
-          <span className={styles.liveIndicator}>
-            <span className={styles.liveDot}></span>
-            Live Fitting Room
-          </span>
-        </div>
-        <div className={styles.headerActions}>
-          {isCameraActive && (
-            <button onClick={capturePhoto} className={styles.captureBtn}>
-              Capture Look
-            </button>
-          )}
-        </div>
-      </div>
-
       <div className={styles.mainContent}>
         {/* Camera/Preview Section */}
         <div className={styles.cameraSection}>
@@ -573,28 +552,7 @@ export default function VirtualTryOnPage() {
             )}
           </div>
 
-          {/* Instructions */}
-          <div className={styles.aiTryOnCard}>
-  <div className={styles.aiTryOnContent}>
-    <div className={styles.aiTryOnIcon}>
-      ✦
-    </div>
 
-    <div className={styles.aiTryOnText}>
-      <h3>Want a realistic generated try-on?</h3>
-      <p>
-        Upload your photo and a product image to see how it looks on you.
-      </p>
-    </div>
-  </div>
-
-  <Link
-    href={`/services/instastyle/virtual-tryon/ai-tryon?img=${encodeURIComponent(selectedProduct?.image || '')}`}
-    className={styles.aiTryOnCardBtn}
-  >
-    Open AI Upload Try-On →
-  </Link>
-</div>
           <div className={styles.instructions}>
             <h3>How to Use</h3>
             <ol>
@@ -644,7 +602,9 @@ export default function VirtualTryOnPage() {
                   <p className={styles.productCategory}>{product.subcategory} • {product.category}</p>
                 </div>
                 {selectedProduct?.id === product.id && (
-                  <span className={styles.selectedBadge}>✓</span>
+                  <span className={styles.selectedBadge}>
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                  </span>
                 )}
               </div>
             ))}

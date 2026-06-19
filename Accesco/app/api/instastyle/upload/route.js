@@ -3,6 +3,8 @@ import { db, storage } from '@/lib/firebase';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { collection, query, where, getDocs } from 'firebase/firestore';
 
+export const dynamic = 'force-dynamic';
+
 const COLLECTION = 'instastyle_products';
 
 // ─────────────────────────────────────────────

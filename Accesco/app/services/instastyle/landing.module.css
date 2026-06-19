@@ -202,7 +202,6 @@
 
 .btnPrimary:hover {
   background: var(--is-brown-pale);
-  transform: translateY(-2px);
   box-shadow: 0 12px 32px rgba(26, 17, 8, 0.28);
 }
 
@@ -228,7 +227,6 @@
 .btnSecondary:hover {
   border-color: rgba(255, 255, 255, 0.7);
   background: rgba(255, 255, 255, 0.06);
-  transform: translateY(-2px);
 }
 
 /* Hero microchips */
@@ -507,7 +505,6 @@
 }
 
 .trendingCard:hover {
-  transform: translateY(-5px);
   border-color: var(--is-border-hover);
   box-shadow: 0 20px 48px rgba(26, 17, 8, 0.1);
 }
@@ -533,7 +530,7 @@
 }
 
 .trendingCard:hover .trendingPhoto {
-  transform: scale(1.05);
+  opacity: 0.95;
 }
 
 .imagePlaceholder {
@@ -692,7 +689,6 @@
 }
 
 .categoryCard:hover {
-  transform: translateY(-4px);
   box-shadow: 0 24px 56px rgba(26, 17, 8, 0.18);
 }
 
@@ -707,7 +703,7 @@
 }
 
 .categoryCard:hover .categoryImage {
-  transform: scale(1.06);
+  opacity: 0.95;
 }
 
 .categoryImagePlaceholder {

@@ -54,7 +54,7 @@ const THRIFT_PRODUCTS = [
     originalPrice: 22000,
     condition: 'Good',
     category: 'Full Look',
-    image: 'https://images.unsplash.com/photo-1539008835657-9e8e9680c956?w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=800&q=80',
   },
   {
     id: 't6',
@@ -64,7 +64,27 @@ const THRIFT_PRODUCTS = [
     originalPrice: 35000,
     condition: 'Fair',
     category: 'Topwear',
-    image: 'https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=800&q=80',
+  },
+  {
+    id: 't7',
+    name: 'Oversized Vintage Trench Coat',
+    brand: 'Burberry',
+    price: 29000,
+    originalPrice: 95000,
+    condition: 'Excellent',
+    category: 'Outerwear',
+    image: 'https://images.unsplash.com/photo-1544923246-77307dd654cb?w=800&q=80',
+  },
+  {
+    id: 't8',
+    name: 'Vintage Wool Cardigan',
+    brand: 'Acne Studios',
+    price: 9500,
+    originalPrice: 28000,
+    condition: 'Like New',
+    category: 'Topwear',
+    image: 'https://images.unsplash.com/photo-1614975058789-41316d0e2e9c?w=800&q=80',
   }
 ];
 
@@ -166,54 +186,6 @@ export default function ThriftMarketplace() {
     <div className={styles.page}>
       <header className={styles.hero}>
         <div className={styles.heroOverlay} aria-hidden="true" />
-        <div className={styles.heroContent}>
-          <div className={styles.heroBadge}>
-            <span className={styles.heroBadgeDot}></span>
-            Thrift Market
-          </div>
-          <motion.h1 
-            className={styles.heroTitle}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-          >
-            The Thrift Edit
-          </motion.h1>
-          <motion.p 
-            className={styles.heroSubtitle}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.1 }}
-          >
-            Pre-owned luxury & vintage pieces, authenticated and ready for a second life. Sustainable style starts here.
-          </motion.p>
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className={styles.heroActions}
-          >
-            <Link href="#collection" className={styles.heroBtn}>
-              Shop Collection
-            </Link>
-            <Link href="/services/instastyle/add-sku" className={styles.heroBtnSecondary}>
-              Sell Your Old Clothes
-            </Link>
-          </motion.div>
-        </div>
-
-        {/* Floating portrait video card */}
-        <div className={styles.floatingVideoCard}>
-          <video
-            autoPlay
-            muted
-            loop
-            playsInline
-            aria-hidden="true"
-          >
-            <source src="/images/instastyle.mp4" type="video/mp4" />
-          </video>
-        </div>
       </header>
 
       <section id="sell" className={styles.sellSection}>
@@ -279,8 +251,6 @@ export default function ThriftMarketplace() {
             >
               <Link href={`/services/instastyle/products/${product.id}`} className={styles.productCard}>
                 <div className={styles.imageWrapper}>
-                  <span className={styles.badge}>Authenticated</span>
-                  <span className={styles.condition}>{product.condition}</span>
                   <img src={product.image} alt={product.name} className={styles.image} />
                 </div>
                 <div className={styles.info}>

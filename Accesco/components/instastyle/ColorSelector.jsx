@@ -37,7 +37,9 @@ export default function ColorSelector({ colors, selectedColor, onColorChange }) 
                 style={{ backgroundColor: color.hex }}
               />
               {isSelected && (
-                <span className={styles.checkmark}>✓</span>
+                <span className={styles.checkmark}>
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                </span>
               )}
             </button>
           );
