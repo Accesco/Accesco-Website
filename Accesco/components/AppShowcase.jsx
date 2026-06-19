@@ -355,11 +355,7 @@ export default function AppShowcase() {
       {/* Posters Section */}
       <div className={styles.postersSectionWrapper}>
         <div className={styles.postersHeadingRow}>
-          <h2 className={styles.postersSectionHeading}>What's <span className={styles.postersSectionHighlight}>NEW</span>?</h2>
-          <span className={styles.postersBadge}>
-            <svg width="7" height="7" viewBox="0 0 8 8" fill="currentColor"><circle cx="4" cy="4" r="4"/></svg>
-            Just dropped
-          </span>
+          <h2 className={styles.postersSectionHeading}>What's <span className={styles.postersSectionHighlight}> NEW </span>?</h2>
         </div>
         <div className={styles.postersSection}>
           <div className={styles.postersTiltCard} onMouseMove={(e) => {
