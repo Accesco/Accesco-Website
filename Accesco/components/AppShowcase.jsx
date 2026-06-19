@@ -172,19 +172,23 @@ export default function AppShowcase() {
       </div>
 
       <div className={styles.waitlistContainer}>
-        {/* Left Side - Information (Poster) */}
+        {/* Left Side - Information (Posters) */}
         <div className={styles.waitlistInfo}>
-          <div className={styles.waitlistPosterWrap}>
-            <img
-              src="/images/xpense-banner.jpg"
-              alt="Accesco Living - Xpense Meter"
-              className={styles.waitlistPosterImg}
-              onError={(e) => {
-                e.currentTarget.src = '/images/accesco_original.png';
-                e.currentTarget.style.padding = '40px';
-                e.currentTarget.style.background = 'linear-gradient(135deg, #7A0042, #1A0A0F)';
-              }}
-            />
+          <div className={styles.waitlistPostersGrid}>
+            <div className={styles.waitlistPosterWrap}>
+              <img
+                src="/images/poster-stadium.jpg"
+                alt="Accesco Living - Things are about to change"
+                className={styles.waitlistPosterImg}
+              />
+            </div>
+            <div className={styles.waitlistPosterWrap}>
+              <img
+                src="/images/poster-newspaper.jpg"
+                alt="Accesco Living - Something exciting is coming"
+                className={styles.waitlistPosterImg}
+              />
+            </div>
           </div>
         </div>
 
