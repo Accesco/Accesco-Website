@@ -19,6 +19,7 @@ const mediaLogos = [
   { name: "BBBusinessNews", src: "/logos/BBB.jpeg" },
   { name: "Buisnessscope", src: "/logos/BSC.jpeg" },
   { name: "Express_visionary", src: "/logos/Express_visionary.jpeg" },
+  { name: "entrepreneurorbit", src: "/logos/orbitent.jpeg" },
 ];
 const ecosystemLogos = [
   { name: "AWS Startups", src: "/logos/aws-startups.png" },
