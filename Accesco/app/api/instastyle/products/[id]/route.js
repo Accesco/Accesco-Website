@@ -11,6 +11,8 @@ import {
   getDocs,
 } from 'firebase/firestore';
 
+export const dynamic = 'force-dynamic';
+
 const COLLECTION = 'instastyle_products';
 
 // Helper: find Firestore doc by product id field (not the auto-generated docId)

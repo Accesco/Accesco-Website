@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { useCart } from '@/contexts/CartContext';
-import styles from '@/app/profile/orders/orders.module.css';
+import styles from '../../../../profile/orders/orders.module.css';
 
 export default function InstaStyleOrderDetailPage() {
   const params = useParams();

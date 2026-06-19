@@ -42,11 +42,44 @@ export default function InstaStyleLanding() {
   const progressRef = useRef(null);
   const stepsSliderRef = useRef(null);
   const reviewsSliderRef = useRef(null);
+  const introVideoRef = useRef(null);
+  const introTimersRef = useRef([]);
 
   const [email, setEmail] = useState('');
   const [isSubscribed, setIsSubscribed] = useState(false);
   const [activeStepIndex, setActiveStepIndex] = useState(0);
   const [activeReviewIndex, setActiveReviewIndex] = useState(0);
+
+  const [introVisible, setIntroVisible] = useState(true);
+  const [introRendered, setIntroRendered] = useState(true);
+
+  useEffect(() => {
+    // Fade out at exactly 9s, unmount after fade completes
+    const t1 = setTimeout(() => setIntroVisible(false), 9000);
+    const t2 = setTimeout(() => setIntroRendered(false), 9800);
+    introTimersRef.current = [t1, t2];
+    return () => {
+      clearTimeout(t1);
+      clearTimeout(t2);
+    };
+  }, []);
+
+  // Pause video at 9s so it never plays beyond the intro window
+  const handleVideoTimeUpdate = () => {
+    if (introVideoRef.current && introVideoRef.current.currentTime >= 9) {
+      introVideoRef.current.pause();
+    }
+  };
+
+  const handleSkipIntro = () => {
+    // Clear auto-dismiss timers
+    introTimersRef.current.forEach(clearTimeout);
+    // Pause video immediately
+    if (introVideoRef.current) introVideoRef.current.pause();
+    // Fade out, then unmount after animation
+    setIntroVisible(false);
+    setTimeout(() => setIntroRendered(false), 800);
+  };
 
   const featuredProducts = getFeaturedProducts().slice(0, 4);
   const brandSet = Array.from(new Set(products.map(p => p.brand))).slice(0, 8);
@@ -306,6 +339,97 @@ export default function InstaStyleLanding() {
   return (
   <>
     <JsonLd data={serviceSchema} />
+
+    {introRendered && (
+      <div style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        width: '100vw',
+        height: '100vh',
+        background: '#d6d6d6',
+        zIndex: 99999,
+        overflow: 'hidden',
+        opacity: introVisible ? 1 : 0,
+        transition: 'opacity 0.8s ease-in-out',
+        pointerEvents: introVisible ? 'all' : 'none',
+      }}>
+        {/* Fullscreen video — no black bars, capped at 9s via onTimeUpdate */}
+        <video
+          ref={introVideoRef}
+          autoPlay
+          muted
+          playsInline
+          onTimeUpdate={handleVideoTimeUpdate}
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
+            objectPosition: 'center',
+            display: 'block',
+            zIndex: 0,
+          }}
+        >
+          <source src="/images/instastylevideo.mp4" type="video/mp4" />
+        </video>
+
+        {/* Skip button — high zIndex ensures it is always clickable above video */}
+        <button
+          onClick={handleSkipIntro}
+          style={{
+            position: 'absolute',
+            top: '24px',
+            right: '24px',
+            background: 'rgba(255, 255, 255, 0.9)',
+            border: 'none',
+            color: '#111',
+            padding: '10px 22px',
+            borderRadius: '30px',
+            fontSize: '12px',
+            fontWeight: 600,
+            letterSpacing: '0.5px',
+            cursor: 'pointer',
+            backdropFilter: 'blur(12px)',
+            WebkitBackdropFilter: 'blur(12px)',
+            transition: 'background 0.2s ease, transform 0.2s ease',
+            boxShadow: '0 4px 20px rgba(0,0,0,0.15)',
+            zIndex: 100000,
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.background = '#fff';
+            e.currentTarget.style.transform = 'translateY(-1px)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.background = 'rgba(255, 255, 255, 0.9)';
+            e.currentTarget.style.transform = 'translateY(0)';
+          }}
+        >
+          Skip Intro
+        </button>
+
+        {/* Branding label */}
+        <div style={{
+          position: 'absolute',
+          bottom: '32px',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          color: '#fff',
+          fontSize: '13px',
+          fontWeight: 500,
+          letterSpacing: '3px',
+          textTransform: 'uppercase',
+          textShadow: '0 2px 12px rgba(0,0,0,0.5)',
+          zIndex: 100000,
+          whiteSpace: 'nowrap',
+          pointerEvents: 'none',
+        }}>
+          InstaStyle by Accesco Living
+        </div>
+      </div>
+    )}
 
       <div ref={pageRef} className={styles.landingPage}>
       {/* ── Scroll Progress Bar ── */}

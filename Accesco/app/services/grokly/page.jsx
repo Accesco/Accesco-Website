@@ -7,7 +7,7 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import { GroklyProvider } from './contexts/GroklyContext';
+import { GroklyProvider, useGrokly } from './contexts/GroklyContext';
 import GroklyHeader from './components/GroklyHeader';
 import MobileHeader from './components/MobileHeader';
 import CategoryNav from './components/CategoryNav';
@@ -23,6 +23,49 @@ import './styles/variables.css';
 import './styles/globals.css';
 import JsonLd from '../../../components/JsonLd';
 
+const dishes = {
+  tikka: {
+    name: 'Paneer Tikka Masala',
+    image: 'https://images.unsplash.com/photo-1631452180519-c014fe946bc7?w=600&auto=format&fit=crop&q=80',
+    itemsCount: 6,
+    price: 249,
+    ingredients: [
+      { id: 'dish-paneer', name: 'Milky Mist Paneer', unit: '200 g', price: 82, mrp: 130, image: 'https://images.unsplash.com/photo-1631452180519-c014fe946bc7?w=120&auto=format&fit=crop&q=80' },
+      { id: 'dish-marinade', name: 'Everest Tikhalal Powder Pouch', unit: '100 g', price: 52, mrp: 60, image: 'https://images.unsplash.com/photo-1596040033229-a0b3b83b2e4d?w=120&auto=format&fit=crop&q=80' },
+      { id: 'dish-yogurt', name: 'Milky Mist Greek Yogurt', unit: '100 g', price: 35, mrp: 55, image: 'https://images.unsplash.com/photo-1488477181946-6428a0291777?w=120&auto=format&fit=crop&q=80' },
+      { id: 'dish-ggpaste', name: 'Catch Ginger Garlic Paste', unit: '100 g', price: 17, mrp: 28, image: 'https://images.unsplash.com/photo-1608686207856-001b95cf60ca?w=120&auto=format&fit=crop&q=80' },
+      { id: 'veg-001', name: 'Tomato - Hybrid', unit: '500 g', price: 28, mrp: 35, image: 'https://cdn.grofers.com/cdn-cgi/image/f=auto,fit=scale-down,q=70,metadata=none,w=120/app/images/products/sliding_image/10590a.jpg' },
+      { id: 'veg-002', name: 'Onion', unit: '1 kg', price: 35, mrp: 40, image: 'https://cdn.grofers.com/cdn-cgi/image/f=auto,fit=scale-down,q=70,metadata=none,w=120/app/images/products/sliding_image/17553a.jpg' },
+    ]
+  },
+  biryani: {
+    name: 'Paneer Biryani',
+    image: 'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=600&auto=format&fit=crop&q=80',
+    itemsCount: 5,
+    price: 744,
+    ingredients: [
+      { id: 'dish-paneer', name: 'Milky Mist Paneer', unit: '200 g', price: 82, mrp: 130, image: 'https://images.unsplash.com/photo-1631452180519-c014fe946bc7?w=120&auto=format&fit=crop&q=80' },
+      { id: 'atta-002', name: 'India Gate Basmati Rice', unit: '5 kg', price: 525, mrp: 575, image: 'https://cdn.grofers.com/cdn-cgi/image/f=auto,fit=scale-down,q=70,metadata=none,w=120/app/images/products/sliding_image/483632a.jpg' },
+      { id: 'dish-ggpaste', name: 'Catch Ginger Garlic Paste', unit: '100 g', price: 17, mrp: 28, image: 'https://images.unsplash.com/photo-1608686207856-001b95cf60ca?w=120&auto=format&fit=crop&q=80' },
+      { id: 'masala-003', name: 'Everest Garam Masala', unit: '100 g', price: 85, mrp: 95, image: 'https://cdn.grofers.com/cdn-cgi/image/f=auto,fit=scale-down,q=70,metadata=none,w=120/app/images/products/sliding_image/483640a.jpg' },
+      { id: 'veg-002', name: 'Onion', unit: '1 kg', price: 35, mrp: 40, image: 'https://cdn.grofers.com/cdn-cgi/image/f=auto,fit=scale-down,q=70,metadata=none,w=120/app/images/products/sliding_image/17553a.jpg' },
+    ]
+  },
+  butter: {
+    name: 'Paneer Butter Masala',
+    image: 'https://images.unsplash.com/photo-1601050690597-df056fb4ce78?w=600&auto=format&fit=crop&q=80',
+    itemsCount: 5,
+    price: 237,
+    ingredients: [
+      { id: 'dish-paneer', name: 'Milky Mist Paneer', unit: '200 g', price: 82, mrp: 130, image: 'https://images.unsplash.com/photo-1631452180519-c014fe946bc7?w=120&auto=format&fit=crop&q=80' },
+      { id: 'dairy-004', name: 'Amul Butter - Salted', unit: '100 g', price: 58, mrp: 60, image: 'https://cdn.grofers.com/cdn-cgi/image/f=auto,fit=scale-down,q=70,metadata=none,w=120/app/images/products/sliding_image/1254a.jpg' },
+      { id: 'dairy-006', name: 'Amul Fresh Cream', unit: '250 ml', price: 52, mrp: 55, image: 'https://cdn.grofers.com/cdn-cgi/image/f=auto,fit=scale-down,q=70,metadata=none,w=120/app/images/products/sliding_image/1316a.jpg' },
+      { id: 'veg-001', name: 'Tomato - Hybrid', unit: '500 g', price: 28, mrp: 35, image: 'https://cdn.grofers.com/cdn-cgi/image/f=auto,fit=scale-down,q=70,metadata=none,w=120/app/images/products/sliding_image/10590a.jpg' },
+      { id: 'dish-ggpaste', name: 'Catch Ginger Garlic Paste', unit: '100 g', price: 17, mrp: 28, image: 'https://images.unsplash.com/photo-1608686207856-001b95cf60ca?w=120&auto=format&fit=crop&q=80' },
+    ]
+  }
+};
+
 /**
  * Grokly Page Component
  */
@@ -36,6 +79,8 @@ function GroklyPageContent() {
   const [isLoading, setIsLoading] = useState(false);
   const [activeFilter, setActiveFilter] = useState('all');
   const [sortBy, setSortBy] = useState('');
+  const [selectedDishKey, setSelectedDishKey] = useState('tikka');
+  const { getProductQuantity, addToCart, incrementQuantity, decrementQuantity, openCart } = useGrokly();
 
   // ═══════════════════════════════════════════════
   // COMPUTED VALUES
@@ -150,6 +195,19 @@ function GroklyPageContent() {
    */
   const handleSearchClear = () => {
     setSearchQuery('');
+  };
+
+  /**
+   * Add all ingredients for active dish
+   */
+  const handleAddAll = () => {
+    const activeDish = dishes[selectedDishKey];
+    activeDish.ingredients.forEach(item => {
+      if (getProductQuantity(item.id) === 0) {
+        addToCart(item.id, 1);
+      }
+    });
+    openCart();
   };
 const serviceSchema = {
   "@context": "https://schema.org",
@@ -343,13 +401,8 @@ item: {
           borderRadius: '20px',
           overflow: 'hidden',
           position: 'relative',
-          padding: 'clamp(32px, 5vw, 56px)',
-          display: 'grid',
-          gridTemplateColumns: '1fr 1fr',
-          gap: '40px',
-          alignItems: 'center',
-        }} className="dish-first-section">
-
+          padding: 'clamp(24px, 4vw, 48px)',
+        }}>
           {/* Decorative background blobs */}
           <div style={{
             position: 'absolute', inset: 0, pointerEvents: 'none', overflow: 'hidden',
@@ -359,231 +412,448 @@ item: {
               width: '280px', height: '280px', borderRadius: '50%',
               background: 'radial-gradient(circle, rgba(74,222,128,0.12) 0%, transparent 70%)',
             }} />
-            <div style={{
-              position: 'absolute', bottom: '-40px', left: '30%',
-              width: '200px', height: '200px', borderRadius: '50%',
-              background: 'radial-gradient(circle, rgba(74,222,128,0.08) 0%, transparent 70%)',
-            }} />
           </div>
 
-          {/* Left: Text content */}
-          <div style={{ position: 'relative', zIndex: 1 }}>
-            <div style={{
-              display: 'inline-flex', alignItems: 'center', gap: '8px',
-              background: 'rgba(74,222,128,0.12)', border: '1px solid rgba(74,222,128,0.25)',
-              borderRadius: '9999px', padding: '6px 14px', marginBottom: '20px',
-            }}>
-              <span style={{ width: '7px', height: '7px', borderRadius: '50%', background: '#4ade80', boxShadow: '0 0 8px #4ade80', display: 'inline-block' }} />
-              <span style={{ fontFamily: 'var(--grokly-font-display)', fontSize: '10px', fontWeight: 700, letterSpacing: '2px', textTransform: 'uppercase', color: '#4ade80' }}>
-                New Feature
-              </span>
+          {/* DESKTOP VIEW */}
+          <div className="dish-desktop-view" style={{
+            display: 'grid',
+            gridTemplateColumns: '320px 1fr',
+            gap: '32px',
+            position: 'relative',
+            zIndex: 1,
+          }}>
+            {/* Left Column: Dish Selection */}
+            <div>
+              <div style={{
+                background: 'rgba(74,222,128,0.12)', border: '1px solid rgba(74,222,128,0.25)',
+                borderRadius: '9999px', padding: '6px 14px', marginBottom: '16px',
+                display: 'inline-flex', alignItems: 'center', gap: '8px'
+              }}>
+                <span style={{ width: '7px', height: '7px', borderRadius: '50%', background: '#4ade80', boxShadow: '0 0 8px #4ade80' }} />
+                <span style={{ fontFamily: 'var(--grokly-font-display)', fontSize: '10px', fontWeight: 700, letterSpacing: '2px', textTransform: 'uppercase', color: '#4ade80' }}>
+                  Dish Cart
+                </span>
+              </div>
+              <h2 style={{
+                fontFamily: 'var(--grokly-font-display)',
+                fontSize: '2rem',
+                fontWeight: 900, color: '#fff', margin: '0 0 12px',
+                letterSpacing: '-0.02em', lineHeight: 1.1,
+              }}>
+                Choose a Dish,<br />
+                <span style={{ color: '#4ade80' }}>Get All Ingredients</span>
+              </h2>
+              <p style={{
+                fontFamily: 'var(--grokly-font-body)',
+                fontSize: '0.95rem',
+                color: 'rgba(255,255,255,0.7)', lineHeight: 1.5,
+                margin: '0 0 24px',
+              }}>
+                Select a recipe below. We will bundle the fresh ingredients so you can cook it at home. Customize items before adding.
+              </p>
+
+              {/* Stacked Recipe List */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                {Object.entries(dishes).map(([key, dish]) => {
+                  const isActive = selectedDishKey === key;
+                  return (
+                    <button
+                      key={key}
+                      onClick={() => setSelectedDishKey(key)}
+                      style={{
+                        background: isActive ? 'rgba(74,222,128,0.15)' : 'rgba(255,255,255,0.03)',
+                        border: isActive ? '1.5px solid #4ade80' : '1.5px solid rgba(255,255,255,0.08)',
+                        borderRadius: '16px',
+                        padding: '16px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '16px',
+                        cursor: 'pointer',
+                        textAlign: 'left',
+                        transition: 'all 0.25s',
+                        width: '100%',
+                      }}
+                      onMouseEnter={(e) => {
+                        if (!isActive) e.currentTarget.style.background = 'rgba(255,255,255,0.06)';
+                      }}
+                      onMouseLeave={(e) => {
+                        if (!isActive) e.currentTarget.style.background = 'rgba(255,255,255,0.03)';
+                      }}
+                    >
+                      <img
+                        src={dish.image}
+                        alt={dish.name}
+                        style={{
+                          width: '64px',
+                          height: '64px',
+                          borderRadius: '12px',
+                          objectFit: 'cover',
+                        }}
+                      />
+                      <div style={{ flex: 1 }}>
+                        <h4 style={{ margin: '0 0 4px', fontSize: '15px', color: '#fff', fontWeight: 800 }}>{dish.name}</h4>
+                        <p style={{ margin: 0, fontSize: '12px', color: 'rgba(255,255,255,0.6)' }}>
+                          {dish.ingredients.length} items &middot; ₹{dish.price}
+                        </p>
+                      </div>
+                      <span style={{
+                        width: '32px', height: '32px', borderRadius: '50%',
+                        background: isActive ? '#4ade80' : 'rgba(255,255,255,0.05)',
+                        color: isActive ? '#0a1e0a' : '#fff',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '14px',
+                        transition: 'all 0.2s'
+                      }}>
+                        <i className={isActive ? 'ri-checkbox-circle-fill' : 'ri-arrow-right-line'}></i>
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
             </div>
 
-            <h2 style={{
-              fontFamily: 'var(--grokly-font-display)',
-              fontSize: 'clamp(1.6rem, 3vw, 2.4rem)',
-              fontWeight: 900, color: '#fff', margin: '0 0 8px',
-              letterSpacing: '-0.03em', lineHeight: 1.1,
-            }}>
-              Dish-First<br />
-              <span style={{ color: '#4ade80' }}>Grocery Shopping</span>
-            </h2>
-
-            <p style={{
-              fontFamily: 'var(--grokly-font-body)',
-              fontSize: 'clamp(0.88rem, 1.5vw, 1rem)',
-              color: 'rgba(255,255,255,0.7)', lineHeight: 1.65,
-              margin: '0 0 28px', maxWidth: '420px',
-            }}>
-              Choose a dish first — instantly get all ingredients in your cart. Reduces friction, saves time, and makes grocery shopping feel effortless.
-            </p>
-
-            {/* Feature bullets */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '32px' }}>
-              {[
-                { iconClass: 'ri-shopping-cart-2-line', text: 'Add all ingredients in one tap' },
-                { iconClass: 'ri-restaurant-line', text: 'Search by dish, not ingredient' },
-                { iconClass: 'ri-pencil-line', text: 'Customise ingredients before adding' },
-                { iconClass: 'ri-flashlight-line', text: 'Delivered in 11 minutes flat' },
-              ].map((f) => (
-                <div key={f.text} style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                  <span style={{
-                    width: '32px', height: '32px', borderRadius: '8px',
-                    background: 'rgba(74,222,128,0.1)', border: '1px solid rgba(74,222,128,0.2)',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '16px', flexShrink: 0,
-                    color: '#4ade80'
-                  }}><i className={f.iconClass}></i></span>
-                  <span style={{
-                    fontFamily: 'var(--grokly-font-body)', fontSize: '0.9rem',
-                    color: 'rgba(255,255,255,0.85)', fontWeight: 500,
-                  }}>{f.text}</span>
-                </div>
-              ))}
-            </div>
-
-            <button
-              style={{
-                padding: '14px 32px', borderRadius: '9999px',
-                background: '#4ade80', color: '#0a1e0a',
-                fontFamily: 'var(--grokly-font-display)', fontWeight: 800,
-                fontSize: '15px', border: 'none', cursor: 'pointer',
-                transition: 'all 0.2s', boxShadow: '0 8px 24px rgba(74,222,128,0.3)',
-                display: 'inline-flex', alignItems: 'center', gap: '8px',
-              }}
-              onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 12px 32px rgba(74,222,128,0.45)'; }}
-              onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 8px 24px rgba(74,222,128,0.3)'; }}
-            >
-              Try Dish Cart
-            </button>
-          </div>
-
-          {/* Right: Phone mockups */}
-          <div style={{
-            position: 'relative', zIndex: 1,
-            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px',
-          }} className="dish-mockup-wrap">
-
-            {/* Mockup 1 – Dish search */}
+            {/* Right Column: Ingredients Details */}
             <div style={{
-              background: '#fff', borderRadius: '20px',
-              width: 'clamp(140px, 18vw, 190px)', flexShrink: 0,
-              overflow: 'hidden', boxShadow: '0 20px 48px rgba(0,0,0,0.4)',
+              background: 'rgba(255,255,255,0.02)',
               border: '1px solid rgba(255,255,255,0.08)',
+              borderRadius: '20px',
+              padding: '24px',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'space-between',
+              minHeight: '440px',
             }}>
-              <div style={{ background: '#f9f9f9', padding: '12px 12px 8px' }}>
-                <div style={{
-                  background: '#fff', borderRadius: '10px', padding: '8px 10px',
-                  display: 'flex', alignItems: 'center', gap: '6px',
-                  border: '1px solid #e5e7eb', fontSize: '10px', color: '#9ca3af',
-                }}>
-                  <i className="ri-search-line" style={{ fontSize: '11px', color: '#9ca3af' }}></i> Search "Paneer Chilli"
+              <div>
+                <div style={{ display: 'flex', justifycontent: 'space-between', alignItems: 'center', marginBottom: '20px', borderBottom: '1px solid rgba(255,255,255,0.08)', paddingBottom: '12px' }}>
+                  <h3 style={{ margin: 0, color: '#fff', fontSize: '18px', fontWeight: 800 }}>
+                    Ingredients for {dishes[selectedDishKey].name}
+                  </h3>
+                  <span style={{ fontSize: '13px', color: '#4ade80', fontWeight: 700 }}>
+                    {dishes[selectedDishKey].ingredients.length} Fresh items
+                  </span>
                 </div>
-              </div>
-              {/* Introducing Dish Cart banner */}
-              <div style={{
-                margin: '8px 10px', background: '#fff7ed', borderRadius: '10px',
-                padding: '10px', border: '1px solid #fed7aa',
-              }}>
-                <div style={{ fontSize: '9px', fontWeight: 800, color: '#ea580c', marginBottom: '6px' }}>
-                  <i className="ri-shopping-basket-line" style={{ marginRight: '4px', verticalAlign: 'middle' }}></i> Introducing Dish Cart
-                </div>
-                {['Add all ingredients in one tap', 'Search dishes', 'Customise easily'].map(t => (
-                  <div key={t} style={{ fontSize: '8px', color: '#374151', marginBottom: '3px', display: 'flex', alignItems: 'center', gap: '3px' }}>
-                    <i className="ri-checkbox-circle-fill" style={{ color: '#ea580c', fontSize: '9px' }}></i>
-                    {t}
-                  </div>
-                ))}
-              </div>
-              {/* Popular dishes */}
-              <div style={{ padding: '0 10px 10px' }}>
-                <div style={{ fontSize: '9px', fontWeight: 700, color: '#111', marginBottom: '6px' }}>Popular Dishes</div>
-                <div style={{ display: 'flex', gap: '6px' }}>
-                  {['Biryani', 'Tikka', 'Butter'].map(d => (
-                    <div key={d} style={{
-                      flex: 1, background: '#f3f4f6', borderRadius: '8px',
-                      padding: '6px 4px', textAlign: 'center', fontSize: '7px', color: '#374151', fontWeight: 600,
-                    }}><i className="ri-restaurant-line" style={{ fontSize: '10px', display: 'block', marginBottom: '2px' }}></i>{d}</div>
-                  ))}
-                </div>
-              </div>
-            </div>
 
-            {/* Mockup 2 – Ingredient list (highlighted / centre) */}
-            <div style={{
-              background: '#fff', borderRadius: '20px',
-              width: 'clamp(150px, 20vw, 200px)', flexShrink: 0,
-              overflow: 'hidden', boxShadow: '0 28px 64px rgba(0,0,0,0.55)',
-              border: '1px solid rgba(74,222,128,0.25)',
-              transform: 'scale(1.05)',
-              zIndex: 2,
-            }}>
-              <div style={{
-                background: 'linear-gradient(135deg, #0a1e0a, #1a3d1a)',
-                padding: '12px 12px 10px', color: '#fff',
-              }}>
-                <div style={{ fontSize: '10px', fontWeight: 800, marginBottom: '2px' }}>Paneer Tikka Masala</div>
-                <div style={{ fontSize: '8px', color: 'rgba(255,255,255,0.6)' }}>12 items · ₹698</div>
-              </div>
-              {/* Ingredient rows */}
-              {[
-                { name: 'Paneer (200g)', price: '₹82', disc: '₹130' },
-                { name: 'Tikka Marinade', price: '₹52', disc: '₹60' },
-                { name: 'Greek Yogurt', price: '₹35', disc: '₹55' },
-                { name: 'Ginger Garlic', price: '₹17', disc: '₹28' },
-              ].map((item) => (
-                <div key={item.name} style={{
-                  display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                  padding: '7px 10px', borderBottom: '1px solid #f3f4f6',
+                {/* Ingredients Grid */}
+                <div style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))',
+                  gap: '12px',
                 }}>
-                  <div>
-                    <div style={{ fontSize: '8px', fontWeight: 600, color: '#111' }}>{item.name}</div>
-                    <div style={{ fontSize: '7px', color: '#6b7280' }}>
-                      <span style={{ color: '#16a34a', fontWeight: 700 }}>{item.price}</span>
-                      {' '}<span style={{ textDecoration: 'line-through' }}>{item.disc}</span>
-                    </div>
-                  </div>
-                  <button style={{
-                    background: '#e11d48', color: '#fff', border: 'none',
-                    borderRadius: '5px', padding: '3px 8px', fontSize: '7px', fontWeight: 700, cursor: 'pointer',
-                  }}>ADD</button>
+                  {dishes[selectedDishKey].ingredients.map((ing) => {
+                    const qty = getProductQuantity(ing.id);
+                    return (
+                      <div
+                        key={ing.id}
+                        style={{
+                          background: '#fff',
+                          borderRadius: '12px',
+                          padding: '12px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '12px',
+                          border: '1px solid rgba(0,0,0,0.05)',
+                        }}
+                      >
+                        <img
+                          src={ing.image}
+                          alt={ing.name}
+                          style={{
+                            width: '48px',
+                            height: '48px',
+                            borderRadius: '8px',
+                            objectFit: 'cover',
+                            background: '#f9f9f9',
+                          }}
+                        />
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          <h5 style={{ margin: '0 0 2px', fontSize: '12px', color: '#111', fontWeight: 700, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                            {ing.name}
+                          </h5>
+                          <p style={{ margin: '0 0 4px', fontSize: '10px', color: '#6b7280' }}>{ing.unit}</p>
+                          <div style={{ fontSize: '11px', fontWeight: 700, color: '#111' }}>
+                            ₹{ing.price}{' '}
+                            <span style={{ fontSize: '9px', textDecoration: 'line-through', color: '#9ca3af', fontWeight: 'normal' }}>
+                              ₹{ing.mrp}
+                            </span>
+                          </div>
+                        </div>
+                        <div style={{ flexShrink: 0 }}>
+                          {qty > 0 ? (
+                            <div style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: '6px',
+                              background: '#22c55e',
+                              color: '#fff',
+                              borderRadius: '6px',
+                              padding: '4px 6px',
+                            }}>
+                              <button
+                                onClick={() => decrementQuantity(ing.id)}
+                                style={{ background: 'none', border: 'none', color: '#fff', fontWeight: 'bold', cursor: 'pointer', fontSize: '12px', padding: '0 2px' }}
+                              >
+                                -
+                              </button>
+                              <span style={{ fontSize: '11px', fontWeight: 'bold', minWidth: '10px', textAlign: 'center' }}>{qty}</span>
+                              <button
+                                onClick={() => incrementQuantity(ing.id)}
+                                style={{ background: 'none', border: 'none', color: '#fff', fontWeight: 'bold', cursor: 'pointer', fontSize: '12px', padding: '0 2px' }}
+                              >
+                                +
+                              </button>
+                            </div>
+                          ) : (
+                            <button
+                              onClick={() => addToCart(ing.id, 1)}
+                              style={{
+                                background: '#f0fdf4',
+                                border: '1px solid #22c55e',
+                                color: '#16a34a',
+                                borderRadius: '6px',
+                                padding: '5px 10px',
+                                fontSize: '10px',
+                                fontWeight: 800,
+                                cursor: 'pointer',
+                              }}
+                            >
+                              ADD
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
-              ))}
-              {/* Add All button */}
-              <div style={{ padding: '8px 10px' }}>
-                <button style={{
-                  width: '100%', background: '#4ade80', color: '#0a1e0a',
-                  border: 'none', borderRadius: '8px', padding: '8px',
-                  fontSize: '9px', fontWeight: 800, cursor: 'pointer',
-                }}>
-                  Add All Ingredients
+              </div>
+
+              {/* Add All CTA */}
+              <div style={{
+                marginTop: '24px',
+                paddingTop: '20px',
+                borderTop: '1px solid rgba(255,255,255,0.08)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+              }}>
+                <div style={{ color: '#fff' }}>
+                  <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase', letterSpacing: '1px' }}>Bundle Total</div>
+                  <div style={{ fontSize: '24px', fontWeight: 900, color: '#4ade80' }}>
+                    ₹{dishes[selectedDishKey].price}
+                  </div>
+                </div>
+                <button
+                  onClick={handleAddAll}
+                  style={{
+                    background: '#4ade80',
+                    color: '#0a1e0a',
+                    border: 'none',
+                    borderRadius: '9999px',
+                    padding: '14px 32px',
+                    fontSize: '14px',
+                    fontWeight: 800,
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    boxShadow: '0 8px 24px rgba(74,222,128,0.25)',
+                    transition: 'all 0.2s'
+                  }}
+                  onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 12px 32px rgba(74,222,128,0.4)'; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 8px 24px rgba(74,222,128,0.25)'; }}
+                >
+                  <i className="ri-shopping-basket-line"></i> Add All Ingredients
                 </button>
               </div>
             </div>
+          </div>
 
-            {/* Mockup 3 – Dish suggestions list */}
+          {/* MOBILE VIEW */}
+          <div className="dish-mobile-view" style={{
+            display: 'none',
+            position: 'relative',
+            zIndex: 1,
+          }}>
+            {/* Header */}
+            <div style={{ marginBottom: '16px', textAlign: 'center' }}>
+              <div style={{
+                background: 'rgba(74,222,128,0.12)', border: '1px solid rgba(74,222,128,0.25)',
+                borderRadius: '9999px', padding: '4px 10px', marginBottom: '8px',
+                display: 'inline-flex', alignItems: 'center', gap: '6px'
+              }}>
+                <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#4ade80' }} />
+                <span style={{ fontFamily: 'var(--grokly-font-display)', fontSize: '9px', fontWeight: 700, letterSpacing: '1px', textTransform: 'uppercase', color: '#4ade80' }}>
+                  Introducing Dish Cart
+                </span>
+              </div>
+              <h3 style={{ margin: '0 0 4px', fontSize: '1.25rem', fontWeight: 900, color: '#fff' }}>
+                Cook with Fresh Ingredients
+              </h3>
+              <p style={{ margin: 0, fontSize: '0.8rem', color: 'rgba(255,255,255,0.65)' }}>
+                Choose a dish to get all ingredients in one tap.
+              </p>
+            </div>
+
+            {/* Mockup Frame mimic */}
             <div style={{
-              background: '#fff', borderRadius: '20px',
-              width: 'clamp(140px, 18vw, 190px)', flexShrink: 0,
-              overflow: 'hidden', boxShadow: '0 20px 48px rgba(0,0,0,0.4)',
+              background: '#fff',
+              borderRadius: '24px',
+              padding: '16px',
+              boxShadow: '0 16px 32px rgba(0,0,0,0.3)',
               border: '1px solid rgba(255,255,255,0.08)',
             }}>
-              <div style={{ padding: '12px 12px 8px', background: '#f9f9f9' }}>
-                <div style={{ fontSize: '9px', fontWeight: 800, color: '#111', marginBottom: '6px' }}>Popular Paneer Dishes</div>
-                <div style={{ fontSize: '7px', color: '#6b7280' }}>Add all ingredients in one tap</div>
+              {/* Search Mimic */}
+              <div style={{ background: '#f9f9f9', padding: '10px', borderRadius: '12px', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px', border: '1px solid #e5e7eb', fontSize: '12px', color: '#9ca3af' }}>
+                <i className="ri-search-line"></i> Try searching "Paneer Chilli"
               </div>
-              {[
-                { iconClass: 'ri-restaurant-line', name: 'Paneer Biryani' },
-                { iconClass: 'ri-restaurant-2-line', name: 'Paneer Tikka' },
-                { iconClass: 'ri-cup-line', name: 'Butter Masala' },
-                { iconClass: 'ri-restaurant-line', name: 'Kadai Paneer' },
-              ].map((dish) => (
-                <div key={dish.name} style={{
-                  display: 'flex', alignItems: 'center', gap: '8px',
-                  padding: '7px 12px', borderBottom: '1px solid #f3f4f6',
-                }}>
-                  <span style={{
-                    width: '28px', height: '28px', background: '#f0fdf4',
-                    borderRadius: '8px', display: 'flex', alignItems: 'center',
-                    justifyContent: 'center', color: '#16a34a', fontSize: '14px', flexShrink: 0,
-                  }}><i className={dish.iconClass}></i></span>
-                  <span style={{ fontSize: '9px', fontWeight: 600, color: '#111' }}>{dish.name}</span>
-                </div>
-              ))}
-              <div style={{ padding: '8px 12px' }}>
-                <div style={{ fontSize: '8px', color: '#16a34a', fontWeight: 700, textAlign: 'center' }}>
-                  See all recipes with Paneer
+
+              {/* Popular Dishes selector horizontal */}
+              <div style={{ marginBottom: '16px' }}>
+                <div style={{ fontSize: '11px', fontWeight: 800, color: '#111', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Popular Dishes</div>
+                <div style={{ display: 'flex', gap: '8px', overflowX: 'auto', paddingBottom: '4px' }} className="hide-scrollbar">
+                  {Object.entries(dishes).map(([key, dish]) => {
+                    const isActive = selectedDishKey === key;
+                    return (
+                      <button
+                        key={key}
+                        onClick={() => setSelectedDishKey(key)}
+                        style={{
+                          flex: '0 0 auto',
+                          background: isActive ? '#f0fdf4' : '#f3f4f6',
+                          border: isActive ? '1px solid #22c55e' : '1px solid transparent',
+                          borderRadius: '12px',
+                          padding: '8px 12px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '8px',
+                          cursor: 'pointer',
+                        }}
+                      >
+                        <i className="ri-restaurant-line" style={{ color: isActive ? '#16a34a' : '#6b7280', fontSize: '14px' }}></i>
+                        <span style={{ fontSize: '11px', fontWeight: 700, color: isActive ? '#16a34a' : '#374151' }}>
+                          {dish.name.replace('Paneer ', '')}
+                        </span>
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
+
+              {/* Ingredients Card Section */}
+              <div style={{
+                background: '#fafafa',
+                borderRadius: '16px',
+                padding: '12px',
+                border: '1px solid #f0f0f0',
+              }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px', borderBottom: '1px solid #e5e7eb', paddingBottom: '8px' }}>
+                  <span style={{ fontSize: '12px', fontWeight: 800, color: '#111' }}>
+                    {dishes[selectedDishKey].name}
+                  </span>
+                  <span style={{ fontSize: '10px', color: '#6b7280' }}>
+                    {dishes[selectedDishKey].ingredients.length} items &middot; ₹{dishes[selectedDishKey].price}
+                  </span>
+                </div>
+
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                  {dishes[selectedDishKey].ingredients.map((item) => {
+                    const qty = getProductQuantity(item.id);
+                    return (
+                      <div key={item.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #f3f4f6' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                          <img src={item.image} alt={item.name} style={{ width: '36px', height: '36px', borderRadius: '6px', objectFit: 'cover' }} />
+                          <div>
+                            <div style={{ fontSize: '11px', fontWeight: 700, color: '#111' }}>{item.name}</div>
+                            <div style={{ fontSize: '9px', color: '#6b7280' }}>{item.unit}</div>
+                            <div style={{ fontSize: '10px', fontWeight: 700, color: '#111' }}>
+                              ₹{item.price}{' '}
+                              <span style={{ fontSize: '8px', textDecoration: 'line-through', color: '#9ca3af', fontWeight: 'normal' }}>
+                                ₹{item.mrp}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+
+                        {qty > 0 ? (
+                          <div style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '6px',
+                            background: '#22c55e',
+                            color: '#fff',
+                            borderRadius: '6px',
+                            padding: '4px 6px',
+                          }}>
+                            <button
+                              onClick={() => decrementQuantity(item.id)}
+                              style={{ background: 'none', border: 'none', color: '#fff', fontWeight: 'bold', cursor: 'pointer', fontSize: '12px', padding: '0 2px' }}
+                            >
+                              -
+                            </button>
+                            <span style={{ fontSize: '11px', fontWeight: 'bold', minWidth: '10px', textAlign: 'center' }}>{qty}</span>
+                            <button
+                              onClick={() => incrementQuantity(item.id)}
+                              style={{ background: 'none', border: 'none', color: '#fff', fontWeight: 'bold', cursor: 'pointer', fontSize: '12px', padding: '0 2px' }}
+                            >
+                              +
+                            </button>
+                          </div>
+                        ) : (
+                          <button
+                            onClick={() => addToCart(item.id, 1)}
+                            style={{
+                              background: '#e11d48',
+                              color: '#fff',
+                              border: 'none',
+                              borderRadius: '5px',
+                              padding: '4px 10px',
+                              fontSize: '9px',
+                              fontWeight: 700,
+                              cursor: 'pointer',
+                            }}
+                          >
+                            ADD
+                          </button>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Bottom Mobile Button */}
+              <button
+                onClick={handleAddAll}
+                style={{
+                  width: '100%',
+                  background: '#16a34a',
+                  color: '#fff',
+                  border: 'none',
+                  borderRadius: '12px',
+                  padding: '12px',
+                  marginTop: '16px',
+                  fontSize: '13px',
+                  fontWeight: 800,
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '6px'
+                }}
+              >
+                <i className="ri-shopping-basket-line"></i> Add All Ingredients
+              </button>
             </div>
           </div>
         </div>
 
-        {/* Mobile responsive style injected inline */}
+        {/* Mobile responsive styles */}
         <style>{`
+          .dish-desktop-view {
+            display: grid !important;
+          }
+          .dish-mobile-view {
+            display: none !important;
+          }
           @media (max-width: 768px) {
-            .dish-first-section {
-              grid-template-columns: 1fr !important;
-              gap: 28px !important;
               padding: 28px 20px !important;
             }
             .dish-mockup-wrap {

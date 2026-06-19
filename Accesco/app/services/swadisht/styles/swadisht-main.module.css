@@ -748,7 +748,7 @@
   }
 }
 .discoverSection {
-  padding: 24px;
+  padding: 40px 24px;
   background: #FFF9F0;
 }
 
@@ -757,64 +757,362 @@
   margin: 0 auto;
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 20px;
+  gap: 24px;
 }
 
 .featureCard {
-  background: white;
-  border: 1px solid rgba(107,29,58,0.12);
-  border-radius: 24px;
-  padding: 28px;
+  position: relative;
+  overflow: hidden;
+
+  min-height: 280px;
+  padding: 34px 300px 34px 36px;
+
+  border-radius: 28px;
   text-decoration: none;
-  transition: all 0.2s ease;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  border: 1px solid rgba(107, 29, 58, 0.08);
+  transition: all 0.35s ease;
 }
 
 .featureCard:hover {
-  border-color: #6B1D3A;
+  transform: translateY(-6px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+}
+
+.featureCard:nth-child(1) {
+  background: linear-gradient(135deg, #ffffff, #fff4f4);
+}
+
+.featureCard:nth-child(2) {
+  background: linear-gradient(135deg, #fffef7, #fff6d8);
+}
+
+.featureCard:nth-child(3) {
+  background: linear-gradient(135deg, #ffffff, #eef8eb);
+}
+
+.featureCard:nth-child(4) {
+  background: linear-gradient(135deg, #faf7ff, #f2ebff);
+}
+
+.featureCard::before {
+  content: '';
+  position: absolute;
+
+  width: 420px;
+  height: 420px;
+
+  border-radius: 50%;
+  right: -180px;
+  top: -90px;
+
+  opacity: 0.75;
+  z-index: 0;
+}
+
+.featureCard:nth-child(1)::before {
+  background: #f8dede;
+}
+
+.featureCard:nth-child(2)::before {
+  background: #fff0ba;
+}
+
+.featureCard:nth-child(3)::before {
+  background: #dff0d8;
+}
+
+.featureCard:nth-child(4)::before {
+  background: #eadcff;
+}
+
+.featureCard::after {
+  content: '';
+  position: absolute;
+
+  top: 44px;
+  right: 44px;
+
+  width: 60px;
+  height: 60px;
+
+  opacity: 0.35;
+  z-index: 1;
+
+  background-image: radial-gradient(#d4a017 2px, transparent 2px);
+  background-size: 12px 12px;
+}
+
+.featureCard h3,
+.featureCard p,
+.featureCard span {
+  position: relative;
+  z-index: 5;
 }
 
 .featureCard h3 {
   color: #6B1D3A;
-  font-size: 26px;
-  margin-bottom: 12px;
+
+  font-size: 2rem;
+  font-weight: 800;
+  line-height: 1.15;
+
+  margin-bottom: 14px;
+  max-width: 360px;
 }
 
 .featureCard p {
-  color: #6B7280;
-  margin-bottom: 18px;
-  line-height: 1.6;
+  color: #64748b;
+
+  font-size: 1.05rem;
+  line-height: 1.65;
+
+  max-width: 340px;
+  margin-bottom: 26px;
 }
 
 .featureCard span {
-  color: #6B1D3A;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: fit-content;
+
+  padding: 16px 26px;
+  border-radius: 16px;
+
+  background: #6B1D3A;
+  color: white;
+
   font-weight: 700;
+  font-size: 17px;
+
+  box-shadow: 0 10px 25px rgba(107, 29, 58, 0.25);
+  transition: all 0.3s ease;
 }
 
+.featureCard:hover span {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 30px rgba(107, 29, 58, 0.32);
+}
+
+.featureImage {
+  position: absolute;
+
+  right: -65px;
+  bottom: -18px;
+
+  width: 330px;
+  height: 245px;
+
+  pointer-events: none;
+  z-index: 2;
+
+  transition: transform 0.4s ease;
+}
+
+.featureCard:hover .featureImage {
+  transform: scale(1.05);
+}
+
+.featureImage img {
+  object-fit: contain;
+  opacity: 0.96;
+}
+
+/* Individual image tuning */
+
+.featureGrid .featureCard:nth-child(1) .featureImage {
+  right: -75px;
+  bottom: -18px;
+  width: 350px;
+  height: 250px;
+}
+
+.featureGrid .featureCard:nth-child(2) .featureImage {
+  right: -55px;
+  bottom: -12px;
+  width: 335px;
+  height: 245px;
+}
+
+.featureGrid .featureCard:nth-child(3) .featureImage {
+  right: -40px;
+  bottom: -10px;
+  width: 360px;
+  height: 250px;
+}
+
+.regionalImage {
+  right: -25px;
+  bottom: -20px;
+  width: 315px;
+  height: 285px;
+}
+
+/* Tablet */
+
+@media (max-width: 1024px) {
+  .featureCard {
+    padding: 30px 250px 30px 30px;
+  }
+
+  .featureCard h3 {
+    font-size: 1.7rem;
+  }
+
+  .featureCard p {
+    font-size: 0.98rem;
+    max-width: 300px;
+  }
+
+  .featureImage {
+    width: 290px;
+    height: 220px;
+  }
+}
+
+/* Mobile */
+
 @media (max-width: 768px) {
+  .discoverSection {
+    padding: 24px 12px;
+  }
+
   .featureGrid {
     grid-template-columns: repeat(2, 1fr);
     gap: 12px;
   }
 
   .featureCard {
-    padding: 16px;
+    min-height: 210px;
+    padding: 16px 110px 16px 16px;
+
     border-radius: 18px;
+  }
+
+  .featureCard::before {
+    width: 230px;
+    height: 230px;
+
+    right: -120px;
+    top: -40px;
+  }
+
+  .featureCard::after {
+    top: 20px;
+    right: 20px;
+
+    width: 44px;
+    height: 44px;
+
+    background-size: 10px 10px;
   }
 
   .featureCard h3 {
     font-size: 15px;
-    margin-bottom: 8px;
     line-height: 1.15;
+
+    margin-bottom: 8px;
+    max-width: 140px;
   }
 
   .featureCard p {
     font-size: 12px;
     line-height: 1.35;
+
+    max-width: 150px;
     margin-bottom: 10px;
   }
 
   .featureCard span {
+    padding: 10px 14px;
+
+    font-size: 11px;
+    border-radius: 12px;
+  }
+
+  .featureImage {
+    right: -45px;
+    bottom: -8px;
+
+    width: 170px;
+    height: 145px;
+  }
+
+  .featureGrid .featureCard:nth-child(1) .featureImage {
+    right: -55px;
+    bottom: -6px;
+
+    width: 180px;
+    height: 145px;
+  }
+
+  .featureGrid .featureCard:nth-child(2) .featureImage {
+    right: -50px;
+    bottom: -5px;
+
+    width: 175px;
+    height: 145px;
+  }
+
+  .featureGrid .featureCard:nth-child(3) .featureImage {
+    right: -45px;
+    bottom: -4px;
+
+    width: 185px;
+    height: 145px;
+  }
+
+  .regionalImage {
+    right: -35px;
+    bottom: -10px;
+
+    width: 160px;
+    height: 155px;
+  }
+}
+
+/* Very small mobile */
+
+@media (max-width: 480px) {
+  .featureGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .featureCard {
+    min-height: 190px;
+    padding: 20px 145px 20px 20px;
+  }
+
+  .featureCard h3 {
+    font-size: 20px;
+    max-width: 220px;
+  }
+
+  .featureCard p {
+    font-size: 13px;
+    max-width: 200px;
+  }
+
+  .featureCard span {
     font-size: 12px;
+  }
+
+  .featureImage {
+    right: -50px;
+    width: 190px;
+    height: 160px;
+  }
+
+  .regionalImage {
+    right: -30px;
+    width: 165px;
+    height: 165px;
   }
 }
 @media (max-width: 768px) {
@@ -827,5 +1125,3 @@
     padding-top: 80px;
   }
 }
-
- 

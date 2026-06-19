@@ -2,25 +2,25 @@
 // 250+ products inspired by Zepto, designed for Blinkit-style UI
 
 export const categories = [
-  { id: 'all', name: 'All Products', icon: '🛒', color: '#0c831f' },
-  { id: 'vegetables-fruits', name: 'Vegetables & Fruits', icon: '🥬', color: '#10b981' },
-  { id: 'dairy-breakfast', name: 'Dairy & Breakfast', icon: '🥛', color: '#3b82f6' },
-  { id: 'munchies', name: 'Munchies', icon: '🍿', color: '#f59e0b' },
-  { id: 'cold-drinks', name: 'Cold Drinks & Juices', icon: '🥤', color: '#ef4444' },
-  { id: 'instant-frozen', name: 'Instant & Frozen Food', icon: '🍜', color: '#8b5cf6' },
-  { id: 'tea-coffee', name: 'Tea, Coffee & Health', icon: '☕', color: '#78350f' },
-  { id: 'bakery-biscuits', name: 'Bakery & Biscuits', icon: '🍞', color: '#d97706' },
-  { id: 'sweet-tooth', name: 'Sweet Tooth', icon: '🍫', color: '#ec4899' },
-  { id: 'atta-rice-dal', name: 'Atta, Rice & Dal', icon: '🌾', color: '#eab308' },
-  { id: 'masala-oil', name: 'Masala, Oil & More', icon: '🌶️', color: '#dc2626' },
-  { id: 'sauces-spreads', name: 'Sauces & Spreads', icon: '🍯', color: '#f97316' },
-  { id: 'organic-healthy', name: 'Organic & Healthy', icon: '🥗', color: '#059669' },
-  { id: 'baby-care', name: 'Baby Care', icon: '👶', color: '#06b6d4' },
-  { id: 'pharma-wellness', name: 'Pharma & Wellness', icon: '💊', color: '#0891b2' },
-  { id: 'cleaning', name: 'Cleaning Essentials', icon: '🧹', color: '#0284c7' },
-  { id: 'home-office', name: 'Home & Office', icon: '🏠', color: '#6366f1' },
-  { id: 'personal-care', name: 'Personal Care', icon: '🧴', color: '#a855f7' },
-  { id: 'pet-care', name: 'Pet Care', icon: '🐕', color: '#d946ef' },
+  { id: 'all', name: 'All Products', icon: '', color: '#0c831f' },
+  { id: 'vegetables-fruits', name: 'Vegetables & Fruits', icon: '', color: '#10b981' },
+  { id: 'dairy-breakfast', name: 'Dairy & Breakfast', icon: '', color: '#3b82f6' },
+  { id: 'munchies', name: 'Munchies', icon: '', color: '#f59e0b' },
+  { id: 'cold-drinks', name: 'Cold Drinks & Juices', icon: '', color: '#ef4444' },
+  { id: 'instant-frozen', name: 'Instant & Frozen Food', icon: '', color: '#8b5cf6' },
+  { id: 'tea-coffee', name: 'Tea, Coffee & Health', icon: '', color: '#78350f' },
+  { id: 'bakery-biscuits', name: 'Bakery & Biscuits', icon: '', color: '#d97706' },
+  { id: 'sweet-tooth', name: 'Sweet Tooth', icon: '', color: '#ec4899' },
+  { id: 'atta-rice-dal', name: 'Atta, Rice & Dal', icon: '', color: '#eab308' },
+  { id: 'masala-oil', name: 'Masala, Oil & More', icon: '', color: '#dc2626' },
+  { id: 'sauces-spreads', name: 'Sauces & Spreads', icon: '', color: '#f97316' },
+  { id: 'organic-healthy', name: 'Organic & Healthy', icon: '', color: '#059669' },
+  { id: 'baby-care', name: 'Baby Care', icon: '', color: '#06b6d4' },
+  { id: 'pharma-wellness', name: 'Pharma & Wellness', icon: '', color: '#0891b2' },
+  { id: 'cleaning', name: 'Cleaning Essentials', icon: '', color: '#0284c7' },
+  { id: 'home-office', name: 'Home & Office', icon: '', color: '#6366f1' },
+  { id: 'personal-care', name: 'Personal Care', icon: '', color: '#a855f7' },
+  { id: 'pet-care', name: 'Pet Care', icon: '', color: '#d946ef' },
 ];
 
 // Product data structure optimized for Blinkit-style display
@@ -582,6 +582,30 @@ export const products = [
     image: 'https://images.unsplash.com/photo-1568254183919-78a4f43a2877?w=270&h=270&fit=crop',
     inStock: true, rating: 4.5, reviews: 220
   },
+  {
+    id: 'dish-paneer', name: 'Milky Mist Paneer', brand: 'Milky Mist', category: 'dairy-breakfast',
+    price: 82, mrp: 130, discount: 37, unit: '200 g', deliveryTime: '11 MINS',
+    image: 'https://images.unsplash.com/photo-1631452180519-c014fe946bc7?w=270&h=270&fit=crop',
+    inStock: true, tags: ['Bestseller', 'Protein Rich'], rating: 4.6, reviews: 860
+  },
+  {
+    id: 'dish-marinade', name: 'Everest Tikhalal Powder Pouch', brand: 'Everest', category: 'masala-oil',
+    price: 52, mrp: 60, discount: 13, unit: '100 g', deliveryTime: '11 MINS',
+    image: 'https://images.unsplash.com/photo-1596040033229-a0b3b83b2e4d?w=270&h=270&fit=crop',
+    inStock: true, rating: 4.5, reviews: 180
+  },
+  {
+    id: 'dish-yogurt', name: 'Milky Mist Greek Yogurt', brand: 'Milky Mist', category: 'dairy-breakfast',
+    price: 35, mrp: 55, discount: 36, unit: '1 pc (100 g)', deliveryTime: '11 MINS',
+    image: 'https://images.unsplash.com/photo-1488477181946-6428a0291777?w=270&h=270&fit=crop',
+    inStock: true, rating: 4.6, reviews: 260
+  },
+  {
+    id: 'dish-ggpaste', name: 'Catch Ginger Garlic Paste', brand: 'Catch', category: 'masala-oil',
+    price: 17, mrp: 28, discount: 39, unit: '1 pack (100 g)', deliveryTime: '11 MINS',
+    image: 'https://images.unsplash.com/photo-1608686207856-001b95cf60ca?w=270&h=270&fit=crop',
+    inStock: true, rating: 4.6, reviews: 225
+  }
 ];
 
 // Helper functions

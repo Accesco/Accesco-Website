@@ -8,12 +8,11 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { useSwadishtt } from '../contexts/SwadishttContext';
 import SwadishttHeader from '../components/SwadishttHeader';
 import { THALI_RECIPES, getThalisByCategory } from '../lib/thaliData';
 import styles from './thali-engine.module.css';
 
-// Hero Section
+// 1. Hero Section
 function ThaliHero() {
   return (
     <div className={styles.hero}>
@@ -26,30 +25,22 @@ function ThaliHero() {
         </p>
         
         <div className={styles.heroFeatures}>
-          <div className={styles.heroFeature}>
-            <span className={styles.featureText}>FarmChain Traced</span>
-          </div>
-          <div className={styles.heroFeature}>
-            <span className={styles.featureText}>Traditional Proportions</span>
-          </div>
-          <div className={styles.heroFeature}>
-            <span className={styles.featureText}>Optional Cooking</span>
-          </div>
-          <div className={styles.heroFeature}>
-            <span className={styles.featureText}>Cultural Stories</span>
-          </div>
+          <div className={styles.heroFeature}><span className={styles.featureText}>FarmChain Traced</span></div>
+          <div className={styles.heroFeature}><span className={styles.featureText}>Traditional Proportions</span></div>
+          <div className={styles.heroFeature}><span className={styles.featureText}>Optional Cooking</span></div>
+          <div className={styles.heroFeature}><span className={styles.featureText}>Cultural Stories</span></div>
         </div>
       </div>
     </div>
   );
 }
 
-// Category Filter
+// 2. Category Filter
 function CategoryFilter({ activeCategory, onCategoryChange }) {
   const categories = [
-    { id: 'all', name: 'All Thalis', icon: '' },
-    { id: 'traditional', name: 'Traditional', icon: '' },
-    { id: 'festival', name: 'Festival', icon: '' }
+    { id: 'all', name: 'All Thalis' },
+    { id: 'traditional', name: 'Traditional' },
+    { id: 'festival', name: 'Festival' }
   ];
   
   return (
@@ -67,10 +58,34 @@ function CategoryFilter({ activeCategory, onCategoryChange }) {
   );
 }
 
-// Thali Card Component
+// 3. Main Thali Card Component (With Standardized Buy Options)
 function ThaliCard({ thali }) {
   const [showStory, setShowStory] = useState(false);
+
+  // Logic to ensure every thali has exactly 3 options like Sunday Thali
+  const basePrice = thali.cookingOptions[0]?.price || 599;
   
+  const standardizedOptions = [
+    {
+      name: 'Ready to Eat',
+      description: 'Fully prepared, just heat and serve',
+      deliveryTime: thali.cookingOptions[0]?.deliveryTime || '45-60 mins',
+      price: basePrice
+    },
+    {
+      name: 'Semi-Prepared',
+      description: 'Pre-cut ingredients with recipe, cook at home',
+      deliveryTime: '2-3 hours',
+      price: basePrice - 100 
+    },
+    {
+      name: 'Raw Ingredients Kit',
+      description: 'Fresh ingredients with detailed recipe',
+      deliveryTime: '4-5 hours',
+      price: basePrice - 150
+    }
+  ];
+
   return (
     <div className={styles.thaliCard}>
       <div className={styles.cardImage}>
@@ -78,76 +93,57 @@ function ThaliCard({ thali }) {
           src={thali.image} 
           alt={thali.name}
           onError={(e) => {
-            e.target.src = `https://placehold.co/400x300/E23744/FFFFFF/png?text=${encodeURIComponent(thali.name)}`;
+            e.target.src = `https://placehold.co/400x300/520B24/FFFFFF/png?text=${encodeURIComponent(thali.name)}`;
           }}
         />
-        {thali.isBestseller && (
-          <div className={styles.bestsellerBadge}>⭐ Bestseller</div>
-        )}
-        {thali.festival && (
-          <div className={styles.festivalBadge}>{thali.festival}</div>
-        )}
+        {thali.isBestseller && <div className={styles.bestsellerBadge}>⭐ Bestseller</div>}
       </div>
       
       <div className={styles.cardContent}>
         <div className={styles.cardHeader}>
           <h3 className={styles.thaliName}>{thali.name}</h3>
-          <div className={styles.ratingBadge}>
-            ★ {thali.rating}
-          </div>
+          <div className={styles.ratingBadge}>★ {thali.rating}</div>
         </div>
         
         <p className={styles.description}>{thali.description}</p>
         
         <div className={styles.cardMeta}>
-          <span className={styles.metaItem}>
-            {thali.prepTime}
-          </span>
-          <span className={styles.metaDivider}>•</span>
-          <span className={styles.metaItem}>
-            Serves {thali.serves}
-          </span>
-          <span className={styles.metaDivider}>•</span>
-          <span className={styles.metaItem}>
-            {thali.components.length} dishes
-          </span>
+          <span>{thali.prepTime}</span>
+          <span>•</span>
+          <span>Serves {thali.serves}</span>
+          <span>•</span>
+          <span>{thali.components.length} dishes</span>
         </div>
-        
+
+        <div className={styles.nutrition}>
+          <div className={styles.nutritionItem}>
+            <span className={styles.nutritionLabel}>Calories</span>
+            <span className={styles.nutritionValue}>{thali.nutritionInfo.calories}</span>
+          </div>
+          <div className={styles.nutritionItem}>
+            <span className={styles.nutritionLabel}>Protein</span>
+            <span className={styles.nutritionValue}>{thali.nutritionInfo.protein}g</span>
+          </div>
+          <div className={styles.nutritionItem}>
+            <span className={styles.nutritionLabel}>Carbs</span>
+            <span className={styles.nutritionValue}>{thali.nutritionInfo.carbs}g</span>
+          </div>
+          <div className={styles.nutritionItem}>
+            <span className={styles.nutritionLabel}>Fats</span>
+            <span className={styles.nutritionValue}>{thali.nutritionInfo.fats}g</span>
+          </div>
+        </div>
+
         <div className={styles.components}>
           <h4 className={styles.componentsTitle}>Includes:</h4>
           <div className={styles.componentsList}>
-            {thali.components.slice(0, 4).map((comp, idx) => (
-              <span key={idx} className={styles.componentTag}>
-                {comp.name}
-              </span>
+            {thali.components.map((comp, idx) => (
+              <span key={idx} className={styles.componentTag}>{comp.name}</span>
             ))}
-            {thali.components.length > 4 && (
-              <span className={styles.componentTag}>
-                +{thali.components.length - 4} more
-              </span>
-            )}
           </div>
         </div>
         
-        <div className={styles.nutrition}>
-          <span className={styles.nutritionItem}>
-            {thali.nutritionInfo.calories} cal
-          </span>
-          <span className={styles.nutritionItem}>
-            Protein: {thali.nutritionInfo.protein}g
-          </span>
-          <span className={styles.nutritionItem}>
-            Carbs: {thali.nutritionInfo.carbs}g
-          </span>
-          <span className={styles.nutritionItem}>
-            Fats: {thali.nutritionInfo.fats}g
-          </span>
-        </div>
-        
-        <button 
-          className={styles.storyBtn}
-          onClick={() => setShowStory(!showStory)}
-        >
+        <button className={styles.storyBtn} onClick={() => setShowStory(!showStory)}>
           {showStory ? 'Hide' : 'Read'} Cultural Story
         </button>
         
@@ -155,38 +151,29 @@ function ThaliCard({ thali }) {
           <div className={styles.culturalStory}>
             <h4 className={styles.storyTitle}>{thali.culturalStory.title}</h4>
             <p className={styles.storyContent}>{thali.culturalStory.content}</p>
-            <div className={styles.traditions}>
-              <h5>Traditions:</h5>
-              <ul>
-                {thali.culturalStory.traditions.map((tradition, idx) => (
-                  <li key={idx}>{tradition}</li>
-                ))}
-              </ul>
-            </div>
           </div>
         )}
         
         <div className={styles.cookingOptions}>
           <h4 className={styles.optionsTitle}>Choose Your Option:</h4>
-          {thali.cookingOptions.map((option, idx) => (
+          {standardizedOptions.map((option, idx) => (
             <div key={idx} className={styles.cookingOption}>
               <div className={styles.optionInfo}>
                 <span className={styles.optionName}>{option.name}</span>
                 <span className={styles.optionDesc}>{option.description}</span>
-                <span className={styles.optionDelivery}>Delivery: {option.deliveryTime}</span>
+                <span className={styles.optionDelivery}>
+                  Delivery: <strong>{option.deliveryTime}</strong>
+                </span>
               </div>
               <div className={styles.optionPrice}>
                 <span className={styles.price}>₹{option.price}</span>
-                <button className={styles.addBtn}>Add</button>
+                <button className={styles.addBtn}>ADD</button>
               </div>
             </div>
           ))}
         </div>
         
-        <Link 
-          href={`/services/swadisht/thali/${thali.id}`}
-          className={styles.viewDetailsBtn}
-        >
+        <Link href={`/services/swadisht/thali/${thali.id}`} className={styles.viewDetailsBtn}>
           View Full Details & Customize
         </Link>
       </div>
@@ -194,7 +181,7 @@ function ThaliCard({ thali }) {
   );
 }
 
-// Main Page Component
+// 4. Main Page Content Controller
 function ThaliEngineContent() {
   const [activeCategory, setActiveCategory] = useState('all');
   const [thalis, setThalis] = useState(THALI_RECIPES);
@@ -213,24 +200,16 @@ function ThaliEngineContent() {
       <SwadishttHeader />
       <div className={styles.pageContent}>
         <ThaliHero />
-        
         <div className={styles.container}>
-          <CategoryFilter 
-            activeCategory={activeCategory}
-            onCategoryChange={handleCategoryChange}
-          />
-          
+          <CategoryFilter activeCategory={activeCategory} onCategoryChange={handleCategoryChange} />
           <div className={styles.thaliGrid}>
             {thalis.map(thali => (
               <ThaliCard key={thali.id} thali={thali} />
             ))}
           </div>
-          
           {thalis.length === 0 && (
             <div className={styles.emptyState}>
-              <div className={styles.emptyIcon}>🍛</div>
               <h3 className={styles.emptyTitle}>No thalis found</h3>
-              <p className={styles.emptyText}>Try selecting a different category</p>
             </div>
           )}
         </div>
@@ -239,8 +218,6 @@ function ThaliEngineContent() {
   );
 }
 
-
-// Edited Jabez: SwadishttProvider now lives in the layout for shared state.
 export default function ThaliEnginePage() {
   return <ThaliEngineContent />;
 }

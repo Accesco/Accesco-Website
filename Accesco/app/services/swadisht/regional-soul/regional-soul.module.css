@@ -1,412 +1,936 @@
-/* Regional Soul Page - State-wise Authentic Cuisine */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap');
 
 .pageContent {
   min-height: 100vh;
-  background: #F8F9FA;
-  padding-top: 72px;
+  background-color: #fcfbf7;
+  color: #292524;
+  font-family: 'Plus Jakarta Sans', sans-serif;
 }
 
-/* Hero Section */
+/* Cinematic Hero Home Section */
 .hero {
-  background: #ffffff;
-  padding: 40px 24px;
-  text-align: center;
-  border-bottom: 1px solid #E8E8E8;
+  position: relative;
+  min-height: 85vh;
+  display: flex;
+  align-items: center;
+  padding: 0 10%;
+  color: white;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  margin-bottom: 60px;
+}
+
+.heroContent {
+  max-width: 650px;
+  z-index: 2;
+  text-align: left;
+}
+
+.heroKicker {
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  font-size: 11px;
+  font-weight: 700;
+  color: #fcd34d;
+  margin-bottom: 16px;
+  display: block;
 }
 
 .heroTitle {
-  font-size: 32px;
-  font-weight: 600;
-  margin-bottom: 12px;
-  color: #1C1C1C;
-  letter-spacing: -0.01em;
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(40px, 6vw, 64px);
+  line-height: 1.1;
+  margin-bottom: 24px;
+}
+
+.heroItalic {
+  font-style: italic;
+  font-weight: 400;
+  color: #fef08a;
 }
 
 .heroSub {
   font-size: 16px;
-  color: #696969;
-  margin-bottom: 8px;
-  max-width: 700px;
-  margin-left: auto;
-  margin-right: auto;
-  line-height: 1.5;
+  line-height: 1.6;
+  margin-bottom: 32px;
+  opacity: 0.9;
+  font-weight: 300;
 }
 
-.heroQuote {
-  font-size: 14px;
-  font-style: italic;
-  color: #969696;
+.heroBtnPrimary {
+  background: #78350f;
+  color: white;
+  padding: 14px 32px;
+  border-radius: 9999px;
+  font-weight: 750;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border: 1px solid #78350f;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 10px 25px rgba(120, 53, 15, 0.25);
 }
 
-/* Container */
-.container {
+.heroBtnPrimary:hover {
+  background: #92400e;
+  transform: translateY(-2px);
+}
+
+/* Regional Explorer Catalogue Section */
+.explorerSection {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 40px 24px;
+  padding: 40px 24px 80px;
 }
 
-.sectionLabel {
-  font-size: 14px;
-  font-weight: 700;
-  color: #696969;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  margin-bottom: 16px;
-}
-
-/* State Selector */
-.stateSelector {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-  gap: 16px;
+.sectionHeaderRow {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  border-bottom: 1px solid #e7e5e4;
+  padding-bottom: 32px;
   margin-bottom: 48px;
 }
 
-.stateBtn {
-  background: #ffffff;
-  border: 2px solid #E8E8E8;
-  border-radius: 16px;
-  padding: 20px;
+@media(min-width: 900px) {
+  .sectionHeaderRow {
+    flex-direction: row;
+    align-items: flex-end;
+    justify-content: space-between;
+  }
+}
+
+.sectionTitleBlock {
+  max-width: 550px;
+  text-align: left;
+}
+
+.heritageLabel {
+  display: block;
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: #78350f;
+  margin-bottom: 8px;
+}
+
+.sectionTitle {
+  font-family: 'Playfair Display', serif;
+  font-size: 36px;
+  color: #1c1917;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+.sectionDesc {
+  font-size: 14px;
+  color: #57534e;
+  line-height: 1.6;
+}
+
+/* Filters Navigation bar */
+.regionSelectorRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.regionTab {
+  background: white;
+  border: 1px solid #e7e5e4;
+  border-radius: 9999px;
+  padding: 10px 22px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  font-weight: 700;
+  color: #57534e;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  transition: all 0.25s ease;
+}
+
+.regionTab:hover {
+  border-color: #78350f;
+  color: #78350f;
+}
+
+.regionActive {
+  background: #78350f !important;
+  color: white !important;
+  border-color: #78350f !important;
+  box-shadow: 0 4px 12px rgba(120, 53, 15, 0.15);
+}
+
+/* 10 States Grid display */
+.statesGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 24px;
+}
+
+.stateCard {
+  position: relative;
+  height: 380px;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+  cursor: pointer;
+  transition: all 0.4s ease;
+  border: 1px solid rgba(120, 53, 15, 0.05);
+}
+
+.stateCardImg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.stateCard:hover .stateCardImg {
+  transform: scale(1.05);
+}
+
+.stateCardCover {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, #0c0a09 15%, rgba(12, 10, 9, 0.4) 50%, rgba(12, 10, 9, 0.1));
+  transition: background 0.3s ease;
+}
+
+.stateCard:hover .stateCardCover {
+  background: linear-gradient(to top, #090503 20%, rgba(12, 10, 9, 0.5) 55%, rgba(12, 10, 9, 0.15));
+}
+
+.stateCardContent {
+  position: absolute;
+  inset: 0;
+  padding: 24px;
   display: flex;
   flex-direction: column;
+  justify-content: flex-end;
+  color: white;
+  text-align: left;
+}
+
+.stateCardNative {
+  font-family: 'Playfair Display', serif;
+  font-size: 12px;
+  font-style: italic;
+  color: #fcd34d;
+  margin-bottom: 2px;
+}
+
+.stateCardTitle {
+  font-family: 'Playfair Display', serif;
+  font-size: 22px;
+  font-weight: 700;
+  margin: 0 !important;
+  color: white;
+}
+
+.stateCardHoverInfo {
+  margin-top: 8px;
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: all 0.4s ease;
+}
+
+.stateCard:hover .stateCardHoverInfo {
+  max-height: 80px;
+  opacity: 1;
+}
+
+.stateCardTagline {
+  font-size: 10px;
+  text-transform: uppercase;
+  color: #fef08a;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  margin-bottom: 4px !important;
+}
+
+.stateCardSpecialties {
+  font-size: 11px;
+  color: #d6d3d1;
+  font-weight: 300;
+}
+
+.stateCardFooter {
+  display: flex;
+  justify-content: space-between;
   align-items: center;
-  gap: 12px;
+  margin-top: 16px;
+  border-top: 1px solid rgba(255,255,255,0.15);
+  padding-top: 12px;
+  font-size: 11px;
+  color: rgba(255,255,255,0.7);
+  text-transform: uppercase;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+
+/* Join the Collective Subscription Card */
+.collectiveBanner {
+  background: rgba(120, 53, 15, 0.03);
+  border-top: 1px solid rgba(120, 53, 15, 0.08);
+  border-bottom: 1px solid rgba(120, 53, 15, 0.08);
+  padding: 80px 24px;
+  margin-top: 40px;
+}
+
+.collectiveContainer {
+  max-width: 800px;
+  margin: 0 auto;
   text-align: center;
 }
 
-.stateBtn:hover {
-  border-color: #CFCFCF;
-  transform: translateY(-4px);
-  box-shadow: 0 8px 24px rgba(0,0,0,0.1);
-}
-
-.stateActive {
-  border-width: 3px;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.15);
-  transform: translateY(-4px);
-}
-
-.stateEmoji {
-  font-size: 48px;
+.collectiveTitle {
+  font-family: 'Playfair Display', serif;
+  font-size: 32px;
+  color: #1c1917;
   font-weight: 700;
-  color: #1C1C1C;
+  margin-bottom: 12px;
 }
 
-.stateName {
-  font-size: 16px;
+.collectiveDesc {
+  color: #78716c;
+  font-size: 14px;
+  font-weight: 300;
+  max-width: 550px;
+  margin: 0 auto 32px;
+  line-height: 1.6;
+}
+
+.collectiveInputWrap {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 450px;
+  margin: 0 auto;
+}
+
+@media(min-width: 500px) {
+  .collectiveInputWrap {
+    flex-direction: row;
+    gap: 8px;
+    background: white;
+    border: 1px solid #e7e5e4;
+    border-radius: 9999px;
+    padding: 6px;
+  }
+}
+
+.collectiveInput {
+  flex: 1;
+  border: 1px solid #e7e5e4;
+  border-radius: 9999px;
+  padding: 14px 24px;
+  font-size: 13px;
+  outline: none;
+}
+
+@media(min-width: 500px) {
+  .collectiveInput {
+    border: none;
+  }
+}
+
+.collectiveBtn {
+  background: #78350f;
+  color: white;
+  border: none;
+  border-radius: 9999px;
+  padding: 14px 30px;
   font-weight: 700;
-  color: #1C1C1C;
-  letter-spacing: -0.01em;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  cursor: pointer;
 }
 
-/* Featured Section */
-.featuredSection {
-  background: #ffffff;
-  border-radius: 16px;
-  padding: 32px;
-  box-shadow: 0 2px 16px rgba(0,0,0,0.08);
+.collectiveSuccess {
+  background: #065f46;
+  color: white;
+  font-weight: 600;
+  padding: 12px 24px;
+  border-radius: 12px;
+  font-size: 13px;
+  display: inline-block;
 }
 
-.featuredHeader {
-  border-left: 6px solid;
-  padding-left: 24px;
+/* Detail view structural classes */
+.detailWrapper {
+  animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.detailHero {
+  position: relative;
+  min-height: 70vh;
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  align-items: flex-end;
+  padding: 40px 10% 60px;
+  color: white;
+  text-align: left;
+}
+
+.backBtn {
+  position: absolute;
+  top: 140px;
+  left: 10%;
+  background: rgba(0,0,0,0.4);
+  color: white;
+  border: 1px solid rgba(255,255,255,0.25);
+  border-radius: 9999px;
+  padding: 10px 20px;
+  font-size: 11px;
+  text-transform: uppercase;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  backdrop-filter: blur(8px);
+}
+
+.backBtn:hover {
+  background: rgba(0,0,0,0.6);
+  transform: translateX(-4px);
+}
+
+.detailHeroContent {
+  max-width: 800px;
+  z-index: 2;
+}
+
+.detailHeroKicker {
+  background: rgba(120, 53, 15, 0.45);
+  color: #fcd34d;
+  font-size: 10px;
+  font-weight: 800;
+  padding: 4px 10px;
+  text-transform: uppercase;
+  border-radius: 4px;
+  letter-spacing: 0.1em;
+  display: inline-block;
+  margin-bottom: 12px;
+}
+
+.detailHeroTitle {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(34px, 5vw, 52px);
+  font-weight: 700;
+  line-height: 1.15;
+  margin-bottom: 16px;
+}
+
+.detailHeroStory {
+  font-size: 15px;
+  font-weight: 300;
+  line-height: 1.6;
+  color: #e7e5e4;
   margin-bottom: 24px;
 }
 
-.featuredTitle {
-  font-size: 32px;
-  font-weight: 700;
-  color: #1C1C1C;
-  margin-bottom: 12px;
-  letter-spacing: -0.02em;
-}
-
-.featuredStory {
-  font-size: 16px;
-  color: #696969;
-  line-height: 1.6;
-  margin-bottom: 12px;
-}
-
-.chefNote {
-  font-size: 14px;
-  color: #696969;
-  font-style: italic;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-/* Specialties Row */
-.specialtiesRow {
+.detailSpecialtiesContainer {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: 12px;
-  margin-bottom: 32px;
-  padding: 20px;
-  background: #F8F9FA;
-  border-radius: 12px;
 }
 
-.specialtiesLabel {
-  font-size: 14px;
-  font-weight: 700;
-  color: #696969;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.specialtyTag {
-  padding: 8px 16px;
-  border: 2px solid;
-  border-radius: 20px;
-  font-size: 14px;
-  font-weight: 600;
-  background: #ffffff;
-  transition: all 0.2s ease;
-}
-
-.specialtyTag:hover {
-  transform: scale(1.05);
-}
-
-/* Dish Grid */
-.dishGrid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 24px;
-}
-
-.dishCard {
-  background: #ffffff;
-  border: 1px solid #E8E8E8;
-  border-radius: 12px;
-  overflow: hidden;
-  transition: all 0.2s ease;
-}
-
-.dishCard:hover {
-  box-shadow: 0 8px 24px rgba(0,0,0,0.12);
-  border-color: #CFCFCF;
-  transform: translateY(-4px);
-}
-
-.dishImageWrap {
-  position: relative;
-  width: 100%;
-  height: 200px;
-  overflow: hidden;
-  background: #F8F8F8;
-}
-
-.dishImageWrap img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 0.3s ease;
-}
-
-.dishCard:hover .dishImageWrap img {
-  transform: scale(1.05);
-}
-
-.ratingBadge {
-  position: absolute;
-  top: 12px;
-  left: 12px;
-  background: rgba(15,138,101,0.95);
-  color: #ffffff;
-  padding: 6px 12px;
-  border-radius: 20px;
-  font-size: 13px;
-  font-weight: 700;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-}
-
-.vegBadge {
-  position: absolute;
-  top: 12px;
-  right: 12px;
-  font-size: 10px;
-  font-weight: 700;
-  background: #ffffff;
-  padding: 4px 8px;
-  border-radius: 4px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.dishContent {
-  padding: 16px;
-}
-
-.dishName {
-  font-size: 18px;
-  font-weight: 700;
-  color: #1C1C1C;
-  margin-bottom: 6px;
-  letter-spacing: -0.01em;
-}
-
-.dishDesc {
-  font-size: 13px;
-  color: #696969;
-  line-height: 1.5;
-  margin-bottom: 12px;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-.dishFooter {
+.specialtiesPillRow {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding-top: 12px;
-  border-top: 1px solid #E8E8E8;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 
-.dishPrice {
-  font-size: 17px;
-  font-weight: 700;
-  color: #1C1C1C;
-}
-
-.dishCal {
-  font-size: 13px;
-  color: #696969;
-  margin-left: 12px;
+.specialtyPill {
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255,255,255,0.18);
+  border-radius: 9999px;
+  padding: 6px 14px;
+  font-size: 11px;
+  color: #fef3c7;
   font-weight: 500;
 }
 
-.addBtn {
-  background: #E23744;
-  color: #ffffff;
-  border: none;
-  padding: 10px 28px;
-  border-radius: 10px;
-  font-size: 15px;
+/* History Block columns */
+.tapestrySection {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 80px 24px;
+}
+
+.tapestryGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 60px;
+}
+
+@media(min-width: 1024px) {
+  .tapestryGrid {
+    grid-template-columns: 7fr 5fr;
+    align-items: start;
+  }
+}
+
+.tapestryColStory {
+  text-align: left;
+}
+
+.tapestryLabel {
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: #78350f;
+  letter-spacing: 0.1em;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.tapestryTitle {
+  font-family: 'Playfair Display', serif;
+  font-size: 28px;
+  color: #1c1917;
   font-weight: 700;
+  margin-bottom: 16px;
+}
+
+.tapestryText {
+  color: #57534e;
+  font-size: 14px;
+  line-height: 1.6;
+  font-weight: 300;
+  margin-bottom: 32px;
+}
+
+.tapestryPics {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.tapestryPicFrame {
+  border-radius: 16px;
+  overflow: hidden;
+  aspect-ratio: 4/3;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.tapestryPicFrame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Culinary Alchemist highlight panels */
+.tapestryColCard {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.alchemistBox {
+  background: rgba(120, 53, 15, 0.03);
+  border: 1px solid rgba(120, 53, 15, 0.08);
+  border-radius: 24px;
+  padding: 32px;
+  text-align: left;
+}
+
+.alchemistHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.alchemistTitleLabel {
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: #92400e;
+  letter-spacing: 0.08em;
+}
+
+.alchemistTitle {
+  font-family: 'Playfair Display', serif;
+  font-size: 22px;
+  color: #1c1917;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+.alchemistStory {
+  font-size: 13px;
+  line-height: 1.6;
+  color: #57534e;
+  margin-bottom: 24px;
+}
+
+.chefMessageBox {
+  background: rgba(120, 53, 15, 0.05);
+  border-radius: 16px;
+  padding: 16px;
+  display: flex;
+  gap: 12px;
+}
+
+.chefMessageEmoji {
+  font-size: 20px;
+}
+
+.chefMessageTitle {
+  font-weight: 750;
+  font-size: 12px;
+  display: block;
+  color: #444;
+}
+
+.chefMessageText {
+  font-style: italic;
+  font-size: 11px;
+  color: #78350f;
+  margin: 4px 0 0 !important;
+}
+
+.alchemistHeroFrame {
+  position: relative;
+  aspect-ratio: 16/10;
+  border-radius: 24px;
+  overflow: hidden;
+}
+
+.alchemistHeroFrame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.alchemistHeroCover {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, #111e 10%, transparent);
+  display: flex;
+  align-items: flex-end;
+  padding: 24px;
+  text-align: left;
+}
+
+.alchemistHeroTag {
+  font-size: 9px;
+  text-transform: uppercase;
+  color: #fcd34d;
+  font-weight: 700;
+}
+
+.alchemistHeroTitle {
+  font-family: 'Playfair Display', serif;
+  font-size: 18px;
+  color: white;
+  font-weight: 700;
+  margin: 2px 0 0 !important;
+}
+
+/* Taste of state Artisan Menu section */
+.menuContainer {
+  background: rgba(120, 53, 15, 0.02);
+  border-top: 1px solid rgba(120, 53, 15, 0.06);
+  padding: 80px 24px;
+}
+
+.menuHeader {
+  max-width: 650px;
+  margin: 0 auto 56px;
+  text-align: center;
+}
+
+.menuLabel {
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: #78350f;
+  display: inline-block;
+  margin-bottom: 8px;
+}
+
+.menuTitle {
+  font-family: 'Playfair Display', serif;
+  font-size: 32px;
+  font-weight: 700;
+  color: #171717;
+  margin-bottom: 12px;
+}
+
+.menuSubtitle {
+  font-size: 13px;
+  color: #666;
+  line-height: 1.6;
+}
+
+.dishGridCardRow {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 32px;
+}
+
+.dishCardModern {
+  background: white;
+  border: 1px solid #e7e5e4;
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.03);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.dishBadgeLabel {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  z-index: 10;
+  background: #78350f;
+  color: white;
+  font-size: 9px;
+  font-weight: 850;
+  text-transform: uppercase;
+  padding: 4px 8px;
+  border-radius: 4px;
+  letter-spacing: 0.05em;
+}
+
+.dishRatingBadge {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  z-index: 10;
+  background: rgba(0,0,0,0.6);
+  color: #fcd34d;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+.dishImgWrapper {
+  aspect-ratio: 1/1;
+  overflow: hidden;
+  position: relative;
+  background: #f5f5f4;
+}
+
+.dishImgWrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.dishVegMarker {
+  position: absolute;
+  bottom: 16px;
+  left: 16px;
+  background: rgba(255,255,255,0.9);
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 9px;
+  font-weight: 800;
+  color: #444;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.vegColorDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+
+.vegDotGreen {
+  background: #059669;
+}
+
+.vegDotRed {
+  background: #dc2626;
+}
+
+.dishContentBlock {
+  padding: 24px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  text-align: left;
+}
+
+.dishNameText {
+  font-family: 'Playfair Display', serif;
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 8px !important;
+  color: #171717;
+}
+
+.dishDescriptionText {
+  font-size: 12px;
+  color: #666;
+  line-height: 1.5;
+  margin-bottom: 24px !important;
+}
+
+.dishFooterRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  border-top: 1px solid #f2f0ed;
+  padding-top: 16px;
+}
+
+.dishPriceText {
+  font-size: 18px;
+  font-weight: 800;
+  color: #111;
+  display: block;
+}
+
+.dishCalText {
+  font-size: 10px;
+  color: #999;
+  display: block;
+}
+
+.addTrayBtn {
+  background: #78350f;
+  color: white;
+  border: none;
+  font-weight: 700;
+  font-size: 11px;
+  text-transform: uppercase;
+  padding: 10px 18px;
+  border-radius: 8px;
   cursor: pointer;
-  transition: all 0.2s ease;
-  text-transform: none;
-  letter-spacing: 0;
+  transition: opacity 0.2s;
 }
 
-.addBtn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(226,55,68,0.3);
+.addTrayBtn:hover {
+  opacity: 0.95;
+}
+.storyLayout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 32px;
+  align-items: center;
 }
 
-/* Responsive Design */
-@media (max-width: 768px) {
-  .pageContent {
-    padding-top: 116px;
-  }
-  
-  .hero {
-    padding: 32px 16px;
-  }
-  
-  .heroTitle {
-    font-size: 24px;
-  }
-  
-  .heroSub {
-    font-size: 14px;
-  }
-  
-  .heroQuote {
-    font-size: 13px;
-  }
-  
-  .container {
-    padding: 32px 16px;
-  }
-  
-  .stateSelector {
-    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-    gap: 12px;
-  }
-  
-  .stateBtn {
-    padding: 16px;
-  }
-  
-  .stateEmoji {
-    font-size: 36px;
-  }
-  
-  .stateName {
-    font-size: 14px;
-  }
-  
-  .featuredSection {
-    padding: 24px;
-  }
-  
-  .featuredHeader {
-    padding-left: 16px;
-  }
-  
-  .featuredTitle {
-    font-size: 24px;
-  }
-  
-  .featuredStory {
-    font-size: 15px;
-  }
-  
-  .specialtiesRow {
-    padding: 16px;
-  }
-  
-  .dishGrid {
-    grid-template-columns: 1fr;
-    gap: 16px;
-  }
+.storyTextBlock {
+  text-align: left;
 }
 
-@media (max-width: 640px) {
-  .pageContent {
-    padding-top: 106px;
+.storyImagesTop {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+}
+
+.storySmallImage {
+  border-radius: 10px;
+  overflow: hidden;
+  aspect-ratio: 4 / 5;
+}
+
+.storySmallImage img,
+.storyMainImage img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.storyMainImage {
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+  min-height: 320px;
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.12);
+}
+
+.storyImageTag {
+  position: absolute;
+  right: 14px;
+  bottom: 14px;
+  background: #fff7d6;
+  color: #78350f;
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-size: 11px;
+  max-width: 160px;
+}
+
+.storyImageTag strong {
+  display: block;
+  font-family: 'Playfair Display', serif;
+  font-size: 13px;
+  margin-bottom: 4px;
+}
+
+.storyImageTag span {
+  display: block;
+  color: #57534e;
+  line-height: 1.4;
+}
+
+.storyCard {
+  background: #f5edc8;
+  border-radius: 12px;
+  padding: 32px;
+  text-align: left;
+}
+
+.storyCard h3 {
+  font-family: 'Playfair Display', serif;
+  color: #78350f;
+  font-size: 20px;
+  margin-bottom: 14px;
+}
+
+.storyCard p {
+  color: #57534e;
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+@media (min-width: 900px) {
+  .storyLayout {
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
   }
-  
-  .heroTitle {
-    font-size: 28px;
+
+  .storyTextBlock {
+    padding-right: 30px;
   }
-  
-  .heroSub {
-    font-size: 16px;
+
+  .storyImagesTop {
+    align-items: start;
   }
-  
-  .stateSelector {
-    grid-template-columns: repeat(2, 1fr);
+
+  .storyMainImage {
+    min-height: 380px;
   }
-  
-  .featuredTitle {
-    font-size: 20px;
-  }
-  
-  .featuredStory {
-    font-size: 14px;
-  }
-  
-  .chefNote {
-    font-size: 13px;
-  }
-  
-  .specialtiesRow {
-    gap: 8px;
-  }
-  
-  .specialtyTag {
-    padding: 6px 12px;
-    font-size: 12px;
+
+  .storyCard {
+    max-width: 520px;
   }
 }

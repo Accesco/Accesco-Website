@@ -361,6 +361,16 @@ function OrderTrackingContent() {
     order?.id ||
     '1781081083395';
 
+  if (!order) {
+    return (
+      <div className={styles.container}>
+        <div style={{ padding: '40px', textAlign: 'center' }}>
+          Loading order...
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className={styles.container}>
       
