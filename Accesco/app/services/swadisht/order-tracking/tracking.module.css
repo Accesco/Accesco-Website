@@ -429,7 +429,7 @@
 }
 
 .sectionLabel {
-  font-size: 12px;
+  font-size: 22px;
   font-weight: 800;
   color: var(--text-3);
   letter-spacing: 0.12em;
@@ -440,7 +440,7 @@
 .livePulse {
   width: 10px;
   height: 10px;
-  background: var(--red);
+  background: var(--green);
   border-radius: 50%;
   animation: pulseLive 1.5s infinite;
 }
@@ -484,7 +484,7 @@
 
 .addressText {
   font-size: 15px;
-  font-weight: 700;
+  font-weight: 400;
   color: var(--text-1);
   margin: 0 0 4px;
   line-height: 1.5;

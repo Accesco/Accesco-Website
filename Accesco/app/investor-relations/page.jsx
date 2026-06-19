@@ -15,6 +15,10 @@ const mediaLogos = [
   { name: "The Weekly Mail", src: "/logos/weekly-mail.jpeg" },
   { name: "Achieve Times", src: "/logos/achieve-times.jpeg" },
   { name: "Achieve Times", src: "/logos/Successaga.jpeg" },
+    { name: "Buisness Insider Daily", src: "/logos/BID.jpeg" },
+  { name: "BBBusinessNews", src: "/logos/BBB.jpeg" },
+  { name: "Buisnessscope", src: "/logos/BSC.jpeg" },
+  { name: "Express_visionary", src: "/logos/Express_visionary.jpeg" },
 ];
 const ecosystemLogos = [
   { name: "AWS Startups", src: "/logos/aws-startups.png" },

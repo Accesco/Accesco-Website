@@ -376,6 +376,38 @@
   transform: translateY(-1px);
   box-shadow: 0 2px 8px rgba(226,55,68,0.3);
 }
+.quantityControl {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 96px;
+  height: 34px;
+  border: 1px solid #E23744;
+  border-radius: 8px;
+  background: #ffffff;
+  overflow: hidden;
+}
+
+.quantityBtn {
+  width: 32px;
+  height: 100%;
+  border: none;
+  background: #ffffff;
+  color: #E23744;
+  font-size: 18px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.quantityBtn:hover {
+  background: #FFF0F1;
+}
+
+.quantityValue {
+  color: #E23744;
+  font-size: 14px;
+  font-weight: 700;
+}
 
 /* Cart Float - Zomato Style */
 .cartFloat {

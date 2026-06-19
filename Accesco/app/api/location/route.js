@@ -1,6 +1,6 @@
 // /app/api/location/route.js
 
-const MAPMYINDIA_API_KEY = process.env.MAPMYINDIA_API_KEY;
+const MAPMYINDIA_API_KEY = process.env.NEXT_PUBLIC_MAPMYINDIA_API_KEY;
 
 export async function POST(request) {
   try {
@@ -66,7 +66,7 @@ export async function POST(request) {
     const data = await response.json();
 
     // console.log(
-    //   '✅ MapMyIndia Response:',
+    //   'MapMyIndia Response:',
     //   JSON.stringify(data, null, 2)
     // );
 
