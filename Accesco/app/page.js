@@ -258,50 +258,6 @@ const softwareApplicationSchema = {
 
         {/* ── Waitlist / App Showcase ── */}
         <AppShowcase />
-
-        {/* ── Section Posters ── */}
-        <section style={{
-          padding: 'clamp(40px, 6vw, 80px) clamp(16px, 4vw, 40px)',
-          background: '#FFFDF8',
-          display: 'flex',
-          gap: 'clamp(12px, 2vw, 24px)',
-          justifyContent: 'center',
-          alignItems: 'stretch',
-          flexWrap: 'wrap',
-        }}>
-          <div style={{
-            flex: '1 1 340px',
-            maxWidth: '480px',
-            borderRadius: '24px',
-            overflow: 'hidden',
-            boxShadow: '0 20px 40px rgba(0,0,0,0.08)',
-            position: 'relative',
-          }}>
-            <Image
-              src="/images/SectionPost1.jpeg"
-              alt="Accesco Living — Poster 1"
-              width={480}
-              height={300}
-              style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
-            />
-          </div>
-          <div style={{
-            flex: '1 1 340px',
-            maxWidth: '480px',
-            borderRadius: '24px',
-            overflow: 'hidden',
-            boxShadow: '0 20px 40px rgba(0,0,0,0.08)',
-            position: 'relative',
-          }}>
-            <Image
-              src="/images/SectionPost2.PNG"
-              alt="Accesco Living — Poster 2"
-              width={480}
-              height={300}
-              style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
-            />
-          </div>
-        </section>
       </main>
       <Footer />
 

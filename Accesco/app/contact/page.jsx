@@ -1,7 +1,7 @@
 'use client';
 
 import AccescoHeader from '../../components/AccescoHeader';
-import Footer from '../../components/Footer';
+
 import './contact.css';
 import { useState } from 'react';
 
@@ -286,7 +286,7 @@ export default function ContactPage() {
         )}
       </main>
 
-      <Footer />
+
     </>
   );
 }

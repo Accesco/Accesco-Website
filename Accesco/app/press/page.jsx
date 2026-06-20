@@ -2,7 +2,6 @@
 
 import React from 'react';
 import AccescoHeader from '../../components/AccescoHeader';
-import Footer from '../../components/Footer';
 import './press.css';
 
 const pressReleases = [
@@ -361,7 +360,6 @@ export default function PressPage() {
         </section>
 
       </main>
-      <Footer />
     </>
   );
 }

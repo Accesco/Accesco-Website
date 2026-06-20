@@ -11,7 +11,7 @@ export default function InstaStyleFooter() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="accesco-footer-root">
+    <footer className="accesco-footer-root instastyle-footer-root">
       <div className="footer-main-content">
         
         <div className="footer-grid-layout">
@@ -60,25 +60,25 @@ export default function InstaStyleFooter() {
             <div className="link-group">
               <h4 className="col-title">COMPANY</h4>
               <Link href="/about" className="link-item">About Us</Link>
-              <Link href="/services/instastyle/careers" className="link-item">Careers</Link>
-              <Link href="/services/instastyle/press" className="link-item">Press</Link>
-              <Link href="/services/instastyle/blogs" className="link-item">Blog</Link>
+              <Link href="/contact" className="link-item">Careers</Link>
+              <Link href="/press" className="link-item">Press</Link>
+              <Link href="/blogs" className="link-item">Blog</Link>
             </div>
             
             <div className="link-group">
               <h4 className="col-title">SUPPORT</h4>
-              <Link href="/services/instastyle/help" className="link-item">Help Center</Link>
+              <Link href="/contact" className="link-item">Help Center</Link>
               <Link href="/services/instastyle/orders" className="link-item">Track Order</Link>
-              <Link href="/services/instastyle/returns" className="link-item">Returns</Link>
+              <Link href="/refund#instastyle" className="link-item">Returns</Link>
               <Link href="/terms" className="link-item">Terms of Service</Link>
               <Link href="/privacy" className="link-item">Privacy Policy</Link>
             </div>
 
             <div className="link-group">
               <h4 className="col-title">PARTNERS</h4>
-              <Link href="/services/instastyle/ambassadors" className="link-item">Ambassador Program</Link>
-              <Link href="/services/instastyle/stylists" className="link-item">Stylist Portal</Link>
-              <Link href="/services/instastyle/influencers" className="link-item">Influencer Hub</Link>
+              <Link href="/partner" className="link-item">Ambassador Program</Link>
+              <Link href="/partner" className="link-item">Stylist Portal</Link>
+              <Link href="/partner" className="link-item">Influencer Hub</Link>
               <Link href="/partner" className="link-item">Vendor Relations</Link>
             </div>
           </div>

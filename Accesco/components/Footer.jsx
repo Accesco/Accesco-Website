@@ -82,7 +82,7 @@ export default function Footer() {
             <div className="link-group">
               <h4 className="col-title">FOR DELIVERY PARTNERS</h4>
               <Link href="/partner" className="link-item">Partner with us</Link>
-              <Link href="/apps-for-you" className="link-item">Apps for you</Link>
+              <Link href="/partner/delivery" className="link-item">Apps for you</Link>
             </div>
           </div>
         </div>

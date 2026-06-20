@@ -18,17 +18,34 @@
 }
 
 .backLink {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 5px;
+  gap: 6px;
   text-decoration: none;
-  color: #6f5644;
+  color: #0D0D0D;
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 999px;
+  padding: 8px 16px;
   font-weight: 700;
-  font-size: 14px;
+  font-size: 13px;
+  letter-spacing: 0.02em;
   flex-shrink: 0;
-  transition: opacity 0.2s;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 }
-.backLink:hover { opacity: 0.65; }
+.backLink:hover {
+  background: #0D0D0D;
+  color: #FFF;
+  border-color: #0D0D0D;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  transform: translateY(-1px);
+}
+.backLink:active {
+  transform: translateY(0);
+}
 
 .headerCenter {
   text-align: center;

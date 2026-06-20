@@ -43,6 +43,10 @@ async function sendOtpEmail(email, otp) {
   const apiKey = process.env.RESEND_API_KEY;
   if (!apiKey) {
     console.error('[send-otp] RESEND_API_KEY is missing');
+    if (process.env.NODE_ENV === 'development') {
+      console.info(`\n[DEVELOPMENT MOCK] RESEND_API_KEY is missing. Verification Code for ${email} is: ${otp}\n`);
+      return { ok: true };
+    }
     return { ok: false, type: 'config' };
   }
 

@@ -147,17 +147,13 @@ export default function AccescoLibraryPage() {
           <video
             className="lib-hero-video"
             autoPlay muted loop playsInline
-            poster="/assets/hero_poster.jpg"
+            poster="/images/qtc-mobile-hero.jpg"
           >
             <source src="/images/qtcbackground.mp4" type="video/mp4" />
           </video>
           <div className="lib-hero-overlay" />
 
           <div className="lib-hero-content">
-            <div className="lib-badge">
-              <span className="dot" />
-              Accesco Library
-            </div>
             <h1 className="lib-title">
               Your gateway to <span className="lib-gradient-text">knowledge & insight.</span>
             </h1>

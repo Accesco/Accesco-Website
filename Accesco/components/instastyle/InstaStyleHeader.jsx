@@ -301,7 +301,6 @@ export default function InstaStyleHeader() {
     { href: '/services/instastyle/virtual-tryon', label: 'Virtual Try-On' },
     { href: '/services/instastyle/swipestyle', label: 'SwipeStyle' },
     { href: '/services/instastyle/thrift', label: 'Thrift' },
-    ...(isMobileViewport ? [{ href: '/services/instastyle/wishlist', label: 'Wishlist' }] : []),
   ];
 
   const isActiveLink = (href, exact = false) => {
