@@ -156,10 +156,12 @@ export default function AppShowcase() {
   }, []);
 
   return (
-    <section id="waitlist" style={{ padding: '64px 20px', background: '#FFFDF8', position: 'relative' }}>
-      {/* Waitlist Section Header */}
-      <div style={{ maxWidth: '1200px', margin: '0 auto 40px', padding: '0', textAlign: 'center' }}>
+   <section id="waitlist" style={{ padding: '64px 20px', background: '#FFFDF8', position: 'relative' }}>
 
+ 
+
+  {/* Waitlist Section Header */}
+  <div style={{ maxWidth: '1200px', margin: '0 auto 40px', padding: '0', textAlign: 'center' }}>
 
         <h2 className={styles.waitlistTitle}>
           Join the <span className={styles.highlight}>Revolution</span>
@@ -185,7 +187,8 @@ export default function AppShowcase() {
                 e.currentTarget.style.background = 'linear-gradient(135deg, #7A0042, #1A0A0F)';
               }}
             />
-          </div>
+          </div> 
+                   
         </div>
 
         {/* Right Side - Form */}
@@ -349,43 +352,6 @@ export default function AppShowcase() {
               </>
             )}
           </form>
-        </div>
-      </div>
-
-      {/* Posters Section */}
-      <div className={styles.postersSectionWrapper}>
-        <div className={styles.postersHeadingRow}>
-          <h2 className={styles.postersSectionHeading}>What's <span className={styles.postersSectionHighlight}> NEW </span>?</h2>
-        </div>
-        <div className={styles.postersSection}>
-          <div className={styles.postersTiltCard} onMouseMove={(e) => {
-            const rect = e.currentTarget.getBoundingClientRect();
-            const x = (e.clientX - rect.left) / rect.width - 0.5;
-            const y = (e.clientY - rect.top) / rect.height - 0.5;
-            e.currentTarget.style.transform = `perspective(800px) rotateY(${x * 18}deg) rotateX(${-y * 18}deg) scale(1.03)`;
-          }} onMouseLeave={(e) => {
-            e.currentTarget.style.transform = 'perspective(800px) rotateY(0deg) rotateX(0deg) scale(1)';
-          }}>
-            <img
-              src="/images/poster-stadium.PNG"
-              alt="Accesco Living - Things are about to change"
-              className={styles.postersTiltImg}
-            />
-          </div>
-          <div className={styles.postersTiltCard} onMouseMove={(e) => {
-            const rect = e.currentTarget.getBoundingClientRect();
-            const x = (e.clientX - rect.left) / rect.width - 0.5;
-            const y = (e.clientY - rect.top) / rect.height - 0.5;
-            e.currentTarget.style.transform = `perspective(800px) rotateY(${x * 18}deg) rotateX(${-y * 18}deg) scale(1.03)`;
-          }} onMouseLeave={(e) => {
-            e.currentTarget.style.transform = 'perspective(800px) rotateY(0deg) rotateX(0deg) scale(1)';
-          }}>
-            <img
-              src="/images/poster-newspaper.jpeg"
-              alt="Accesco Living - Something exciting is coming"
-              className={styles.postersTiltImg}
-            />
-          </div>
         </div>
       </div>
     </section>

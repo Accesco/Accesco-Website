@@ -77,6 +77,7 @@ export default function Footer() {
               <Link href="/faq" className="link-item">FAQ</Link>
               <Link href="/referral" className="link-item">Referral Program</Link>
               <Link href="/investor-relations" className="link-item">Investor Relations</Link>
+               <Link href="#" className="link-item">Careers</Link>
             </div>
 
             <div className="link-group">

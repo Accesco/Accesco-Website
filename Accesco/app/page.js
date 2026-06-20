@@ -48,6 +48,43 @@ const softwareApplicationSchema = {
 
         {/* ── Services Section ── */}
         <section id="services" style={{ padding: 'clamp(60px, 8vw, 100px) 0', background: '#FFFDF8', position: 'relative' }}>
+         
+          <div className="intelligencePosterRow">
+
+  {/* Intelligence Image */}
+  <div className="intelligenceSection">
+    <img
+      src="/images/intelligence-layer.png"
+      alt="Accesco Intelligence Layer"
+      className="intelligenceImage"
+    />
+  </div>
+
+  {/* Poster */}
+  <div className="postersSectionWrapper">
+    <div
+      className="postersTiltCard"
+      onMouseMove={(e) => {
+        const rect = e.currentTarget.getBoundingClientRect();
+        const x = (e.clientX - rect.left) / rect.width - 0.5;
+        const y = (e.clientY - rect.top) / rect.height - 0.5;
+        e.currentTarget.style.transform =
+          `perspective(800px) rotateY(${x * 18}deg) rotateX(${-y * 18}deg) scale(1.03)`;
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.transform =
+          'perspective(800px) rotateY(0deg) rotateX(0deg) scale(1)';
+      }}
+    >
+      <img
+        src="/images/poster-newspaper.jpeg"
+        alt="Accesco Living - Something exciting is coming"
+        className="postersTiltImg"
+      />
+    </div>
+  </div>
+
+</div>
           <div style={{
             position: 'absolute', inset: 0,
             backgroundImage: 'radial-gradient(circle at 20% 50%, rgba(122,0,66,0.03) 0%, transparent 60%), radial-gradient(circle at 80% 20%, rgba(200,150,62,0.03) 0%, transparent 60%)',
@@ -59,20 +96,31 @@ const softwareApplicationSchema = {
 
               <h2 style={{
                 fontFamily: "'Sora', sans-serif",
-                fontWeight: 900, fontSize: 'clamp(1.85rem, 3.8vw, 2.9rem)',
+                fontWeight: 800,
+fontSize: 'clamp(1.8rem, 3.4vw, 2.6rem)',
                 color: '#1A0A0F', letterSpacing: '-0.04em',
-                margin: '0 0 16px', lineHeight: 1.1,
+                margin: '0 0 8px', lineHeight: 1.1,
               }}>
                 India solved delivery in 10 minutes.<br />
-                <span style={{ color: '#7A0042', fontStyle: 'italic' }}>Nobody solved the household in 10 years.</span>
+                <span style={{
+  color: '#2B1A24',
+  fontStyle: 'normal',
+  fontWeight: 500,
+ fontSize: 'clamp(1.4rem, 2.5vw, 2rem)', // try 0.8em–0.9em
+}}>
+  Nobody solved the household in 10 years.
+</span>
+
               </h2>
               <p style={{
-                fontFamily: "'DM Sans', sans-serif",
-                fontSize: '1.05rem', color: '#6B5B65',
-                maxWidth: '560px', lineHeight: 1.7,
-              }}>
-                From Fresh groceries to curated meals, fast curated fashion delivery to instant medicine—Intelligent hyperlocal commerce that fits your life.
-              </p>
+  fontFamily: "'DM Sans', sans-serif",
+  fontSize: '1.05rem',
+  color: '#6B5B65',
+  maxWidth: '900px',
+  lineHeight: 1.7,
+  
+}}>
+                Groceries, food and fashion at your doorstep in minutes — sourced straight from producers, built to circulate, and engineered so the value of everything you buy keeps working for your household—Intelligent Hyperlocal delivery app that fits your life. </p>
             </div>
 
             <div className="services-container-wrapper">
@@ -112,7 +160,7 @@ const softwareApplicationSchema = {
                   <div style={{ textDecoration: 'none', display: 'block' }}>
                     <div className="service-premium-card swadisht-card">
                       <div className="service-card-visual">
-                        <Image src="/images/swadisht-new1.png" alt="Swadishtt Meals" fill style={{ objectFit: 'cover' }} />
+                        <Image src="/images/swadisht/swadisht_logo1.JPG" alt="Swadishtt Meals" fill style={{ objectFit: 'cover' }} />
                       </div>
                       <div className="service-icon-circle">
                         <Image src="/images/swadisht/swadisht_logo.JPG" alt="Swadishtt" width={40} height={40} style={{ objectFit: 'contain', width: '100%', height: '100%' }} />
@@ -159,7 +207,6 @@ const softwareApplicationSchema = {
             </div>
           </div>
         </section>
-
         {/* ── Xpense Meter Section ── */}
         <section className="xpense-meter-section">
           <div className="xpense-container">
@@ -273,6 +320,40 @@ const softwareApplicationSchema = {
 
       {/* ── Combined & Optimized Styles ── */}
             <style dangerouslySetInnerHTML={{ __html: `
+            .intelligenceSection {
+   flex: 1.8;
+   order: 2;
+  max-width: none;
+  margin: 0;
+  padding: 80px 40px;
+  border-radius: 40px;
+
+  background:
+    radial-gradient(
+      circle at center,
+      rgba(255, 0, 120, 0.08) 0%,
+      rgba(255, 0, 120, 0.04) 40%,
+      transparent 75%
+    ),
+    #fffdf8;
+
+  overflow: hidden;
+}
+
+.intelligenceImage {
+   width: 100%;
+  max-width: 800px;
+  display: block;
+  border-radius: 24px;
+
+  mix-blend-mode: multiply;
+
+  filter:
+    saturate(1.05)
+    brightness(1.02);
+
+  margin: 0 auto;
+}
             
         .services-container-wrapper {
           position: relative;
@@ -492,16 +573,18 @@ const softwareApplicationSchema = {
           padding: 10px;
         }
 
-        .service-card-cta {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          padding: 14px;
-          border-radius: 12px;
-          font-family: 'Sora', sans-serif;
-          font-size: 0.88rem;
-          font-weight: 700;
-        }
+       .service-card-cta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px;
+  border-radius: 8px;
+
+  font-family: 'Proxima Nova', sans-serif;
+  font-size: 0.98rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
 
         .grokly-btn {
           background: #2E7D32;

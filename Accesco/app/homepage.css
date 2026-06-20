@@ -2794,3 +2794,27 @@ footer .app-buttons {
     right: 4px;
   }
 }
+.intelligencePosterRow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;          /* smaller gap */
+  max-width: 1200px;  /* reduce overall width */
+  margin: 0 auto 40px; /* less empty space below */
+}
+.postersSectionWrapper {
+   flex: 0.9;
+  max-width: 420px;
+  order: 1;           /* poster on LEFT */
+}
+
+.postersTiltCard {
+  transition: transform 0.2s ease;
+  transform-style: preserve-3d;
+}
+
+.postersTiltImg {
+  width: 100%;
+  border-radius: 24px;
+  display: block;
+}
