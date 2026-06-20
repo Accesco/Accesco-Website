@@ -46,6 +46,7 @@ export default function Hero() {
 
      
 
+
         .hero-main-content {
           position: relative;
           z-index: 2;
