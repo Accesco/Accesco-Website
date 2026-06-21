@@ -1,9 +1,3 @@
-/**
- * Swadishtt Header Component
- * @component SwadishttHeader
- * @description Zomato-style header with location, search, and navigation
- */
-
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -15,14 +9,11 @@ import LocationModal from '@/components/LocationModal';
 export default function SwadishttHeader() {
   const [scrolled, setScrolled] = useState(false);
   const [locationDropdown, setLocationDropdown] = useState(false);
-  const [detectingLocation, setDetectingLocation] = useState(false);
   
   // Custom Modal States
   const [showLocationModal, setShowLocationModal] = useState(false);
-  const [manualArea, setManualArea] = useState('');
-  const [manualCity, setManualCity] = useState('');
 
-  const { location, updateLocation, detectLocation, getCartCount, searchQuery, setSearchQuery } = useSwadishtt();
+  const { location, updateLocation, getCartCount, searchQuery, setSearchQuery } = useSwadishtt();
   
   const cartCount = getCartCount();
 
@@ -37,17 +28,6 @@ export default function SwadishttHeader() {
   const handleSearch = (e) => {
     e.preventDefault();
     console.log('Searching for:', searchQuery);
-  };
-
-  const handleManualLocationSubmit = () => {
-    if (manualArea.trim() && manualCity.trim()) {
-      updateLocation({ area: manualArea.trim(), city: manualCity.trim() });
-      setShowManualModal(false);
-      setManualArea('');
-      setManualCity('');
-    } else {
-      alert("Please enter both Area and City.");
-    }
   };
 
   return (
@@ -100,39 +80,6 @@ export default function SwadishttHeader() {
                     <button onClick={() => setLocationDropdown(false)}>✕</button>
                   </div>
                   <div className={styles.locationList}>
-                    <button
-                      className={styles.locationItem}
-                      onClick={() => {
-                        setDetectingLocation(true);
-                        detectLocation()
-                          .then(() => {
-                            setLocationDropdown(false);
-                          })
-                          .catch((error) => {
-                            console.error('Error detecting location:', error);
-                            alert(
-                              error?.message ||
-                                'Unable to access your location. Please check browser permissions and try again, or enter manually.'
-                            );
-                          })
-                          .finally(() => {
-                            setDetectingLocation(false);
-                          });
-                      }}
-                      disabled={detectingLocation}
-                    >
-                      <svg className={styles.locationItemIcon} viewBox="0 0 20 20" fill="currentColor">
-                        <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd"/>
-                      </svg>
-                      <div>
-                        <div className={styles.locationItemArea}>
-                          {detectingLocation ? 'Detecting...' : 'Use Current Location'}
-                        </div>
-                        <div className={styles.locationItemCity}> 
-                          {detectingLocation ? 'Please wait' : 'Detect automatically'}
-                        </div>
-                      </div>
-                    </button>
                     
                     <button
                       className={styles.locationItem}
@@ -145,7 +92,7 @@ export default function SwadishttHeader() {
                         <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"/>
                       </svg>
                       <div>
-                        <div className={styles.locationItemArea}>Enter Manually</div>
+                        <div className={styles.locationItemArea}>Select Custom Location</div>
                         <div className={styles.locationItemCity}>Type your location</div>
                       </div>
                     </button>
@@ -196,27 +143,42 @@ export default function SwadishttHeader() {
 
       {/* Manual Location Modal Overlay */}
       <LocationModal
-  isOpen={showLocationModal}
-  onClose={() => setShowLocationModal(false)}
-  onLocationSelect={(address) => {
-    const parts = address.split(',');
+        isOpen={showLocationModal}
+        onClose={() => setShowLocationModal(false)}
+        onLocationSelect={(locationData) => {
+          const { fullAddress, lat, lng } = locationData; 
+          
+          const parts = fullAddress.split(',');
+          const resolvedArea = parts[0]?.trim() || fullAddress;
+          const resolvedCity = parts[1]?.trim() || '';
 
-    updateLocation({
-      area: parts[0]?.trim() || address,
-      city: parts[1]?.trim() || '',
-    });
+          updateLocation({
+            area: resolvedArea,
+            city: resolvedCity,
+          });
 
-    localStorage.setItem(
-      'swadishtt_location',
-      JSON.stringify({
-        address,
-        timestamp: Date.now(),
-      })
-    );
+          const locationObject = {
+            area: resolvedArea,
+            city: resolvedCity,
+            latitude: lat,
+            longitude: lng,
+            lat: lat,
+            lon: lng,
+            fullAddress: fullAddress,
+            formattedAddress: fullAddress,
+            displayAddress: resolvedCity || resolvedArea,
+            timestamp: new Date().toISOString()
+          };
 
-    setShowLocationModal(false);
-  }}
-/>
+          localStorage.setItem(
+            'userLocation',
+            JSON.stringify(locationObject)
+          );
+          
+          console.log("Saved location data:", locationObject);
+          setShowLocationModal(false);
+        }}
+      />
     </>
   );
 }
