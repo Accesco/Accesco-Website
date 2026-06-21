@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import AccescoHeader from '../../components/AccescoHeader';
-import Footer from '../../components/Footer';
 import './faq.css';
 import JsonLd from '../../components/JsonLd';
 const faqData = [
@@ -477,7 +476,6 @@ const faqSchema = {
           </div>
         </section>
       </main>
-      <Footer />
     </>
   );
 }

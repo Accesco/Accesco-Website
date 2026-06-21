@@ -2,21 +2,21 @@
   min-height: 100vh;
   background-color: #fcfbf9;
   color: #1a1a1a;
-  padding-top: 100px;
+  padding-top: 0;
   padding-bottom: 80px;
 }
 
 .hero {
   position: relative;
-  height: 65vh;
-  min-height: 450px;
+  height: 50vh;
+  min-height: 400px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   background: url('/images/instastyle-hero-banner.png') no-repeat center center;
   background-size: cover;
   overflow: hidden;
-  padding: 0 8%;
+  padding: 80px 24px 0;
 }
 
 .heroOverlay {
@@ -96,7 +96,6 @@
 }
 
 .heroBtn:hover {
-  transform: translateY(-2px);
   background: #7c4a2d;
 }
 
@@ -117,7 +116,6 @@
 }
 
 .floatingVideoCard:hover {
-  transform: translateY(-8px) scale(1.02);
   box-shadow: 0 30px 60px rgba(0, 0, 0, 0.2);
   border-color: #7c4a2d;
 }
@@ -190,7 +188,6 @@
 }
 
 .productCard:hover {
-  transform: translateY(-4px);
   box-shadow: 0 12px 32px rgba(0,0,0,0.08);
 }
 
@@ -209,7 +206,7 @@
 }
 
 .productCard:hover .image {
-  transform: scale(1.05);
+  opacity: 0.95;
 }
 
 .badge {
@@ -382,12 +379,24 @@
 
 .sellBtn:hover {
   background: #1a1108;
-  transform: scale(1.05);
 }
 
 @media (max-width: 768px) {
   .hero {
-    height: 50vh;
+    height: 25vh;
+    min-height: 180px;
+    padding: 0;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .floatingVideoCard {
+    display: none;
+  }
+
+  .heroContent {
+    max-width: 100%;
   }
   .sectionHeader {
     flex-direction: column;

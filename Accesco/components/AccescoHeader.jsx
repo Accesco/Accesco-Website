@@ -190,9 +190,9 @@ export default function AccescoHeader() {
           </Link>
           <div className={styles.logoDivider}></div>
 
-          <a href="#waitlist" className={styles.waitlistLink}>
-            JOIN WAITLIST
-          </a>
+<Link href="/#waitlist" className={styles.waitlistLink}>
+  JOIN WAITLIST
+</Link>
 
           <div className={styles.actions}>
             {/* Location Selector */}

@@ -1,6 +1,13 @@
 .virtualTryOnPage {
   min-height: 100vh;
   background: #f8f9fa;
+  padding-top: 80px;
+}
+
+@media (max-width: 1023px) {
+  .virtualTryOnPage {
+    padding-top: 64px;
+  }
 }
 
 /* Loading State */
@@ -44,12 +51,17 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 20px 40px;
+  padding: 10px 24px;
   background: #fff;
   border-bottom: 1px solid #e0e0e0;
-  position: sticky;
-  top: 70px;
-  z-index: 100;
+  position: relative;
+  z-index: 10;
+}
+
+@media (max-width: 1023px) {
+  .header {
+    padding: 8px 16px;
+  }
 }
 
 .backButton {
@@ -65,7 +77,7 @@
 
 .title {
   font-family: 'Syne', sans-serif;
-  font-size: 28px;
+  font-size: 18px;
   font-weight: 800;
   margin: 0;
   color: #171411;
@@ -74,8 +86,9 @@
 
 .headerTitleGroup {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
+  gap: 12px;
 }
 
 .liveIndicator {
@@ -87,7 +100,7 @@
   text-transform: uppercase;
   letter-spacing: 0.1em;
   color: #8d6648;
-  margin-top: 4px;
+  margin-top: 0;
 }
 
 .liveDot {
@@ -147,8 +160,11 @@
   background: #000;
   border-radius: 16px;
   overflow: hidden;
-  aspect-ratio: 16/9;
   position: relative;
+  width: 100%;
+  max-width: 800px;
+  height: 400px;
+  margin: 0 auto;
 }
 
 .cameraPlaceholder {
@@ -159,59 +175,59 @@
   height: 100%;
   color: #fff;
   text-align: center;
-  padding: 40px;
+  padding: 24px;
   background: radial-gradient(circle at center, rgba(216, 193, 167, 0.05), transparent);
 }
 
 .placeholderIcon {
-  width: 88px;
-  height: 88px;
+  width: 48px;
+  height: 48px;
   border-radius: 999px;
   border: 1px solid rgba(255, 255, 255, 0.15);
   display: grid;
   place-items: center;
-  font-size: 22px;
+  font-size: 14px;
   font-weight: 800;
-  letter-spacing: 0.12em;
-  margin-bottom: 32px;
+  letter-spacing: 0.05em;
+  margin-bottom: 16px;
   background: rgba(255, 255, 255, 0.03);
 }
 
 .cameraPlaceholder h2 {
   font-family: 'Syne', sans-serif;
-  font-size: 36px;
+  font-size: 24px;
   font-weight: 800;
-  margin: 0 0 16px 0;
+  margin: 0 0 10px 0;
   letter-spacing: -0.02em;
 }
 
 .cameraPlaceholder p {
   font-family: 'Inter', sans-serif;
-  font-size: 18px;
-  opacity: 0.6;
-  margin: 0 0 40px 0;
-  max-width: 440px;
+  font-size: 14px;
+  opacity: 0.7;
+  margin: 0 0 24px 0;
+  max-width: 380px;
+  line-height: 1.4;
 }
 
 .startCameraBtn {
-  padding: 20px 56px;
+  padding: 12px 36px;
   background: #FFF;
   color: #000;
   border: none;
   border-radius: 999px;
   font-family: 'Syne', sans-serif;
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.1em;
   cursor: pointer;
-  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-  box-shadow: 0 10px 30px rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
+  box-shadow: 0 6px 20px rgba(255, 255, 255, 0.08);
 }
 
 .startCameraBtn:hover {
   background: #d8c1a7;
-  transform: scale(1.05) translateY(-2px);
   box-shadow: 0 15px 40px rgba(216, 193, 167, 0.3);
 }
 
@@ -391,7 +407,6 @@
 
 .controlBtn:hover:not(:disabled) {
   background: rgba(255, 255, 255, 0.3);
-  transform: translateY(-2px);
 }
 
 .controlBtn:disabled {
@@ -413,7 +428,7 @@
 }
 
 .captureButton:hover:not(:disabled) {
-  transform: scale(1.1);
+  border-color: #d8c1a7;
 }
 
 .captureButton:disabled {
@@ -489,7 +504,7 @@
 .retakeBtn:hover,
 .downloadBtn:hover,
 .tryAnotherBtn:hover {
-  transform: translateY(-2px);
+  opacity: 0.9;
 }
 
 /* Instructions */
@@ -614,7 +629,6 @@
 
 .productItem:hover {
   border-color: #667eea;
-  transform: translateX(4px);
 }
 
 .productItem.selected {
@@ -726,7 +740,6 @@
 }
 
 .featureCard:hover {
-  transform: translateY(-8px);
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.1);
 }
 
@@ -1037,6 +1050,35 @@
 }
 
 .aiTryOnCardBtn:hover {
-  transform: translateY(-2px);
   background: #cfb592;
+}
+
+@media (max-width: 768px) {
+  .aiTryOnCard {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 16px;
+  }
+
+  .aiTryOnContent {
+    gap: 12px;
+  }
+
+  .aiTryOnIcon {
+    width: 44px;
+    height: 44px;
+    font-size: 18px;
+  }
+
+  .aiTryOnText h3 {
+    font-size: 15px;
+  }
+
+  .aiTryOnCardBtn {
+    width: 100%;
+    text-align: center;
+    padding: 13px 20px;
+    font-size: 13px;
+  }
 }

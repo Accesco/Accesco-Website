@@ -244,7 +244,7 @@ header {
   max-width: 100%;
   margin: 0;
   padding: 0;
-  padding-top: 64px; /* Offset for fixed AccescoHeader (height: 64px) */
+  padding-top: 0; /* Offset removed so video aligns to the top behind header */
   overflow: hidden;
 }
 
@@ -443,7 +443,7 @@ object-position: center center !important;
   background: var(--card-bg);
   border-radius: 16px;
   overflow: hidden;
-  cursor: pointer;
+  cursor: default;
   transition: var(--transition);
   box-shadow: var(--shadow-sm);
   display: flex;
@@ -461,9 +461,7 @@ object-position: center center !important;
 }
 
 .story-card:hover {
-  transform: translateY(-8px);
-  box-shadow: var(--shadow-lg);
-  border-color: transparent;
+  box-shadow: var(--shadow-sm);
 }
 
 .story-visual {
@@ -480,7 +478,7 @@ object-position: center center !important;
 }
 
 .story-card:hover .story-visual img {
-  transform: scale(1.05);
+  transform: none;
 }
 
 .story-overlay {
@@ -495,7 +493,7 @@ object-position: center center !important;
 }
 
 .story-card:hover .story-overlay {
-  opacity: 1;
+  opacity: 0;
 }
 
 .read-time {
@@ -588,9 +586,10 @@ object-position: center center !important;
   align-items: center;
   gap: 0.25rem;
   transition: var(--transition);
+  cursor: pointer;
 }
 
-.story-card:hover .read-more {
+.read-more:hover {
   gap: 0.5rem;
 }
 

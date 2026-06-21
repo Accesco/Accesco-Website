@@ -39,11 +39,11 @@ export default function InstaStyleHeader() {
 
   const initials = user?.name
     ? user.name
-        .split(' ')
-        .map((n) => n[0])
-        .slice(0, 2)
-        .join('')
-        .toUpperCase()
+      .split(' ')
+      .map((n) => n[0])
+      .slice(0, 2)
+      .join('')
+      .toUpperCase()
     : '';
 
   // Optimized scroll handler with RAF throttling
@@ -53,7 +53,7 @@ export default function InstaStyleHeader() {
 
     const handleScroll = () => {
       if (rafId) return;
-      
+
       rafId = requestAnimationFrame(() => {
         const currentScrollY = window.scrollY;
         if (Math.abs(currentScrollY - lastScrollY) > 10) {
@@ -89,7 +89,7 @@ export default function InstaStyleHeader() {
   }, [pathname]);
 
   useEffect(() => {
-    const mediaQuery = window.matchMedia('(max-width: 1024px)');
+    const mediaQuery = window.matchMedia('(max-width: 1539px)');
 
     const updateViewport = () => {
       setIsMobileViewport(mediaQuery.matches);
@@ -105,20 +105,20 @@ export default function InstaStyleHeader() {
 
   // Locatoion usEffect
   useEffect(() => {
-  const saved = localStorage.getItem('instastyle_location');
+    const saved = localStorage.getItem('instastyle_location');
 
-  if (saved) {
-    try {
-      const parsed = JSON.parse(saved);
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
 
-      if (parsed.location) {
-        setSelectedLocation(parsed.location);
+        if (parsed.location) {
+          setSelectedLocation(parsed.location);
+        }
+      } catch (err) {
+        console.error(err);
       }
-    } catch (err) {
-      console.error(err);
     }
-  }
-}, []);
+  }, []);
 
   const handleSearch = useCallback((e) => {
     e.preventDefault();
@@ -301,7 +301,6 @@ export default function InstaStyleHeader() {
     { href: '/services/instastyle/virtual-tryon', label: 'Virtual Try-On' },
     { href: '/services/instastyle/swipestyle', label: 'SwipeStyle' },
     { href: '/services/instastyle/thrift', label: 'Thrift' },
-    ...(isMobileViewport ? [{ href: '/services/instastyle/wishlist', label: 'Wishlist' }] : []),
   ];
 
   const isActiveLink = (href, exact = false) => {
@@ -312,107 +311,107 @@ export default function InstaStyleHeader() {
 
   return (
     <>
-      <header 
+      <header
         className={`instaHeaderShell ${styles.header} ${isScrolled ? styles.scrolled : ''}`}
         style={fallback.header}
         role="banner"
       >
-      <div className={`instaHeaderContainer ${styles.container}`} style={fallback.container}>
-        {/* Logo */}
-        <Link 
-          href="/services/instastyle" 
-          className={`instaHeaderLogo ${styles.logo}`}
-          style={fallback.logo}
-          aria-label="InstaStyle Home"
-        >
-          <InstaStyleLogo className={`instaHeaderLogoMark ${styles.logoMark}`} style={fallback.logoMark} />
-          <span className={`instaHeaderLogoText ${styles.logoText}`} style={fallback.logoText}>InstaStyle</span>
-        </Link>
-
-        {/* Desktop Navigation */}
-        <nav className={`instaHeaderNav ${styles.nav}`} aria-label="Main navigation">
-          <ul className={`instaHeaderNavList ${styles.navList}`} style={fallback.navList}>
-            {navLinks.map(({ href, label, exact }) => (
-              <li key={href}>
-                <Link
-                  href={href}
-                  className={`instaHeaderNavLink ${styles.navLink} ${
-                    isActiveLink(href, exact) ? styles.active : ''
-                  }`}
-                  style={fallback.navLink}
-                  aria-current={isActiveLink(href, exact) ? 'page' : undefined}
-                >
-                  {label}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </nav>
-
-        {/* Search Bar */}
-        <form 
-          className={`instaHeaderSearch ${styles.searchForm} ${isSearchFocused ? styles.focused : ''}`}
-          style={fallback.searchForm}
-          onSubmit={handleSearch}
-          role="search"
-        >
-          <input
-            type="search"
-            placeholder="Search products..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            onFocus={() => setIsSearchFocused(true)}
-            onBlur={() => setIsSearchFocused(false)}
-            className={`instaHeaderSearchInput ${styles.searchInput}`}
-            style={fallback.searchInput}
-            aria-label="Search products"
-          />
-          <button 
-            type="submit" 
-            className={`instaHeaderSearchButton ${styles.searchButton}`}
-            style={fallback.searchButton}
-            aria-label="Submit search"
+        <div className={`instaHeaderContainer ${styles.container}`} style={fallback.container}>
+          {/* Logo */}
+          <Link
+            href="/services/instastyle"
+            className={`instaHeaderLogo ${styles.logo}`}
+            style={fallback.logo}
+            aria-label="InstaStyle Home"
           >
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-              <path 
-                d="M9 17A8 8 0 1 0 9 1a8 8 0 0 0 0 16zM19 19l-4.35-4.35" 
-                stroke="currentColor" 
-                strokeWidth="2" 
-                strokeLinecap="round" 
-                strokeLinejoin="round"
-              />
-            </svg>
-          </button>
-        </form>
+            <InstaStyleLogo className={`instaHeaderLogoMark ${styles.logoMark}`} style={fallback.logoMark} />
+            <span className={`instaHeaderLogoText ${styles.logoText}`} style={fallback.logoText}>InstaStyle</span>
+          </Link>
 
-        {/* Actions */}
-        <button
-          type="button"
-          onClick={() => setIsLocationModalOpen(true)}
-          className={`instaHeaderActionButton ${styles.actionButton}`}
-          style={{
-            ...fallback.actionButton,
-            width: 'auto',
-            padding: '0 12px',
-            gap: '6px'
-          }}
-        >
-          <MapPin size={18} />
-          <span
-            style={{
-              maxWidth: isMobileViewport ? '75px' : '140px',
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-              fontSize: '14px'
-            }}
+          {/* Desktop Navigation */}
+          <nav className={`instaHeaderNav ${styles.nav}`} aria-label="Main navigation">
+            <ul className={`instaHeaderNavList ${styles.navList}`} style={fallback.navList}>
+              {navLinks.map(({ href, label, exact }) => (
+                <li key={href}>
+                  <Link
+                    href={href}
+                    className={`instaHeaderNavLink ${styles.navLink} ${isActiveLink(href, exact) ? styles.active : ''
+                      }`}
+                    style={fallback.navLink}
+                    aria-current={isActiveLink(href, exact) ? 'page' : undefined}
+                  >
+                    {label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
+
+          {/* Search Bar */}
+          <form
+            className={`instaHeaderSearch ${styles.searchForm} ${isSearchFocused ? styles.focused : ''}`}
+            style={fallback.searchForm}
+            onSubmit={handleSearch}
+            role="search"
           >
-            {selectedLocation}
-          </span>
-        </button>
-        <div className={`instaHeaderActions ${styles.actions}`} style={fallback.actions}>
-          {/* Wishlist */}
-          {!isMobileViewport && (
+            <input
+              type="search"
+              placeholder="Search products..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              onFocus={() => setIsSearchFocused(true)}
+              onBlur={() => setIsSearchFocused(false)}
+              className={`instaHeaderSearchInput ${styles.searchInput}`}
+              style={fallback.searchInput}
+              aria-label="Search products"
+            />
+            <button
+              type="submit"
+              className={`instaHeaderSearchButton ${styles.searchButton}`}
+              style={fallback.searchButton}
+              aria-label="Submit search"
+            >
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                <path
+                  d="M9 17A8 8 0 1 0 9 1a8 8 0 0 0 0 16zM19 19l-4.35-4.35"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </button>
+          </form>
+
+          <div className={`instaHeaderActions ${styles.actions}`} style={fallback.actions}>
+            {/* Location */}
+            <button
+              type="button"
+              onClick={() => setIsLocationModalOpen(true)}
+              className={`instaHeaderActionButton ${styles.actionButton} ${styles.locationButton}`}
+              style={{
+                ...fallback.actionButton,
+                width: 'auto',
+                padding: '0 8px',
+                gap: '4px'
+              }}
+            >
+              <MapPin size={18} />
+              <span
+                className={styles.locationText}
+                style={{
+                  maxWidth: isMobileViewport ? '65px' : '140px',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap',
+                  fontSize: '13px'
+                }}
+              >
+                {selectedLocation}
+              </span>
+            </button>
+
+            {/* Wishlist */}
             <Link
               href="/services/instastyle/wishlist"
               className={`instaHeaderActionButton ${styles.actionButton}`}
@@ -424,31 +423,29 @@ export default function InstaStyleHeader() {
                 <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
               </svg>
             </Link>
-          )}
 
-          {/* Cart */}
-          <button
-            type="button"
-            onClick={toggleCart}
-            className={`instaHeaderActionButton ${styles.actionButton}`}
-            style={fallback.actionButton}
-            aria-label={`Shopping cart with ${cartItemCount} items`}
-          >
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-              <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z" />
-              <path d="M3 6h18" />
-              <path d="M16 10a4 4 0 0 1-8 0" />
-            </svg>
-            {cartItemCount > 0 && (
-              <span className={styles.badge} aria-label={`${cartItemCount} items`}>
-                {cartItemCount > 99 ? '99+' : cartItemCount}
-              </span>
-            )}
-          </button>
+            {/* Cart */}
+            <button
+              type="button"
+              onClick={toggleCart}
+              className={`instaHeaderActionButton ${styles.actionButton}`}
+              style={fallback.actionButton}
+              aria-label={`Shopping cart with ${cartItemCount} items`}
+            >
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z" />
+                <path d="M3 6h18" />
+                <path d="M16 10a4 4 0 0 1-8 0" />
+              </svg>
+              {cartItemCount > 0 && (
+                <span className={styles.badge} aria-label={`${cartItemCount} items`}>
+                  {cartItemCount > 99 ? '99+' : cartItemCount}
+                </span>
+              )}
+            </button>
 
-          {/* Account — same Accesco session via AuthModal */}
-          {!isMobileViewport && (
-            user ? (
+            {/* Account — same Accesco session via AuthModal */}
+            {user ? (
               <Link
                 href="/services/instastyle/profile"
                 className={`instaHeaderActionButton ${styles.actionButton} ${styles.accountLink}`}
@@ -474,43 +471,42 @@ export default function InstaStyleHeader() {
                   <circle cx="12" cy="7" r="4" />
                 </svg>
               </button>
-            )
-          )}
+            )}
 
-          {/* Mobile Menu Toggle */}
-          {isMobileViewport && (
-            <button
-              className={`instaHeaderMobileMenuButton ${styles.mobileMenuButton}`}
-              style={fallback.mobileMenuButton}
-              onClick={toggleMobileMenu}
-              aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}
-              aria-expanded={isMobileMenuOpen}
-              aria-controls="mobile-menu"
-            >
-              <span className={`instaHeaderHamburger ${styles.hamburger} ${isMobileMenuOpen ? styles.open : ''}`} style={fallback.hamburger}>
-                <span
-                  style={{
-                    ...fallback.hamburgerLine,
-                    transform: isMobileMenuOpen ? 'translateY(6px) rotate(45deg)' : 'none',
-                  }}
-                ></span>
-                <span
-                  style={{
-                    ...fallback.hamburgerLine,
-                    opacity: isMobileMenuOpen ? 0 : 1,
-                  }}
-                ></span>
-                <span
-                  style={{
-                    ...fallback.hamburgerLine,
-                    transform: isMobileMenuOpen ? 'translateY(-6px) rotate(-45deg)' : 'none',
-                  }}
-                ></span>
-              </span>
-            </button>
-          )}
+            {/* Mobile Menu Toggle */}
+            {isMobileViewport && (
+              <button
+                className={`instaHeaderMobileMenuButton ${styles.mobileMenuButton}`}
+                style={fallback.mobileMenuButton}
+                onClick={toggleMobileMenu}
+                aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}
+                aria-expanded={isMobileMenuOpen}
+                aria-controls="mobile-menu"
+              >
+                <span className={`instaHeaderHamburger ${styles.hamburger} ${isMobileMenuOpen ? styles.open : ''}`} style={fallback.hamburger}>
+                  <span
+                    style={{
+                      ...fallback.hamburgerLine,
+                      transform: isMobileMenuOpen ? 'translateY(6px) rotate(45deg)' : 'none',
+                    }}
+                  ></span>
+                  <span
+                    style={{
+                      ...fallback.hamburgerLine,
+                      opacity: isMobileMenuOpen ? 0 : 1,
+                    }}
+                  ></span>
+                  <span
+                    style={{
+                      ...fallback.hamburgerLine,
+                      transform: isMobileMenuOpen ? 'translateY(-6px) rotate(-45deg)' : 'none',
+                    }}
+                  ></span>
+                </span>
+              </button>
+            )}
+          </div>
         </div>
-      </div>
       </header>
 
       {/* Mobile Menu — IMMERSIVE FULL-SCREEN OVERLAY */}

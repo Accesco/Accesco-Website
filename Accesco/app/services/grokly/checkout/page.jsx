@@ -216,7 +216,7 @@ export default function GroklyCheckout() {
 
       console.log("API Response:", data);
 
-      // ✅ STORE ETA
+      // STORE ETA
       setEta(data.eta_minutes);
 
     } catch (err) {

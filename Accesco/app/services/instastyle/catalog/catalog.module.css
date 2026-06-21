@@ -364,12 +364,32 @@
 
 @media (max-width: 640px) {
   .productsGrid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px 12px;
   }
   
   .toolbar {
     flex-direction: column;
     align-items: flex-start;
     gap: 16px;
+  }
+
+  .catalogHeader {
+    padding: 100px 0 32px;
+  }
+
+  .description {
+    font-size: 15px;
+  }
+}
+
+@media (max-width: 420px) {
+  .productsGrid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .sortWrapper {
+    width: 100%;
   }
 }

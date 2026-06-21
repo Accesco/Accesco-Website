@@ -9,3 +9,7 @@ node_modules/
 
 # External/Parent directory path
 ../Integrated/
+
+# Temp and build files
+.next_build/
+tmp/

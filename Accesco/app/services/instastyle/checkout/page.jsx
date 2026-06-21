@@ -27,9 +27,6 @@ export default function CheckoutPage() {
   const [errors, setErrors] = useState({});
   const [isProcessing, setIsProcessing] = useState(false);
 
-  // Delivery speed selector
-  const [deliverySpeed, setDeliverySpeed] = useState('instant');
-  
   // Location detection states
   const [isLocating, setIsLocating] = useState(false);
   const [locationError, setLocationError] = useState('');
@@ -37,10 +34,9 @@ export default function CheckoutPage() {
   // Dynamic ETA state
   const [deliveryETA, setDeliveryETA] = useState(null);
 
-  // Delivery speed discount — applied locally on top of CartContext totals
-  const speedDiscount = deliverySpeed === 'batched' ? 20 : 0;
-  const finalTotal = Math.max(0, total - speedDiscount);
-  const batchedETA = deliveryETA ? deliveryETA + 15 : 25;
+  const deliverySpeed = 'instant';
+  const speedDiscount = 0;
+  const finalTotal = total;
 
   const STATE_OPTIONS = [
     'Delhi',
@@ -382,7 +378,7 @@ export default function CheckoutPage() {
                     disabled={isLocating}
                     style={{ padding: '8px 16px', cursor: 'pointer', backgroundColor: '#000', color: '#fff', border: 'none', borderRadius: '4px' }}
                   >
-                    {isLocating ? 'Locating & Calculating ETA...' : '📍 Detect My Location'}
+                    {isLocating ? 'Locating & Calculating ETA...' : 'Detect My Location'}
                   </button>
                 </div>
                 
@@ -471,56 +467,6 @@ export default function CheckoutPage() {
                     {errors.pincode && <span className={styles.errorText}>{errors.pincode}</span>}
                   </div>
                 </div>
-              </section>
-
-              {/* ── Delivery Speed Selector ── */}
-              <section className={styles.deliverySpeedBox}>
-                <h3 className={styles.speedHeading}>Would you wait 15 minutes to save ₹20?</h3>
-                <p className={styles.speedSubheading}>A checkout toggle quick-commerce apps are missing</p>
-
-                <div className={styles.speedOptions}>
-                  <div
-                    className={`${styles.speedOption} ${deliverySpeed === 'instant' ? styles.speedOptionInstantActive : ''}`}
-                    onClick={() => setDeliverySpeed('instant')}
-                  >
-                    <div className={styles.speedOptionLeft}>
-                      <span className={styles.speedIcon}>
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                          <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
-                        </svg>
-                      </span>
-                      <div className={styles.speedInfo}>
-                        <span className={styles.speedTitle}>
-                          Get it in {deliveryETA ? `${deliveryETA} min` : '15–20 min'}
-                        </span>
-                        <span className={styles.speedDesc}>Express — a courier just for you</span>
-                      </div>
-                    </div>
-                    <span className={styles.speedOffText}>₹0 off</span>
-                  </div>
-
-                  <div
-                    className={`${styles.speedOption} ${deliverySpeed === 'batched' ? styles.speedOptionActive : ''}`}
-                    onClick={() => setDeliverySpeed('batched')}
-                  >
-                    <div className={styles.speedOptionLeft}>
-                      <span className={styles.speedIcon}>
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                          <circle cx="12" cy="12" r="10" />
-                          <polyline points="12 6 12 12 16 14" />
-                        </svg>
-                      </span>
-                      <div className={styles.speedInfo}>
-                        <span className={styles.speedTitle}>I can wait · ~{batchedETA} min</span>
-                        <span className={styles.speedDesc}>We&apos;ll batch you with a nearby order</span>
-                      </div>
-                    </div>
-                    <span className={styles.saveBadge}>SAVE ₹20</span>
-                  </div>
-                </div>
-
-                <p className={styles.speedFooter}>One courier · two nearby orders · lower cost for everyone</p>
-                <h4 className={styles.speedTagline}>Speed is a feature. So is <span>patience.</span></h4>
               </section>
 
               <section className={styles.section}>

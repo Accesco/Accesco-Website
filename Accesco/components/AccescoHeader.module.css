@@ -351,7 +351,6 @@
 
 .detectLocationBtn:hover {
   background: #5A0031;
-  transform: translateY(-1px);
   box-shadow: 0 10px 26px rgba(122, 0, 66, 0.22);
 }
 
@@ -410,7 +409,6 @@
 
 .loginButton:hover {
   background: #5A0031;
-  transform: translateY(-2px);
   box-shadow: 0 8px 28px rgba(122, 0, 66, 0.45);
 }
 
@@ -450,7 +448,6 @@
 
 .userButton:hover {
   background: rgba(122, 0, 66, 0.15);
-  transform: translateY(-1px);
 }
 
 .avatar {
@@ -751,7 +748,6 @@
 
 .mobileLoginButton:hover {
   background: #5A0031;
-  transform: translateY(-1px);
 }
 
 /* Mobile user card */

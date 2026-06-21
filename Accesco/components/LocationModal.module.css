@@ -27,6 +27,22 @@
   gap: 20px;
   box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
   animation: slideUp 0.3s ease-out;
+  position: relative;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.modal::-webkit-scrollbar {
+  width: 4px;
+}
+
+.modal::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.modal::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.12);
+  border-radius: 4px;
 }
 
 @keyframes slideUp {
@@ -50,10 +66,13 @@
   letter-spacing: -0.5px;
 }
 
-.header button {
+.closeBtn {
+  position: absolute;
+  top: 20px;
+  right: 20px;
   background: #f5f5f5;
   border: none;
-  font-size: 20px;
+  font-size: 22px;
   width: 32px;
   height: 32px;
   border-radius: 50%;
@@ -63,46 +82,37 @@
   align-items: center;
   justify-content: center;
   transition: all 0.2s;
+  z-index: 10;
 }
 
-.header button:hover {
+.closeBtn:hover {
   background: #e0e0e0;
   color: #000;
 }
 
 .detectBtn {
-  background-color: #f4f8fb;
-  border: 1px solid #cce0f0;
+  background-color: #FAF9F6;
+  border: 1px solid rgba(13, 13, 13, 0.12);
   padding: 14px;
-  border-radius: 8px;
+  border-radius: 12px;
   font-weight: 700;
-  font-size: 13px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+  font-size: 15px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  color: #0056b3;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+  transition: all 0.2s ease;
+  color: #0D0D0D;
 }
 
 .detectBtn:hover:not(:disabled) {
-  background-color: #e6f0f9;
-  border-color: #b3d1eb;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 86, 179, 0.15);
-}
-
-.detectBtn:active:not(:disabled) {
-  transform: translateY(0);
-  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+  background-color: #F2F1EF;
+  border-color: rgba(13, 13, 13, 0.22);
 }
 
 .detectBtn:disabled {
-  opacity: 0.6;
+  opacity: 0.5;
   cursor: not-allowed;
   transform: none;
 }
@@ -169,6 +179,8 @@
   overflow: hidden;
   border: 1px solid #eaeaea;
   box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+  position: relative;
+  z-index: 1;
 }
 
 .addressDisplay {
@@ -196,7 +208,7 @@
 }
 
 .confirmBtn {
-  background-color: #E23744;
+  background-color: #0D0D0D;
   color: white;
   border: none;
   padding: 16px;
@@ -205,7 +217,7 @@
   font-weight: 700;
   cursor: pointer;
   transition: transform 0.1s, background 0.2s;
-  box-shadow: 0 4px 12px rgba(226, 55, 68, 0.3);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -220,11 +232,12 @@
 }
 
 .confirmBtn:hover:not(:disabled) {
-  background-color: #c9303c;
+  background-color: #2D2D2D;
 }
 
 .confirmBtn:disabled {
-  background-color: #f1a9af;
+  background-color: #EAE8E5;
+  color: #8A8782;
   box-shadow: none;
   cursor: not-allowed;
 }

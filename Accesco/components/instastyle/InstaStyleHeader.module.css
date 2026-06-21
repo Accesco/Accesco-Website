@@ -48,10 +48,6 @@
   transition: transform 0.3s ease;
 }
 
-.logo:hover .logoMark {
-  transform: rotate(-10deg) scale(1.05);
-}
-
 .logoText {
   font-family: 'Syne', sans-serif;
   font-size: 22px;
@@ -66,7 +62,7 @@
   display: none;
 }
 
-@media (min-width: 1150px) {
+@media (min-width: 1350px) {
   .nav {
     display: block;
   }
@@ -106,17 +102,43 @@
   border: 1px solid rgba(13, 13, 13, 0.12);
 }
 
-/* ── SEARCH ── */
-.searchForm {
-  display: none;
+@media (max-width: 1600px) and (min-width: 1350px) {
+  .navLink {
+    padding: 6px 12px;
+    font-size: 11px;
+    letter-spacing: 0.04em;
+  }
+
+  .container {
+    height: 72px;
+    gap: 8px;
+  }
 }
 
-@media (min-width: 1280px) {
+@media (min-width: 1350px) {
   .searchForm {
     display: block;
     flex: 1;
     max-width: 320px;
     position: relative;
+  }
+}
+
+@media (max-width: 1600px) and (min-width: 1350px) {
+  .searchForm {
+    max-width: 200px;
+  }
+
+  .searchInput {
+    height: 38px;
+    font-size: 12px;
+    padding: 0 40px 0 16px;
+  }
+
+  .searchButton {
+    right: 4px;
+    width: 28px;
+    height: 28px;
   }
 }
 
@@ -180,7 +202,6 @@
 
 .actionButton:hover {
   background: rgba(0, 0, 0, 0.04);
-  transform: translateY(-2px);
 }
 
 .badge {
@@ -234,7 +255,7 @@
   z-index: 1001;
 }
 
-@media (min-width: 1150px) {
+@media (min-width: 1350px) {
   .mobileMenuButton {
     display: none;
   }
@@ -503,10 +524,11 @@
 .overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.4);
+  background: rgba(0, 0, 0, 0.4);
   backdrop-filter: blur(4px);
   z-index: 1999;
 }
+
 .backBtn {
   display: inline-flex;
   align-items: center;
@@ -549,6 +571,7 @@
     justify-content: center;
   }
 }
+
 .backDesktop {
   display: inline !important;
 }
@@ -587,5 +610,37 @@
 
   .scrolled .container {
     height: 58px !important;
+  }
+}
+
+.locationText {
+  display: inline;
+}
+
+@media (max-width: 600px) {
+  .locationText {
+    display: none !important;
+  }
+}
+
+/* Optimize spacing and elements between 1350px and 1440px to prevent actions/profile cutoff */
+@media (max-width: 1440px) and (min-width: 1350px) {
+  .navLink {
+    padding: 6px 8px !important;
+    font-size: 11px !important;
+    letter-spacing: 0.02em !important;
+  }
+  .navList {
+    gap: 4px !important;
+  }
+  .searchForm {
+    max-width: 160px !important;
+  }
+  .container {
+    gap: 6px !important;
+    padding: 0 12px !important;
+  }
+  .actions {
+    gap: 4px !important;
   }
 }

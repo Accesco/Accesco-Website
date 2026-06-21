@@ -31,6 +31,26 @@
   display: flex;
   flex-direction: column;
   gap: 32px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(122, 0, 66, 0.25) transparent;
+}
+
+.sidebar::-webkit-scrollbar {
+  width: 4px;
+}
+
+.sidebar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+  background: rgba(122, 0, 66, 0.25);
+  border-radius: 4px;
+}
+
+.sidebar::-webkit-scrollbar-thumb:hover {
+  background: rgba(122, 0, 66, 0.45);
 }
 
 .sidebar h4 {
@@ -85,7 +105,6 @@
   background: rgba(122, 0, 66, 0.04);
   color: #7a0042;
   border-color: rgba(122, 0, 66, 0.08);
-  transform: translateX(4px);
 }
 
 .sidebar li a::before {
@@ -100,7 +119,6 @@
 
 .sidebar li a:hover::before {
   background: #7a0042;
-  transform: scale(1.4);
 }
 
 /* ==========================================================================
@@ -240,10 +258,7 @@
 }
 
 .clause:hover {
-  border-color: rgba(122, 0, 66, 0.15);
-  background: #ffffff;
-  box-shadow: 0 12px 32px rgba(122, 0, 66, 0.04);
-  transform: translateY(-1px);
+  background: rgba(255, 255, 255, 0.85);
 }
 
 .clause-num {
@@ -329,3 +344,137 @@
     align-self: flex-start;
   }
 }
+
+/* Premium Responsive Data Tables */
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  margin: 24px 0;
+  border-radius: 16px;
+  border: 1px solid rgba(122, 0, 66, 0.08);
+  background: rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(8px);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 0.9rem;
+}
+
+th {
+  background: rgba(122, 0, 66, 0.04);
+  color: #7a0042;
+  font-weight: 700;
+  padding: 14px 20px;
+  border-bottom: 2px solid rgba(122, 0, 66, 0.08);
+  font-family: 'Sora', sans-serif;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+td {
+  padding: 14px 20px;
+  border-bottom: 1px solid rgba(122, 0, 66, 0.06);
+  color: #554850;
+  line-height: 1.6;
+}
+
+tr:last-child td {
+  border-bottom: none;
+}
+
+tr:hover td {
+  background: rgba(122, 0, 66, 0.02);
+}
+
+/* ==========================================================================
+   REFUND & CANCELLATION BADGES & CARDS (STATIC)
+   ========================================================================== */
+.grid-badges {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  margin: 24px 0;
+}
+
+.badge-box {
+  background: rgba(122, 0, 66, 0.04);
+  border: 1px solid rgba(122, 0, 66, 0.08);
+  padding: 18px;
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.badge-box .title {
+  font-family: 'Sora', sans-serif;
+  font-weight: 700;
+  color: #7a0042;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.badge-box .time {
+  font-size: 0.9rem;
+  color: #1a0a0f;
+  font-weight: 500;
+}
+
+/* Contact Card in Refund/Privacy */
+.contact-card {
+  background: rgba(122, 0, 66, 0.02);
+  border: 1px solid rgba(122, 0, 66, 0.08);
+  border-left: 4px solid #7a0042;
+  padding: 24px;
+  border-radius: 16px;
+  margin-top: 24px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.contact-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.contact-field strong {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  color: #9c8e96;
+  letter-spacing: 0.1em;
+}
+
+.contact-field span {
+  font-weight: 600;
+  color: #1a0a0f;
+  font-size: 0.9rem;
+}
+
+.contact-field a {
+  color: #7a0042;
+  text-decoration: none;
+  font-weight: 700;
+}
+
+.contact-field a:hover {
+  text-decoration: underline;
+}
+
+.important-note {
+  background: rgba(122, 0, 66, 0.04);
+  border-radius: 12px;
+  padding: 12px 18px;
+  color: #7a0042;
+  font-weight: 600;
+  display: inline-block;
+  margin-top: 12px;
+  font-size: 0.9rem;
+}
+

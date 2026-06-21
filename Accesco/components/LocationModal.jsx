@@ -128,8 +128,8 @@ export default function LocationModal({ isOpen, onClose, onLocationSelect }) {
     <div className={styles.overlay} onClick={onClose}>
       <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
         <div className={styles.header}>
-          <h3>Detect Location</h3>
-          <button onClick={onClose}>&times;</button>
+          <h3>Select Location</h3>
+          <button onClick={onClose} className={styles.closeBtn}>&times;</button>
         </div>
 
         <button

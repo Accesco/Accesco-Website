@@ -49,4 +49,3 @@ Accesco/node_modules/
 Accesco/.next/
 Accesco/.env.local
 Accesco/public/images/*.mp4
-!Accesco/public/images/herovideo.mp4

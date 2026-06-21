@@ -420,8 +420,11 @@ function OrderTrackingContent() {
               JS
             </div>
             <strong className={styles.riderName}>{riderName}</strong>
-            <span className={styles.riderStats}>
-              ⭐ 4.9 • Premium Courier
+            <span className={styles.riderStats} style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeWidth="2" style={{ color: '#D4A017' }} aria-hidden="true">
+                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+              </svg>
+              4.9 • Premium Courier
             </span>
           </div>
         </div>
@@ -451,14 +454,19 @@ function OrderTrackingContent() {
             <button onClick={() => setChatOpen(false)} className={styles.chatClose}>&times;</button>
           </div>
           <div className={styles.chatQuickReplies}>
-            <button onClick={() => setChatText('Leave at the door')} className={styles.quickReplyBtn}>🚪 Leave at door</button>
-            <button onClick={() => setChatText('Call when nearby')} className={styles.quickReplyBtn}>📞 Call when nearby</button>
+            <button onClick={() => setChatText('Leave at the door')} className={styles.quickReplyBtn}>Leave at door</button>
+            <button onClick={() => setChatText('Call when nearby')} className={styles.quickReplyBtn}>Call when nearby</button>
           </div>
           <form onSubmit={(e) => { e.preventDefault(); setChatSent(true); setChatText(''); setTimeout(() => setChatSent(false), 3000); }} className={styles.chatInputWrapper}>
             <input type="text" placeholder="Type a message..." value={chatText} onChange={(e) => setChatText(e.target.value)} className={styles.chatInput} />
             <button type="submit" className={styles.chatSendBtn}>Send</button>
           </form>
-          {chatSent && <div className={styles.chatSent}>✅ Sent to partner!</div>}
+          {chatSent && (
+            <div className={styles.chatSent} style={{ display: 'flex', alignItems: 'center', gap: '6px', justifyContent: 'center' }}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              Sent to partner!
+            </div>
+          )}
         </div>
       )}
 
@@ -654,7 +662,10 @@ function OrderTrackingContent() {
               <span className={styles.totalPaidTextLabel}>Total Value</span>
               <div className={styles.totalPaidBadgeWrapper}>
                 <strong className={styles.totalAmountValue}>₹{orderTotal.toLocaleString()}</strong>
-                <span className={styles.paidCheckBadge}>PAID ✓</span>
+                <span className={styles.paidCheckBadge}>
+                  PAID
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" style={{ marginLeft: '4px', display: 'inline-block', verticalAlign: 'middle' }} aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                </span>
               </div>
             </div>
           </div>
