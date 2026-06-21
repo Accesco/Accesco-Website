@@ -41,16 +41,10 @@ export default function Hero() {
           object-fit: cover;
           opacity: 1;
           z-index: 0;
-            filter: brightness(1.45);
+            filter: brightness(2);
         }
 
-        .hero::after {
-          content: '';
-          position: absolute;
-          inset: 0;
-     background: rgba(0, 0, 0, 0.12);
-          z-index: 1;
-        }
+     
 
         .hero-main-content {
           position: relative;
@@ -286,7 +280,7 @@ export default function Hero() {
         playsInline
         preload="auto"
       >
-        <source src="/images/start.MP4" type="video/mp4" />
+        <source src="/images/herovideo.MP4" type="video/mp4" />
         Your browser does not support the video tag.
       </video>
 
