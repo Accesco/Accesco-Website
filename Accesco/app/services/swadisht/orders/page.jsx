@@ -8,6 +8,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import SwadishttHeader from '../components/SwadishttHeader';
 import styles from './orders.module.css';
 
@@ -34,6 +35,7 @@ function normalizeStatus(value) {
 }
 
 export default function SwadishttOrdersPage() {
+  const router = useRouter();
   const [orders, setOrders] = useState([]);
   const [profile, setProfile] = useState({
     name: '',
@@ -46,7 +48,7 @@ export default function SwadishttOrdersPage() {
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
-    // Edited Jabez: load Swadishtt order history from localStorage.
+    // Load Swadishtt order history from localStorage.
     try {
       const raw = localStorage.getItem(ORDERS_STORAGE_KEY);
       if (raw) {
@@ -57,7 +59,7 @@ export default function SwadishttOrdersPage() {
       console.error('Error reading Swadishtt orders:', error);
     }
 
-    // Edited Jabez: prefill profile details from localStorage for the orders view.
+    // Prefill profile details from localStorage for the orders view.
     let storedUser = null;
     let storedLocation = null;
 
@@ -160,11 +162,18 @@ export default function SwadishttOrdersPage() {
                   const totalValue = totals.total ?? order?.total ?? 0;
                   const status = normalizeStatus(order?.status);
 
+                  const orderId = order.id || `SW-${index + 1}`;
+
                   return (
-                    <article key={order.id || index} className={styles.orderCard}>
+                    <article 
+                      key={order.id || index} 
+                      className={styles.orderCard}
+                      onClick={() => router.push(`/services/swadisht/order-tracking?id=${orderId}`)}
+                      style={{ cursor: 'pointer' }}
+                    >
                       <div className={styles.orderHeaderRow}>
                         <div>
-                          <div className={styles.orderId}>Order {order.id || `SW-${index + 1}`}</div>
+                          <div className={styles.orderId}>Order {orderId}</div>
                           <div className={styles.orderDate}>{formatOrderDate(order?.placedAt)}</div>
                         </div>
                         <span

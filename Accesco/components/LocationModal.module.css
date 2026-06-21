@@ -7,7 +7,7 @@
   right: 0;
   bottom: 0;
   background-color: rgba(0, 0, 0, 0.4);
-  backdrop-filter: blur(4px); /* Modern frosted glass effect */
+  backdrop-filter: blur(4px);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -19,12 +19,13 @@
   background: #ffffff;
   width: 100%;
   max-width: 480px;
-  border-radius: 20px; /* Modern, softer corners */
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
   padding: 24px;
   display: flex;
   flex-direction: column;
   gap: 20px;
-  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
   animation: slideUp 0.3s ease-out;
   position: relative;
   max-height: 90vh;
@@ -113,9 +114,9 @@
 .detectBtn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+  transform: none;
 }
 
-/* Unified Search Bar Look */
 .manualForm {
   display: flex;
   position: relative;
@@ -211,12 +212,19 @@
   color: white;
   border: none;
   padding: 16px;
-  border-radius: 12px;
+  border-radius: 8px;
   font-size: 16px;
   font-weight: 700;
   cursor: pointer;
   transition: transform 0.1s, background 0.2s;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  width: 100%;
+  box-sizing: border-box;
+  line-height: 1; 
 }
 
 .confirmBtn:active:not(:disabled) {
@@ -239,11 +247,11 @@
   align-items: center;
   justify-content: center;
   gap: 8px;
-  width: calc(100% - 24px); /* Keeps it neatly inside the dropdown borders */
+  width: calc(100% - 24px);
   margin: 0 12px 12px 12px;
   padding: 10px 16px;
-  background-color: #fff4f4; /* A soft red tint to match your theme */
-  color: #e23744; /* Standard delivery app red */
+  background-color: #fff4f4;
+  color: #e23744;
   border: 1px solid #f8d7da;
   border-radius: 8px;
   font-size: 14px;

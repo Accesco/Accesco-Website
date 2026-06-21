@@ -31,10 +31,10 @@ export async function POST(request) {
     }
 
     const result = data[0];
-    
+    console.log(result)
     return Response.json({
-      latitude: parseFloat(result.lat),
-      longitude: parseFloat(result.lon),
+      latitude: parseFloat(result.lat || result.latitude),
+      longitude: parseFloat(result.lon || result.longitude),
       formattedAddress: result.display_name
     }, { status: 200 });
 

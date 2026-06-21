@@ -2,7 +2,7 @@ export default function Navbar() {
   return (
     <header className="navbar">
       <div className="container nav-inner">
-        <a href="#home" className="brand" aria-label="Accesco home">
+        <a href="/" className="brand" aria-label="Accesco home">
           {/* Logo Instructions:
              1. Create a folder called "public" inside your Next.js project.
              2. Place your logo file inside it as "logo.png".
