@@ -1,0 +1,8 @@
+export const metadata = {
+  title: "Track Grocery Delivery | Grokly",
+  description: "Real-time delivery partner tracking for your groceries and daily essentials from Grokly.",
+};
+
+export default function Layout({ children }) {
+  return <>{children}</>;
+}

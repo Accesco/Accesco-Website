@@ -251,7 +251,7 @@ html.lenis, html.lenis-scrolling {
 .instaHeaderOverlay   { display: none; }
 
 /* ── RESPONSIVE ── */
-@media (max-width: 1024px) {
+@media (max-width: 1349px) {
   .instaHeaderNav { display: none; }
 
   .instaHeaderMobileMenuButton {

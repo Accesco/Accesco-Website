@@ -8,7 +8,7 @@ export default function Hero() {
           <p>
             Transparent disclosures, disciplined growth and a commitment to creating enduring value for shareholders, customers and communities.
           </p>
-          <a href="/pdfs/investor-presentation-q1.pdf" target="_blank" rel="noopener noreferrer" className="primary-button">
+          <a href="/pdfs/Accesco_deck.pdf" target="_blank" rel="noopener noreferrer" className="primary-button">
             View Investor Deck
           </a>
         </div>

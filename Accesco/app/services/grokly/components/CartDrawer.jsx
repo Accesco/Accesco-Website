@@ -153,7 +153,7 @@ export default function CartDrawer() {
           {cartCount === 0 ? (
             "Your cart is empty"
           ) : deliveryFee === 0 ? (
-            "🎉 You got FREE delivery on this order!"
+            "You got FREE delivery on this order!"
           ) : (
             `Add ₹${199 - subtotal} more for FREE delivery`
           )}

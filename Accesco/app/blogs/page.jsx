@@ -392,7 +392,7 @@ setFilteredPosts(visibleBlogs);
         ) : (
           <div id="storyContainer" className="story-grid">
             {filteredPosts.map((post, index) => (
-              <article key={post.id} className="story-card" onClick={() => openReader(post)} style={{ animationDelay: `${index * 0.05}s` }}>
+              <article key={post.id} className="story-card" style={{ animationDelay: `${index * 0.05}s` }}>
                 <div className="story-visual">
                  
 <Image
@@ -418,7 +418,6 @@ setFilteredPosts(visibleBlogs);
                 </div>
                 <div className="story-content">
                   <div className="story-meta">
-                    <span className="story-tag">{post.category}</span>
                     <span className="story-date">{new Date(post.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
                   </div>
                   <h3 className="story-headline">{post.title}</h3>
@@ -428,7 +427,7 @@ setFilteredPosts(visibleBlogs);
                       <i className="ri-user-line"></i>
                       {post.author || 'ACCESCO Editorial'}
                     </span>
-                    <span className="read-more">
+                    <span className="read-more" onClick={() => openReader(post)} role="button" tabIndex={0} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') openReader(post); }}>
                       Read more <i className="ri-arrow-right-line"></i>
                     </span>
                   </div>

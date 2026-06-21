@@ -100,7 +100,7 @@ export default function LocationModal({ isOpen, onClose, onLocationSelect }) {
       <div className={styles.modal} onClick={e => e.stopPropagation()}>
         <div className={styles.header}>
           <h3>Select Location</h3>
-          <button onClick={onClose}>&times;</button>
+          <button onClick={onClose} className={styles.closeBtn}>&times;</button>
         </div>
 
         <button onClick={detectLocation} className={styles.detectBtn} disabled={loading}>

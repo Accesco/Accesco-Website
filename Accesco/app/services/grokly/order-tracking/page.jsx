@@ -15,6 +15,25 @@ const CheckIcon = ({ className }) => (
   </svg>
 );
 
+const StarIcon = ({ className, style }) => (
+  <svg className={className} width="12" height="12" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeWidth="2" style={style}>
+    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+  </svg>
+);
+
+const DoorIcon = ({ className, style }) => (
+  <svg className={className} width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={style}>
+    <rect x="3" y="3" width="18" height="18" rx="2" />
+    <path d="M9 3v18" />
+  </svg>
+);
+
+const PhoneIcon = ({ className, style }) => (
+  <svg className={className} width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={style}>
+    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+  </svg>
+);
+
 const BikeIcon = ({ className }) => (
   <svg className={className} width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
     <circle cx="5" cy="18" r="3" />
@@ -351,8 +370,8 @@ function GroklyTrackingContent() {
               RK
             </div>
             <strong className={styles.riderName}>{mockRiderData.rider.name}</strong>
-            <span className={styles.riderStats}>
-              ⭐ {mockRiderData.rider.rating} • 350+ trips
+            <span className={styles.riderStats} style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+              <StarIcon style={{ color: '#eab308' }} /> {mockRiderData.rider.rating} • 350+ trips
             </span>
           </div>
         </div>
@@ -382,14 +401,22 @@ function GroklyTrackingContent() {
             <button onClick={() => setChatOpen(false)} className={styles.chatClose}>&times;</button>
           </div>
           <div className={styles.chatQuickReplies}>
-            <button onClick={() => setChatText('Leave at the door')} className={styles.quickReplyBtn}>🚪 Leave at door</button>
-            <button onClick={() => setChatText('Call when nearby')} className={styles.quickReplyBtn}>📞 Call when nearby</button>
+            <button onClick={() => setChatText('Leave at the door')} className={styles.quickReplyBtn}>
+              <DoorIcon style={{ marginRight: '4px', verticalAlign: 'middle' }} /> Leave at door
+            </button>
+            <button onClick={() => setChatText('Call when nearby')} className={styles.quickReplyBtn}>
+              <PhoneIcon style={{ marginRight: '4px', verticalAlign: 'middle' }} /> Call when nearby
+            </button>
           </div>
           <form onSubmit={(e) => { e.preventDefault(); setChatSent(true); setChatText(''); setTimeout(() => setChatSent(false), 3000); }} className={styles.chatInputWrapper}>
             <input type="text" placeholder="Type a message..." value={chatText} onChange={(e) => setChatText(e.target.value)} className={styles.chatInput} />
             <button type="submit" className={styles.chatSendBtn}>Send</button>
           </form>
-          {chatSent && <div className={styles.chatSent}>✅ Sent to partner!</div>}
+          {chatSent && (
+            <div className={styles.chatSent} style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+              <CheckIcon className={styles.inlineCheck} /> Sent to partner!
+            </div>
+          )}
         </div>
       )}
 
@@ -608,7 +635,9 @@ function GroklyTrackingContent() {
               <span className={styles.totalPaidTextLabel}>Total Paid</span>
               <div className={styles.totalPaidBadgeWrapper}>
                 <strong className={styles.totalAmountValue}>₹{order.total}</strong>
-                <span className={styles.paidCheckBadge}>PAID ✓</span>
+                <span className={styles.paidCheckBadge} style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                  PAID <CheckIcon />
+                </span>
               </div>
             </div>
           </div>

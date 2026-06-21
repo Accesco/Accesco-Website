@@ -306,7 +306,6 @@
 .press-kit-item-card:hover {
   border-color: rgba(122, 0, 66, 0.3);
   box-shadow: 0 12px 36px rgba(122, 0, 66, 0.09);
-  transform: translateY(-3px);
 }
 
 .press-kit-item-icon {
@@ -351,7 +350,6 @@
 
 .press-kit-item-card:hover .press-kit-item-arrow {
   opacity: 1;
-  transform: translate(2px, -2px);
 }
 
 /* ===== PRESS KIT MODAL ===== */

@@ -5,10 +5,12 @@
 
 'use client';
 
+import { useMemo } from 'react';
 import Image from 'next/image';
 import { MapPin, Search, X, ShoppingCart } from 'lucide-react';
 import styles from './GroklyHeader.module.css';
 import { useGrokly } from '../contexts/GroklyContext';
+import { products } from '../lib/groklyData';
 import Link from 'next/link';
 
 export default function GroklyHeader({ 
@@ -20,18 +22,24 @@ export default function GroklyHeader({
     location, 
     openLocationModal, 
     cartCount, 
-    openCart 
+    openCart,
+    cart
   } = useGrokly();
 
-  // Calculate cart total (simplified - would come from context in production)
-  const cartTotal = 0; // TODO: Calculate from cart items
+  // Calculate cart total dynamically
+  const cartTotal = useMemo(() => {
+    return Object.entries(cart || {}).reduce((sum, [productId, quantity]) => {
+      const product = products.find(p => p.id === productId);
+      return sum + (product ? product.price * quantity : 0);
+    }, 0);
+  }, [cart]);
 
   return (
     <div className={styles.topbar}>
       <div className={styles.topbarInner}>
         <Link href="/" className={styles.backBtn}>
-  ← Back
-</Link>
+          Back
+        </Link>
         {/* Logo */}
         <div className={styles.logo}>
           <div className={styles.logoIcon}>

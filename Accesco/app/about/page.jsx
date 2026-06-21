@@ -1,7 +1,7 @@
 'use client';
 
 import AccescoHeader from '../../components/AccescoHeader';
-import Footer from '../../components/Footer';
+
 import { AccescoHero } from '../../components/HeroBanners';
 import './about.css';
 
@@ -261,7 +261,7 @@ export default function AboutPage() {
         </section>
 
       </main>
-      <Footer />
+
     </>
   );
 }

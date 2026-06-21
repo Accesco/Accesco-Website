@@ -71,6 +71,7 @@ export default function RootLayout({ children }) {
     "contactPoint": {
       "@type": "ContactPoint",
       "contactType": "customer support",
+      "telephone": "+91-99727-06940",
       "url": "https://www.accescoliving.com/contact",
       "areaServed": "IN",
       "availableLanguage": ["en", "hi"],

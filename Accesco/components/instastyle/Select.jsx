@@ -58,7 +58,11 @@ export default function Select({ label, value, options, onChange, placeholder = 
                 onClick={() => handleSelect(optValue)}
               >
                 {optLabel}
-                {isSelected && <span className={styles.check}>✓</span>}
+                {isSelected && (
+                  <span className={styles.check}>
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                  </span>
+                )}
               </div>
             );
           })}
