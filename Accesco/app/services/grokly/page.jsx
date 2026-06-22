@@ -533,7 +533,7 @@ item: {
         width: '100%',
         padding: '32px 20px 0',
       }}>
-        <div style={{
+        <div className="dish-inner-container" style={{
           background: 'linear-gradient(135deg, #0a1e0a 0%, #0d2d0d 50%, #112e11 100%)',
           borderRadius: '20px',
           overflow: 'hidden',
@@ -983,7 +983,7 @@ item: {
         </div>
 
         {/* Mobile responsive styles */}
-        <style>{`
+        <style dangerouslySetInnerHTML={{ __html: `
           .dish-desktop-view {
             display: grid !important;
           }
@@ -991,23 +991,17 @@ item: {
             display: none !important;
           }
           @media (max-width: 768px) {
+            .dish-inner-container {
               padding: 28px 20px !important;
             }
-            .dish-mockup-wrap {
-              justify-content: center !important;
-              gap: 8px !important;
-            }
-            .dish-mockup-wrap > div:first-child,
-            .dish-mockup-wrap > div:last-child {
+            .dish-desktop-view {
               display: none !important;
             }
-            .dish-mockup-wrap > div:nth-child(2) {
-              transform: scale(1) !important;
-              width: 85vw !important;
-              max-width: 320px !important;
+            .dish-mobile-view {
+              display: block !important;
             }
           }
-        `}</style>
+        ` }} />
       </div>
 
       {/* Main Content */}

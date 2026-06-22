@@ -78,7 +78,7 @@ export default function RootLayout({ children }) {
     },
     "sameAs": [
       "https://twitter.com/accescoliving",
-      "https://instagram.com/accescoliving",
+      "https://www.instagram.com/accescostore?utm_source=qr",
       "https://www.linkedin.com/company/accesco-living/",
       "https://facebook.com/accescoliving",
       "https://youtube.com/@accescoliving",

@@ -232,7 +232,7 @@ export default function ContactPage() {
           <div className="contact-container">
             <h3>Connect with us</h3>
             <div className="social-links">
-              <a href="https://www.instagram.com/accescoliving" target="_blank" rel="noopener noreferrer" className="social-link">
+              <a href="https://www.instagram.com/accescostore?utm_source=qr" target="_blank" rel="noopener noreferrer" className="social-link">
                 <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
                   <path d="M14.5 1H5.5C3.01472 1 1 3.01472 1 5.5V14.5C1 16.9853 3.01472 19 5.5 19H14.5C16.9853 19 19 16.9853 19 14.5V5.5C19 3.01472 16.9853 1 14.5 1Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                   <path d="M13 9.5C13.1234 10.3766 12.9812 11.2736 12.5937 12.0609C12.2062 12.8482 11.5931 13.4874 10.8416 13.8892C10.0901 14.291 9.23734 14.4357 8.39661 14.3023C7.55588 14.1689 6.77548 13.7641 6.17157 13.1464C5.56766 12.5286 5.17283 11.7373 5.04945 10.8916C4.92608 10.0459 5.08079 9.18755 5.49254 8.43135C5.90429 7.67515 6.55345 7.05925 7.34802 6.67172C8.14259 6.28419 9.04654 6.14201 9.93 6.26501C10.8336 6.39101 11.6708 6.78509 12.3207 7.39351C12.9706 8.00193 13.3993 8.79501 13.55 9.66001" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
