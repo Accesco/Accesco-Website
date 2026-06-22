@@ -79,7 +79,7 @@ export default function RootLayout({ children }) {
     "sameAs": [
       "https://twitter.com/accescoliving",
       "https://instagram.com/accescoliving",
-      "https://linkedin.com/company/accescoliving",
+      "https://www.linkedin.com/company/accesco-living/",
       "https://facebook.com/accescoliving",
       "https://youtube.com/@accescoliving",
       "https://threads.net/@accescoliving",

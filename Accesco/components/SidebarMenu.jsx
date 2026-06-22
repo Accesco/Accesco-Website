@@ -237,7 +237,7 @@ export default function SidebarMenu({ onLoginClick }) {
             <h3>Follow Accesco</h3>
             <div className="sm-social-icons">
               <a href="https://www.instagram.com/accescoliving" target="_blank" rel="noopener noreferrer"><i className="ri-instagram-line"></i></a>
-              <a href="https://www.linkedin.com/company/acceso-living/" target="_blank" rel="noopener noreferrer"><i className="ri-linkedin-fill"></i></a>
+              <a href="https://www.linkedin.com/company/accesco-living/" target="_blank" rel="noopener noreferrer"><i className="ri-linkedin-fill"></i></a>
               <a href="https://x.com/accesco_living?s=11" target="_blank" rel="noopener noreferrer"><i className="ri-twitter-x-line"></i></a>
               <a href="https://www.facebook.com/share/1BMyjWcU1B/" target="_blank" rel="noopener noreferrer"><i className="ri-facebook-fill"></i></a>
               <a href="https://youtube.com/@accescoliving?si=Xzk9m4vzZqW6-lje" target="_blank" rel="noopener noreferrer"><i className="ri-youtube-fill"></i></a>
