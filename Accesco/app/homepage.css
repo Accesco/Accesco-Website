@@ -2794,6 +2794,7 @@ footer .app-buttons {
     right: 4px;
   }
 }
+<<<<<<< HEAD
 /* ===== INTELLIGENCE + POSTER ROW ===== */
 
 .intelligencePosterRow {
@@ -2814,11 +2815,30 @@ footer .app-buttons {
 .postersTiltCard {
   width: 100%;
   transition: transform 0.25s ease;
+=======
+.intelligencePosterRow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;          /* smaller gap */
+  max-width: 1200px;  /* reduce overall width */
+  margin: 0 auto 40px; /* less empty space below */
+}
+.postersSectionWrapper {
+   flex: 0.9;
+  max-width: 420px;
+  order: 1;           /* poster on LEFT */
+}
+
+.postersTiltCard {
+  transition: transform 0.2s ease;
+>>>>>>> 8a2388cd54e803674b2a4ec22cb48383152101f5
   transform-style: preserve-3d;
 }
 
 .postersTiltImg {
   width: 100%;
+<<<<<<< HEAD
   display: block;
   border-radius: 24px;
   box-shadow: 0 20px 50px rgba(0,0,0,0.12);
@@ -2886,4 +2906,8 @@ footer .app-buttons {
     mix-blend-mode: multiply;
     filter: contrast(1.08) saturate(1.05);
   }
+=======
+  border-radius: 24px;
+  display: block;
+>>>>>>> 8a2388cd54e803674b2a4ec22cb48383152101f5
 }

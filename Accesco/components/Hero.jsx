@@ -41,11 +41,18 @@ export default function Hero() {
           object-fit: cover;
           opacity: 1;
           z-index: 0;
+<<<<<<< HEAD
             filter: brightness(2);
         }
 
      
 
+=======
+            filter: brightness(1.8);
+        }
+
+       
+>>>>>>> 8a2388cd54e803674b2a4ec22cb48383152101f5
 
         .hero-main-content {
           position: relative;

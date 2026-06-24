@@ -358,6 +358,7 @@ export default function AppShowcase() {
           </form>
         </div>
       </div>
+
       {/* Download App Banner */}
 {/* Download App Banner */}
 <div className={styles.downloadAppSection}>
@@ -379,6 +380,7 @@ export default function AppShowcase() {
   aria-label="App Store"
 />
 </div>
+
     </section>
   );
 }
