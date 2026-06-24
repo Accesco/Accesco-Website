@@ -53,7 +53,6 @@ const softwareApplicationSchema = {
 
   {/* Intelligence Image */}
   <div className="intelligenceSection">
-<<<<<<< HEAD
     <picture>
   <source
     media="(max-width: 768px)"
@@ -65,13 +64,6 @@ const softwareApplicationSchema = {
     className="intelligenceImage"
   />
 </picture>
-=======
-    <img
-      src="/images/intelligence-layer.png"
-      alt="Accesco Intelligence Layer"
-      className="intelligenceImage"
-    />
->>>>>>> 8a2388cd54e803674b2a4ec22cb48383152101f5
   </div>
 
   {/* Poster */}
@@ -109,51 +101,30 @@ const softwareApplicationSchema = {
             <div style={{ marginBottom: '60px' }}>
 
               <h2 style={{
-<<<<<<< HEAD
                 fontFamily: "'Inter', sans-serif",
                 fontWeight: 800,
 fontSize: 'clamp(2.45rem, 4.9vw, 4.4rem)',
-=======
-                fontFamily: "'Sora', sans-serif",
-                fontWeight: 800,
-fontSize: 'clamp(1.8rem, 3.4vw, 2.6rem)',
->>>>>>> 8a2388cd54e803674b2a4ec22cb48383152101f5
                 color: '#1A0A0F', letterSpacing: '-0.04em',
                 margin: '0 0 8px', lineHeight: 1.1,
               }}>
                 India solved delivery in 10 minutes.<br />
                 <span style={{
-<<<<<<< HEAD
   fontFamily: "'Inter', sans-serif",
   color: '#2B1A24',
   fontWeight: 550,
   fontSize: 'clamp(1rem, 3.8vw, 2rem)',
   lineHeight: 1.2,
-=======
-  color: '#2B1A24',
-  fontStyle: 'normal',
-  fontWeight: 500,
- fontSize: 'clamp(1.4rem, 2.5vw, 2rem)', // try 0.8em–0.9em
->>>>>>> 8a2388cd54e803674b2a4ec22cb48383152101f5
 }}>
   Nobody solved the household in 10 years.
 </span>
 
               </h2>
               <p style={{
-<<<<<<< HEAD
  fontFamily: "'Plus Jakarta Sans', sans-serif",
   fontSize: 'clamp(1.15rem, 1.5vw, 1.4rem)',
   color: '#6B5B65',
   maxWidth: '900px',
   lineHeight: 1.5,
-=======
-  fontFamily: "'DM Sans', sans-serif",
-  fontSize: '1.05rem',
-  color: '#6B5B65',
-  maxWidth: '900px',
-  lineHeight: 1.7,
->>>>>>> 8a2388cd54e803674b2a4ec22cb48383152101f5
   
 }}>
                 Groceries, food and fashion at your doorstep in minutes — sourced straight from producers, built to circulate, and engineered so the value of everything you buy keeps working for your household—Intelligent Hyperlocal delivery app that fits your life. </p>
@@ -356,46 +327,9 @@ fontSize: 'clamp(1.8rem, 3.4vw, 2.6rem)',
 
       {/* ── Combined & Optimized Styles ── */}
             <style dangerouslySetInnerHTML={{ __html: `
-<<<<<<< HEAD
  
   
   
-=======
-            .intelligenceSection {
-   flex: 1.8;
-   order: 2;
-  max-width: none;
-  margin: 0;
-  padding: 80px 40px;
-  border-radius: 40px;
-
-  background:
-    radial-gradient(
-      circle at center,
-      rgba(255, 0, 120, 0.08) 0%,
-      rgba(255, 0, 120, 0.04) 40%,
-      transparent 75%
-    ),
-    #fffdf8;
-
-  overflow: hidden;
-}
-
-.intelligenceImage {
-   width: 100%;
-  max-width: 800px;
-  display: block;
-  border-radius: 24px;
-
-  mix-blend-mode: multiply;
-
-  filter:
-    saturate(1.05)
-    brightness(1.02);
-
-  margin: 0 auto;
-}
->>>>>>> 8a2388cd54e803674b2a4ec22cb48383152101f5
             
         .services-container-wrapper {
           position: relative;
@@ -626,11 +560,7 @@ fontSize: 'clamp(1.8rem, 3.4vw, 2.6rem)',
   padding: 14px;
   border-radius: 8px;
 
-<<<<<<< HEAD
   font-family: 'Inter', sans-serif;
-=======
-  font-family: 'Proxima Nova', sans-serif;
->>>>>>> 8a2388cd54e803674b2a4ec22cb48383152101f5
   font-size: 0.98rem;
   font-weight: 700;
   letter-spacing: -0.02em;
