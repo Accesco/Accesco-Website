@@ -15,7 +15,7 @@
 }
 
 .waitlistTitle {
-  font-family: 'Sora', sans-serif;
+  font-family: 'Proxima Nova', sans-serif;
   font-size: clamp(2rem, 4vw, 3.2rem);
   font-weight: 900;
   color: #1A0A0F;
@@ -26,14 +26,11 @@
 }
 
 .waitlistTitle .highlight {
-  background: linear-gradient(135deg, #7A0042 0%, #C8963E 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: #7A0042;
 }
 
 .waitlistSubtitle {
-  font-family: 'DM Sans', sans-serif;
+  font-family: 'Proxima Nova', sans-serif;
   font-size: 1.05rem;
   color: #6B5B65;
   margin: 0 auto 36px;
@@ -203,7 +200,7 @@ border: none;
   left: 0;
   right: 0;
   height: 3px;
-  background: linear-gradient(90deg, #7A0042, #C8963E, #7A0042);
+ border: 2px solid #700457;
   background-size: 200%;
   animation: wlShimmer 3s ease infinite;
 }
@@ -251,7 +248,7 @@ border: none;
 }
 
 .stepDotActive {
-  background: linear-gradient(90deg, #7A0042, #C8963E) !important;
+ background: #700457 !important;
   width: 48px !important;
 }
 

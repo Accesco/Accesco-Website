@@ -2795,26 +2795,29 @@ footer .app-buttons {
   }
 }
 .intelligencePosterRow {
+  max-width: 1200px;
+  margin: 0 auto 60px;
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 24px;          /* smaller gap */
-  max-width: 1200px;  /* reduce overall width */
-  margin: 0 auto 40px; /* less empty space below */
-}
-.postersSectionWrapper {
-   flex: 0.9;
-  max-width: 420px;
-  order: 1;           /* poster on LEFT */
+  justify-content: space-between;
+  gap: 48px;
 }
 
+.postersSectionWrapper {
+  flex: 0 0 340px;
+  max-width: 340px;
+  order: 1;
+}
 .postersTiltCard {
-  transition: transform 0.2s ease;
+  width: 100%;
+  transition: transform 0.25s ease;
   transform-style: preserve-3d;
 }
 
+
 .postersTiltImg {
   width: 100%;
-  border-radius: 24px;
   display: block;
+  border-radius: 24px;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.12);
 }

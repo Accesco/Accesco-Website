@@ -95,29 +95,29 @@ const softwareApplicationSchema = {
             <div style={{ marginBottom: '60px' }}>
 
               <h2 style={{
-                fontFamily: "'Sora', sans-serif",
+                fontFamily: "'Proxima Nova', sans-serif",
                 fontWeight: 800,
-fontSize: 'clamp(1.8rem, 3.4vw, 2.6rem)',
+fontSize: 'clamp(2.45rem, 4.9vw, 4.4rem)',
                 color: '#1A0A0F', letterSpacing: '-0.04em',
                 margin: '0 0 8px', lineHeight: 1.1,
               }}>
                 India solved delivery in 10 minutes.<br />
                 <span style={{
+                  fontFamily: "'Proxima Nova', sans-serif",
   color: '#2B1A24',
-  fontStyle: 'normal',
-  fontWeight: 500,
- fontSize: 'clamp(1.4rem, 2.5vw, 2rem)', // try 0.8em–0.9em
+  fontWeight: 550,
+ fontSize: 'clamp(1.5rem, 2.2vw, 2rem)', // try 0.8em–0.9em
 }}>
   Nobody solved the household in 10 years.
 </span>
 
               </h2>
               <p style={{
-  fontFamily: "'DM Sans', sans-serif",
-  fontSize: '1.05rem',
+ fontFamily: "'Proxima Nova', sans-serif",
+  fontSize: 'clamp(1.15rem, 1.5vw, 1.4rem)',
   color: '#6B5B65',
   maxWidth: '900px',
-  lineHeight: 1.7,
+  lineHeight: 1.5,
   
 }}>
                 Groceries, food and fashion at your doorstep in minutes — sourced straight from producers, built to circulate, and engineered so the value of everything you buy keeps working for your household—Intelligent Hyperlocal delivery app that fits your life. </p>
@@ -321,9 +321,9 @@ fontSize: 'clamp(1.8rem, 3.4vw, 2.6rem)',
       {/* ── Combined & Optimized Styles ── */}
             <style dangerouslySetInnerHTML={{ __html: `
             .intelligenceSection {
-   flex: 1.8;
-   order: 2;
-  max-width: none;
+flex: 1;
+  min-width: 0;
+  order: 2;
   margin: 0;
   padding: 80px 40px;
   border-radius: 40px;
@@ -429,6 +429,8 @@ fontSize: 'clamp(1.8rem, 3.4vw, 2.6rem)',
           }
 
           .service-card-name {
+          font-family: 'Proxima Nova', sans-serif;
+  font-weight: 700;
             font-size: 0.9rem !important;
             margin-bottom: 4px !important;
           }
@@ -501,6 +503,8 @@ fontSize: 'clamp(1.8rem, 3.4vw, 2.6rem)',
             padding: 6px 6px 8px !important;
           }
           .service-card-name {
+          font-family: 'Proxima Nova', sans-serif;
+  font-weight: 700;
             font-size: 0.72rem !important;
             margin-bottom: 2px !important;
           }
@@ -550,8 +554,8 @@ fontSize: 'clamp(1.8rem, 3.4vw, 2.6rem)',
         }
 
         .service-card-name {
-          font-family: 'Sora', sans-serif;
-          font-weight: 800;
+          font-family: 'Proxima Nova', sans-serif;
+  font-weight: 700;
           font-size: 1.35rem;
           color: #1A0A0F;
           margin: 0 0 8px;

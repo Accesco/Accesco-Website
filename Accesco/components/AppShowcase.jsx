@@ -192,11 +192,15 @@ export default function AppShowcase() {
         </div>
 
         {/* Right Side - Form */}
-        <div className={styles.waitlistFormWrapper} style={{
-          background: currentStep === 1 ? '#FFFDF8' : currentStep === 2 ? '#FAF7F0' : '#F0F9F4',
-          border: `2px solid ${currentStep === 1 ? '#7A0042' : currentStep === 2 ? '#C8963E' : '#10b981'}`,
-          transition: 'all 0.4s ease'
-        }}>
+   <div
+  className={styles.waitlistFormWrapper}
+  style={{
+    background: '#FFFDF8',
+    border: '2px solid #700457',
+    transition: 'all 0.4s ease'
+  }}
+
+>
           <div className={styles.formHeader}>
             <h3 className={styles.formTitle}>Get Early Access</h3>
             <p className={styles.formDescription}>
@@ -208,10 +212,10 @@ export default function AppShowcase() {
 
           {/* Step Indicator */}
           <div className={styles.stepIndicator}>
-            <div className={`${styles.stepDot} ${currentStep >= 1 ? styles.stepDotActive : ''}`} style={currentStep === 1 ? { background: '#7A0042', transform: 'scale(1.2)' } : {}}></div>
-            <div className={`${styles.stepDot} ${currentStep >= 2 ? styles.stepDotActive : ''}`} style={currentStep === 2 ? { background: '#C8963E', transform: 'scale(1.2)' } : {}}></div>
-            <div className={`${styles.stepDot} ${currentStep >= 3 ? styles.stepDotActive : ''}`} style={currentStep === 3 ? { background: '#10b981', transform: 'scale(1.2)' } : {}}></div>
-          </div>
+  <div className={`${styles.stepDot} ${currentStep >= 1 ? styles.stepDotActive : ''}`} style={currentStep === 1 ? { background: '#700457', transform: 'scale(1.2)' } : {}}></div>
+  <div className={`${styles.stepDot} ${currentStep >= 2 ? styles.stepDotActive : ''}`} style={currentStep === 2 ? { background: '#700457', transform: 'scale(1.2)' } : {}}></div>
+  <div className={`${styles.stepDot} ${currentStep >= 3 ? styles.stepDotActive : ''}`} style={currentStep === 3 ? { background: '#700457', transform: 'scale(1.2)' } : {}}></div>
+</div>
 
           {success && (
             <div className={styles.successMessage}>
