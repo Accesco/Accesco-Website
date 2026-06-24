@@ -519,3 +519,43 @@ border: none;
     border-radius: 20px !important;
   }
 }
+.downloadAppSection {
+  width: 100vw;
+  margin: 80px 0 0;
+  padding: 0;
+  position: relative;
+  left: 50%;
+  right: 50%;
+  margin-left: -50vw;
+  margin-right: -50vw;
+}
+
+.downloadAppImage {
+  width: 100%;
+  display: block;
+}
+
+/* CLICKABLE HOTSPOTS */
+
+.playStoreHotspot,
+.appStoreHotspot {
+  position: absolute;
+  display: block;
+  z-index: 999;
+  cursor: pointer;
+  
+}
+
+.playStoreHotspot {
+  left: 36%;
+  top: 82%;
+  width: 23%;
+  height: 11%;
+}
+
+.appStoreHotspot {
+  left: 60%;
+  top: 82%;
+  width: 23%;
+  height: 11%;
+}

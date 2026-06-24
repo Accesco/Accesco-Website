@@ -53,11 +53,17 @@ const softwareApplicationSchema = {
 
   {/* Intelligence Image */}
   <div className="intelligenceSection">
-    <img
-      src="/images/intelligence-layer.png"
-      alt="Accesco Intelligence Layer"
-      className="intelligenceImage"
-    />
+    <picture>
+  <source
+    media="(max-width: 768px)"
+    srcSet="/images/YOUR-MOBILE-IMAGE.jpeg"
+  />
+  <img
+    src="/images/intelligence-layer.png"
+    alt="Accesco Living - Something exciting is coming"
+    className="intelligenceImage"
+  />
+</picture>
   </div>
 
   {/* Poster */}
@@ -95,7 +101,7 @@ const softwareApplicationSchema = {
             <div style={{ marginBottom: '60px' }}>
 
               <h2 style={{
-                fontFamily: "'Proxima Nova', sans-serif",
+                fontFamily: "'Inter', sans-serif",
                 fontWeight: 800,
 fontSize: 'clamp(2.45rem, 4.9vw, 4.4rem)',
                 color: '#1A0A0F', letterSpacing: '-0.04em',
@@ -103,17 +109,18 @@ fontSize: 'clamp(2.45rem, 4.9vw, 4.4rem)',
               }}>
                 India solved delivery in 10 minutes.<br />
                 <span style={{
-                  fontFamily: "'Proxima Nova', sans-serif",
+  fontFamily: "'Inter', sans-serif",
   color: '#2B1A24',
   fontWeight: 550,
- fontSize: 'clamp(1.5rem, 2.2vw, 2rem)', // try 0.8em–0.9em
+  fontSize: 'clamp(1rem, 3.8vw, 2rem)',
+  lineHeight: 1.2,
 }}>
   Nobody solved the household in 10 years.
 </span>
 
               </h2>
               <p style={{
- fontFamily: "'Proxima Nova', sans-serif",
+ fontFamily: "'Plus Jakarta Sans', sans-serif",
   fontSize: 'clamp(1.15rem, 1.5vw, 1.4rem)',
   color: '#6B5B65',
   maxWidth: '900px',
@@ -320,40 +327,9 @@ fontSize: 'clamp(2.45rem, 4.9vw, 4.4rem)',
 
       {/* ── Combined & Optimized Styles ── */}
             <style dangerouslySetInnerHTML={{ __html: `
-            .intelligenceSection {
-flex: 1;
-  min-width: 0;
-  order: 2;
-  margin: 0;
-  padding: 80px 40px;
-  border-radius: 40px;
-
-  background:
-    radial-gradient(
-      circle at center,
-      rgba(255, 0, 120, 0.08) 0%,
-      rgba(255, 0, 120, 0.04) 40%,
-      transparent 75%
-    ),
-    #fffdf8;
-
-  overflow: hidden;
-}
-
-.intelligenceImage {
-   width: 100%;
-  max-width: 800px;
-  display: block;
-  border-radius: 24px;
-
-  mix-blend-mode: multiply;
-
-  filter:
-    saturate(1.05)
-    brightness(1.02);
-
-  margin: 0 auto;
-}
+ 
+  
+  
             
         .services-container-wrapper {
           position: relative;
@@ -429,7 +405,7 @@ flex: 1;
           }
 
           .service-card-name {
-          font-family: 'Proxima Nova', sans-serif;
+          font-family: 'Inter', sans-serif;
   font-weight: 700;
             font-size: 0.9rem !important;
             margin-bottom: 4px !important;
@@ -503,7 +479,7 @@ flex: 1;
             padding: 6px 6px 8px !important;
           }
           .service-card-name {
-          font-family: 'Proxima Nova', sans-serif;
+          font-family: 'Inter', sans-serif;
   font-weight: 700;
             font-size: 0.72rem !important;
             margin-bottom: 2px !important;
@@ -554,7 +530,7 @@ flex: 1;
         }
 
         .service-card-name {
-          font-family: 'Proxima Nova', sans-serif;
+          font-family: 'Inter', sans-serif;
   font-weight: 700;
           font-size: 1.35rem;
           color: #1A0A0F;
@@ -584,7 +560,7 @@ flex: 1;
   padding: 14px;
   border-radius: 8px;
 
-  font-family: 'Proxima Nova', sans-serif;
+  font-family: 'Inter', sans-serif;
   font-size: 0.98rem;
   font-weight: 700;
   letter-spacing: -0.02em;
