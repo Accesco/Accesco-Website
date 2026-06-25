@@ -6,7 +6,7 @@
 
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { GroklyProvider, useGrokly } from './contexts/GroklyContext';
 import GroklyHeader from './components/GroklyHeader';
 import MobileHeader from './components/MobileHeader';
@@ -80,7 +80,15 @@ function GroklyPageContent() {
   const [activeFilter, setActiveFilter] = useState('all');
   const [sortBy, setSortBy] = useState('');
   const [selectedDishKey, setSelectedDishKey] = useState('tikka');
+  const [currentSlide, setCurrentSlide] = useState(0);
   const { getProductQuantity, addToCart, incrementQuantity, decrementQuantity, openCart } = useGrokly();
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentSlide((prev) => (prev === 0 ? 1 : 0));
+    }, 5000);
+    return () => clearInterval(timer);
+  }, []);
 
   // ═══════════════════════════════════════════════
   // COMPUTED VALUES
@@ -272,120 +280,249 @@ item: {
         onCategorySelect={handleCategorySelect}
       />
 
-      {/* Single Big Banner */}
+      {/* Sliding Carousel Banners */}
       <div style={{ 
         maxWidth: 'var(--grokly-max-width)', 
         margin: '0 auto', 
         width: '100%', 
         padding: '16px 20px' 
       }}>
-        <div 
-          onClick={() => {
-            const mainContent = document.querySelector('main');
-            if (mainContent) {
-              mainContent.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }
-          }}
-          style={{
-            position: 'relative',
-            height: 'clamp(280px, 40vw, 450px)',
-            borderRadius: '16px',
-            overflow: 'hidden',
-            cursor: 'pointer',
-            transition: 'transform 0.3s ease',
-          }}
-          onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.01)'}
-          onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
-        >
-          <img 
-            src="/images/banners/hero-grokly.jpg" 
-            alt="Grokly Fresh Groceries" 
-            style={{ 
-              width: '100%', 
-              height: '100%', 
-              objectFit: 'cover',
-              objectPosition: 'center'
+        <div style={{
+          position: 'relative',
+          height: 'clamp(280px, 40vw, 450px)',
+          borderRadius: '16px',
+          overflow: 'hidden',
+          cursor: 'pointer',
+          boxShadow: '0 8px 30px rgba(0, 0, 0, 0.08)',
+        }}>
+          {/* SLIDE 0: Grokly Fresh Groceries */}
+          <div 
+            onClick={() => {
+              const mainContent = document.querySelector('main');
+              if (mainContent) {
+                mainContent.scrollIntoView({ behavior: 'smooth', block: 'start' });
+              }
             }}
-          />
-          <div style={{
-            position: 'absolute',
-            inset: 0,
-            background: 'linear-gradient(to right, rgba(10,30,10,0.88) 0%, rgba(10,30,10,0.5) 50%, transparent 80%)',
-            display: 'flex',
-            alignItems: 'center',
-            padding: 'clamp(32px, 5vw, 64px)',
-          }}>
-            <div style={{ maxWidth: '650px' }}>
-              <h2 style={{
-                fontFamily: 'var(--grokly-font-display)',
-                fontSize: 'clamp(28px, 5vw, 52px)',
-                fontWeight: 900,
-                color: '#fff',
-                margin: '0 0 12px',
-                letterSpacing: '-0.02em',
-                lineHeight: 1.1,
-              }}>
-                Groceries in <span style={{ color: '#4ade80' }}>11 minutes flat.</span>
-              </h2>
-              <p style={{
-                fontFamily: 'var(--grokly-font-body)',
-                fontSize: 'clamp(15px, 2vw, 20px)',
-                color: 'rgba(255,255,255,0.9)',
-                margin: '0 0 24px',
-                lineHeight: 1.6,
-              }}>
-                Farm-fresh essentials sourced directly from Karnataka farms. No middlemen. Full transparency.
-              </p>
-              <div style={{ display: 'flex', gap: '14px', flexWrap: 'wrap' }}>
-                <button 
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    const mainContent = document.querySelector('main');
-                    if (mainContent) {
-                      mainContent.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                    }
-                  }}
-                  style={{
-                    padding: '14px 32px',
-                    borderRadius: '9999px',
-                    background: '#4ade80',
-                    color: '#0a1e0a',
-                    fontFamily: 'var(--grokly-font-display)',
-                    fontWeight: 800,
-                    fontSize: '16px',
-                    border: 'none',
-                    cursor: 'pointer',
-                    transition: 'all 0.2s',
-                  }}
-                  onMouseEnter={(e) => {
-                    e.target.style.background = '#22c55e';
-                    e.target.style.transform = 'translateY(-2px)';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.target.style.background = '#4ade80';
-                    e.target.style.transform = 'translateY(0)';
-                  }}
-                >
-                  Shop Now
-                </button>
-                <span style={{
-                  padding: '14px 24px',
-                  borderRadius: '9999px',
-                  background: 'rgba(255,255,255,0.15)',
-                  backdropFilter: 'blur(8px)',
-                  border: '1px solid rgba(255,255,255,0.25)',
+            style={{
+              position: 'absolute',
+              inset: 0,
+              opacity: currentSlide === 0 ? 1 : 0,
+              pointerEvents: currentSlide === 0 ? 'auto' : 'none',
+              transition: 'opacity 0.8s ease-in-out',
+            }}
+          >
+            <img 
+              src="/images/banners/hero-grokly.jpg" 
+              alt="Grokly Fresh Groceries" 
+              style={{ 
+                width: '100%', 
+                height: '100%', 
+                objectFit: 'cover',
+                objectPosition: 'center'
+              }}
+            />
+            <div style={{
+              position: 'absolute',
+              inset: 0,
+              background: 'linear-gradient(to right, rgba(10,30,10,0.88) 0%, rgba(10,30,10,0.5) 50%, transparent 80%)',
+              display: 'flex',
+              alignItems: 'center',
+              padding: 'clamp(32px, 5vw, 64px)',
+            }}>
+              <div style={{ maxWidth: '650px' }}>
+                <h2 style={{
+                  fontFamily: 'var(--grokly-font-display)',
+                  fontSize: 'clamp(28px, 5vw, 52px)',
+                  fontWeight: 900,
                   color: '#fff',
-                  fontSize: '15px',
-                  fontFamily: 'var(--grokly-font-body)',
-                  fontWeight: 600,
-                  display: 'inline-flex',
-                  alignItems: 'center',
+                  margin: '0 0 12px',
+                  letterSpacing: '-0.02em',
+                  lineHeight: 1.1,
                 }}>
-                  Free delivery on ₹199+
-                </span>
+                  Groceries in <span style={{ color: '#4ade80' }}>11 minutes flat.</span>
+                </h2>
+                <p style={{
+                  fontFamily: 'var(--grokly-font-body)',
+                  fontSize: 'clamp(15px, 2vw, 20px)',
+                  color: 'rgba(255,255,255,0.9)',
+                  margin: '0 0 24px',
+                  lineHeight: 1.6,
+                }}>
+                  Farm-fresh essentials sourced directly from Karnataka farms. No middlemen. Full transparency.
+                </p>
+                <div style={{ display: 'flex', gap: '14px', flexWrap: 'wrap' }}>
+                  <button 
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      const mainContent = document.querySelector('main');
+                      if (mainContent) {
+                        mainContent.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                      }
+                    }}
+                    style={{
+                      padding: '14px 32px',
+                      borderRadius: '9999px',
+                      background: '#4ade80',
+                      color: '#0a1e0a',
+                      fontFamily: 'var(--grokly-font-display)',
+                      fontWeight: 800,
+                      fontSize: '16px',
+                      border: 'none',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s',
+                    }}
+                    onMouseEnter={(e) => {
+                      e.target.style.background = '#22c55e';
+                      e.target.style.transform = 'translateY(-2px)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.target.style.background = '#4ade80';
+                      e.target.style.transform = 'translateY(0)';
+                    }}
+                  >
+                    Shop Now
+                  </button>
+                  <span style={{
+                    padding: '14px 24px',
+                    borderRadius: '9999px',
+                    background: 'rgba(255,255,255,0.15)',
+                    backdropFilter: 'blur(8px)',
+                    border: '1px solid rgba(255,255,255,0.25)',
+                    color: '#fff',
+                    fontSize: '15px',
+                    fontFamily: 'var(--grokly-font-body)',
+                    fontWeight: 600,
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                  }}>
+                    Free delivery on ₹199+
+                  </span>
+                </div>
               </div>
             </div>
           </div>
+
+          {/* SLIDE 1: Premium Grokly Banner (IMG_4400.PNG) */}
+          <div 
+            onClick={() => {
+              const mainContent = document.querySelector('main');
+              if (mainContent) {
+                mainContent.scrollIntoView({ behavior: 'smooth', block: 'start' });
+              }
+            }}
+            style={{
+              position: 'absolute',
+              inset: 0,
+              opacity: currentSlide === 1 ? 1 : 0,
+              pointerEvents: currentSlide === 1 ? 'auto' : 'none',
+              transition: 'opacity 0.8s ease-in-out',
+            }}
+          >
+            <img 
+              src="/images/IMG_4400.PNG" 
+              alt="Grokly Banner" 
+              style={{ 
+                width: '100%', 
+                height: '100%', 
+                objectFit: 'cover',
+                objectPosition: 'center'
+              }}
+            />
+          </div>
+
+          {/* Slide Indicator Dots */}
+          <div style={{
+            position: 'absolute',
+            bottom: '20px',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            display: 'flex',
+            gap: '8px',
+            zIndex: 10,
+          }}>
+            {[0, 1].map((index) => (
+              <button
+                key={index}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setCurrentSlide(index);
+                }}
+                style={{
+                  width: '12px',
+                  height: '12px',
+                  borderRadius: '50%',
+                  background: currentSlide === index ? '#4ade80' : 'rgba(255, 255, 255, 0.4)',
+                  border: 'none',
+                  cursor: 'pointer',
+                  padding: 0,
+                  transition: 'all 0.3s ease',
+                  boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
+                }}
+              />
+            ))}
+          </div>
+
+          {/* Slide Arrow Buttons */}
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              setCurrentSlide((prev) => (prev === 0 ? 1 : 0));
+            }}
+            style={{
+              position: 'absolute',
+              left: '20px',
+              top: '50%',
+              transform: 'translateY(-50%)',
+              width: '40px',
+              height: '40px',
+              borderRadius: '50%',
+              background: 'rgba(0, 0, 0, 0.4)',
+              backdropFilter: 'blur(4px)',
+              color: '#fff',
+              border: '1px solid rgba(255, 255, 255, 0.1)',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              zIndex: 10,
+              fontSize: '18px',
+              transition: 'background 0.2s',
+            }}
+            onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(0, 0, 0, 0.6)'}
+            onMouseLeave={(e) => e.currentTarget.style.background = 'rgba(0, 0, 0, 0.4)'}
+          >
+            <i className="ri-arrow-left-s-line" style={{ display: 'block', margin: 'auto' }}></i>
+          </button>
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              setCurrentSlide((prev) => (prev === 0 ? 1 : 0));
+            }}
+            style={{
+              position: 'absolute',
+              right: '20px',
+              top: '50%',
+              transform: 'translateY(-50%)',
+              width: '40px',
+              height: '40px',
+              borderRadius: '50%',
+              background: 'rgba(0, 0, 0, 0.4)',
+              backdropFilter: 'blur(4px)',
+              color: '#fff',
+              border: '1px solid rgba(255, 255, 255, 0.1)',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              zIndex: 10,
+              fontSize: '18px',
+              transition: 'background 0.2s',
+            }}
+            onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(0, 0, 0, 0.6)'}
+            onMouseLeave={(e) => e.currentTarget.style.background = 'rgba(0, 0, 0, 0.4)'}
+          >
+            <i className="ri-arrow-right-s-line" style={{ display: 'block', margin: 'auto' }}></i>
+          </button>
         </div>
       </div>
 
@@ -396,7 +533,7 @@ item: {
         width: '100%',
         padding: '32px 20px 0',
       }}>
-        <div style={{
+        <div className="dish-inner-container" style={{
           background: 'linear-gradient(135deg, #0a1e0a 0%, #0d2d0d 50%, #112e11 100%)',
           borderRadius: '20px',
           overflow: 'hidden',
@@ -846,7 +983,7 @@ item: {
         </div>
 
         {/* Mobile responsive styles */}
-        <style>{`
+        <style dangerouslySetInnerHTML={{ __html: `
           .dish-desktop-view {
             display: grid !important;
           }
@@ -854,23 +991,17 @@ item: {
             display: none !important;
           }
           @media (max-width: 768px) {
+            .dish-inner-container {
               padding: 28px 20px !important;
             }
-            .dish-mockup-wrap {
-              justify-content: center !important;
-              gap: 8px !important;
-            }
-            .dish-mockup-wrap > div:first-child,
-            .dish-mockup-wrap > div:last-child {
+            .dish-desktop-view {
               display: none !important;
             }
-            .dish-mockup-wrap > div:nth-child(2) {
-              transform: scale(1) !important;
-              width: 85vw !important;
-              max-width: 320px !important;
+            .dish-mobile-view {
+              display: block !important;
             }
           }
-        `}</style>
+        ` }} />
       </div>
 
       {/* Main Content */}

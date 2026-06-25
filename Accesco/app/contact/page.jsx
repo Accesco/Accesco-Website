@@ -232,7 +232,7 @@ export default function ContactPage() {
           <div className="contact-container">
             <h3>Connect with us</h3>
             <div className="social-links">
-              <a href="https://www.instagram.com/accescoliving" target="_blank" rel="noopener noreferrer" className="social-link">
+              <a href="https://www.instagram.com/accescostore?utm_source=qr" target="_blank" rel="noopener noreferrer" className="social-link">
                 <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
                   <path d="M14.5 1H5.5C3.01472 1 1 3.01472 1 5.5V14.5C1 16.9853 3.01472 19 5.5 19H14.5C16.9853 19 19 16.9853 19 14.5V5.5C19 3.01472 16.9853 1 14.5 1Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                   <path d="M13 9.5C13.1234 10.3766 12.9812 11.2736 12.5937 12.0609C12.2062 12.8482 11.5931 13.4874 10.8416 13.8892C10.0901 14.291 9.23734 14.4357 8.39661 14.3023C7.55588 14.1689 6.77548 13.7641 6.17157 13.1464C5.56766 12.5286 5.17283 11.7373 5.04945 10.8916C4.92608 10.0459 5.08079 9.18755 5.49254 8.43135C5.90429 7.67515 6.55345 7.05925 7.34802 6.67172C8.14259 6.28419 9.04654 6.14201 9.93 6.26501C10.8336 6.39101 11.6708 6.78509 12.3207 7.39351C12.9706 8.00193 13.3993 8.79501 13.55 9.66001" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -253,7 +253,7 @@ export default function ContactPage() {
                 </svg>
                 YouTube
               </a>
-              <a href="https://www.linkedin.com/company/acceso-living/" target="_blank" rel="noopener noreferrer" className="social-link">
+              <a href="https://www.linkedin.com/company/accesco-living/" target="_blank" rel="noopener noreferrer" className="social-link">
                 <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
                   <path d="M18.5195 0H1.47656C0.660156 0 0 0.644531 0 1.44141V18.5547C0 19.3516 0.660156 20 1.47656 20H18.5195C19.3359 20 20 19.3516 20 18.5586V1.44141C20 0.644531 19.3359 0 18.5195 0ZM5.93359 17.043H2.96484V7.49609H5.93359V17.043ZM4.44922 6.19531C3.49609 6.19531 2.72656 5.42578 2.72656 4.47656C2.72656 3.52734 3.49609 2.75781 4.44922 2.75781C5.39844 2.75781 6.16797 3.52734 6.16797 4.47656C6.16797 5.42188 5.39844 6.19531 4.44922 6.19531ZM17.043 17.043H14.0781V12.4023C14.0781 11.2969 14.0586 9.87109 12.5352 9.87109C10.9922 9.87109 10.7578 11.0781 10.7578 12.3242V17.043H7.79297V7.49609H10.6406V8.80078H10.6797C11.0742 8.05078 12.043 7.25781 13.4844 7.25781C16.4883 7.25781 17.043 9.23438 17.043 11.8047V17.043Z" fill="currentColor"/>
                 </svg>
