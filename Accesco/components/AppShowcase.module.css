@@ -15,7 +15,7 @@
 }
 
 .waitlistTitle {
-  font-family: 'Sora', sans-serif;
+  font-family: 'Proxima Nova', sans-serif;
   font-size: clamp(2rem, 4vw, 3.2rem);
   font-weight: 900;
   color: #1A0A0F;
@@ -26,14 +26,11 @@
 }
 
 .waitlistTitle .highlight {
-  background: linear-gradient(135deg, #7A0042 0%, #C8963E 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: #7A0042;
 }
 
 .waitlistSubtitle {
-  font-family: 'DM Sans', sans-serif;
+  font-family: 'Proxima Nova', sans-serif;
   font-size: 1.05rem;
   color: #6B5B65;
   margin: 0 auto 36px;
@@ -50,9 +47,9 @@
   max-width: 1200px;
   margin: 80px auto 0;
   padding: 48px 40px 40px;
-  background: linear-gradient(135deg, rgba(122, 0, 66, 0.03) 0%, rgba(200, 150, 62, 0.04) 100%);
+  background: #fff;
   border-radius: 32px;
-  border: 1px solid rgba(122, 0, 66, 0.08);
+border: none;
   position: relative;
   overflow: hidden;
 }
@@ -66,6 +63,7 @@
   height: 2px;
   background: linear-gradient(90deg, transparent, #7A0042, #C8963E, transparent);
   opacity: 0.5;
+    display: none;
 }
 
 .postersHeadingRow {
@@ -202,7 +200,7 @@
   left: 0;
   right: 0;
   height: 3px;
-  background: linear-gradient(90deg, #7A0042, #C8963E, #7A0042);
+ border: 2px solid #700457;
   background-size: 200%;
   animation: wlShimmer 3s ease infinite;
 }
@@ -250,7 +248,7 @@
 }
 
 .stepDotActive {
-  background: linear-gradient(90deg, #7A0042, #C8963E) !important;
+ background: #700457 !important;
   width: 48px !important;
 }
 
@@ -519,5 +517,80 @@
   .waitlistFormWrapper {
     padding: 28px 20px;
     border-radius: 20px !important;
+  }
+}
+.downloadAppSection {
+  max-width: 1200px;
+  width: 100%;
+  margin: 56px auto 0;
+  position: relative;
+  padding: 0 20px;
+  box-sizing: border-box;
+}
+
+
+.downloadAppImageDesktop {
+  width: 100%;
+  display: block;
+  border-radius: 24px;
+  box-shadow: 0 18px 45px rgba(122, 0, 66, 0.12);
+}
+
+.downloadAppImageMobile {
+  width: 100%;
+  display: none;
+  border-radius: 24px;
+}
+
+/* Desktop hotspots */
+.playStoreHotspot,
+.appStoreHotspot {
+  position: absolute;
+  display: block;
+  z-index: 999;
+  cursor: pointer;
+}
+
+.playStoreHotspot {
+  left: 27%;
+  top: 80%;
+  width: 19%;
+  height: 10%;
+}
+
+.appStoreHotspot {
+  left: 47%;
+  top: 80%;
+  width: 19%;
+  height: 10%;
+}
+
+@media (max-width: 768px) {
+  .downloadAppSection {
+    max-width: 100%;
+    margin: 48px auto 0;
+    padding: 0;
+  }
+
+  .downloadAppImageDesktop {
+    display: none;
+  }
+
+  .downloadAppImageMobile {
+    display: block;
+  }
+
+  .playStoreHotspot {
+    left: 36%;
+    top: 82%;
+    width: 23%;
+    height: 11%;
+  }
+
+  .appStoreHotspot {
+    left: 60%;
+    top: 82%;
+    width: 23%;
+    height: 11%;
   }
 }

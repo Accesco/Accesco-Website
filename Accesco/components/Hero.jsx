@@ -9,7 +9,7 @@ export default function Hero() {
   React.useEffect(() => {
     if (videoRef.current) {
       videoRef.current.play().catch(error => {
-        console.log("Video autoplay failed, user interaction may be required:", error);
+        console.log("Video autoplay failed, user Avenir Nextaction may be required:", error);
       });
     }
   }, []);
@@ -27,7 +27,7 @@ export default function Hero() {
           flex-direction: column;
           align-items: center;
           box-sizing: border-box;
-          font-family: 'DM Sans', sans-serif;
+          font-family: 'Avenir Next', sans-serif;
           padding: 130px 20px 40px 20px; /* Leave room at the bottom for the scroll down button */
           overflow: hidden;
         }
@@ -45,6 +45,7 @@ export default function Hero() {
         }
 
      
+
 
         .hero-main-content {
           position: relative;
@@ -78,7 +79,7 @@ export default function Hero() {
         }
 
         .hero-title {
-          font-family: 'Sora', sans-serif;
+          font-family: 'Avenir Next', sans-serif;
           font-size: clamp(32px, 5.5vw, 54px);
           font-weight: 900;
           margin: 0;
@@ -91,7 +92,7 @@ export default function Hero() {
         .hero-kicker {
           display: block;
           color: #fff;
-          font-family: 'Sora', sans-serif;
+          font-family: 'Avenir Next', sans-serif;
           font-weight: 700;
           letter-spacing: -0.01em;
           font-size: clamp(18px, 3.8vw, 30px);
@@ -117,7 +118,7 @@ export default function Hero() {
           justify-content: center;
           background: #FFF;
           color: #1A0A0F;
-          font-family: 'Sora', sans-serif;
+          font-family: 'Avenir Next', sans-serif;
           font-weight: 900;
           font-size: clamp(15px, 2.5vw, 18px);
           letter-spacing: 2px;
