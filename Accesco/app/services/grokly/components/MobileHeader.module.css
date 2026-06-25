@@ -6,7 +6,7 @@
   display: none;
   position: sticky;
   top: 0;
-  z-index: var(--grokly-z-sticky);
+  z-index: 9999 !important;
   background: var(--grokly-bg-white);
   box-shadow: var(--grokly-shadow-sm);
 }
