@@ -10,16 +10,16 @@
   left: 50%;
   transform: translateX(-50%);
 
-  width: min(92%, 1320px);
-  height: 78px;
+ width: min(92%, 1320px);   /* was 92%, 1320px */
+  height: 68px;              /* was 78px */
 
   z-index: 1000;
 
-  background: rgba(255, 255, 255, 0.72);
-  backdrop-filter: blur(18px);
+  background: rgba(255, 255, 255, 0.95); /* slightly more opaque */
+  backdrop-filter: blur(30px);
   -webkit-backdrop-filter: blur(18px);
 
-  border-radius: 24px;
+  border-radius: 16px;       /* was 24px */
   box-shadow: 0 12px 40px rgba(0,0,0,0.12);
 
   display: flex;
@@ -249,14 +249,14 @@
   gap: 6px;
   padding: 8px 14px;
   border-radius: 9999px;
-  border: 1.5px solid rgba(255, 253, 248, 0.3);
+  border: 1.5px solid  #7A0042;
   background: none;
   cursor: pointer;
   font-family: 'Sora', sans-serif;
   font-size: 0.78rem;
   font-weight: 500;
  color: #7A0042;
-  border-color: rgba(209, 0, 122, 0.2);
+  border-color:  #7A0042;
   transition: all 0.3s;
   white-space: nowrap;
 }
