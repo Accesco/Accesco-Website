@@ -363,24 +363,29 @@ export default function AppShowcase() {
 {/* Download App Banner */}
 <div className={styles.downloadAppSection}>
   <img
-    src="/images/download-app-banner.png"
-    alt="Download Accesco Living App"
-    className={styles.downloadAppImage}
+    src="/images/download-app-banner-desktop.png"
+    alt="Download App"
+    className={styles.downloadAppImageDesktop}
   />
 
- <a
-  href="#"
-  className={styles.playStoreHotspot}
-  aria-label="Google Play"
-/>
+  <img
+    src="/images/download-app-banner-mobile.png"
+    alt="Download App"
+    className={styles.downloadAppImageMobile}
+  />
 
-<a
-  href="#"
-  className={styles.appStoreHotspot}
-  aria-label="App Store"
-/>
+  <a
+    href="#"
+    className={styles.playStoreHotspot}
+    aria-label="Google Play"
+  />
+
+  <a
+    href="#"
+    className={styles.appStoreHotspot}
+    aria-label="App Store"
+  />
 </div>
-
     </section>
   );
 }
