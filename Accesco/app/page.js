@@ -49,20 +49,26 @@ const softwareApplicationSchema = {
         {/* ── Services Section ── */}
         <section id="services" style={{ padding: 'clamp(60px, 8vw, 100px) 0', background: '#FFFDF8', position: 'relative' }}>
          
-          <div className="intelligencePosterRow">
 
+          <div className="intelligencePosterRow">
+<div className="intelligenceWaveOverlay" />
   {/* Intelligence Image */}
   <div className="intelligenceSection">
+    
     <picture>
   <source
     media="(max-width: 768px)"
     srcSet="/images/YOUR-MOBILE-IMAGE.jpeg"
   />
-  <img
-    src="/images/intelligence-layer.png"
-    alt="Accesco Living - Something exciting is coming"
-    className="intelligenceImage"
-  />
+    <Image
+  src="/images/intelligence-layer.png"
+  alt="Accesco Intelligence Layer"
+  width={1600}
+  height={900}
+  className="intelligenceImage"
+  sizes="100vw"
+  quality={80}
+/>
 </picture>
   </div>
 
@@ -98,7 +104,6 @@ const softwareApplicationSchema = {
           }} />
 
           <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 clamp(20px, 4vw, 40px)', position: 'relative' }}>
-            <div style={{ marginBottom: '60px' }}>
 
               <h2 style={{
                 fontFamily: "'Inter', sans-serif",
@@ -212,7 +217,7 @@ fontSize: 'clamp(2.45rem, 4.9vw, 4.4rem)',
                 </button>
               </div>
             </div>
-          </div>
+          {/*</div>*/}
         </section>
         {/* ── Xpense Meter Section ── */}
         <section className="xpense-meter-section">

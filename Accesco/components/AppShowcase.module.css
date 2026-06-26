@@ -520,11 +520,11 @@ border: none;
   }
 }
 .downloadAppSection {
-  max-width: 1200px;
+  max-width: 950px;   /* try 900–1000px */
   width: 100%;
   margin: 56px auto 0;
   position: relative;
-  padding: 0 20px;
+  padding: 0;
   box-sizing: border-box;
 }
 
