@@ -78,7 +78,7 @@ const pressReleases = [
     date: 'June 13, 2026',
     category: 'Media Coverage',
     excerpt: 'Many people in India use a lot of different apps to manage their daily needs. They buy groceries on one app, food on another and clothes on another app. Accesco Living, a company based in Bengaluru has started a beta program this week.',
-    image: '/images/achievetimes.jpg',
+    image: '/images/head3.jpg',
     readTime: '4 min read',
     url: 'https://achievetimes.com/accesco-living-launches-beta-in-bengaluru-targets-20000-early/',
     logo: '/logos/achieve-times.jpeg',

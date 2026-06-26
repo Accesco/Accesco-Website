@@ -33,7 +33,7 @@ const getProductImage = (productId, category) => {
     'vegetables-fruits': [
       'https://images.unsplash.com/photo-1540420773420-3366772f4999?w=300&h=300&fit=crop', // vegetables
       'https://images.unsplash.com/photo-1610348725531-843dff563e2c?w=300&h=300&fit=crop', // tomatoes
-      'https://images.unsplash.com/photo-1587049352846-4a222e784422?w=300&h=300&fit=crop', // fruits
+      'https://images.unsplash.com/photo-1619566636858-adf3ef46400b?w=300&h=300&fit=crop', // fruits
       'https://images.unsplash.com/photo-1619566636858-adf3ef46400b?w=300&h=300&fit=crop', // fresh produce
       'https://images.unsplash.com/photo-1566385101042-1a0aa0c1268c?w=300&h=300&fit=crop', // bananas
     ],
