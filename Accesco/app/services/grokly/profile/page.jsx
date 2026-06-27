@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, Suspense } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useGrokly } from '../contexts/GroklyContext';
@@ -66,7 +66,7 @@ const INITIAL_BASKETS = [
   }
 ];
 
-export default function GroklyProfile() {
+function GroklyProfileInner() {
   const { cart, cartCount, orders, addToCart, openCart, location, updateLocation, getProductQuantity, incrementQuantity, decrementQuantity } = useGrokly();
   const { user, signOut } = useAuth();
   const router = useRouter();
@@ -753,5 +753,13 @@ export default function GroklyProfile() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function GroklyProfile() {
+  return (
+    <Suspense fallback={<div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>Loading profile...</div>}>
+      <GroklyProfileInner />
+    </Suspense>
   );
 }
