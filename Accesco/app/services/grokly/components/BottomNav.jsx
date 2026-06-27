@@ -1,82 +1,46 @@
-/**
- * BottomNav Component - Mobile bottom navigation
- * @version 1.0.0
- */
-
 'use client';
 
-import { useState } from 'react';
-import { Home, Grid, Gift, User } from 'lucide-react';
-import { useGrokly } from '../contexts/GroklyContext';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { Home, Grid, Heart, User } from 'lucide-react';
 import styles from './BottomNav.module.css';
 
-/**
- * Navigation items
- */
 const NAV_ITEMS = [
-  { id: 'home', label: 'Home', Icon: Home, action: 'scrollTop' },
-  { id: 'categories', label: 'Categories', Icon: Grid, action: 'showCategories' },
-  { id: 'offers', label: 'Offers', Icon: Gift, action: 'showOffers' },
-  { id: 'account', label: 'Account', Icon: User, action: 'showAccount' },
+  { id: 'home', label: 'Home', Icon: Home, href: '/services/grokly' },
+  { id: 'categories', label: 'Categories', Icon: Grid, href: '/services/grokly/category/vegetables-fruits' },
+  { id: 'wishlist', label: 'Wishlist', Icon: Heart, href: '/services/grokly/profile?view=wishlist' },
+  { id: 'account', label: 'Account', Icon: User, href: '/services/grokly/profile?view=profile' },
 ];
 
-/**
- * BottomNav Component
- * Mobile bottom navigation bar
- */
 export default function BottomNav() {
-  const [activeTab, setActiveTab] = useState('home');
-  const { openCart } = useGrokly();
+  const pathname = usePathname();
+  const router = useRouter();
+  const searchParams = useSearchParams();
 
-  /**
-   * Handle tab click with actual functionality
-   */
-  const handleTabClick = (tabId, action) => {
-    setActiveTab(tabId);
-    
-    switch (action) {
-      case 'scrollTop':
-        // Scroll to top of page
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-        break;
-        
-      case 'showCategories':
-        // Scroll to category navigation
-        const categoryNav = document.querySelector('[role="tablist"]');
-        if (categoryNav) {
-          categoryNav.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
-        break;
-        
-      case 'showOffers':
-        // Filter to show only discounted products
-        const mainContent = document.querySelector('main');
-        if (mainContent) {
-          mainContent.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
-        // TODO: Trigger discount filter
-        break;
-        
-      case 'showAccount':
-        window.location.href = '/services/grokly/profile';
-        break;
-        
-      default:
-        console.log('Navigate to:', tabId);
+  const getActiveTab = () => {
+    if (pathname === '/services/grokly') return 'home';
+    if (pathname.includes('/category')) return 'categories';
+    if (pathname.includes('/profile')) {
+      const view = searchParams.get('view');
+      if (view === 'wishlist') return 'wishlist';
+      return 'account';
     }
+    return 'home';
   };
+
+  const activeTab = getActiveTab();
 
   return (
     <nav className={styles.bottomNav} role="navigation" aria-label="Main navigation">
       {NAV_ITEMS.map((item) => {
         const IconComponent = item.Icon;
+        const isActive = item.id === activeTab;
         return (
           <button
             key={item.id}
-            className={`${styles.navItem} ${activeTab === item.id ? styles.active : ''}`}
-            onClick={() => handleTabClick(item.id, item.action)}
+            className={`${styles.navItem} ${isActive ? styles.active : ''}`}
+            onClick={() => router.push(item.href)}
             aria-label={item.label}
-            aria-current={activeTab === item.id ? 'page' : undefined}
+            aria-current={isActive ? 'page' : undefined}
           >
             <IconComponent className={styles.navIcon} size={20} aria-hidden="true" />
             <span className={styles.navLabel}>{item.label}</span>
@@ -86,3 +50,4 @@ export default function BottomNav() {
     </nav>
   );
 }
+
