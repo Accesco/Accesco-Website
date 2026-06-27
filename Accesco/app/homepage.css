@@ -2794,3 +2794,91 @@ footer .app-buttons {
     right: 4px;
   }
 }
+/* ===== INTELLIGENCE + POSTER ROW ===== */
+
+.intelligencePosterRow {
+  max-width: 1200px;
+  margin: 0 auto 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 48px;
+}
+
+.postersSectionWrapper {
+  flex: 0 0 340px;
+  max-width: 340px;
+  order: 1;
+}
+
+.postersTiltCard {
+  width: 100%;
+  transition: transform 0.25s ease;
+  transform-style: preserve-3d;
+}
+
+.postersTiltImg {
+  width: 100%;
+  display: block;
+  border-radius: 24px;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.12);
+}
+
+.intelligenceSection {
+  flex: 1.8;
+  order: 2;
+  max-width: none;
+  margin: 0;
+  padding: 80px 40px;
+  border-radius: 40px;
+
+  background: transparent; /* remove pink glow */
+}
+
+.intelligenceImage {
+  width: 100%;
+  max-width: 800px;
+  display: block;
+  border-radius: 24px;
+
+  mix-blend-mode: normal; /* remove color blending */
+  filter: none;           /* remove tint/saturation */
+
+  margin: 0 auto;
+}
+
+/* MOBILE */
+@media (max-width: 768px) {
+  .postersSectionWrapper {
+    display: none;
+  }
+
+  .intelligencePosterRow {
+    width: 100vw;
+    max-width: none;
+    margin: 0 0 40px;
+    margin-left: calc(50% - 50vw);
+    margin-right: calc(50% - 50vw);
+    display: block;
+  }
+
+  .intelligenceSection {
+    width: 100%;
+    padding: 0;
+    margin: 0;
+    border-radius: 0;
+    background: transparent;
+    overflow: visible;
+  }
+
+  .intelligenceImage {
+    width: 100%;
+    max-width: none;
+    border-radius: 0;
+    box-shadow: none;
+    display: block;
+    object-fit: cover;
+    mix-blend-mode: multiply;
+    filter: contrast(1.08) saturate(1.05);
+  }
+}

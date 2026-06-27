@@ -156,10 +156,12 @@ export default function AppShowcase() {
   }, []);
 
   return (
-    <section id="waitlist" style={{ padding: '64px 20px', background: '#FFFDF8', position: 'relative' }}>
-      {/* Waitlist Section Header */}
-      <div style={{ maxWidth: '1200px', margin: '0 auto 40px', padding: '0', textAlign: 'center' }}>
+   <section id="waitlist" style={{ padding: '64px 20px', background: '#FFFDF8', position: 'relative' }}>
 
+ 
+
+  {/* Waitlist Section Header */}
+  <div style={{ maxWidth: '1200px', margin: '0 auto 40px', padding: '0', textAlign: 'center' }}>
 
         <h2 className={styles.waitlistTitle}>
           Join the <span className={styles.highlight}>Revolution</span>
@@ -185,15 +187,20 @@ export default function AppShowcase() {
                 e.currentTarget.style.background = 'linear-gradient(135deg, #7A0042, #1A0A0F)';
               }}
             />
-          </div>
+          </div> 
+                   
         </div>
 
         {/* Right Side - Form */}
-        <div className={styles.waitlistFormWrapper} style={{
-          background: currentStep === 1 ? '#FFFDF8' : currentStep === 2 ? '#FAF7F0' : '#F0F9F4',
-          border: `2px solid ${currentStep === 1 ? '#7A0042' : currentStep === 2 ? '#C8963E' : '#10b981'}`,
-          transition: 'all 0.4s ease'
-        }}>
+   <div
+  className={styles.waitlistFormWrapper}
+  style={{
+    background: '#FFFDF8',
+    border: '2px solid #700457',
+    transition: 'all 0.4s ease'
+  }}
+
+>
           <div className={styles.formHeader}>
             <h3 className={styles.formTitle}>Get Early Access</h3>
             <p className={styles.formDescription}>
@@ -205,10 +212,10 @@ export default function AppShowcase() {
 
           {/* Step Indicator */}
           <div className={styles.stepIndicator}>
-            <div className={`${styles.stepDot} ${currentStep >= 1 ? styles.stepDotActive : ''}`} style={currentStep === 1 ? { background: '#7A0042', transform: 'scale(1.2)' } : {}}></div>
-            <div className={`${styles.stepDot} ${currentStep >= 2 ? styles.stepDotActive : ''}`} style={currentStep === 2 ? { background: '#C8963E', transform: 'scale(1.2)' } : {}}></div>
-            <div className={`${styles.stepDot} ${currentStep >= 3 ? styles.stepDotActive : ''}`} style={currentStep === 3 ? { background: '#10b981', transform: 'scale(1.2)' } : {}}></div>
-          </div>
+  <div className={`${styles.stepDot} ${currentStep >= 1 ? styles.stepDotActive : ''}`} style={currentStep === 1 ? { background: '#700457', transform: 'scale(1.2)' } : {}}></div>
+  <div className={`${styles.stepDot} ${currentStep >= 2 ? styles.stepDotActive : ''}`} style={currentStep === 2 ? { background: '#700457', transform: 'scale(1.2)' } : {}}></div>
+  <div className={`${styles.stepDot} ${currentStep >= 3 ? styles.stepDotActive : ''}`} style={currentStep === 3 ? { background: '#700457', transform: 'scale(1.2)' } : {}}></div>
+</div>
 
           {success && (
             <div className={styles.successMessage}>
@@ -352,42 +359,33 @@ export default function AppShowcase() {
         </div>
       </div>
 
-      {/* Posters Section */}
-      <div className={styles.postersSectionWrapper}>
-        <div className={styles.postersHeadingRow}>
-          <h2 className={styles.postersSectionHeading}>What's <span className={styles.postersSectionHighlight}> NEW </span>?</h2>
-        </div>
-        <div className={styles.postersSection}>
-          <div className={styles.postersTiltCard} onMouseMove={(e) => {
-            const rect = e.currentTarget.getBoundingClientRect();
-            const x = (e.clientX - rect.left) / rect.width - 0.5;
-            const y = (e.clientY - rect.top) / rect.height - 0.5;
-            e.currentTarget.style.transform = `perspective(800px) rotateY(${x * 18}deg) rotateX(${-y * 18}deg) scale(1.03)`;
-          }} onMouseLeave={(e) => {
-            e.currentTarget.style.transform = 'perspective(800px) rotateY(0deg) rotateX(0deg) scale(1)';
-          }}>
-            <img
-              src="/images/poster-stadium.PNG"
-              alt="Accesco Living - Things are about to change"
-              className={styles.postersTiltImg}
-            />
-          </div>
-          <div className={styles.postersTiltCard} onMouseMove={(e) => {
-            const rect = e.currentTarget.getBoundingClientRect();
-            const x = (e.clientX - rect.left) / rect.width - 0.5;
-            const y = (e.clientY - rect.top) / rect.height - 0.5;
-            e.currentTarget.style.transform = `perspective(800px) rotateY(${x * 18}deg) rotateX(${-y * 18}deg) scale(1.03)`;
-          }} onMouseLeave={(e) => {
-            e.currentTarget.style.transform = 'perspective(800px) rotateY(0deg) rotateX(0deg) scale(1)';
-          }}>
-            <img
-              src="/images/poster-newspaper.jpeg"
-              alt="Accesco Living - Something exciting is coming"
-              className={styles.postersTiltImg}
-            />
-          </div>
-        </div>
-      </div>
+      {/* Download App Banner */}
+{/* Download App Banner */}
+<div className={styles.downloadAppSection}>
+  <img
+    src="/images/download-app-banner-desktop.png"
+    alt="Download App"
+    className={styles.downloadAppImageDesktop}
+  />
+
+  <img
+    src="/images/download-app-banner-mobile.png"
+    alt="Download App"
+    className={styles.downloadAppImageMobile}
+  />
+
+  <a
+    href="#"
+    className={styles.playStoreHotspot}
+    aria-label="Google Play"
+  />
+
+  <a
+    href="#"
+    className={styles.appStoreHotspot}
+    aria-label="App Store"
+  />
+</div>
     </section>
   );
 }
