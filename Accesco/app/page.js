@@ -12,6 +12,8 @@ import JsonLd from '../components/JsonLd';
 export default function HomePage() {
   const [isClient, setIsClient] = useState(false);
   const scrollRef = useRef(null);
+  const deliveryRef = useRef(null);
+const [deliveryVisible, setDeliveryVisible] = useState(false);
 const softwareApplicationSchema = {
   "@context": "https://schema.org",
   "@type": "SoftwareApplication",
@@ -28,6 +30,20 @@ const softwareApplicationSchema = {
   useEffect(() => {
     setIsClient(true);
   }, []);
+  useEffect(() => {
+  const observer = new IntersectionObserver(
+    ([entry]) => {
+      setDeliveryVisible(entry.isIntersecting);
+    },
+    { threshold: 0.35 }
+  );
+
+  if (deliveryRef.current) {
+    observer.observe(deliveryRef.current);
+  }
+
+  return () => observer.disconnect();
+}, []);
 
   const scroll = (direction) => {
   if (scrollRef.current) {
@@ -49,20 +65,26 @@ const softwareApplicationSchema = {
         {/* ── Services Section ── */}
         <section id="services" style={{ padding: 'clamp(60px, 8vw, 100px) 0', background: '#FFFDF8', position: 'relative' }}>
          
+
           <div className="intelligencePosterRow">
 
   {/* Intelligence Image */}
   <div className="intelligenceSection">
+    
     <picture>
   <source
     media="(max-width: 768px)"
     srcSet="/images/YOUR-MOBILE-IMAGE.jpeg"
   />
-  <img
-    src="/images/intelligence-layer.png"
-    alt="Accesco Living - Something exciting is coming"
-    className="intelligenceImage"
-  />
+    <Image
+  src="/images/intelligence-layer.png"
+  alt="Accesco Intelligence Layer"
+  width={1600}
+  height={900}
+  className="intelligenceImage"
+  sizes="100vw"
+  quality={80}
+/>
 </picture>
   </div>
 
@@ -97,9 +119,23 @@ const softwareApplicationSchema = {
             pointerEvents: 'none',
           }} />
 
-          <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 clamp(20px, 4vw, 40px)', position: 'relative' }}>
-            <div style={{ marginBottom: '60px' }}>
-
+  
+  <div
+    ref={deliveryRef}
+    className={`deliveryHeadingFrame ${deliveryVisible ? "is-visible" : ""}`}
+    style={{
+      maxWidth: '1280px',
+      margin: '0 auto',
+      padding: '0 clamp(20px, 4vw, 40px)',
+      position: 'relative'
+    }}
+  >
+<div className="floatingHeroItems">
+  <img src="/images/burger.png" className="popItem popBurger" alt="Burger" />
+  <img src="/images/hoodie.png" className="popItem popHoodie" alt="Hoodie" />
+  <img src="/images/salad.png" className="popItem popSalad" alt="Salad" />
+  <img src="/images/pizza.png" className="popItem popPizza" alt="Pizza" />
+</div>
               <h2 style={{
                 fontFamily: "'Inter', sans-serif",
                 fontWeight: 800,
@@ -128,7 +164,8 @@ fontSize: 'clamp(2.45rem, 4.9vw, 4.4rem)',
   
 }}>
                 Groceries, food and fashion at your doorstep in minutes — sourced straight from producers, built to circulate, and engineered so the value of everything you buy keeps working for your household—Intelligent Hyperlocal delivery app that fits your life. </p>
-            </div>
+            </div>   {/* deliveryHeadingFrame */}
+          
 
             <div className="services-container-wrapper">
               <div className="servicesWrap">
@@ -212,7 +249,7 @@ fontSize: 'clamp(2.45rem, 4.9vw, 4.4rem)',
                 </button>
               </div>
             </div>
-          </div>
+      
         </section>
         {/* ── Xpense Meter Section ── */}
         <section className="xpense-meter-section">
@@ -308,6 +345,7 @@ fontSize: 'clamp(2.45rem, 4.9vw, 4.4rem)',
               </div>
             </div>
           </div>
+  
         </section>
 
         {/* ── Waitlist / App Showcase ── */}
