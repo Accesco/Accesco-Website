@@ -2770,6 +2770,8 @@ footer .app-buttons {
 }
 
 
+
+
 .intelligenceSection,
 .postersSectionWrapper {
   position: relative;
@@ -2854,7 +2856,7 @@ footer .app-buttons {
     filter: contrast(1.08) saturate(1.05);
   }
 }
-/*
+
 .floatingHeroItems {
   position: absolute;
   inset: 0;
@@ -2875,7 +2877,9 @@ footer .app-buttons {
 .deliveryHeadingFrame.is-visible .popBurger {
   animation: burgerEnter 1.3s ease-out forwards;
 }
-
+ .deliveryHeadingFrame.is-visible .popPizza {
+  animation: pizzaEnter 1.35s ease-out forwards;
+}
 .deliveryHeadingFrame.is-visible .popHoodie {
   animation: hoodieEnter 1.45s ease-out forwards;
 }
@@ -2883,7 +2887,7 @@ footer .app-buttons {
 .deliveryHeadingFrame.is-visible .popSalad {
   animation: saladEnter 1.6s ease-out forwards;
 }
- 
+
 
 
 .popBurger {
@@ -2891,7 +2895,11 @@ footer .app-buttons {
   top: -75px;
   width: clamp(130px, 15vw, 220px);
 }
-
+.popPizza {
+  left: -145px;
+  top: 95px;
+  width: clamp(115px, 13vw, 190px);
+}
 
 
 .popHoodie {
@@ -2922,6 +2930,20 @@ footer .app-buttons {
     transform: translate(0, 0)
       scale(1)
       rotate(-10deg);
+  }
+}
+@keyframes pizzaEnter {
+  from {
+    opacity: 0;
+    transform: translate(-420px, 180px)
+      scale(0.35)
+      rotate(35deg);
+  }
+  to {
+    opacity: 1;
+    transform: translate(0, 0)
+      scale(1)
+      rotate(12deg);
   }
 }
 
@@ -2959,24 +2981,13 @@ footer .app-buttons {
   .floatingHeroItems {
     display: none;
   }
-}*/
-.deliveryHeadingFrame {
-  position: relative;
-  isolation: isolate;
 }
 
-.deliveryHeadingFrame::before {
-  content: "";
-  position: absolute;
-  inset: -140px -220px -80px -220px;
-  background-image: url("/images/pink-wave-bg.png");
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  opacity: 0.12;
-  z-index: -1;
-  pointer-events: none;
+.deliveryHeadingFrame {
+  position: relative;
+  z-index: 2;
 }
+
 /* ==========================================================================
    MOBILE SERVICES BENTO GRID OVERRIDE (Swiggy / Instamart Style)
    ========================================================================== */

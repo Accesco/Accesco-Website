@@ -594,3 +594,19 @@ border: none;
     height: 11%;
   }
 }
+.deliveryHeadingFrame {
+  position: relative;
+  isolation: isolate;
+}
+
+.deliveryHeadingFrame::before {
+  content: "";
+  position: absolute;
+  inset: -9px -220px -50px -220px;
+  background-image: url("/images/pink-wave-bg.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  opacity: 0.12;
+  z-index: -1;
+  pointer-events: none;}
