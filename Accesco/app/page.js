@@ -63,7 +63,14 @@ const softwareApplicationSchema = {
         <Hero />
 
         {/* ── Services Section ── */}
-        <section id="services" style={{ padding: 'clamp(60px, 8vw, 100px) 0', background: '#FFFDF8', position: 'relative' }}>
+       <section
+  id="services"
+  style={{
+    padding: 'clamp(60px, 8vw, 100px) 0',
+    background: '#FFFDF8',
+    position: 'relative'
+  }}
+>
          
 
           <div className="intelligencePosterRow">
@@ -119,7 +126,6 @@ const softwareApplicationSchema = {
             pointerEvents: 'none',
           }} />
 
-  
   <div
     ref={deliveryRef}
     className={`deliveryHeadingFrame ${deliveryVisible ? "is-visible" : ""}`}
@@ -132,9 +138,11 @@ const softwareApplicationSchema = {
   >
 <div className="floatingHeroItems">
   <img src="/images/burger.png" className="popItem popBurger" alt="Burger" />
+  <img src="/images/pizza.png" className="popItem popPizza" alt="Pizza" />
+  <img src="/images/Grocery.png" className="popItem popGrocery" alt="Grocery Basket" />
   <img src="/images/hoodie.png" className="popItem popHoodie" alt="Hoodie" />
   <img src="/images/salad.png" className="popItem popSalad" alt="Salad" />
-  <img src="/images/pizza.png" className="popItem popPizza" alt="Pizza" />
+  <img src="/images/Jeans.png" className="popItem popJeans" alt="Jeans" />
 </div>
               <h2 style={{
                 fontFamily: "'Inter', sans-serif",
@@ -248,8 +256,8 @@ fontSize: 'clamp(2.45rem, 4.9vw, 4.4rem)',
                   ›
                 </button>
               </div>
-            </div>
-      
+         
+      </div>
         </section>
         {/* ── Xpense Meter Section ── */}
         <section className="xpense-meter-section">
