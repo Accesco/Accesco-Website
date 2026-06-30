@@ -2148,6 +2148,8 @@ display: block;
   gap: 28px;
   max-width: 1200px;
   margin: 0 auto;
+    position: relative;
+  top: 30px;
 }
 
 .service-item {
@@ -2345,47 +2347,7 @@ display: block;
   }
 }
 
-@media (max-width: 600px) {
-  .services-grid {
-    display: flex;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    gap: 18px;
-    padding-bottom: 20px;
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-    grid-template-columns: none;
-  }
-  
-  .services-grid::-webkit-scrollbar {
-    display: none;
-  }
-  
-  .service-item {
-    min-width: 280px;
-    max-width: 280px;
-    scroll-snap-align: center;
-    flex-shrink: 0;
-  }
-  
-  .services-enhanced {
-    padding: 70px 16px;
-  }
-  .services-subtitle {
-    margin: 0 auto 48px;
-  }
-  .service-visual {
-    height: 190px;
-  }
-  .service-content {
-    padding: 20px;
-  }
-  .service-name {
-    font-size: 19px;
-  }
-}
 
-/* Sidebar Panel */
 
 
 
@@ -2803,6 +2765,17 @@ footer .app-buttons {
   align-items: center;
   justify-content: space-between;
   gap: 48px;
+  position: relative;
+  isolation: isolate;
+}
+
+
+
+
+.intelligenceSection,
+.postersSectionWrapper {
+  position: relative;
+  z-index: 3;
 }
 
 .postersSectionWrapper {
@@ -2847,6 +2820,7 @@ footer .app-buttons {
   margin: 0 auto;
 }
 
+
 /* MOBILE */
 @media (max-width: 768px) {
   .postersSectionWrapper {
@@ -2882,3 +2856,282 @@ footer .app-buttons {
     filter: contrast(1.08) saturate(1.05);
   }
 }
+
+.floatingHeroItems {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  overflow: visible;
+}
+
+.popItem {
+  position: absolute;
+  height: auto;
+  object-fit: contain;
+  opacity: 0;
+  filter: drop-shadow(0 22px 30px rgba(0, 0, 0, 0.22));
+}
+
+
+.deliveryHeadingFrame.is-visible .popBurger {
+  animation: burgerEnter 1.3s ease-out forwards;
+}
+ .deliveryHeadingFrame.is-visible .popPizza {
+  animation: pizzaEnter 1.35s ease-out forwards;
+}
+.deliveryHeadingFrame.is-visible .popHoodie {
+  animation: hoodieEnter 1.45s ease-out forwards;
+}
+
+.deliveryHeadingFrame.is-visible .popSalad {
+  animation: saladEnter 1.6s ease-out forwards;
+}
+
+
+
+.popBurger {
+  left: -180px;
+  top: -75px;
+  width: clamp(130px, 15vw, 220px);
+}
+.popPizza {
+  left: -145px;
+  top: 95px;
+  width: clamp(115px, 13vw, 190px);
+}
+
+
+.popHoodie {
+  right: -150px;
+  top: -80px;
+  width: clamp(120px, 14vw, 200px);
+}
+
+
+
+.popSalad {
+  right: -170px;
+  top: 155px;
+  width: clamp(140px, 16vw, 230px);
+}
+
+
+
+@keyframes burgerEnter {
+  from {
+    opacity: 0;
+    transform: translate(-450px, -220px)
+      scale(0.35)
+      rotate(-35deg);
+  }
+  to {
+    opacity: 1;
+    transform: translate(0, 0)
+      scale(1)
+      rotate(-10deg);
+  }
+}
+@keyframes pizzaEnter {
+  from {
+    opacity: 0;
+    transform: translate(-420px, 180px)
+      scale(0.35)
+      rotate(35deg);
+  }
+  to {
+    opacity: 1;
+    transform: translate(0, 0)
+      scale(1)
+      rotate(12deg);
+  }
+}
+
+@keyframes hoodieEnter {
+  from {
+    opacity: 0;
+    transform: translate(450px, -220px)
+      scale(0.35)
+      rotate(35deg);
+  }
+  to {
+    opacity: 1;
+    transform: translate(0, 0)
+      scale(1)
+      rotate(8deg);
+  }
+}
+
+@keyframes saladEnter {
+  from {
+    opacity: 0;
+    transform: translate(350px, 260px)
+      scale(0.35)
+      rotate(-25deg);
+  }
+  to {
+    opacity: 1;
+    transform: translate(0, 0)
+      scale(1)
+      rotate(-6deg);
+  }
+}
+
+@media (max-width: 768px) {
+  .floatingHeroItems {
+    display: none;
+  }
+}
+
+.deliveryHeadingFrame {
+  position: relative;
+  z-index: 2;
+}
+
+/* ==========================================================================
+   MOBILE SERVICES BENTO GRID OVERRIDE (Swiggy / Instamart Style)
+   ========================================================================== */
+
+/*@media (max-width: 768px) {
+  .services-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 12px !important;
+
+    width: calc(100vw - 32px) !important;
+    max-width: calc(100vw - 32px) !important;
+
+    position: relative !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+
+    margin: 0 auto !important;
+    padding: 0 !important;
+    box-sizing: border-box !important;
+    overflow: visible !important;
+  }
+
+  .services-grid > div:nth-child(2) {
+    grid-column: 1 !important;
+    grid-row: 1 / span 2 !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: none !important;
+  }
+
+  .services-grid > div:nth-child(1) {
+    grid-column: 2 !important;
+    grid-row: 1 !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: none !important;
+  }
+
+  .services-grid > div:nth-child(3) {
+    grid-column: 2 !important;
+    grid-row: 2 !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: none !important;
+  }
+
+  .services-grid > div:nth-child(2) .service-premium-card {
+    aspect-ratio: 1 / 1.9 !important;
+    height: 100% !important;
+  }
+
+  .services-grid > div:nth-child(1) .service-premium-card,
+  .services-grid > div:nth-child(3) .service-premium-card {
+    aspect-ratio: 1 / 0.95 !important;
+    height: 100% !important;
+  }
+
+  .service-premium-card {
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+    border-radius: 20px !important;
+    border: 1px solid rgba(122, 0, 66, 0.06) !important;
+    background: #ffffff !important;
+    overflow: hidden !important;
+    position: relative !important;
+  }
+
+  .service-card-visual {
+    position: absolute !important;
+    right: -8px !important;
+    bottom: -8px !important;
+    width: 90px !important;
+    height: 90px !important;
+    border-radius: 50% !important;
+    overflow: hidden !important;
+    z-index: 1 !important;
+  }
+
+  .swadisht-card .service-card-visual {
+    width: 130px !important;
+    height: 130px !important;
+    right: -12px !important;
+    bottom: -12px !important;
+  }
+
+  .service-card-body {
+    padding: 16px !important;
+    z-index: 2 !important;
+    position: relative !important;
+    height: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+    pointer-events: none;
+  }
+
+  .service-card-name {
+    font-size: 1.15rem !important;
+    font-weight: 800 !important;
+    margin-bottom: 2px !important;
+    letter-spacing: -0.03em !important;
+  }
+
+  .service-card-desc {
+    display: none !important;
+  }
+
+  .service-card-cta {
+    pointer-events: auto;
+    padding: 10px 14px !important;
+    font-size: 0.72rem !important;
+    font-weight: 700 !important;
+    letter-spacing: -0.02em !important;
+    border-radius: 10px !important;
+    width: fit-content !important;
+    margin-top: auto !important;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.06) !important;
+    white-space: nowrap !important;
+  }
+
+  .service-icon-circle {
+    display: none !important;
+  }
+}
+@media (max-width: 768px) {
+
+  .services-container-wrapper {
+    width: 100vw !important;
+    max-width: none !important;
+    margin-left: calc(50% - 50vw) !important;
+    margin-right: calc(50% - 50vw) !important;
+    padding: 0 !important;
+  }
+
+  .servicesWrap {
+    width: 100% !important;
+    max-width: none !important;
+    padding: 0 12px !important;
+  }
+
+  .services-grid {
+    width: 100% !important;
+    max-width: none !important;
+  }
+}*/

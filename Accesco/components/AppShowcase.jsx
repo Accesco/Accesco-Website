@@ -361,7 +361,9 @@ export default function AppShowcase() {
 
       {/* Download App Banner */}
 {/* Download App Banner */}
+
 <div className={styles.downloadAppSection}>
+  
   <img
     src="/images/download-app-banner-desktop.png"
     alt="Download App"
@@ -386,6 +388,7 @@ export default function AppShowcase() {
     aria-label="App Store"
   />
 </div>
+
     </section>
   );
 }
