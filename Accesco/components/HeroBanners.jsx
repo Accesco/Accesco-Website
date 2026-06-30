@@ -205,6 +205,9 @@ export function SwadishttHero() {
       description:
         'From biryani to comfort meals, get your favourites delivered hot and fast.',
     },
+    {
+      image: '/images/banners/hero-swadishtt-3.png'
+    }
   ];
 
   const [currentSlide, setCurrentSlide] = useState(0);
