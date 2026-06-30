@@ -1079,40 +1079,139 @@
 
 /* Very small mobile */
 
+/* Very small mobile - 2 column compact discovery cards */
+
 @media (max-width: 480px) {
+  .discoverSection {
+    padding: 18px 8px;
+  }
+
   .featureGrid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
   }
 
   .featureCard {
-    min-height: 190px;
-    padding: 20px 145px 20px 20px;
+    min-height: 175px;
+    padding: 14px 78px 14px 12px;
+    border-radius: 18px;
+  }
+
+  .featureCard::before {
+    width: 210px;
+    height: 210px;
+    right: -125px;
+    top: -42px;
+  }
+
+  .featureCard::after {
+    width: 34px;
+    height: 34px;
+    top: 18px;
+    right: 18px;
+    background-size: 8px 8px;
   }
 
   .featureCard h3 {
-    font-size: 20px;
-    max-width: 220px;
+    font-size: 14px;
+    line-height: 1.12;
+    max-width: 105px;
+    margin-bottom: 8px;
   }
 
   .featureCard p {
-    font-size: 13px;
-    max-width: 200px;
+    font-size: 11px;
+    line-height: 1.32;
+    max-width: 105px;
+    margin-bottom: 10px;
+
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
   }
 
   .featureCard span {
-    font-size: 12px;
+    font-size: 10px;
+    line-height: 1.1;
+    padding: 8px 10px;
+    border-radius: 11px;
+    box-shadow: none;
+    max-width: 108px;
   }
 
   .featureImage {
-    right: -50px;
-    width: 190px;
-    height: 160px;
+    right: -58px;
+    bottom: -8px;
+    width: 145px;
+    height: 122px;
+  }
+
+  .featureGrid .featureCard:nth-child(1) .featureImage {
+    right: -60px;
+    bottom: -8px;
+    width: 150px;
+    height: 124px;
+  }
+
+  .featureGrid .featureCard:nth-child(2) .featureImage {
+    right: -62px;
+    bottom: -6px;
+    width: 150px;
+    height: 124px;
+  }
+
+  .featureGrid .featureCard:nth-child(3) .featureImage {
+    right: -62px;
+    bottom: -8px;
+    width: 155px;
+    height: 126px;
   }
 
   .regionalImage {
-    right: -30px;
-    width: 165px;
-    height: 165px;
+    right: -42px;
+    bottom: -8px;
+    width: 128px;
+    height: 128px;
+  }
+}
+/* Extra tiny phones */
+
+@media (max-width: 370px) {
+  .featureGrid {
+    gap: 8px;
+  }
+
+  .featureCard {
+    min-height: 160px;
+    padding: 12px 64px 12px 10px;
+  }
+
+  .featureCard h3 {
+    font-size: 12.5px;
+    max-width: 90px;
+  }
+
+  .featureCard p {
+    display: none;
+  }
+
+  .featureCard span {
+    font-size: 9px;
+    padding: 7px 8px;
+    max-width: 90px;
+  }
+
+  .featureImage {
+    right: -52px;
+    width: 125px;
+    height: 105px;
+  }
+
+  .regionalImage {
+    right: -38px;
+    width: 112px;
+    height: 112px;
   }
 }
 @media (max-width: 768px) {
