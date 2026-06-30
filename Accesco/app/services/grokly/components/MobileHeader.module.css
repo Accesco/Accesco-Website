@@ -6,7 +6,7 @@
   display: none;
   position: sticky;
   top: 0;
-  z-index: 9999 !important;
+  z-index: 1000;
   background: var(--grokly-bg-white);
   box-shadow: var(--grokly-shadow-sm);
 }
@@ -85,10 +85,6 @@
   transition: var(--grokly-transition-fast);
 }
 
-.cartBtn:active {
-  transform: scale(0.95);
-}
-
 .cartIcon {
   font-size: 20px;
   display: block;
@@ -145,18 +141,4 @@
 .searchInput:focus {
   background: var(--grokly-bg-white);
   box-shadow: 0 0 0 2px var(--grokly-primary-light);
-}
-.mobileBackBtn {
-  width: 38px;
-  height: 38px;
-  border-radius: var(--grokly-radius-sm);
-  background: var(--grokly-primary-light);
-  color: var(--grokly-primary);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-decoration: none;
-  font-size: 20px;
-  font-weight: 900;
-  flex-shrink: 0;
 }

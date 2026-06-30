@@ -34,15 +34,6 @@
   cursor: pointer;
   flex-shrink: 0;
   padding: 0;
-  transition: transform var(--grokly-transition-fast);
-}
-
-.catItem:hover {
-  transform: scale(1.05);
-}
-
-.catItem:active {
-  transform: scale(0.95);
 }
 
 .catImageWrapper {

@@ -1,7 +1,8 @@
 'use client';
 
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import AccescoHeader from '../../components/AccescoHeader';
 import AuthModal from '../components/AuthModal';
@@ -9,9 +10,26 @@ import { useAuth } from '../components/AuthProvider';
 import ActiveOrdersWidget from '../../components/ActiveOrdersWidget';
 import './profile.css';
 
-export default function ProfilePage() {
+function ProfileContent() {
   const { user, loading, signOut, signIn } = useAuth();
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirectUrl = searchParams.get('redirect');
+
+  // Auto-open login modal if we have a redirect parameter and user is not logged in
+  useEffect(() => {
+    if (!loading && !user && redirectUrl) {
+      setIsLoginModalOpen(true);
+    }
+  }, [loading, user, redirectUrl]);
+
+  // Redirect on successful login or if already logged in and redirect exists
+  useEffect(() => {
+    if (user && redirectUrl) {
+      router.push(redirectUrl);
+    }
+  }, [user, redirectUrl, router]);
 
   const openLoginModal = () => setIsLoginModalOpen(true);
   const closeLoginModal = () => setIsLoginModalOpen(false);
@@ -165,5 +183,13 @@ export default function ProfilePage() {
         onSuccess={handleLoginSuccess}
       />
     </>
+  );
+}
+
+export default function ProfilePage() {
+  return (
+    <Suspense fallback={<div className="profile-loading">Loading profile...</div>}>
+      <ProfileContent />
+    </Suspense>
   );
 }

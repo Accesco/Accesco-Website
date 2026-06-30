@@ -1,6 +1,7 @@
 'use client';
 
 import { createContext, useContext, useState, useEffect, useMemo } from 'react';
+import { useAuth } from '../../../components/AuthProvider';
 
 const GroklyContext = createContext();
 
@@ -9,11 +10,32 @@ const ORDERS_STORAGE_KEY = 'grokly_orders';
 const LOCATION_STORAGE_KEY = 'userLocation';
 
 export function GroklyProvider({ children }) {
+  const { user } = useAuth();
   const [cart, setCart] = useState({}); // id -> quantity mapping for compatibility
   const [orders, setOrders] = useState([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [location, setLocation] = useState('Koramangala');
   const [isLocationModalOpen, setIsLocationModalOpen] = useState(false);
+
+  // Fetch orders from backend Firestore if user is logged in
+  useEffect(() => {
+    if (!user) return;
+    const fetchOrders = async () => {
+      try {
+        const queryParam = user.uid ? `userId=${encodeURIComponent(user.uid)}` : `email=${encodeURIComponent(user.email)}`;
+        const res = await fetch(`/api/grokly/orders?${queryParam}`);
+        if (res.ok) {
+          const data = await res.json();
+          if (data.orders) {
+            setOrders(data.orders);
+          }
+        }
+      } catch (err) {
+        console.error('[GroklyContext] Failed to sync orders from backend:', err);
+      }
+    };
+    fetchOrders();
+  }, [user]);
 
   // Load from local storage
   useEffect(() => {
@@ -100,9 +122,38 @@ export function GroklyProvider({ children }) {
   const closeCart = () => setIsCartOpen(false);
   const toggleCart = () => setIsCartOpen(prev => !prev);
 
-  const updateLocation = (newLocation) => setLocation(newLocation);
+  const updateLocation = (newLocation) => {
+    setLocation(newLocation);
+    if (typeof window !== 'undefined') {
+      try {
+        const existing = localStorage.getItem(LOCATION_STORAGE_KEY);
+        const parsed = existing ? JSON.parse(existing) : {};
+        localStorage.setItem(LOCATION_STORAGE_KEY, JSON.stringify({
+          ...parsed,
+          displayAddress: newLocation,
+          fullAddress: parsed.fullAddress || newLocation
+        }));
+      } catch (e) {
+        localStorage.setItem(LOCATION_STORAGE_KEY, JSON.stringify({
+          displayAddress: newLocation,
+          fullAddress: newLocation
+        }));
+      }
+    }
+  };
   const openLocationModal = () => setIsLocationModalOpen(true);
   const closeLocationModal = () => setIsLocationModalOpen(false);
+
+  useEffect(() => {
+    if (isCartOpen || isLocationModalOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isCartOpen, isLocationModalOpen]);
 
   const placeOrder = (orderDetails) => {
     const newOrder = {
@@ -110,17 +161,20 @@ export function GroklyProvider({ children }) {
       status: 'PLACED',
       timestamp: new Date().toISOString(),
       venture: 'Grokly',
+      userId: orderDetails.userId || user?.uid || null,
+      customerEmail: orderDetails.customerEmail || user?.email || null,
+      customerName: orderDetails.customerName || user?.name || user?.displayName || 'Accesco Customer',
       ...orderDetails
     };
     setOrders(prev => [newOrder, ...prev]);
     setCart({});
 
     // Persist to backend (non-blocking — local state already updated)
-    const customerEmail = orderDetails.customerEmail || null;
+    const emailToUse = newOrder.customerEmail;
     fetch('/api/grokly/orders', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ order: newOrder, customerEmail }),
+      body: JSON.stringify({ order: newOrder, customerEmail: emailToUse }),
     }).catch(err => console.error('[GroklyContext] Backend order sync failed:', err));
 
     return newOrder;

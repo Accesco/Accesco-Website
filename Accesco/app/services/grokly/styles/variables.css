@@ -93,7 +93,7 @@
      TYPOGRAPHY
   ═══════════════════════════════════════════════ */
   --grokly-font-primary: 'Nunito', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  --grokly-font-display: 'Syne', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --grokly-font-display: 'Nunito', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   
   --grokly-font-size-xs: 12px;
   --grokly-font-size-sm: 14px;
@@ -151,8 +151,10 @@
 /* ═══════════════════════════════════════════════
    DARK MODE SUPPORT (Future Enhancement)
 ═══════════════════════════════════════════════ */
+/*
 @media (prefers-color-scheme: dark) {
   :root {
-    /* Dark mode variables can be added here */
+    // Dark mode variables can be added here
   }
 }
+*/

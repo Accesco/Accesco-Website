@@ -5,7 +5,9 @@ export const dynamic = 'force-dynamic';
 function buildGroklyOrderEmailHtml({ customerName, orderId, items, subtotal, deliveryFee, discount, total, deliverySpeed, address, eta }) {
   const itemsHtml = items.map(item => `
     <tr>
-      <td style="padding:8px 0;border-bottom:1px solid #f0f0f0;">${item.name}</td>
+      <td style="padding:8px 0;border-bottom:1px solid #f0f0f0;">
+        <a href="https://www.accescoliving.com/services/grokly/category/${item.category || 'all'}" style="color:#0c831f;text-decoration:none;font-weight:600;">${item.name}</a>
+      </td>
       <td style="padding:8px 0;border-bottom:1px solid #f0f0f0;text-align:center;">x${item.quantity}</td>
       <td style="padding:8px 0;border-bottom:1px solid #f0f0f0;text-align:right;">₹${(item.price * item.quantity).toLocaleString('en-IN')}</td>
     </tr>
@@ -66,7 +68,7 @@ function buildGroklyOrderEmailHtml({ customerName, orderId, items, subtotal, del
       </table>
 
       <p style="font-size:13px;color:#999;margin:32px 0 0;">
-        — Grokly by Accesco Living · <a href="https://www.accescoliving.com/services/grokly" style="color:#1a1a1a;">Track your order</a>
+        — Grokly by Accesco Living · <a href="https://www.accescoliving.com/services/grokly/profile?orderId=${orderId}" style="color:#0c831f;font-weight:700;text-decoration:underline;">Track Order #${orderId}</a>
       </p>
     </div>
   `;
@@ -87,7 +89,8 @@ export async function POST(request) {
       const { collection, doc, setDoc, serverTimestamp } = await import('firebase/firestore');
       await setDoc(doc(collection(db, 'grokly_orders'), order.id), {
         ...order,
-        customerEmail: customerEmail || null,
+        customerEmail: customerEmail || order.customerEmail || null,
+        userId: order.userId || null,
         createdAt: serverTimestamp(),
       });
     } catch (dbErr) {
@@ -96,7 +99,8 @@ export async function POST(request) {
     }
 
     // Send order confirmation email if email is provided
-    if (customerEmail) {
+    const emailTo = customerEmail || order.customerEmail;
+    if (emailTo) {
       const apiKey = process.env.RESEND_API_KEY;
       if (apiKey) {
         const fromEmail = process.env.RESEND_FROM_EMAIL || 'Accesco <noreply@accescoliving.com>';
@@ -108,9 +112,12 @@ export async function POST(request) {
           },
           body: JSON.stringify({
             from: fromEmail,
-            to: [customerEmail],
+            to: [emailTo],
             subject: `Order confirmed — ${order.id} | Grokly`,
-            html: buildGroklyOrderEmailHtml(order),
+            html: buildGroklyOrderEmailHtml({
+              ...order,
+              orderId: order.id,
+            }),
           }),
         }).catch((err) => console.error('[grokly/orders] Email failed:', err));
       }
@@ -127,10 +134,13 @@ export async function GET(request) {
   try {
     const { searchParams } = new URL(request.url);
     const orderId = searchParams.get('id');
+    const userId = searchParams.get('userId');
+    const email = searchParams.get('email');
 
     const { db } = await import('@/lib/firebase');
-    const { collection, doc, getDoc, getDocs, query, orderBy, limit } = await import('firebase/firestore');
+    const { collection, doc, getDoc, getDocs, query, orderBy, limit, where } = await import('firebase/firestore');
 
+    // Fetch single order by ID
     if (orderId) {
       const docSnap = await getDoc(doc(db, 'grokly_orders', orderId));
       if (!docSnap.exists()) {
@@ -139,6 +149,37 @@ export async function GET(request) {
       return NextResponse.json({ order: { id: docSnap.id, ...docSnap.data() } });
     }
 
+    // Fetch orders by userId
+    if (userId) {
+      const q = query(
+        collection(db, 'grokly_orders'),
+        where('userId', '==', userId),
+        limit(100)
+      );
+      const snapshot = await getDocs(q);
+      const orders = [];
+      snapshot.forEach(d => orders.push({ id: d.id, ...d.data() }));
+      // Sort in JS to avoid composite index requirement
+      orders.sort((a, b) => new Date(b.timestamp || b.createdAt) - new Date(a.timestamp || a.createdAt));
+      return NextResponse.json({ orders });
+    }
+
+    // Fetch orders by email
+    if (email) {
+      const q = query(
+        collection(db, 'grokly_orders'),
+        where('customerEmail', '==', email),
+        limit(100)
+      );
+      const snapshot = await getDocs(q);
+      const orders = [];
+      snapshot.forEach(d => orders.push({ id: d.id, ...d.data() }));
+      // Sort in JS to avoid composite index requirement
+      orders.sort((a, b) => new Date(b.timestamp || b.createdAt) - new Date(a.timestamp || a.createdAt));
+      return NextResponse.json({ orders });
+    }
+
+    // Fetch all orders (admin — most recent 50)
     const q = query(collection(db, 'grokly_orders'), orderBy('createdAt', 'desc'), limit(50));
     const snapshot = await getDocs(q);
     const orders = [];
