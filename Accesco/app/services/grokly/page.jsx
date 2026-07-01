@@ -1176,6 +1176,110 @@ function GroklyPageContent() {
             </div>
           )}
 
+          {/* Curated Product Sections */}
+          {activeCategory === 'all' && !searchQuery && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '36px', margin: '16px 0 40px' }}>
+              {/* Shelf 1: Quick Breakfast Corner */}
+              <div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                  <h3 style={{ fontFamily: 'var(--grokly-font-display)', fontSize: '18px', fontWeight: 800, color: 'var(--grokly-text-primary)', margin: 0 }}>
+                    Quick Breakfast Corner
+                  </h3>
+                  <button 
+                    onClick={() => handleCategorySelect('dairy-breakfast')}
+                    style={{ background: 'none', border: 'none', color: '#0c831f', fontWeight: 700, fontSize: '14px', cursor: 'pointer' }}
+                  >
+                    See All
+                  </button>
+                </div>
+                <div style={{
+                  display: 'flex',
+                  gap: '12px',
+                  overflowX: 'auto',
+                  paddingBottom: '8px',
+                  scrollbarWidth: 'none',
+                  msOverflowStyle: 'none',
+                  alignItems: 'stretch'
+                }} className="hide-scrollbar">
+                  {products
+                    .filter(p => ['dairy-001', 'dairy-002', 'dairy-003', 'dairy-004', 'dairy-007', 'dairy-008', 'fruit-001', 'fruit-002', 'tea-002', 'tea-001'].includes(p.id))
+                    .map(product => (
+                      <div key={product.id} style={{ flex: '0 0 180px', width: '180px', display: 'flex' }}>
+                        <ProductCard product={product} />
+                      </div>
+                    ))
+                  }
+                </div>
+              </div>
+
+              {/* Shelf 2: Snack Attack & Cold Drinks */}
+              <div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                  <h3 style={{ fontFamily: 'var(--grokly-font-display)', fontSize: '18px', fontWeight: 800, color: 'var(--grokly-text-primary)', margin: 0 }}>
+                    Snack Attack & Cold Drinks
+                  </h3>
+                  <button 
+                    onClick={() => handleCategorySelect('munchies')}
+                    style={{ background: 'none', border: 'none', color: '#0c831f', fontWeight: 700, fontSize: '14px', cursor: 'pointer' }}
+                  >
+                    See All
+                  </button>
+                </div>
+                <div style={{
+                  display: 'flex',
+                  gap: '12px',
+                  overflowX: 'auto',
+                  paddingBottom: '8px',
+                  scrollbarWidth: 'none',
+                  msOverflowStyle: 'none',
+                  alignItems: 'stretch'
+                }} className="hide-scrollbar">
+                  {products
+                    .filter(p => ['munch-001', 'munch-002', 'munch-003', 'munch-005', 'munch-006', 'drink-001', 'drink-002', 'drink-003', 'drink-004'].includes(p.id))
+                    .map(product => (
+                      <div key={product.id} style={{ flex: '0 0 180px', width: '180px', display: 'flex' }}>
+                        <ProductCard product={product} />
+                      </div>
+                    ))
+                  }
+                </div>
+              </div>
+
+              {/* Shelf 3: Daily Cooking Essentials */}
+              <div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                  <h3 style={{ fontFamily: 'var(--grokly-font-display)', fontSize: '18px', fontWeight: 800, color: 'var(--grokly-text-primary)', margin: 0 }}>
+                    Daily Cooking Essentials
+                  </h3>
+                  <button 
+                    onClick={() => handleCategorySelect('atta-rice-dal')}
+                    style={{ background: 'none', border: 'none', color: '#0c831f', fontWeight: 700, fontSize: '14px', cursor: 'pointer' }}
+                  >
+                    See All
+                  </button>
+                </div>
+                <div style={{
+                  display: 'flex',
+                  gap: '12px',
+                  overflowX: 'auto',
+                  paddingBottom: '8px',
+                  scrollbarWidth: 'none',
+                  msOverflowStyle: 'none',
+                  alignItems: 'stretch'
+                }} className="hide-scrollbar">
+                  {products
+                    .filter(p => ['veg-001', 'veg-002', 'veg-003', 'atta-001', 'atta-002', 'atta-003', 'masala-001', 'masala-003'].includes(p.id))
+                    .map(product => (
+                      <div key={product.id} style={{ flex: '0 0 180px', width: '180px', display: 'flex' }}>
+                        <ProductCard product={product} />
+                      </div>
+                    ))
+                  }
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* Filter Panel - Only show when searching */}
           {searchQuery && (
             <FilterPanel
