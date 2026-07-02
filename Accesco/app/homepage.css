@@ -2783,11 +2783,10 @@ bottom: 0px;
   left: 50%;
   width: 100vw;
   transform: translateX(-50%);
-
 background:
   linear-gradient(
-    rgba(255, 182, 210, 0.05),
-    rgba(255, 182, 210, 0.05)
+    rgba(255,255,255,0.45),
+    rgba(255,255,255,0.45)
   ),
   url("/images/wave-desktop.png") center/cover no-repeat;
 

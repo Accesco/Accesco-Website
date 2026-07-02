@@ -377,7 +377,7 @@ fontSize: 'clamp(2.45rem, 4.9vw, 4.4rem)',
   
   
             
-        .services-container-wrapper {
+       r .services-container-wrapper {
           position: relative;
           width: 100%;
           display: flex;
@@ -408,7 +408,7 @@ fontSize: 'clamp(2.45rem, 4.9vw, 4.4rem)',
 
           .services-grid {
             display: grid !important;
-            grid-template-columns: repeat(3, 1fr) !important;
+            grid-template-columns: repeat(3, 1f) !important;
             gap: 8px !important;
             width: 100% !important;
             overflow: visible !important;
@@ -505,8 +505,8 @@ fontSize: 'clamp(2.45rem, 4.9vw, 4.4rem)',
         @media (max-width: 480px) {
           .services-grid {
             gap: 6px !important;
-            display: grid !important;
-            grid-template-columns: repeat(3, 1fr) !important;
+  display: grid !important;
+  grid-template-columns: repeat(2, 1fr) !important;
             overflow: visible !important;
             scroll-snap-type: none !important;
             padding-bottom: 0 !important;
@@ -518,6 +518,20 @@ fontSize: 'clamp(2.45rem, 4.9vw, 4.4rem)',
             max-width: none !important;
             flex-shrink: 0 !important;
           }
+            .services-grid > div:nth-child(1) {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+.services-grid > div:nth-child(2) {
+  grid-column: 1;
+  grid-row: 2;
+}
+
+.services-grid > div:nth-child(3) {
+  grid-column: 2;
+  grid-row: 1;
+}
           .service-card-visual {
             height: 85px !important;
           }
