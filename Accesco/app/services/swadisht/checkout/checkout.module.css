@@ -1008,3 +1008,1051 @@
     grid-template-columns: 1fr;
   }
 }
+/* =======================================
+   Better Order Placed Success Screen
+======================================= */
+
+.successScreen {
+  min-height: calc(100vh - 120px);
+  padding: 72px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background:
+    radial-gradient(circle at top, rgba(15, 138, 101, 0.12), transparent 34%),
+    linear-gradient(135deg, #fff9f0 0%, #ffffff 55%, #f4fff8 100%);
+  border-radius: 0;
+  margin-top: 0;
+}
+
+.successCard {
+  width: min(560px, 100%);
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(15, 138, 101, 0.18);
+  border-radius: 28px;
+  padding: 36px;
+  text-align: center;
+  box-shadow: 0 28px 80px rgba(17, 24, 39, 0.12);
+}
+
+.successTopBadge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: #ecfdf5;
+  color: #0f8a65;
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 18px;
+}
+
+.successIcon {
+  width: 86px;
+  height: 86px;
+  margin: 0 auto 22px;
+  font-size: 48px;
+  background: linear-gradient(135deg, #0f8a65, #16a34a);
+  color: #ffffff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 18px 36px rgba(15, 138, 101, 0.28);
+}
+
+.successTitle {
+  font-family: 'Playfair Display', serif;
+  font-size: 34px;
+  line-height: 1.1;
+  color: #1c1c1c;
+  margin-bottom: 12px;
+}
+
+.successText {
+  max-width: 420px;
+  margin: 0 auto 22px;
+  font-size: 15px;
+  color: #696969;
+}
+
+.orderNumber {
+  display: inline-flex;
+  background: #ffffff;
+  border: 1px dashed #0f8a65;
+  color: #0f8a65;
+  border-radius: 14px;
+  font-size: 15px;
+  padding: 12px 18px;
+  margin-bottom: 22px;
+}
+
+.driverPreview {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  text-align: left;
+  background: #fff8ef;
+  border: 1px solid #f0decf;
+  border-radius: 20px;
+  padding: 16px;
+  margin: 0 auto 24px;
+}
+
+.driverAvatar {
+  width: 52px;
+  height: 52px;
+  border-radius: 18px;
+  background: #6b1d3a;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+  flex-shrink: 0;
+}
+
+.driverInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.driverInfo strong {
+  font-size: 15px;
+  color: #1c1c1c;
+}
+
+.driverInfo span {
+  font-size: 13px;
+  color: #696969;
+}
+
+.successSteps {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin: 0 0 26px;
+}
+
+.successSteps > div {
+  background: #f8f9fa;
+  border: 1px solid #e8e8e8;
+  border-radius: 16px;
+  padding: 14px 10px;
+}
+
+.successSteps span {
+  width: 28px;
+  height: 28px;
+  margin: 0 auto 8px;
+  border-radius: 50%;
+  background: #e5e7eb;
+  color: #6b7280;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.successSteps p {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 700;
+  color: #6b7280;
+}
+
+.successStepActive span {
+  background: #0f8a65;
+  color: #ffffff;
+}
+
+.successStepActive p {
+  color: #0f8a65;
+}
+
+.primaryTrackBtn {
+  width: 100%;
+  min-height: 52px;
+  border: none;
+  border-radius: 16px;
+  background: #6b1d3a;
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 16px 30px rgba(107, 29, 58, 0.24);
+}
+
+.redirectText {
+  margin-top: 16px;
+  font-size: 13px;
+  color: #9ca3af;
+}
+
+@media (max-width: 640px) {
+  .successScreen {
+    padding: 48px 14px;
+    min-height: calc(100vh - 116px);
+  }
+
+  .successCard {
+    padding: 28px 18px;
+    border-radius: 24px;
+  }
+
+  .successTitle {
+    font-size: 26px;
+  }
+
+  .successText {
+    font-size: 14px;
+  }
+
+  .driverPreview {
+    padding: 14px;
+  }
+
+  .successSteps {
+    gap: 8px;
+  }
+
+  .successSteps > div {
+    padding: 12px 6px;
+  }
+
+  .successSteps p {
+    font-size: 10px;
+  }
+}
+/* =======================================
+   EatClub-like Order Placed Page
+   Swadishtt design system
+======================================= */
+
+.successScreen {
+  min-height: calc(100vh - 120px);
+  padding: 56px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #FFF9F0;
+}
+
+.eatclubSuccessCard {
+  width: min(520px, 100%);
+  background: #ffffff;
+  border-radius: 28px;
+  padding: 26px;
+  box-shadow: 0 24px 70px rgba(58, 21, 36, 0.12);
+  border: 1px solid rgba(107, 29, 58, 0.08);
+}
+
+.successHero {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.successTick {
+  width: 54px;
+  height: 54px;
+  border-radius: 18px;
+  background: #0F8A65;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  font-weight: 900;
+  flex-shrink: 0;
+  box-shadow: 0 12px 28px rgba(15, 138, 101, 0.25);
+}
+
+.successEyebrow {
+  margin: 0 0 6px;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #0F8A65;
+}
+
+.successTitle {
+  margin: 0 0 8px;
+  font-family: 'Playfair Display', serif;
+  font-size: 30px;
+  line-height: 1.1;
+  color: #1C1C1C;
+}
+
+.successText {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.55;
+  color: #696969;
+}
+
+.etaCard {
+  background: linear-gradient(135deg, #6B1D3A, #8E2C51);
+  color: #ffffff;
+  border-radius: 22px;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 16px;
+}
+
+.etaLabel {
+  display: block;
+  font-size: 12px;
+  opacity: 0.82;
+  margin-bottom: 4px;
+}
+
+.etaCard strong {
+  font-size: 34px;
+  line-height: 1;
+}
+
+.etaBadge {
+  padding: 9px 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.16);
+  font-size: 12px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.partnerLiveCard {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  background: #FFF8EF;
+  border: 1px solid #F0DECF;
+  border-radius: 20px;
+  padding: 16px;
+  margin-bottom: 18px;
+}
+
+.partnerIcon {
+  width: 46px;
+  height: 46px;
+  border-radius: 16px;
+  background: #D4A017;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 23px;
+  flex-shrink: 0;
+}
+
+.partnerLiveCard strong {
+  display: block;
+  font-size: 14px;
+  color: #1C1C1C;
+  margin-bottom: 4px;
+}
+
+.partnerLiveCard p {
+  margin: 0;
+  font-size: 12.5px;
+  color: #696969;
+  line-height: 1.45;
+}
+
+.progressCard {
+  background: #FFF9F0;
+  border: 1px solid rgba(107, 29, 58, 0.10);
+  border-radius: 20px;
+  padding: 18px;
+  margin-bottom: 16px;
+}
+
+.progressLine {
+  display: grid;
+  grid-template-columns: 20px 1fr 20px 1fr 20px;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.progressDotActive,
+.progressDot {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+}
+
+.progressDotActive {
+  background: #0F8A65;
+  box-shadow: 0 0 0 5px rgba(15, 138, 101, 0.12);
+}
+
+.progressDot {
+  background: #E5E7EB;
+}
+
+.progressConnectorActive,
+.progressConnector {
+  height: 4px;
+  border-radius: 999px;
+}
+
+.progressConnectorActive {
+  background: #0F8A65;
+}
+
+.progressConnector {
+  background: #E5E7EB;
+}
+
+.progressLabels {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  font-size: 12px;
+  font-weight: 800;
+  color: #4B5563;
+}
+
+.progressLabels span:nth-child(2) {
+  text-align: center;
+}
+
+.progressLabels span:nth-child(3) {
+  text-align: right;
+}
+
+.orderMiniCard {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.orderMiniCard > div {
+  background: #F8F9FA;
+  border: 1px solid #E8E8E8;
+  border-radius: 18px;
+  padding: 14px;
+}
+
+.orderMiniLabel {
+  display: block;
+  font-size: 11px;
+  font-weight: 800;
+  color: #8A8A8A;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 5px;
+}
+
+.orderMiniCard strong {
+  font-size: 14px;
+  color: #1C1C1C;
+  word-break: break-word;
+}
+
+.primaryTrackBtn,
+.secondaryOrderBtn {
+  width: 100%;
+  min-height: 50px;
+  border-radius: 16px;
+  font-size: 15px;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.primaryTrackBtn {
+  border: none;
+  background: #6B1D3A;
+  color: #ffffff;
+  box-shadow: 0 14px 28px rgba(107, 29, 58, 0.22);
+  margin-bottom: 10px;
+}
+
+.secondaryOrderBtn {
+  border: 1px solid rgba(107, 29, 58, 0.18);
+  background: #ffffff;
+  color: #6B1D3A;
+}
+
+.redirectText {
+  margin: 14px 0 0;
+  text-align: center;
+  font-size: 12.5px;
+  color: #8A8A8A;
+}
+
+@media (max-width: 640px) {
+  .successScreen {
+    padding: 36px 12px;
+  }
+
+  .eatclubSuccessCard {
+    padding: 20px;
+    border-radius: 24px;
+  }
+
+  .successHero {
+    gap: 12px;
+  }
+
+  .successTick {
+    width: 48px;
+    height: 48px;
+    border-radius: 16px;
+    font-size: 25px;
+  }
+
+  .successTitle {
+    font-size: 24px;
+  }
+
+  .successText {
+    font-size: 13px;
+  }
+
+  .etaCard {
+    padding: 18px;
+    border-radius: 20px;
+  }
+
+  .etaCard strong {
+    font-size: 30px;
+  }
+
+  .etaBadge {
+    font-size: 11px;
+  }
+
+  .orderMiniCard {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 370px) {
+  .successHero {
+    flex-direction: column;
+  }
+
+  .etaCard {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .progressLabels {
+    font-size: 10.5px;
+  }
+}
+/* =======================================
+   FINAL PREMIUM ORDER PLACED PAGE
+   Real structured Swadishtt confirmation UI
+======================================= */
+
+.premiumSuccessScreen {
+  min-height: calc(100vh - 120px);
+  padding: 52px 18px 64px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  background:
+    radial-gradient(circle at top left, rgba(107, 29, 58, 0.08), transparent 34%),
+    linear-gradient(135deg, #fff9f0 0%, #ffffff 50%, #fff6fa 100%);
+}
+
+.premiumOrderCard {
+  width: min(590px, 100%);
+  background: rgba(255, 255, 255, 0.96);
+  border: 1px solid rgba(107, 29, 58, 0.10);
+  border-radius: 32px;
+  padding: 28px;
+  box-shadow:
+    0 28px 80px rgba(58, 21, 36, 0.14),
+    inset 0 1px 0 rgba(255, 255, 255, 0.75);
+}
+
+.premiumTopRow {
+  display: grid;
+  grid-template-columns: 64px 1fr;
+  gap: 18px;
+  align-items: center;
+  padding-bottom: 22px;
+}
+
+.premiumTickWrap {
+  width: 64px;
+  height: 64px;
+  border-radius: 22px;
+  background: rgba(15, 138, 101, 0.10);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.premiumTick {
+  width: 52px;
+  height: 52px;
+  border-radius: 18px;
+  background: linear-gradient(135deg, #0f8a65, #13a977);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  font-weight: 900;
+  box-shadow: 0 16px 32px rgba(15, 138, 101, 0.26);
+}
+
+.premiumEyebrow {
+  display: block;
+  margin-bottom: 7px;
+  font-size: 12px;
+  font-weight: 900;
+  color: #0f8a65;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.premiumHeaderText h1 {
+  margin: 0 0 8px;
+  font-family: 'Playfair Display', serif;
+  font-size: 34px;
+  line-height: 1.08;
+  letter-spacing: -0.03em;
+  color: #171016;
+}
+
+.premiumHeaderText p {
+  margin: 0;
+  max-width: 420px;
+  font-size: 14px;
+  line-height: 1.55;
+  color: #6f6670;
+}
+
+.deliveryPromiseCard {
+  background:
+    linear-gradient(135deg, rgba(107, 29, 58, 0.98), rgba(142, 44, 81, 0.98)),
+    radial-gradient(circle at top right, rgba(212, 160, 23, 0.35), transparent 38%);
+  color: #ffffff;
+  border-radius: 26px;
+  padding: 22px;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  box-shadow: 0 20px 44px rgba(107, 29, 58, 0.24);
+}
+
+.deliveryPromiseCard span {
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+  opacity: 0.82;
+  margin-bottom: 6px;
+}
+
+.deliveryPromiseCard strong {
+  font-size: 42px;
+  line-height: 1;
+  letter-spacing: -0.05em;
+}
+
+.deliveryModePill {
+  padding: 10px 14px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.16);
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.partnerCard {
+  display: grid;
+  grid-template-columns: 54px 1fr;
+  gap: 14px;
+  align-items: center;
+  padding: 16px;
+  margin-bottom: 16px;
+  background: #fff8ef;
+  border: 1px solid rgba(212, 160, 23, 0.24);
+  border-radius: 22px;
+}
+
+.partnerIcon {
+  width: 50px;
+  height: 50px;
+  border-radius: 18px;
+  background: #d4a017;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+}
+
+.partnerInfo span {
+  display: block;
+  margin-bottom: 3px;
+  color: #8a7a5b;
+  font-size: 11px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.partnerInfo strong {
+  display: block;
+  margin-bottom: 4px;
+  color: #171016;
+  font-size: 15px;
+}
+
+.partnerInfo p {
+  margin: 0;
+  color: #6f6670;
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.timelineCard {
+  padding: 18px;
+  margin-bottom: 16px;
+  border-radius: 22px;
+  background: #fff9f0;
+  border: 1px solid rgba(107, 29, 58, 0.10);
+}
+
+.timelineHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+}
+
+.timelineHeader span {
+  color: #8a8a8a;
+  font-size: 11px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.timelineHeader strong {
+  color: #6b1d3a;
+  font-size: 15px;
+}
+
+.timelineTrack {
+  display: grid;
+  grid-template-columns: 62px 1fr 82px 1fr 72px;
+  align-items: start;
+}
+
+.timelineStep,
+.timelineStepDone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 7px;
+}
+
+.timelineStep span,
+.timelineStepDone span {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+}
+
+.timelineStepDone span {
+  background: #0f8a65;
+  box-shadow: 0 0 0 5px rgba(15, 138, 101, 0.12);
+}
+
+.timelineStep span {
+  background: #e5e7eb;
+}
+
+.timelineStep p,
+.timelineStepDone p {
+  margin: 0;
+  color: #4b5563;
+  font-size: 11px;
+  font-weight: 800;
+  text-align: center;
+}
+
+.timelineLine,
+.timelineLineDone {
+  height: 4px;
+  margin-top: 8px;
+  border-radius: 999px;
+}
+
+.timelineLineDone {
+  background: #0f8a65;
+}
+
+.timelineLine {
+  background: #e5e7eb;
+}
+
+.receiptPanel {
+  padding: 18px;
+  margin-bottom: 16px;
+  border-radius: 22px;
+  background: #ffffff;
+  border: 1px solid rgba(107, 29, 58, 0.10);
+}
+
+.receiptHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.receiptHeader h2 {
+  margin: 0;
+  color: #171016;
+  font-size: 15px;
+  font-weight: 900;
+}
+
+.receiptHeader span {
+  color: #8a8a8a;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.receiptItems {
+  display: grid;
+  gap: 10px;
+}
+
+.receiptItem {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #f1edf0;
+}
+
+.receiptItem:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.receiptItem strong {
+  display: block;
+  color: #1c1c1c;
+  font-size: 13px;
+  margin-bottom: 3px;
+}
+
+.receiptItem span {
+  color: #8a8a8a;
+  font-size: 12px;
+}
+
+.receiptItem p {
+  margin: 0;
+  color: #6b1d3a;
+  font-size: 13px;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.moreItems {
+  color: #6b1d3a;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.infoGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.infoBox {
+  padding: 15px;
+  border-radius: 18px;
+  background: #f8f9fa;
+  border: 1px solid #e8e8e8;
+}
+
+.infoBox span {
+  display: block;
+  margin-bottom: 6px;
+  color: #8a8a8a;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.infoBox strong {
+  display: block;
+  color: #1c1c1c;
+  font-size: 14px;
+  word-break: break-word;
+}
+
+.deliveryAddressCard {
+  display: grid;
+  grid-template-columns: 44px 1fr;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 16px;
+  margin-bottom: 18px;
+  border-radius: 20px;
+  background: #ffffff;
+  border: 1px solid rgba(107, 29, 58, 0.10);
+}
+
+.addressIcon {
+  width: 42px;
+  height: 42px;
+  border-radius: 15px;
+  background: rgba(107, 29, 58, 0.08);
+  color: #6b1d3a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.deliveryAddressCard span {
+  display: block;
+  margin-bottom: 4px;
+  color: #8a8a8a;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.deliveryAddressCard p {
+  margin: 0;
+  color: #1c1c1c;
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.premiumActions {
+  display: grid;
+  gap: 10px;
+}
+
+.trackPrimaryBtn,
+.trackSecondaryBtn {
+  width: 100%;
+  min-height: 52px;
+  border-radius: 17px;
+  font-size: 15px;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.trackPrimaryBtn {
+  border: none;
+  background: #6b1d3a;
+  color: #ffffff;
+  box-shadow: 0 16px 32px rgba(107, 29, 58, 0.24);
+}
+
+.trackSecondaryBtn {
+  border: 1px solid rgba(107, 29, 58, 0.18);
+  background: #ffffff;
+  color: #6b1d3a;
+}
+
+.autoRedirectNote {
+  margin: 15px 0 0;
+  text-align: center;
+  color: #8a8a8a;
+  font-size: 12.5px;
+}
+
+@media (max-width: 640px) {
+  .premiumSuccessScreen {
+    padding: 34px 12px 48px;
+  }
+
+  .premiumOrderCard {
+    padding: 20px;
+    border-radius: 26px;
+  }
+
+  .premiumTopRow {
+    grid-template-columns: 54px 1fr;
+    gap: 14px;
+  }
+
+  .premiumTickWrap {
+    width: 54px;
+    height: 54px;
+    border-radius: 18px;
+  }
+
+  .premiumTick {
+    width: 46px;
+    height: 46px;
+    font-size: 25px;
+  }
+
+  .premiumHeaderText h1 {
+    font-size: 25px;
+  }
+
+  .deliveryPromiseCard {
+    padding: 18px;
+    border-radius: 21px;
+  }
+
+  .deliveryPromiseCard strong {
+    font-size: 32px;
+  }
+
+  .deliveryModePill {
+    font-size: 11px;
+    padding: 8px 10px;
+  }
+
+  .infoGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 380px) {
+  .premiumTopRow,
+  .partnerCard,
+  .deliveryAddressCard {
+    grid-template-columns: 1fr;
+  }
+
+  .deliveryPromiseCard {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .timelineTrack {
+    grid-template-columns: 52px 1fr 72px 1fr 62px;
+  }
+
+  .timelineStep p,
+  .timelineStepDone p {
+    font-size: 10px;
+  }
+}
