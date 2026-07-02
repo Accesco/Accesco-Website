@@ -518,26 +518,31 @@ fontSize: 'clamp(2.45rem, 4.9vw, 4.4rem)',
             max-width: none !important;
             flex-shrink: 0 !important;
           }
-            .services-grid > div:nth-child(1) {
+/* Grokly */
+.services-grid > div:nth-child(1) {
   grid-column: 1;
   grid-row: 1;
 }
 
+/* Swadisht - full width */
 .services-grid > div:nth-child(2) {
-  grid-column: 1;
+  grid-column: 1 / -1;
   grid-row: 2;
 }
 
+/* InstaStyle */
 .services-grid > div:nth-child(3) {
   grid-column: 2;
   grid-row: 1;
 }
-          .service-card-visual {
-            height: 85px !important;
-          }
-          .service-card-body {
-            padding: 6px 6px 8px !important;
-          }
+  
+       .service-card-visual {
+  height: 120px !important;   /* was 85px */
+}
+
+.service-card-body {
+  padding: 10px 10px 12px !important;   /* was 6px 6px 8px */
+}
           .service-card-name {
           font-family: 'Inter', sans-serif;
   font-weight: 700;

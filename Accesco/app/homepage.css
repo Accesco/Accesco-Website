@@ -2304,13 +2304,16 @@ display: block;
   border: none;
   padding: 15px 20px;
   border-radius: 14px;
-  font-weight: 800;
+
+  font-family: "Manrope", sans-serif;
+  font-weight: 700;
   font-size: 12px;
-  letter-spacing: 1px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+
   cursor: pointer;
   width: 100%;
   transition: all 0.3s cubic-bezier(0.22,1,0.36,1);
-  text-transform: uppercase;
   position: relative;
   overflow: hidden;
   margin-top: auto;
@@ -2922,18 +2925,18 @@ background:
 
 
 .popBurger {
-  left: -180px;
+  left: -200px;
   top: -20px;   /* was -75px */
   width: clamp(130px, 15vw, 220px);
 }
 
 .popPizza {
-  left: -145px;
+  left: -220px;
   top: 200px;   /* was 95px */
   width: clamp(115px, 13vw, 190px);
 }
 .popGrocery {
-  left: -185px;
+  left: -200px;
   top: 500px;              /* below the pizza */
   width: clamp(150px, 17vw, 240px);
 }
@@ -2945,14 +2948,14 @@ background:
 }
 
 .popSalad {
-  right: -170px;
-  top: 180px;   /* was 155px */
+  right: -250px;
+  top: 200px;   /* was 155px */
   width: clamp(140px, 16vw, 230px);
 }
 
 
 .popJeans {
-  right: -175px;
+  right: -165px;
   top: 470px;              /* below the salad */
   width: clamp(120px, 15vw, 200px);
 }
