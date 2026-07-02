@@ -41,28 +41,81 @@ export default function AccescoHeader() {
 
   useEffect(() => {
     const savedLocation = localStorage.getItem('userLocation');
-    
+
     if (savedLocation) {
       setSelectedLocation(savedLocation);
       return;
     }
 
-    getPersonCity()
-      .then((city) => {
-        // Standardize auto-detected location into JSON schema
-        const locationObject = {
-          city: city,
-          area: '',
-          displayAddress: city,
-          fullAddress: city
-        };
-        const locationStr = JSON.stringify(locationObject);
-        setSelectedLocation(locationStr);
-        localStorage.setItem('userLocation', locationStr);
-      })
-      .catch((err) => {
-        console.error("Error:", err);
-      });
+    // Fallback: save the default city when auto-detection is unavailable/denied
+    const applyDefaultLocation = () => {
+      getPersonCity()
+        .then((city) => {
+          // Standardize auto-detected location into JSON schema
+          const locationObject = {
+            city: city,
+            area: '',
+            displayAddress: city,
+            fullAddress: city
+          };
+          const locationStr = JSON.stringify(locationObject);
+          setSelectedLocation(locationStr);
+          localStorage.setItem('userLocation', locationStr);
+        })
+        .catch((err) => {
+          console.error("Error:", err);
+        });
+    };
+
+    // Auto-detect the user's real location on first visit
+    if (!navigator.geolocation) {
+      applyDefaultLocation();
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        try {
+          const { latitude, longitude } = position.coords;
+          const res = await fetch('/api/location', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ latitude, longitude }),
+          });
+          const data = await res.json();
+          if (!res.ok) throw new Error(data?.error || 'Reverse geocoding failed');
+
+          // Same schema the LocationModal confirm handler saves
+          const locationObject = {
+            area: data.area || '',
+            city: data.city || '',
+            latitude,
+            longitude,
+            lat: latitude,
+            lon: longitude,
+            street: data.street || '',
+            state: data.state || '',
+            postalCode: data.postalCode || '',
+            fullAddress: data.fullAddress || data.formattedAddress || '',
+            formattedAddress: data.formattedAddress || data.fullAddress || '',
+            displayAddress: data.displayAddress || data.city || '',
+            timestamp: new Date().toISOString()
+          };
+
+          const locationStr = JSON.stringify(locationObject);
+          setSelectedLocation(locationStr);
+          localStorage.setItem('userLocation', locationStr);
+        } catch (err) {
+          console.error('Auto location detection failed:', err);
+          applyDefaultLocation();
+        }
+      },
+      () => {
+        // Permission denied or unavailable — fall back to default city
+        applyDefaultLocation();
+      },
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 300000 }
+    );
   }, []);
 
   useEffect(() => {
