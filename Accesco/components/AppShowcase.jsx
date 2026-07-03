@@ -1,13 +1,13 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import { RecaptchaVerifier, signInWithPhoneNumber, signOut } from 'firebase/auth';
 import { ShoppingCart, Utensils, Shirt, GlassWater } from 'lucide-react';
 import styles from './AppShowcase.module.css';
+import { auth } from '../lib/firebase';
 import {
   addWaitlistEntry,
-  sendOtpEmailVerification,
   validateWaitlistEntry,
-  verifyOtpEmailCode,
 } from '../lib/waitlistService';
 
 export default function AppShowcase() {
@@ -23,8 +23,10 @@ export default function AppShowcase() {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState('');
-  const [codeSent, setCodeSent] = useState(false);
-  const [otpVerified, setOtpVerified] = useState(false);
+  const [phoneCodeSent, setPhoneCodeSent] = useState(false);
+  const [phoneVerified, setPhoneVerified] = useState(false);
+  const [confirmationResult, setConfirmationResult] = useState(null);
+  const recaptchaVerifierRef = useRef(null);
 
   const interestOptions = [
     { id: 'grokly', label: 'Groceries & Essentials', icon: <ShoppingCart size={32} /> },
@@ -42,9 +44,16 @@ export default function AppShowcase() {
     }));
   };
 
-  const sendVerificationCode = async () => {
-    if (!form.email?.trim()) {
-      setError('Please enter your email first');
+  // Converts user-entered phone to E.164 format required by Firebase
+  function normalizePhone(phone) {
+    const stripped = phone.replace(/[\s\-().]/g, '');
+    if (stripped.startsWith('+')) return stripped;
+    return '+91' + stripped.replace(/\D/g, '');
+  }
+
+  const sendPhoneOtp = async () => {
+    if (!form.phone?.trim()) {
+      setError('Please enter your phone number first');
       return;
     }
 
@@ -52,12 +61,23 @@ export default function AppShowcase() {
     setError('');
 
     try {
-      await sendOtpEmailVerification(form.email.trim());
-      setCodeSent(true);
-      setOtpVerified(false);
+      if (recaptchaVerifierRef.current) {
+        recaptchaVerifierRef.current.clear();
+        recaptchaVerifierRef.current = null;
+      }
+
+      const verifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
+        size: 'invisible',
+      });
+      recaptchaVerifierRef.current = verifier;
+
+      const phoneNumber = normalizePhone(form.phone.trim());
+      const result = await signInWithPhoneNumber(auth, phoneNumber, verifier);
+      setConfirmationResult(result);
+      setPhoneCodeSent(true);
     } catch (err) {
-      console.error('OTP send failed:', err);
-      setError(err.message || 'Failed to send verification code');
+      console.error('Phone OTP send failed:', err);
+      setError(err.message || 'Failed to send OTP. Check your phone number and try again.');
     } finally {
       setLoading(false);
     }
@@ -78,8 +98,8 @@ export default function AppShowcase() {
         return;
       }
       setCurrentStep(3);
-      if (!codeSent) {
-        sendVerificationCode();
+      if (!phoneCodeSent) {
+        sendPhoneOtp();
       }
     }
   };
@@ -99,7 +119,7 @@ export default function AppShowcase() {
       return;
     }
 
-    if (!codeSent) {
+    if (!confirmationResult) {
       setError('Verification code is still being sent. Please wait a moment.');
       return;
     }
@@ -109,10 +129,10 @@ export default function AppShowcase() {
       return;
     }
 
+    setLoading(true);
     try {
-      setLoading(true);
-      await verifyOtpEmailCode(form.email.trim(), form.verificationCode.trim());
-      setOtpVerified(true);
+      await confirmationResult.confirm(form.verificationCode.trim());
+      setPhoneVerified(true);
 
       await addWaitlistEntry({
         name: form.name,
@@ -120,16 +140,26 @@ export default function AppShowcase() {
         phone: form.phone,
         interests: form.interests.join(', '),
       });
+
+      // Sign out after Firestore write — we only needed phone verification, not a persistent session
+      await signOut(auth);
+
       setSuccess(true);
       setForm({ name: '', email: '', phone: '', interests: [], verificationCode: '' });
-      setCodeSent(false);
-      setOtpVerified(false);
+      setPhoneCodeSent(false);
+      setPhoneVerified(false);
+      setConfirmationResult(null);
       setCurrentStep(1);
-
       setTimeout(() => setSuccess(false), 5000);
     } catch (err) {
       console.error('Waitlist submit failed:', err);
-      setError(err.message || 'Something went wrong. Please try again.');
+      if (err.code === 'auth/invalid-verification-code') {
+        setError('Invalid OTP. Please check the code and try again.');
+      } else if (err.code === 'auth/code-expired') {
+        setError('OTP has expired. Please request a new one.');
+      } else {
+        setError(err.message || 'Something went wrong. Please try again.');
+      }
     } finally {
       setLoading(false);
     }
@@ -158,7 +188,8 @@ export default function AppShowcase() {
   return (
    <section id="waitlist" style={{ padding: '64px 20px', background: '#FFFDF8', position: 'relative' }}>
 
- 
+  {/* Invisible reCAPTCHA container required by Firebase Phone Auth */}
+  <div id="recaptcha-container"></div>
 
   {/* Waitlist Section Header */}
   <div style={{ maxWidth: '1200px', margin: '0 auto 40px', padding: '0', textAlign: 'center' }}>
@@ -187,8 +218,8 @@ export default function AppShowcase() {
                 e.currentTarget.style.background = 'linear-gradient(135deg, #7A0042, #1A0A0F)';
               }}
             />
-          </div> 
-                   
+          </div>
+
         </div>
 
         {/* Right Side - Form */}
@@ -206,7 +237,7 @@ export default function AppShowcase() {
             <p className={styles.formDescription}>
               {currentStep === 1 && 'Tell us about yourself'}
               {currentStep === 2 && 'What interests you?'}
-              {currentStep === 3 && 'Verify your email'}
+              {currentStep === 3 && 'Verify your phone number'}
             </p>
           </div>
 
@@ -304,28 +335,28 @@ export default function AppShowcase() {
               </>
             )}
 
-            {/* Step 3: Email Verification */}
+            {/* Step 3: Phone OTP Verification */}
             {currentStep === 3 && (
               <>
                 <div className={styles.verificationSection}>
                   <div className={styles.verificationInfo}>
-                    {codeSent ? (
+                    {phoneCodeSent ? (
                       <>
-                        <p>We've sent a verification code to <strong>{form.email}</strong></p>
-                        <p>Please check your inbox and enter the code below.</p>
-                        {otpVerified && <p>Email verification successful.</p>}
+                        <p>We've sent a 6-digit OTP to <strong>{form.phone}</strong></p>
+                        <p>Please check your SMS and enter the code below.</p>
+                        {phoneVerified && <p style={{ color: '#22c55e' }}>Phone verified successfully.</p>}
                       </>
                     ) : (
-                      <p>Sending verification code...</p>
+                      <p>Sending OTP to your phone number...</p>
                     )}
                   </div>
 
                   <div className={styles.formGroup}>
-                    <label className={styles.formLabel}>Verification Code *</label>
+                    <label className={styles.formLabel}>OTP Code *</label>
                     <input
                       type="text"
                       className={styles.formInput}
-                      placeholder="Enter 6-digit code"
+                      placeholder="Enter 6-digit OTP"
                       value={form.verificationCode}
                       onChange={(e) => setForm({ ...form, verificationCode: e.target.value })}
                       maxLength={6}
@@ -337,10 +368,10 @@ export default function AppShowcase() {
                   <button
                     type="button"
                     className={styles.resendCode}
-                    onClick={sendVerificationCode}
+                    onClick={sendPhoneOtp}
                     disabled={loading}
                   >
-                    Resend Code
+                    Resend OTP
                   </button>
                 </div>
 
@@ -360,10 +391,9 @@ export default function AppShowcase() {
       </div>
 
       {/* Download App Banner */}
-{/* Download App Banner */}
 
 <div className={styles.downloadAppSection}>
-  
+
   <img
     src="/images/download-app-banner-desktop.png"
     alt="Download App"

@@ -7,14 +7,6 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 // Accepts digits, spaces, dashes, dots, parentheses, and an optional leading +
 const PHONE_RE = /^\+?[\d\s\-().]{7,20}$/;
 
-async function parseJsonResponse(response) {
-  try {
-    return await response.json();
-  } catch {
-    return null;
-  }
-}
-
 /**
  * Validate waitlist form data.
  * @param {{ name?: string; email: string; phone: string }} data
@@ -78,32 +70,3 @@ export async function addWaitlistEntry(data) {
   return docRef.id;
 }
 
-export async function sendOtpEmailVerification(email) {
-  const response = await fetch('/api/send-otp', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email }),
-  });
-
-  const payload = await parseJsonResponse(response);
-  if (!response.ok) {
-    throw new Error(payload?.error || 'Failed to send OTP');
-  }
-
-  return payload;
-}
-
-export async function verifyOtpEmailCode(email, otp) {
-  const response = await fetch('/api/verify-otp', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email, otp }),
-  });
-
-  const payload = await parseJsonResponse(response);
-  if (!response.ok) {
-    throw new Error(payload?.error || 'OTP verification failed');
-  }
-
-  return payload;
-}
