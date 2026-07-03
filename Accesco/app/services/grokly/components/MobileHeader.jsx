@@ -26,9 +26,6 @@ export default function MobileHeader() {
     <div className={styles.mobileHeader}>
       {/* Top Bar - Location and Cart */}
       <div className={styles.topBar}>
-        <Link href="/" className={styles.mobileBackBtn}>
-  ←
-</Link>
         {/* Location Button */}
         <button 
           className={styles.locationBtn}

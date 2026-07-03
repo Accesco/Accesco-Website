@@ -173,7 +173,7 @@ function ThaliCard({ thali }) {
           ))}
         </div>
         
-        <Link href={`/services/swadisht/thali/${thali.id}`} className={styles.viewDetailsBtn}>
+        <Link href={`/services/swadisht/`} className={styles.viewDetailsBtn}>
           View Full Details & Customize
         </Link>
       </div>

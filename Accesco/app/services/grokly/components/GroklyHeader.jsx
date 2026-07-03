@@ -12,6 +12,7 @@ import styles from './GroklyHeader.module.css';
 import { useGrokly } from '../contexts/GroklyContext';
 import { products } from '../lib/groklyData';
 import Link from 'next/link';
+import { useAuth } from '../../../components/AuthProvider';
 
 export default function GroklyHeader({ 
   searchQuery, 
@@ -25,6 +26,7 @@ export default function GroklyHeader({
     openCart,
     cart
   } = useGrokly();
+  const { user } = useAuth();
 
   // Calculate cart total dynamically
   const cartTotal = useMemo(() => {
@@ -37,9 +39,6 @@ export default function GroklyHeader({
   return (
     <div className={styles.topbar}>
       <div className={styles.topbarInner}>
-        <Link href="/" className={styles.backBtn}>
-          Back
-        </Link>
         {/* Logo */}
         <div className={styles.logo}>
           <div className={styles.logoIcon}>
@@ -59,11 +58,13 @@ export default function GroklyHeader({
           onClick={openLocationModal}
           aria-label="Change delivery location"
         >
-          <MapPin className={styles.locPin} size={18} aria-hidden="true" />
           <div className={styles.locText}>
-            <div className={styles.locName}>{location}</div>
+            <div className={styles.locLabel}>Delivery in 11 minutes</div>
+            <div className={styles.locName}>
+              {location}
+              <span className={styles.locArrow} aria-hidden="true"> ▼</span>
+            </div>
           </div>
-          <span className={styles.locArrow} aria-hidden="true">▼</span>
         </button>
 
         {/* Search Bar */}
@@ -90,27 +91,39 @@ export default function GroklyHeader({
 
         {/* Cart Button */}
         <button 
-          className={styles.hdrCart}
+          className={`${styles.hdrCart} ${cartCount > 0 ? styles.hasItems : ''}`}
           onClick={openCart}
           aria-label={`Shopping cart with ${cartCount} items`}
         >
-          <ShoppingCart size={20} aria-hidden="true" />
-          {cartCount > 0 && (
-            <span className={styles.hdrCartCount} aria-label={`${cartCount} items`}>
-              {cartCount}
-            </span>
-          )}
-          <span className={styles.hdrCartAmt}>₹{cartTotal}</span>
+          <ShoppingCart size={18} aria-hidden="true" />
+          <div className={styles.cartBtnText}>
+            {cartCount > 0 ? (
+              <span className={styles.cartDetails}>
+                <span>{cartCount} {cartCount === 1 ? 'item' : 'items'}</span>
+                <span className={styles.cartDivider}>|</span>
+                <span>₹{cartTotal}</span>
+              </span>
+            ) : (
+              <span>My Cart</span>
+            )}
+          </div>
         </button>
 
-        {/* Login Button */}
-        <button 
-          className={styles.hdrLogin}
-          onClick={() => console.log('Login clicked')}
-          aria-label="Login or sign up"
-        >
-          Login
-        </button>
+        {/* Auth State Button */}
+        {user ? (
+          <Link href="/services/grokly/profile" className={styles.hdrProfile} aria-label="Go to profile">
+            <div className={styles.profileAvatar}>
+              {user.name ? user.name.split(' ').map(n => n[0]).slice(0, 2).join('').toUpperCase() : 'U'}
+            </div>
+            <span className={styles.profileName}>
+              Hi, {user.name ? user.name.split(' ')[0] : 'User'}
+            </span>
+          </Link>
+        ) : (
+          <Link href="/profile?redirect=/services/grokly" className={styles.hdrLogin} aria-label="Login or sign up">
+            Login
+          </Link>
+        )}
       </div>
     </div>
   );

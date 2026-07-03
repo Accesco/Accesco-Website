@@ -12,7 +12,7 @@
   position: fixed;
   inset: 0;
   background: var(--grokly-bg-overlay);
-  z-index: var(--grokly-z-modal-backdrop);
+  z-index: 99998;
   animation: fadein 0.2s ease;
 }
 
@@ -33,7 +33,7 @@
   width: 100%;
   max-width: 480px;
   background: var(--grokly-bg-white);
-  z-index: var(--grokly-z-modal);
+  z-index: 99999;
   display: flex;
   flex-direction: column;
   box-shadow: var(--grokly-shadow-xl);
@@ -130,12 +130,10 @@
 .clearBtn:hover {
   background: #fee;
   color: var(--grokly-error);
-  transform: scale(1.05);
 }
 
 .closeBtn:hover {
   background: var(--grokly-border);
-  transform: scale(1.05);
 }
 
 /* ═══════════════════════════════════════════════
@@ -175,6 +173,7 @@
   flex: 1;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
 }
 
 /* ═══════════════════════════════════════════════
@@ -280,6 +279,7 @@
   color: var(--grokly-text-primary);
   display: -webkit-box;
   -webkit-line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
   line-height: 1.3;
@@ -355,11 +355,6 @@
 
 .itemQtyBtn:hover {
   background: rgba(255, 255, 255, 0.2);
-  transform: scale(1.1);
-}
-
-.itemQtyBtn:active {
-  transform: scale(0.95);
 }
 
 .itemQtyNum {
@@ -490,12 +485,7 @@
 
 .checkoutBtn:hover {
   background: var(--grokly-primary-dark);
-  transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(12, 131, 31, 0.4);
-}
-
-.checkoutBtn:active {
-  transform: translateY(0);
 }
 
 .checkoutLeft {

@@ -7,6 +7,17 @@ import './press.css';
 const pressReleases = [
 
   {
+    id: 15,
+    title: 'The Actual Trap with Quick Commerce and How Accesco Intends to Solve It',
+    date: 'June 27, 2026',
+    category: 'Media Coverage',
+    excerpt: 'An in-depth analysis of quick commerce unit economics and how Accesco Living circular commerce and dark store network plan to create sustainable hyper-convenience.',
+    image: '/images/head4.jpeg',
+    readTime: '5 min read',
+    url: 'https://businesspressline.com/the-actual-trap-with-quick-commerce-and-how-accesco-intends-to/',
+    logo: '/logos/businesspressline.png',
+  },
+  {
     id: 14,
     title: 'How Accesco Living Will Change the Quick Commerce Industry',
     date: 'June 19, 2026',
@@ -78,7 +89,7 @@ const pressReleases = [
     date: 'June 13, 2026',
     category: 'Media Coverage',
     excerpt: 'Many people in India use a lot of different apps to manage their daily needs. They buy groceries on one app, food on another and clothes on another app. Accesco Living, a company based in Bengaluru has started a beta program this week.',
-    image: '/images/achievetimes.jpg',
+    image: '/images/head3.jpg',
     readTime: '4 min read',
     url: 'https://achievetimes.com/accesco-living-launches-beta-in-bengaluru-targets-20000-early/',
     logo: '/logos/achieve-times.jpeg',

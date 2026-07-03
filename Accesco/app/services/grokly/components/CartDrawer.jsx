@@ -10,7 +10,7 @@ import { useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import styles from './CartDrawer.module.css';
 import { useGrokly } from '../contexts/GroklyContext';
-import { products } from '../../../../lib/groklyProducts';
+import { products } from '../lib/groklyData';
 import CouponSection from './CouponSection';
 
 /**
@@ -181,144 +181,142 @@ export default function CartDrawer() {
               <p className={styles.emptySub}>Add items to get started</p>
             </div>
           ) : (
-            /* Cart Items */
-            <div className={styles.items}>
-              {cartItems.map(({ product, quantity }) => (
-                <div key={product.id} className={styles.item}>
-                  {/* Product Image */}
-                  <div className={styles.itemImgWrap}>
-                    <img 
-                      className={styles.itemImg}
-                      src={product.img}
-                      alt={product.name}
-                      onError={(e) => handleImageError(e, product.name)}
-                    />
-                  </div>
+            /* Cart Items, Coupon and Bill Details (scrollable together) */
+            <>
+              <div className={styles.items}>
+                {cartItems.map(({ product, quantity }) => (
+                  <div key={product.id} className={styles.item}>
+                    {/* Product Image */}
+                    <div className={styles.itemImgWrap}>
+                      <img 
+                        className={styles.itemImg}
+                        src={product.image}
+                        alt={product.name}
+                        onError={(e) => handleImageError(e, product.name)}
+                      />
+                    </div>
 
-                  {/* Product Info */}
-                  <div className={styles.itemInfo}>
-                    <h4 className={styles.itemName}>{product.name}</h4>
-                    <p className={styles.itemUnit}>{product.unit}</p>
-                    
-                    {/* Price Row */}
-                    <div className={styles.itemPriceRow}>
-                      <div className={styles.itemPrice}>
-                        <span className={styles.itemPriceCurrent}>₹{product.price}</span>
-                        {product.mrp > product.price && (
-                          <span className={styles.itemPriceMrp}>₹{product.mrp}</span>
+                    {/* Product Info */}
+                    <div className={styles.itemInfo}>
+                      <h4 className={styles.itemName}>{product.name}</h4>
+                      <p className={styles.itemUnit}>{product.unit}</p>
+                      
+                      {/* Price Row */}
+                      <div className={styles.itemPriceRow}>
+                        <div className={styles.itemPrice}>
+                          <span className={styles.itemPriceCurrent}>₹{product.price}</span>
+                          {product.mrp > product.price && (
+                            <span className={styles.itemPriceMrp}>₹{product.mrp}</span>
+                          )}
+                        </div>
+                        {product.disc > 0 && (
+                          <span className={styles.itemDiscount}>{product.disc}% OFF</span>
                         )}
                       </div>
-                      {product.disc > 0 && (
-                        <span className={styles.itemDiscount}>{product.disc}% OFF</span>
-                      )}
+                    </div>
+
+                    {/* Quantity Controls */}
+                    <div className={styles.itemQty} role="group" aria-label="Quantity controls">
+                      <button 
+                        className={styles.itemQtyBtn}
+                        onClick={() => decrementQuantity(product.id)}
+                        aria-label="Decrease quantity"
+                      >
+                        −
+                      </button>
+                      <span className={styles.itemQtyNum} aria-label={`Quantity: ${quantity}`}>
+                        {quantity}
+                      </span>
+                      <button 
+                        className={styles.itemQtyBtn}
+                        onClick={() => incrementQuantity(product.id)}
+                        aria-label="Increase quantity"
+                      >
+                        +
+                      </button>
                     </div>
                   </div>
+                ))}
+              </div>
 
-                  {/* Quantity Controls */}
-                  <div className={styles.itemQty} role="group" aria-label="Quantity controls">
-                    <button 
-                      className={styles.itemQtyBtn}
-                      onClick={() => decrementQuantity(product.id)}
-                      aria-label="Decrease quantity"
-                    >
-                      −
-                    </button>
-                    <span className={styles.itemQtyNum} aria-label={`Quantity: ${quantity}`}>
-                      {quantity}
-                    </span>
-                    <button 
-                      className={styles.itemQtyBtn}
-                      onClick={() => incrementQuantity(product.id)}
-                      aria-label="Increase quantity"
-                    >
-                      +
-                    </button>
-                  </div>
+              {/* Coupon Section */}
+              <CouponSection 
+                cartTotal={subtotal}
+                onApply={setAppliedCoupon}
+              />
+
+              {/* Bill Details */}
+              <div className={styles.bill}>
+                <h3 className={styles.billTitle}>Bill Details</h3>
+                
+                <div className={styles.billRow}>
+                  <span className={styles.billLabel}>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
+                      <path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/>
+                    </svg>
+                    Items total
+                  </span>
+                  <span className={styles.billValue}>₹{subtotal}</span>
                 </div>
-              ))}
-            </div>
+
+                <div className={styles.billRow}>
+                  <span className={styles.billLabel}>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M5 12h14M12 5l7 7-7 7"/>
+                    </svg>
+                    Delivery fee
+                  </span>
+                  <span className={`${styles.billValue} ${deliveryFee === 0 ? styles.free : ''}`}>
+                    {deliveryFee === 0 ? 'FREE' : `₹${deliveryFee}`}
+                  </span>
+                </div>
+
+                <div className={styles.billRow}>
+                  <span className={styles.billLabel}>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M12 2v20M2 12h20"/>
+                    </svg>
+                    Handling fee
+                  </span>
+                  <span className={styles.billValue}>₹{handlingFee}</span>
+                </div>
+
+                {savings > 0 && (
+                  <div className={styles.billSavings}>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M20 12V8H6a2 2 0 01-2-2c0-1.1.9-2 2-2h12v4"/>
+                      <path d="M4 6v12c0 1.1.9 2 2 2h14v-4"/>
+                      <path d="M18 12a2 2 0 100 4 2 2 0 000-4z"/>
+                    </svg>
+                    Your total savings: ₹{savings}
+                  </div>
+                )}
+
+                {appliedCoupon && (
+                  <div className={styles.billRow}>
+                    <span className={styles.billLabel}>
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/>
+                      </svg>
+                      Coupon ({appliedCoupon.code})
+                    </span>
+                    <span className={`${styles.billValue} ${styles.discount}`}>
+                      -₹{appliedCoupon.discount}
+                    </span>
+                  </div>
+                )}
+
+                <div className={styles.billDivider} />
+
+                <div className={`${styles.billRow} ${styles.total}`}>
+                  <span className={styles.billLabel}>Grand Total</span>
+                  <span className={styles.billValue}>₹{total}</span>
+                </div>
+              </div>
+            </>
           )}
         </div>
-
-        {/* Bill Details (only show if cart has items) */}
-        {cartCount > 0 && (
-          <>
-            {/* Coupon Section */}
-            <CouponSection 
-              cartTotal={subtotal}
-              onApply={setAppliedCoupon}
-            />
-
-            <div className={styles.bill}>
-            <h3 className={styles.billTitle}>Bill Details</h3>
-            
-            <div className={styles.billRow}>
-              <span className={styles.billLabel}>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
-                  <path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/>
-                </svg>
-                Items total
-              </span>
-              <span className={styles.billValue}>₹{subtotal}</span>
-            </div>
-
-            <div className={styles.billRow}>
-              <span className={styles.billLabel}>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M5 12h14M12 5l7 7-7 7"/>
-                </svg>
-                Delivery fee
-              </span>
-              <span className={`${styles.billValue} ${deliveryFee === 0 ? styles.free : ''}`}>
-                {deliveryFee === 0 ? 'FREE' : `₹${deliveryFee}`}
-              </span>
-            </div>
-
-            <div className={styles.billRow}>
-              <span className={styles.billLabel}>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M12 2v20M2 12h20"/>
-                </svg>
-                Handling fee
-              </span>
-              <span className={styles.billValue}>₹{handlingFee}</span>
-            </div>
-
-            {savings > 0 && (
-              <div className={styles.billSavings}>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M20 12V8H6a2 2 0 01-2-2c0-1.1.9-2 2-2h12v4"/>
-                  <path d="M4 6v12c0 1.1.9 2 2 2h14v-4"/>
-                  <path d="M18 12a2 2 0 100 4 2 2 0 000-4z"/>
-                </svg>
-                Your total savings: ₹{savings}
-              </div>
-            )}
-
-            {appliedCoupon && (
-              <div className={styles.billRow}>
-                <span className={styles.billLabel}>
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/>
-                  </svg>
-                  Coupon ({appliedCoupon.code})
-                </span>
-                <span className={`${styles.billValue} ${styles.discount}`}>
-                  -₹{appliedCoupon.discount}
-                </span>
-              </div>
-            )}
-
-            <div className={styles.billDivider} />
-
-            <div className={`${styles.billRow} ${styles.total}`}>
-              <span className={styles.billLabel}>Grand Total</span>
-              <span className={styles.billValue}>₹{total}</span>
-            </div>
-          </div>
-          </>
-        )}
 
         {/* Checkout Button (only show if cart has items) */}
         {cartCount > 0 && (

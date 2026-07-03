@@ -73,7 +73,7 @@ export const categories = [
     id: "masala-oil", 
     name: "Masala & Oil", 
     color: "#dc2626", 
-    image: "https://images.unsplash.com/photo-1596040033229-a0b3b83b2e4d?w=100&h=100&fit=crop"
+    image: "https://www.jkcart.com/uploads/blogs/blogImg_585759961113264285326367187944.png"
   },
   { 
     id: "sauces-spreads", 

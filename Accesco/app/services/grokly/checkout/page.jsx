@@ -3,82 +3,58 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useGrokly } from '../contexts/GroklyContext';
-import { products } from '../../../../lib/groklyProducts';
+import { products } from '../lib/groklyData';
 import styles from './checkout.module.css';
+import { useAuth } from '../../../components/AuthProvider';
+import { 
+  ArrowLeft, MapPin, Phone, User, CreditCard, 
+  ShieldCheck, ShoppingBag, Clock, Zap, Sparkles 
+} from 'lucide-react';
 
 export default function GroklyCheckout() {
-  const { cart, placeOrder } = useGrokly();
+  const { cart, placeOrder, location } = useGrokly();
   const router = useRouter();
+  const { user } = useAuth();
+  const [isMounted, setIsMounted] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
-  const [isLoadingLocation, setIsLoadingLocation] = useState(true);
+  const [isLoadingLocation, setIsLoadingLocation] = useState(false);
   const [customerDetails, setCustomerDetails] = useState({
     name: 'Accesco Customer',
-    address: 'Bengaluru',
+    address: location || 'Bengaluru',
     phone: '+91 9022217637'
   });
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (location) {
+      setCustomerDetails(prev => ({
+        ...prev,
+        address: location
+      }));
+    }
+  }, [location]);
   const [eta , setEta] = useState(0);
   const [deliverySpeed, setDeliverySpeed] = useState('instant');
 
-  // Fetch address from geolocation
-  // It is to add the address automatically in the checkout box
+  // Pre-populate customer name and phone from authenticated user session
   useEffect(() => {
-    const fetchLocationAddress = async () => {
-      try {
-        if (navigator.geolocation) {
-          navigator.geolocation.getCurrentPosition(
-            async (position) => {
-              const { latitude, longitude, accuracy } = position.coords;
-              
-              try {
-                const response = await fetch('/api/location', {
-                  method: 'POST',
-                  headers: {
-                    'Content-Type': 'application/json',
-                  },
-                  body: JSON.stringify({
-                    latitude,
-                    longitude,
-                    accuracy,
-                  }),
-                });
+    if (user) {
+      setCustomerDetails(prev => ({
+        ...prev,
+        name: user.name || prev.name,
+        phone: user.phone || prev.phone
+      }));
+    }
+  }, [user]);
 
-                if (response.ok) {
-                  const data = await response.json();
-                  if (data.success) {
-                    setCustomerDetails(prev => ({
-                      ...prev,
-                      address: data.formattedAddress?.label || data.locationName || prev.address,
-                    }));
-                  }
-                }
-              } catch (error) {
-                console.error('Error fetching location address:', error);
-              } finally {
-                setIsLoadingLocation(false);
-              }
-            },
-            (error) => {
-              console.error('Geolocation error:', error);
-              setIsLoadingLocation(false);
-            }
-          );
-        } else {
-          setIsLoadingLocation(false);
-        }
-      } catch (error) {
-        console.error('Error in location fetch:', error);
-        setIsLoadingLocation(false);
-      }
-    };
 
-    fetchLocationAddress();
-  }, []);
 
   const cartItems = Object.entries(cart)
     .map(([id, qty]) => ({ product: products.find(p => p.id === id), quantity: qty }))
     .filter(item => item.product);
-
-
 
   const handleCreateBasket = () => {
     if (cartItems.length === 0) return;
@@ -173,11 +149,14 @@ export default function GroklyCheckout() {
       deliveryFee,
       deliverySpeed,
       discount,
+      eta: resolvedEta,
       items: cartItems.map(i => ({ id: i.product.id, name: i.product.name, price: i.product.price, quantity: i.quantity })),
       paymentMethod: 'UPI',
       address: customerDetails.address,
       customerName: customerDetails.name,
-      phone: customerDetails.phone
+      phone: customerDetails.phone,
+      customerEmail: user?.email || null,
+      userId: user?.uid || user?.id || null,
     });
 
     setTimeout(() => {
@@ -185,95 +164,138 @@ export default function GroklyCheckout() {
       router.push(`/services/grokly/order-tracking?id=${order.id}&eta=${resolvedEta}`);
     }, 2000);
   };
+
   useEffect(() => {
-  const fetchEta = async () => {
-    try {
-      const location = JSON.parse(localStorage.getItem("userLocation"));
+    const fetchEta = async () => {
+      try {
+        const storedLocation = localStorage.getItem("userLocation");
+        let parsedLocation = null;
+        if (storedLocation) {
+          try {
+            parsedLocation = JSON.parse(storedLocation);
+          } catch (e) {
+            console.error("Failed to parse userLocation:", e);
+          }
+        }
 
-      if (!location) {
-        console.log("No location found in localStorage");
-        return;
+        // Coordinates check with fallback
+        const lat = parsedLocation?.latitude ?? parsedLocation?.lat ?? 12.9716;
+        const lon = parsedLocation?.longitude ?? parsedLocation?.lon ?? 77.5946;
+
+        const res = await fetch("/api/darkstore", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            latitude: lat,
+            longitude: lon,
+          }),
+        });
+
+        const text = await res.text();
+        if (!text) {
+          console.error("Empty response");
+          return;
+        }
+
+        const data = JSON.parse(text);
+        if (data && data.eta_minutes) {
+          setEta(data.eta_minutes);
+        }
+      } catch (err) {
+        console.error("Error fetching ETA:", err);
       }
+    };
 
-      const res = await fetch("/api/darkstore", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          latitude: location.lat,
-          longitude: location.lon,
-        }),
-      });
+    fetchEta();
+  }, []); 
 
-      const text = await res.text();
-      if (!text) {
-        console.error("Empty response");
-        return;
-      }
-
-      const data = JSON.parse(text);
-
-      console.log("API Response:", data);
-
-      // STORE ETA
-      setEta(data.eta_minutes);
-
-    } catch (err) {
-      console.error("Error:", err);
-    }
-  };
-
-  fetchEta();
-}, []); 
-
-  if (cart.length === 0) {
+  if (!isMounted) {
     return (
-      <div className={styles.container}>
-        <h1>Your cart is empty</h1>
-        <button onClick={() => router.push('/services/grokly')}>Go Shopping</button>
+      <div className={styles.emptyCartContainer}>
+        <ShoppingBag size={48} className={styles.emptyCartIcon} />
+        <h1>Loading secure checkout...</h1>
+        <p>Please wait while we secure your session and load your cart items.</p>
+      </div>
+    );
+  }
+
+  if (cartItems.length === 0 && !isProcessing) {
+    return (
+      <div className={styles.emptyCartContainer}>
+        <ShoppingBag size={48} className={styles.emptyCartIcon} />
+        <h1>Your checkout is empty</h1>
+        <p>Looks like you haven't added any fresh groceries to your cart yet.</p>
+        <button className={styles.goBackBtn} onClick={() => router.push('/services/grokly')}>Go Shopping</button>
       </div>
     );
   }
 
   return (
     <div className={styles.container}>
-      <h1>Checkout</h1>
+      <header className={styles.checkoutHeader}>
+        <button className={styles.backBtn} onClick={() => router.push('/services/grokly')} aria-label="Go back to Grokly">
+          <ArrowLeft size={16} /> Back to Grokly
+        </button>
+        <h1 className={styles.title}>Secure Checkout</h1>
+      </header>
+
       <div className={styles.grid}>
         <div className={styles.details}>
           <section className={styles.section}>
-            <h2>Delivery Details</h2>
+            <div className={styles.sectionHeader}>
+              <MapPin size={18} className={styles.sectionHeaderIcon} />
+              <h2>Delivery Details</h2>
+            </div>
+            
             <div className={styles.formGroup}>
               <label>Full Name</label>
-              <input 
-                type="text" 
-                value={customerDetails.name}
-                onChange={(e) => setCustomerDetails({...customerDetails, name: e.target.value})}
-              />
+              <div className={styles.inputWrapper}>
+                <User size={16} className={styles.inputIcon} />
+                <input 
+                  type="text" 
+                  value={customerDetails.name}
+                  onChange={(e) => setCustomerDetails({...customerDetails, name: e.target.value})}
+                  placeholder="Enter your full name"
+                />
+              </div>
             </div>
+
             <div className={styles.formGroup}>
-              <label>Address {isLoadingLocation && '(Loading...)'}</label>
+              <label>Phone Number</label>
+              <div className={styles.inputWrapper}>
+                <Phone size={16} className={styles.inputIcon} />
+                <input 
+                  type="text" 
+                  value={customerDetails.phone}
+                  onChange={(e) => setCustomerDetails({...customerDetails, phone: e.target.value})}
+                  placeholder="Enter phone number"
+                />
+              </div>
+            </div>
+
+            <div className={styles.formGroup}>
+              <label>Delivery Address {isLoadingLocation && '(Detecting...)'}</label>
               <textarea 
                 value={customerDetails.address}
                 onChange={(e) => setCustomerDetails({...customerDetails, address: e.target.value})}
-                placeholder={isLoadingLocation ? 'Fetching your location...' : 'Enter your address'}
+                placeholder={isLoadingLocation ? 'Fetching your location...' : 'Enter your delivery address'}
                 disabled={isLoadingLocation}
-              />
-            </div>
-            <div className={styles.formGroup}>
-              <label>Phone Number</label>
-              <input 
-                type="text" 
-                value={customerDetails.phone}
-                onChange={(e) => setCustomerDetails({...customerDetails, phone: e.target.value})}
+                rows={3}
               />
             </div>
           </section>
 
           {/* Delivery Speed Selection Section */}
           <section className={styles.deliverySpeedBox}>
-            <h3 className={styles.speedHeading}>Would you wait 15 minutes to save ₹20?</h3>
-            <p className={styles.speedSubheading}>A checkout toggle quick-commerce apps are missing</p>
+            <div className={styles.speedHeaderWrapper}>
+              <Zap size={18} className={styles.speedHeaderIcon} />
+              <div className={styles.speedHeaderMain}>
+                <h3 className={styles.speedHeading}>Delivery Speed</h3>
+                <p className={styles.speedSubheading}>Help reduce traffic emissions by choosing to batch your delivery.</p>
+              </div>
+            </div>
             
             <div className={styles.speedOptions}>
               <div 
@@ -281,13 +303,12 @@ export default function GroklyCheckout() {
                 onClick={() => setDeliverySpeed('instant')}
               >
                 <div className={styles.speedOptionLeft}>
-                  <span className={styles.speedIcon}><i className="ri-flashlight-line"></i></span>
                   <div className={styles.speedInfo}>
                     <span className={styles.speedTitle}>Get it in {eta || 11} min</span>
-                    <span className={styles.speedDesc}>Standard — a rider just for you</span>
+                    <span className={styles.speedDesc}>Direct Delivery — dedicated rider just for you</span>
                   </div>
                 </div>
-                <span className={styles.speedOffText}>₹0 off</span>
+                <span className={styles.speedOffText}>Standard</span>
               </div>
 
               <div 
@@ -295,27 +316,32 @@ export default function GroklyCheckout() {
                 onClick={() => setDeliverySpeed('batched')}
               >
                 <div className={styles.speedOptionLeft}>
-                  <span className={styles.speedIcon}><i className="ri-time-line"></i></span>
                   <div className={styles.speedInfo}>
-                    <span className={styles.speedTitle}>I can wait · ~{eta ? eta + 15 : 25} min</span>
-                    <span className={styles.speedDesc}>We'll batch you with a nearby order</span>
+                    <span className={styles.speedTitle}>Eco Saver · ~{eta ? eta + 15 : 25} min</span>
+                    <span className={styles.speedDesc}>Batched Delivery — shared rider route</span>
                   </div>
                 </div>
                 <span className={styles.saveBadge}>SAVE ₹20</span>
               </div>
             </div>
 
-            <p className={styles.speedFooter}>One rider · two nearby orders · lower cost for everyone</p>
-            <h4 className={styles.speedTagline}>Speed is a feature. So is <span>patience.</span></h4>
+            <p className={styles.speedFooter}>Eco saver batches deliveries along similar routes, reducing fuel burn and delivery cost.</p>
           </section>
           
           <section className={styles.section}>
-            <h2>Payment Method</h2>
+            <div className={styles.sectionHeader}>
+              <CreditCard size={18} className={styles.sectionHeaderIcon} />
+              <h2>Payment Method</h2>
+            </div>
             <div className={styles.paymentOption}>
-              <input type="radio" checked readOnly />
-              <div className={styles.paymentInfo}>
-                <strong>UPI (PhonePe / Google Pay)</strong>
-                <p>Fast and secure payment via any UPI app</p>
+              <input type="radio" checked readOnly id="upi-radio" />
+              <label htmlFor="upi-radio" className={styles.paymentInfo}>
+                <strong>UPI (PhonePe / Google Pay / BHIM)</strong>
+                <p>Instant digital transfer through secure verification</p>
+              </label>
+              <div className={styles.shieldBadge}>
+                <ShieldCheck size={14} />
+                <span>Secure</span>
               </div>
             </div>
           </section>
@@ -325,29 +351,34 @@ export default function GroklyCheckout() {
           {/* Save Time Next Time Card */}
           <div className={styles.saveTimeCard}>
             <div className={styles.saveTimeLeft}>
-              <span className={styles.saveTimeEmoji} style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>
-                <i className="ri-shopping-basket-line" style={{ fontSize: '24px' }}></i>
-              </span>
+              <div className={styles.basketIconFrame}>
+                <ShoppingBag size={18} />
+              </div>
               <div className={styles.saveTimeTexts}>
-                <h4 className={styles.saveTimeTitle}>Save Time, Next Time</h4>
-                <p className={styles.saveTimeDesc}>Create a basket with these items and reorder in one tap.</p>
+                <h4 className={styles.saveTimeTitle}>Save Time Next Time</h4>
+                <p className={styles.saveTimeDesc}>Save this combination of items as a custom basket to reorder with a single click.</p>
               </div>
             </div>
             <button className={styles.createBasketBtn} onClick={handleCreateBasket}>
-              Create basket
+              Create Basket
             </button>
           </div>
 
-          <h2>Order Summary</h2>
-          {cartItems.map(({ product, quantity }) => (
-            <div key={product.id} className={styles.item}>
-              <span>{product.name} x {quantity}</span>
-              <span>₹{product.price * quantity}</span>
-            </div>
-          ))}
-          <hr />
+          <h2 className={styles.summaryHeading}>Bill Details</h2>
+          
+          <div className={styles.summaryItems}>
+            {cartItems.map(({ product, quantity }) => (
+              <div key={product.id} className={styles.item}>
+                <span className={styles.itemName}>{product.name} <span className={styles.itemQty}>x {quantity}</span></span>
+                <span>₹{product.price * quantity}</span>
+              </div>
+            ))}
+          </div>
+          
+          <div className={styles.divider} />
+          
           <div className={styles.row}>
-            <span>Subtotal</span>
+            <span>Item Subtotal</span>
             <span>₹{subtotal}</span>
           </div>
           <div className={styles.row}>
@@ -361,13 +392,16 @@ export default function GroklyCheckout() {
             <span>₹2</span>
           </div>
           {deliverySpeed === 'batched' && (
-            <div className={styles.row} style={{ color: '#0c831f', fontWeight: 'bold' }}>
-              <span>Delivery Discount (Batched)</span>
+            <div className={`${styles.row} ${styles.discountRow}`}>
+              <span>Eco Saver Discount</span>
               <span>-₹20</span>
             </div>
           )}
+          
+          <div className={styles.divider} />
+          
           <div className={`${styles.row} ${styles.total}`}>
-            <span>Total</span>
+            <span>To Pay</span>
             <span>₹{total}</span>
           </div>
           <button 
@@ -375,7 +409,7 @@ export default function GroklyCheckout() {
             onClick={handlePlaceOrder}
             disabled={isProcessing}
           >
-            {isProcessing ? 'Processing...' : 'Place Order'}
+            {isProcessing ? 'Processing Order...' : `Pay & Place Order · ₹${total}`}
           </button>
         </div>
       </div>

@@ -172,16 +172,16 @@ export default function LocationModal() {
   }, []);
 
   const POPULAR_LOCATIONS = [
-    { name: "Koramangala", area: "Bangalore", time: "11 mins" },
-    { name: "Indiranagar", area: "Bangalore", time: "12 mins" },
-    { name: "HSR Layout", area: "Bangalore", time: "13 mins" },
-    { name: "Whitefield", area: "Bangalore", time: "15 mins" },
-    { name: "Electronic City", area: "Bangalore", time: "18 mins" },
-    { name: "Marathahalli", area: "Bangalore", time: "14 mins" },
-    { name: "BTM Layout", area: "Bangalore", time: "12 mins" },
-    { name: "Jayanagar", area: "Bangalore", time: "13 mins" },
-    { name: "Bellandur", area: "Bangalore", time: "14 mins" },
-    { name: "Sarjapur Road", area: "Bangalore", time: "16 mins" },
+    { name: "Koramangala", area: "Bangalore", time: "11 mins", lat: 12.9352, lng: 77.6244 },
+    { name: "Indiranagar", area: "Bangalore", time: "12 mins", lat: 12.9719, lng: 77.6412 },
+    { name: "HSR Layout", area: "Bangalore", time: "13 mins", lat: 12.9128, lng: 77.6387 },
+    { name: "Whitefield", area: "Bangalore", time: "15 mins", lat: 12.9698, lng: 77.7500 },
+    { name: "Electronic City", area: "Bangalore", time: "18 mins", lat: 12.8452, lng: 77.6602 },
+    { name: "Marathahalli", area: "Bangalore", time: "14 mins", lat: 12.9562, lng: 77.6970 },
+    { name: "BTM Layout", area: "Bangalore", time: "12 mins", lat: 12.9166, lng: 77.6101 },
+    { name: "Jayanagar", area: "Bangalore", time: "13 mins", lat: 12.9308, lng: 77.5838 },
+    { name: "Bellandur", area: "Bangalore", time: "14 mins", lat: 12.9260, lng: 77.6762 },
+    { name: "Sarjapur Road", area: "Bangalore", time: "16 mins", lat: 12.9174, lng: 77.6744 },
   ];
 
   const filteredLocations = POPULAR_LOCATIONS.filter(
@@ -251,16 +251,6 @@ export default function LocationModal() {
     abortControllerRef.current = new AbortController();
 
     try {
-      if (navigator.permissions && navigator.permissions.query) {
-        try {
-          const perm = await navigator.permissions.query({ name: "geolocation" });
-          if (perm.state === "denied") {
-            setLocationError("Location permission is denied. Please enable location for this site in your browser settings.");
-            return;
-          }
-        } catch (e) {}
-      }
-
       const position = await getDeliveryGradePosition();
       const { latitude, longitude, accuracy } = position.coords;
       const roundedAccuracy = Math.round(accuracy);
@@ -311,7 +301,11 @@ export default function LocationModal() {
         );
       }
     } catch (error) {
-      setLocationError(error?.message || "Failed to detect location.");
+      if (error.code === 1 || error.message?.toLowerCase().includes("denied") || error.message?.toLowerCase().includes("permission")) {
+        setLocationError("Location permission is denied. Please enable location for this site in your browser settings.");
+      } else {
+        setLocationError(error?.message || "Failed to detect location.");
+      }
     } finally {
       setIsDetecting(false);
       abortControllerRef.current = null;
@@ -361,12 +355,18 @@ export default function LocationModal() {
     closeLocationModal();
   };
 
-  const handleSelectLocation = (locationName) => {
-    try {
-      localStorage.setItem("userLocation", JSON.stringify({ displayAddress: locationName, fullAddress: locationName }));
-    } catch (e) {}
-    updateLocation(locationName);
-    closeLocationModal();
+  const handleSelectLocation = (loc) => {
+    setMapCenter({ lat: loc.lat, lng: loc.lng });
+    const resolvedAddress = `${loc.name}, ${loc.area}, Karnataka, India`;
+    setDetectedLocation({
+      name: loc.name,
+      fullAddress: resolvedAddress,
+      coords: {
+        latitude: loc.lat,
+        longitude: loc.lng,
+        accuracy: 50
+      }
+    });
   };
 
   if (!isLocationModalOpen) return null;
@@ -384,86 +384,104 @@ export default function LocationModal() {
         </div>
 
         <div className={styles.body}>
-          <button
-            className={styles.detectBtn}
-            onClick={() => detectLocation({ autoSelect: false })}
-            disabled={isDetecting}
-          >
-            {isDetecting ? (
-              <Clock className={styles.detectIcon} size={20} />
-            ) : (
-              <Target className={styles.detectIcon} size={20} />
-            )}
-            <div className={styles.detectText}>
-              <div className={styles.detectLabel}>
-                {isDetecting ? "Detecting..." : "Detect my location"}
-              </div>
-              <div className={styles.detectSub}>
-                {isDetecting ? "Waiting for GPS lock..." : "Using high-accuracy GPS"}
-              </div>
-            </div>
-          </button>
-
-          {locationError && (
-            <div className={styles.errorBox}>
-              <AlertTriangle size={18} />
-              <span>{locationError}</span>
-            </div>
-          )}
-
-          {/* Map Feature Integration */}
-          <div className={styles.mapContainer}>
-            <Map center={mapCenter} onLocationChange={handleMapDrag} />
-          </div>
-
-          {detectedLocation && (
-            <button className={styles.detectedLocation} onClick={handleUseDetectedLocation}>
-              <Navigation className={styles.detectedIcon} size={20} />
-              <div className={styles.detectedText}>
-                <div className={styles.detectedLabel}>
-                  Confirm Location
+          {/* Left Pane: Detect and Popular Locations */}
+          <div className={styles.leftPane}>
+            <button
+              className={styles.detectBtn}
+              onClick={() => detectLocation({ autoSelect: false })}
+              disabled={isDetecting}
+            >
+              {isDetecting ? (
+                <Clock className={styles.detectIcon} size={20} />
+              ) : (
+                <Target className={styles.detectIcon} size={20} />
+              )}
+              <div className={styles.detectText}>
+                <div className={styles.detectLabel}>
+                  {isDetecting ? "Detecting..." : "Detect my location"}
                 </div>
-                <div className={styles.detectedName}>{detectedLocation.name}</div>
-                <div className={styles.detectedAddress}>{detectedLocation.fullAddress}</div>
+                <div className={styles.detectSub}>
+                  {isDetecting ? "Waiting for GPS lock..." : "Using high-accuracy GPS"}
+                </div>
               </div>
             </button>
-          )}
 
-          <div className={styles.searchBox}>
-            <Search className={styles.searchIcon} size={18} />
-            <input
-              type="search"
-              placeholder="Search popular areas..."
-              className={styles.searchInput}
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
+            {locationError && (
+              <div className={styles.errorBox}>
+                <AlertTriangle size={18} />
+                <span>{locationError}</span>
+              </div>
+            )}
+
+            <div className={styles.searchBox}>
+              <Search className={styles.searchIcon} size={18} />
+              <input
+                type="search"
+                placeholder="Search popular areas..."
+                className={styles.searchInput}
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+            </div>
+
+            <h3 className={styles.sectionTitle}>Popular Locations</h3>
+            <div className={styles.locationsList}>
+              {filteredLocations.length > 0 ? (
+                filteredLocations.map((loc, index) => (
+                  <button
+                    key={index}
+                    className={styles.locationItem}
+                    onClick={() => handleSelectLocation(loc)}
+                  >
+                    <div className={styles.locationLeft}>
+                      <MapPin className={styles.locationIcon} size={18} />
+                      <div className={styles.locationInfo}>
+                        <div className={styles.locationName}>{loc.name}</div>
+                        <div className={styles.locationArea}>{loc.area}</div>
+                      </div>
+                    </div>
+                    <div className={styles.locationTime}>
+                      <Clock className={styles.timeIcon} size={13} />
+                      <span>{loc.time}</span>
+                    </div>
+                  </button>
+                ))
+              ) : (
+                <div className={styles.noResults}>
+                  <Search size={32} />
+                  <p>No locations found</p>
+                </div>
+              )}
+            </div>
           </div>
 
-          <h3 className={styles.sectionTitle}>Popular Locations</h3>
-          <div className={styles.locationsList}>
-            {filteredLocations.length > 0 ? (
-              filteredLocations.map((loc, index) => (
-                <button
-                  key={index}
-                  className={styles.locationItem}
-                  onClick={() => handleSelectLocation(loc.name)}
-                >
-                  <MapPin className={styles.locationIcon} size={18} />
-                  <div className={styles.locationInfo}>
-                    <div className={styles.locationName}>{loc.name}</div>
-                    <div className={styles.locationArea}>{loc.area}</div>
+          {/* Right Pane: Map and Address Confirmation */}
+          <div className={styles.rightPane}>
+            <div className={styles.mapContainer}>
+              <Map center={mapCenter} onLocationChange={handleMapDrag} />
+            </div>
+
+            {detectedLocation ? (
+              <div className={styles.detectedLocation} onClick={handleUseDetectedLocation}>
+                <Navigation className={styles.detectedIcon} size={20} />
+                <div className={styles.detectedText}>
+                  <div className={styles.detectedLabel}>
+                    Confirm Location
                   </div>
-                  <div className={styles.locationTime}>
-                    <Zap className={styles.timeIcon} size={14} />
-                    {loc.time}
-                  </div>
-                </button>
-              ))
+                  <div className={styles.detectedName}>{detectedLocation.name}</div>
+                  <div className={styles.detectedAddress}>{detectedLocation.fullAddress}</div>
+                </div>
+                <div className={styles.confirmBtnWrap}>
+                  <span className={styles.confirmBtnText}>Confirm & Deliver</span>
+                </div>
+              </div>
             ) : (
-              <div className={styles.noResults}>
-                <Search size={32} />
-                <p>No locations found</p>
+              <div className={styles.mapInstructions}>
+                <MapPin size={24} className={styles.instrIcon} />
+                <div>
+                  <div className={styles.instrTitle}>Pin Your Location</div>
+                  <div className={styles.instrDesc}>Drag the map marker or select an area to pinpoint your exact doorstep.</div>
+                </div>
               </div>
             )}
           </div>

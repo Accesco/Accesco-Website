@@ -791,3 +791,296 @@
     transform: translateY(0);
   }
 }
+/* =======================================
+   Profile Page Premium Polish
+======================================= */
+
+.page {
+  --sw-red: #6B1D3A;
+  --sw-red-dark: #4f122c;
+  --sw-gold: #D4A017;
+  --sw-amber: #FFB347;
+  --sw-soft: #FFF9F0;
+
+}
+
+.shell {
+  max-width: 1320px;
+}
+
+.profileBoard {
+  gap: 28px;
+}
+
+.profileCard,
+.tasteCard,
+.metricCard,
+.orderRow,
+.utilityCard {
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.94);
+  border: 1px solid rgba(107, 29, 58, 0.12);
+  box-shadow: 0 18px 50px rgba(58, 21, 36, 0.08);
+}
+
+.profileCard {
+  padding: 26px;
+  position: sticky;
+  top: 96px;
+}
+
+.avatar,
+.profileMini {
+  background: linear-gradient(135deg, #6B1D3A, #9b2555);
+  box-shadow: 0 14px 30px rgba(107, 29, 58, 0.24);
+}
+
+.memberName {
+  font-size: 30px;
+  line-height: 1.05;
+}
+
+.primaryBtn,
+.bannerBtn {
+  background: linear-gradient(135deg, #6B1D3A, #4f122c);
+  border-radius: 14px;
+  box-shadow: 0 14px 30px rgba(107, 29, 58, 0.22);
+}
+
+.secondaryBtn {
+  border-radius: 14px;
+  background: #fff8ef;
+}
+
+.welcomeBar {
+  background: rgba(255, 255, 255, 0.88);
+  border: 1px solid rgba(107, 29, 58, 0.10);
+  border-radius: 24px;
+  padding: 22px 26px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 18px 50px rgba(58, 21, 36, 0.07);
+}
+
+.welcomeTitle {
+  margin: 0;
+  font-family: 'Playfair Display', serif;
+  font-size: 34px;
+  color: #6B1D3A;
+}
+
+.welcomeSubtitle {
+  margin: 6px 0 0;
+  color: var(--sw-muted);
+  font-size: 15px;
+}
+
+.profileMini {
+  width: 48px;
+  height: 48px;
+  border-radius: 16px;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+}
+
+.bannerCard {
+  border-radius: 32px;
+  min-height: 320px;
+  box-shadow: 0 24px 70px rgba(58, 21, 36, 0.20);
+}
+
+.bannerTitle {
+  font-size: 52px;
+}
+
+.bannerCopy {
+  font-size: 18px;
+}
+
+.metricsGrid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.metricCard {
+  padding: 24px;
+  min-height: 120px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.metricCard:hover,
+.orderRow:hover,
+.utilityCard:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 24px 60px rgba(58, 21, 36, 0.12);
+}
+
+.metricCard strong {
+  font-size: 24px;
+}
+
+.ordersPanel {
+  padding-top: 10px;
+}
+
+.orderRow {
+  padding: 22px;
+  align-items: center;
+}
+
+.statusBadge {
+  background: #ecfdf5;
+  color: #0f8a65;
+}
+
+.utilityCard {
+  padding: 24px;
+}
+
+.healthModeCard {
+  border-radius: 20px;
+  background: linear-gradient(135deg, #fff4f5, #fff8ef);
+}
+
+/* Profile mobile polish */
+
+@media (max-width: 1024px) {
+  .profileBoard {
+    grid-template-columns: 1fr;
+  }
+
+  .profileCard {
+    position: static;
+  }
+
+  .metricsGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .page {
+    padding-top: 124px;
+  }
+
+  .shell {
+    padding: 22px 12px;
+  }
+
+  .profileBoard {
+    gap: 18px;
+  }
+
+  .profileCard {
+    padding: 20px;
+  }
+
+  .profileTop {
+    align-items: flex-start;
+  }
+
+  .memberName {
+    font-size: 26px;
+  }
+
+  .memberMeta {
+    font-size: 13px;
+    word-break: break-word;
+  }
+
+  .welcomeBar {
+    display: flex;
+    padding: 18px;
+    border-radius: 20px;
+  }
+
+  .welcomeTitle {
+    font-size: 24px;
+  }
+
+  .welcomeSubtitle {
+    font-size: 13px;
+  }
+
+  .bannerCard {
+    min-height: 250px;
+    padding: 26px 20px;
+    border-radius: 24px;
+    align-items: flex-start;
+    flex-direction: column;
+    justify-content: flex-end;
+  }
+
+  .bannerTitle {
+    font-size: 36px;
+  }
+
+  .bannerCopy {
+    font-size: 14px;
+  }
+
+  .bannerBtn {
+    display: inline-flex;
+    min-height: 44px;
+    align-items: center;
+    padding: 12px 20px;
+    font-size: 14px;
+  }
+
+  .metricsGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .metricCard {
+    padding: 18px;
+    min-height: 108px;
+  }
+
+  .metricCard strong {
+    font-size: 18px;
+  }
+
+  .orderRow {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .orderHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+
+  .orderItems {
+    overflow-x: auto;
+    padding-bottom: 4px;
+  }
+
+  .orderSummary {
+    align-items: flex-start;
+  }
+
+  .utilityGrid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+}
+
+@media (max-width: 390px) {
+  .metricsGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .profileActions {
+    gap: 8px;
+  }
+
+  .bannerTitle {
+    font-size: 32px;
+  }
+}

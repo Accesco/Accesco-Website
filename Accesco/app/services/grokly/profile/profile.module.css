@@ -1,42 +1,38 @@
 /* ===== PREMIUM GROKLY PROFILE & BASKETS STYLES ===== */
 
 .groklyProfileWrapper {
-  background: #f1f5f0;
+  background: #f4f7f4;
   min-height: 100vh;
-  padding: 30px 0;
+  padding: 32px 16px;
   font-family: 'Inter', sans-serif;
   display: flex;
-  align-items: center;
   justify-content: center;
+  box-sizing: border-box;
 }
 
 .container {
   width: 100%;
-  max-width: 460px;
+  max-width: 1200px;
   margin: 0 auto;
   background: #ffffff;
-  min-height: 820px;
-  border-radius: 36px;
-  box-shadow: 0 24px 70px rgba(12, 131, 31, 0.08), 0 8px 24px rgba(0,0,0,0.04);
-  padding: 24px;
+  border-radius: 24px;
+  box-shadow: 0 10px 30px rgba(12, 131, 31, 0.04);
+  padding: 32px;
   position: relative;
   display: flex;
   flex-direction: column;
-  border: 4px solid #ffffff;
   box-sizing: border-box;
 }
 
-@media (max-width: 500px) {
+@media (max-width: 768px) {
   .groklyProfileWrapper {
     padding: 0;
     background: #ffffff;
   }
   .container {
-    min-height: 100vh;
     border-radius: 0;
     box-shadow: none;
     padding: 16px;
-    border: none;
   }
 }
 
@@ -128,10 +124,11 @@
   align-items: center;
   gap: 18px;
   margin-bottom: 24px;
-  background: #f9fbf9;
-  padding: 16px;
+  background: linear-gradient(135deg, #ffffff 0%, #fafdfa 100%);
+  padding: 20px;
   border-radius: 20px;
-  border: 1px solid #edf4ed;
+  border: 1px solid #e2ebd9;
+  box-shadow: 0 4px 20px rgba(12, 131, 31, 0.02);
 }
 
 .avatar {
@@ -672,6 +669,107 @@
   border-top: 1px solid #eee;
 }
 
+/* ── LOGOUT TAB ── */
+.navTabLogout {
+  color: #dc2626 !important;
+  margin-top: 4px;
+  border-top: 1px solid #f3f4f6;
+  padding-top: 12px;
+}
+
+.navTabLogout:hover {
+  background: #fef2f2 !important;
+  color: #dc2626 !important;
+}
+
+/* ── BASKET DETAIL PANE CARD ── */
+.paneCardDetail {
+  background: #ffffff;
+  border: 1px solid #eceeec;
+  border-radius: 24px;
+  padding: 24px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.01);
+  display: flex;
+  flex-direction: column;
+  max-height: 600px;
+  position: relative;
+}
+
+.detailItemsScroll {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-right: 6px;
+  padding-bottom: 8px;
+}
+
+.detailItemsScroll::-webkit-scrollbar {
+  width: 4px;
+}
+
+.detailItemsScroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.detailItemsScroll::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 4px;
+}
+
+.detailFooter {
+  padding-top: 16px;
+  border-top: 1px solid #eef2ee;
+  margin-top: 8px;
+  flex-shrink: 0;
+}
+
+/* Wishlist add/remove buttons */
+.wishlistAddBtn {
+  padding: 6px 16px;
+  border: 1.5px solid #0c831f;
+  background: #fff;
+  color: #0c831f;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+  font-family: 'Inter', sans-serif;
+}
+
+.wishlistAddBtn:hover {
+  background: #0c831f;
+  color: #fff;
+}
+
+.wishlistRemoveBtn {
+  background: #fff0f0;
+  border: 1px solid #fecaca;
+  border-radius: 6px;
+  width: 28px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.wishlistRemoveBtn:hover {
+  background: #fee2e2;
+}
+
+@media (max-width: 768px) {
+  .paneCardDetail {
+    max-height: none;
+  }
+  .detailItemsScroll {
+    max-height: 400px;
+  }
+}
+
 /* ── BASKET DETAIL PAGE ── */
 .detailCountHeader {
   display: flex;
@@ -838,4 +936,116 @@
 .basketAddToCartBtn:hover {
   background: #e62e5b;
   transform: translateY(-1px);
+}
+
+/* ── DASHBOARD GRID & RESPONSIVE LAYOUTS ── */
+
+.dashboardGrid {
+  display: grid;
+  grid-template-columns: 340px 1fr;
+  gap: 32px;
+  align-items: start;
+  width: 100%;
+}
+
+.leftColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.rightColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.desktopNav {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: #ffffff;
+  padding: 16px;
+  border-radius: 20px;
+  border: 1px solid #edf4ed;
+}
+
+.navTab {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 12px 16px;
+  background: transparent;
+  border: none;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 700;
+  color: #555;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.2s ease;
+}
+
+.navTab:hover {
+  background: #f4faf4;
+  color: #0c831f;
+}
+
+.navTab.activeTab {
+  background: #eaf6ea;
+  color: #0c831f;
+}
+
+.quickGridMobile {
+  display: none;
+}
+
+.paneCard {
+  background: #ffffff;
+  border: 1px solid #eceeec;
+  border-radius: 24px;
+  padding: 24px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.01);
+}
+
+.paneTitle {
+  font-size: 18px;
+  font-weight: 800;
+  color: #1a1a1a;
+  margin: 0 0 20px;
+  font-family: 'Sora', sans-serif;
+}
+
+.paneHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+@media (max-width: 768px) {
+  .dashboardGrid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  
+  .desktopNav {
+    display: none !important;
+  }
+  
+  .quickGridMobile {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 8px;
+  }
+  
+  .mobileHidden {
+    display: none !important;
+  }
+  
+  .mobileOnlyOrders {
+    display: block !important;
+  }
 }

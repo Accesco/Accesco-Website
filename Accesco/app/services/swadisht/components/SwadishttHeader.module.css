@@ -616,3 +616,289 @@
     min-width: auto;
   }
 }
+/* ================================
+   Mobile Header Polish
+   Clean 2-row mobile layout
+================================ */
+
+@media (max-width: 768px) {
+  .header {
+    min-height: 0;
+    background: rgba(255, 255, 255, 0.96);
+    backdrop-filter: blur(18px) saturate(180%);
+    -webkit-backdrop-filter: blur(18px) saturate(180%);
+  }
+
+  .container {
+    padding: 0 14px;
+  }
+
+  .headerContent {
+    display: grid;
+    grid-template-columns: auto auto minmax(0, 1fr) auto;
+    grid-template-areas:
+      "back logo location nav"
+      "search search search search";
+    align-items: center;
+
+    height: auto;
+    min-height: 0;
+    padding: 10px 0 12px;
+    gap: 10px;
+  }
+
+  .backBtn {
+    grid-area: back;
+    width: 34px;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 0 !important;
+    flex-shrink: 0;
+  }
+
+  .backDesktop {
+    display: none !important;
+  }
+
+  .backMobile {
+    display: inline !important;
+    font-size: 24px;
+    line-height: 1;
+    font-weight: 500;
+    color: #111827;
+  }
+
+  .logo {
+    grid-area: logo;
+    gap: 8px;
+    min-width: 0;
+    flex-shrink: 0;
+  }
+
+  .logoImage {
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+  }
+
+  .brandName {
+    display: inline;
+    font-size: 18px;
+    font-weight: 700;
+    color: #6B1D3A;
+    white-space: nowrap;
+  }
+
+  .locationWrapper {
+    grid-area: location;
+    min-width: 0;
+    width: 100%;
+  }
+
+  .locationButton {
+    width: 100%;
+    min-width: 0;
+    height: 44px;
+    padding: 0 12px;
+    border-radius: 16px;
+    gap: 8px;
+  }
+
+  .locationIcon {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+  }
+
+  .locationLabel {
+    display: none;
+  }
+
+  .locationText {
+    min-width: 0;
+    flex: 1;
+  }
+
+  .locationArea {
+    font-size: 12.5px;
+    font-weight: 700;
+    max-width: 100% !important;
+    width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .dropdownIcon {
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+  }
+
+  .nav {
+    grid-area: nav;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-left: 0;
+    flex-shrink: 0;
+  }
+
+  .navLink {
+    width: 42px;
+    height: 42px;
+    min-width: 42px;
+    padding: 0;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .navText {
+    display: none;
+  }
+
+  .navIcon {
+    width: 21px;
+    height: 21px;
+    color: #6B1D3A;
+  }
+
+  .cartButton {
+    width: 46px;
+    height: 46px;
+    min-width: 46px;
+    padding: 0;
+    border-radius: 50%;
+    background: #6B1D3A;
+    color: #ffffff;
+  }
+
+  .cartButton .navIcon {
+    color: #ffffff !important;
+    fill: currentColor !important;
+  }
+
+  .cartBadge {
+    top: 0;
+    right: 0;
+    font-size: 10px;
+    min-width: 16px;
+    height: 16px;
+    padding: 2px 5px;
+    line-height: 12px;
+  }
+
+  .searchForm {
+    grid-area: search;
+    width: 100%;
+    max-width: none;
+    height: 46px;
+    order: unset;
+    flex: unset;
+  }
+
+  .searchInput {
+    height: 46px;
+    font-size: 14px;
+    border-radius: 18px;
+    padding: 0 14px 0 44px;
+    background: #F8F9FA;
+  }
+
+  .searchIcon {
+    left: 15px;
+    width: 20px;
+    height: 20px;
+  }
+
+  .locationDropdown {
+    position: fixed;
+    top: 112px;
+    left: 12px;
+    right: 12px;
+    min-width: 0;
+    max-width: none;
+    width: auto;
+    border-radius: 18px;
+  }
+}
+/* Extra small phones */
+
+@media (max-width: 480px) {
+  .container {
+    padding: 0 12px;
+  }
+
+  .headerContent {
+    grid-template-columns: auto auto minmax(0, 1fr) auto;
+    gap: 8px;
+    padding: 10px 0 12px;
+  }
+
+  .brandName {
+    display: none;
+  }
+
+  .logoImage {
+    width: 28px;
+    height: 28px;
+  }
+
+  .backBtn {
+    width: 30px;
+    height: 40px;
+  }
+
+  .backMobile {
+    font-size: 23px;
+  }
+
+  .locationButton {
+    height: 42px;
+    padding: 0 10px;
+    border-radius: 15px;
+  }
+
+  .locationArea {
+    font-size: 12px;
+  }
+
+  .nav {
+    gap: 7px;
+  }
+
+  .navLink {
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+  }
+
+  .cartButton {
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+  }
+
+  .searchForm {
+    height: 46px;
+  }
+
+  .searchInput {
+    height: 46px;
+    font-size: 13.5px;
+    border-radius: 18px;
+  }
+
+  .locationDropdown {
+    top: 110px;
+  }
+}
+@media (max-width: 768px) {
+  .page {
+    padding-top: 122px;
+  }
+}
