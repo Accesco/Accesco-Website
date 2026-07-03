@@ -63,7 +63,14 @@ const softwareApplicationSchema = {
         <Hero />
 
         {/* ── Services Section ── */}
-        <section id="services" style={{ padding: 'clamp(60px, 8vw, 100px) 0', background: '#FFFDF8', position: 'relative' }}>
+       <section
+  id="services"
+  style={{
+    padding: 'clamp(60px, 8vw, 100px) 0',
+    background: '#FFFDF8',
+    position: 'relative'
+  }}
+>
          
 
           <div className="intelligencePosterRow">
@@ -119,7 +126,6 @@ const softwareApplicationSchema = {
             pointerEvents: 'none',
           }} />
 
-  
   <div
     ref={deliveryRef}
     className={`deliveryHeadingFrame ${deliveryVisible ? "is-visible" : ""}`}
@@ -132,9 +138,11 @@ const softwareApplicationSchema = {
   >
 <div className="floatingHeroItems">
   <img src="/images/burger.png" className="popItem popBurger" alt="Burger" />
+  <img src="/images/pizza.png" className="popItem popPizza" alt="Pizza" />
+  <img src="/images/Grocery.png" className="popItem popGrocery" alt="Grocery Basket" />
   <img src="/images/hoodie.png" className="popItem popHoodie" alt="Hoodie" />
   <img src="/images/salad.png" className="popItem popSalad" alt="Salad" />
-  <img src="/images/pizza.png" className="popItem popPizza" alt="Pizza" />
+  <img src="/images/Jeans.png" className="popItem popJeans" alt="Jeans" />
 </div>
               <h2 style={{
                 fontFamily: "'Inter', sans-serif",
@@ -248,8 +256,8 @@ fontSize: 'clamp(2.45rem, 4.9vw, 4.4rem)',
                   ›
                 </button>
               </div>
-            </div>
-      
+         
+      </div>
         </section>
         {/* ── Xpense Meter Section ── */}
         <section className="xpense-meter-section">
@@ -369,7 +377,7 @@ fontSize: 'clamp(2.45rem, 4.9vw, 4.4rem)',
   
   
             
-        .services-container-wrapper {
+       r .services-container-wrapper {
           position: relative;
           width: 100%;
           display: flex;
@@ -400,7 +408,7 @@ fontSize: 'clamp(2.45rem, 4.9vw, 4.4rem)',
 
           .services-grid {
             display: grid !important;
-            grid-template-columns: repeat(3, 1fr) !important;
+            grid-template-columns: repeat(3, 1f) !important;
             gap: 8px !important;
             width: 100% !important;
             overflow: visible !important;
@@ -497,8 +505,8 @@ fontSize: 'clamp(2.45rem, 4.9vw, 4.4rem)',
         @media (max-width: 480px) {
           .services-grid {
             gap: 6px !important;
-            display: grid !important;
-            grid-template-columns: repeat(3, 1fr) !important;
+  display: grid !important;
+  grid-template-columns: repeat(2, 1fr) !important;
             overflow: visible !important;
             scroll-snap-type: none !important;
             padding-bottom: 0 !important;
@@ -510,12 +518,31 @@ fontSize: 'clamp(2.45rem, 4.9vw, 4.4rem)',
             max-width: none !important;
             flex-shrink: 0 !important;
           }
-          .service-card-visual {
-            height: 85px !important;
-          }
-          .service-card-body {
-            padding: 6px 6px 8px !important;
-          }
+/* Grokly */
+.services-grid > div:nth-child(1) {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+/* Swadisht - full width */
+.services-grid > div:nth-child(2) {
+  grid-column: 1 / -1;
+  grid-row: 2;
+}
+
+/* InstaStyle */
+.services-grid > div:nth-child(3) {
+  grid-column: 2;
+  grid-row: 1;
+}
+  
+       .service-card-visual {
+  height: 120px !important;   /* was 85px */
+}
+
+.service-card-body {
+  padding: 10px 10px 12px !important;   /* was 6px 6px 8px */
+}
           .service-card-name {
           font-family: 'Inter', sans-serif;
   font-weight: 700;

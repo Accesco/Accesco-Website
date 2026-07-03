@@ -2304,13 +2304,16 @@ display: block;
   border: none;
   padding: 15px 20px;
   border-radius: 14px;
-  font-weight: 800;
+
+  font-family: "Manrope", sans-serif;
+  font-weight: 700;
   font-size: 12px;
-  letter-spacing: 1px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+
   cursor: pointer;
   width: 100%;
   transition: all 0.3s cubic-bezier(0.22,1,0.36,1);
-  text-transform: uppercase;
   position: relative;
   overflow: hidden;
   margin-top: auto;
@@ -2768,6 +2771,32 @@ footer .app-buttons {
   position: relative;
   isolation: isolate;
 }
+.intelligencePosterRow {
+  position: relative;
+  isolation: isolate;
+  z-index: 1;
+}
+
+.intelligencePosterRow::before {
+  content: "";
+  position: absolute;
+top: -80px;
+bottom: 0px;
+
+  left: 50%;
+  width: 100vw;
+  transform: translateX(-50%);
+background:
+  linear-gradient(
+    rgba(255,255,255,0.45),
+    rgba(255,255,255,0.45)
+  ),
+  url("/images/wave-desktop.png") center/cover no-repeat;
+
+  z-index: -1;
+  pointer-events: none;
+}
+
 
 
 
@@ -2880,6 +2909,9 @@ footer .app-buttons {
  .deliveryHeadingFrame.is-visible .popPizza {
   animation: pizzaEnter 1.35s ease-out forwards;
 }
+.deliveryHeadingFrame.is-visible .popGrocery {
+  animation: groceryEnter 1.5s ease-out forwards;
+}
 .deliveryHeadingFrame.is-visible .popHoodie {
   animation: hoodieEnter 1.45s ease-out forwards;
 }
@@ -2887,37 +2919,46 @@ footer .app-buttons {
 .deliveryHeadingFrame.is-visible .popSalad {
   animation: saladEnter 1.6s ease-out forwards;
 }
-
+.deliveryHeadingFrame.is-visible .popJeans {
+  animation: jeansEnter 1.65s ease-out forwards;
+}
 
 
 .popBurger {
-  left: -180px;
-  top: -75px;
+  left: -200px;
+  top: -20px;   /* was -75px */
   width: clamp(130px, 15vw, 220px);
 }
+
 .popPizza {
-  left: -145px;
-  top: 95px;
+  left: -220px;
+  top: 200px;   /* was 95px */
   width: clamp(115px, 13vw, 190px);
 }
-
+.popGrocery {
+  left: -200px;
+  top: 500px;              /* below the pizza */
+  width: clamp(150px, 17vw, 240px);
+}
 
 .popHoodie {
   right: -150px;
-  top: -80px;
+  top: -10px;   /* was -80px */
   width: clamp(120px, 14vw, 200px);
 }
 
-
-
 .popSalad {
-  right: -170px;
-  top: 155px;
+  right: -250px;
+  top: 200px;   /* was 155px */
   width: clamp(140px, 16vw, 230px);
 }
 
 
-
+.popJeans {
+  right: -165px;
+  top: 470px;              /* below the salad */
+  width: clamp(120px, 15vw, 200px);
+}
 @keyframes burgerEnter {
   from {
     opacity: 0;
@@ -2946,7 +2987,22 @@ footer .app-buttons {
       rotate(12deg);
   }
 }
+@keyframes groceryEnter {
+  0% {
+    opacity: 0;
+    transform: translate(-120px, 40px) rotate(-12deg) scale(0.8);
+  }
 
+  70% {
+    opacity: 1;
+    transform: translate(8px, -6px) rotate(2deg) scale(1.03);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translate(0, 0) rotate(0deg) scale(1);
+  }
+}
 @keyframes hoodieEnter {
   from {
     opacity: 0;
@@ -2976,16 +3032,25 @@ footer .app-buttons {
       rotate(-6deg);
   }
 }
+@keyframes jeansEnter {
+  from {
+    opacity: 0;
+    transform: translate(380px, 260px)
+      scale(0.35)
+      rotate(22deg);
+  }
+  to {
+    opacity: 1;
+    transform: translate(0, 0)
+      scale(1)
+      rotate(0deg);
+  }
+}
 
 @media (max-width: 768px) {
   .floatingHeroItems {
     display: none;
   }
-}
-
-.deliveryHeadingFrame {
-  position: relative;
-  z-index: 2;
 }
 
 /* ==========================================================================
