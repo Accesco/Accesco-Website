@@ -1,8 +1,10 @@
 'use client'
 
-import { useState } from 'react'
-import { db } from '../../lib/firebase'
+import { useState, useRef } from 'react'
+import { db, auth } from '../../lib/firebase'
 import { doc, setDoc, serverTimestamp } from 'firebase/firestore'
+import { RecaptchaVerifier, signInWithPhoneNumber, signOut } from 'firebase/auth'
+import { sendOtpEmailVerification, verifyOtpEmailCode } from '../../lib/waitlistService'
 
 export default function AuthModal({ isOpen, onClose, onSuccess }) {
   const [name, setName] = useState('')
@@ -13,14 +15,41 @@ export default function AuthModal({ isOpen, onClose, onSuccess }) {
   const [success, setSuccess] = useState(false)
   const [focused, setFocused] = useState('')
 
+  // OTP flow: 'details' collects info, 'verify' does phone (mandatory) + email (optional) OTP
+  const [step, setStep] = useState('details')
+  const [otpCode, setOtpCode] = useState('')
+  const [phoneCodeSent, setPhoneCodeSent] = useState(false)
+  const [confirmationResult, setConfirmationResult] = useState(null)
+  const recaptchaVerifierRef = useRef(null)
+
+  // Optional email verification state
+  const [emailCode, setEmailCode] = useState('')
+  const [emailCodeSent, setEmailCodeSent] = useState(false)
+  const [emailVerified, setEmailVerified] = useState(false)
+  const [emailLoading, setEmailLoading] = useState(false)
+
   const reset = () => {
     setName(''); setPhone(''); setEmail('')
     setError(''); setSuccess(false); setFocused('')
+    setStep('details'); setOtpCode(''); setPhoneCodeSent(false); setConfirmationResult(null)
+    setEmailCode(''); setEmailCodeSent(false); setEmailVerified(false)
+    if (recaptchaVerifierRef.current) {
+      recaptchaVerifierRef.current.clear()
+      recaptchaVerifierRef.current = null
+    }
   }
 
   const handleClose = () => { reset(); onClose() }
 
-  const handleSubmit = async (e) => {
+  // Converts user-entered phone to E.164 format required by Firebase
+  const normalizePhone = (p) => {
+    const stripped = p.replace(/[\s\-().]/g, '')
+    if (stripped.startsWith('+')) return stripped
+    return '+91' + stripped.replace(/\D/g, '')
+  }
+
+  // Step 1 → validate details, then send phone OTP and move to verify step
+  const handleDetailsSubmit = async (e) => {
     e.preventDefault()
     setError('')
     const n = name.trim(), p = phone.trim(), em = email.trim()
@@ -34,12 +63,86 @@ export default function AuthModal({ isOpen, onClose, onSuccess }) {
     }
     if (em && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)) { setError('Enter a valid email address'); return }
 
+    setStep('verify')
+    if (!phoneCodeSent) sendPhoneOtp()
+  }
+
+  const sendPhoneOtp = async () => {
+    // Prevent a second reCAPTCHA widget from being created while one is still loading
+    if (loading) return
+    setLoading(true); setError('')
+
+    try {
+      if (recaptchaVerifierRef.current) {
+        recaptchaVerifierRef.current.clear()
+        recaptchaVerifierRef.current = null
+      }
+      const verifier = new RecaptchaVerifier(auth, 'am-recaptcha-container', { size: 'invisible' })
+      recaptchaVerifierRef.current = verifier
+
+      const result = await signInWithPhoneNumber(auth, normalizePhone(phone.trim()), verifier)
+      setConfirmationResult(result)
+      setPhoneCodeSent(true)
+    } catch (err) {
+      console.error('Phone OTP send failed:', err)
+      setError(err.message || 'Failed to send OTP. Check your phone number and try again.')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  // Optional: send an email verification code
+  const sendEmailOtp = async () => {
+    if (!email.trim()) { setError('Please add an email first'); return }
+    setEmailLoading(true); setError('')
+    try {
+      await sendOtpEmailVerification(email.trim())
+      setEmailCodeSent(true); setEmailVerified(false)
+    } catch (err) {
+      console.error('Email OTP send failed:', err)
+      setError(err.message || 'Failed to send email code')
+    } finally {
+      setEmailLoading(false)
+    }
+  }
+
+  // Optional: verify the email code
+  const verifyEmailOtp = async () => {
+    if (!/^\d{6}$/.test(emailCode.trim())) { setError('Please enter a valid 6-digit email code.'); return }
+    setEmailLoading(true); setError('')
+    try {
+      await verifyOtpEmailCode(email.trim(), emailCode.trim())
+      setEmailVerified(true)
+    } catch (err) {
+      console.error('Email OTP verify failed:', err)
+      setError(err.message || 'Email verification failed')
+    } finally {
+      setEmailLoading(false)
+    }
+  }
+
+  // Step 2 → verify phone OTP (mandatory), then save the user
+  const handleVerifySubmit = async (e) => {
+    e.preventDefault()
+    setError('')
+    if (!confirmationResult) { setError('Code is still being sent. Please wait a moment.'); return }
+    if (!/^\d{6}$/.test(otpCode.trim())) { setError('Please enter a valid 6-digit OTP.'); return }
+
     setLoading(true)
     try {
+      await confirmationResult.confirm(otpCode.trim())
+
+      const n = name.trim(), p = phone.trim(), em = email.trim()
+      const docId = p.replace(/[^\d]/g, '')
       await setDoc(doc(db, 'users', docId), {
         name: n, phone: p, email: em || null,
+        phoneVerified: true,      // phone OTP mandatory
+        emailVerified,            // email OTP optional
         createdAt: serverTimestamp(), updatedAt: serverTimestamp(),
       }, { merge: true })
+
+      // Sign out of Firebase Auth after the write — we only needed phone verification
+      await signOut(auth)
 
       const user = { name: n, phone: p, email: em || null, uid: docId }
       localStorage.setItem('accesco_user', JSON.stringify(user))
@@ -47,7 +150,9 @@ export default function AuthModal({ isOpen, onClose, onSuccess }) {
       setTimeout(() => { onSuccess && onSuccess(user); handleClose() }, 1800)
     } catch (err) {
       console.error(err)
-      setError('Something went wrong. Please try again.')
+      if (err.code === 'auth/invalid-verification-code') setError('Invalid OTP. Please check the code and try again.')
+      else if (err.code === 'auth/code-expired') setError('OTP has expired. Please request a new one.')
+      else setError('Something went wrong. Please try again.')
     } finally {
       setLoading(false)
     }
@@ -111,10 +216,8 @@ export default function AuthModal({ isOpen, onClose, onSuccess }) {
             </div>
           ) : (
             <>
-              <div className="am-right-header">
-                <h2>Welcome!</h2>
-                <p>No password needed — just your details.</p>
-              </div>
+              {/* Invisible reCAPTCHA container required by Firebase Phone Auth */}
+              <div id="am-recaptcha-container"></div>
 
               {error && (
                 <div className="am-error">
@@ -122,77 +225,197 @@ export default function AuthModal({ isOpen, onClose, onSuccess }) {
                 </div>
               )}
 
-              <form onSubmit={handleSubmit} className="am-form">
-                {/* Name */}
-                <div className={`am-field ${focused === 'name' ? 'am-field--focus' : ''} ${name ? 'am-field--filled' : ''}`}>
-                  <label className="am-label">
-                    Full Name <span className="am-req">*</span>
-                  </label>
-                  <div className="am-input-row">
-                    <span className="am-ico"><i className="ri-user-3-line"/></span>
-                    <input
-                      type="text"
-                      placeholder="e.g. Priya Sharma"
-                      value={name}
-                      onChange={e => setName(e.target.value)}
-                      onFocus={() => setFocused('name')}
-                      onBlur={() => setFocused('')}
-                      disabled={loading}
-                      autoFocus
-                    />
+              {step === 'details' ? (
+                <>
+                  <div className="am-right-header">
+                    <h2>Welcome!</h2>
+                    <p>No password needed — just verify your phone.</p>
                   </div>
-                </div>
 
-                {/* Phone */}
-                <div className={`am-field ${focused === 'phone' ? 'am-field--focus' : ''} ${phone ? 'am-field--filled' : ''}`}>
-                  <label className="am-label">
-                    Phone Number <span className="am-req">*</span>
-                  </label>
-                  <div className="am-input-row">
-                    <span className="am-ico"><i className="ri-phone-line"/></span>
-                    <input
-                      type="tel"
-                      placeholder="+91 9022217637"
-                      value={phone}
-                      onChange={e => setPhone(e.target.value)}
-                      onFocus={() => setFocused('phone')}
-                      onBlur={() => setFocused('')}
-                      disabled={loading}
-                    />
+                  <form onSubmit={handleDetailsSubmit} className="am-form">
+                    {/* Name */}
+                    <div className={`am-field ${focused === 'name' ? 'am-field--focus' : ''} ${name ? 'am-field--filled' : ''}`}>
+                      <label className="am-label">
+                        Full Name <span className="am-req">*</span>
+                      </label>
+                      <div className="am-input-row">
+                        <span className="am-ico"><i className="ri-user-3-line"/></span>
+                        <input
+                          type="text"
+                          placeholder="e.g. Priya Sharma"
+                          value={name}
+                          onChange={e => setName(e.target.value)}
+                          onFocus={() => setFocused('name')}
+                          onBlur={() => setFocused('')}
+                          disabled={loading}
+                          autoFocus
+                        />
+                      </div>
+                    </div>
+
+                    {/* Phone */}
+                    <div className={`am-field ${focused === 'phone' ? 'am-field--focus' : ''} ${phone ? 'am-field--filled' : ''}`}>
+                      <label className="am-label">
+                        Phone Number <span className="am-req">*</span>
+                      </label>
+                      <div className="am-input-row">
+                        <span className="am-ico"><i className="ri-phone-line"/></span>
+                        <input
+                          type="tel"
+                          placeholder="+91 9022217637"
+                          value={phone}
+                          onChange={e => setPhone(e.target.value)}
+                          onFocus={() => setFocused('phone')}
+                          onBlur={() => setFocused('')}
+                          disabled={loading}
+                        />
+                      </div>
+                      <span className="am-hint">Include country code · +91 India · +1 USA</span>
+                    </div>
+
+                    {/* Email */}
+                    <div className={`am-field ${focused === 'email' ? 'am-field--focus' : ''} ${email ? 'am-field--filled' : ''}`}>
+                      <label className="am-label">
+                        Email <span className="am-opt">optional</span>
+                      </label>
+                      <div className="am-input-row">
+                        <span className="am-ico"><i className="ri-mail-line"/></span>
+                        <input
+                          type="email"
+                          placeholder="you@example.com"
+                          value={email}
+                          onChange={e => setEmail(e.target.value)}
+                          onFocus={() => setFocused('email')}
+                          onBlur={() => setFocused('')}
+                          disabled={loading}
+                        />
+                      </div>
+                    </div>
+
+                    <button type="submit" className="am-submit" disabled={loading}>
+                      Continue <i className="ri-arrow-right-line"/>
+                    </button>
+                  </form>
+
+                  <p className="am-privacy">
+                    <i className="ri-lock-2-line"/> Your data is stored securely in Firebase and never shared.
+                  </p>
+                </>
+              ) : (
+                <>
+                  <div className="am-right-header">
+                    <h2>Verify your phone</h2>
+                    <p>{phoneCodeSent ? `Enter the 6-digit code sent to ${phone}` : 'Sending OTP to your phone…'}</p>
                   </div>
-                  <span className="am-hint">Include country code · +91 India · +1 USA</span>
-                </div>
 
-                {/* Email */}
-                <div className={`am-field ${focused === 'email' ? 'am-field--focus' : ''} ${email ? 'am-field--filled' : ''}`}>
-                  <label className="am-label">
-                    Email <span className="am-opt">optional</span>
-                  </label>
-                  <div className="am-input-row">
-                    <span className="am-ico"><i className="ri-mail-line"/></span>
-                    <input
-                      type="email"
-                      placeholder="you@example.com"
-                      value={email}
-                      onChange={e => setEmail(e.target.value)}
-                      onFocus={() => setFocused('email')}
-                      onBlur={() => setFocused('')}
+                  <form onSubmit={handleVerifySubmit} className="am-form">
+                    {/* Phone OTP — mandatory */}
+                    <div className={`am-field ${focused === 'otp' ? 'am-field--focus' : ''} ${otpCode ? 'am-field--filled' : ''}`}>
+                      <label className="am-label">
+                        OTP Code <span className="am-req">*</span>
+                      </label>
+                      <div className="am-input-row">
+                        <span className="am-ico"><i className="ri-shield-keyhole-line"/></span>
+                        <input
+                          type="text"
+                          inputMode="numeric"
+                          placeholder="Enter 6-digit OTP"
+                          value={otpCode}
+                          onChange={e => setOtpCode(e.target.value)}
+                          onFocus={() => setFocused('otp')}
+                          onBlur={() => setFocused('')}
+                          maxLength={6}
+                          disabled={loading}
+                          autoFocus
+                        />
+                      </div>
+                      <button
+                        type="button"
+                        onClick={sendPhoneOtp}
+                        disabled={loading}
+                        style={{ background: 'none', border: 'none', color: '#7A0042', fontSize: 12, fontWeight: 600, cursor: 'pointer', padding: '6px 0', textDecoration: 'underline', alignSelf: 'flex-start' }}
+                      >
+                        Resend OTP
+                      </button>
+                    </div>
+
+                    {/* Optional email verification */}
+                    <div style={{ borderTop: '1px dashed #e2b8d4', paddingTop: 14, marginTop: 2 }}>
+                      <label className="am-label">
+                        Verify Email <span className="am-opt">optional</span>
+                      </label>
+
+                      {emailVerified ? (
+                        <p style={{ color: '#16a34a', fontSize: 13, fontWeight: 600, margin: '8px 0 0' }}>
+                          Email verified ✓
+                        </p>
+                      ) : !email.trim() ? (
+                        <p style={{ color: '#bbb', fontSize: 12, margin: '8px 0 0' }}>
+                          Add an email in the previous step to verify it.
+                        </p>
+                      ) : !emailCodeSent ? (
+                        <button
+                          type="button"
+                          onClick={sendEmailOtp}
+                          disabled={emailLoading}
+                          style={{ marginTop: 8, width: '100%', padding: '11px 12px', background: '#fff', border: '2px solid #7A0042', color: '#7A0042', borderRadius: 12, fontWeight: 700, fontSize: 13, cursor: 'pointer' }}
+                        >
+                          {emailLoading ? 'Sending…' : 'Send email code'}
+                        </button>
+                      ) : (
+                        <>
+                          <div className="am-input-row" style={{ marginTop: 8 }}>
+                            <span className="am-ico"><i className="ri-mail-check-line"/></span>
+                            <input
+                              type="text"
+                              inputMode="numeric"
+                              placeholder="Email 6-digit code"
+                              value={emailCode}
+                              onChange={e => setEmailCode(e.target.value)}
+                              maxLength={6}
+                              disabled={emailLoading}
+                            />
+                          </div>
+                          <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
+                            <button
+                              type="button"
+                              onClick={sendEmailOtp}
+                              disabled={emailLoading}
+                              style={{ flex: 1, padding: '10px 12px', background: '#fff', border: '2px solid #ddd', color: '#666', borderRadius: 12, fontWeight: 700, fontSize: 13, cursor: 'pointer' }}
+                            >
+                              Resend
+                            </button>
+                            <button
+                              type="button"
+                              onClick={verifyEmailOtp}
+                              disabled={emailLoading}
+                              style={{ flex: 1, padding: '10px 12px', background: '#fff', border: '2px solid #7A0042', color: '#7A0042', borderRadius: 12, fontWeight: 700, fontSize: 13, cursor: 'pointer' }}
+                            >
+                              {emailLoading ? 'Verifying…' : 'Verify email'}
+                            </button>
+                          </div>
+                        </>
+                      )}
+                    </div>
+
+                    <button type="submit" className="am-submit" disabled={loading}>
+                      {loading
+                        ? <><span className="am-spin"><i className="ri-loader-4-line"/></span> Verifying…</>
+                        : <>Verify &amp; Continue <i className="ri-arrow-right-line"/></>
+                      }
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => { setStep('details'); setError('') }}
                       disabled={loading}
-                    />
-                  </div>
-                </div>
-
-                <button type="submit" className="am-submit" disabled={loading}>
-                  {loading
-                    ? <><span className="am-spin"><i className="ri-loader-4-line"/></span> Saving…</>
-                    : <>Continue <i className="ri-arrow-right-line"/></>
-                  }
-                </button>
-              </form>
-
-              <p className="am-privacy">
-                <i className="ri-lock-2-line"/> Your data is stored securely in Firebase and never shared.
-              </p>
+                      style={{ background: 'none', border: 'none', color: '#888', fontSize: 13, fontWeight: 600, cursor: 'pointer', padding: '4px 0' }}
+                    >
+                      ← Back to details
+                    </button>
+                  </form>
+                </>
+              )}
             </>
           )}
         </div>
