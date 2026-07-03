@@ -357,8 +357,8 @@
   }
 }
 
-/* Premium brown background for InstaStyle footer */
+/* Clean dark theme background for InstaStyle footer */
 .instastyle-footer-root {
-  background-image: linear-gradient(rgba(43, 24, 16, 0.92), rgba(43, 24, 16, 0.97)), url('/images/investor-bg.jpg') !important;
-  background-color: #2b1810 !important;
+  background-image: none !important;
+  background-color: #0A0A0A !important;
 }
