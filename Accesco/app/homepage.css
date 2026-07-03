@@ -3052,7 +3052,28 @@ background:
     display: none;
   }
 }
+/* Mobile-only Launch Poster */
 
+.mobileLaunchPoster {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .mobileLaunchPoster {
+  display: block;
+  padding: 12px 16px 0; /* was 18px 16px 10px */
+  margin-bottom: 0;
+}
+
+  .mobileLaunchPoster img {
+    width: 100%;
+    max-width: 420px;
+    margin: 0 auto;
+    display: block;
+    border-radius: 18px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+  }
+}
 /* ==========================================================================
    MOBILE SERVICES BENTO GRID OVERRIDE (Swiggy / Instamart Style)
    ========================================================================== */

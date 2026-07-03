@@ -61,7 +61,13 @@ const softwareApplicationSchema = {
       <main>
         {/* ── Hero Section ── */}
         <Hero />
-
+{/* Mobile Launch Poster */}
+<section className="mobileLaunchPoster">
+  <img
+    src="/images/poster-newspaper.jpeg"
+    alt="Launching Soon"
+  />
+</section>
         {/* ── Services Section ── */}
        <section
   id="services"
@@ -70,8 +76,7 @@ const softwareApplicationSchema = {
     background: '#FFFDF8',
     position: 'relative'
   }}
->
-         
+>       
 
           <div className="intelligencePosterRow">
 
@@ -97,6 +102,7 @@ const softwareApplicationSchema = {
 
   {/* Poster */}
   <div className="postersSectionWrapper">
+  
     <div
       className="postersTiltCard"
       onMouseMove={(e) => {
@@ -637,7 +643,7 @@ fontSize: 'clamp(2.45rem, 4.9vw, 4.4rem)',
         }
 
         .swadishtt-btn {
-          background: #7A0042;
+          background: #E53935;;
           color: #fff;
         }
 
