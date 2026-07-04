@@ -643,7 +643,7 @@ fontSize: 'clamp(2.45rem, 4.9vw, 4.4rem)',
         }
 
         .swadishtt-btn {
-          background: #E53935;;
+          background: #E53935;                                                        ;
           color: #fff;
         }
 
