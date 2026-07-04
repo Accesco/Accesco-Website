@@ -51,7 +51,7 @@ background-repeat: no-repeat;
 
     background:url("/images/wave-desktop3.png") center bottom / cover no-repeat;
 
-    opacity:0.05;      /* was 0.18 */
+    opacity:0.001;      /* was 0.18 */
     z-index:1;
     pointer-events:none;
 }
@@ -277,7 +277,8 @@ font-weight:800;
 }
 .copyright-text {
   font-size: 13px;
-  color: rgba(255,255,255,0.4);
+/* Quite prominent */
+color: rgba(255, 255, 255, 0.35);
 }
 
 @media (max-width: 900px) {
@@ -669,10 +670,11 @@ font-weight:800;
 }
 .footer-watermark{
     text-align:center;
-    font-size:170px;
+    font-size:100px;
     font-weight:900;
     line-height:.9;
-    color:rgba(255,255,255,.09);
+ /* Quite prominent */
+color: rgba(255, 255, 255, 0.35);
     letter-spacing:-8px;
     user-select:none;
     margin-top:30px;
