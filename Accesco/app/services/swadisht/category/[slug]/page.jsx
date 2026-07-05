@@ -22,16 +22,21 @@ const CATEGORY_MAP = {
     desc: 'Crispy dosas, idlis and South Indian breakfast favourites.',
     keywords: ['south indian', 'dosa', 'idli'],
   },
+  'north-indian': {
+    title: 'North Indian',
+    desc: 'Comforting curries, rotis, naans, paneer dishes and North Indian meals.',
+    keywords: ['north indian', 'paneer', 'roti', 'naan', 'dal', 'curry', 'paratha'],
+  },
   beverages: {
     title: 'Beverages',
     desc: 'Refreshing drinks, coffees and juices.',
     keywords: ['beverage', 'coffee', 'juice', 'drink'],
   },
- desserts: {
-  title: 'Desserts',
-  desc: 'Cakes, sweets and desserts to finish your meal.',
-  keywords: ['dessert', 'desserts', 'cake', 'sweet', 'sweets', 'bakery'],
-},
+  desserts: {
+    title: 'Desserts',
+    desc: 'Cakes, sweets and desserts to finish your meal.',
+    keywords: ['dessert', 'desserts', 'cake', 'sweet', 'sweets', 'bakery'],
+  },
   snacks: {
     title: 'Snacks',
     desc: 'Quick bites, fries and snackable favourites.',
@@ -41,6 +46,21 @@ const CATEGORY_MAP = {
     title: 'Salads',
     desc: 'Fresh and healthy salad options.',
     keywords: ['salad', 'healthy'],
+  },
+  pasta: {
+    title: 'Pasta',
+    desc: 'Creamy, cheesy and saucy pasta options from nearby restaurants.',
+    keywords: ['pasta', 'italian', 'alfredo', 'arrabbiata', 'macaroni'],
+  },
+  biryani: {
+    title: 'Biryani',
+    desc: 'Aromatic biryanis, rice bowls and royal meal favourites.',
+    keywords: ['biryani', 'rice', 'hyderabadi', 'dum'],
+  },
+  'fried-rice': {
+    title: 'Fried Rice',
+    desc: 'Flavourful fried rice, Indo-Chinese bowls and quick meals.',
+    keywords: ['fried rice', 'chinese', 'rice', 'noodles'],
   },
 };
 
