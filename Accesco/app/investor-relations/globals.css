@@ -194,7 +194,7 @@ a {
   min-height: 520px;
   padding: 32px 60px 42px;
  background: #B8005A
-    url("/images/wave-desktop4.png")
+    url("/images/waves.png")
     center -200px / cover no-repeat !important;}
 .ir-hero-inner::before,
 .ir-hero-inner::after {

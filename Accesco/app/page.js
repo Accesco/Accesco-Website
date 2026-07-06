@@ -9,6 +9,7 @@ import Hero from '../components/Hero';
 import AppShowcase from '../components/AppShowcase';
 import Footer from '../components/Footer';
 import JsonLd from '../components/JsonLd';
+import XpenseIntro from '@/components/XpenseIntro';
 export default function HomePage() {
   const [isClient, setIsClient] = useState(false);
   const scrollRef = useRef(null);
@@ -266,102 +267,7 @@ fontSize: 'clamp(2.45rem, 4.9vw, 4.4rem)',
       </div>
         </section>
         {/* ── Xpense Meter Section ── */}
-        <section className="xpense-meter-section">
-          <div className="xpense-container">
-            <div className="xpense-content">
-              <div className="xpense-header">
-                <h2 className="xpense-title">
-                  Smart budgeting built for <span className="xpense-highlight">your income cycle</span>
-                </h2>
-                <p className="xpense-description">
-                  Track and manage your household expenses dynamically relative to your salary schedule.
-                </p>
-
-                <div className="xpense-features">
-                  <div className="feature-item">
-                    <span className="feature-icon">
-                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <rect x="2" y="4" width="20" height="16" rx="2" ry="2" />
-                        <line x1="12" y1="4" x2="12" y2="20" />
-                      </svg>
-                    </span>
-                    <div className="feature-text">
-                      <h4>Salary Sync</h4>
-                      <p>Adapts your monthly budget limits to your payroll cycle.</p>
-                    </div>
-                  </div>
-                  <div className="feature-item">
-                    <span className="feature-icon">
-                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
-                        <path d="M13.73 21a2 2 0 0 1-3.46 0" />
-                      </svg>
-                    </span>
-                    <div className="feature-text">
-                      <h4>Budget Alerts</h4>
-                      <p>Get notified instantly before you exceed category limits.</p>
-                    </div>
-                  </div>
-                  <div className="feature-item">
-                    <span className="feature-icon">
-                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <circle cx="12" cy="12" r="10" />
-                        <circle cx="12" cy="12" r="6" />
-                        <circle cx="12" cy="12" r="2" />
-                      </svg>
-                    </span>
-                    <div className="feature-text">
-                      <h4>Smart Goals</h4>
-                      <p>Track and secure your savings targets automatically.</p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="xpense-actions">
-                  <Link href="/calculator" className="xpense-cta">
-                    Launch calculator
-                  </Link>
-                  <Link href="#waitlist" className="xpense-secondary-cta">
-                    Join waitlist
-                  </Link>
-                </div>
-              </div>
-
-              <div className="xpense-visual">
-                <div className="xpense-dashboard-card">
-                  <div className="dashboard-header">
-                    <div className="header-meta">
-                      <span className="dashboard-title">Xpense Meter</span>
-                      <p className="dashboard-subtitle">Transform your financial habits with intelligent expense tracking and predictive analytics.</p>
-                    </div>
-                    <Link href="/calculator" className="dashboard-calc-link">
-                      Launch Calculator
-                    </Link>
-                  </div>
-                  
-                  <div className="dashboard-grid">
-                    <div className="dashboard-item">
-                      <span className="item-label">Monthly Limit</span>
-                      <span className="item-value">₹50,000</span>
-                    </div>
-
-                    <div className="dashboard-item">
-                      <span className="item-label">Current Spent</span>
-                      <span className="item-value" style={{ color: '#7A0042' }}>₹45,280</span>
-                    </div>
-
-                    <div className="dashboard-item item-full">
-                      <span className="item-label">Remaining Balance</span>
-                      <span className="item-value" style={{ color: '#2E7D32' }}>₹4,720</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-  
-        </section>
-
+        <XpenseIntro />
         {/* ── Waitlist / App Showcase ── */}
         <AppShowcase />
       </main>

@@ -9,34 +9,39 @@
 /* ── HERO ── */
 .lib-hero {
   position: relative;
-  min-height: 520px;
+  min-height: 500px;
+  background: #AA0152;
+
   display: flex;
+  justify-content: center;
   align-items: center;
-  padding: 100px 48px 80px;
+
+  padding: 60px 80px;
   overflow: hidden;
-  background: #0d0408;
-  border-radius: 0 0 40px 40px;
-  margin-bottom: 0;
-  border-bottom: 1px solid rgba(200, 150, 62, 0.15);
 }
-
-.lib-hero-video {
+.lib-hero::before {
+  content: "";
   position: absolute;
   inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  opacity: 0.45;
-  z-index: 0;
-}
 
-.lib-hero-overlay {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(135deg, rgba(26,10,15,0.96) 0%, rgba(45,8,24,0.85) 50%, rgba(26,10,15,0.4) 100%),
-              radial-gradient(circle at center, rgba(200,150,62,0.15) 0%, transparent 60%);
+  background: url("/images/waves.png") center bottom / cover no-repeat;
+
   z-index: 1;
+  pointer-events: none;
+  opacity: 1; /* reduce if you want the waves lighter */
 }
+.lib-hero-center,
+.lib-hero-content {
+  position: relative;
+  z-index: 2;
+}
+.lib-hero-center {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 
 .lib-hero-content {
   position: relative;
@@ -45,94 +50,32 @@
   color: #fff;
 }
 
-.lib-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  font-family: 'Sora', sans-serif;
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  color: #C8963E;
-  margin-bottom: 24px;
-  background: rgba(200, 150, 62, 0.12);
-  border: 1px solid rgba(200, 150, 62, 0.25);
-  padding: 6px 14px;
-  border-radius: 9999px;
-  backdrop-filter: blur(8px);
-}
 
-.lib-badge .dot {
-  width: 8px;
-  height: 8px;
-  background: #C8963E;
-  box-shadow: 0 0 8px #C8963E;
-  border-radius: 50%;
-  display: inline-block;
-  animation: libPulse 2s infinite;
-}
 
-.lib-title {
-  font-family: 'Sora', sans-serif;
-  font-size: clamp(2rem, 4vw, 3.2rem);
+.lib-hero-center h1 {
+  font-family: inherit;
   font-weight: 800;
-  line-height: 1.1;
+  font-size: clamp(64px, 15vw, 190px);
+  line-height: 0.82;
+  letter-spacing: -6px;
   color: #fff;
-  margin: 0 0 16px;
-  letter-spacing: -0.03em;
+  margin: 0;
+}
+@media (max-width: 768px) {
+  .lib-hero {
+    min-height: 360px;
+    padding: 22px 18px;
+  }
+
+  .lib-hero-center h1 {
+    font-size: 82px;
+    letter-spacing: -3px;
+  }
 }
 
-.lib-gradient-text {
-  background: linear-gradient(135deg, #c8963e 0%, #fce0ad 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
 
-.lib-hero-subtitle {
-  font-family: 'DM Sans', sans-serif;
-  font-size: clamp(0.95rem, 1.5vw, 1.1rem);
-  line-height: 1.65;
-  color: rgba(255, 255, 255, 0.7);
-  margin: 0 0 32px;
-  max-width: 600px;
-}
 
-.lib-stats-bar {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-  flex-wrap: wrap;
-}
 
-.lib-stat-item {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.lib-stat-num {
-  font-family: 'Sora', sans-serif;
-  font-size: 1.5rem;
-  font-weight: 800;
-  color: #fff;
-  line-height: 1;
-}
-
-.lib-stat-label {
-  font-family: 'DM Sans', sans-serif;
-  font-size: 0.7rem;
-  color: rgba(255, 255, 255, 0.4);
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-
-.lib-stat-divider {
-  width: 1px;
-  height: 28px;
-  background: rgba(255, 255, 255, 0.15);
-}
 
 /* ── SEGMENT TABS ── */
 .lib-tabs-wrap {
@@ -370,16 +313,13 @@
 
 /* ── RESPONSIVE ── */
 @media (max-width: 768px) {
-  .lib-hero {
-    min-height: 360px;
-    padding: 100px 22px 40px;
-    border-radius: 0 0 28px 28px;
-  }
+ 
 
+  
   .lib-hero-video { display: none; }
-  .lib-hero-overlay { display: none; }
+ 
 
-  .lib-title { font-size: 1.65rem; }
+ 
 
   .lib-tabs {
     padding: 0 16px;
