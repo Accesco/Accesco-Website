@@ -4,8 +4,13 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useGrokly } from '../contexts/GroklyContext';
 import { products } from '../lib/groklyData';
+import { dishIngredients } from '../lib/dishesData';
 import styles from './checkout.module.css';
+
+// Combined lookup: regular products + dish ingredients (which have their own IDs)
+const allPurchasable = [...products, ...dishIngredients];
 import { useAuth } from '../../../components/AuthProvider';
+import AuthModal from '../../../components/AuthModal';
 import { 
   ArrowLeft, MapPin, Phone, User, CreditCard, 
   ShieldCheck, ShoppingBag, Clock, Zap, Sparkles 
@@ -14,9 +19,10 @@ import {
 export default function GroklyCheckout() {
   const { cart, placeOrder, location } = useGrokly();
   const router = useRouter();
-  const { user } = useAuth();
+  const { user, signIn } = useAuth();
   const [isMounted, setIsMounted] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [showAuth, setShowAuth] = useState(false);
   const [isLoadingLocation, setIsLoadingLocation] = useState(false);
   const [customerDetails, setCustomerDetails] = useState({
     name: 'Accesco Customer',
@@ -53,7 +59,7 @@ export default function GroklyCheckout() {
 
 
   const cartItems = Object.entries(cart)
-    .map(([id, qty]) => ({ product: products.find(p => p.id === id), quantity: qty }))
+    .map(([id, qty]) => ({ product: allPurchasable.find(p => p.id === id), quantity: qty }))
     .filter(item => item.product);
 
   const handleCreateBasket = () => {
@@ -140,7 +146,26 @@ export default function GroklyCheckout() {
   const discount = deliverySpeed === 'batched' ? 20 : 0;
   const total = Math.max(0, subtotal + deliveryFee + 2 - discount);
 
-  const handlePlaceOrder = () => {
+  // Reads the customer's real delivery coordinates from the detected/selected
+  // location so the tracking map can show the actual "Your door" position.
+  const getDeliveryCoords = () => {
+    try {
+      const raw = localStorage.getItem('userLocation');
+      if (!raw) return {};
+      const loc = JSON.parse(raw);
+      const lat = parseFloat(loc.latitude ?? loc.lat);
+      const lng = parseFloat(loc.longitude ?? loc.lng ?? loc.lon);
+      if (!Number.isNaN(lat) && !Number.isNaN(lng)) {
+        return { deliveryLat: lat, deliveryLng: lng };
+      }
+    } catch (e) {
+      console.error('Failed to read delivery coordinates:', e);
+    }
+    return {};
+  };
+
+  // Places the order for a specific logged-in user.
+  const submitOrder = (activeUser) => {
     setIsProcessing(true);
     const resolvedEta = deliverySpeed === 'batched' ? (eta ? eta + 15 : 25) : eta;
     const order = placeOrder({
@@ -153,16 +178,34 @@ export default function GroklyCheckout() {
       items: cartItems.map(i => ({ id: i.product.id, name: i.product.name, price: i.product.price, quantity: i.quantity })),
       paymentMethod: 'UPI',
       address: customerDetails.address,
-      customerName: customerDetails.name,
-      phone: customerDetails.phone,
-      customerEmail: user?.email || null,
-      userId: user?.uid || user?.id || null,
+      customerName: activeUser?.name || customerDetails.name,
+      phone: activeUser?.phone || customerDetails.phone,
+      customerEmail: activeUser?.email || null,
+      userId: activeUser?.uid || activeUser?.id || null,
+      ...getDeliveryCoords(),
     });
 
     setTimeout(() => {
       setIsProcessing(false);
       router.push(`/services/grokly/order-tracking?id=${order.id}&eta=${resolvedEta}`);
     }, 2000);
+  };
+
+  const handlePlaceOrder = () => {
+    // Require login before an order can be placed, so it's tied to a real user
+    // (and shows up later in their Order History). Not logged in → open OTP login.
+    if (!user) {
+      setShowAuth(true);
+      return;
+    }
+    submitOrder(user);
+  };
+
+  // After a successful login from the checkout gate, continue placing the order.
+  const handleAuthSuccess = (userData) => {
+    signIn(userData);
+    setShowAuth(false);
+    submitOrder(userData);
   };
 
   useEffect(() => {
@@ -404,15 +447,25 @@ export default function GroklyCheckout() {
             <span>To Pay</span>
             <span>₹{total}</span>
           </div>
-          <button 
-            className={styles.placeOrderBtn} 
+          <button
+            className={styles.placeOrderBtn}
             onClick={handlePlaceOrder}
             disabled={isProcessing}
           >
-            {isProcessing ? 'Processing Order...' : `Pay & Place Order · ₹${total}`}
+            {isProcessing
+              ? 'Processing Order...'
+              : !user
+                ? `Login & Place Order · ₹${total}`
+                : `Pay & Place Order · ₹${total}`}
           </button>
         </div>
       </div>
+
+      <AuthModal
+        isOpen={showAuth}
+        onClose={() => setShowAuth(false)}
+        onSuccess={handleAuthSuccess}
+      />
     </div>
   );
 }

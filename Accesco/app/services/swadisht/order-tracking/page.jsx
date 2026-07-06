@@ -195,7 +195,7 @@ export default function SwadishttTrackingPage() {
 
               {/* Map */}
               <div className={styles.mapWrapper}>
-                <LiveTrackingMap />
+                <LiveTrackingMap orderId={order.id} />
               </div>
 
               {/* Delivery address */}
