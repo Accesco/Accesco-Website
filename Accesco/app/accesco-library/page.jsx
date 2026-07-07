@@ -145,28 +145,27 @@ export default function AccescoLibraryPage() {
       <main className="lib-container">
   {/* ── HERO ── */}
 <section className="lib-hero">
-  <div className="lib-hero-center">
-    <h1>library</h1>
+  <div className="lib-hero-content">
+    <h1>Watch the brand<br />come alive.</h1>
+
+    <p>
+      Every film, story and magazine that defines Accesco Living —
+      <br />
+      collected in one intelligent library.
+    </p>
+
+   <div className="lib-search-bar">
+  <input
+    type="text"
+    placeholder="Search videos & magazines..."
+    value={searchQuery}
+    onChange={(e) => setSearchQuery(e.target.value)}
+  />
+
+  <button>Search</button>
+</div>
   </div>
 </section>
-
-        {/* ── SEGMENT TABS ── */}
-        <div className="lib-tabs-wrap">
-          <div className="lib-tabs">
-            {segments.map((seg) => (
-              <button
-                key={seg.id}
-                className={`lib-tab-btn ${activeSegment === seg.id ? 'active' : ''}`}
-                onClick={() => setActiveSegment(seg.id)}
-              >
-                <span className="lib-tab-icon">
-                  <i className={seg.iconClass}></i>
-                </span>
-                <span className="lib-tab-label">{seg.label}</span>
-              </button>
-            ))}
-          </div>
-        </div>
 
         {/* ── SEGMENT: RESOURCE LIBRARY ── */}
         {activeSegment === 'resources' && (

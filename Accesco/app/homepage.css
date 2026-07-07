@@ -2825,21 +2825,23 @@ background:
 }
 
 /* --- Left Hero Card --- */
-.left-hero-card {
-  background: linear-gradient(135deg, #f4f4f5 0%, #dedede 100%);
-  border: 1px solid rgba(0, 0, 0, 0.08);
-  border-radius: 32px;
-  padding: 3rem;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  box-shadow: 
-    0 10px 25px -5px rgba(0, 0, 0, 0.04), 
-    0 8px 10px -6px rgba(0, 0, 0, 0.04),
-    inset 0 1px 0 rgba(255, 255, 255, 0.6);
-  position: relative;
-  overflow: hidden;
-  min-height: 580px;
+.left-hero-card{
+    background: #f3f3f3;
+    border: 1px solid #e3e3e3;
+    border-radius: 36px;
+
+    padding: 48px;
+    height: 100%;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,.9),
+      0 18px 45px rgba(0,0,0,.06);
+
+    overflow: hidden;
 }
 
 .left-hero-card::after {
@@ -3547,19 +3549,14 @@ background:
     box-shadow: 0 0 0 8px rgba(255, 255, 255, 0);
   }
 }
-.xpense-container {
-  max-width: 1420px;
-  margin: 0 auto;
-  padding: 26px;
+.xpense-container{
+    background:#e9e9e9;
+    border-radius:44px;
+    padding:28px;
 
-    border: 3px solid #000;
-  border-radius: 30px;
-
-  background: rgba(255, 255, 255, 0.18);
-
-  box-shadow:
-    0 18px 45px rgba(112, 4, 87, 0.18),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.5);
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,.9),
+      0 20px 50px rgba(0,0,0,.08);
 }
 @media (max-width: 768px) {
   .xpense-page-wrapper {
@@ -3570,4 +3567,37 @@ background:
     padding: 14px;
     border-radius: 22px;
   }
+}
+.hero-heading{
+    display:flex;
+    flex-direction:column;
+}
+
+.hero-heading-top{
+    display:flex;
+    align-items:flex-start;
+    gap:10px;
+}
+.hero-asterisk {
+  width: 100px !important;
+  height: 100px !important;
+  max-width: 100px !important;
+  min-width: 100px !important;
+  display: inline-block !important;
+  object-fit: contain;
+  margin-top: -50px;
+  margin-left: 75px;
+  flex-shrink: 0;
+  border-radius: 0 !important;
+
+  /* Dark pink (#AA0152) tint */
+  filter: brightness(0) saturate(100%)
+          invert(16%) sepia(96%) saturate(5075%)
+          hue-rotate(326deg) brightness(86%) contrast(110%);
+}
+.hero-heading-top img {
+  width: 100px !important;
+  height: 100px !important;
+  max-width: 100px !important;
+  border-radius: 0 !important;
 }

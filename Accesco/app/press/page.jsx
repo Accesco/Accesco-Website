@@ -205,8 +205,21 @@ export default function PressPage() {
 
         {/* Hero Section */}
     <section className="press-hero">
-  <div className="press-container">
-    <h1 className="press-hero-title">Press</h1>
+  <div className="press-container press-hero-content">
+    <h1 className="press-hero-title">
+      The Accesco story,<br />ready to tell.
+    </h1>
+
+    <p className="press-hero-subtitle">
+      Press releases, brand assets and media coverage — everything
+      <br />
+      journalists and creators need, in one press room.
+    </p>
+
+    <div className="press-hero-actions">
+      <button>Download Press Kit</button>
+      <button>Media Enquiries</button>
+    </div>
   </div>
 </section>
 

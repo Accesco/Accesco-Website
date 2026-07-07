@@ -9,14 +9,14 @@
 /* ── HERO ── */
 .lib-hero {
   position: relative;
-  min-height: 500px;
+ min-height:560px;
   background: #AA0152;
 
   display: flex;
   justify-content: center;
   align-items: center;
 
-  padding: 60px 80px;
+   padding:90px 24px 70px;
   overflow: hidden;
 }
 .lib-hero::before {
@@ -24,7 +24,10 @@
   position: absolute;
   inset: 0;
 
-  background: url("/images/waves.png") center bottom / cover no-repeat;
+  background-image: url("/images/black-pink.png");
+background-size: cover;
+background-repeat: no-repeat;
+background-position: center -15px;
 
   z-index: 1;
   pointer-events: none;
@@ -46,20 +49,97 @@
 .lib-hero-content {
   position: relative;
   z-index: 2;
-  max-width: 720px;
+  max-width: 900px;
+   width: 100%;
+    text-align: center;
+    margin-top:65px;
   color: #fff;
+}
+.lib-search-bar button{
+    padding:12px 30px;
+    font-size:14px;
+    font-weight:700;
 }
 
 
 
-.lib-hero-center h1 {
-  font-family: inherit;
-  font-weight: 800;
-  font-size: clamp(64px, 15vw, 190px);
-  line-height: 0.82;
-  letter-spacing: -6px;
+.lib-hero-content h1 {
+  font-family: inherit; /* Baloo from layout */
+  font-weight: 700;
+  font-size: clamp(4rem, 7vw, 5.8rem); /* ~64px-92px */
+  line-height: 0.95;
+  letter-spacing: -2px;
   color: #fff;
-  margin: 0;
+  margin: 0 0 22px;
+}
+
+.lib-hero-content p {
+  max-width: 620px;
+  margin: 0 auto 34px;
+
+  font-family: "Inter", sans-serif;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.6;
+  color: rgba(255,255,255,.82);
+}
+.lib-search-bar {
+  width: min(620px, 100%);
+  margin: 0 auto;
+
+  display: flex;
+  align-items: center;
+
+  padding: 6px;
+  border-radius: 999px;
+
+  background: rgba(18, 8, 18, 0.85);
+  border: 1px solid rgba(255,255,255,0.15);
+
+  backdrop-filter: blur(10px);
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,.04),
+    0 8px 24px rgba(0,0,0,.25);
+}
+
+.lib-search-bar input {
+  flex: 1;
+
+  background: transparent;
+  border: none;
+  outline: none;
+
+  padding: 0 22px;
+
+  color: #fff;
+  font-size: 15px;
+  font-family: "Inter", sans-serif;
+}
+
+.lib-search-bar input::placeholder {
+  color: rgba(255,255,255,.55);
+}
+
+.lib-search-bar button {
+  border: none;
+  outline: none;
+
+  padding: 13px 28px;
+  border-radius: 999px;
+
+  background: linear-gradient(135deg, #ff4fa5, #ff2b8d);
+  color: #fff;
+
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+
+  transition: .25s;
+}
+
+.lib-search-bar button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(255, 67, 153, .4);
 }
 @media (max-width: 768px) {
   .lib-hero {

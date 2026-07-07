@@ -24,7 +24,7 @@ import {
   Trash2,
   ListFilter
 } from 'lucide-react';
-
+import Image from "next/image";
 import { useRouter } from 'next/navigation';
 export default function XpenseIntro() {
   // Page routing state ('intro' | 'meter')
@@ -413,9 +413,21 @@ const navigateToDashboard = () => {
           {/* LEFT HERO CARD */}
           <div className="left-hero-card">
             <div>
-              <h1 className="hero-heading">
-                Introducing<br />Xpense Meter!
-              </h1>
+ <h1 className="hero-heading">
+  <div className="hero-heading-top">
+    <span>Introducing</span>
+
+    <Image
+      src="/images/asterik.png"
+      alt=""
+      width={30}
+      height={30}
+      className="hero-asterisk"
+    />
+  </div>
+
+  <div>Xpense Meter!</div>
+</h1>
               <p className="hero-subtitle">
                 Your smart spending companion for Grocery, Food & Fashion - all in one place.
               </p>
