@@ -10,6 +10,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import SwadishttHeader from '../components/SwadishttHeader';
+import { useSwadishtt } from '../contexts/SwadishttContext';
 import styles from './orders.module.css';
 
 const ORDERS_STORAGE_KEY = 'swadishtt-orders';
@@ -36,7 +37,15 @@ function normalizeStatus(value) {
 
 export default function SwadishttOrdersPage() {
   const router = useRouter();
+  const { reorder } = useSwadishtt();
   const [orders, setOrders] = useState([]);
+
+  // "Order Again": re-add all of a past order's items to the cart, then open it.
+  const handleReorder = (e, order) => {
+    e.stopPropagation();
+    reorder(order.items || []);
+    router.push('/services/swadisht');
+  };
   const [profile, setProfile] = useState({
     name: '',
     phone: '',
@@ -224,6 +233,18 @@ export default function SwadishttOrdersPage() {
                           <div className={styles.footerTotal}>Rs {totalValue}</div>
                         </div>
                       </div>
+
+                      <button
+                        type="button"
+                        onClick={(e) => handleReorder(e, order)}
+                        style={{
+                          marginTop: '12px', width: '100%', padding: '10px 12px',
+                          background: '#0F8A65', color: '#fff', border: 'none',
+                          borderRadius: '10px', fontWeight: 700, fontSize: '14px', cursor: 'pointer',
+                        }}
+                      >
+                        Order Again
+                      </button>
                     </article>
                   );
                 })}

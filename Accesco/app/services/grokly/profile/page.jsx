@@ -72,6 +72,15 @@ function GroklyProfileInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
+  // "Order Again": re-add all of a past order's items to the cart, then open it.
+  const handleReorder = (order) => {
+    (order.items || []).forEach(item => {
+      if (item?.id) addToCart(item.id, item.quantity || 1);
+    });
+    openCart();
+    router.push('/services/grokly');
+  };
+
   // Navigation states
   // 'profile' | 'baskets' | 'basket-detail' | 'wishlist'
   const [currentView, setCurrentView] = useState('profile');
@@ -463,9 +472,19 @@ function GroklyProfileInner() {
                         <div className={styles.orderStatus} data-status={order.status}>
                           {order.status.replace(/_/g, ' ')}
                         </div>
-                        <Link href={`/services/grokly/order-tracking?id=${order.id}`} className={styles.trackLink}>
-                          Track Order
-                        </Link>
+                        <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                          <button
+                            type="button"
+                            onClick={() => handleReorder(order)}
+                            className={styles.trackLink}
+                            style={{ border: 'none', cursor: 'pointer', background: '#0c831f', color: '#fff' }}
+                          >
+                            Order Again
+                          </button>
+                          <Link href={`/services/grokly/order-tracking?id=${order.id}`} className={styles.trackLink}>
+                            Track Order
+                          </Link>
+                        </div>
                       </div>
                     ))}
                   </div>
