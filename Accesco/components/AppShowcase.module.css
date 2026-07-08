@@ -471,3 +471,14 @@
     height: 11%;
   }
 }
+.brandAsterisk {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+   filter: brightness(0) saturate(100%)
+          invert(12%) sepia(92%)
+          saturate(5435%)
+          hue-rotate(323deg)
+          brightness(81%)
+          contrast(111%);
+}

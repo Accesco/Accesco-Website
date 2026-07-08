@@ -238,13 +238,13 @@ export default function AppShowcase() {
         {/* Right Panel: Clean Form Wrapper */}
         <div className={styles.rightPanel}>
           
-          <div className={styles.brandLogoRow}>
-            <svg width="90" height="24" viewBox="0 0 90 24" fill="none">
-              <path d="M6 12L9 15L14 9" stroke="#7A0042" strokeWidth="2" />
-              <circle cx="10" cy="12" r="8" stroke="#7A0042" strokeWidth="2" fill="none" />
-              
-            </svg>
-          </div>
+         <div className={styles.brandLogoRow}>
+  <img
+    src="/images/asterik.png"
+    alt="Accesco mark"
+    className={styles.brandAsterisk}
+  />
+</div>
 
           <h3 className={styles.cardTitle}>Get Early Access</h3>
           
