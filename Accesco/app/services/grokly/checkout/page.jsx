@@ -140,7 +140,7 @@ export default function GroklyCheckout() {
   const discount = deliverySpeed === 'batched' ? 20 : 0;
   const total = Math.max(0, subtotal + deliveryFee + 2 - discount);
 
-  const handlePlaceOrder = () => {
+  const handlePlaceOrder = async () => {
     setIsProcessing(true);
     const resolvedEta = deliverySpeed === 'batched' ? (eta ? eta + 15 : 25) : eta;
     const order = placeOrder({
@@ -150,7 +150,7 @@ export default function GroklyCheckout() {
       deliverySpeed,
       discount,
       eta: resolvedEta,
-      items: cartItems.map(i => ({ id: i.product.id, name: i.product.name, price: i.product.price, quantity: i.quantity })),
+      items: cartItems.map(i => ({ id: i.product.id, name: i.product.name, price: i.product.price, quantity: i.quantity, sku: i.product.sku || '' })),
       paymentMethod: 'UPI',
       address: customerDetails.address,
       customerName: customerDetails.name,
@@ -158,6 +158,46 @@ export default function GroklyCheckout() {
       customerEmail: user?.email || null,
       userId: user?.uid || user?.id || null,
     });
+
+    let customerEmail = user?.email;
+    if (!customerEmail) {
+      try {
+        const storedUser = JSON.parse(localStorage.getItem('accesco_user') || '{}');
+        if (storedUser.email) customerEmail = storedUser.email;
+      } catch {}
+    }
+
+    if (customerEmail) {
+      try {
+        await fetch('/api/grokly/orders/confirm', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            orderId: order.id,
+            customerEmail,
+            customerName: customerDetails.name,
+            orderData: {
+              items: cartItems.map(i => ({
+                name: i.product.name,
+                price: i.product.price,
+                quantity: i.quantity,
+                sku: i.product.sku || ''
+              })),
+              totals: {
+                subtotal,
+                deliveryFee,
+                total
+              },
+              address: customerDetails.address,
+              paymentMethod: 'UPI',
+              eta: resolvedEta
+            }
+          })
+        });
+      } catch (err) {
+        console.error('Failed to trigger confirmation email for Grokly:', err);
+      }
+    }
 
     setTimeout(() => {
       setIsProcessing(false);

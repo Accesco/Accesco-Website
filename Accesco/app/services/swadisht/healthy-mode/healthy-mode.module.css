@@ -1,258 +1,130 @@
-/* Healthy Mode Page - Calorie & Nutrition Aware Meals */
+/* ── Healthy Mode Page — Premium Redesign ── */
 
 .pageContent {
   min-height: 100vh;
-  background: #ffffff;
-  padding-top: 72px;
+  background: #FAF9F8;
+  padding-top: 80px;
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
 }
 
-/* Hero Section */
+/* ── Hero Section ── */
 .hero {
-  background: #ffffff;
-  padding: 40px 24px;
+  background: linear-gradient(180deg, #FFF9F5 0%, #FAF9F8 100%);
+  padding: 48px 24px 32px;
   text-align: center;
-  border-bottom: 1px solid #E8E8E8;
+  border-bottom: 1px solid rgba(107, 29, 58, 0.06);
+  position: relative;
 }
+.healthTopBar {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 18px;
+}
+.exitHealthBtn {
+  background: #6B1D3A;
+  color: #ffffff;
+  border: none;
+  padding: 8px 18px;
+  border-radius: 99px;
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(107, 29, 58, 0.2);
+  transition: opacity 0.2s;
+}
+.exitHealthBtn:hover { opacity: 0.88; }
 
 .heroTitle {
-  font-size: 32px;
-  font-weight: 600;
-  margin-bottom: 12px;
-  color: #1C1C1C;
-  letter-spacing: -0.01em;
+  font-size: clamp(26px, 4vw, 38px);
+  font-weight: 850;
+  margin-bottom: 8px;
+  color: #6B1D3A;
+  letter-spacing: -0.02em;
 }
-
 .heroSub {
-  font-size: 16px;
-  color: #696969;
-  max-width: 600px;
+  font-size: 15px;
+  color: #6B5E65;
+  max-width: 540px;
   margin: 0 auto;
   line-height: 1.5;
 }
 
-/* Container */
+/* ── Container ── */
 .container {
-  max-width: 1200px;
+  max-width: 1000px;
   margin: 0 auto;
-  padding: 40px 24px;
+  padding: 32px 24px 80px;
 }
 
-/* Goal Section */
-.goalSection {
-  margin-bottom: 40px;
-}
-
-.sectionTitle {
-  font-size: 28px;
-  font-weight: 700;
-  color: #1C1C1C;
-  margin-bottom: 24px;
-  letter-spacing: -0.01em;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.dishCount {
-  font-size: 16px;
-  color: #696969;
-  font-weight: 500;
-}
-
-/* Horizontal Scroll Container */
-.goalScrollContainer {
-  position: relative;
-  overflow-x: auto;
-  overflow-y: hidden;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-  margin: 0 -24px;
-  padding: 0 24px;
-}
-
-.goalScrollContainer::-webkit-scrollbar {
-  display: none;
-}
-
-.goalRow {
-  display: flex;
-  gap: 16px;
-  padding-bottom: 8px;
-}
-
-.goalCard {
-  background: #ffffff;
-  border: 2px solid #E8E8E8;
-  border-radius: 20px;
-  padding: 24px 20px;
-  cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 12px;
-  text-align: center;
-  min-width: 160px;
-  flex-shrink: 0;
-  position: relative;
-  overflow: hidden;
-}
-
-.goalCard::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: var(--goal-color);
-  opacity: 0;
-  transition: opacity 0.3s ease;
-  z-index: 0;
-}
-
-.goalCard:hover {
-  border-color: var(--goal-color);
-  transform: translateY(-6px) scale(1.02);
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
-}
-
-.goalCard:hover::before {
-  opacity: 0.05;
-}
-
-.goalActive {
-  background: var(--goal-color);
-  border-color: var(--goal-color);
-  color: #ffffff;
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2);
-  transform: translateY(-6px) scale(1.05);
-}
-
-.goalActive::before {
-  opacity: 0;
-}
-
-.goalActive .goalIconWrapper {
-  background: rgba(255, 255, 255, 0.2);
-  border-color: rgba(255, 255, 255, 0.3);
-}
-
-.goalActive .goalIconWrapper svg {
-  stroke: #ffffff;
-}
-
-.goalIconWrapper {
-  width: 64px;
-  height: 64px;
-  border-radius: 50%;
-  background: #F8F9FA;
-  border: 2px solid #E8E8E8;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.3s ease;
-  position: relative;
-  z-index: 1;
-}
-
-.goalIconWrapper svg {
-  width: 32px;
-  height: 32px;
-  stroke: var(--goal-color);
-  transition: all 0.3s ease;
-}
-
-.goalLabel {
-  font-size: 15px;
-  font-weight: 700;
-  letter-spacing: -0.01em;
-  position: relative;
-  z-index: 1;
-}
-
-.goalCalories {
-  font-size: 12px;
-  opacity: 0.8;
-  font-weight: 600;
-  position: relative;
-  z-index: 1;
-}
-
-/* Calorie Tracker */
+/* ── Calorie Tracker Card ── */
 .trackerCard {
   background: #ffffff;
-  border-radius: 16px;
-  padding: 28px;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
-  margin-bottom: 40px;
+  border-radius: 24px;
+  padding: 32px;
+  border: 1px solid rgba(107, 29, 58, 0.08);
+  box-shadow: 0 10px 35px rgba(107,29,58,0.04);
+  margin-bottom: 36px;
 }
-
 .trackerHeader {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 20px;
+  align-items: center;
+  margin-bottom: 24px;
 }
-
 .trackerTitle {
-  font-size: 22px;
-  font-weight: 700;
-  color: #1C1C1C;
-  margin-bottom: 4px;
-  letter-spacing: -0.01em;
+  font-size: 20px;
+  font-weight: 800;
+  color: #1A1518;
+  margin: 0 0 4px;
+  letter-spacing: -0.02em;
 }
-
 .trackerGoal {
-  font-size: 14px;
-  color: #696969;
+  font-size: 13px;
+  color: #6B5E65;
+  margin: 0;
 }
-
 .trackerNumbers {
   display: flex;
   align-items: baseline;
-  gap: 4px;
+  gap: 5px;
 }
-
 .consumed {
-  font-size: 36px;
-  font-weight: 700;
-  color: #1C8B3C;
+  font-size: 38px;
+  font-weight: 900;
+  color: #10B981;
 }
-
 .trackerSep {
-  font-size: 24px;
-  color: #CFCFCF;
+  font-size: 22px;
+  color: #DCD6D9;
 }
-
 .total {
-  font-size: 28px;
-  font-weight: 600;
-  color: #696969;
+  font-size: 24px;
+  font-weight: 700;
+  color: #6B5E65;
 }
-
 .calLabel {
-  font-size: 14px;
-  color: #696969;
-  margin-left: 4px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #6B5E65;
+  margin-left: 2px;
 }
 
 /* Progress Bar */
 .progressBar {
   width: 100%;
-  height: 12px;
-  background: #E8E8E8;
-  border-radius: 6px;
+  height: 10px;
+  background: #F3EEF0;
+  border-radius: 99px;
   overflow: hidden;
-  margin-bottom: 20px;
+  margin-bottom: 24px;
 }
-
 .progressFill {
   height: 100%;
-  background: #1C8B3C;
-  border-radius: 6px;
-  transition: all 0.3s ease;
+  background: linear-gradient(90deg, #10B981, #34D399);
+  border-radius: 99px;
+  transition: width 0.4s ease;
 }
 
 /* Tracker Stats */
@@ -261,447 +133,224 @@
   grid-template-columns: repeat(3, 1fr);
   gap: 16px;
 }
-
 .trackerStat {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 4px;
-  padding: 12px;
-  background: #F8F9FA;
-  border-radius: 8px;
+  padding: 14px;
+  background: #FDFCFC;
+  border: 1px solid rgba(107, 29, 58, 0.05);
+  border-radius: 14px;
 }
-
 .statValue {
-  font-size: 24px;
-  font-weight: 700;
+  font-size: 22px;
+  font-weight: 800;
+  color: #1A1518;
 }
-
 .statLabel {
-  font-size: 12px;
-  color: #696969;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-/* Dishes Section */
-.dishesSection {
-  margin-bottom: 60px;
-}
-
-.dishGrid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: 24px;
-}
-
-/* Dish Card */
-.dishCard {
-  background: #ffffff;
-  border: 1px solid #E8E8E8;
-  border-radius: 16px;
-  overflow: hidden;
-  transition: all 0.3s ease;
-}
-
-.dishCard:hover {
-  box-shadow: 0 12px 32px rgba(0,0,0,0.12);
-  border-color: #CFCFCF;
-  transform: translateY(-8px);
-}
-
-.dishImageWrap {
-  position: relative;
-  width: 100%;
-  height: 200px;
-  overflow: hidden;
-  background: #F8F8F8;
-}
-
-.dishImageWrap img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 0.3s ease;
-}
-
-.dishCard:hover .dishImageWrap img {
-  transform: scale(1.05);
-}
-
-.healthScoreBadge {
-  position: absolute;
-  top: 12px;
-  left: 12px;
-  background: #1C8B3C;
-  color: #ffffff;
-  padding: 6px 12px;
-  border-radius: 20px;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 700;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  color: #9E9399;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
 }
 
-.vegBadge {
-  position: absolute;
-  top: 12px;
-  right: 12px;
-  background: #ffffff;
-  padding: 6px;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+/* Member Calories List */
+.memberCaloriesList {
+  margin-top: 24px;
+  padding-top: 24px;
+  border-top: 1px solid rgba(107, 29, 58, 0.08);
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 14px;
 }
-
-.vegDot {
-  display: block;
-  width: 12px;
-  height: 12px;
-  border: 2px solid #0F8A65;
-  border-radius: 3px;
-}
-
-.nonVegDot {
-  display: block;
-  width: 12px;
-  height: 12px;
-  border: 2px solid #E23744;
-  border-radius: 3px;
-}
-
-.dishContent {
-  padding: 20px;
-}
-
-.dishHeader {
+.memberCaloriesCard {
+  background: #FFF5F5;
+  border: 1px solid rgba(107, 29, 58, 0.08);
+  border-radius: 14px;
+  padding: 14px 18px;
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 16px;
-}
-
-.dishName {
-  font-size: 20px;
-  font-weight: 700;
-  color: #1C1C1C;
-  margin-bottom: 4px;
-  letter-spacing: -0.01em;
-  flex: 1;
-}
-
-.dishRestaurant {
-  font-size: 13px;
-  color: #696969;
-}
-
-.dishPrice {
-  font-size: 20px;
-  font-weight: 700;
-  color: #1C8B3C;
-  flex-shrink: 0;
-}
-
-/* Macro Row */
-.macroRow {
-  display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 14px;
-  background: #F8F9FA;
-  border-radius: 8px;
-  margin-bottom: 16px;
 }
-
-.macro {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2px;
-  flex: 1;
-}
-
-.macroVal {
-  font-size: 16px;
-  font-weight: 700;
-  color: #1C1C1C;
-}
-
-.macroLabel {
-  font-size: 11px;
-  color: #696969;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.macroDivider {
-  width: 1px;
-  height: 32px;
-  background: #E8E8E8;
-}
-
-/* Tag Row */
-.tagRow {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-bottom: 16px;
-}
-
-.dishTag {
-  background: #E8F5E9;
-  color: #1C8B3C;
-  padding: 6px 12px;
-  border-radius: 16px;
-  font-size: 11px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  border: 1px solid #C8E6C9;
-}
-
-/* Vitamin Row */
-.vitaminRow {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 16px;
-  flex-wrap: wrap;
-}
-
-.vitaminLabel {
-  font-size: 12px;
-  font-weight: 700;
-  color: #696969;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.vitaminBadge {
-  background: #FFF3E0;
-  color: #E65100;
-  padding: 4px 10px;
-  border-radius: 12px;
-  font-size: 11px;
-  font-weight: 700;
-  border: 1px solid #FFE0B2;
-}
-
-/* Add Button */
-.addBtn {
-  width: 100%;
-  background: #1C8B3C;
-  color: #ffffff;
-  border: none;
-  padding: 14px;
-  border-radius: 12px;
-  font-size: 16px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.addBtn:hover {
-  background: #0F8A65;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(28,139,60,0.3);
-}
-
-/* Tips Section */
-.tipsSection {
-  margin-top: 60px;
-  padding-top: 60px;
-  border-top: 1px solid #E8E8E8;
-}
-
-.tipsGrid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: 24px;
-}
-
-.tipCard {
-  background: #ffffff;
-  border: 2px solid #E8E8E8;
-  border-radius: 16px;
-  padding: 28px;
-  transition: all 0.3s ease;
-  position: relative;
-  overflow: hidden;
-}
-
-.tipCard::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 4px;
-  height: 100%;
-  background: linear-gradient(180deg, #1C8B3C, #10b981);
-  transform: scaleY(0);
-  transform-origin: top;
-  transition: transform 0.3s ease;
-}
-
-.tipCard:hover {
-  box-shadow: 0 12px 32px rgba(0,0,0,0.12);
-  border-color: #1C8B3C;
-  transform: translateY(-4px);
-}
-
-.tipCard:hover::before {
-  transform: scaleY(1);
-}
-
-.tipTitle {
-  font-size: 20px;
-  font-weight: 700;
-  color: #1C1C1C;
-  margin: 0 0 12px 0;
-  letter-spacing: -0.01em;
-}
-
-.tipText {
-  font-size: 15px;
-  color: #696969;
-  line-height: 1.7;
-  margin: 0;
-}
-.healthTopBar {
-  display: flex;
-  justify-content: flex-end;
-  margin-bottom: 20px;
-}
-
-.exitHealthBtn {
-  background: #E23744;
-  color: #ffffff;
-  border: none;
-  padding: 10px 16px;
-  border-radius: 999px;
+.memberCaloriesCard span {
   font-size: 13px;
   font-weight: 700;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  box-shadow: 0 4px 14px rgba(226, 55, 68, 0.25);
+  color: #1A1518;
+}
+.memberCaloriesCard strong {
+  font-size: 16px;
+  font-weight: 800;
+  color: #6B1D3A;
 }
 
-.exitHealthBtn:hover {
-  background: #C62828;
-  transform: translateY(-2px);
+/* ── Form Overlay & Card ── */
+.formOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(26,21,24,0.45);
+  backdrop-filter: blur(4px);
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
 }
 .healthFormCard {
   background: #ffffff;
-  border: 1px solid rgba(226, 55, 68, 0.18);
+  border: 1px solid rgba(107, 29, 58, 0.1);
   border-radius: 24px;
-  padding: 28px;
-  margin-bottom: 42px;
-  box-shadow: 0 18px 45px rgba(226, 55, 68, 0.08);
+  padding: 32px;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.15);
+  width: min(100%, 720px);
+  max-height: 85vh;
+  overflow-y: auto;
 }
-
 .formHeader {
   margin-bottom: 24px;
 }
-
+.formHeaderTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
 .formBadge {
-  display: inline-flex;
-  background: rgba(226, 55, 68, 0.12);
-  color: #e23744;
-  padding: 7px 14px;
-  border-radius: 999px;
-  font-size: 13px;
+  background: rgba(107, 29, 58, 0.07);
+  color: #6B1D3A;
+  padding: 5px 12px;
+  border-radius: 99px;
+  font-size: 11px;
   font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
   margin-bottom: 12px;
 }
-
+.closeFormBtn {
+  background: none;
+  border: none;
+  font-size: 26px;
+  cursor: pointer;
+  color: #9E9399;
+  line-height: 1;
+  padding: 0 4px;
+}
 .formHeader h2 {
-  font-size: 32px;
-  margin: 0 0 8px;
-  color: #1c1c1c;
+  font-size: 24px;
+  font-weight: 850;
+  color: #1A1518;
+  margin: 0 0 6px;
+  letter-spacing: -0.02em;
 }
-
 .formHeader p {
+  font-size: 14px;
+  color: #6B5E65;
   margin: 0;
-  font-size: 15px;
-  color: #696969;
 }
 
+/* Member Form Block */
+.memberBlock {
+  border: 1px solid rgba(107, 29, 58, 0.08);
+  border-radius: 18px;
+  padding: 20px;
+  margin-bottom: 18px;
+  background: #FDFCFC;
+}
+.memberBlock h3 {
+  margin: 0 0 16px;
+  font-size: 15px;
+  font-weight: 800;
+  color: #6B1D3A;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
 .formGrid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 18px;
-  margin-bottom: 24px;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  margin-bottom: 16px;
 }
-
 .formGroup {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
 }
-
 .formGroup label {
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 700;
-  color: #1c1c1c;
+  color: #1A1518;
 }
-
 .formGroup input,
 .formGroup select {
   width: 100%;
-  height: 52px;
-  border: 1px solid #e8e8e8;
-  border-radius: 14px;
+  height: 48px;
+  border: 1px solid #EAE6E8;
+  border-radius: 12px;
   padding: 0 14px;
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 600;
-  color: #1c1c1c;
+  color: #1A1518;
   background: #ffffff;
   outline: none;
+  transition: border-color 0.2s;
 }
-
 .formGroup input:focus,
 .formGroup select:focus {
-  border-color: #e23744;
-  box-shadow: 0 0 0 4px rgba(226, 55, 68, 0.1);
+  border-color: #6B1D3A;
 }
 
 .preferenceSection {
-  margin-top: 8px;
+  margin-top: 14px;
 }
-
 .preferenceSection h3 {
-  font-size: 18px;
-  margin: 0 0 14px;
-  color: #1c1c1c;
+  font-size: 13px;
+  font-weight: 750;
+  color: #1A1518;
+  margin-bottom: 10px;
 }
-
 .preferenceGrid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 12px;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
 }
-
 .preferenceOption {
-  min-height: 52px;
-  border: 1px solid #e8e8e8;
-  border-radius: 14px;
-  padding: 0 14px;
   display: flex;
   align-items: center;
-  gap: 10px;
-  background: #fff;
-  cursor: pointer;
-  font-size: 14px;
+  gap: 8px;
+  border: 1px solid #EAE6E8;
+  border-radius: 11px;
+  height: 44px;
+  padding: 0 12px;
+  font-size: 13px;
   font-weight: 600;
-  color: #333;
-  text-transform: capitalize;
+  color: #6B5E65;
+  cursor: pointer;
+  background: #ffffff;
+  transition: all 0.2s;
 }
-
 .preferenceOption:hover {
-  border-color: rgba(226, 55, 68, 0.45);
-  background: #fff4f5;
+  border-color: #6B1D3A;
+  background: rgba(107, 29, 58, 0.03);
+}
+.preferenceOption input {
+  accent-color: #6B1D3A;
 }
 
-.preferenceOption input {
-  accent-color: #e23744;
+.addMemberBtn {
+  background: #fff;
+  color: #6B1D3A;
+  border: 1px dashed rgba(107, 29, 58, 0.4);
+  border-radius: 14px;
+  padding: 12px;
+  font-size: 13px;
+  font-weight: 750;
+  cursor: pointer;
+  width: 100%;
+  margin-top: 8px;
+  transition: background 0.2s;
+}
+.addMemberBtn:hover {
+  background: rgba(107, 29, 58, 0.04);
 }
 
 .formActions {
@@ -709,370 +358,57 @@
   justify-content: flex-end;
   margin-top: 24px;
 }
-
 .submitHealthBtn {
-  background: #e23744;
+  background: #6B1D3A;
   color: #ffffff;
   border: none;
-  border-radius: 14px;
-  padding: 14px 24px;
-  font-size: 14px;
+  border-radius: 12px;
+  padding: 13px 28px;
+  font-size: 13px;
   font-weight: 800;
   cursor: pointer;
   text-transform: uppercase;
-  letter-spacing: 0.03em;
-  box-shadow: 0 10px 24px rgba(226, 55, 68, 0.25);
+  letter-spacing: 0.04em;
+  box-shadow: 0 6px 20px rgba(107,29,58,0.25);
+  transition: opacity 0.2s;
 }
-
-.submitHealthBtn:hover {
-  background: #c62828;
-  transform: translateY(-2px);
-}
-.formOverlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(28, 28, 28, 0.45);
-  z-index: 999;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 24px;
-}
-
-.formOverlay .healthFormCard {
-  width: min(100%, 980px);
-  max-height: 90vh;
-  overflow-y: auto;
-  margin-bottom: 0;
-}
+.submitHealthBtn:hover { opacity: 0.88; }
 .submitHealthBtn:disabled {
-  opacity: 0.65;
+  opacity: 0.5;
   cursor: not-allowed;
-  transform: none;
 }
+
+/* ── Results Row Actions ── */
 .healthActionRow {
   display: flex;
   justify-content: flex-end;
-  margin-bottom: 16px;
+  margin-bottom: 20px;
 }
-
 .editProfileBtn {
-  background: #fff4f5;
-  color: #e23744;
-  border: 1px solid rgba(226, 55, 68, 0.25);
-  padding: 10px 16px;
-  border-radius: 999px;
-  font-size: 13px;
-  font-weight: 800;
+  background: #ffffff;
+  color: #6B1D3A;
+  border: 1px solid rgba(107, 29, 58, 0.2);
+  padding: 8px 18px;
+  border-radius: 99px;
+  font-size: 12px;
+  font-weight: 750;
   cursor: pointer;
+  transition: all 0.2s;
 }
-
 .editProfileBtn:hover {
-  background: #e23744;
+  background: #6B1D3A;
   color: #ffffff;
 }
-.healthActionRow {
-  display: flex;
-  justify-content: flex-end;
-  margin-bottom: 16px;
-}
 
-.editProfileBtn {
-  background: #fff4f5;
-  color: #e23744;
-  border: 1px solid rgba(226, 55, 68, 0.25);
-  padding: 10px 16px;
-  border-radius: 999px;
-  font-size: 13px;
-  font-weight: 800;
-  cursor: pointer;
-}
-
-.insightLoading {
-  color: #696969;
-  font-size: 14px;
-  margin-bottom: 20px;
-}
-
-.insightCard {
-  background: #fff4f5;
-  border: 1px solid rgba(226, 55, 68, 0.2);
-  border-radius: 18px;
-  padding: 18px;
-  margin-bottom: 28px;
-}
-
-.insightBadge {
-  display: inline-flex;
-  background: #e23744;
-  color: #fff;
-  padding: 6px 12px;
-  border-radius: 999px;
-  font-size: 12px;
-  font-weight: 800;
-  margin-bottom: 12px;
-}
-
-.insightCard pre {
-  white-space: pre-wrap;
-  font-size: 13px;
-  color: #1c1c1c;
-}
-/* Responsive Design */
+/* Responsive */
 @media (max-width: 768px) {
-  .pageContent {
-    padding-top: 116px;
-  }
-  
-  .hero {
-    padding: 32px 16px;
-  }
-  
-  .heroTitle {
-    font-size: 24px;
-  }
-  
-  .heroSub {
-    font-size: 14px;
-  }
-  
-  .container {
-    padding: 32px 16px;
-  }
-  
-  .sectionTitle {
-    font-size: 24px;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 8px;
-  }
-  
-  .goalScrollContainer {
-    margin: 0 -16px;
-    padding: 0 16px;
-  }
-  
-  .goalRow {
-    gap: 12px;
-  }
-  
-  .goalCard {
-    padding: 20px 16px;
-    min-width: 140px;
-  }
-  
-  .goalIconWrapper {
-    width: 56px;
-    height: 56px;
-  }
-  
-  .goalIconWrapper svg {
-    width: 28px;
-    height: 28px;
-  }
-  
-  .goalLabel {
-    font-size: 14px;
-  }
-  
-  .goalCalories {
-    font-size: 11px;
-  }
-  
-  .trackerCard {
-    padding: 20px;
-  }
-  
-  .trackerHeader {
-    flex-direction: column;
-    gap: 16px;
-  }
-  
-  .trackerTitle {
-    font-size: 20px;
-  }
-  
-  .consumed {
-    font-size: 28px;
-  }
-  
-  .total {
-    font-size: 24px;
-  }
-  
-  .trackerStats {
-    gap: 12px;
-  }
-  
-  .statValue {
-    font-size: 20px;
-  }
-  
-  .dishGrid {
-    grid-template-columns: 1fr;
-    gap: 20px;
-  }
-  
-  .tipsSection {
-    margin-top: 48px;
-    padding-top: 48px;
-  }
-  
-  .tipsGrid {
-    grid-template-columns: 1fr;
-    gap: 20px;
-  }
-  
-  .tipCard {
-    padding: 24px;
-  }
-  
-  .tipTitle {
-    font-size: 18px;
-  }
-  
-  .tipText {
-    font-size: 14px;
-  }
-}
-
-@media (max-width: 640px) {
-  .pageContent {
-    padding-top: 106px;
-  }
-  
-  .heroTitle {
-    font-size: 28px;
-  }
-  
-  .heroSub {
-    font-size: 16px;
-  }
-  
-  .goalScrollContainer {
-    margin: 0 -12px;
-    padding: 0 12px;
-  }
-  
-  .goalCard {
-    min-width: 130px;
-    padding: 18px 14px;
-  }
-  
-  .goalIconWrapper {
-    width: 52px;
-    height: 52px;
-  }
-  
-  .goalIconWrapper svg {
-    width: 26px;
-    height: 26px;
-  }
-  
-  .trackerTitle {
-    font-size: 18px;
-  }
-  
-  .consumed {
-    font-size: 24px;
-  }
-  
-  .total {
-    font-size: 20px;
-  }
-  
-  .trackerStats {
-    grid-template-columns: 1fr;
-  }
-  
-  .dishName {
-    font-size: 18px;
-  }
-  
-  .macroRow {
-    padding: 12px;
-  }
-  
-  .macroVal {
-    font-size: 14px;
-  }
-  .healthFormCard {
-  padding: 20px;
-  border-radius: 20px;
-}
-
-.formHeader h2 {
-  font-size: 24px;
-}
-
-.formGrid,
-.preferenceGrid {
-  grid-template-columns: 1fr;
-}
-
-.formActions {
-  justify-content: stretch;
-}
-
-.submitHealthBtn {
-  width: 100%;
-}
-}
-.memberBlock {
-  border: 1px solid #e8e8e8;
-  border-radius: 18px;
-  padding: 18px;
-  margin-bottom: 20px;
-  background: #fff;
-}
-
-.memberBlock h3 {
-  margin: 0 0 16px;
-  font-size: 18px;
-  color: #1c1c1c;
-}
-
-.addMemberBtn {
-  background: #fff4f5;
-  color: #e23744;
-  border: 1px dashed rgba(226, 55, 68, 0.45);
-  border-radius: 14px;
-  padding: 13px 18px;
-  font-size: 14px;
-  font-weight: 800;
-  cursor: pointer;
-  width: 100%;
-  margin-top: 8px;
-}
-
-.addMemberBtn:hover {
-  background: #e23744;
-  color: #fff;
-}
-.memberCaloriesList {
-  margin-top: 22px;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 14px;
-}
-
-.memberCaloriesCard {
-  background: #fff4f5;
-  border: 1px solid rgba(226, 55, 68, 0.18);
-  border-radius: 14px;
-  padding: 14px 16px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.memberCaloriesCard span {
-  font-size: 14px;
-  font-weight: 700;
-  color: #1c1c1c;
-}
-
-.memberCaloriesCard strong {
-  font-size: 18px;
-  color: #e23744;
+  .pageContent { padding-top: 72px; }
+  .hero { padding: 32px 16px 24px; }
+  .container { padding: 20px 16px 60px; }
+  .trackerCard { padding: 20px; }
+  .trackerHeader { flex-direction: column; gap: 12px; align-items: flex-start; }
+  .trackerStats { grid-template-columns: 1fr; }
+  .formGrid { grid-template-columns: 1fr; }
+  .preferenceGrid { grid-template-columns: 1fr; }
+  .healthFormCard { padding: 20px; }
 }

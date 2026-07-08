@@ -16,16 +16,7 @@ import styles from './styles/swadisht-main.module.css';
 import CategorySection from './components/CategorySection';
 import Image from 'next/image';
 import JsonLd from '../../../components/JsonLd';
-// Hero Section Component
-function HeroSection() {
-  const [activeTab, setActiveTab] = useState('delivery');
-  
- return (
-  <div className={styles.hero}>
 
-  </div>
-);
-}
 
 // Filter Bar Component
 function FilterBar({ filters, onFilterChange }) {
@@ -69,15 +60,24 @@ function FilterBar({ filters, onFilterChange }) {
           Pure Veg
         </button>
         
-        <button className={styles.filterChip}>
+        <button 
+          className={`${styles.filterChip} ${filters.offers ? styles.active : ''}`}
+          onClick={() => onFilterChange({ offers: !filters.offers })}
+        >
           Offers
         </button>
         
-        <button className={styles.filterChip}>
+        <button 
+          className={`${styles.filterChip} ${filters.outdoorSeating ? styles.active : ''}`}
+          onClick={() => onFilterChange({ outdoorSeating: !filters.outdoorSeating })}
+        >
           Outdoor Seating
         </button>
         
-        <button className={styles.filterChip}>
+        <button 
+          className={`${styles.filterChip} ${filters.openNow ? styles.active : ''}`}
+          onClick={() => onFilterChange({ openNow: !filters.openNow })}
+        >
           Open Now
         </button>
       </div>
@@ -154,57 +154,69 @@ function DiscoverFeatures() {
     <section className={styles.discoverSection}>
       <div className={styles.featureGrid}>
         
-        <Link href="/services/swadisht/swipe-eat" className={styles.featureCard}>
+        <div className={styles.featureCard}>
           <h3>SwipeEat Discovery</h3>
           <p>Swipe through dishes and discover your next favourite meal.</p>
-          <span>Try SwipeEat →</span>
+          <Link href="/services/swadisht/swipe-eat" className={styles.featureBtn}>
+            Try SwipeEat
+          </Link>
            <div className={styles.featureImage}>
     <Image
       src="/images/swipeeat-biryani.png"
       alt=""
       fill
+      draggable={false}
     />
   </div>
-        </Link>
+        </div>
 
-        <Link href="/services/swadisht/thali-engine" className={styles.featureCard}>
+        <div className={styles.featureCard}>
           <h3>Thali Engine</h3>
           <p>Create festive, regional and family-style thalis.</p>
-          <span>Build Your Thali →</span>
+          <Link href="/services/swadisht/thali-engine" className={styles.featureBtn}>
+            Build Your Thali
+          </Link>
             <div className={styles.featureImage}>
     <Image
       src="/images/thali-engine.png"
       alt=""
       fill
+      draggable={false}
     />
   </div>
-        </Link>
+        </div>
 
-        <Link href="/services/swadisht/instant-catering" className={styles.featureCard}>
+        <div className={styles.featureCard}>
           <h3>Instant Catering</h3>
           <p>Pre-book catering packs for events and office gatherings.</p>
-          <span>Plan Catering →</span>
+          <Link href="/services/swadisht/instant-catering" className={styles.featureBtn}>
+            Plan Catering
+          </Link>
             <div className={styles.featureImage}>
     <Image
       src="/images/catering-trays.png"
       alt=""
       fill
+      draggable={false}
     />
   </div>
-        </Link>
+        </div>
 
-        <Link href="/services/swadisht/regional-soul" className={styles.featureCard}>
+        <div className={styles.featureCard}>
           <h3>Regional Soul</h3>
           <p>Explore authentic cuisines from across India.</p>
-          <span>Explore Regions →</span>
+          <Link href="/services/swadisht/regional-soul" className={styles.featureBtn}>
+            Explore Regions
+          </Link>
            <div   className={`${styles.featureImage} ${styles.regionalImage}`}>
     <Image
       src="/images/regional-india.png"
       alt=""
       fill
+      draggable={false}
     />
   </div>
-        </Link>
+        </div>
 
       </div>
     </section>
@@ -263,7 +275,11 @@ function MainContent() {
         
         {restaurants.length === 0 && (
           <div className={styles.emptyState}>
-            <div className={styles.emptyIcon}>🔍</div>
+            <div className={styles.emptyIcon}>
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ opacity: 0.4 }}>
+                <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+              </svg>
+            </div>
             <h3 className={styles.emptyTitle}>No restaurants found</h3>
             <p className={styles.emptyText}>Try adjusting your filters</p>
             <button 
@@ -315,7 +331,6 @@ export default function SwadishttPage() {
       <div className={styles.pageContent}>
        <CategorySection />
 <DiscoverFeatures />
-<HeroSection />
 <MainContent />
       </div>
     </div>

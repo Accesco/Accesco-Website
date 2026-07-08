@@ -77,6 +77,9 @@ const consumedFats = cart?.reduce(
   0
 ) || 0;
 
+const targetCal = healthInsights?.householdSummary?.totalCalories || 2000;
+const progressPercent = targetCal > 0 ? Math.min(Math.round((consumedCalories / targetCal) * 100), 100) : 0;
+
   // ── Restore saved profile from localStorage on mount ──
   useEffect(() => {
     try {
@@ -338,72 +341,72 @@ const addMember = () => {
             ) : error ? (
               <p style={{ color: 'red' }}>{error}</p>
             ) : healthInsights ? (
-              
               <section className={styles.trackerCard}>
-  <div className={styles.trackerHeader}>
-    <div>
-      <h2 className={styles.trackerTitle}>Today’s Intake</h2>
-      <p className={styles.trackerGoal}>Based on your health profile</p>
-    </div>
+                <div className={styles.trackerHeader}>
+                  <div>
+                    <h2 className={styles.trackerTitle}>Today’s Intake</h2>
+                    <p className={styles.trackerGoal}>Based on your health profile</p>
+                  </div>
 
-    <div className={styles.trackerNumbers}>
-      <span className={styles.consumed}>
-  {consumedCalories}
-</span>
-      <span className={styles.trackerSep}>/</span>
-      <span className={styles.total}>
-        {healthInsights?.householdSummary?.totalCalories}
-      </span>
-      <span className={styles.calLabel}>cal</span>
-    </div>
-  </div>
+                  <div className={styles.trackerNumbers}>
+                    <span className={styles.consumed}>
+                      {consumedCalories}
+                    </span>
+                    <span className={styles.trackerSep}>/</span>
+                    <span className={styles.total}>
+                      {targetCal}
+                    </span>
+                    <span className={styles.calLabel}>cal</span>
+                  </div>
+                </div>
 
-  <div className={styles.progressBar}>
-    <div
-      className={styles.progressFill}
-      style={{ width: '0%' }}
-    />
-  </div>
+                <div className={styles.progressBar}>
+                  <div
+                    className={styles.progressFill}
+                    style={{ width: `${progressPercent}%` }}
+                  />
+                </div>
 
-  <div className={styles.trackerStats}>
-    <div className={styles.trackerStat}>
-      <span className={styles.statValue}>
-  {consumedProtein}g
-</span>
-      <span className={styles.statLabel}>
-        Protein / {healthInsights?.householdSummary?.macroSplit?.protein}g
-      </span>
-    </div>
+                <div className={styles.trackerStats}>
+                  <div className={styles.trackerStat}>
+                    <span className={styles.statValue}>
+                      {consumedProtein}g
+                    </span>
+                    <span className={styles.statLabel}>
+                      Protein / {healthInsights?.householdSummary?.macroSplit?.protein}g
+                    </span>
+                  </div>
 
-    <div className={styles.trackerStat}>
-      <span className={styles.statValue}>
-  {consumedCarbs}g
-</span>
-      <span className={styles.statLabel}>
-        Carbs / {healthInsights?.householdSummary?.macroSplit?.carbs}g
-      </span>
-    </div>
+                  <div className={styles.trackerStat}>
+                    <span className={styles.statValue}>
+                      {consumedCarbs}g
+                    </span>
+                    <span className={styles.statLabel}>
+                      Carbs / {healthInsights?.householdSummary?.macroSplit?.carbs}g
+                    </span>
+                  </div>
 
-    <div className={styles.trackerStat}>
-      <span className={styles.statValue}>
-  {consumedFats}g
-</span>
-      <span className={styles.statLabel}>
-        Fats / {healthInsights?.householdSummary?.macroSplit?.fats}g
-      </span>
-    </div>
-  </div>
-  {healthInsights?.members?.length > 0 && (
-  <div className={styles.memberCaloriesList}>
-    {healthInsights.members.map((member, index) => (
-      <div key={index} className={styles.memberCaloriesCard}>
-        <span>Family Member {index + 1}</span>
-        <strong>{member.calories} cal</strong>
-      </div>
-    ))}
-  </div>
-)}
-</section>
+                  <div className={styles.trackerStat}>
+                    <span className={styles.statValue}>
+                      {consumedFats}g
+                    </span>
+                    <span className={styles.statLabel}>
+                      Fats / {healthInsights?.householdSummary?.macroSplit?.fats}g
+                    </span>
+                  </div>
+                </div>
+
+                {healthInsights?.members?.length > 0 && (
+                  <div className={styles.memberCaloriesList}>
+                    {healthInsights.members.map((member, index) => (
+                      <div key={index} className={styles.memberCaloriesCard}>
+                        <span>Family Member {index + 1}</span>
+                        <strong>{member.calories} cal</strong>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </section>
             ) : null}
           </>
         )}

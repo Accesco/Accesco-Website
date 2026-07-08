@@ -285,8 +285,44 @@ export default function CheckoutPage() {
       speedDiscount,
       address: formData,
       paymentMethod: formData.paymentMethod,
-      eta: deliverySpeed === 'batched' ? batchedETA : (deliveryETA || null),
+      eta: deliverySpeed === 'batched' ? (typeof batchedETA !== 'undefined' ? batchedETA : null) : (deliveryETA || null),
     });
+
+    try {
+      await fetch('/api/instastyle/orders/confirm', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          orderId: order.id,
+          customerEmail: formData.email,
+          customerName: formData.fullName,
+          orderData: {
+            items: cart.map(item => ({
+              name: item.name,
+              price: item.price,
+              quantity: item.quantity,
+              brand: item.brand,
+              size: item.selectedSize || item.size || 'M',
+              sku: item.sku || ''
+            })),
+            totals: {
+              subtotal,
+              shippingFee: deliveryFee,
+              gst: tax,
+              total: finalTotal
+            },
+            shippingAddress: {
+              line1: formData.addressLine1,
+              city: formData.city,
+              pincode: formData.pincode
+            },
+            paymentMethod: formData.paymentMethod
+          }
+        })
+      });
+    } catch (err) {
+      console.error('Email confirm failed:', err);
+    }
 
     setTimeout(() => {
       setIsProcessing(false);

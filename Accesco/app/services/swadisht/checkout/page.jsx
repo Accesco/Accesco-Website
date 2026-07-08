@@ -4,12 +4,6 @@
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
-/**
- * Checkout Page
- * @page /services/swadisht/checkout
- * @description Order checkout with address and payment
- */
-
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSwadishtt } from '../contexts/SwadishttContext';
@@ -25,6 +19,7 @@ function CheckoutContent() {
   const [deliveryAddress, setDeliveryAddress] = useState({
     name: '',
     phone: '',
+    email: '',
     address: '',
     landmark: '',
     city: '',
@@ -35,6 +30,10 @@ function CheckoutContent() {
   const [orderPlaced, setOrderPlaced] = useState(false);
   const [lastOrderId, setLastOrderId] = useState('');
   const [placedOrder, setPlacedOrder] = useState(null);
+  
+  // Validation error states
+  const [addressErrors, setAddressErrors] = useState({});
+  const [paymentError, setPaymentError] = useState('');
 
   useEffect(() => {
     if (!cartHydrated) return;
@@ -47,7 +46,6 @@ function CheckoutContent() {
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
-    // Edited Jabez: prefill checkout fields from localStorage (user + location).
     let storedUser = null;
     let storedLocation = null;
 
@@ -67,6 +65,7 @@ function CheckoutContent() {
     
     const resolvedName = typeof storedUser?.name === 'string' ? storedUser.name : '';
     const resolvedPhone = typeof storedUser?.phone === 'string' ? storedUser.phone : '';
+    const resolvedEmail = typeof storedUser?.email === 'string' ? storedUser.email : '';
     
     const resolvedCity =
       (typeof storedLocation?.city === 'string' && storedLocation.city) ||
@@ -85,7 +84,6 @@ function CheckoutContent() {
         : '') ||
       '';
     
-    // Resolving pincode with fallbacks for common naming conventions and types
     const resolvedPincode =
       (typeof storedLocation?.pincode === 'string' && storedLocation.pincode) ||
       (typeof storedLocation?.pinCode === 'string' && storedLocation.pinCode) ||
@@ -99,9 +97,10 @@ function CheckoutContent() {
       ...prev,
       name: prev.name || resolvedName,
       phone: prev.phone || resolvedPhone,
+      email: prev.email || resolvedEmail,
       address: prev.address || resolvedAddress,
       city: prev.city || resolvedCity,
-      pincode: prev.pincode || resolvedPincode, // Appended to state
+      pincode: prev.pincode || resolvedPincode,
     }));
   }, []);
 
@@ -115,7 +114,6 @@ function CheckoutContent() {
   const persistOrder = (nextOrder) => {
     if (typeof window === 'undefined') return;
 
-    // Edited Jabez: persist Swadishtt orders to localStorage for the /orders page.
     try {
       const raw = localStorage.getItem(ORDERS_STORAGE_KEY);
       const parsed = raw ? JSON.parse(raw) : [];
@@ -126,36 +124,58 @@ function CheckoutContent() {
     }
   };
 
-  const handleAddressSubmit = (e) => {
-    e.preventDefault();
-    setStep(2);
+  const validateAddress = () => {
+    const errors = {};
+    if (!deliveryAddress.name.trim()) errors.name = 'Full Name is required';
+    if (!deliveryAddress.phone.trim()) errors.phone = 'Phone Number is required';
+    else if (!/^\d{10}$/.test(deliveryAddress.phone.trim())) errors.phone = 'Invalid 10-digit phone';
+    if (!deliveryAddress.email.trim()) errors.email = 'Email is required';
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(deliveryAddress.email.trim())) errors.email = 'Invalid email address';
+    if (!deliveryAddress.address.trim()) errors.address = 'Complete Address is required';
+    if (!deliveryAddress.city.trim()) errors.city = 'City is required';
+    if (!deliveryAddress.pincode.trim()) errors.pincode = 'Pincode is required';
+    else if (!/^\d{6}$/.test(deliveryAddress.pincode.trim())) errors.pincode = 'Invalid 6-digit pincode';
+
+    setAddressErrors(errors);
+    return Object.keys(errors).length === 0;
   };
 
-  const handlePlaceOrder = () => {
+  const handleAddressSubmit = (e) => {
+    e.preventDefault();
+    if (validateAddress()) {
+      setStep(2);
+    }
+  };
+
+  const handlePlaceOrder = async () => {
     if (!paymentMethod) {
-      alert('Please select a payment method');
+      setPaymentError('Please select a payment method');
       return;
     }
 
+    // Get customer details from delivery address (already auto-filled from accesco_user)
+    const customerEmail = deliveryAddress.email || 'customer@accescoliving.com';
+    const customerName = deliveryAddress.name || 'Valued Customer';
+
     const orderId = `SW${Date.now().toString(36).toUpperCase()}`;
     const nextOrder = {
-  id: orderId,
-  status: 'Preparing',
-  placedAt: new Date().toISOString(),
-  paymentMethod,
-  delivery: { ...deliveryAddress },
-
-  deliveryPartner: {
-    name: 'Ravi Kumar',
-    distanceKm: deliverySpeed === 'batched' ? 3.4 : 1.8,
-    etaMinutes: deliverySpeed === 'batched' ? 25 : 10,
-    statusText:
-      deliverySpeed === 'batched'
-        ? 'Delivery partner is completing a nearby order'
-        : 'Delivery partner is heading to the restaurant',
-  },
-
-  totals:  {
+      id: orderId,
+      status: 'PENDING',
+      placedAt: new Date().toISOString(),
+      paymentMethod,
+      customerEmail,
+      customerName,
+      delivery: { ...deliveryAddress },
+      deliveryPartner: {
+        name: 'Ravi Kumar',
+        distanceKm: deliverySpeed === 'batched' ? 3.4 : 1.8,
+        etaMinutes: deliverySpeed === 'batched' ? 25 : 10,
+        statusText:
+          deliverySpeed === 'batched'
+            ? 'Delivery partner is completing a nearby order'
+            : 'Delivery partner is heading to the restaurant',
+      },
+      totals: {
         subtotal,
         deliveryFee,
         platformFee,
@@ -169,24 +189,46 @@ function CheckoutContent() {
         quantity: item.quantity || 1,
         image: item.image,
         restaurant: item.restaurant || '',
+        sku: item.sku || `SWD-GEN-${item.id.replace(/[^0-9]/g, '') || '00'}`,
       })),
     };
+    
     setPlacedOrder(nextOrder);
-
     persistOrder(nextOrder);
     setLastOrderId(orderId);
 
-    // Simulate order placement
+    // Send confirmation email and advance status to CONFIRMED
+    try {
+      const res = await fetch('/api/swadishtt/orders/update-status', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          orderId,
+          newStatus: 'CONFIRMED',
+          customerEmail,
+          customerName,
+          orderData: nextOrder,
+        }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        // Update local storage status
+        const orders = JSON.parse(localStorage.getItem(ORDERS_STORAGE_KEY) || '[]');
+        const updated = orders.map((o) =>
+          o.id === orderId ? { ...o, status: 'CONFIRMED', updatedAt: new Date().toISOString() } : o
+        );
+        localStorage.setItem(ORDERS_STORAGE_KEY, JSON.stringify(updated));
+      }
+    } catch (err) {
+      console.error('Failed to trigger confirmation email:', err);
+    }
+
     setOrderPlaced(true);
 
     setTimeout(() => {
       clearCart();
-
-      router.push(
-        `/services/swadisht/order-tracking?id=${orderId}`
-      );
+      router.push(`/services/swadisht/order-tracking?id=${orderId}`);
     }, 3000);
-
   };
 
   if (cart.length === 0 && !orderPlaced) {
@@ -194,203 +236,217 @@ function CheckoutContent() {
     return null;
   }
 
-if (orderPlaced) {
-  const displayOrder = placedOrder || {};
-  const deliveryPartner = displayOrder.deliveryPartner || {};
-  const etaMinutes = deliveryPartner.etaMinutes || (deliverySpeed === 'batched' ? 25 : 10);
-  const driverDistance = deliveryPartner.distanceKm || (deliverySpeed === 'batched' ? 3.4 : 1.8);
-  const driverName = deliveryPartner.name || 'Ravi Kumar';
-  const orderLabel = displayOrder.id || lastOrderId || `SW${Math.floor(Math.random() * 100000)}`;
+  if (orderPlaced) {
+    const displayOrder = placedOrder || {};
+    const deliveryPartner = displayOrder.deliveryPartner || {};
+    const etaMinutes = deliveryPartner.etaMinutes || (deliverySpeed === 'batched' ? 25 : 10);
+    const driverDistance = deliveryPartner.distanceKm || (deliverySpeed === 'batched' ? 3.4 : 1.8);
+    const driverName = deliveryPartner.name || 'Ravi Kumar';
+    const orderLabel = displayOrder.id || lastOrderId || `SW${Math.floor(Math.random() * 100000)}`;
 
-  const displayItems = displayOrder.items || [];
-  const itemCount = displayItems.reduce((sum, item) => sum + (item.quantity || 1), 0);
+    const displayItems = displayOrder.items || [];
+    const itemCount = displayItems.reduce((sum, item) => sum + (item.quantity || 1), 0);
 
-  const deliveryText =
-    displayOrder.delivery?.address ||
-    displayOrder.delivery?.fullAddress ||
-    [
-      displayOrder.delivery?.house,
-      displayOrder.delivery?.area,
-      displayOrder.delivery?.city,
-      displayOrder.delivery?.pincode,
-    ]
-      .filter(Boolean)
-      .join(', ') ||
-    'Selected delivery address';
+    const deliveryText =
+      displayOrder.delivery?.address ||
+      displayOrder.delivery?.fullAddress ||
+      [
+        displayOrder.delivery?.house,
+        displayOrder.delivery?.area,
+        displayOrder.delivery?.city,
+        displayOrder.delivery?.pincode,
+      ]
+        .filter(Boolean)
+        .join(', ') ||
+      'Selected delivery address';
 
-  const paymentLabel =
-    displayOrder.paymentMethod?.toUpperCase() ||
-    paymentMethod?.toUpperCase() ||
-    'SELECTED';
+    const paymentLabel =
+      displayOrder.paymentMethod?.toUpperCase() ||
+      paymentMethod?.toUpperCase() ||
+      'SELECTED';
 
-  const totalLabel =
-    typeof displayOrder.totals?.total === 'number'
-      ? `₹${Math.round(displayOrder.totals.total)}`
-      : '₹--';
+    const totalLabel =
+      typeof displayOrder.totals?.total === 'number'
+        ? `₹${Math.round(displayOrder.totals.total)}`
+        : '₹--';
 
-  return (
-    <div className={styles.page}>
-      <SwadishttHeader />
+    return (
+      <div className={styles.page}>
+        <SwadishttHeader />
 
-      <div className={styles.premiumSuccessScreen}>
-        <section className={styles.premiumOrderCard}>
-          <div className={styles.premiumTopRow}>
-            <div className={styles.premiumTickWrap}>
-              <span className={styles.premiumTick}>✓</span>
-            </div>
-
-            <div className={styles.premiumHeaderText}>
-              <span className={styles.premiumEyebrow}>Order placed</span>
-              <h1>We’re preparing your food</h1>
-              <p>
-                Your order is confirmed. Track your delivery partner and order status from here.
-              </p>
-            </div>
-          </div>
-
-          <div className={styles.deliveryPromiseCard}>
-            <div>
-              <span>Estimated delivery</span>
-              <strong>{etaMinutes} mins</strong>
-            </div>
-
-            <div className={styles.deliveryModePill}>
-              {deliverySpeed === 'batched' ? 'Saver delivery' : 'Priority delivery'}
-            </div>
-          </div>
-
-          <div className={styles.partnerCard}>
-            <div className={styles.partnerIcon}>🛵</div>
-
-            <div className={styles.partnerInfo}>
-              <span>Delivery partner</span>
-              <strong>
-                {driverName} is {driverDistance} km away
-              </strong>
-              <p>
-                {deliveryPartner.statusText ||
-                  'Delivery partner is heading to the restaurant'}
-                . Arriving in about {etaMinutes} minutes.
-              </p>
-            </div>
-          </div>
-
-          <div className={styles.timelineCard}>
-            <div className={styles.timelineHeader}>
-              <span>Current status</span>
-              <strong>Preparing</strong>
-            </div>
-
-            <div className={styles.timelineTrack}>
-              <div className={styles.timelineStepDone}>
-                <span></span>
-                <p>Placed</p>
+        <div className={styles.premiumSuccessScreen}>
+          <section className={styles.premiumOrderCard}>
+            <div className={styles.premiumTopRow}>
+              <div className={styles.premiumTickWrap}>
+                <span className={styles.premiumTick}>✓</span>
               </div>
 
-              <div className={styles.timelineLineDone}></div>
-
-              <div className={styles.timelineStepDone}>
-                <span></span>
-                <p>Preparing</p>
-              </div>
-
-              <div className={styles.timelineLine}></div>
-
-              <div className={styles.timelineStep}>
-                <span></span>
-                <p>On the way</p>
+              <div className={styles.premiumHeaderText}>
+                <span className={styles.premiumEyebrow}>Order Confirmed</span>
+                <h1>We're preparing your food</h1>
+                <p>
+                  Your order is confirmed. A confirmation email has been sent to <strong>{displayOrder.customerEmail}</strong>.
+                </p>
               </div>
             </div>
-          </div>
 
-          <div className={styles.receiptPanel}>
-            <div className={styles.receiptHeader}>
-              <h2>Order summary</h2>
-              <span>{itemCount} {itemCount === 1 ? 'item' : 'items'}</span>
+            <div className={styles.deliveryPromiseCard}>
+              <div>
+                <span>Estimated delivery</span>
+                <strong>{etaMinutes} mins</strong>
+              </div>
+
+              <div className={styles.deliveryModePill}>
+                {deliverySpeed === 'batched' ? 'Saver delivery' : 'Priority delivery'}
+              </div>
             </div>
 
-            <div className={styles.receiptItems}>
-              {displayItems.slice(0, 3).map((item) => (
-                <div className={styles.receiptItem} key={item.id || item.name}>
-                  <div>
-                    <strong>{item.name}</strong>
-                    <span>{item.restaurant || 'Swadishtt kitchen'}</span>
+            <div className={styles.partnerCard}>
+              <div className={styles.partnerIcon}>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <circle cx="5.5" cy="17.5" r="2.5" />
+                  <circle cx="18.5" cy="17.5" r="2.5" />
+                  <path d="M5.5 17.5H16M18.5 17.5h2A1.5 1.5 0 0 0 22 16v-1.5L19 10h-4M5.5 15h11" />
+                  <path d="M12 5h-2l-2 4h4Z" />
+                  <path d="M14 9V5" />
+                </svg>
+              </div>
+
+              <div className={styles.partnerInfo}>
+                <span>Delivery partner</span>
+                <strong>
+                  {driverName} is {driverDistance} km away
+                </strong>
+                <p>
+                  {deliveryPartner.statusText ||
+                    'Delivery partner is heading to the restaurant'}
+                  . Arriving in about {etaMinutes} minutes.
+                </p>
+              </div>
+            </div>
+
+            <div className={styles.timelineCard}>
+              <div className={styles.timelineHeader}>
+                <span>Current status</span>
+                <strong>Confirmed</strong>
+              </div>
+
+              <div className={styles.timelineTrack}>
+                <div className={styles.timelineStepDone}>
+                  <span></span>
+                  <p>Placed</p>
+                </div>
+
+                <div className={styles.timelineLineDone}></div>
+
+                <div className={styles.timelineStepDone}>
+                  <span></span>
+                  <p>Confirmed</p>
+                </div>
+
+                <div className={styles.timelineLine}></div>
+
+                <div className={styles.timelineStep}>
+                  <span></span>
+                  <p>On the way</p>
+                </div>
+              </div>
+            </div>
+
+            <div className={styles.receiptPanel}>
+              <div className={styles.receiptHeader}>
+                <h2>Order summary</h2>
+                <span>{itemCount} {itemCount === 1 ? 'item' : 'items'}</span>
+              </div>
+
+              <div className={styles.receiptItems}>
+                {displayItems.slice(0, 3).map((item) => (
+                  <div className={styles.receiptItem} key={item.id || item.name}>
+                    <div>
+                      <strong>{item.name}</strong>
+                      <span>{item.restaurant || 'Swadishtt kitchen'} &bull; {item.sku}</span>
+                    </div>
+
+                    <p>
+                      {item.quantity || 1} × ₹{item.price}
+                    </p>
                   </div>
+                ))}
 
-                  <p>
-                    {item.quantity || 1} × ₹{item.price}
-                  </p>
-                </div>
-              ))}
-
-              {displayItems.length > 3 && (
-                <div className={styles.moreItems}>
-                  +{displayItems.length - 3} more item{displayItems.length - 3 > 1 ? 's' : ''}
-                </div>
-              )}
-            </div>
-          </div>
-
-          <div className={styles.infoGrid}>
-            <div className={styles.infoBox}>
-              <span>Order ID</span>
-              <strong>#{orderLabel}</strong>
+                {displayItems.length > 3 && (
+                  <div className={styles.moreItems}>
+                    +{displayItems.length - 3} more item{displayItems.length - 3 > 1 ? 's' : ''}
+                  </div>
+                )}
+              </div>
             </div>
 
-            <div className={styles.infoBox}>
-              <span>Payment</span>
-              <strong>{paymentLabel}</strong>
+            <div className={styles.infoGrid}>
+              <div className={styles.infoBox}>
+                <span>Order ID</span>
+                <strong>#{orderLabel}</strong>
+              </div>
+
+              <div className={styles.infoBox}>
+                <span>Payment</span>
+                <strong>{paymentLabel}</strong>
+              </div>
+
+              <div className={styles.infoBox}>
+                <span>Total paid</span>
+                <strong>{totalLabel}</strong>
+              </div>
+
+              <div className={styles.infoBox}>
+                <span>Status</span>
+                <strong>Confirmed</strong>
+              </div>
             </div>
 
-            <div className={styles.infoBox}>
-              <span>Total paid</span>
-              <strong>{totalLabel}</strong>
+            <div className={styles.deliveryAddressCard}>
+              <div className={styles.addressIcon}>
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+                  <circle cx="12" cy="10" r="3" />
+                </svg>
+              </div>
+
+              <div>
+                <span>Delivering to</span>
+                <p>{deliveryText}</p>
+              </div>
             </div>
 
-            <div className={styles.infoBox}>
-              <span>Status</span>
-              <strong>Preparing</strong>
+            <div className={styles.premiumActions}>
+              <button
+                type="button"
+                className={styles.trackPrimaryBtn}
+                onClick={() => {
+                  clearCart();
+                  router.push(`/services/swadisht/order-tracking?id=${orderLabel}`);
+                }}
+              >
+                Track order
+              </button>
+
+              <button
+                type="button"
+                className={styles.trackSecondaryBtn}
+                onClick={() => router.push('/services/swadisht/orders')}
+              >
+                View all orders
+              </button>
             </div>
-          </div>
 
-          <div className={styles.deliveryAddressCard}>
-            <div className={styles.addressIcon}>📍</div>
-
-            <div>
-              <span>Delivering to</span>
-              <p>{deliveryText}</p>
-            </div>
-          </div>
-
-          <div className={styles.premiumActions}>
-            <button
-              type="button"
-              className={styles.trackPrimaryBtn}
-              onClick={() => {
-                clearCart();
-                router.push(`/services/swadisht/order-tracking?id=${orderLabel}`);
-              }}
-            >
-              Track order
-            </button>
-
-            <button
-              type="button"
-              className={styles.trackSecondaryBtn}
-              onClick={() => router.push('/services/swadisht/orders')}
-            >
-              View all orders
-            </button>
-          </div>
-
-          <p className={styles.autoRedirectNote}>
-            Opening live tracking in a few seconds...
-          </p>
-        </section>
+            <p className={styles.autoRedirectNote}>
+              Opening live tracking in a few seconds...
+            </p>
+          </section>
+        </div>
       </div>
-    </div>
-  );
-}
+    );
+  }
+
   return (
     <div className={styles.page}>
       <SwadishttHeader />
@@ -422,33 +478,57 @@ if (orderPlaced) {
                       <label className={styles.formLabel}>Full Name *</label>
                       <input
                         type="text"
-                        className={styles.formInput}
+                        className={`${styles.formInput} ${addressErrors.name ? styles.inputError : ''}`}
                         value={deliveryAddress.name}
-                        onChange={(e) => setDeliveryAddress({...deliveryAddress, name: e.target.value})}
-                        required
+                        onChange={(e) => {
+                          setDeliveryAddress({...deliveryAddress, name: e.target.value});
+                          setAddressErrors({...addressErrors, name: ''});
+                        }}
                       />
+                      {addressErrors.name && <span className={styles.fieldError}>{addressErrors.name}</span>}
                     </div>
                     <div className={styles.formGroup}>
                       <label className={styles.formLabel}>Phone Number *</label>
                       <input
                         type="tel"
-                        className={styles.formInput}
+                        className={`${styles.formInput} ${addressErrors.phone ? styles.inputError : ''}`}
                         value={deliveryAddress.phone}
-                        onChange={(e) => setDeliveryAddress({...deliveryAddress, phone: e.target.value})}
-                        required
+                        onChange={(e) => {
+                          setDeliveryAddress({...deliveryAddress, phone: e.target.value});
+                          setAddressErrors({...addressErrors, phone: ''});
+                        }}
                       />
+                      {addressErrors.phone && <span className={styles.fieldError}>{addressErrors.phone}</span>}
                     </div>
+                  </div>
+
+                  <div className={styles.formGroup}>
+                    <label className={styles.formLabel}>Email Address *</label>
+                    <input
+                      type="email"
+                      className={`${styles.formInput} ${addressErrors.email ? styles.inputError : ''}`}
+                      placeholder="For order confirmation"
+                      value={deliveryAddress.email}
+                      onChange={(e) => {
+                        setDeliveryAddress({...deliveryAddress, email: e.target.value});
+                        setAddressErrors({...addressErrors, email: ''});
+                      }}
+                    />
+                    {addressErrors.email && <span className={styles.fieldError}>{addressErrors.email}</span>}
                   </div>
 
                   <div className={styles.formGroup}>
                     <label className={styles.formLabel}>Complete Address *</label>
                     <textarea
-                      className={styles.formTextarea}
+                      className={`${styles.formTextarea} ${addressErrors.address ? styles.inputError : ''}`}
                       value={deliveryAddress.address}
-                      onChange={(e) => setDeliveryAddress({...deliveryAddress, address: e.target.value})}
+                      onChange={(e) => {
+                        setDeliveryAddress({...deliveryAddress, address: e.target.value});
+                        setAddressErrors({...addressErrors, address: ''});
+                      }}
                       rows={3}
-                      required
                     />
+                    {addressErrors.address && <span className={styles.fieldError}>{addressErrors.address}</span>}
                   </div>
 
                   <div className={styles.formGroup}>
@@ -466,21 +546,27 @@ if (orderPlaced) {
                       <label className={styles.formLabel}>City *</label>
                       <input
                         type="text"
-                        className={styles.formInput}
+                        className={`${styles.formInput} ${addressErrors.city ? styles.inputError : ''}`}
                         value={deliveryAddress.city}
-                        onChange={(e) => setDeliveryAddress({...deliveryAddress, city: e.target.value})}
-                        required
+                        onChange={(e) => {
+                          setDeliveryAddress({...deliveryAddress, city: e.target.value});
+                          setAddressErrors({...addressErrors, city: ''});
+                        }}
                       />
+                      {addressErrors.city && <span className={styles.fieldError}>{addressErrors.city}</span>}
                     </div>
                     <div className={styles.formGroup}>
                       <label className={styles.formLabel}>Pincode *</label>
                       <input
                         type="text"
-                        className={styles.formInput}
+                        className={`${styles.formInput} ${addressErrors.pincode ? styles.inputError : ''}`}
                         value={deliveryAddress.pincode}
-                        onChange={(e) => setDeliveryAddress({...deliveryAddress, pincode: e.target.value})}
-                        required
+                        onChange={(e) => {
+                          setDeliveryAddress({...deliveryAddress, pincode: e.target.value});
+                          setAddressErrors({...addressErrors, pincode: ''});
+                        }}
                       />
+                      {addressErrors.pincode && <span className={styles.fieldError}>{addressErrors.pincode}</span>}
                     </div>
                   </div>
 
@@ -495,15 +581,17 @@ if (orderPlaced) {
             {step === 1 && (
               <section className={styles.deliverySpeedBox}>
                 <h3 className={styles.speedHeading}>Would you wait 15 minutes to save ₹20?</h3>
-                
-                
                 <div className={styles.speedOptions}>
                   <div 
                     className={`${styles.speedOption} ${deliverySpeed === 'instant' ? styles.speedOptionInstantActive : ''}`}
                     onClick={() => setDeliverySpeed('instant')}
                   >
                     <div className={styles.speedOptionLeft}>
-                      <span className={styles.speedIcon}>⚡</span>
+                      <span className={styles.speedIcon}>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                          <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+                        </svg>
+                      </span>
                       <div className={styles.speedInfo}>
                         <span className={styles.speedTitle}>Get it in 10 min</span>
                         <span className={styles.speedDesc}>Standard — a rider just for you</span>
@@ -517,7 +605,12 @@ if (orderPlaced) {
                     onClick={() => setDeliverySpeed('batched')}
                   >
                     <div className={styles.speedOptionLeft}>
-                      <span className={styles.speedIcon}>🕒</span>
+                      <span className={styles.speedIcon}>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                          <circle cx="12" cy="12" r="10" />
+                          <polyline points="12 6 12 12 16 14" />
+                        </svg>
+                      </span>
                       <div className={styles.speedInfo}>
                         <span className={styles.speedTitle}>I can wait · ~25 min</span>
                         <span className={styles.speedDesc}>We'll batch you with a nearby order</span>
@@ -527,8 +620,7 @@ if (orderPlaced) {
                   </div>
                 </div>
 
-                <p className={styles.speedFooter}>One rider · two nearby orders · lower cost for everyone</p>
-                <h4 className={styles.speedTagline}>Speed is a feature. So is <span>patience.</span></h4>
+                <p className={styles.speedFooter}>One rider &bull; two nearby orders &bull; lower cost for everyone</p>
               </section>
             )}
 
@@ -536,15 +628,17 @@ if (orderPlaced) {
             {step === 2 && (
               <div className={styles.stepContent}>
                 <button className={styles.backBtn} onClick={() => setStep(1)}>
-                  ← Back to Address
+                  &larr; Back to Address
                 </button>
                 
                 <h2 className={styles.stepTitle}>Payment Method</h2>
                 
+                {paymentError && <p className={styles.paymentError}>{paymentError}</p>}
+
                 <div className={styles.paymentMethods}>
                   <div 
                     className={`${styles.paymentOption} ${paymentMethod === 'upi' ? styles.selected : ''}`}
-                    onClick={() => setPaymentMethod('upi')}
+                    onClick={() => { setPaymentMethod('upi'); setPaymentError(''); }}
                   >
                     <div className={styles.paymentRadio}>
                       {paymentMethod === 'upi' && <div className={styles.radioSelected}></div>}
@@ -557,7 +651,7 @@ if (orderPlaced) {
 
                   <div 
                     className={`${styles.paymentOption} ${paymentMethod === 'card' ? styles.selected : ''}`}
-                    onClick={() => setPaymentMethod('card')}
+                    onClick={() => { setPaymentMethod('card'); setPaymentError(''); }}
                   >
                     <div className={styles.paymentRadio}>
                       {paymentMethod === 'card' && <div className={styles.radioSelected}></div>}
@@ -570,7 +664,7 @@ if (orderPlaced) {
 
                   <div 
                     className={`${styles.paymentOption} ${paymentMethod === 'netbanking' ? styles.selected : ''}`}
-                    onClick={() => setPaymentMethod('netbanking')}
+                    onClick={() => { setPaymentMethod('netbanking'); setPaymentError(''); }}
                   >
                     <div className={styles.paymentRadio}>
                       {paymentMethod === 'netbanking' && <div className={styles.radioSelected}></div>}
@@ -583,7 +677,7 @@ if (orderPlaced) {
 
                   <div 
                     className={`${styles.paymentOption} ${paymentMethod === 'cod' ? styles.selected : ''}`}
-                    onClick={() => setPaymentMethod('cod')}
+                    onClick={() => { setPaymentMethod('cod'); setPaymentError(''); }}
                   >
                     <div className={styles.paymentRadio}>
                       {paymentMethod === 'cod' && <div className={styles.radioSelected}></div>}
@@ -615,12 +709,15 @@ if (orderPlaced) {
                       alt={item.name}
                       className={styles.orderItemImage}
                       onError={(e) => {
-                        e.target.src = `https://placehold.co/60x50/E23744/FFFFFF/png?text=${encodeURIComponent(item.name)}`;
+                        e.target.src = `https://placehold.co/60x50/262626/FAF9F6/png?text=${encodeURIComponent(item.name)}`;
                       }}
                     />
                     <div className={styles.orderItemInfo}>
                       <div className={styles.orderItemName}>{item.name}</div>
-                      <div className={styles.orderItemQty}>Qty: {item.quantity || 1}</div>
+                      <div className={styles.metaRow}>
+                        <span className={styles.orderItemQty}>Qty: {item.quantity || 1}</span>
+                        <span className={styles.orderItemSku}>{item.sku || `SWD-GEN-${item.id.replace(/[^0-9]/g, '') || '00'}`}</span>
+                      </div>
                     </div>
                     <div className={styles.orderItemPrice}>₹{item.price * (item.quantity || 1)}</div>
                   </div>
@@ -635,7 +732,7 @@ if (orderPlaced) {
               </div>
               <div className={styles.summaryRow}>
                 <span>Delivery Fee</span>
-                <span className={deliveryFee === 0 ? styles.free : ''}>
+                <span className={deliveryFee === 0 ? styles.freeText : ''}>
                   {deliveryFee === 0 ? 'FREE' : `₹${deliveryFee}`}
                 </span>
               </div>
@@ -648,7 +745,7 @@ if (orderPlaced) {
                 <span>₹{gst}</span>
               </div>
               {deliverySpeed === 'batched' && (
-                <div className={styles.summaryRow} style={{ color: '#059669', fontWeight: 'bold' }}>
+                <div className={styles.summaryRow} style={{ color: '#22c55e', fontWeight: 'bold' }}>
                   <span>Delivery Discount (Batched)</span>
                   <span>-₹20</span>
                 </div>
@@ -669,7 +766,6 @@ if (orderPlaced) {
 }
 
 export default function CheckoutPage() {
-  // Prevent rendering during build/prerendering
   if (typeof window === 'undefined') {
     return null;
   }

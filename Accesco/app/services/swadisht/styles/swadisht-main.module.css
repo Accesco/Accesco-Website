@@ -2,11 +2,12 @@
 
 .page {
   min-height: 100vh;
-  background: #ffffff;
+  background: #FFF8EF;
 }
 
 .pageContent {
-  padding-top: 100px;
+  padding-top: 0;
+  background: #FFF8EF;
 }
 
 /* Hero Section - Zomato Tab Style */
@@ -118,7 +119,7 @@
 
 /* Main Content */
 .mainContent {
-  background: #F8F9FA;
+  background: #FFF8EF;
   min-height: 60vh;
 }
 
@@ -128,15 +129,17 @@
   padding: 40px 24px;
 }
 
-/* Filter Bar - Zomato Style */
 .filterBar {
-  background: #ffffff;
-  border-bottom: 1px solid #E8E8E8;
-  padding: 16px 0;
-  margin-bottom: 24px;
+  background: rgba(255, 248, 239, 0.95);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-bottom: 1.5px solid #EAD9C8;
+  padding: 14px 0;
+  margin-bottom: 28px;
   position: sticky;
-  top: 72px;
-  z-index: 100;
+  top: 74px;
+  z-index: 500;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
 }
 
 .filterScroll {
@@ -160,25 +163,27 @@
   align-items: center;
   gap: 8px;
   background: #ffffff;
-  border: 1px solid #CFCFCF;
-  border-radius: 8px;
-  padding: 8px 16px;
-  font-size: 14px;
-  font-weight: 400;
-  color: #1C1C1C;
+  border: 1px solid #E2DCDD;
+  border-radius: 99px;
+  padding: 8px 18px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #1A1518;
   cursor: pointer;
   white-space: nowrap;
-  transition: all 0.2s ease;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
 }
 
 .filterBtn:hover {
-  border-color: #9C9C9C;
+  border-color: #6B1D3A;
+  background: rgba(107, 29, 58, 0.04);
 }
 
 .filterIcon {
-  width: 16px;
-  height: 16px;
-  color: #696969;
+  width: 14px;
+  height: 14px;
+  color: #6B1D3A;
 }
 
 .filterChip {
@@ -186,27 +191,30 @@
   align-items: center;
   gap: 6px;
   background: #ffffff;
-  border: 1px solid #CFCFCF;
-  border-radius: 8px;
-  padding: 8px 16px;
-  font-size: 14px;
-  font-weight: 400;
-  color: #1C1C1C;
+  border: 1px solid #E2DCDD;
+  border-radius: 99px;
+  padding: 8px 18px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #6B5E65;
   cursor: pointer;
   white-space: nowrap;
-  transition: all 0.2s ease;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
 }
 
 .filterChip:hover {
-  border-color: #9C9C9C;
-  background: #F8F8F8;
+  border-color: #6B1D3A;
+  color: #6B1D3A;
+  background: rgba(107, 29, 58, 0.04);
 }
 
 .filterChip.active {
-   background: #6B1D3A;
+  background: #6B1D3A;
   border-color: #6B1D3A;
   color: #ffffff;
-  font-weight: 500;
+  font-weight: 700;
+  box-shadow: 0 4px 12px rgba(107, 29, 58, 0.24);
 }
 
 /* Results Header */
@@ -231,16 +239,18 @@
 /* Restaurant Card - Exact Zomato Design */
 .restaurantCard {
   background: #ffffff;
-  border: 1px solid #E8E8E8;
-  border-radius: 8px;
+  border: 1px solid rgba(107, 29, 58, 0.06);
+  border-radius: 18px;
   overflow: hidden;
   text-decoration: none;
-  transition: all 0.2s ease;
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.25s ease, border-color 0.25s ease;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.02);
 }
 
 .restaurantCard:hover {
-  border-color: #CFCFCF;
-  box-shadow: 0 2px 16px rgba(0,0,0,0.08);
+  border-color: rgba(107, 29, 58, 0.15);
+  transform: translateY(-5px);
+  box-shadow: 0 12px 30px rgba(107, 29, 58, 0.06), 0 4px 12px rgba(0, 0, 0, 0.02);
 }
 
 .cardImageWrapper {
@@ -268,7 +278,7 @@
 }
 
 .restaurantCard:hover .cardImage img {
-  transform: scale(1.03);
+  opacity: 0.95;
 }
 
 .imageSkeleton {
@@ -450,8 +460,6 @@
 
 .resetButton:hover {
   background: #C62828;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(226,55,68,0.3);
 }
 
 /* Footer */
@@ -779,8 +787,7 @@
 }
 
 .featureCard:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+  /* no lift – hover is intentionally disabled */
 }
 
 .featureCard:nth-child(1) {
@@ -875,29 +882,27 @@
   margin-bottom: 26px;
 }
 
-.featureCard span {
+.featureBtn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-
   width: fit-content;
-
   padding: 16px 26px;
   border-radius: 16px;
-
   background: #6B1D3A;
   color: white;
-
+  text-decoration: none;
   font-weight: 700;
   font-size: 17px;
-
   box-shadow: 0 10px 25px rgba(107, 29, 58, 0.25);
   transition: all 0.3s ease;
+  cursor: pointer;
 }
 
-.featureCard:hover span {
+.featureBtn:hover {
+  background: #A02050;
   transform: translateY(-2px);
-  box-shadow: 0 14px 30px rgba(107, 29, 58, 0.32);
+  box-shadow: 0 14px 30px rgba(160, 32, 80, 0.32);
 }
 
 .featureImage {
@@ -916,12 +921,16 @@
 }
 
 .featureCard:hover .featureImage {
-  transform: scale(1.05);
+  transform: none;
 }
 
 .featureImage img {
   object-fit: contain;
   opacity: 0.96;
+  user-select: none;
+  pointer-events: none;
+  -webkit-user-drag: none;
+  draggable: false;
 }
 
 /* Individual image tuning */
