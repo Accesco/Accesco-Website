@@ -242,7 +242,7 @@ export default function AppShowcase() {
             <svg width="90" height="24" viewBox="0 0 90 24" fill="none">
               <path d="M6 12L9 15L14 9" stroke="#7A0042" strokeWidth="2" />
               <circle cx="10" cy="12" r="8" stroke="#7A0042" strokeWidth="2" fill="none" />
-              <path d="M24 6L25.25 8.5L27.75 9L25.75 10.75L26.5 13.25L24 12L21.5 13.25L22.25 10.75L20.25 9L22.75 8.5L24 6Z" fill="#D47A55" />
+              
             </svg>
           </div>
 
