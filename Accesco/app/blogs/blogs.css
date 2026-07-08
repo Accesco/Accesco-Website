@@ -1682,3 +1682,21 @@ object-position: center center !important;
     font-size: 11px;
   }
 }
+@media (max-width: 768px) {
+  .blog-inspo-hero {
+    width: 100vw;
+    margin-left: calc(50% - 50vw);
+    margin-right: calc(50% - 50vw);
+    border-radius: 0;
+  }
+  .hero-header-wrap {
+  transform: translateY(-40px); /* Increase/decrease as needed */
+  margin-bottom: 70px;          /* Reduce if the heading also needs to move up */
+}
+.blog-hero-center h1 {
+  font-size: 100px !important;
+  letter-spacing: -3px;
+  margin-bottom: 18px;
+  margin-top: -55px;
+}
+}
