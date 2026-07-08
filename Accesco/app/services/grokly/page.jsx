@@ -110,12 +110,6 @@ function GroklyPageContent() {
     setSearchQuery(searchParams.get('search') || '');
   }, [searchParams]);
 
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentSlide((prev) => (prev === 0 ? 1 : 0));
-    }, 5000);
-    return () => clearInterval(timer);
-  }, []);
 
   // ═══════════════════════════════════════════════
   // COMPUTED VALUES
@@ -340,12 +334,11 @@ function GroklyPageContent() {
                   }
                 }}
                 style={{
-                  position: 'absolute',
-                  inset: 0,
-                  opacity: currentSlide === 0 ? 1 : 0,
-                  pointerEvents: currentSlide === 0 ? 'auto' : 'none',
-                  transition: 'opacity 0.8s ease-in-out',
-                }}
+                     position: 'absolute',
+                     inset: 0,
+                      opacity: 1,
+                     pointerEvents: 'auto',
+                  }}
               >
                 <img
                   src="/images/IMG_4614.PNG"
@@ -433,128 +426,7 @@ function GroklyPageContent() {
                   </div>
                 </div>
               </div>
-
-              {/* SLIDE 1: Premium Grokly Banner (IMG_4400.PNG) */}
-              <div
-                onClick={() => {
-                  const mainContent = document.querySelector('main');
-                  if (mainContent) {
-                    mainContent.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                  }
-                }}
-                style={{
-                  position: 'absolute',
-                  inset: 0,
-                  opacity: currentSlide === 1 ? 1 : 0,
-                  pointerEvents: currentSlide === 1 ? 'auto' : 'none',
-                  transition: 'opacity 0.8s ease-in-out',
-                }}
-              >
-                <img
-                  src="/images/banners/hero-grokly.jpg"
-                  alt="Grokly Banner"
-                  style={{
-                    width: '100%',
-                    height: '100%',
-                    objectFit: 'cover',
-                    objectPosition: 'center'
-                  }}
-                />
-              </div>
-
-              {/* Slide Indicator Dots */}
-              <div style={{
-                position: 'absolute',
-                bottom: '20px',
-                left: '50%',
-                transform: 'translateX(-50%)',
-                display: 'flex',
-                gap: '8px',
-                zIndex: 10,
-              }}>
-                {[0, 1].map((index) => (
-                  <button
-                    key={index}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setCurrentSlide(index);
-                    }}
-                    style={{
-                      width: '12px',
-                      height: '12px',
-                      borderRadius: '50%',
-                      background: currentSlide === index ? '#4ade80' : 'rgba(255, 255, 255, 0.4)',
-                      border: 'none',
-                      cursor: 'pointer',
-                      padding: 0,
-                      transition: 'all 0.3s ease',
-                      boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
-                    }}
-                  />
-                ))}
-              </div>
-
-              {/* Slide Arrow Buttons */}
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setCurrentSlide((prev) => (prev === 0 ? 1 : 0));
-                }}
-                style={{
-                  position: 'absolute',
-                  left: '20px',
-                  top: '50%',
-                  transform: 'translateY(-50%)',
-                  width: '40px',
-                  height: '40px',
-                  borderRadius: '50%',
-                  background: 'rgba(0, 0, 0, 0.4)',
-                  backdropFilter: 'blur(4px)',
-                  color: '#fff',
-                  border: '1px solid rgba(255, 255, 255, 0.1)',
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  zIndex: 10,
-                  fontSize: '18px',
-                  transition: 'background 0.2s',
-                }}
-                onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(0, 0, 0, 0.6)'}
-                onMouseLeave={(e) => e.currentTarget.style.background = 'rgba(0, 0, 0, 0.4)'}
-              >
-                <i className="ri-arrow-left-s-line" style={{ display: 'block', margin: 'auto' }}></i>
-              </button>
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setCurrentSlide((prev) => (prev === 0 ? 1 : 0));
-                }}
-                style={{
-                  position: 'absolute',
-                  right: '20px',
-                  top: '50%',
-                  transform: 'translateY(-50%)',
-                  width: '40px',
-                  height: '40px',
-                  borderRadius: '50%',
-                  background: 'rgba(0, 0, 0, 0.4)',
-                  backdropFilter: 'blur(4px)',
-                  color: '#fff',
-                  border: '1px solid rgba(255, 255, 255, 0.1)',
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  zIndex: 10,
-                  fontSize: '18px',
-                  transition: 'background 0.2s',
-                }}
-                onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(0, 0, 0, 0.6)'}
-                onMouseLeave={(e) => e.currentTarget.style.background = 'rgba(0, 0, 0, 0.4)'}
-              >
-                <i className="ri-arrow-right-s-line" style={{ display: 'block', margin: 'auto' }}></i>
-              </button>
+              
             </div>
           </div>
         )}

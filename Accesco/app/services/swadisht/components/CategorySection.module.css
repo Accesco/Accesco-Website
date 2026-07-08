@@ -1,43 +1,39 @@
 .categorySection {
-  width: 100%;
-  max-width: 1500px;
-  margin: 0 auto;
-  padding: 0px 24px 48px;
-  background:
-    linear-gradient(
-      to bottom,
-      rgba(255, 245, 245, 0.95),
-      #ffffff
-    );
+  margin: 18px 0 24px;
+  padding: 18px 36px 28px;
+  background: linear-gradient(180deg, #FFF7F5 0%, #FFFFFF 100%);
 }
 
 .sectionHeader {
-  margin-bottom: 24px;
+  margin-bottom: 12px;
 }
 
 .sectionHeader h2 {
-  font-family: 'Sora', sans-serif;
-  font-size: clamp(1.35rem, 2vw, 2rem);
-  font-weight: 800;
+  margin: 0;
   color: #111827;
-  margin: 0 0 6px;
+  font-family: inherit;
+  font-size: clamp(1.55rem, 2.4vw, 2rem);
+  font-weight: 800;
+  line-height: 1.08;
   letter-spacing: -0.04em;
 }
-
 .sectionHeader p {
-  font-family: 'DM Sans', sans-serif;
-  font-size: 0.95rem;
-  color: #6b7280;
-  margin: 0;
+  margin: 8px 0 0;
+  color: #6B7280;
+  font-family: inherit;
+  font-size: clamp(0.95rem, 1.3vw, 1.1rem);
+  font-weight: 400;
+  line-height: 1.45;
 }
-
 .categoryScroller {
   display: flex;
-  align-items: center;
-  gap: 18px;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: 10px;
   overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  padding: 4px 2px 14px;
+  overflow-y: hidden;
+  padding: 4px 0 10px;
+  scroll-snap-type: x proximity;
   scrollbar-width: none;
 }
 
@@ -46,65 +42,63 @@
 }
 
 .categoryCard {
-  flex: 0 0 132px;
-  scroll-snap-align: start;
+  flex: 0 0 108px;
+  width: 108px;
+  min-width: 108px;
+  color: #1A0A0F;
+  text-align: center;
   text-decoration: none;
-  color: #111827;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 12px;
-  transition: transform 0.25s ease;
-}
-.categoryCard:hover .imageWrap {
-  transform: scale(1.05);
-}
-.categoryCard:hover {
-  transform: translateY(-6px);
+  scroll-snap-align: start;
 }
 
 .imageWrap {
-  width: 132px;
-  height: 132px;
+  width: 106px;
+  height: 106px;
+  margin: 0 auto 10px;
   border-radius: 28px;
-  background: #ffffff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   overflow: hidden;
-  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.09);
-  border: 1px solid rgba(0, 0, 0, 0.04);
-  transition: transform 0.25s ease;
+  background: #ffffff;
+  border: 1px solid rgba(107, 29, 58, 0.08);
+  box-shadow: 0 10px 24px rgba(26, 10, 15, 0.065);
+  display: grid;
+  place-items: center;
 }
 
 .imageWrap img {
   width: 100%;
   height: 100%;
+  display: block;
   object-fit: cover;
+  object-position: center;
 }
 
 .categoryCard span {
-  font-family: 'DM Sans', sans-serif;
-  font-size: 0.92rem;
+  display: block;
+  color: #1A0A0F;
+  font-family: 'Lato', sans-serif;
+  font-size: 0.78rem;
   font-weight: 700;
-  text-align: center;
+  line-height: 1.2;
+  white-space: normal;
 }
 
-@media (min-width: 1200px) {
-  .categoryScroller {
-    justify-content: space-between;
-    overflow-x: visible;
-  }
+.categoryCard:hover .imageWrap {
+  transform: translateY(-2px);
+  border-color: rgba(107, 29, 58, 0.22);
+  box-shadow: 0 10px 24px rgba(107, 29, 58, 0.09);
+}
 
-  .categoryCard {
-    flex: 0 0 auto;
-  }
+.categoryCard:hover .imageWrap img {
+  transform: scale(1.04);
+}
+
+.categoryCard:hover span {
+  color: #6B1D3A;
 }
 
 @media (max-width: 768px) {
   .categorySection {
-    padding: 0 16px 36px;
-    margin-top: -150px;
+    margin: 14px 0 18px;
   }
 
   .sectionHeader {
@@ -112,22 +106,68 @@
   }
 
   .categoryScroller {
-    gap: 16px;
-    padding-bottom: 12px;
+    gap: 8px;
+    padding-bottom: 8px;
   }
 
   .categoryCard {
-    flex: 0 0 92px;
-    gap: 9px;
+    flex-basis: 96px;
+    width: 96px;
+    min-width: 96px;
   }
 
   .imageWrap {
-    width: 86px;
-    height: 86px;
+    width: 82px;
+    height: 82px;
     border-radius: 22px;
+    margin-bottom: 7px;
   }
 
   .categoryCard span {
-    font-size: 0.78rem;
+    font-size: 0.72rem;
   }
 }
+
+@media (max-width: 480px) {
+  .categoryScroller {
+    gap: 6px;
+  }
+
+  .categoryCard {
+    flex-basis: 88px;
+    width: 88px;
+    min-width: 88px;
+  }
+
+  .imageWrap {
+    width: 76px;
+    height: 76px;
+    border-radius: 20px;
+  }
+
+  .categoryCard span {
+    font-size: 0.68rem;
+  }
+}
+@media (max-width: 768px) {
+  .categorySection {
+    margin: 14px 0 18px;
+    padding: 14px 14px 22px;
+  }
+
+  .categoryScroller {
+    gap: 8px;
+    padding-bottom: 8px;
+  }
+}
+@media (max-width: 768px) {
+  .sectionHeader h2 {
+    font-size: 1.55rem;
+    font-weight: 800;
+  }
+
+  .sectionHeader p {
+    font-size: 0.95rem;
+  }
+}
+
