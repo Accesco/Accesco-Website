@@ -44,7 +44,37 @@ export function GroklyProvider({ children }) {
       const savedOrders = localStorage.getItem(ORDERS_STORAGE_KEY);
       const savedLocation = localStorage.getItem(LOCATION_STORAGE_KEY);
       
-      if (savedCart) setCart(JSON.parse(savedCart));
+      if (savedCart) {
+        try {
+          const parsed = JSON.parse(savedCart);
+          // Normalize legacy formats: support array of items or mapping
+          if (Array.isArray(parsed)) {
+            // array can be [ { id, quantity } ] or [id, id, ...]
+            const mapped = parsed.reduce((acc, item) => {
+              if (!item) return acc;
+              if (typeof item === 'string') {
+                acc[item] = (acc[item] || 0) + 1;
+              } else if (item.id) {
+                acc[item.id] = (acc[item.id] || 0) + (item.quantity || 1);
+              }
+              return acc;
+            }, {});
+            setCart(mapped);
+          } else if (parsed && typeof parsed === 'object') {
+            setCart(parsed);
+          } else {
+            setCart({});
+          }
+        } catch (e) {
+          // Fallback: if parse fails, use raw value if it's an object
+          try {
+            setCart(JSON.parse(savedCart));
+          } catch (err) {
+            console.error('Failed to parse savedCart, resetting cart', err);
+            setCart({});
+          }
+        }
+      }
       if (savedOrders) setOrders(JSON.parse(savedOrders));
       if (savedLocation) {
         let parsedLocation = null;
