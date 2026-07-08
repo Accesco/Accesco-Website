@@ -400,33 +400,10 @@ section[class*="hero"] *:not([class*="background"]):not([class*="orb"]):not([cla
 }
 
 /* 3. Dark overlay so background image does not overpower text */
-.hero::before,
-.hero-section::before,
-.hero-banner::before,
-section[class*="hero"]::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  pointer-events: none;
-  background: linear-gradient(
-    90deg,
-    rgba(0, 0, 0, 0.68),
-    rgba(0, 0, 0, 0.42),
-    rgba(0, 0, 0, 0.28)
-  );
-}
 
 /* 4. Mobile hero text visibility fix */
 @media (max-width: 768px) {
-  .hero h1,
-  .hero-section h1,
-  .hero-banner h1,
-  section[class*="hero"] h1 {
-    font-size: 2rem !important;
-    line-height: 1.15 !important;
-    max-width: 100% !important;
-  }
+  
 
   .hero p,
   .hero-section p,

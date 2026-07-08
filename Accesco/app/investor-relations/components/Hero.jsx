@@ -1,35 +1,49 @@
 export default function Hero() {
   return (
-    <section id="home" className="hero">
-      <div className="container hero-content">
-        <div className="hero-copy">
-          <span className="eyebrow">Investor Relations</span>
-          <h1>Building Long-Term Value for Stakeholders</h1>
-          <p>
-            Transparent disclosures, disciplined growth and a commitment to creating enduring value for shareholders, customers and communities.
-          </p>
-          <a href="/pdfs/Accesco_deck.pdf" target="_blank" rel="noopener noreferrer" className="primary-button">
-            View Investor Deck
-          </a>
-        </div>
+    <section id="home" className="ir-hero">
+      <div className="ir-hero-inner">
+        <nav className="ir-nav">
+          <div className="ir-logo">← accesco living.</div>
 
-        <div className="hero-card" aria-label="Company highlights">
-          <div className="hero-card-topline">FY 2025 Highlights</div>
-          <div className="hero-stat">
-            <strong>24%</strong>
-            <span>Revenue Growth</span>
-          </div>
-          <div className="hero-stat">
-            <strong>18%</strong>
-            <span>EBITDA Margin</span>
-          </div>
-          <div className="hero-stat">
-            <strong>AAA</strong>
-            <span>Governance Focus</span>
+    
+        </nav>
+
+        <div className="ir-hero-content">
+         
+
+          <h1>investors</h1>
+
+          <div className="ir-bottom">
+            <p>
+              Empowering the future of circular commerce through innovation, transparency, and sustainable growth.
+            </p>
+
+            <div className="ir-stats">
+              <div>
+                <strong>10K+</strong>
+                <span>EARLY USERS</span>
+              </div>
+              <div>
+                <strong>3</strong>
+                <span>SERVICE VERTICALS</span>
+              </div>
+              <div>
+                <strong>1</strong>
+                <span>UNIFIED PLATFORM</span>
+              </div>
+            </div>
+
+            <div className="ir-actions">
+              <a href="/pdfs/Accesco_deck.pdf" className="deck-btn">
+                Download Investor Deck
+              </a>
+              <a href="#contact" className="contact-btn">
+                Contact IR
+              </a>
+            </div>
           </div>
         </div>
       </div>
     </section>
   );
 }
-

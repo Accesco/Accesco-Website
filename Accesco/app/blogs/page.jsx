@@ -320,19 +320,56 @@ setFilteredPosts(visibleBlogs);
       )}
 
       {/* Common Website Header */}
-      <AccescoHeader />
+ <section className="blog-inspo-hero">
+  
 
-      {/* Hero Section */}
-      <div className="hero-canvas">
-        <section className="hero-viewport">
-         <video className="blog-hero-video" autoPlay muted loop playsInline poster="https://images.unsplash.com/...">
-  <source src="/images/bloghero.mp4" type="video/mp4" />
-</video>
-          <div className="hero-shimmer-overlay"></div>
-          <div className="hero-text-box">
-          </div>
-        </section>
-      </div>
+  <div className="hero-header-wrap">
+    <AccescoHeader />
+  </div>
+
+  <div className="blog-hero-center">
+    <h1>blog.</h1>
+
+    <div className="hero-categories">
+      {['All', 'Groceries', 'Food', 'Fashion', 'Company news'].map((cat) => (
+        <button key={cat}>{cat}</button>
+      ))}
+    </div>
+  </div>
+
+  <div className="blog-hero-bottom-row">
+    <p>
+      Ideas for smarter living — guides, product news and the thinking behind
+      India's intelligent commerce ecosystem.
+    </p>
+
+   <div className="hero-search">
+  <input
+    type="text"
+    placeholder="Search articles..."
+    value={searchQuery}
+    onChange={(e) => handleSearch(e.target.value)}
+    onKeyDown={(e) => {
+      if (e.key === "Enter") {
+        document
+          .getElementById("storyContainer")
+          ?.scrollIntoView({ behavior: "smooth" });
+      }
+    }}
+  />
+
+  <button
+    onClick={() =>
+      document
+        .getElementById("storyContainer")
+        ?.scrollIntoView({ behavior: "smooth" })
+    }
+  >
+    Search
+  </button>
+</div>
+  </div>
+</section>
 
       {/* Blog Navigation Bar */}
       <div className="blog-nav-wrapper">
