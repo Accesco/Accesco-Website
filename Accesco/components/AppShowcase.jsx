@@ -2,7 +2,19 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import { RecaptchaVerifier, signInWithPhoneNumber, signOut } from 'firebase/auth';
-import { ShoppingCart, Utensils, Shirt, GlassWater } from 'lucide-react';
+import { 
+  ShoppingCart, 
+  Utensils, 
+  Shirt, 
+  GlassWater,
+  User,
+  Mail,
+  Phone,
+  ArrowRight,
+  ArrowLeft,
+  Check,
+  ShieldCheck
+} from 'lucide-react';
 import styles from './AppShowcase.module.css';
 import { auth } from '../lib/firebase';
 import {
@@ -29,10 +41,10 @@ export default function AppShowcase() {
   const recaptchaVerifierRef = useRef(null);
 
   const interestOptions = [
-    { id: 'grokly', label: 'Groceries & Essentials', icon: <ShoppingCart size={32} /> },
-    { id: 'swadishtt', label: 'Food Delivery', icon: <Utensils size={32} /> },
-    { id: 'instastyle', label: 'Fashion & Styling', icon: <Shirt size={32} /> },
-    { id: 'dinex', label: 'Dining Experience', icon: <GlassWater size={32} /> },
+    { id: 'grokly', label: 'Groceries & Essentials', icon: <ShoppingCart size={22} /> },
+    { id: 'swadishtt', label: 'Food Delivery', icon: <Utensils size={22} /> },
+    { id: 'instastyle', label: 'Fashion & Styling', icon: <Shirt size={22} /> },
+    { id: 'dinex', label: 'Dining Experience', icon: <GlassWater size={22} /> },
   ];
 
   const toggleInterest = (id) => {
@@ -44,7 +56,6 @@ export default function AppShowcase() {
     }));
   };
 
-  // Converts user-entered phone to E.164 format required by Firebase
   function normalizePhone(phone) {
     const stripped = phone.replace(/[\s\-().]/g, '');
     if (stripped.startsWith('+')) return stripped;
@@ -61,9 +72,9 @@ export default function AppShowcase() {
     setError('');
 
     try {
-      if (recaptchaVerifierRef.current) {
-        recaptchaVerifierRef.current.clear();
-        recaptchaVerifierRef.current = null;
+      const container = document.getElementById('recaptcha-container');
+      if (container) {
+        container.innerHTML = '';
       }
 
       const verifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
@@ -78,6 +89,7 @@ export default function AppShowcase() {
     } catch (err) {
       console.error('Phone OTP send failed:', err);
       setError(err.message || 'Failed to send OTP. Check your phone number and try again.');
+      setPhoneCodeSent(false);
     } finally {
       setLoading(false);
     }
@@ -111,7 +123,6 @@ export default function AppShowcase() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
 
     const validationErrors = validateWaitlistEntry(form);
     if (validationErrors.length > 0) {
@@ -119,8 +130,15 @@ export default function AppShowcase() {
       return;
     }
 
+    if (loading) {
+      setError('Verification code is still being sent. Please wait.');
+      return;
+    }
+
     if (!confirmationResult) {
-      setError('Verification code is still being sent. Please wait a moment.');
+      if (!error) {
+        setError('Verification failed to initiate. Please try again.');
+      }
       return;
     }
 
@@ -129,6 +147,7 @@ export default function AppShowcase() {
       return;
     }
 
+    setError('');
     setLoading(true);
     try {
       await confirmationResult.confirm(form.verificationCode.trim());
@@ -141,7 +160,6 @@ export default function AppShowcase() {
         interests: form.interests.join(', '),
       });
 
-      // Sign out after Firestore write — we only needed phone verification, not a persistent session
       await signOut(auth);
 
       setSuccess(true);
@@ -186,73 +204,58 @@ export default function AppShowcase() {
   }, []);
 
   return (
-   <section id="waitlist" style={{ padding: '64px 20px', background: '#FFFDF8', position: 'relative' }}>
+    <section id="waitlist" style={{ padding: '80px 20px', background: '#FAFAF9', position: 'relative' }}>
 
-  {/* Invisible reCAPTCHA container required by Firebase Phone Auth */}
-  <div id="recaptcha-container"></div>
+      <div id="recaptcha-container"></div>
 
-  {/* Waitlist Section Header */}
-  <div style={{ maxWidth: '1200px', margin: '0 auto 40px', padding: '0', textAlign: 'center' }}>
-
+      {/* Centered Heading Block Positioned Symmetrically Above the Card */}
+      <div style={{ maxWidth: '1200px', margin: '0 auto 48px', padding: '0', textAlign: 'center' }}>
         <h2 className={styles.waitlistTitle}>
           Join the <span className={styles.highlight}>Revolution</span>
         </h2>
-
-        <p className={styles.waitlistSubtitle} style={{ maxWidth: '100%', fontSize: '1.1rem' }}>
-          Be the first to experience India's most intelligent commerce platform.
-          Get exclusive early access and special launch benefits.
+        <p className={styles.waitlistSubtitle}>
+          Be the first to experience India's most intelligent commerce platform. Get exclusive early access and special launch benefits.
         </p>
       </div>
 
-      <div className={styles.waitlistContainer}>
-        {/* Left Side - Information (Poster) */}
-        <div className={styles.waitlistInfo}>
-          <div className={styles.waitlistPosterWrap}>
-            <img
-              src="/images/xpense-banner.jpg"
-              alt="Accesco Living - Xpense Meter"
-              className={styles.waitlistPosterImg}
-              onError={(e) => {
-                e.currentTarget.src = '/images/accesco_original.png';
-                e.currentTarget.style.padding = '40px';
-                e.currentTarget.style.background = 'linear-gradient(135deg, #7A0042, #1A0A0F)';
-              }}
-            />
-          </div>
-
+      {/* Main 1:1 Sorcerer Grid Card Wrapper */}
+      <div className={styles.waitlistCard}>
+        
+        {/* Left Panel: Flush Poster Image */}
+        <div className={styles.leftPanel}>
+          <img
+            src="/images/xpense-banner.jpg"
+            alt="Accesco Living - Wanna Skip The Line?"
+            className={styles.posterImage}
+            onError={(e) => {
+              e.currentTarget.src = '/images/accesco_original.png';
+              e.currentTarget.style.padding = '40px';
+              e.currentTarget.style.background = 'linear-gradient(135deg, #7A0042, #1A0A0F)';
+            }}
+          />
         </div>
 
-        {/* Right Side - Form */}
-   <div
-  className={styles.waitlistFormWrapper}
-  style={{
-    background: '#FFFDF8',
-    border: '2px solid #700457',
-    transition: 'all 0.4s ease'
-  }}
-
->
-          <div className={styles.formHeader}>
-            <h3 className={styles.formTitle}>Get Early Access</h3>
-            <p className={styles.formDescription}>
-              {currentStep === 1 && 'Tell us about yourself'}
-              {currentStep === 2 && 'What interests you?'}
-              {currentStep === 3 && 'Verify your phone number'}
-            </p>
+        {/* Right Panel: Clean Form Wrapper */}
+        <div className={styles.rightPanel}>
+          
+          <div className={styles.brandLogoRow}>
+            <svg width="90" height="24" viewBox="0 0 90 24" fill="none">
+              <path d="M6 12L9 15L14 9" stroke="#7A0042" strokeWidth="2" />
+              <circle cx="10" cy="12" r="8" stroke="#7A0042" strokeWidth="2" fill="none" />
+              <path d="M24 6L25.25 8.5L27.75 9L25.75 10.75L26.5 13.25L24 12L21.5 13.25L22.25 10.75L20.25 9L22.75 8.5L24 6Z" fill="#D47A55" />
+            </svg>
           </div>
 
-          {/* Step Indicator */}
-          <div className={styles.stepIndicator}>
-  <div className={`${styles.stepDot} ${currentStep >= 1 ? styles.stepDotActive : ''}`} style={currentStep === 1 ? { background: '#700457', transform: 'scale(1.2)' } : {}}></div>
-  <div className={`${styles.stepDot} ${currentStep >= 2 ? styles.stepDotActive : ''}`} style={currentStep === 2 ? { background: '#700457', transform: 'scale(1.2)' } : {}}></div>
-  <div className={`${styles.stepDot} ${currentStep >= 3 ? styles.stepDotActive : ''}`} style={currentStep === 3 ? { background: '#700457', transform: 'scale(1.2)' } : {}}></div>
-</div>
+          <h3 className={styles.cardTitle}>Get Early Access</h3>
+          
+          <p className={styles.cardSubtitle}>
+            {currentStep === 1 && "Join the waitlist and be the first to experience India's most intelligent commerce platform."}
+            {currentStep === 2 && "What interests you? Choose at least one category to curate your feed."}
+            {currentStep === 3 && "Security verification. Enter the 6-digit passcode sent to your phone."}
+          </p>
 
           {success && (
             <div className={styles.successMessage}>
-              <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
-                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-              </svg>
               Welcome to the waitlist! We'll be in touch soon.
             </div>
           )}
@@ -263,39 +266,41 @@ export default function AppShowcase() {
             </div>
           )}
 
-          <form onSubmit={handleSubmit}>
-            {/* Step 1: Basic Information */}
+          {/* Form Step Router */}
+          <form onSubmit={handleSubmit} style={{ width: '100%' }}>
+            
+            {/* Step 1: Base Inputs */}
             {currentStep === 1 && (
-              <>
-                <div className={styles.formGroup}>
-                  <label className={styles.formLabel}>Full Name</label>
+              <div className={styles.inputsStack}>
+                <div className={styles.inputWrapper}>
+                  <User size={18} className={styles.inputIcon} />
                   <input
                     type="text"
                     className={styles.formInput}
-                    placeholder="Enter your full name"
+                    placeholder="Full Name"
                     value={form.name}
                     onChange={(e) => setForm({ ...form, name: e.target.value })}
                   />
                 </div>
 
-                <div className={styles.formGroup}>
-                  <label className={styles.formLabel}>Email Address *</label>
+                <div className={styles.inputWrapper}>
+                  <Mail size={18} className={styles.inputIcon} />
                   <input
                     type="email"
                     className={styles.formInput}
-                    placeholder="your@email.com"
+                    placeholder="Email Address"
                     value={form.email}
                     onChange={(e) => setForm({ ...form, email: e.target.value })}
                     required
                   />
                 </div>
 
-                <div className={styles.formGroup}>
-                  <label className={styles.formLabel}>Phone Number *</label>
+                <div className={styles.inputWrapper}>
+                  <Phone size={18} className={styles.inputIcon} />
                   <input
                     type="tel"
                     className={styles.formInput}
-                    placeholder="+91 XXXXX XXXXX"
+                    placeholder="Phone Number"
                     value={form.phone}
                     onChange={(e) => setForm({ ...form, phone: e.target.value })}
                     required
@@ -303,121 +308,156 @@ export default function AppShowcase() {
                 </div>
 
                 <button type="button" className={styles.submitButton} onClick={handleNext}>
-                  Next
+                  <span>Join Waitlist</span>
+                  <ArrowRight size={18} />
                 </button>
-              </>
+              </div>
             )}
 
-            {/* Step 2: Interests */}
+            {/* Step 2: Bento Interest Grid */}
             {currentStep === 2 && (
-              <>
+              <div className={styles.inputsStack}>
                 <div className={styles.interestsGrid}>
-                  {interestOptions.map((interest) => (
-                    <div
-                      key={interest.id}
-                      className={`${styles.interestCard} ${form.interests.includes(interest.id) ? styles.interestCardSelected : ''}`}
-                      onClick={() => toggleInterest(interest.id)}
-                    >
-                      <div className={styles.interestIcon}>{interest.icon}</div>
-                      <div className={styles.interestLabel}>{interest.label}</div>
-                    </div>
-                  ))}
+                  {interestOptions.map((interest) => {
+                    const isSelected = form.interests.includes(interest.id);
+                    return (
+                      <div
+                        key={interest.id}
+                        className={`${styles.interestCard} ${isSelected ? styles.interestCardSelected : ''}`}
+                        onClick={() => toggleInterest(interest.id)}
+                      >
+                        <div className={styles.interestCardHeader}>
+                          <div className={styles.interestIcon}>{interest.icon}</div>
+                          <div className={`${styles.customCheckbox} ${isSelected ? styles.customCheckboxActive : ''}`}>
+                            {isSelected && <Check size={12} strokeWidth={3} />}
+                          </div>
+                        </div>
+                        <div className={styles.interestLabel}>{interest.label}</div>
+                      </div>
+                    );
+                  })}
                 </div>
 
                 <div className={styles.buttonGroup}>
-                  <button type="button" className={styles.navButton} onClick={handlePrev}>
-                    Previous
+                  <button type="button" className={styles.prevButton} onClick={handlePrev}>
+                    <ArrowLeft size={16} />
+                    <span>Back</span>
                   </button>
-                  <button type="button" className={styles.navButton} onClick={handleNext}>
-                    Next
+                  <button type="button" className={styles.submitButton} onClick={handleNext} style={{ flex: 1 }}>
+                    <span>Continue</span>
+                    <ArrowRight size={18} />
                   </button>
                 </div>
-              </>
+              </div>
             )}
 
-            {/* Step 3: Phone OTP Verification */}
+            {/* Step 3: Verification */}
             {currentStep === 3 && (
-              <>
-                <div className={styles.verificationSection}>
-                  <div className={styles.verificationInfo}>
+              <div className={styles.inputsStack}>
+                <div className={styles.verificationCard}>
+                  <ShieldCheck size={32} className={styles.verificationShield} />
+                  <p className={styles.verificationSubtitle}>
                     {phoneCodeSent ? (
-                      <>
-                        <p>We've sent a 6-digit OTP to <strong>{form.phone}</strong></p>
-                        <p>Please check your SMS and enter the code below.</p>
-                        {phoneVerified && <p style={{ color: '#22c55e' }}>Phone verified successfully.</p>}
-                      </>
+                      <>Sent a passcode to <strong>{form.phone}</strong></>
                     ) : (
-                      <p>Sending OTP to your phone number...</p>
+                      'Preparing code transmission...'
                     )}
-                  </div>
-
-                  <div className={styles.formGroup}>
-                    <label className={styles.formLabel}>OTP Code *</label>
-                    <input
-                      type="text"
-                      className={styles.formInput}
-                      placeholder="Enter 6-digit OTP"
-                      value={form.verificationCode}
-                      onChange={(e) => setForm({ ...form, verificationCode: e.target.value })}
-                      maxLength={6}
-                      required
-                      style={{ textAlign: 'center', fontSize: '24px', letterSpacing: '8px' }}
-                    />
-                  </div>
-
-                  <button
-                    type="button"
-                    className={styles.resendCode}
-                    onClick={sendPhoneOtp}
-                    disabled={loading}
-                  >
-                    Resend OTP
-                  </button>
+                  </p>
                 </div>
+
+                <div className={styles.inputWrapper}>
+                  <input
+                    type="text"
+                    className={styles.formInput}
+                    placeholder="Enter 6-digit OTP"
+                    value={form.verificationCode}
+                    onChange={(e) => setForm({ ...form, verificationCode: e.target.value })}
+                    maxLength={6}
+                    required
+                    style={{ textAlign: 'center', fontSize: '1.2rem', letterSpacing: '4px', padding: '0' }}
+                  />
+                </div>
+
+                {phoneCodeSent && (
+                  <p className={styles.otpHelperText}>
+                    Didn't receive the SMS?{' '}
+                    <button
+                      type="button"
+                      className={styles.resendCodeButton}
+                      onClick={sendPhoneOtp}
+                      disabled={loading}
+                    >
+                      Resend Code
+                    </button>
+                  </p>
+                )}
 
                 <div className={styles.buttonGroup}>
-                  <button type="button" className={styles.navButton} onClick={handlePrev}>
-                    Previous
+                  <button type="button" className={styles.prevButton} onClick={handlePrev}>
+                    <ArrowLeft size={16} />
+                    <span>Back</span>
                   </button>
-                  <button type="submit" className={styles.submitButton} disabled={loading}>
-                    {loading && <span className={styles.loadingSpinner}></span>}
-                    {loading ? 'Joining...' : 'Join Waitlist'}
+                  <button type="submit" className={styles.submitButton} disabled={loading} style={{ flex: 1 }}>
+                    {loading ? (
+                      <span>Joining...</span>
+                    ) : (
+                      <>
+                        <span>Reserve My Spot</span>
+                        <ArrowRight size={18} />
+                      </>
+                    )}
                   </button>
                 </div>
-              </>
+              </div>
             )}
+
           </form>
+
+          {/* Symmetrical Trust Badges */}
+          <div className={styles.trustRow}>
+            <div className={styles.trustLeft}>
+              <div className={styles.trustItem}>
+                <span>👥</span>
+                <span>Join 12,000+ members</span>
+              </div>
+              <div className={styles.trustDivider}></div>
+              <div className={styles.trustItem}>
+                <span>🔒</span>
+                <span>Secure &amp; Spam-Free</span>
+              </div>
+            </div>
+            <div className={styles.launchBadge}>
+              Launching Soon
+            </div>
+          </div>
+
         </div>
+
       </div>
 
-      {/* Download App Banner */}
-
-<div className={styles.downloadAppSection}>
-
-  <img
-    src="/images/download-app-banner-desktop.png"
-    alt="Download App"
-    className={styles.downloadAppImageDesktop}
-  />
-
-  <img
-    src="/images/download-app-banner-mobile.png"
-    alt="Download App"
-    className={styles.downloadAppImageMobile}
-  />
-
-  <a
-    href="#"
-    className={styles.playStoreHotspot}
-    aria-label="Google Play"
-  />
-
-  <a
-    href="#"
-    className={styles.appStoreHotspot}
-    aria-label="App Store"
-  />
-</div>
+      {/* Unchanged bottom app download segments */}
+      <div className={styles.downloadAppSection}>
+        <img
+          src="/images/download-app-banner-desktop.png"
+          alt="Download App"
+          className={styles.downloadAppImageDesktop}
+        />
+        <img
+          src="/images/download-app-banner-mobile.png"
+          alt="Download App"
+          className={styles.downloadAppImageMobile}
+        />
+        <a
+          href="#"
+          className={styles.playStoreHotspot}
+          aria-label="Google Play"
+        />
+        <a
+          href="#"
+          className={styles.appStoreHotspot}
+          aria-label="App Store"
+        />
+      </div>
 
     </section>
   );
