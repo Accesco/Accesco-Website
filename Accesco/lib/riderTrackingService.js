@@ -98,6 +98,24 @@ function haversineKm(a, b) {
 }
 
 /**
+ * Moves `current` toward `target` by at most `maxStep`, instead of easing
+ * (current += (target-current) * k), which closes ~99% of ANY gap within
+ * about a second regardless of how large it is. That made the marker visibly
+ * teleport whenever the live target was ahead of the display value (e.g. a
+ * network delay before the map first subscribed). Capping the per-frame step
+ * guarantees the marker can only ever move at a bounded, realistic speed.
+ *
+ * @param {number} current
+ * @param {number} target
+ * @param {number} maxStep - largest allowed change this frame
+ */
+export function stepProgressTowards(current, target, maxStep) {
+  const diff = target - current;
+  if (Math.abs(diff) <= maxStep) return target;
+  return current + Math.sign(diff) * maxStep;
+}
+
+/**
  * Given a road route (array of [lat,lng]) and a progress fraction (0..1 by
  * distance), return the exact on-road position + heading, and the REMAINING
  * route ahead of the rider (for a trail that shrinks as the rider advances).

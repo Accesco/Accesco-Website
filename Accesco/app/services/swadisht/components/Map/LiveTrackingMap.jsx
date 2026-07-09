@@ -8,7 +8,10 @@ import {
   subscribeToRiderLocation,
   startRiderSimulation,
   computeRoutePosition,
+  stepProgressTowards,
 } from "@/lib/riderTrackingService";
+
+const RIDE_DURATION_MS = 3 * 60 * 1000;
 
 // Track which orders already have a running simulation this session, so a
 // refresh / strict-mode double-mount doesn't spawn duplicate rider feeds.
@@ -123,13 +126,13 @@ export default function LiveTrackingMap({ orderId }) {
 
     setRiderPos(routePositions[0]); // render the marker at the store initially
 
+    // Bounded step per frame so the marker can never visually teleport, even if
+    // the live target is far ahead when the map first subscribes.
+    const maxStepPerFrame = (4 / (RIDE_DURATION_MS / 1000)) / 60;
     let displayProgress = 0;
     let raf;
     const animate = () => {
-      displayProgress += (targetProgressRef.current - displayProgress) * 0.1;
-      if (Math.abs(targetProgressRef.current - displayProgress) < 0.0002) {
-        displayProgress = targetProgressRef.current;
-      }
+      displayProgress = stepProgressTowards(displayProgress, targetProgressRef.current, maxStepPerFrame);
       const { lat, lng, remaining } = computeRoutePosition(routePositions, displayProgress);
       if (riderMarkerRef.current) riderMarkerRef.current.setLatLng([lat, lng]);
       if (routeLineRef.current && remaining.length >= 2) routeLineRef.current.setLatLngs(remaining);
@@ -163,7 +166,7 @@ export default function LiveTrackingMap({ orderId }) {
 
     const stopSim = startRiderSimulation(orderId, from, to, {
       waypoints,
-      durationMs: 3 * 60 * 1000,
+      durationMs: RIDE_DURATION_MS,
       tickMs: 1000, // frequent updates + CSS glide = smooth constant-speed motion
     });
 

@@ -6,7 +6,7 @@ import { useGrokly } from '../contexts/GroklyContext';
 import styles from './tracking.module.css';
 import Link from 'next/link';
 import { mockRiderData } from '@/lib/mockRiderData';
-import { subscribeToRiderLocation, startRiderSimulation, computeRoutePosition } from '@/lib/riderTrackingService';
+import { subscribeToRiderLocation, startRiderSimulation, computeRoutePosition, stepProgressTowards } from '@/lib/riderTrackingService';
 
 // Track which orders already have a running simulation this session, so a
 // refresh / strict-mode double-mount doesn't spawn duplicate rider feeds.
@@ -367,13 +367,15 @@ function GroklyTrackingContent() {
     const to = path[path.length - 1];
     const waypoints = path.slice(1, -1);
 
+    const RIDE_DURATION_MS = 3 * 60 * 1000;
+
     // Start the stand-in rider feed once per order this session.
     let stopSim = () => {};
     if (!startedSimulations.has(orderId)) {
       startedSimulations.add(orderId);
       stopSim = startRiderSimulation(orderId, from, to, {
         waypoints,
-        durationMs: 3 * 60 * 1000,
+        durationMs: RIDE_DURATION_MS,
         tickMs: 1000,
         rider: {
           riderName: mockRiderData.rider.name,
@@ -382,14 +384,16 @@ function GroklyTrackingContent() {
       });
     }
 
-    // Target progress comes from Firestore; display progress eases toward it each frame.
+    // Target progress comes from Firestore; display progress moves toward it at a
+    // bounded speed each frame — fast enough to stay responsive to real updates,
+    // but capped so the marker can never visually teleport across the map.
+    const maxStepPerFrame = (4 / (RIDE_DURATION_MS / 1000)) / 60;
     let targetProgress = 0;
     let displayProgress = 0;
     let raf;
 
     const animate = () => {
-      displayProgress += (targetProgress - displayProgress) * 0.1; // smooth catch-up
-      if (Math.abs(targetProgress - displayProgress) < 0.0002) displayProgress = targetProgress;
+      displayProgress = stepProgressTowards(displayProgress, targetProgress, maxStepPerFrame);
 
       const { lat, lng, heading, remaining } = computeRoutePosition(roadRoute, displayProgress);
 

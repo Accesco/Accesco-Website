@@ -15,6 +15,7 @@ import { useRouter } from 'next/navigation';
 import { useSwadishtt } from '../contexts/SwadishttContext';
 import SwadishttHeader from '../components/SwadishttHeader';
 import styles from './checkout.module.css';
+import { payWithRazorpay } from '@/lib/razorpayService';
 
 const ORDERS_STORAGE_KEY = 'swadishtt-orders';
 
@@ -34,6 +35,8 @@ function CheckoutContent() {
   const [deliverySpeed, setDeliverySpeed] = useState('instant');
   const [orderPlaced, setOrderPlaced] = useState(false);
   const [lastOrderId, setLastOrderId] = useState('');
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [paymentError, setPaymentError] = useState('');
 
   useEffect(() => {
     if (!cartHydrated) return;
@@ -130,18 +133,14 @@ function CheckoutContent() {
     setStep(2);
   };
 
-  const handlePlaceOrder = () => {
-    if (!paymentMethod) {
-      alert('Please select a payment method');
-      return;
-    }
-
+  const finalizeOrder = (paymentInfo = {}) => {
     const orderId = `SW${Date.now().toString(36).toUpperCase()}`;
     const nextOrder = {
       id: orderId,
       status: 'Placed',
       placedAt: new Date().toISOString(),
       paymentMethod,
+      ...paymentInfo,
       delivery: { ...deliveryAddress },
       totals: {
         subtotal,
@@ -162,18 +161,52 @@ function CheckoutContent() {
 
     persistOrder(nextOrder);
     setLastOrderId(orderId);
-    
-    // Simulate order placement
-  setOrderPlaced(true);
+    setOrderPlaced(true);
 
-  setTimeout(() => {
-    clearCart();
+    setTimeout(() => {
+      clearCart();
+      router.push(`/services/swadisht/order-tracking?id=${orderId}`);
+    }, 3000);
+  };
 
-    router.push(
-      `/services/swadisht/order-tracking?id=${orderId}`
-    );
-  }, 3000); 
+  const handlePlaceOrder = async () => {
+    if (!paymentMethod) {
+      alert('Please select a payment method');
+      return;
+    }
 
+    // Cash on Delivery skips the payment gateway entirely.
+    if (paymentMethod === 'cod') {
+      finalizeOrder();
+      return;
+    }
+
+    // Digital payment (UPI / Card / Netbanking): collect payment via Razorpay
+    // before the order is created.
+    setIsProcessing(true);
+    setPaymentError('');
+    try {
+      const payment = await payWithRazorpay({
+        amount: total,
+        receipt: `swadisht_${Date.now()}`,
+        name: 'Swadishtt',
+        description: `Swadishtt order · ${cart.length} item(s)`,
+        prefill: {
+          name: deliveryAddress.name,
+          contact: deliveryAddress.phone,
+        },
+        theme: { color: '#E23744' },
+      });
+      finalizeOrder({
+        razorpayOrderId: payment.orderId,
+        razorpayPaymentId: payment.paymentId,
+      });
+    } catch (err) {
+      console.error('Payment failed:', err);
+      setPaymentError(err.message || 'Payment failed. Please try again.');
+    } finally {
+      setIsProcessing(false);
+    }
   };
 
   if (cart.length === 0 && !orderPlaced) {
@@ -404,8 +437,18 @@ function CheckoutContent() {
                   </div>
                 </div>
 
-                <button className={styles.placeOrderBtn} onClick={handlePlaceOrder}>
-                  Place Order - ₹{total}
+                {paymentError && (
+                  <div style={{ color: '#dc2626', fontSize: '13px', fontWeight: 600, marginBottom: '10px' }}>
+                    {paymentError}
+                  </div>
+                )}
+
+                <button
+                  className={styles.placeOrderBtn}
+                  onClick={handlePlaceOrder}
+                  disabled={isProcessing}
+                >
+                  {isProcessing ? 'Processing Payment...' : `Place Order - ₹${total}`}
                 </button>
               </div>
             )}

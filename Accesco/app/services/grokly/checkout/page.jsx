@@ -11,6 +11,7 @@ import styles from './checkout.module.css';
 const allPurchasable = [...products, ...dishIngredients];
 import { useAuth } from '../../../components/AuthProvider';
 import AuthModal from '../../../components/AuthModal';
+import { payWithRazorpay } from '@/lib/razorpayService';
 import { 
   ArrowLeft, MapPin, Phone, User, CreditCard, 
   ShieldCheck, ShoppingBag, Clock, Zap, Sparkles 
@@ -23,6 +24,7 @@ export default function GroklyCheckout() {
   const [isMounted, setIsMounted] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [showAuth, setShowAuth] = useState(false);
+  const [paymentError, setPaymentError] = useState('');
   const [isLoadingLocation, setIsLoadingLocation] = useState(false);
   const [customerDetails, setCustomerDetails] = useState({
     name: 'Accesco Customer',
@@ -164,31 +166,53 @@ export default function GroklyCheckout() {
     return {};
   };
 
-  // Places the order for a specific logged-in user.
-  const submitOrder = (activeUser) => {
+  // Places the order for a specific logged-in user, after payment succeeds.
+  const submitOrder = async (activeUser) => {
     setIsProcessing(true);
-    const resolvedEta = deliverySpeed === 'batched' ? (eta ? eta + 15 : 25) : eta;
-    const order = placeOrder({
-      total,
-      subtotal,
-      deliveryFee,
-      deliverySpeed,
-      discount,
-      eta: resolvedEta,
-      items: cartItems.map(i => ({ id: i.product.id, name: i.product.name, price: i.product.price, quantity: i.quantity })),
-      paymentMethod: 'UPI',
-      address: customerDetails.address,
-      customerName: activeUser?.name || customerDetails.name,
-      phone: activeUser?.phone || customerDetails.phone,
-      customerEmail: activeUser?.email || null,
-      userId: activeUser?.uid || activeUser?.id || null,
-      ...getDeliveryCoords(),
-    });
+    setPaymentError('');
 
-    setTimeout(() => {
-      setIsProcessing(false);
+    try {
+      // Collect payment via Razorpay before the order is created — never place
+      // an order first and hope the payment follows.
+      const payment = await payWithRazorpay({
+        amount: total,
+        receipt: `grokly_${Date.now()}`,
+        name: 'Grokly',
+        description: `Grokly order · ${cartItems.length} item(s)`,
+        prefill: {
+          name: activeUser?.name || customerDetails.name,
+          email: activeUser?.email || '',
+          contact: activeUser?.phone || customerDetails.phone,
+        },
+        theme: { color: '#0c831f' },
+      });
+
+      const resolvedEta = deliverySpeed === 'batched' ? (eta ? eta + 15 : 25) : eta;
+      const order = placeOrder({
+        total,
+        subtotal,
+        deliveryFee,
+        deliverySpeed,
+        discount,
+        eta: resolvedEta,
+        items: cartItems.map(i => ({ id: i.product.id, name: i.product.name, price: i.product.price, quantity: i.quantity })),
+        paymentMethod: 'razorpay',
+        razorpayOrderId: payment.orderId,
+        razorpayPaymentId: payment.paymentId,
+        address: customerDetails.address,
+        customerName: activeUser?.name || customerDetails.name,
+        phone: activeUser?.phone || customerDetails.phone,
+        customerEmail: activeUser?.email || null,
+        userId: activeUser?.uid || activeUser?.id || null,
+        ...getDeliveryCoords(),
+      });
+
       router.push(`/services/grokly/order-tracking?id=${order.id}&eta=${resolvedEta}`);
-    }, 2000);
+    } catch (err) {
+      console.error('Payment failed:', err);
+      setPaymentError(err.message || 'Payment failed. Please try again.');
+      setIsProcessing(false);
+    }
   };
 
   const handlePlaceOrder = () => {
@@ -447,13 +471,18 @@ export default function GroklyCheckout() {
             <span>To Pay</span>
             <span>₹{total}</span>
           </div>
+          {paymentError && (
+            <div style={{ color: '#dc2626', fontSize: '13px', fontWeight: 600, marginBottom: '10px' }}>
+              {paymentError}
+            </div>
+          )}
           <button
             className={styles.placeOrderBtn}
             onClick={handlePlaceOrder}
             disabled={isProcessing}
           >
             {isProcessing
-              ? 'Processing Order...'
+              ? 'Processing Payment...'
               : !user
                 ? `Login & Place Order · ₹${total}`
                 : `Pay & Place Order · ₹${total}`}
