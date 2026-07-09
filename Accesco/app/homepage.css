@@ -3618,3 +3618,27 @@ background:
   }
 
 }
+/* QUICK FIX: desktop screens at 125% scaling / DPR 1.25 */
+@media (min-width: 769px) and (resolution: 1.25dppx) {
+  .deliveryHeadingFrame h2 {
+    font-size: clamp(2rem, 4vw, 3.6rem) !important;
+    line-height: 1.02 !important;
+  }
+
+  .deliveryHeadingFrame h2 span {
+    font-size: clamp(0.9rem, 2.8vw, 1.55rem) !important;
+  }
+
+  .deliveryHeadingFrame {
+    max-width: 1120px !important;
+  }
+
+  .popBurger,
+  .popPizza,
+  .popGrocery,
+  .popHoodie,
+  .popSalad,
+  .popJeans {
+    transform: scale(0.88);
+  }
+}

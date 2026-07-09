@@ -104,7 +104,7 @@ const router = useRouter();
 
   // Switch to the full interactive dashboard app
 const navigateToDashboard = () => {
-  router.push('/calculator');
+  router.push('/xpense_meter');
 };
   // Sync state between transaction list and categories when in active dashboard mode
   useEffect(() => {
