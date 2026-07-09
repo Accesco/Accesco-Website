@@ -286,7 +286,41 @@ fontSize: 'clamp(2.45rem, 4.9vw, 4.4rem)',
       {/* ── Combined & Optimized Styles ── */}
             <style dangerouslySetInnerHTML={{ __html: `
  
-  
+    /* Scale down CTA cards for 125% display scaling */
+  @media (min-width: 769px) and (resolution: 1.25dppx) {
+
+   .servicesTrack{
+    width: fit-content !important;
+    margin-inline: auto !important;
+  }
+
+  .service-premium-card{
+    transform: scale(0.85);
+    transform-origin: center;
+  }
+
+    .service-card-visual{
+      height: 190px !important;
+    }
+
+    .service-icon-circle{
+      width: 72px !important;
+      height: 72px !important;
+    }
+
+    .service-card-name{
+      font-size: 1.5rem !important;
+    }
+
+    .service-card-desc{
+      font-size: 0.95rem !important;
+    }
+
+    .service-card-cta{
+      padding: 12px 22px !important;
+      font-size: 0.92rem !important;
+    }
+  }
   
             
        r .services-container-wrapper {
