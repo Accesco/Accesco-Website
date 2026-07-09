@@ -3642,3 +3642,53 @@ background:
     transform: scale(0.88);
   }
 }
+/* FORCE XPENSE METER SHORTER */
+
+.xpense-page-wrapper {
+  padding: 1rem 1.5rem !important;
+}
+
+.xpense-container {
+  padding: 18px !important;
+}
+
+.xpense-layout {
+  gap: 1.2rem !important;
+  align-items: stretch !important;
+}
+
+.left-hero-card {
+  padding: 30px 38px !important;
+}
+.right-dashboard-card {
+  padding: 1.4rem !important;
+  gap: 1rem !important;
+  min-height: 460px !important;
+}
+.black-card-inner {
+  padding: 1rem !important;
+}
+
+.dashboard-grid-content {
+  gap: 0.9rem !important;
+}
+
+.features-list {
+  gap: 10px !important;
+}
+
+.hero-heading {
+  font-size: 3.8rem !important;
+  line-height: 0.9 !important;
+}
+
+.hero-subtitle {
+  margin-bottom: 14px !important;
+}
+
+.hero-asterisk {
+  width: 70px !important;
+  height: 70px !important;
+  max-width: 70px !important;
+  min-width: 70px !important;
+}
