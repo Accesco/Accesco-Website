@@ -37,9 +37,9 @@ export default function PrivacyPage() {
               Accesco Living Private Limited<br />
               CIN: U47912WB2025PTC285309<br />
               Bengaluru, Karnataka, India<br /><br />
-              <strong>EFFECTIVE DATE</strong><br />
+              <strong>EFFECTIVE DATE</strong>
               02 June 2026 (Subject to revision with 30 days notice)<br /><br />
-              <strong>JURISDICTION</strong><br />
+              <strong>JURISDICTION</strong>
               Republic of India<br />
               Governing law: IT Act 2000, Consumer Protection Act 2019, Indian Contract Act 1872
             </div>
