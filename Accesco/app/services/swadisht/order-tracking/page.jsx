@@ -223,7 +223,7 @@ return (
 
               {/* Map */}
               <div className={styles.mapWrapper}>
-                <LiveTrackingMap />
+                <LiveTrackingMap orderId={order.id} />
               </div>
 
               {/* Delivery address */}

@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
-export default function ActiveOrdersWidget() {
+export default function ActiveOrdersWidget({ venture } = {}) {
   const [activeOrders, setActiveOrders] = useState([]);
   const router = useRouter();
 
@@ -24,8 +24,12 @@ export default function ActiveOrdersWidget() {
           ...instastyle.map(o => ({ ...o, venture: 'InstaStyle', path: '/services/instastyle/order-tracking' }))
         ];
 
+        // When a specific venture is requested (e.g. InstaStyle's own orders page),
+        // only show that venture's orders instead of every service's.
+        const scoped = venture ? combined.filter(o => o.venture === venture) : combined;
+
         // Filter for orders that are not DELIVERED
-        const active = combined.filter(o => o.status !== 'DELIVERED');
+        const active = scoped.filter(o => o.status !== 'DELIVERED');
         setActiveOrders(active);
       } catch (error) {
         console.error('Error loading active orders:', error);
@@ -35,7 +39,7 @@ export default function ActiveOrdersWidget() {
     loadActiveOrders();
     const interval = setInterval(loadActiveOrders, 10000);
     return () => clearInterval(interval);
-  }, []);
+  }, [venture]);
 
   if (activeOrders.length === 0) return null;
 
