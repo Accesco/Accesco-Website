@@ -311,18 +311,19 @@ function BookingModal({ pkg, onClose, onSuccess }) {
 
   const handleConfirm = async () => {
     setSubmitting(true);
+    const cateringOrderId = `CAT-${Date.now().toString(36).toUpperCase()}`;
     try {
       // Send catering enquiry email via API
       await fetch('/api/swadishtt/orders/update-status', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          orderId: `CAT-${Date.now().toString(36).toUpperCase()}`,
+          orderId: cateringOrderId,
           newStatus: 'CONFIRMED',
           customerEmail: email,
           customerName: name,
           orderData: {
-            id: `CAT-${Date.now().toString(36).toUpperCase()}`,
+            id: cateringOrderId,
             type: 'catering',
             package: pkg.name,
             serves: pkg.serves,

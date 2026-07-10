@@ -1331,11 +1331,9 @@ function GroklyPageContent() {
 
 export default function GroklyPage() {
   return (
-    <GroklyProvider>
-      <Suspense fallback={<div>Loading...</div>}>
-        <GroklyPageContent />
-      </Suspense>
-    </GroklyProvider>
+    <Suspense fallback={<div>Loading...</div>}>
+      <GroklyPageContent />
+    </Suspense>
   );
 }
 // Redesigned with Blinkit-style flat layout

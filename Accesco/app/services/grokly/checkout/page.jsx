@@ -12,10 +12,9 @@ import {
 } from 'lucide-react';
 
 export default function GroklyCheckout() {
-  const { cart, placeOrder, location } = useGrokly();
+  const { cart, placeOrder, location, cartHydrated } = useGrokly();
   const router = useRouter();
   const { user } = useAuth();
-  const [isMounted, setIsMounted] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [isLoadingLocation, setIsLoadingLocation] = useState(false);
   const [customerDetails, setCustomerDetails] = useState({
@@ -25,10 +24,6 @@ export default function GroklyCheckout() {
   });
 
   useEffect(() => {
-    setIsMounted(true);
-  }, []);
-
-  useEffect(() => {
     if (location) {
       setCustomerDetails(prev => ({
         ...prev,
@@ -36,6 +31,7 @@ export default function GroklyCheckout() {
       }));
     }
   }, [location]);
+
   const [eta , setEta] = useState(0);
   const [deliverySpeed, setDeliverySpeed] = useState('instant');
 
@@ -143,6 +139,7 @@ export default function GroklyCheckout() {
   const handlePlaceOrder = async () => {
     setIsProcessing(true);
     const resolvedEta = deliverySpeed === 'batched' ? (eta ? eta + 15 : 25) : eta;
+    // placeOrder in GroklyContext already persists to Firestore + sends confirmation email via /api/grokly/orders
     const order = placeOrder({
       total,
       subtotal,
@@ -151,6 +148,7 @@ export default function GroklyCheckout() {
       discount,
       eta: resolvedEta,
       items: cartItems.map(i => ({ id: i.product.id, name: i.product.name, price: i.product.price, quantity: i.quantity, sku: i.product.sku || '' })),
+      totals: { subtotal, deliveryFee, discount, total },
       paymentMethod: 'UPI',
       address: customerDetails.address,
       customerName: customerDetails.name,
@@ -158,46 +156,6 @@ export default function GroklyCheckout() {
       customerEmail: user?.email || null,
       userId: user?.uid || user?.id || null,
     });
-
-    let customerEmail = user?.email;
-    if (!customerEmail) {
-      try {
-        const storedUser = JSON.parse(localStorage.getItem('accesco_user') || '{}');
-        if (storedUser.email) customerEmail = storedUser.email;
-      } catch {}
-    }
-
-    if (customerEmail) {
-      try {
-        await fetch('/api/grokly/orders/confirm', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            orderId: order.id,
-            customerEmail,
-            customerName: customerDetails.name,
-            orderData: {
-              items: cartItems.map(i => ({
-                name: i.product.name,
-                price: i.product.price,
-                quantity: i.quantity,
-                sku: i.product.sku || ''
-              })),
-              totals: {
-                subtotal,
-                deliveryFee,
-                total
-              },
-              address: customerDetails.address,
-              paymentMethod: 'UPI',
-              eta: resolvedEta
-            }
-          })
-        });
-      } catch (err) {
-        console.error('Failed to trigger confirmation email for Grokly:', err);
-      }
-    }
 
     setTimeout(() => {
       setIsProcessing(false);
@@ -251,17 +209,15 @@ export default function GroklyCheckout() {
     fetchEta();
   }, []); 
 
-  if (!isMounted) {
-    return (
-      <div className={styles.emptyCartContainer}>
-        <ShoppingBag size={48} className={styles.emptyCartIcon} />
-        <h1>Loading secure checkout...</h1>
-        <p>Please wait while we secure your session and load your cart items.</p>
-      </div>
-    );
-  }
-
   if (cartItems.length === 0 && !isProcessing) {
+    // Show loading spinner while cart is still hydrating from Firestore
+    if (!cartHydrated) {
+      return (
+        <div className={styles.emptyCartContainer}>
+          <p style={{ color: '#888', fontSize: '15px' }}>Loading your cart...</p>
+        </div>
+      );
+    }
     return (
       <div className={styles.emptyCartContainer}>
         <ShoppingBag size={48} className={styles.emptyCartIcon} />

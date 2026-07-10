@@ -164,78 +164,83 @@ export function buildOrderConfirmationEmail({ order, customerName }) {
   const totals  = order?.totals || {};
   const addr    = order?.delivery || {};
   const method  = (order?.paymentMethod || 'online').toUpperCase();
-  const placedAt = order?.placedAt
-    ? new Date(order.placedAt).toLocaleString('en-IN', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })
-    : new Date().toLocaleString('en-IN');
+  const etaMinutes = order?.deliveryPartner?.etaMinutes || (order?.deliverySpeed === 'batched' ? 25 : 10);
 
-  const itemRows = items.map((item) => `
+  const itemsHtml = items.map(item => `
     <tr>
-      <td>
-        <div class="item-name">${item.name}</div>
-        <div class="item-meta">${item.restaurant || 'Swadishtt Kitchen'}${item.sku ? ` &nbsp;&middot;&nbsp; ${item.sku}` : ''}</div>
+      <td style="padding:8px 0;border-bottom:1px solid #f0f0f0;">
+        <strong>${item.name}</strong>
+        ${item.restaurant ? `<br/><span style="color:#888;font-size:12px;">${item.restaurant}</span>` : ''}
+        ${item.sku ? `<span style="color:#888;font-size:12px;"> · ${item.sku}</span>` : ''}
       </td>
-      <td style="color:#6b7280">${item.quantity}&times;</td>
-      <td>&#8377;${(item.price * item.quantity).toLocaleString('en-IN')}</td>
+      <td style="padding:8px 0;border-bottom:1px solid #f0f0f0;text-align:center;">x${item.quantity}</td>
+      <td style="padding:8px 0;border-bottom:1px solid #f0f0f0;text-align:right;">&#8377;${(item.price * item.quantity).toLocaleString('en-IN')}</td>
     </tr>
   `).join('');
 
-  const body = `
-    <p class="greeting">Order Confirmed, ${name.split(' ')[0]}.</p>
-    <p class="note">Your order <strong>#${orderId}</strong> has been received and is being prepared. You will receive updates as it progresses.</p>
+  const deliveryAddress = [addr.address, addr.city, addr.pincode].filter(Boolean).join(', ');
 
-    <div class="status-bar">
-      <div class="status-dot"></div>
-      <div>
-        <div class="status-label">Order Status</div>
-        <div class="status-value">Confirmed</div>
+  const html = `
+    <div style="font-family:Arial,sans-serif;max-width:560px;margin:0 auto;padding:32px 24px;color:#1a1a1a;">
+      <div style="background:#1a1a1a;border-radius:8px;padding:24px;margin-bottom:24px;">
+        <p style="margin:0 0 4px;font-size:13px;color:#aaa;text-transform:uppercase;letter-spacing:1px;">Order Confirmed</p>
+        <h1 style="margin:0;font-size:26px;font-weight:700;color:#fff;">Your Swadishtt order is placed.</h1>
       </div>
-    </div>
 
-    <p class="section-title">Order Summary</p>
-    <table class="items-table">
-      <thead>
+      <p style="font-size:15px;line-height:1.7;margin:0 0 20px;">
+        Hi ${name}, your food is being prepared.
+        Estimated delivery: <strong>~${etaMinutes} min</strong>.
+      </p>
+
+      <p style="font-size:13px;color:#888;margin:0 0 6px;">Order ID: <code style="background:#f0f0f0;padding:2px 6px;border-radius:4px;">${orderId}</code></p>
+      <p style="font-size:13px;color:#888;margin:0 0 24px;">Delivery to: ${deliveryAddress || 'Your address'}</p>
+
+      <table style="width:100%;border-collapse:collapse;font-size:14px;margin-bottom:20px;">
+        <thead>
+          <tr>
+            <th style="text-align:left;padding:8px 0;border-bottom:2px solid #1a1a1a;font-size:12px;text-transform:uppercase;letter-spacing:0.5px;">Item</th>
+            <th style="text-align:center;padding:8px 0;border-bottom:2px solid #1a1a1a;font-size:12px;text-transform:uppercase;">Qty</th>
+            <th style="text-align:right;padding:8px 0;border-bottom:2px solid #1a1a1a;font-size:12px;text-transform:uppercase;">Price</th>
+          </tr>
+        </thead>
+        <tbody>${itemsHtml}</tbody>
+      </table>
+
+      <table style="width:100%;font-size:14px;margin-bottom:24px;">
         <tr>
-          <th>Item</th>
-          <th>Qty</th>
-          <th style="text-align:right">Total</th>
+          <td style="padding:4px 0;color:#555;">Subtotal</td>
+          <td style="padding:4px 0;text-align:right;">&#8377;${(totals.subtotal || 0).toLocaleString('en-IN')}</td>
         </tr>
-      </thead>
-      <tbody>${itemRows}</tbody>
-    </table>
+        <tr>
+          <td style="padding:4px 0;color:#555;">Delivery</td>
+          <td style="padding:4px 0;text-align:right;">${totals.deliveryFee === 0 ? '<span style="color:#0c831f;">FREE</span>' : `&#8377;${totals.deliveryFee || 0}`}</td>
+        </tr>
+        <tr>
+          <td style="padding:4px 0;color:#555;">Platform Fee</td>
+          <td style="padding:4px 0;text-align:right;">&#8377;${totals.platformFee || 5}</td>
+        </tr>
+        <tr>
+          <td style="padding:4px 0;color:#555;">GST</td>
+          <td style="padding:4px 0;text-align:right;">&#8377;${(totals.gst || 0).toLocaleString('en-IN')}</td>
+        </tr>
+        ${totals.discount > 0 ? `
+        <tr>
+          <td style="padding:4px 0;color:#0c831f;">Batched Discount</td>
+          <td style="padding:4px 0;text-align:right;color:#0c831f;">-&#8377;${totals.discount}</td>
+        </tr>` : ''}
+        <tr style="border-top:2px solid #1a1a1a;">
+          <td style="padding:10px 0 4px;font-weight:700;font-size:16px;">Total Paid</td>
+          <td style="padding:10px 0 4px;text-align:right;font-weight:700;font-size:16px;">&#8377;${(totals.total || 0).toLocaleString('en-IN')}</td>
+        </tr>
+      </table>
 
-    <div class="totals">
-      <div class="total-row"><span>Subtotal</span><span>&#8377;${(totals.subtotal || 0).toLocaleString('en-IN')}</span></div>
-      <div class="total-row"><span>Delivery</span><span>${totals.deliveryFee === 0 ? 'Free' : '&#8377;' + (totals.deliveryFee || 0)}</span></div>
-      <div class="total-row"><span>Platform Fee</span><span>&#8377;${(totals.platformFee || 5).toLocaleString('en-IN')}</span></div>
-      <div class="total-row"><span>GST</span><span>&#8377;${(totals.gst || 0).toLocaleString('en-IN')}</span></div>
-      <div class="total-row grand"><span>Total Paid</span><span>&#8377;${(totals.total || 0).toLocaleString('en-IN')}</span></div>
+      <p style="font-size:13px;color:#999;margin:32px 0 0;">
+        — Swadishtt by Accesco Living · <a href="https://www.accescoliving.com/services/swadisht/order-tracking?id=${orderId}" style="color:#1a1a1a;font-weight:700;text-decoration:underline;">Track Order #${orderId}</a>
+      </p>
     </div>
-
-    <div class="info-grid">
-      <div class="info-box">
-        <div class="info-label">Delivery Address</div>
-        <div class="info-value">${addr.address || ''}, ${addr.city || ''} ${addr.pincode || ''}</div>
-      </div>
-      <div class="info-box">
-        <div class="info-label">Payment</div>
-        <div class="info-value">${method}</div>
-      </div>
-      <div class="info-box">
-        <div class="info-label">Order ID</div>
-        <div class="info-value">#${orderId}</div>
-      </div>
-      <div class="info-box">
-        <div class="info-label">Placed At</div>
-        <div class="info-value">${placedAt}</div>
-      </div>
-    </div>
-
-    <a href="http://accescoliving.com/services/swadisht/order-tracking?id=${orderId}" class="cta">Track My Order</a>
   `;
 
   const subject  = `Order Confirmed — #${orderId} | Swadishtt`;
-  const preheader = `Your order #${orderId} is confirmed and being prepared.`;
-  const html     = baseLayout({ title: subject, preheader, body });
   return { subject, html };
 }
 
@@ -308,72 +313,80 @@ export function buildInstaStyleOrderEmail({ order, customerName }) {
   const addr    = order?.shippingAddress || {};
   const method  = (order?.paymentMethod || 'online').toUpperCase();
 
-  const itemRows = items.map((item) => `
+  const itemsHtml = items.map((item) => `
     <tr>
-      <td>
-        <div class="item-name">${item.name}</div>
-        <div class="item-meta">${item.brand || 'InstaStyle'}${item.size ? ` &nbsp;&middot;&nbsp; Size: ${item.size}` : ''}${item.sku ? ` &nbsp;&middot;&nbsp; SKU: ${item.sku}` : ''}</div>
+      <td style="padding:10px 0;border-bottom:1px solid #f0ece8;">
+        <strong>${item.name}</strong>
+        ${item.brand ? `<br/><span style="color:#888;font-size:12px;">${item.brand}</span>` : ''}
+        ${item.size ? `<span style="color:#888;font-size:12px;"> · Size ${item.size}</span>` : ''}
+        ${item.sku ? `<span style="color:#888;font-size:12px;"> · ${item.sku}</span>` : ''}
       </td>
-      <td style="color:#6b7280">${item.quantity}&times;</td>
-      <td>&#8377;${(item.price * item.quantity).toLocaleString('en-IN')}</td>
+      <td style="padding:10px 0;border-bottom:1px solid #f0ece8;text-align:center;">x${item.quantity}</td>
+      <td style="padding:10px 0;border-bottom:1px solid #f0ece8;text-align:right;">&#8377;${((item.discountedPrice || item.price) * item.quantity).toLocaleString('en-IN')}</td>
     </tr>
   `).join('');
 
-  const body = `
-    <p class="greeting">Order Placed, ${name.split(' ')[0]}.</p>
-    <p class="note">Your InstaStyle order <strong>#${orderId}</strong> has been confirmed. We are processing it for dispatch within 1–2 business days.</p>
+  const deliveryAddress = [addr.line1 || addr.address, addr.city, addr.pincode].filter(Boolean).join(', ');
 
-    <div class="status-bar">
-      <div class="status-dot"></div>
-      <div>
-        <div class="status-label">Order Status</div>
-        <div class="status-value">Confirmed</div>
+  const html = `
+    <div style="font-family:'Georgia',serif;max-width:560px;margin:0 auto;padding:40px 24px;color:#1a1a1a;">
+      <div style="border-top:3px solid #1a1a1a;padding-top:24px;margin-bottom:32px;">
+        <p style="margin:0 0 6px;font-size:11px;text-transform:uppercase;letter-spacing:2px;color:#888;">Order Confirmed</p>
+        <h1 style="margin:0;font-size:28px;font-weight:400;letter-spacing:-0.5px;">InstaStyle</h1>
+        <p style="margin:4px 0 0;font-size:12px;color:#888;">by Accesco Living</p>
       </div>
-    </div>
 
-    <p class="section-title">Items Ordered</p>
-    <table class="items-table">
-      <thead>
+      <p style="font-size:15px;line-height:1.8;margin:0 0 24px;">
+        Hi ${name} — your order is confirmed and being prepared.
+        Estimated delivery: <strong>3–5 Business Days</strong>.
+      </p>
+
+      <p style="font-size:12px;color:#888;margin:0 0 4px;">Order · <code style="background:#f5f5f0;padding:2px 6px;">${orderId}</code></p>
+      <p style="font-size:12px;color:#888;margin:0 0 32px;">Ship to: ${deliveryAddress || 'Your address'}</p>
+
+      <table style="width:100%;border-collapse:collapse;font-size:14px;margin-bottom:24px;">
+        <thead>
+          <tr>
+            <th style="text-align:left;padding:8px 0;border-bottom:1px solid #1a1a1a;font-size:11px;text-transform:uppercase;letter-spacing:1px;font-weight:400;">Item</th>
+            <th style="text-align:center;padding:8px 0;border-bottom:1px solid #1a1a1a;font-size:11px;text-transform:uppercase;font-weight:400;">Qty</th>
+            <th style="text-align:right;padding:8px 0;border-bottom:1px solid #1a1a1a;font-size:11px;text-transform:uppercase;font-weight:400;">Price</th>
+          </tr>
+        </thead>
+        <tbody>${itemsHtml}</tbody>
+      </table>
+
+      <table style="width:100%;font-size:14px;margin-bottom:32px;">
         <tr>
-          <th>Item</th>
-          <th>Qty</th>
-          <th style="text-align:right">Total</th>
+          <td style="padding:5px 0;color:#666;">Subtotal</td>
+          <td style="padding:5px 0;text-align:right;">&#8377;${(totals.subtotal || 0).toLocaleString('en-IN')}</td>
         </tr>
-      </thead>
-      <tbody>${itemRows}</tbody>
-    </table>
+        <tr>
+          <td style="padding:5px 0;color:#666;">Shipping</td>
+          <td style="padding:5px 0;text-align:right;">${(totals.shippingFee || totals.deliveryFee) === 0 ? '<span style="color:#2d6a4f;">FREE</span>' : `&#8377;${totals.shippingFee || totals.deliveryFee || 0}`}</td>
+        </tr>
+        <tr>
+          <td style="padding:5px 0;color:#666;">GST</td>
+          <td style="padding:5px 0;text-align:right;">&#8377;${(totals.gst || totals.tax || 0).toLocaleString('en-IN')}</td>
+        </tr>
+        ${(totals.discount || 0) > 0 ? `
+        <tr>
+          <td style="padding:5px 0;color:#2d6a4f;">Discount</td>
+          <td style="padding:5px 0;text-align:right;color:#2d6a4f;">-&#8377;${totals.discount}</td>
+        </tr>` : ''}
+        <tr>
+          <td style="padding:12px 0 4px;font-size:16px;font-weight:600;border-top:1px solid #1a1a1a;">Total Paid</td>
+          <td style="padding:12px 0 4px;text-align:right;font-size:16px;font-weight:600;border-top:1px solid #1a1a1a;">&#8377;${(totals.total || 0).toLocaleString('en-IN')}</td>
+        </tr>
+      </table>
 
-    <div class="totals">
-      <div class="total-row"><span>Subtotal</span><span>&#8377;${(totals.subtotal || 0).toLocaleString('en-IN')}</span></div>
-      <div class="total-row"><span>Shipping</span><span>${totals.shippingFee === 0 ? 'Free' : '&#8377;' + (totals.shippingFee || 0)}</span></div>
-      <div class="total-row"><span>GST</span><span>&#8377;${(totals.gst || 0).toLocaleString('en-IN')}</span></div>
-      <div class="total-row grand"><span>Total Paid</span><span>&#8377;${(totals.total || 0).toLocaleString('en-IN')}</span></div>
+      <p style="font-size:12px;color:#999;border-top:1px solid #f0ece8;padding-top:20px;margin:0;">
+        InstaStyle by Accesco Living · 
+        <a href="https://www.accescoliving.com/services/instastyle/orders/${orderId}" style="color:#1a1a1a;font-weight:700;text-decoration:underline;">View Order #${orderId}</a>
+      </p>
     </div>
-
-    <div class="info-grid">
-      <div class="info-box">
-        <div class="info-label">Ship To</div>
-        <div class="info-value">${addr.line1 || addr.address || ''}, ${addr.city || ''} ${addr.pincode || ''}</div>
-      </div>
-      <div class="info-box">
-        <div class="info-label">Payment</div>
-        <div class="info-value">${method}</div>
-      </div>
-      <div class="info-box">
-        <div class="info-label">Order ID</div>
-        <div class="info-value">#${orderId}</div>
-      </div>
-      <div class="info-box">
-        <div class="info-label">Est. Delivery</div>
-        <div class="info-value">3–5 Business Days</div>
-      </div>
-    </div>
-
-    <a href="http://accescoliving.com/services/instastyle/orders/${orderId}" class="cta">View My Order</a>
   `;
+
   const subject   = `Order Confirmed — #${orderId} | InstaStyle`;
-  const preheader = `Your InstaStyle order #${orderId} is confirmed.`;
-  const html      = baseLayout({ title: subject, preheader, body });
   return { subject, html };
 }
 

@@ -34,6 +34,7 @@ function CheckoutContent() {
   // Validation error states
   const [addressErrors, setAddressErrors] = useState({});
   const [paymentError, setPaymentError] = useState('');
+  const [isPlacingOrder, setIsPlacingOrder] = useState(false);
 
   useEffect(() => {
     if (!cartHydrated) return;
@@ -148,10 +149,12 @@ function CheckoutContent() {
   };
 
   const handlePlaceOrder = async () => {
+    if (isPlacingOrder) return;
     if (!paymentMethod) {
       setPaymentError('Please select a payment method');
       return;
     }
+    setIsPlacingOrder(true);
 
     // Get customer details from delivery address (already auto-filled from accesco_user)
     const customerEmail = deliveryAddress.email || 'customer@accescoliving.com';
@@ -689,8 +692,12 @@ function CheckoutContent() {
                   </div>
                 </div>
 
-                <button className={styles.placeOrderBtn} onClick={handlePlaceOrder}>
-                  Place Order - ₹{total}
+                <button 
+                  className={styles.placeOrderBtn} 
+                  onClick={handlePlaceOrder}
+                  disabled={isPlacingOrder}
+                >
+                  {isPlacingOrder ? 'Placing Order...' : `Place Order - ₹${total}`}
                 </button>
               </div>
             )}

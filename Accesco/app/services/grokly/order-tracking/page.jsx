@@ -85,8 +85,40 @@ function GroklyTrackingContent() {
   const orderId = searchParams.get('id');
   const eta = searchParams.get('eta') || '12';
   const { orders } = useGrokly();
-  
-  const order = orders.find(o => o.id === orderId);
+
+  // Local state for the current order so we can fall back to localStorage
+  // and respond to updates immediately after placing an order.
+  const [currentOrder, setCurrentOrder] = useState(() => {
+    try {
+      const saved = typeof window !== 'undefined' ? localStorage.getItem('grokly_orders') : null;
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed)) {
+          return parsed.find(o => o.id === orderId) || null;
+        }
+      }
+    } catch (e) {
+      // ignore
+    }
+    return null;
+  });
+
+  // Keep local order in sync with context orders
+  useEffect(() => {
+    if (!orderId) return;
+    const found = orders.find(o => o.id === orderId);
+    if (found) {
+      setCurrentOrder(found);
+      // also persist to localStorage for robustness
+      try {
+        const existing = JSON.parse(localStorage.getItem('grokly_orders') || '[]');
+        const updated = [found, ...existing.filter(o => o.id !== found.id)];
+        localStorage.setItem('grokly_orders', JSON.stringify(updated));
+      } catch (e) {}
+    }
+  }, [orders, orderId]);
+
+  const order = currentOrder || orders.find(o => o.id === orderId);
 
   // States for interactive custom features
   const [chatOpen, setChatOpen] = useState(false);

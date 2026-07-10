@@ -276,6 +276,7 @@ export default function CheckoutPage() {
 
     setIsProcessing(true);
 
+    // placeOrder in CartContext syncs to /api/instastyle/orders which sends the rich confirmation email
     const order = placeOrder({
       total: finalTotal,
       subtotal,
@@ -284,45 +285,11 @@ export default function CheckoutPage() {
       deliverySpeed,
       speedDiscount,
       address: formData,
+      customerEmail: formData.email,
+      customerName: formData.fullName,
       paymentMethod: formData.paymentMethod,
       eta: deliverySpeed === 'batched' ? (typeof batchedETA !== 'undefined' ? batchedETA : null) : (deliveryETA || null),
     });
-
-    try {
-      await fetch('/api/instastyle/orders/confirm', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          orderId: order.id,
-          customerEmail: formData.email,
-          customerName: formData.fullName,
-          orderData: {
-            items: cart.map(item => ({
-              name: item.name,
-              price: item.price,
-              quantity: item.quantity,
-              brand: item.brand,
-              size: item.selectedSize || item.size || 'M',
-              sku: item.sku || ''
-            })),
-            totals: {
-              subtotal,
-              shippingFee: deliveryFee,
-              gst: tax,
-              total: finalTotal
-            },
-            shippingAddress: {
-              line1: formData.addressLine1,
-              city: formData.city,
-              pincode: formData.pincode
-            },
-            paymentMethod: formData.paymentMethod
-          }
-        })
-      });
-    } catch (err) {
-      console.error('Email confirm failed:', err);
-    }
 
     setTimeout(() => {
       setIsProcessing(false);
