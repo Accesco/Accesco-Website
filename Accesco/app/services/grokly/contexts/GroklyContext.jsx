@@ -88,27 +88,23 @@ export function GroklyProvider({ children }) {
     }
   };
 
-  const [cart, setCart] = useState(() => readInitialCart()); // id -> quantity mapping for compatibility
-  const [orders, setOrders] = useState(() => readInitialOrders());
+  const [cart, setCart] = useState({}); // starts empty for SSR safety
+  const [orders, setOrders] = useState([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
-  const [location, setLocation] = useState(() => readInitialLocation());
+  const [location, setLocation] = useState('Koramangala');
   const [isLocationModalOpen, setIsLocationModalOpen] = useState(false);
-  // Initialize cartHydrated=true immediately if localStorage already has cart data (sync read)
-  // This prevents false "empty cart" flash on navigation — Firestore is just a background sync
-  const [cartHydrated, setCartHydrated] = useState(() => {
-    if (typeof window === 'undefined') return false;
-    try {
-      const saved = localStorage.getItem(CART_STORAGE_KEY);
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        if (parsed && typeof parsed === 'object' && Object.keys(parsed).length > 0) return true;
-      }
-    } catch {}
-    return false;
-  });
+  const [cartHydrated, setCartHydrated] = useState(false);
 
   // Track hydration — skip the first localStorage write so we never overwrite the real cart with an empty SSR value
   const isHydrated = useRef(false);
+
+  // Load localStorage data once client side has mounted to avoid hydration errors
+  useEffect(() => {
+    const initialLocation = readInitialLocation();
+    const initialOrders = readInitialOrders();
+    setLocation(initialLocation);
+    setOrders(initialOrders);
+  }, []);
 
   // Fetch orders from backend Firestore on mount/user change (for both registered users and guests)
   useEffect(() => {
@@ -170,17 +166,27 @@ export function GroklyProvider({ children }) {
   // Fetch cart from Firestore on mount/user change
   useEffect(() => {
     const loadCartFromFirestore = async () => {
-      const identifier = user?.uid || user?.email || getDeviceId();
-      if (!identifier) {
+      // 1. Always load from localStorage first so the user has immediate access to local items
+      const initialLocal = readInitialCart();
+      if (initialLocal && Object.keys(initialLocal).length > 0) {
+        setCart(initialLocal);
+      }
+
+      // If user is not logged in, we only use localStorage. Do not fetch/overwrite guest carts in Firestore.
+      if (!user) {
+        isHydrated.current = true;
         setCartHydrated(true);
         return;
       }
 
+      // If user is logged in, sync with their user-specific Firestore cart
+      const identifier = user.uid || user.email;
       try {
         const docSnap = await getDoc(doc(db, 'grokly_carts', identifier));
         if (docSnap.exists()) {
           const remoteCart = docSnap.data()?.cart;
-          if (remoteCart && typeof remoteCart === 'object' && Object.keys(remoteCart).length > 0) {
+          if (remoteCart && typeof remoteCart === 'object') {
+            // Overwrite cart state with remote Firestore cart if it exists (even if empty, since logged-in user state is source of truth)
             setCart(remoteCart);
             isHydrated.current = true;
             setCartHydrated(true);
@@ -191,11 +197,6 @@ export function GroklyProvider({ children }) {
         console.error('[GroklyContext] Failed to load cart from Firestore:', err);
       }
       
-      // Fallback: LocalStorage
-      const initialLocal = readInitialCart();
-      if (initialLocal && Object.keys(initialLocal).length > 0) {
-        setCart(initialLocal);
-      }
       isHydrated.current = true;
       setCartHydrated(true);
     };
