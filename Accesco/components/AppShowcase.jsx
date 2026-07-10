@@ -7,9 +7,6 @@ import {
   Utensils, 
   Shirt, 
   GlassWater,
-  User,
-  Mail,
-  Phone,
   ArrowRight,
   ArrowLeft,
   Check,
@@ -321,21 +318,18 @@ export default function AppShowcase() {
         {/* Right Panel: Clean Form Wrapper */}
         <div className={styles.rightPanel}>
           
-          <div className={styles.brandLogoRow}>
-            <svg width="90" height="24" viewBox="0 0 90 24" fill="none">
-              <path d="M6 12L9 15L14 9" stroke="#7A0042" strokeWidth="2" />
-              <circle cx="10" cy="12" r="8" stroke="#7A0042" strokeWidth="2" fill="none" />
-              <path d="M24 6L25.25 8.5L27.75 9L25.75 10.75L26.5 13.25L24 12L21.5 13.25L22.25 10.75L20.25 9L22.75 8.5L24 6Z" fill="#D47A55" />
-            </svg>
-          </div>
+  
 
-          <h3 className={styles.cardTitle}>Get Early Access</h3>
-          
-          <p className={styles.cardSubtitle}>
-            {currentStep === 1 && "Join the waitlist and be the first to experience India's most intelligent commerce platform."}
-            {currentStep === 2 && "What interests you? Choose at least one category to curate your feed."}
-            {currentStep === 3 && "Security verification. Enter the 6-digit passcode sent to your phone."}
-          </p>
+<div className={styles.waitlistStar} aria-hidden="true">
+  ✱
+</div>
+
+<h3 className={styles.cardTitle}>Get Early Access</h3>
+<p className={styles.cardSubtitle}>
+  {currentStep === 1 && "Join the waitlist for early access to Accesco Living’s unified commerce platform, built for groceries, food delivery, fashion, dining, home services, and member-only launch benefits."}
+  {currentStep === 2 && "Select the experiences you are most interested in so we can personalize your early access updates, offers, and launch notifications."}
+  {currentStep === 3 && "Verify your phone number to secure your waitlist entry and receive important early access updates safely."}
+</p>
 
           {success && (
             <div className={styles.successMessage}>
@@ -356,39 +350,39 @@ export default function AppShowcase() {
             {currentStep === 1 && (
               <div className={styles.inputsStack}>
                 <div className={styles.inputWrapper}>
-                  <User size={18} className={styles.inputIcon} />
-                  <input
-                    type="text"
-                    className={styles.formInput}
-                    placeholder="Full Name"
-                    value={form.name}
-                    onChange={(e) => setForm({ ...form, name: e.target.value })}
-                  />
-                </div>
+
+  <input
+    type="text"
+    className={styles.formInput}
+    placeholder="Enter your full name"
+    value={form.name}
+    onChange={(e) => setForm({ ...form, name: e.target.value })}
+  />
+</div>
 
                 <div className={styles.inputWrapper}>
-                  <Mail size={18} className={styles.inputIcon} />
+  
                   <input
                     type="email"
                     className={styles.formInput}
-                    placeholder="Email Address"
+                    placeholder="your@email.com"
                     value={form.email}
                     onChange={(e) => setForm({ ...form, email: e.target.value })}
                     required
                   />
                 </div>
 
-                <div className={styles.inputWrapper}>
-                  <Phone size={18} className={styles.inputIcon} />
-                  <input
-                    type="tel"
-                    className={styles.formInput}
-                    placeholder="Phone Number"
-                    value={form.phone}
-                    onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                    required
-                  />
-                </div>
+               <div className={styles.inputWrapper}>
+  
+  <input
+    type="tel"
+    className={styles.formInput}
+    placeholder="Enter your phone number"
+    value={form.phone}
+    onChange={(e) => setForm({ ...form, phone: e.target.value })}
+    required
+  />
+</div>
 
                 <button type="button" className={styles.submitButton} onClick={handleNext}>
                   <span>Join Waitlist</span>
@@ -568,12 +562,11 @@ export default function AppShowcase() {
           <div className={styles.trustRow}>
             <div className={styles.trustLeft}>
               <div className={styles.trustItem}>
-                <span>👥</span>
                 <span>Join 12,000+ members</span>
               </div>
               <div className={styles.trustDivider}></div>
               <div className={styles.trustItem}>
-                <span>🔒</span>
+                <span></span>
                 <span>Secure &amp; Spam-Free</span>
               </div>
             </div>

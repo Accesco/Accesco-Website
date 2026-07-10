@@ -15,113 +15,113 @@ export const categories = [
     color: "#0c831f", 
     image: "https://images.unsplash.com/photo-1534723452862-4c874018d66d?w=100&h=100&fit=crop"
   },
-  { 
-    id: "vegetables-fruits", 
-    name: "Veggies & Fruits", 
-    color: "#10b981", 
-    image: "https://images.unsplash.com/photo-1540420773420-3366772f4999?w=100&h=100&fit=crop"
-  },
+ {
+  id: "vegetables-fruits",
+  name: "Veggies & Fruits",
+  color: "#10b981",
+  image: "https://i.pinimg.com/736x/27/33/5d/27335dd021a80576927344e039bfc8b5.jpg"
+},
   { 
     id: "dairy-breakfast", 
     name: "Dairy & Breakfast", 
     color: "#3b82f6", 
-    image: "https://images.unsplash.com/photo-1563636619-e9143da7973b?w=100&h=100&fit=crop"
+    image: "https://www.bbassets.com/media/uploads/p/xl/1229504_3-bb-combo-kelloggs-corn-flakes-original12-kg-amul-taaza-homogenised-toned-milk-1l.jpg"
   },
   { 
     id: "munchies", 
     name: "Munchies", 
     color: "#f59e0b", 
-    image: "https://images.unsplash.com/photo-1621939514649-280e2ee25f60?w=100&h=100&fit=crop"
+    image: "https://media.potatopro.com/pepsico-parters-india-1-1200.jpg"
   },
   { 
     id: "cold-drinks", 
     name: "Cold Drinks", 
     color: "#ef4444", 
-    image: "https://images.unsplash.com/photo-1581006852262-e4307cf6283a?w=100&h=100&fit=crop"
+    image: "https://tiimg.tistatic.com/fp/1/007/193/cold-drink-delicious-taste-with-meals-100ml-300ml-500ml-1l-1-25l-2l--403.jpg"
   },
   { 
     id: "instant-frozen", 
     name: "Instant & Frozen", 
     color: "#8b5cf6", 
-    image: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=100&h=100&fit=crop"
+    image: "https://i.pinimg.com/736x/5c/94/22/5c94225787c1aadb6413d34b971cd9c4.jpg"
   },
   { 
     id: "tea-coffee", 
     name: "Tea & Coffee", 
     color: "#78350f", 
-    image: "https://images.unsplash.com/photo-1511920170033-f8396924c348?w=100&h=100&fit=crop"
+    image: "https://i.pinimg.com/736x/e5/b1/71/e5b171de4141e19b43672dcf8d97bc83.jpg"
   },
   { 
     id: "bakery-biscuits", 
     name: "Bakery & Biscuits", 
     color: "#d97706", 
-    image: "https://images.unsplash.com/photo-1558961363-fa8fdf82db35?w=100&h=100&fit=crop"
+    image: "https://i.pinimg.com/736x/6e/a6/fc/6ea6fce4eb1eb56c0deaab3591764a6c.jpg"
   },
   { 
     id: "sweet-tooth", 
     name: "Sweet Tooth", 
     color: "#ec4899", 
-    image: "https://images.unsplash.com/photo-1511381939415-e44015466834?w=100&h=100&fit=crop"
+    image: "https://image.cdn.shpy.in/505502/cat/510341_cat-1777546355286.png?width=300&format=webp"
   },
   { 
     id: "atta-rice-dal", 
     name: "Atta, Rice & Dal", 
     color: "#eab308", 
-    image: "https://images.unsplash.com/photo-1586201375761-83865001e31c?w=100&h=100&fit=crop"
+    image: "https://i.pinimg.com/736x/3f/3e/1c/3f3e1c1939f840427f22e84270ed23c8.jpg"
   },
   { 
     id: "masala-oil", 
     name: "Masala & Oil", 
     color: "#dc2626", 
-    image: "https://www.jkcart.com/uploads/blogs/blogImg_585759961113264285326367187944.png"
+    image: "https://i0.wp.com/gujcomart.in/wp-content/uploads/2025/10/Masala-Oil.png?resize=300%2C286&ssl=1"
   },
   { 
     id: "sauces-spreads", 
     name: "Sauces & Spreads", 
     color: "#f97316", 
-    image: "https://images.unsplash.com/photo-1472476443507-c7a5948772fc?w=100&h=100&fit=crop"
+    image: "https://i.pinimg.com/736x/f7/82/d5/f782d5aac4dd45ee808486bc45a9a7bb.jpg"
   },
   { 
     id: "organic-healthy", 
     name: "Organic & Healthy", 
     color: "#059669", 
-    image: "https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=100&h=100&fit=crop"
+    image: "https://i.pinimg.com/736x/34/19/8a/34198aee64c74f6509df366441a282e4.jpg"
   },
   { 
     id: "baby-care", 
     name: "Baby Care", 
     color: "#06b6d4", 
-    image: "https://images.unsplash.com/photo-1515488042361-ee00e0ddd4e4?w=100&h=100&fit=crop"
+    image: "https://i.pinimg.com/736x/9e/f0/2d/9ef02d1fe925f71760c7b25b79ac0f19.jpg"
   },
   { 
     id: "pharma-wellness", 
     name: "Pharma & Wellness", 
     color: "#0891b2", 
-    image: "https://images.unsplash.com/photo-1471864190281-a93a3070b6de?w=100&h=100&fit=crop"
+    image: "https://img.magnific.com/free-vector/healthcare-medications-composition-with-images-pills-blisters-capsules-jars-drops-syrups-vector-illustration_1284-71689.jpg?semt=ais_hybrid&w=740&q=80"
   },
   { 
     id: "cleaning", 
     name: "Cleaning", 
     color: "#0284c7", 
-    image: "https://images.unsplash.com/photo-1563453392212-326f5e854473?w=100&h=100&fit=crop"
+    image: "https://t3.ftcdn.net/jpg/02/37/15/86/360_F_237158635_AkhWPaSELIoGtgoeiJHPRwwjZg4ug5vh.jpg"
   },
   { 
     id: "home-office", 
     name: "Home & Office", 
     color: "#6366f1", 
-    image: "https://images.unsplash.com/photo-1484101403633-562f891dc89a?w=100&h=100&fit=crop"
+    image: "https://media.istockphoto.com/id/1213573873/photo/group-of-colorful-school-supplies-isolated-on-white.jpg?s=612x612&w=0&k=20&c=xFC6dFBxjH4OKbTk51RlzVL_qwP8Yl5MCJZZD8lC45M="
   },
   { 
     id: "personal-care", 
     name: "Personal Care", 
     color: "#a855f7", 
-    image: "https://images.unsplash.com/photo-1556228578-0d85b1a4d571?w=100&h=100&fit=crop"
+    image: "https://i.pinimg.com/736x/9c/30/2c/9c302c867ad42eae00f1c4074a251b9c.jpg"
   },
   { 
     id: "pet-care", 
     name: "Pet Care", 
     color: "#d946ef", 
-    image: "https://images.unsplash.com/photo-1450778869180-41d0601e046e?w=100&h=100&fit=crop"
+    image: "https://m.media-amazon.com/images/I/7145CWRtZXL.jpg"
   },
 ];
 

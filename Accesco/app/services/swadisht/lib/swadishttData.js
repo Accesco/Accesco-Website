@@ -118,6 +118,7 @@ export const RESTAURANTS = [
     id: 'rest-002',
     name: 'Green Leaf Pure Veg',
     slug: 'green-leaf-pure-veg',
+    logoImage: 'https://i.pinimg.com/736x/e6/08/07/e608075fca5c9c167058881b1d275229.jpg',
     coverImage: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=600&h=320&fit=crop&auto=format&q=60',
     video: '/video/restaurants/SALAD.mp4',
     images: [
@@ -200,6 +201,7 @@ export const RESTAURANTS = [
     id: 'rest-003',
     name: 'Biryani House',
     slug: 'biryani-house',
+    logoImage: 'https://i.pinimg.com/1200x/81/72/65/817265f683729ee6ffc17e750ba51f25.jpg',
     coverImage: 'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=600&h=320&fit=crop&auto=format&q=60',
     video: '/video/restaurants/BIRIYANI.mp4',
     images: [
@@ -293,6 +295,7 @@ export const RESTAURANTS = [
   id: 4,
   name: 'Dosa Point',
   slug: 'dosa-point',
+  logoImage: 'https://i.pinimg.com/736x/41/59/7f/41597f78477d3a5178ec56ef939929e5.jpg',
   coverImage: 'https://images.unsplash.com/photo-1630383249896-424e482df921?w=600&h=320&fit=crop&auto=format&q=60',
   video: '/video/restaurants/DOSA.mp4',
   cuisines: ['South Indian', 'Breakfast', 'Pure Veg'],
@@ -352,6 +355,7 @@ export const RESTAURANTS = [
   id: 5,
   name: 'Pizza Corner',
   slug: 'pizza-corner',
+  logoImage: 'https://i.pinimg.com/736x/d5/50/47/d5504746a4defd9808768303d7f4aad4.jpg',
   coverImage: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=600&h=320&fit=crop&auto=format&q=60',
   video:'/video/restaurants/PIZZA.mp4',
   cuisines: ['Pizza', 'Fast Food', 'Italian'],
@@ -431,6 +435,7 @@ export const RESTAURANTS = [
   id: 6,
   name: 'Sweet Treats',
   slug: 'sweet-treats',
+  logoImage: 'https://i.pinimg.com/736x/cd/d6/49/cdd649decf33a59adb6503e80e0f60e4.jpg',
   coverImage: 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=600&h=320&fit=crop&auto=format&q=60',
   video:'/video/restaurants/DESSERT.mp4',
   cuisines: ['Desserts', 'Bakery', 'Ice Cream'],
@@ -491,6 +496,7 @@ export const RESTAURANTS = [
   id: 7,
   name: 'Burger Junction',
   slug: 'burger-junction',
+  logoImage: 'https://i.pinimg.com/736x/40/12/73/4012730d581a919d4a423ac37cbffbf0.jpg',
   coverImage: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=600&h=320&fit=crop&auto=format&q=60',
   video:'/video/restaurants/burger.mp4',
   cuisines: ['Burgers', 'Fast Food', 'American'],
@@ -550,6 +556,7 @@ export const RESTAURANTS = [
   id: 8,
   name: 'Royal Tandoor',
   slug: 'royal-tandoor',
+  logoImage: 'https://i.pinimg.com/736x/13/b2/a0/13b2a025a1f8d88ffb7814de395c958f.jpg',
   coverImage: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=600&h=320&fit=crop&auto=format&q=60',
   video:'/video/restaurants/KEBAB.mp4',
   cuisines: ['North Indian', 'Tandoor', 'Mughlai'],
@@ -609,6 +616,7 @@ export const RESTAURANTS = [
   id: 9,
   name: 'China Wok Express',
   slug: 'china-wok-express',
+  logoImage: 'https://i.pinimg.com/736x/37/cf/6d/37cf6db6870543439def79427aa2a312.jpg',
   coverImage: 'https://images.unsplash.com/photo-1585032226651-759b368d7246?w=600&h=320&fit=crop&auto=format&q=60',
   video:'/video/restaurants/WOK.mp4',
   cuisines: ['Chinese', 'Asian', 'Noodles'],
@@ -668,6 +676,7 @@ export const RESTAURANTS = [
   id: 10,
   name: 'Cafe Mocha',
   slug: 'cafe-mocha',
+  logoImage: 'https://i.pinimg.com/736x/20/fb/29/20fb294c1890f05e10430fdb34f1b1e1.jpg',
   coverImage: 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=600&h=320&fit=crop&auto=format&q=60',
   video:'/video/restaurants/COFFEE.mp4',
   cuisines: ['Cafe', 'Beverages', 'Desserts'],
@@ -727,6 +736,7 @@ export const RESTAURANTS = [
   id: 11,
   name: 'Andhra Spice',
   slug: 'andhra-spice',
+   logoImage: 'https://i.pinimg.com/736x/ee/ed/d6/eeedd61044b2130c2f729127aeab6ff4.jpg',
   coverImage: 'https://images.unsplash.com/photo-1606491956689-2ea866880c84?w=600&h=320&fit=crop&auto=format&q=60',
   video:'/video/restaurants/ANDHRAFISH.mp4',
   cuisines: ['Andhra', 'South Indian', 'Spicy'],
@@ -970,3 +980,4 @@ export function filterRestaurants(filters) {
   
   return filtered;
 }
+

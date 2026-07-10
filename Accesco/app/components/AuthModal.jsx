@@ -39,7 +39,10 @@ export default function AuthModal({ isOpen, onClose, onSuccess }) {
     }
   }
 
-  const handleClose = () => { reset(); onClose() }
+  const handleClose = () => {
+    reset()
+    onClose()
+  }
 
   // Converts user-entered phone to E.164 format required by Firebase
   const normalizePhone = (p) => {
@@ -52,16 +55,27 @@ export default function AuthModal({ isOpen, onClose, onSuccess }) {
   const handleDetailsSubmit = async (e) => {
     e.preventDefault()
     setError('')
-    const n = name.trim(), p = phone.trim(), em = email.trim()
-    if (!n) { setError('Please enter your full name'); return }
-    if (!p) { setError('Please enter your phone number'); return }
-    if (!/^[+\d\s\-()]{7,20}$/.test(p)) { setError('Enter a valid phone number with country code'); return }
-    const docId = p.replace(/[^\d]/g, '')
-    if (docId.length < 7) {
-      setError('Enter a valid phone number including digits (e.g. +91 98765 43210)')
-      return
+
+    const n = name.trim()
+    const p = phone.trim()
+    const em = email.trim()
+
+    if (!n) return setError('Please enter your full name')
+    if (!p) return setError('Please enter your phone number')
+
+    if (!/^[+\d\s\-()]{7,20}$/.test(p)) {
+      return setError('Enter a valid phone number with country code')
     }
-    if (em && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)) { setError('Enter a valid email address'); return }
+
+    const docId = p.replace(/[^\d]/g, '')
+
+    if (docId.length < 7) {
+      return setError('Enter a valid phone number including digits')
+    }
+
+    if (em && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)) {
+      return setError('Enter a valid email address')
+    }
 
     setStep('verify')
     if (!phoneCodeSent) sendPhoneOtp()
@@ -129,6 +143,7 @@ export default function AuthModal({ isOpen, onClose, onSuccess }) {
     if (!/^\d{6}$/.test(otpCode.trim())) { setError('Please enter a valid 6-digit OTP.'); return }
 
     setLoading(true)
+
     try {
       await confirmationResult.confirm(otpCode.trim())
 
@@ -145,9 +160,15 @@ export default function AuthModal({ isOpen, onClose, onSuccess }) {
       await signOut(auth)
 
       const user = { name: n, phone: p, email: em || null, uid: docId }
+
       localStorage.setItem('accesco_user', JSON.stringify(user))
+
       setSuccess(true)
-      setTimeout(() => { onSuccess && onSuccess(user); handleClose() }, 1800)
+
+      setTimeout(() => {
+        onSuccess && onSuccess(user)
+        handleClose()
+      }, 1300)
     } catch (err) {
       console.error(err)
       if (err.code === 'auth/invalid-verification-code') setError('Invalid OTP. Please check the code and try again.')
@@ -158,199 +179,234 @@ export default function AuthModal({ isOpen, onClose, onSuccess }) {
     }
   }
 
+const inputStyle = (field) => ({
+  width: '100%',
+  height: 54,
+  borderRadius: 13,
+  border:
+    focused === field
+      ? '1px solid rgba(255,255,255,0.58)'
+      : '1px solid rgba(255,255,255,0.24)',
+  outline: 'none',
+  padding: '0 20px',
+
+  background:
+    focused === field
+      ? 'rgba(96, 0, 48, 0.34)'
+      : 'rgba(40, 0, 24, 0.28)',
+
+  color: '#ffffff',
+  fontSize: 15.5,
+  fontWeight: 400,
+  fontFamily: 'inherit',
+  letterSpacing: '-0.01em',
+
+  boxShadow:
+    focused === field
+      ? '0 0 0 4px rgba(255,255,255,0.055), 0 16px 34px rgba(0,0,0,0.22), inset 0 1px 0 rgba(255,255,255,0.13)'
+      : 'inset 0 1px 0 rgba(255,255,255,0.08), 0 12px 28px rgba(0,0,0,0.12)',
+
+  backdropFilter: 'blur(22px)',
+  WebkitBackdropFilter: 'blur(22px)',
+  transition: '180ms ease',
+})
+
   if (!isOpen) return null
 
   return (
-    <div className="am-backdrop" onClick={handleClose}>
-      <div className="am-shell" onClick={e => e.stopPropagation()}>
+    <div style={styles.backdrop} onClick={handleClose}>
+      <div style={styles.shell} onClick={(e) => e.stopPropagation()}>
+        <div style={styles.glowTop} />
+        <div style={styles.glowRight} />
+        <div style={styles.diagonalOne} />
+        <div style={styles.diagonalTwo} />
+        <div style={styles.noiseLayer} />
 
-        {/* ── Left decorative panel ── */}
-        <div className="am-left">
-          <div className="am-left-inner">
-            <div className="am-left-logo">
-              <img src="/images/accesco_white.png" alt="Accesco Living" />
-              <span>Accesco Living</span>
+        <button style={styles.close} onClick={handleClose} aria-label="Close">
+          ×
+        </button>
+
+        <section style={styles.left}>
+          <div style={styles.logoRow}>
+            <img
+              src="/images/accesco_white.png"
+              alt="Accesco Living"
+              style={styles.logo}
+            />
+            <span style={styles.logoText}>Accesco Living</span>
+          </div>
+
+          <h2 style={styles.heroTitle}>
+            India's
+            <br />
+            Unified
+            <br />
+            Living
+            <br />
+            Ecosystem
+          </h2>
+
+          <p style={styles.heroSub}>
+            One platform for groceries,
+            <br />
+            fashion, food, finance and more.
+          </p>
+
+          <div style={styles.features}>
+            <div style={styles.feature}>
+              <span style={styles.featureIcon}>★</span>
+              <span>Secure &amp; Private</span>
             </div>
-            <h2 className="am-left-title">India's Unified Living Ecosystem</h2>
-            <p className="am-left-sub">
-              One platform for groceries, fashion, food, finance and more.
-            </p>
-            <div className="am-left-features">
-              <div className="am-feature">
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                  <path d="M10 1L13 7L19 8L14.5 12.5L15.5 19L10 16L4.5 19L5.5 12.5L1 8L7 7L10 1Z" fill="currentColor"/>
-                </svg>
-                <span>Secure & Private</span>
-              </div>
-              <div className="am-feature">
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                  <path d="M10 18C14.4183 18 18 14.4183 18 10C18 5.58172 14.4183 2 10 2C5.58172 2 2 5.58172 2 10C2 14.4183 5.58172 18 10 18Z" stroke="currentColor" strokeWidth="2"/>
-                  <path d="M7 10L9 12L13 8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-                <span>No Password Required</span>
-              </div>
-              <div className="am-feature">
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                  <path d="M10 2C10 2 3 5 3 10C3 15 10 18 10 18C10 18 17 15 17 10C17 5 10 2 10 2Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  <path d="M10 10C11.1046 10 12 9.10457 12 8C12 6.89543 11.1046 6 10 6C8.89543 6 8 6.89543 8 8C8 9.10457 8.89543 10 10 10Z" stroke="currentColor" strokeWidth="2"/>
-                </svg>
-                <span>Free Forever</span>
-              </div>
+
+            <div style={styles.feature}>
+              <span style={styles.featureIcon}>✓</span>
+              <span>No Password Required</span>
+            </div>
+
+            <div style={styles.feature}>
+              <span style={styles.featureIcon}>◇</span>
+              <span>Free Forever</span>
             </div>
           </div>
-        </div>
+        </section>
 
-        {/* ── Right form panel ── */}
-        <div className="am-right">
-          <button className="am-close" onClick={handleClose} aria-label="Close">
-            <i className="ri-close-line"/>
-          </button>
+        <section style={styles.card}>
+          <div style={styles.cardShine} />
 
           {success ? (
-            <div className="am-success">
-              <div className="am-success-ring">
-                <div className="am-success-check">✓</div>
-              </div>
-              <h3>You're in!</h3>
-              <p>Welcome to accesco, {name.split(' ')[0]}.</p>
+            <div style={styles.success}>
+              <div style={styles.successCircle}>✓</div>
+              <h3 style={styles.successTitle}>You're in!</h3>
+              <p style={styles.successText}>
+                Welcome to Accesco, {name.split(' ')[0]}.
+              </p>
             </div>
           ) : (
             <>
               {/* Invisible reCAPTCHA container required by Firebase Phone Auth */}
               <div id="am-recaptcha-container"></div>
 
-              {error && (
-                <div className="am-error">
-                  <i className="ri-error-warning-fill"/> {error}
-                </div>
-              )}
+              <div style={styles.header}>
+                <h2 style={styles.title}>
+                  {step === 'details' ? 'Welcome!' : 'Verify your phone'}
+                </h2>
+                <p style={styles.subtitle}>
+                  {step === 'details'
+                    ? 'No password needed — just verify your phone.'
+                    : phoneCodeSent
+                      ? `Enter the 6-digit code sent to ${phone}`
+                      : 'Sending OTP to your phone…'}
+                </p>
+              </div>
+
+              {error && <div style={styles.error}>{error}</div>}
 
               {step === 'details' ? (
                 <>
-                  <div className="am-right-header">
-                    <h2>Welcome!</h2>
-                    <p>No password needed — just verify your phone.</p>
-                  </div>
-
-                  <form onSubmit={handleDetailsSubmit} className="am-form">
-                    {/* Name */}
-                    <div className={`am-field ${focused === 'name' ? 'am-field--focus' : ''} ${name ? 'am-field--filled' : ''}`}>
-                      <label className="am-label">
-                        Full Name <span className="am-req">*</span>
+                  <form onSubmit={handleDetailsSubmit} style={styles.form}>
+                    <div style={styles.field}>
+                      <label style={styles.label}>
+                        Full Name <span style={styles.required}>*</span>
                       </label>
-                      <div className="am-input-row">
-                        <span className="am-ico"><i className="ri-user-3-line"/></span>
-                        <input
-                          type="text"
-                          placeholder="e.g. Priya Sharma"
-                          value={name}
-                          onChange={e => setName(e.target.value)}
-                          onFocus={() => setFocused('name')}
-                          onBlur={() => setFocused('')}
-                          disabled={loading}
-                          autoFocus
-                        />
-                      </div>
+                      <input
+                        style={inputStyle('name')}
+                        type="text"
+                        placeholder="e.g. Priya Sharma"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        onFocus={() => setFocused('name')}
+                        onBlur={() => setFocused('')}
+                        disabled={loading}
+                        autoFocus
+                      />
                     </div>
 
-                    {/* Phone */}
-                    <div className={`am-field ${focused === 'phone' ? 'am-field--focus' : ''} ${phone ? 'am-field--filled' : ''}`}>
-                      <label className="am-label">
-                        Phone Number <span className="am-req">*</span>
+                    <div style={styles.field}>
+                      <label style={styles.label}>
+                        Phone Number <span style={styles.required}>*</span>
                       </label>
-                      <div className="am-input-row">
-                        <span className="am-ico"><i className="ri-phone-line"/></span>
-                        <input
-                          type="tel"
-                          placeholder="+91 9022217637"
-                          value={phone}
-                          onChange={e => setPhone(e.target.value)}
-                          onFocus={() => setFocused('phone')}
-                          onBlur={() => setFocused('')}
-                          disabled={loading}
-                        />
-                      </div>
-                      <span className="am-hint">Include country code · +91 India · +1 USA</span>
+                      <input
+                        style={inputStyle('phone')}
+                        type="tel"
+                        placeholder="+91 9022217637"
+                        value={phone}
+                        onChange={(e) => setPhone(e.target.value)}
+                        onFocus={() => setFocused('phone')}
+                        onBlur={() => setFocused('')}
+                        disabled={loading}
+                      />
+                      <small style={styles.hint}>
+                        Include country code · +91 India · +1 USA
+                      </small>
                     </div>
 
-                    {/* Email */}
-                    <div className={`am-field ${focused === 'email' ? 'am-field--focus' : ''} ${email ? 'am-field--filled' : ''}`}>
-                      <label className="am-label">
-                        Email <span className="am-opt">optional</span>
+                    <div style={styles.field}>
+                      <label style={styles.label}>
+                        Email <em style={styles.optional}>optional</em>
                       </label>
-                      <div className="am-input-row">
-                        <span className="am-ico"><i className="ri-mail-line"/></span>
-                        <input
-                          type="email"
-                          placeholder="you@example.com"
-                          value={email}
-                          onChange={e => setEmail(e.target.value)}
-                          onFocus={() => setFocused('email')}
-                          onBlur={() => setFocused('')}
-                          disabled={loading}
-                        />
-                      </div>
+                      <input
+                        style={inputStyle('email')}
+                        type="email"
+                        placeholder="you@example.com"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        onFocus={() => setFocused('email')}
+                        onBlur={() => setFocused('')}
+                        disabled={loading}
+                      />
                     </div>
 
-                    <button type="submit" className="am-submit" disabled={loading}>
-                      Continue <i className="ri-arrow-right-line"/>
+                    <button type="submit" style={styles.submit} disabled={loading}>
+                      Continue <span style={styles.arrow}>→</span>
                     </button>
                   </form>
 
-                  <p className="am-privacy">
-                    <i className="ri-lock-2-line"/> Your data is stored securely in Firebase and never shared.
+                  <p style={styles.privacy}>
+                    <span>▣</span>
+                    Your data is stored securely in Firebase and never shared.
                   </p>
                 </>
               ) : (
                 <>
-                  <div className="am-right-header">
-                    <h2>Verify your phone</h2>
-                    <p>{phoneCodeSent ? `Enter the 6-digit code sent to ${phone}` : 'Sending OTP to your phone…'}</p>
-                  </div>
-
-                  <form onSubmit={handleVerifySubmit} className="am-form">
+                  <form onSubmit={handleVerifySubmit} style={styles.form}>
                     {/* Phone OTP — mandatory */}
-                    <div className={`am-field ${focused === 'otp' ? 'am-field--focus' : ''} ${otpCode ? 'am-field--filled' : ''}`}>
-                      <label className="am-label">
-                        OTP Code <span className="am-req">*</span>
+                    <div style={styles.field}>
+                      <label style={styles.label}>
+                        OTP Code <span style={styles.required}>*</span>
                       </label>
-                      <div className="am-input-row">
-                        <span className="am-ico"><i className="ri-shield-keyhole-line"/></span>
-                        <input
-                          type="text"
-                          inputMode="numeric"
-                          placeholder="Enter 6-digit OTP"
-                          value={otpCode}
-                          onChange={e => setOtpCode(e.target.value)}
-                          onFocus={() => setFocused('otp')}
-                          onBlur={() => setFocused('')}
-                          maxLength={6}
-                          disabled={loading}
-                          autoFocus
-                        />
-                      </div>
+                      <input
+                        style={inputStyle('otp')}
+                        type="text"
+                        inputMode="numeric"
+                        placeholder="Enter 6-digit OTP"
+                        value={otpCode}
+                        onChange={(e) => setOtpCode(e.target.value)}
+                        onFocus={() => setFocused('otp')}
+                        onBlur={() => setFocused('')}
+                        maxLength={6}
+                        disabled={loading}
+                        autoFocus
+                      />
                       <button
                         type="button"
                         onClick={sendPhoneOtp}
                         disabled={loading}
-                        style={{ background: 'none', border: 'none', color: '#7A0042', fontSize: 12, fontWeight: 600, cursor: 'pointer', padding: '6px 0', textDecoration: 'underline', alignSelf: 'flex-start' }}
+                        style={styles.linkButton}
                       >
                         Resend OTP
                       </button>
                     </div>
 
                     {/* Optional email verification */}
-                    <div style={{ borderTop: '1px dashed #e2b8d4', paddingTop: 14, marginTop: 2 }}>
-                      <label className="am-label">
-                        Verify Email <span className="am-opt">optional</span>
+                    <div style={styles.verifySection}>
+                      <label style={styles.label}>
+                        Verify Email <em style={styles.optional}>optional</em>
                       </label>
 
                       {emailVerified ? (
-                        <p style={{ color: '#16a34a', fontSize: 13, fontWeight: 600, margin: '8px 0 0' }}>
-                          Email verified ✓
-                        </p>
+                        <p style={styles.successNote}>Email verified ✓</p>
                       ) : !email.trim() ? (
-                        <p style={{ color: '#bbb', fontSize: 12, margin: '8px 0 0' }}>
+                        <p style={styles.mutedNote}>
                           Add an email in the previous step to verify it.
                         </p>
                       ) : !emailCodeSent ? (
@@ -358,30 +414,30 @@ export default function AuthModal({ isOpen, onClose, onSuccess }) {
                           type="button"
                           onClick={sendEmailOtp}
                           disabled={emailLoading}
-                          style={{ marginTop: 8, width: '100%', padding: '11px 12px', background: '#fff', border: '2px solid #7A0042', color: '#7A0042', borderRadius: 12, fontWeight: 700, fontSize: 13, cursor: 'pointer' }}
+                          style={styles.secondaryButton}
                         >
                           {emailLoading ? 'Sending…' : 'Send email code'}
                         </button>
                       ) : (
                         <>
-                          <div className="am-input-row" style={{ marginTop: 8 }}>
-                            <span className="am-ico"><i className="ri-mail-check-line"/></span>
-                            <input
-                              type="text"
-                              inputMode="numeric"
-                              placeholder="Email 6-digit code"
-                              value={emailCode}
-                              onChange={e => setEmailCode(e.target.value)}
-                              maxLength={6}
-                              disabled={emailLoading}
-                            />
-                          </div>
-                          <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
+                          <input
+                            style={{ ...inputStyle('emailCode'), marginTop: 8 }}
+                            type="text"
+                            inputMode="numeric"
+                            placeholder="Email 6-digit code"
+                            value={emailCode}
+                            onChange={(e) => setEmailCode(e.target.value)}
+                            onFocus={() => setFocused('emailCode')}
+                            onBlur={() => setFocused('')}
+                            maxLength={6}
+                            disabled={emailLoading}
+                          />
+                          <div style={styles.buttonRow}>
                             <button
                               type="button"
                               onClick={sendEmailOtp}
                               disabled={emailLoading}
-                              style={{ flex: 1, padding: '10px 12px', background: '#fff', border: '2px solid #ddd', color: '#666', borderRadius: 12, fontWeight: 700, fontSize: 13, cursor: 'pointer' }}
+                              style={styles.miniButtonMuted}
                             >
                               Resend
                             </button>
@@ -389,7 +445,7 @@ export default function AuthModal({ isOpen, onClose, onSuccess }) {
                               type="button"
                               onClick={verifyEmailOtp}
                               disabled={emailLoading}
-                              style={{ flex: 1, padding: '10px 12px', background: '#fff', border: '2px solid #7A0042', color: '#7A0042', borderRadius: 12, fontWeight: 700, fontSize: 13, cursor: 'pointer' }}
+                              style={styles.miniButton}
                             >
                               {emailLoading ? 'Verifying…' : 'Verify email'}
                             </button>
@@ -398,18 +454,19 @@ export default function AuthModal({ isOpen, onClose, onSuccess }) {
                       )}
                     </div>
 
-                    <button type="submit" className="am-submit" disabled={loading}>
-                      {loading
-                        ? <><span className="am-spin"><i className="ri-loader-4-line"/></span> Verifying…</>
-                        : <>Verify &amp; Continue <i className="ri-arrow-right-line"/></>
-                      }
+                    <button type="submit" style={styles.submit} disabled={loading}>
+                      {loading ? 'Verifying…' : (
+                        <>
+                          Verify &amp; Continue <span style={styles.arrow}>→</span>
+                        </>
+                      )}
                     </button>
 
                     <button
                       type="button"
                       onClick={() => { setStep('details'); setError('') }}
                       disabled={loading}
-                      style={{ background: 'none', border: 'none', color: '#888', fontSize: 13, fontWeight: 600, cursor: 'pointer', padding: '4px 0' }}
+                      style={styles.backLink}
                     >
                       ← Back to details
                     </button>
@@ -418,231 +475,485 @@ export default function AuthModal({ isOpen, onClose, onSuccess }) {
               )}
             </>
           )}
-        </div>
+        </section>
       </div>
-
-      <style jsx>{`
-        /* Backdrop */
-        .am-backdrop {
-          position: fixed; inset: 0; z-index: 10000;
-          background: rgba(10,5,20,0.72);
-          backdrop-filter: blur(12px);
-          display: flex; align-items: center; justify-content: center;
-          padding: 16px;
-          animation: amFadeIn .25s ease;
-        }
-        @keyframes amFadeIn { from{opacity:0} to{opacity:1} }
-
-        /* Modal shell */
-        .am-shell {
-          display: flex; width: 100%; max-width: 820px;
-          border-radius: 28px; overflow: hidden;
-          box-shadow: 0 32px 80px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.06);
-          animation: amSlideUp .35s cubic-bezier(0.22,1,0.36,1);
-          max-height: 95vh;
-        }
-        @keyframes amSlideUp {
-          from { opacity:0; transform: translateY(32px) scale(0.97) }
-          to   { opacity:1; transform: translateY(0)    scale(1) }
-        }
-
-        /* ── Left panel ── */
-        .am-left {
-          width: 320px; flex-shrink: 0;
-          background: #7A0042;
-          padding: 48px 40px;
-          display: flex; flex-direction: column; justify-content: center;
-          position: relative; overflow: hidden;
-        }
-        .am-left::before {
-          content: '';
-          position: absolute;
-          top: 0;
-          left: 0;
-          right: 0;
-          bottom: 0;
-          background: radial-gradient(circle at 20% 80%, rgba(255,255,255,0.05) 0%, transparent 50%);
-          pointer-events: none;
-        }
-        .am-left-inner { position: relative; z-index: 1; }
-        .am-left-logo {
-          display: flex; align-items: center; gap: 12px;
-          margin-bottom: 48px;
-          font-size: 16px; font-weight: 700; letter-spacing: -0.3px;
-          color: #ffffff;
-        }
-        .am-left-logo img {
-          width: 52px;
-          height: 52px;
-          object-fit: contain;
-        }
-        .am-left-title {
-          font-size: 48px; font-weight: 700; line-height: 1.3;
-          color: #fff; margin: 0 0 16px;
-          letter-spacing: -0.5px;
-        }
-        .am-left-sub {
-          font-size: 15px; color: rgba(255,255,255,0.6);
-          line-height: 1.6; margin: 0 0 40px;
-        }
-        .am-left-features { 
-          display: flex; flex-direction: column; gap: 16px; 
-        }
-        .am-feature {
-          display: flex; align-items: center; gap: 12px;
-          color: rgba(255,255,255,0.8); 
-          font-size: 14px; 
-          font-weight: 500;
-        }
-        .am-feature svg {
-          flex-shrink: 0;
-          color: rgba(255,255,255,0.6);
-        }
-
-        /* ── Right panel ── */
-        .am-right {
-          flex: 1; background: #fff;
-          padding: 44px 44px 40px;
-          overflow-y: auto;
-          position: relative;
-          display: flex; flex-direction: column; justify-content: center;
-        }
-        .am-close {
-          position: absolute; top: 20px; right: 20px;
-          width: 36px; height: 36px; border-radius: 50%;
-          background: #f4f4f4; border: none;
-          font-size: 20px; cursor: pointer; color: #777;
-          display: flex; align-items: center; justify-content: center;
-          transition: all .2s;
-        }
-        .am-close:hover { background: #eaeaea; color: #333; transform: rotate(90deg); }
-
-        .am-right-header { margin-bottom: 28px; }
-        .am-right-header h2 {
-          font-size: 30px; font-weight: 900; color: #111; margin: 0 0 6px;
-        }
-        .am-right-header p { font-size: 14px; color: #888; margin: 0; }
-
-        /* Error */
-        .am-error {
-          background: #fef2f2; border: 1px solid #fecaca;
-          border-radius: 10px; padding: 11px 14px;
-          font-size: 13px; font-weight: 600; color: #dc2626;
-          display: flex; align-items: center; gap: 8px;
-          margin-bottom: 20px;
-        }
-
-        /* Form */
-        .am-form { display: flex; flex-direction: column; gap: 18px; }
-
-        .am-field {
-          display: flex; flex-direction: column; gap: 5px;
-        }
-        .am-label {
-          font-size: 12px; font-weight: 700; color: #555;
-          text-transform: uppercase; letter-spacing: 0.6px;
-        }
-        .am-req { color: #000000; }
-        .am-opt {
-          font-size: 11px; font-weight: 500; color: #bbb;
-          text-transform: none; letter-spacing: 0;
-        }
-        .am-input-row {
-          position: relative;
-          border: 2px solid #ebebeb;
-          border-radius: 14px;
-          background: #fafafa;
-          transition: border-color .2s, box-shadow .2s, background .2s;
-          overflow: hidden;
-        }
-        .am-field--focus .am-input-row {
-          border-color: #7A0042;
-          background: #fff;
-          box-shadow: 0 0 0 3px rgba(122, 0, 66, 0.1);
-        }
-        .am-field--filled .am-input-row {
-          border-color: #ddd;
-          background: #fff;
-        }
-        .am-ico {
-          position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
-          font-size: 17px; color: #bbb; pointer-events: none;
-          transition: color .2s;
-        }
-        .am-field--focus .am-ico { color: #7A0042; }
-        .am-field--filled .am-ico { color: #999; }
-        .am-input-row input {
-          width: 100%; padding: 14px 14px 14px 42px;
-          border: none; background: transparent;
-          font-size: 15px; font-family: inherit;
-          color: #111; outline: none;
-          box-sizing: border-box;
-        }
-        .am-input-row input::placeholder { color: #ccc; }
-        .am-input-row input:disabled { opacity: .55; }
-        .am-hint { font-size: 11px; color: #c0c0c0; }
-
-        /* Submit */
-        .am-submit {
-          width: 100%; padding: 15px;
-          background: linear-gradient(135deg, #7A0042, #9d0054);
-          color: #fff; border: none; border-radius: 12px;
-          font-size: 15px; font-weight: 700; letter-spacing: -0.2px;
-          cursor: pointer;
-          display: flex; align-items: center; justify-content: center; gap: 8px;
-          transition: all .3s; margin-top: 8px;
-          box-shadow: 0 4px 16px rgba(0,0,0,.2);
-        }
-        .am-submit:hover:not(:disabled) {
-          background: linear-gradient(135deg, #9d0054, #c0006b);
-          transform: translateY(-2px);
-          box-shadow: 0 8px 24px rgba(122, 0, 66, 0.3);
-        }
-        .am-submit:active:not(:disabled) { transform: translateY(0); }
-        .am-submit:disabled { opacity: .6; cursor: not-allowed; }
-        .am-spin { animation: amSpin 1s linear infinite; display: inline-flex; }
-        @keyframes amSpin { to { transform: rotate(360deg) } }
-
-        /* Privacy note */
-        .am-privacy {
-          font-size: 11px; color: #ccc; margin: 16px 0 0;
-          display: flex; align-items: center; gap: 5px;
-          justify-content: center; text-align: center;
-        }
-
-        /* Success state */
-        .am-success {
-          display: flex; flex-direction: column; align-items: center;
-          justify-content: center; padding: 20px 0; text-align: center;
-          gap: 12px;
-        }
-        .am-success-ring {
-          width: 72px; height: 72px; border-radius: 50%;
-          background: linear-gradient(135deg, #7A0042, #9d0054);
-          display: flex; align-items: center; justify-content: center;
-          box-shadow: 0 8px 28px rgba(122, 0, 66, 0.25);
-          animation: amPop .4s cubic-bezier(0.22,1,0.36,1);
-        }
-        @keyframes amPop { from{transform:scale(0.4);opacity:0} to{transform:scale(1);opacity:1} }
-        .am-success-check {
-          font-size: 32px; font-weight: 900; color: #fff; line-height: 1;
-        }
-        .am-success h3 {
-          font-size: 24px; font-weight: 900; color: #111; margin: 0;
-        }
-        .am-success p { font-size: 15px; color: #777; margin: 0; }
-
-        /* ── Responsive ── */
-        @media (max-width: 680px) {
-          .am-left { display: none; }
-          .am-shell { max-width: 480px; border-radius: 24px; }
-          .am-right { padding: 36px 28px 32px; }
-          .am-right-header h2 { font-size: 26px; }
-        }
-        @media (max-width: 400px) {
-          .am-right { padding: 32px 20px 28px; }
-        }
-      `}</style>
     </div>
   )
+}
+
+const styles = {
+  backdrop: {
+    position: 'fixed',
+    inset: 0,
+    zIndex: 10000,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 24,
+    background: 'rgba(12, 8, 13, 0.48)',
+    backdropFilter: 'blur(12px)',
+    WebkitBackdropFilter: 'blur(12px)',
+  },
+
+shell: {
+  position: 'relative',
+  width: 'min(940px, calc(100vw - 32px))',
+  height: 'min(724px, calc(100vh - 32px))',
+  minHeight: 650,
+  display: 'grid',
+  gridTemplateColumns: '380px 1fr',
+  overflow: 'hidden',
+
+  background:
+    'radial-gradient(circle at 18% 8%, rgba(115, 0, 60, 0.52), transparent 32%), radial-gradient(circle at 82% 20%, rgba(255,255,255,0.06), transparent 25%), radial-gradient(circle at 70% 75%, rgba(40,0,24,0.65), transparent 38%), linear-gradient(135deg, #230014 0%, #3a001f 38%, #56002f 62%, #240015 100%)',
+
+  boxShadow:
+    '0 42px 110px rgba(0,0,0,0.62), inset 0 1px 0 rgba(255,255,255,0.07)',
+},
+
+  glowTop: {
+    position: 'absolute',
+    top: -120,
+    left: -80,
+    width: 360,
+    height: 260,
+    borderRadius: '50%',
+    background: 'rgba(255, 53, 154, 0.22)',
+    filter: 'blur(70px)',
+    pointerEvents: 'none',
+  },
+
+  glowRight: {
+    position: 'absolute',
+    top: 90,
+    right: -110,
+    width: 340,
+    height: 340,
+    borderRadius: '50%',
+    background: 'rgba(255, 125, 194, 0.16)',
+    filter: 'blur(80px)',
+    pointerEvents: 'none',
+  },
+
+  diagonalOne: {
+    position: 'absolute',
+    right: -160,
+    top: -90,
+    width: 520,
+    height: 900,
+    background:
+      'linear-gradient(145deg, rgba(255,255,255,0.10), rgba(255,255,255,0.02), transparent)',
+    transform: 'rotate(28deg)',
+    pointerEvents: 'none',
+  },
+
+  diagonalTwo: {
+    position: 'absolute',
+    left: -180,
+    bottom: -180,
+    width: 620,
+    height: 320,
+    background:
+      'linear-gradient(145deg, rgba(255,0,132,0.30), rgba(255,255,255,0.035))',
+    transform: 'rotate(-34deg)',
+    pointerEvents: 'none',
+  },
+
+  noiseLayer: {
+    position: 'absolute',
+    inset: 0,
+    background:
+      'linear-gradient(180deg, rgba(255,255,255,0.035), transparent 40%, rgba(0,0,0,0.10))',
+    pointerEvents: 'none',
+  },
+
+  close: {
+    position: 'absolute',
+    top: 18,
+    right: 18,
+    zIndex: 20,
+    width: 38,
+    height: 38,
+    borderRadius: '50%',
+    border: '1px solid rgba(255,255,255,0.24)',
+    background: 'rgba(255,255,255,0.07)',
+    color: '#fff',
+    fontSize: 31,
+    lineHeight: 1,
+    fontWeight: 300,
+    cursor: 'pointer',
+    backdropFilter: 'blur(20px)',
+    WebkitBackdropFilter: 'blur(20px)',
+    boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.16)',
+  },
+
+  left: {
+    position: 'relative',
+    zIndex: 3,
+    padding: '48px 0 0 41px',
+    color: '#fff',
+  },
+
+  logoRow: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: 14,
+    marginBottom: 50,
+  },
+
+  logo: {
+    width: 55,
+    height: 55,
+    objectFit: 'contain',
+    filter: 'drop-shadow(0 14px 24px rgba(0,0,0,0.28))',
+  },
+
+  logoText: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: 750,
+    letterSpacing: '-0.04em',
+  },
+
+  heroTitle: {
+    margin: 0,
+    color: '#fff',
+    fontSize: 48,
+    lineHeight: 1.45,
+    fontWeight: 900,
+    letterSpacing: '-0.065em',
+    textShadow: '0 10px 30px rgba(0,0,0,0.24)',
+  },
+
+  heroSub: {
+    margin: '26px 0',
+    color: 'rgba(255,255,255,0.72)',
+    fontSize: 16,
+    lineHeight: 1.62,
+    letterSpacing: '-0.02em',
+  },
+
+  features: {
+    width: 298,
+    paddingTop: 24,
+    borderTop: '1px solid rgba(255,255,255,0.14)',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 20,
+  },
+
+  feature: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: 14,
+    color: 'rgba(255,255,255,0.70)',
+    fontSize: 16,
+    fontWeight: 500,
+  },
+
+  featureIcon: {
+    width: 22,
+    height: 22,
+    display: 'inline-flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    color: 'rgba(255,255,255,0.56)',
+    fontSize: 18,
+  },
+
+card: {
+  position: 'relative',
+  zIndex: 4,
+  alignSelf: 'center',
+  justifySelf: 'start',
+  width: 498,
+  minHeight: 604,
+  padding: '42px 38px 24px',
+  borderRadius: 30,
+  overflow: 'hidden',
+
+  // DARK MAROON GLASSMORPHISM
+  background:
+    'linear-gradient(145deg, rgba(90,0,48,0.34), rgba(24,0,16,0.24) 48%, rgba(72,0,42,0.28)), rgba(36,0,22,0.22)',
+
+  border: '1px solid rgba(255,255,255,0.25)',
+
+  boxShadow:
+    '0 32px 90px rgba(0,0,0,0.38), inset 0 1px 0 rgba(255,255,255,0.18), inset 0 -1px 0 rgba(255,255,255,0.06), inset 0 0 70px rgba(255,255,255,0.025)',
+
+  backdropFilter: 'blur(36px) saturate(165%)',
+  WebkitBackdropFilter: 'blur(36px) saturate(165%)',
+
+  color: '#ffffff',
+},
+
+cardShine: {
+  position: 'absolute',
+  inset: 0,
+  background:
+    'radial-gradient(circle at 18% 10%, rgba(255,255,255,0.10), transparent 30%), radial-gradient(circle at 92% 16%, rgba(112,0,62,0.28), transparent 34%), linear-gradient(180deg, rgba(255,255,255,0.045), rgba(255,255,255,0.01) 45%, transparent)',
+  pointerEvents: 'none',
+},
+
+  header: {
+    position: 'relative',
+    zIndex: 2,
+    marginBottom: 32,
+  },
+
+  title: {
+    margin: '0 0 12px',
+    color: '#fff',
+    fontSize: 39,
+    lineHeight: 1,
+    fontWeight: 700,
+    letterSpacing: '-0.055em',
+  },
+
+  subtitle: {
+    margin: 0,
+    color: 'rgba(255,255,255,0.66)',
+    fontSize: 16,
+    lineHeight: 1.35,
+    fontweight: 400,
+  },
+
+  error: {
+    position: 'relative',
+    zIndex: 2,
+    margin: '-12px 0 20px',
+    padding: '12px 14px',
+    borderRadius: 12,
+    color: '#fff',
+    background: 'rgba(255,255,255,0.10)',
+    border: '1px solid rgba(255,255,255,0.18)',
+    fontSize: 13,
+    fontWeight: 650,
+  },
+
+  form: {
+    position: 'relative',
+    zIndex: 2,
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 23,
+    width: '100%',
+  },
+
+  field: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 11,
+    width: '100%',
+  },
+
+  label: {
+    color: 'rgba(255,255,255,0.78)',
+    fontSize: 13,
+    lineHeight: 1,
+    fontWeight: 600,
+    letterSpacing: '0.08em',
+    textTransform: 'uppercase',
+  },
+
+  required: {
+    color: '#fff',
+  },
+
+  optional: {
+    marginLeft: 4,
+    color: 'rgba(255,255,255,0.66)',
+    fontSize: 11,
+    fontStyle: 'normal',
+    fontWeight: 650,
+    letterSpacing: 0,
+    textTransform: 'none',
+  },
+
+  hint: {
+    marginTop: -2,
+    color: 'rgba(255,255,255,0.58)',
+    fontSize: 12,
+    lineHeight: 1.25,
+    fontweight :400,
+  },
+
+submit: {
+  width: '100%',
+  height: 54,
+  marginTop: 8,
+  border: '1px solid rgba(255,255,255,0.16)',
+  borderRadius: 13,
+
+  background:
+    'linear-gradient(180deg, #76003f 0%, #5a002f 52%, #390020 100%)',
+
+  color: '#ffffff',
+  cursor: 'pointer',
+
+  display: 'inline-flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  gap: 20,
+
+  fontFamily: 'inherit',
+  fontSize: 13,
+  fontWeight: 700,
+  lineHeight: 1,
+  letterSpacing: '0.02em',
+  textTransform: 'uppercase',
+
+  boxShadow:
+    '0 18px 44px rgba(0,0,0,0.34), inset 0 1px 0 rgba(255,255,255,0.18)',
+},
+
+  arrow: {
+    fontSize: 25,
+    lineHeight: 1,
+    transform: 'translateY(-1px)',
+  },
+
+  privacy: {
+    position: 'relative',
+    zIndex: 2,
+    margin: '21px 0 0',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    color: 'rgba(255,255,255,0.42)',
+    fontSize: 12,
+    lineHeight: 1.35,
+    textAlign: 'center',
+  },
+
+  success: {
+    position: 'relative',
+    zIndex: 2,
+    minHeight: 520,
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    textAlign: 'center',
+    color: '#fff',
+  },
+
+  successCircle: {
+    width: 74,
+    height: 74,
+    borderRadius: '50%',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 20,
+    background: 'linear-gradient(180deg, #c40072, #85004e)',
+    color: '#fff',
+    fontSize: 38,
+    fontWeight: 900,
+    boxShadow: '0 18px 44px rgba(0,0,0,0.28)',
+  },
+
+  successTitle: {
+    margin: '0 0 8px',
+    color: '#fff',
+    fontSize: 34,
+    fontWeight: 900,
+    letterSpacing: '-0.04em',
+  },
+
+  successText: {
+    margin: 0,
+    color: 'rgba(255,255,255,0.68)',
+    fontSize: 16,
+  },
+
+  // OTP step additions
+  linkButton: {
+    marginTop: 8,
+    background: 'none',
+    border: 'none',
+    color: 'rgba(255,255,255,0.78)',
+    fontSize: 12,
+    fontWeight: 650,
+    cursor: 'pointer',
+    padding: '4px 0',
+    textDecoration: 'underline',
+    alignSelf: 'flex-start',
+  },
+
+  verifySection: {
+    borderTop: '1px solid rgba(255,255,255,0.14)',
+    paddingTop: 16,
+    marginTop: 2,
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 10,
+  },
+
+  successNote: {
+    margin: 0,
+    color: '#4ade80',
+    fontSize: 13,
+    fontWeight: 650,
+  },
+
+  mutedNote: {
+    margin: 0,
+    color: 'rgba(255,255,255,0.5)',
+    fontSize: 12,
+  },
+
+  secondaryButton: {
+    width: '100%',
+    padding: '11px 12px',
+    background: 'rgba(255,255,255,0.06)',
+    border: '1px solid rgba(255,255,255,0.28)',
+    color: '#fff',
+    borderRadius: 12,
+    fontWeight: 700,
+    fontSize: 13,
+    cursor: 'pointer',
+  },
+
+  buttonRow: {
+    display: 'flex',
+    gap: 8,
+    marginTop: 8,
+  },
+
+  miniButton: {
+    flex: 1,
+    padding: '10px 12px',
+    background: 'rgba(255,255,255,0.06)',
+    border: '1px solid rgba(255,255,255,0.28)',
+    color: '#fff',
+    borderRadius: 12,
+    fontWeight: 700,
+    fontSize: 13,
+    cursor: 'pointer',
+  },
+
+  miniButtonMuted: {
+    flex: 1,
+    padding: '10px 12px',
+    background: 'transparent',
+    border: '1px solid rgba(255,255,255,0.16)',
+    color: 'rgba(255,255,255,0.6)',
+    borderRadius: 12,
+    fontWeight: 700,
+    fontSize: 13,
+    cursor: 'pointer',
+  },
+
+  backLink: {
+    marginTop: 2,
+    background: 'none',
+    border: 'none',
+    color: 'rgba(255,255,255,0.55)',
+    fontSize: 13,
+    fontWeight: 600,
+    cursor: 'pointer',
+    padding: '4px 0',
+  },
 }
