@@ -53,7 +53,7 @@ export default function TermsPage() {
           <section id="section-b">
             <h2>2. Specific Service Modules</h2>
 
-            <h3>2.1 Ride-Hailing</h3>
+            <h3>2.1&nbsp;&nbsp; Ride-Hailing</h3>
             <div className="clause">
               <div className="clause-num">2.1.1</div>
               <div>
@@ -69,7 +69,7 @@ export default function TermsPage() {
               </div>
             </div>
 
-            <h3>2.2 Food & Grocery Delivery</h3>
+            <h3>2.2&nbsp;&nbsp; Food & Grocery Delivery</h3>
             <div className="clause">
               <div className="clause-num">2.2.1</div>
               <div>
@@ -83,7 +83,7 @@ export default function TermsPage() {
               </div>
             </div>
 
-            <h3>2.3 Pick-up & Drop (Logistics)</h3>
+            <h3>2.3&nbsp;&nbsp; Pick-up & Drop (Logistics)</h3>
             <div className="clause">
               <div className="clause-num">2.3.1</div>
               <div>
