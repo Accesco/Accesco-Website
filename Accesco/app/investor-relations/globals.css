@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700;800&display=swap');
 :root {
   --bg: #ffffff;
   --soft-bg: #f7f3ee;
@@ -86,56 +87,6 @@ a {
   color: var(--brand);
 }
 
-.hero {
-  min-height: 760px;
-  display: flex;
-  align-items: center;
-  background: url("/images/investor-bg.jpg");
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-}
-.hero-content {
-  display: grid;
-  grid-template-columns: 1.15fr 0.85fr;
-  gap: 70px;
-  align-items: center;
-}
-
-.hero-copy h1 {
-  margin: 18px 0 20px;
-  max-width: 760px;
-  font-size: clamp(42px, 7vw, 82px);
-  line-height: 0.98;
-  letter-spacing: -0.07em;
-  color:white;
-}
-
-.hero-copy p {
-  max-width: 620px;
-  font-size: 20px;
-  line-height: 1.7;
-  color: white;
-  margin: 0 0 34px;
-}
-
-.eyebrow {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  color: var(--brand);
-  text-transform: uppercase;
-  font-size: 12px;
-  font-weight: 800;
-  letter-spacing: 0.16em;
-}
-
-.eyebrow::before {
-  content: "";
-  width: 28px;
-  height: 1px;
-  background: currentColor;
-}
 
 .primary-button,
 .outline-button {
@@ -165,44 +116,223 @@ a {
   box-shadow: 0 24px 50px rgba(226, 55, 68, 0.34);
 }
 
-.hero-card {
-  border-radius: 36px;
-  padding: 34px;
-  background: rgba(255, 255, 255, 0.72);
-  border: 1px solid rgba(255, 255, 255, 0.8);
-  box-shadow: var(--shadow);
-  backdrop-filter: blur(14px);
+@media (max-width: 768px) {
+  .ir-hero {
+    padding: 20px 14px;
+  }
+
+  .ir-hero-inner {
+    min-height: auto;
+    border-radius: 24px;
+    padding: 22px 18px 28px;
+  }
+
+  .ir-links,
+  .ir-login {
+    display: none;
+  }
+
+  .ir-logo {
+    padding: 10px 18px;
+    font-size: 13px;
+  }
+
+  .ir-hero-content {
+    margin-top: 34px;
+  }
+
+  .ir-breadcrumb {
+    font-size: 10px;
+    padding: 7px 18px;
+  }
+
+  .ir-hero h1 {
+    font-size: 58px;
+    letter-spacing: -3px;
+    margin: 16px 0 20px;
+  }
+
+  .ir-bottom {
+    display: block;
+    text-align: center;
+  }
+
+  .ir-bottom p {
+    font-size: 13px;
+    margin-bottom: 24px;
+  }
+
+  .ir-stats {
+    display: none;
+  }
+
+  .ir-actions {
+    flex-direction: column;
+  }
+
+  .deck-btn,
+  .contact-btn {
+    text-align: center;
+    padding: 15px 20px;
+  }
+}
+/* ============================
+   Investor Hero
+============================ */
+
+.ir-hero{
+  width:100%;
+  padding:0;
+  background:transparent; /* or remove this */
+}
+.ir-hero-inner {
+  position: relative;
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  border-radius: 0;
+  min-height: 520px;
+  padding: 32px 60px 42px;
+ background: #B8005A
+    url("/images/waves.png")
+    center -200px / cover no-repeat !important;}
+.ir-hero-inner::before,
+.ir-hero-inner::after {
+  display: none !important;
 }
 
-.hero-card-topline {
-  color: rgba(0, 0, 0, 0.55);
-  font-weight: 600;
+.ir-nav{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  position:relative;
+  z-index:2;
 }
 
-
-.hero-stat {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 24px;
-  padding: 24px 0;
-  border-bottom: 1px solid var(--line);
+.ir-logo,
+.ir-login{
+  background:white;
+  color:#4d1730;
+  border:none;
+  border-radius:999px;
+  padding:12px 24px;
+  font-weight:700;
 }
 
-.hero-stat:last-child {
-  border-bottom: 0;
+.ir-links{
+  display:flex;
+  gap:28px;
+  align-items:center;
 }
 
-.hero-stat strong {
-  font-size: 48px;
-  letter-spacing: -0.06em;
+.ir-links a{
+  color:white;
+  font-size:14px;
+  font-weight:600;
 }
 
-.hero-stat span {
-  color: rgba(0, 0, 0, 0.58);
-  font-weight: 500;
+.ir-links .active{
+  padding:12px 22px;
+  background:rgba(255,255,255,.18);
+  border-radius:999px;
+  backdrop-filter:blur(10px);
 }
 
+.ir-hero-content{
+  position:relative;
+  z-index:2;
+  text-align:center;
+  margin-top:55px;
+}
+
+.ir-breadcrumb{
+  display:inline-block;
+  color:white;
+  border:2px solid rgba(255,255,255,.45);
+  border-radius:999px;
+  padding:10px 24px;
+  font-size:12px;
+  font-weight:700;
+  letter-spacing:.08em;
+}
+
+.ir-hero h1{
+  color:white;
+   font-family: "Baloo 2", cursive;
+    font-weight: 800;
+  margin:24px 0 48px;
+  font-size:clamp(92px,11vw,160px);
+  line-height:.86;
+  
+  letter-spacing:-8px;
+}
+
+.ir-bottom{
+  display:grid;
+  grid-template-columns:1.3fr auto auto;
+  align-items:end;
+  gap:40px;
+}
+
+.ir-bottom p{
+  color:white;
+  font-size:18px;
+  line-height:1.6;
+  max-width:420px;
+  margin:0;
+  text-align:left;
+}
+
+.ir-stats{
+  display:flex;
+  gap:42px;
+}
+
+.ir-stats div{
+  text-align:center;
+}
+
+.ir-stats strong{
+  display:block;
+  color:white;
+  font-size:42px;
+  line-height:1;
+}
+
+.ir-stats span{
+  color:white;
+  opacity:.8;
+  font-size:11px;
+  letter-spacing:.08em;
+}
+
+.ir-actions{
+  display:flex;
+  gap:14px;
+}
+
+.deck-btn,
+.contact-btn{
+  padding:18px 30px;
+  border-radius:999px;
+  font-weight:700;
+  transition:.25s;
+}
+
+.deck-btn{
+  background:white;
+  color:#7c1044;
+}
+
+.contact-btn{
+  color:white;
+  border:2px solid rgba(255,255,255,.4);
+}
+
+.deck-btn:hover,
+.contact-btn:hover{
+  transform:translateY(-3px);
+}
 .section {
   padding: 112px 0;
 }

@@ -124,10 +124,11 @@
   align-items: center;
   gap: 18px;
   margin-bottom: 24px;
-  background: #f9fbf9;
-  padding: 16px;
+  background: linear-gradient(135deg, #ffffff 0%, #fafdfa 100%);
+  padding: 20px;
   border-radius: 20px;
-  border: 1px solid #edf4ed;
+  border: 1px solid #e2ebd9;
+  box-shadow: 0 4px 20px rgba(12, 131, 31, 0.02);
 }
 
 .avatar {

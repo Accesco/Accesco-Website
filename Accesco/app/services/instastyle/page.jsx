@@ -699,32 +699,7 @@ export default function InstaStyleLanding() {
       {/* ── SWIPE STYLE DISCOVERY ── */}
       <SwipeStyleShowcase />
 
-      {/* ══════════════════════════════════════════
-          SECTION 7 — BRAND LABELS
-      ══════════════════════════════════════════ */}
-      <section className={`${styles.brands}`}>
-        <div className={styles.container}>
-          <div className={styles.sectionHeader}>
-            <div>
-              <h2 className={styles.sectionTitle}>Featured labels</h2>
-              <p className={styles.sectionSubtitle}>
-                A curated mix of popular and premium labels in one place.
-              </p>
-            </div>
-          </div>
-        </div>
 
-        {/* Full-width marquee — intentionally outside container */}
-        <div className={styles.brandsCarousel}>
-          <div className={styles.brandsTrack}>
-            {[...loopingBrands, ...loopingBrands].map((brand, i) => (
-              <div key={`${brand}-${i}`} className={styles.brandCard}>
-                <span className={styles.brandPlaceholder}>{brand}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
 
 
 

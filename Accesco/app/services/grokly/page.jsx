@@ -68,12 +68,6 @@ function GroklyPageContent() {
     setSearchQuery(searchParams.get('search') || '');
   }, [searchParams]);
 
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentSlide((prev) => (prev === 0 ? 1 : 0));
-    }, 5000);
-    return () => clearInterval(timer);
-  }, []);
 
   // ═══════════════════════════════════════════════
   // COMPUTED VALUES
@@ -298,12 +292,11 @@ function GroklyPageContent() {
                   }
                 }}
                 style={{
-                  position: 'absolute',
-                  inset: 0,
-                  opacity: currentSlide === 0 ? 1 : 0,
-                  pointerEvents: currentSlide === 0 ? 'auto' : 'none',
-                  transition: 'opacity 0.8s ease-in-out',
-                }}
+                     position: 'absolute',
+                     inset: 0,
+                      opacity: 1,
+                     pointerEvents: 'auto',
+                  }}
               >
                 <img
                   src="/images/IMG_4614.PNG"
@@ -391,128 +384,7 @@ function GroklyPageContent() {
                   </div>
                 </div>
               </div>
-
-              {/* SLIDE 1: Premium Grokly Banner (IMG_4400.PNG) */}
-              <div
-                onClick={() => {
-                  const mainContent = document.querySelector('main');
-                  if (mainContent) {
-                    mainContent.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                  }
-                }}
-                style={{
-                  position: 'absolute',
-                  inset: 0,
-                  opacity: currentSlide === 1 ? 1 : 0,
-                  pointerEvents: currentSlide === 1 ? 'auto' : 'none',
-                  transition: 'opacity 0.8s ease-in-out',
-                }}
-              >
-                <img
-                  src="/images/banners/hero-grokly.jpg"
-                  alt="Grokly Banner"
-                  style={{
-                    width: '100%',
-                    height: '100%',
-                    objectFit: 'cover',
-                    objectPosition: 'center'
-                  }}
-                />
-              </div>
-
-              {/* Slide Indicator Dots */}
-              <div style={{
-                position: 'absolute',
-                bottom: '20px',
-                left: '50%',
-                transform: 'translateX(-50%)',
-                display: 'flex',
-                gap: '8px',
-                zIndex: 10,
-              }}>
-                {[0, 1].map((index) => (
-                  <button
-                    key={index}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setCurrentSlide(index);
-                    }}
-                    style={{
-                      width: '12px',
-                      height: '12px',
-                      borderRadius: '50%',
-                      background: currentSlide === index ? '#4ade80' : 'rgba(255, 255, 255, 0.4)',
-                      border: 'none',
-                      cursor: 'pointer',
-                      padding: 0,
-                      transition: 'all 0.3s ease',
-                      boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
-                    }}
-                  />
-                ))}
-              </div>
-
-              {/* Slide Arrow Buttons */}
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setCurrentSlide((prev) => (prev === 0 ? 1 : 0));
-                }}
-                style={{
-                  position: 'absolute',
-                  left: '20px',
-                  top: '50%',
-                  transform: 'translateY(-50%)',
-                  width: '40px',
-                  height: '40px',
-                  borderRadius: '50%',
-                  background: 'rgba(0, 0, 0, 0.4)',
-                  backdropFilter: 'blur(4px)',
-                  color: '#fff',
-                  border: '1px solid rgba(255, 255, 255, 0.1)',
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  zIndex: 10,
-                  fontSize: '18px',
-                  transition: 'background 0.2s',
-                }}
-                onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(0, 0, 0, 0.6)'}
-                onMouseLeave={(e) => e.currentTarget.style.background = 'rgba(0, 0, 0, 0.4)'}
-              >
-                <i className="ri-arrow-left-s-line" style={{ display: 'block', margin: 'auto' }}></i>
-              </button>
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setCurrentSlide((prev) => (prev === 0 ? 1 : 0));
-                }}
-                style={{
-                  position: 'absolute',
-                  right: '20px',
-                  top: '50%',
-                  transform: 'translateY(-50%)',
-                  width: '40px',
-                  height: '40px',
-                  borderRadius: '50%',
-                  background: 'rgba(0, 0, 0, 0.4)',
-                  backdropFilter: 'blur(4px)',
-                  color: '#fff',
-                  border: '1px solid rgba(255, 255, 255, 0.1)',
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  zIndex: 10,
-                  fontSize: '18px',
-                  transition: 'background 0.2s',
-                }}
-                onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(0, 0, 0, 0.6)'}
-                onMouseLeave={(e) => e.currentTarget.style.background = 'rgba(0, 0, 0, 0.4)'}
-              >
-                <i className="ri-arrow-right-s-line" style={{ display: 'block', margin: 'auto' }}></i>
-              </button>
+              
             </div>
           </div>
         )}
@@ -1130,6 +1002,110 @@ function GroklyPageContent() {
                     }}>{cat.name}</span>
                   </button>
                 ))}
+              </div>
+            </div>
+          )}
+
+          {/* Curated Product Sections */}
+          {activeCategory === 'all' && !searchQuery && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '36px', margin: '16px 0 40px' }}>
+              {/* Shelf 1: Quick Breakfast Corner */}
+              <div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                  <h3 style={{ fontFamily: 'var(--grokly-font-display)', fontSize: '18px', fontWeight: 800, color: 'var(--grokly-text-primary)', margin: 0 }}>
+                    Quick Breakfast Corner
+                  </h3>
+                  <button 
+                    onClick={() => handleCategorySelect('dairy-breakfast')}
+                    style={{ background: 'none', border: 'none', color: '#0c831f', fontWeight: 700, fontSize: '14px', cursor: 'pointer' }}
+                  >
+                    See All
+                  </button>
+                </div>
+                <div style={{
+                  display: 'flex',
+                  gap: '12px',
+                  overflowX: 'auto',
+                  paddingBottom: '8px',
+                  scrollbarWidth: 'none',
+                  msOverflowStyle: 'none',
+                  alignItems: 'stretch'
+                }} className="hide-scrollbar">
+                  {products
+                    .filter(p => ['dairy-001', 'dairy-002', 'dairy-003', 'dairy-004', 'dairy-007', 'dairy-008', 'fruit-001', 'fruit-002', 'tea-002', 'tea-001'].includes(p.id))
+                    .map(product => (
+                      <div key={product.id} style={{ flex: '0 0 180px', width: '180px', display: 'flex' }}>
+                        <ProductCard product={product} />
+                      </div>
+                    ))
+                  }
+                </div>
+              </div>
+
+              {/* Shelf 2: Snack Attack & Cold Drinks */}
+              <div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                  <h3 style={{ fontFamily: 'var(--grokly-font-display)', fontSize: '18px', fontWeight: 800, color: 'var(--grokly-text-primary)', margin: 0 }}>
+                    Snack Attack & Cold Drinks
+                  </h3>
+                  <button 
+                    onClick={() => handleCategorySelect('munchies')}
+                    style={{ background: 'none', border: 'none', color: '#0c831f', fontWeight: 700, fontSize: '14px', cursor: 'pointer' }}
+                  >
+                    See All
+                  </button>
+                </div>
+                <div style={{
+                  display: 'flex',
+                  gap: '12px',
+                  overflowX: 'auto',
+                  paddingBottom: '8px',
+                  scrollbarWidth: 'none',
+                  msOverflowStyle: 'none',
+                  alignItems: 'stretch'
+                }} className="hide-scrollbar">
+                  {products
+                    .filter(p => ['munch-001', 'munch-002', 'munch-003', 'munch-005', 'munch-006', 'drink-001', 'drink-002', 'drink-003', 'drink-004'].includes(p.id))
+                    .map(product => (
+                      <div key={product.id} style={{ flex: '0 0 180px', width: '180px', display: 'flex' }}>
+                        <ProductCard product={product} />
+                      </div>
+                    ))
+                  }
+                </div>
+              </div>
+
+              {/* Shelf 3: Daily Cooking Essentials */}
+              <div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                  <h3 style={{ fontFamily: 'var(--grokly-font-display)', fontSize: '18px', fontWeight: 800, color: 'var(--grokly-text-primary)', margin: 0 }}>
+                    Daily Cooking Essentials
+                  </h3>
+                  <button 
+                    onClick={() => handleCategorySelect('atta-rice-dal')}
+                    style={{ background: 'none', border: 'none', color: '#0c831f', fontWeight: 700, fontSize: '14px', cursor: 'pointer' }}
+                  >
+                    See All
+                  </button>
+                </div>
+                <div style={{
+                  display: 'flex',
+                  gap: '12px',
+                  overflowX: 'auto',
+                  paddingBottom: '8px',
+                  scrollbarWidth: 'none',
+                  msOverflowStyle: 'none',
+                  alignItems: 'stretch'
+                }} className="hide-scrollbar">
+                  {products
+                    .filter(p => ['veg-001', 'veg-002', 'veg-003', 'atta-001', 'atta-002', 'atta-003', 'masala-001', 'masala-003'].includes(p.id))
+                    .map(product => (
+                      <div key={product.id} style={{ flex: '0 0 180px', width: '180px', display: 'flex' }}>
+                        <ProductCard product={product} />
+                      </div>
+                    ))
+                  }
+                </div>
               </div>
             </div>
           )}

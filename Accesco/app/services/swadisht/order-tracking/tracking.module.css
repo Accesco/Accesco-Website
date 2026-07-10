@@ -558,3 +558,411 @@
   font-weight: 800;
   color: var(--text-1);
 }
+/* =======================================
+   Swiggy-like Driver Notification
+======================================= */
+
+.driverNotice {
+  position: fixed;
+  top: 88px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(520px, calc(100% - 28px));
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: #ffffff;
+  border: 1px solid rgba(107, 29, 58, 0.16);
+  border-radius: 22px;
+  padding: 14px 16px;
+  box-shadow: 0 24px 60px rgba(17, 24, 39, 0.18);
+  animation: driverToastIn 0.35s ease both;
+}
+
+@keyframes driverToastIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -14px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
+.driverNoticeIcon {
+  width: 52px;
+  height: 52px;
+  border-radius: 18px;
+  background: #6b1d3a;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+  flex-shrink: 0;
+}
+
+.driverNoticeContent {
+  min-width: 0;
+  flex: 1;
+}
+
+.driverNoticeLabel {
+  display: block;
+  font-size: 11px;
+  font-weight: 800;
+  color: #0f8a65;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 4px;
+}
+
+.driverNoticeContent strong {
+  display: block;
+  font-size: 15px;
+  color: #111827;
+  margin-bottom: 3px;
+}
+
+.driverNoticeContent p {
+  margin: 0;
+  font-size: 13px;
+  color: #6b7280;
+  line-height: 1.35;
+}
+
+.driverNoticeClose {
+  width: 30px;
+  height: 30px;
+  border: none;
+  border-radius: 50%;
+  background: #f3f4f6;
+  color: #6b7280;
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+@media (max-width: 768px) {
+  .driverNotice {
+    top: 124px;
+    width: calc(100% - 24px);
+    border-radius: 20px;
+    padding: 12px;
+  }
+
+  .driverNoticeIcon {
+    width: 46px;
+    height: 46px;
+    font-size: 23px;
+  }
+
+  .driverNoticeContent strong {
+    font-size: 14px;
+  }
+
+  .driverNoticeContent p {
+    font-size: 12px;
+  }
+}
+/* =======================================
+   Mobile Fix - Order Tracking Page
+======================================= */
+
+@media (max-width: 768px) {
+  .adminContainer {
+    padding: 150px 14px 32px;
+  }
+
+  .pageHeader {
+    display: block;
+    margin-bottom: 14px;
+  }
+
+  .headerTitleArea {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    width: 100%;
+  }
+
+  .orderTitle {
+    font-size: 28px;
+    line-height: 1.08;
+    letter-spacing: -0.8px;
+    max-width: 100%;
+    word-break: break-word;
+    overflow-wrap: anywhere;
+  }
+
+  .statusPill {
+    font-size: 13px;
+    padding: 7px 16px;
+    border-radius: 999px;
+  }
+
+  .metaRow {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 10px;
+    font-size: 13px;
+    line-height: 1.4;
+    margin-bottom: 24px;
+  }
+
+  .metaRow span {
+    flex-shrink: 0;
+  }
+
+  .dateRight {
+    margin-left: 0;
+    width: 100%;
+    color: var(--text-3);
+  }
+
+  .trackingLayout {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+
+  .mapColumn {
+    position: static;
+    order: -1;
+  }
+
+  .card {
+    padding: 20px;
+    border-radius: 18px;
+  }
+
+  .mapColumn .card {
+    padding: 0 !important;
+    border-radius: 18px;
+  }
+
+  .mapHeader {
+    padding: 18px 20px 14px;
+  }
+
+  .sectionLabel {
+    font-size: 17px;
+    letter-spacing: 0.12em;
+  }
+
+  .mapWrapper {
+    height: 360px;
+  }
+
+  .addressBox {
+    padding: 20px;
+  }
+
+  .paymentMiniCard {
+    margin: 0 20px 20px;
+  }
+
+  .customerRow {
+    align-items: flex-start;
+  }
+
+  .customerProfile {
+    width: 100%;
+  }
+
+  .customerContactActions {
+    width: 100%;
+  }
+
+  .btnOutlineSmall {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .tableWrapper {
+    overflow-x: auto;
+  }
+
+  .productTable {
+    min-width: 560px;
+  }
+
+  .totalsWrapper {
+    justify-content: stretch;
+  }
+
+  .totalsBlock {
+    width: 100%;
+  }
+}
+@media (max-width: 420px) {
+  .adminContainer {
+    padding: 145px 12px 28px;
+  }
+
+  .orderTitle {
+    font-size: 24px;
+    line-height: 1.1;
+  }
+
+  .statusPill {
+    font-size: 12px;
+    padding: 6px 14px;
+  }
+
+  .metaRow {
+    font-size: 12.5px;
+  }
+
+  .sectionLabel {
+    font-size: 15px;
+  }
+
+  .mapWrapper {
+    height: 330px;
+  }
+
+  .card {
+    padding: 18px;
+  }
+}
+/* =======================================
+   Mobile Overflow Fix - Order Tracking
+======================================= */
+
+@media (max-width: 768px) {
+  .pageBackground {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
+  .adminContainer {
+    width: 100%;
+    max-width: 100%;
+    padding: 145px 12px 32px;
+    overflow-x: hidden;
+    box-sizing: border-box;
+  }
+
+  .pageHeader {
+    width: 100%;
+    max-width: 100%;
+    overflow: hidden;
+  }
+
+  .headerTitleArea {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+  }
+
+  .orderTitle {
+    font-size: 32px;
+    line-height: 1.08;
+    max-width: 100%;
+    word-break: break-word;
+    overflow-wrap: anywhere;
+  }
+
+  .metaRow {
+    width: 100%;
+    max-width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 10px;
+    font-size: 14px;
+  }
+
+  .dateRight {
+    width: 100%;
+    margin-left: 0;
+  }
+
+  .trackingLayout {
+    width: 100%;
+    max-width: 100%;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 18px;
+    overflow: hidden;
+  }
+
+  .mapColumn {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  .card {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+    overflow: hidden;
+    border-radius: 20px;
+  }
+
+  .mapColumn .card {
+    width: 100%;
+    max-width: 100%;
+    overflow: hidden;
+  }
+
+  .mapHeader {
+    width: 100%;
+    max-width: 100%;
+    padding: 20px 18px 16px;
+    box-sizing: border-box;
+  }
+
+  .sectionLabel {
+    font-size: 17px;
+    letter-spacing: 0.12em;
+  }
+
+  .mapWrapper {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    height: 360px;
+    overflow: hidden;
+  }
+}
+@media (max-width: 420px) {
+  .adminContainer {
+    padding: 140px 10px 28px;
+  }
+
+  .orderTitle {
+    font-size: 26px;
+    line-height: 1.12;
+  }
+
+  .metaRow {
+    font-size: 13px;
+  }
+
+  .sectionLabel {
+    font-size: 15px;
+    letter-spacing: 0.1em;
+  }
+
+  .mapHeader {
+    padding: 18px 16px 14px;
+  }
+
+  .mapWrapper {
+    height: 330px;
+  }
+
+  .card {
+    border-radius: 18px;
+  }
+}

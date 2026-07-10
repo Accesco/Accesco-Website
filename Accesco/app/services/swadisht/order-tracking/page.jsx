@@ -17,8 +17,9 @@ export default function SwadishttTrackingPage() {
   const searchParams = useSearchParams();
   const orderId = searchParams.get('id');
 
-  const [order, setOrder]           = useState(null);
-  const [currentUser, setCurrentUser] = useState(null);
+const [order, setOrder] = useState(null);
+const [currentUser, setCurrentUser] = useState(null);
+const [showDriverNotice, setShowDriverNotice] = useState(true);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -51,6 +52,12 @@ export default function SwadishttTrackingPage() {
   const totalItems   = order.items?.reduce((acc, item) => acc + item.quantity, 0) ?? 0;
   const userName     = currentUser?.name || order.delivery?.name || 'Customer';
   const initials     = userName.substring(0, 2).toUpperCase();
+  const driverDistance = order.deliveryPartner?.distanceKm || 1.8;
+const driverEta = order.deliveryPartner?.etaMinutes || 10;
+const driverStatus =
+  order.deliveryPartner?.statusText ||
+  'Delivery partner is heading to the restaurant';
+const driverName = order.deliveryPartner?.name || 'Your delivery partner';
 
   const orderDate    = order.placedAt ? new Date(order.placedAt) : new Date();
   const formattedDate = orderDate.toLocaleDateString('en-GB', {
@@ -58,11 +65,32 @@ export default function SwadishttTrackingPage() {
     hour: '2-digit', minute: '2-digit',
   });
 
-  return (
-    <div className={styles.pageBackground}>
-      <SwadishttHeader />
+return (
+  <div className={styles.pageBackground}>
+    <SwadishttHeader />
 
-      <main className={styles.adminContainer}>
+    {showDriverNotice && (
+      <div className={styles.driverNotice}>
+        <div className={styles.driverNoticeIcon}>🛵</div>
+
+        <div className={styles.driverNoticeContent}>
+          <span className={styles.driverNoticeLabel}>Live delivery update</span>
+          <strong>{driverName} is {driverDistance} km away</strong>
+          <p>{driverStatus}. Arriving in about {driverEta} minutes.</p>
+        </div>
+
+        <button
+          type="button"
+          className={styles.driverNoticeClose}
+          onClick={() => setShowDriverNotice(false)}
+          aria-label="Close delivery notification"
+        >
+          ×
+        </button>
+      </div>
+    )}
+
+    <main className={styles.adminContainer}>
 
         {/* ── Page header ── */}
         <div className={styles.pageHeader}>

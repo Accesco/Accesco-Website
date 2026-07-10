@@ -37,6 +37,26 @@ const categories = [
     image: '/images/swadisht/categories/snacks.png',
     href: '/services/swadisht/category/snacks',
   },
+  {
+  name: 'Pasta',
+  image: '/images/swadisht/categories/pasta.png',
+  href: '/services/swadisht/category/pasta',
+},
+{
+  name: 'Biryani',
+  image: '/images/swadisht/categories/biriyani.png',
+  href: '/services/swadisht/category/biryani',
+},
+{
+  name: 'Fried Rice',
+  image: '/images/swadisht/categories/fried-rice.png',
+  href: '/services/swadisht/category/fried-rice',
+},
+{
+  name: 'North Indian',
+  image: '/images/swadisht/categories/north-indian.png',
+  href: '/services/swadisht/category/north-indian',
+},
 ];
 
 export default function CategorySection() {

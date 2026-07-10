@@ -9,6 +9,7 @@ import Hero from '../components/Hero';
 import AppShowcase from '../components/AppShowcase';
 import Footer from '../components/Footer';
 import JsonLd from '../components/JsonLd';
+import XpenseIntro from '@/components/XpenseIntro';
 export default function HomePage() {
   const [isClient, setIsClient] = useState(false);
   const scrollRef = useRef(null);
@@ -61,10 +62,22 @@ const softwareApplicationSchema = {
       <main>
         {/* ── Hero Section ── */}
         <Hero />
-
+{/* Mobile Launch Poster */}
+<section className="mobileLaunchPoster">
+  <img
+    src="/images/poster-newspaper.jpeg"
+    alt="Launching Soon"
+  />
+</section>
         {/* ── Services Section ── */}
-        <section id="services" style={{ padding: 'clamp(60px, 8vw, 100px) 0', background: '#FFFDF8', position: 'relative' }}>
-         
+       <section
+  id="services"
+  style={{
+    padding: 'clamp(60px, 8vw, 100px) 0',
+    background: '#FFFDF8',
+    position: 'relative'
+  }}
+>       
 
           <div className="intelligencePosterRow">
 
@@ -90,6 +103,7 @@ const softwareApplicationSchema = {
 
   {/* Poster */}
   <div className="postersSectionWrapper">
+  
     <div
       className="postersTiltCard"
       onMouseMove={(e) => {
@@ -119,7 +133,6 @@ const softwareApplicationSchema = {
             pointerEvents: 'none',
           }} />
 
-  
   <div
     ref={deliveryRef}
     className={`deliveryHeadingFrame ${deliveryVisible ? "is-visible" : ""}`}
@@ -132,9 +145,11 @@ const softwareApplicationSchema = {
   >
 <div className="floatingHeroItems">
   <img src="/images/burger.png" className="popItem popBurger" alt="Burger" />
+  <img src="/images/pizza.png" className="popItem popPizza" alt="Pizza" />
+  <img src="/images/Grocery.png" className="popItem popGrocery" alt="Grocery Basket" />
   <img src="/images/hoodie.png" className="popItem popHoodie" alt="Hoodie" />
   <img src="/images/salad.png" className="popItem popSalad" alt="Salad" />
-  <img src="/images/pizza.png" className="popItem popPizza" alt="Pizza" />
+  <img src="/images/Jeans.png" className="popItem popJeans" alt="Jeans" />
 </div>
               <h2 style={{
                 fontFamily: "'Inter', sans-serif",
@@ -248,106 +263,11 @@ fontSize: 'clamp(2.45rem, 4.9vw, 4.4rem)',
                   ›
                 </button>
               </div>
-            </div>
-      
+         
+      </div>
         </section>
         {/* ── Xpense Meter Section ── */}
-        <section className="xpense-meter-section">
-          <div className="xpense-container">
-            <div className="xpense-content">
-              <div className="xpense-header">
-                <h2 className="xpense-title">
-                  Smart budgeting built for <span className="xpense-highlight">your income cycle</span>
-                </h2>
-                <p className="xpense-description">
-                  Track and manage your household expenses dynamically relative to your salary schedule.
-                </p>
-
-                <div className="xpense-features">
-                  <div className="feature-item">
-                    <span className="feature-icon">
-                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <rect x="2" y="4" width="20" height="16" rx="2" ry="2" />
-                        <line x1="12" y1="4" x2="12" y2="20" />
-                      </svg>
-                    </span>
-                    <div className="feature-text">
-                      <h4>Salary Sync</h4>
-                      <p>Adapts your monthly budget limits to your payroll cycle.</p>
-                    </div>
-                  </div>
-                  <div className="feature-item">
-                    <span className="feature-icon">
-                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
-                        <path d="M13.73 21a2 2 0 0 1-3.46 0" />
-                      </svg>
-                    </span>
-                    <div className="feature-text">
-                      <h4>Budget Alerts</h4>
-                      <p>Get notified instantly before you exceed category limits.</p>
-                    </div>
-                  </div>
-                  <div className="feature-item">
-                    <span className="feature-icon">
-                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <circle cx="12" cy="12" r="10" />
-                        <circle cx="12" cy="12" r="6" />
-                        <circle cx="12" cy="12" r="2" />
-                      </svg>
-                    </span>
-                    <div className="feature-text">
-                      <h4>Smart Goals</h4>
-                      <p>Track and secure your savings targets automatically.</p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="xpense-actions">
-                  <Link href="/calculator" className="xpense-cta">
-                    Launch calculator
-                  </Link>
-                  <Link href="#waitlist" className="xpense-secondary-cta">
-                    Join waitlist
-                  </Link>
-                </div>
-              </div>
-
-              <div className="xpense-visual">
-                <div className="xpense-dashboard-card">
-                  <div className="dashboard-header">
-                    <div className="header-meta">
-                      <span className="dashboard-title">Xpense Meter</span>
-                      <p className="dashboard-subtitle">Transform your financial habits with intelligent expense tracking and predictive analytics.</p>
-                    </div>
-                    <Link href="/calculator" className="dashboard-calc-link">
-                      Launch Calculator
-                    </Link>
-                  </div>
-                  
-                  <div className="dashboard-grid">
-                    <div className="dashboard-item">
-                      <span className="item-label">Monthly Limit</span>
-                      <span className="item-value">₹50,000</span>
-                    </div>
-
-                    <div className="dashboard-item">
-                      <span className="item-label">Current Spent</span>
-                      <span className="item-value" style={{ color: '#7A0042' }}>₹45,280</span>
-                    </div>
-
-                    <div className="dashboard-item item-full">
-                      <span className="item-label">Remaining Balance</span>
-                      <span className="item-value" style={{ color: '#2E7D32' }}>₹4,720</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-  
-        </section>
-
+        <XpenseIntro />
         {/* ── Waitlist / App Showcase ── */}
         <AppShowcase />
       </main>
@@ -369,7 +289,7 @@ fontSize: 'clamp(2.45rem, 4.9vw, 4.4rem)',
   
   
             
-        .services-container-wrapper {
+       r .services-container-wrapper {
           position: relative;
           width: 100%;
           display: flex;
@@ -400,7 +320,7 @@ fontSize: 'clamp(2.45rem, 4.9vw, 4.4rem)',
 
           .services-grid {
             display: grid !important;
-            grid-template-columns: repeat(3, 1fr) !important;
+            grid-template-columns: repeat(3, 1f) !important;
             gap: 8px !important;
             width: 100% !important;
             overflow: visible !important;
@@ -497,8 +417,8 @@ fontSize: 'clamp(2.45rem, 4.9vw, 4.4rem)',
         @media (max-width: 480px) {
           .services-grid {
             gap: 6px !important;
-            display: grid !important;
-            grid-template-columns: repeat(3, 1fr) !important;
+  display: grid !important;
+  grid-template-columns: repeat(2, 1fr) !important;
             overflow: visible !important;
             scroll-snap-type: none !important;
             padding-bottom: 0 !important;
@@ -510,12 +430,31 @@ fontSize: 'clamp(2.45rem, 4.9vw, 4.4rem)',
             max-width: none !important;
             flex-shrink: 0 !important;
           }
-          .service-card-visual {
-            height: 85px !important;
-          }
-          .service-card-body {
-            padding: 6px 6px 8px !important;
-          }
+/* Grokly */
+.services-grid > div:nth-child(1) {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+/* Swadisht - full width */
+.services-grid > div:nth-child(2) {
+  grid-column: 1 / -1;
+  grid-row: 2;
+}
+
+/* InstaStyle */
+.services-grid > div:nth-child(3) {
+  grid-column: 2;
+  grid-row: 1;
+}
+  
+       .service-card-visual {
+  height: 120px !important;   /* was 85px */
+}
+
+.service-card-body {
+  padding: 10px 10px 12px !important;   /* was 6px 6px 8px */
+}
           .service-card-name {
           font-family: 'Inter', sans-serif;
   font-weight: 700;
@@ -610,7 +549,7 @@ fontSize: 'clamp(2.45rem, 4.9vw, 4.4rem)',
         }
 
         .swadishtt-btn {
-          background: #7A0042;
+          background: #E53935;                                                        ;
           color: #fff;
         }
 

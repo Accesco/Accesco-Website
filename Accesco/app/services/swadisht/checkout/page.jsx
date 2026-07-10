@@ -37,6 +37,7 @@ function CheckoutContent() {
   const [lastOrderId, setLastOrderId] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
   const [paymentError, setPaymentError] = useState('');
+  const [placedOrder, setPlacedOrder] = useState(null);
 
   useEffect(() => {
     if (!cartHydrated) return;
@@ -137,11 +138,20 @@ function CheckoutContent() {
     const orderId = `SW${Date.now().toString(36).toUpperCase()}`;
     const nextOrder = {
       id: orderId,
-      status: 'Placed',
+      status: 'Preparing',
       placedAt: new Date().toISOString(),
       paymentMethod,
       ...paymentInfo,
       delivery: { ...deliveryAddress },
+      deliveryPartner: {
+        name: 'Ravi Kumar',
+        distanceKm: deliverySpeed === 'batched' ? 3.4 : 1.8,
+        etaMinutes: deliverySpeed === 'batched' ? 25 : 10,
+        statusText:
+          deliverySpeed === 'batched'
+            ? 'Delivery partner is completing a nearby order'
+            : 'Delivery partner is heading to the restaurant',
+      },
       totals: {
         subtotal,
         deliveryFee,
@@ -158,6 +168,7 @@ function CheckoutContent() {
         restaurant: item.restaurant || '',
       })),
     };
+    setPlacedOrder(nextOrder);
 
     persistOrder(nextOrder);
     setLastOrderId(orderId);
@@ -214,25 +225,203 @@ function CheckoutContent() {
     return null;
   }
 
-  if (orderPlaced) {
-    return (
-      <div className={styles.page}>
-        <SwadishttHeader />
-        <div className={styles.successScreen}>
-          <div className={styles.successIcon}>✓</div>
-          <h1 className={styles.successTitle}>Order Placed Successfully!</h1>
-          <p className={styles.successText}>
-            Your order has been confirmed and will be delivered soon.
-          </p>
-          <div className={styles.orderNumber}>
-            Order #{lastOrderId || `SW${Math.floor(Math.random() * 100000)}`}
-          </div>
-          <p className={styles.redirectText}>Redirecting to orders page...</p>
-        </div>
-      </div>
-    );
-  }
+if (orderPlaced) {
+  const displayOrder = placedOrder || {};
+  const deliveryPartner = displayOrder.deliveryPartner || {};
+  const etaMinutes = deliveryPartner.etaMinutes || (deliverySpeed === 'batched' ? 25 : 10);
+  const driverDistance = deliveryPartner.distanceKm || (deliverySpeed === 'batched' ? 3.4 : 1.8);
+  const driverName = deliveryPartner.name || 'Ravi Kumar';
+  const orderLabel = displayOrder.id || lastOrderId || `SW${Math.floor(Math.random() * 100000)}`;
 
+  const displayItems = displayOrder.items || [];
+  const itemCount = displayItems.reduce((sum, item) => sum + (item.quantity || 1), 0);
+
+  const deliveryText =
+    displayOrder.delivery?.address ||
+    displayOrder.delivery?.fullAddress ||
+    [
+      displayOrder.delivery?.house,
+      displayOrder.delivery?.area,
+      displayOrder.delivery?.city,
+      displayOrder.delivery?.pincode,
+    ]
+      .filter(Boolean)
+      .join(', ') ||
+    'Selected delivery address';
+
+  const paymentLabel =
+    displayOrder.paymentMethod?.toUpperCase() ||
+    paymentMethod?.toUpperCase() ||
+    'SELECTED';
+
+  const totalLabel =
+    typeof displayOrder.totals?.total === 'number'
+      ? `₹${Math.round(displayOrder.totals.total)}`
+      : '₹--';
+
+  return (
+    <div className={styles.page}>
+      <SwadishttHeader />
+
+      <div className={styles.premiumSuccessScreen}>
+        <section className={styles.premiumOrderCard}>
+          <div className={styles.premiumTopRow}>
+            <div className={styles.premiumTickWrap}>
+              <span className={styles.premiumTick}>✓</span>
+            </div>
+
+            <div className={styles.premiumHeaderText}>
+              <span className={styles.premiumEyebrow}>Order placed</span>
+              <h1>We’re preparing your food</h1>
+              <p>
+                Your order is confirmed. Track your delivery partner and order status from here.
+              </p>
+            </div>
+          </div>
+
+          <div className={styles.deliveryPromiseCard}>
+            <div>
+              <span>Estimated delivery</span>
+              <strong>{etaMinutes} mins</strong>
+            </div>
+
+            <div className={styles.deliveryModePill}>
+              {deliverySpeed === 'batched' ? 'Saver delivery' : 'Priority delivery'}
+            </div>
+          </div>
+
+          <div className={styles.partnerCard}>
+            <div className={styles.partnerIcon}>🛵</div>
+
+            <div className={styles.partnerInfo}>
+              <span>Delivery partner</span>
+              <strong>
+                {driverName} is {driverDistance} km away
+              </strong>
+              <p>
+                {deliveryPartner.statusText ||
+                  'Delivery partner is heading to the restaurant'}
+                . Arriving in about {etaMinutes} minutes.
+              </p>
+            </div>
+          </div>
+
+          <div className={styles.timelineCard}>
+            <div className={styles.timelineHeader}>
+              <span>Current status</span>
+              <strong>Preparing</strong>
+            </div>
+
+            <div className={styles.timelineTrack}>
+              <div className={styles.timelineStepDone}>
+                <span></span>
+                <p>Placed</p>
+              </div>
+
+              <div className={styles.timelineLineDone}></div>
+
+              <div className={styles.timelineStepDone}>
+                <span></span>
+                <p>Preparing</p>
+              </div>
+
+              <div className={styles.timelineLine}></div>
+
+              <div className={styles.timelineStep}>
+                <span></span>
+                <p>On the way</p>
+              </div>
+            </div>
+          </div>
+
+          <div className={styles.receiptPanel}>
+            <div className={styles.receiptHeader}>
+              <h2>Order summary</h2>
+              <span>{itemCount} {itemCount === 1 ? 'item' : 'items'}</span>
+            </div>
+
+            <div className={styles.receiptItems}>
+              {displayItems.slice(0, 3).map((item) => (
+                <div className={styles.receiptItem} key={item.id || item.name}>
+                  <div>
+                    <strong>{item.name}</strong>
+                    <span>{item.restaurant || 'Swadishtt kitchen'}</span>
+                  </div>
+
+                  <p>
+                    {item.quantity || 1} × ₹{item.price}
+                  </p>
+                </div>
+              ))}
+
+              {displayItems.length > 3 && (
+                <div className={styles.moreItems}>
+                  +{displayItems.length - 3} more item{displayItems.length - 3 > 1 ? 's' : ''}
+                </div>
+              )}
+            </div>
+          </div>
+
+          <div className={styles.infoGrid}>
+            <div className={styles.infoBox}>
+              <span>Order ID</span>
+              <strong>#{orderLabel}</strong>
+            </div>
+
+            <div className={styles.infoBox}>
+              <span>Payment</span>
+              <strong>{paymentLabel}</strong>
+            </div>
+
+            <div className={styles.infoBox}>
+              <span>Total paid</span>
+              <strong>{totalLabel}</strong>
+            </div>
+
+            <div className={styles.infoBox}>
+              <span>Status</span>
+              <strong>Preparing</strong>
+            </div>
+          </div>
+
+          <div className={styles.deliveryAddressCard}>
+            <div className={styles.addressIcon}>📍</div>
+
+            <div>
+              <span>Delivering to</span>
+              <p>{deliveryText}</p>
+            </div>
+          </div>
+
+          <div className={styles.premiumActions}>
+            <button
+              type="button"
+              className={styles.trackPrimaryBtn}
+              onClick={() => {
+                clearCart();
+                router.push(`/services/swadisht/order-tracking?id=${orderLabel}`);
+              }}
+            >
+              Track order
+            </button>
+
+            <button
+              type="button"
+              className={styles.trackSecondaryBtn}
+              onClick={() => router.push('/services/swadisht/orders')}
+            >
+              View all orders
+            </button>
+          </div>
+
+          <p className={styles.autoRedirectNote}>
+            Opening live tracking in a few seconds...
+          </p>
+        </section>
+      </div>
+    </div>
+  );
+}
   return (
     <div className={styles.page}>
       <SwadishttHeader />
