@@ -9,6 +9,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useSwadishtt } from './contexts/SwadishttContext';
+import { Nunito } from 'next/font/google';
 import SwadishttHeader from './components/SwadishttHeader';
 import { RESTAURANTS, filterRestaurants } from './lib/swadishttData';
 import { SwadishttHero } from '../../../components/HeroBanners';
@@ -17,6 +18,22 @@ import CategorySection from './components/CategorySection';
 import Image from 'next/image';
 import JsonLd from '../../../components/JsonLd';
 
+const discoveryFont = Nunito({
+  subsets: ['latin'],
+  weight: ['500', '600', '700', '800', '900'],
+  display: 'swap',
+});
+
+// Hero Section Component
+function HeroSection() {
+  const [activeTab, setActiveTab] = useState('delivery');
+  
+ return (
+  <div className={styles.hero}>
+
+  </div>
+);
+}
 
 // Filter Bar Component
 function FilterBar({ filters, onFilterChange }) {
@@ -60,24 +77,15 @@ function FilterBar({ filters, onFilterChange }) {
           Pure Veg
         </button>
         
-        <button 
-          className={`${styles.filterChip} ${filters.offers ? styles.active : ''}`}
-          onClick={() => onFilterChange({ offers: !filters.offers })}
-        >
+        <button className={styles.filterChip}>
           Offers
         </button>
         
-        <button 
-          className={`${styles.filterChip} ${filters.outdoorSeating ? styles.active : ''}`}
-          onClick={() => onFilterChange({ outdoorSeating: !filters.outdoorSeating })}
-        >
+        <button className={styles.filterChip}>
           Outdoor Seating
         </button>
         
-        <button 
-          className={`${styles.filterChip} ${filters.openNow ? styles.active : ''}`}
-          onClick={() => onFilterChange({ openNow: !filters.openNow })}
-        >
+        <button className={styles.filterChip}>
           Open Now
         </button>
       </div>
@@ -87,61 +95,51 @@ function FilterBar({ filters, onFilterChange }) {
 
 // Restaurant Card Component
 function RestaurantCard({ restaurant }) {
-  const [imageLoaded, setImageLoaded] = useState(false);
-  
+  const initials = restaurant.name
+    .split(' ')
+    .slice(0, 2)
+    .map((word) => word[0])
+    .join('')
+    .toUpperCase();
+
   return (
     <Link href={`/services/swadisht/restaurant/${restaurant.slug}`} className={styles.restaurantCard}>
       <div className={styles.cardImageWrapper}>
-        <div className={styles.cardImage}>
-          {!imageLoaded && <div className={styles.imageSkeleton}></div>}
-          <Image
-  src={restaurant.coverImage}
-  alt={restaurant.name}
-  fill
-  sizes="(max-width: 768px) 100vw, 33vw"
-  className={styles.restaurantImage}
-  loading="lazy"
-  onLoad={() => setImageLoaded(true)}
-  style={{ opacity: imageLoaded ? 1 : 0 }}
-/>
-          <div className={styles.imageOverlay}></div>
-        </div>
-        
-        {restaurant.offers.length > 0 && (
-          <div className={styles.offerTag}>
-            <svg className={styles.offerIcon} viewBox="0 0 20 20" fill="currentColor">
-              <path d="M5 4a1 1 0 00-2 0v7.268a2 2 0 000 3.464V16a1 1 0 102 0v-1.268a2 2 0 000-3.464V4z"/>
-            </svg>
-            <span>{restaurant.offers[0].title}</span>
-          </div>
-        )}
-        
-        {restaurant.features.pureVeg && (
-          <div className={styles.vegBadge}>
-            <div className={styles.vegDotIcon}></div>
-          </div>
-        )}
+        <img
+          src={restaurant.coverImage}
+          alt={restaurant.name}
+          className={styles.restaurantImage}
+          loading="lazy"
+          onError={(e) => {
+            e.target.src = `https://placehold.co/800x450/6B1D3A/FFFFFF/png?text=${encodeURIComponent(restaurant.name)}`;
+          }}
+        />
+
+      <div className={styles.restaurantLogoBadge}>
+  <img
+    src={restaurant.logoImage || restaurant.coverImage}
+    alt={`${restaurant.name} logo`}
+    className={styles.restaurantLogoImage}
+    loading="lazy"
+    onError={(e) => {
+      e.currentTarget.style.display = 'none';
+      e.currentTarget.parentElement.textContent = initials;
+    }}
+  />
+</div>
       </div>
-      
+
       <div className={styles.cardContent}>
-        <div className={styles.cardTop}>
-          <h3 className={styles.restaurantName}>{restaurant.name}</h3>
-          <div className={styles.ratingPill}>
-            <span className={styles.ratingValue}>{restaurant.rating}</span>
-            <svg className={styles.starIcon} viewBox="0 0 20 20" fill="currentColor">
-              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
-            </svg>
-          </div>
-        </div>
-        
-        <p className={styles.cuisines}>{restaurant.cuisines.slice(0, 3).join(' • ')}</p>
-        
-        <div className={styles.cardFooter}>
-          <div className={styles.metaInfo}>
-            <span className={styles.deliveryTime}>{restaurant.deliveryTime}</span>
-            <span className={styles.metaDot}>•</span>
-            <span className={styles.priceForTwo}>₹{restaurant.priceForTwo} for two</span>
-          </div>
+        <h3 className={styles.restaurantName}>{restaurant.name}</h3>
+
+        <p className={styles.restaurantSubtitle}>
+          {restaurant.cuisines.join(' • ')}
+        </p>
+
+        <div className={styles.restaurantDivider}></div>
+
+        <div className={styles.restaurantStatusRow}>
+          <span>{restaurant.deliveryTime} • ₹{restaurant.priceForTwo} for two</span>
         </div>
       </div>
     </Link>
@@ -149,75 +147,71 @@ function RestaurantCard({ restaurant }) {
 }
 
 // Main Content Component
+// Main Content Component
 function DiscoverFeatures() {
+  const features = [
+    {
+      href: '/services/swadisht/swipe-eat',
+      title: 'SwipeEat Discovery',
+      description: 'Swipe through dishes and discover your next favourite meal.',
+      cta: 'Try SwipeEat',
+      image: '/images/swipeeat-biryani.png',
+      alt: 'SwipeEat biryani bowl',
+    },
+    {
+      href: '/services/swadisht/thali-engine',
+      title: 'Thali Engine',
+      description: 'Create festive, regional and family-style thalis.',
+      cta: 'Build Your Thali',
+      image: '/images/thali-engine.png',
+      alt: 'Thali Engine meal plate',
+    },
+    {
+      href: '/services/swadisht/instant-catering',
+      title: 'Instant Catering',
+      description: 'Pre-book catering packs for events and office gatherings.',
+      cta: 'Plan Catering',
+      image: '/images/catering-trays.png',
+      alt: 'Instant Catering food trays',
+    },
+    {
+      href: '/services/swadisht/regional-soul',
+      title: 'Regional Soul',
+      description: 'Explore authentic cuisines from across India.',
+      cta: 'Explore Regions',
+      image: '/images/regional-india.png',
+      alt: 'Regional Soul India food map',
+    },
+  ];
+
   return (
-    <section className={styles.discoverSection}>
+    <section className={`${styles.discoverSection} ${discoveryFont.className}`} aria-label="Swadishtt discovery features">
       <div className={styles.featureGrid}>
-        
-        <div className={styles.featureCard}>
-          <h3>SwipeEat Discovery</h3>
-          <p>Swipe through dishes and discover your next favourite meal.</p>
-          <Link href="/services/swadisht/swipe-eat" className={styles.featureBtn}>
-            Try SwipeEat
-          </Link>
-           <div className={styles.featureImage}>
+        {features.map((feature) => (
+          <Link key={feature.href} href={feature.href} className={styles.featureCard}>
+  <div className={styles.featureImage}>
     <Image
-      src="/images/swipeeat-biryani.png"
-      alt=""
+      src={feature.image}
+      alt={feature.alt}
       fill
-      draggable={false}
+      sizes="(max-width: 768px) 86vw, (max-width: 1024px) 44vw, 23vw"
+      priority={false}
+      className={styles.featureImg}
     />
   </div>
-        </div>
 
-        <div className={styles.featureCard}>
-          <h3>Thali Engine</h3>
-          <p>Create festive, regional and family-style thalis.</p>
-          <Link href="/services/swadisht/thali-engine" className={styles.featureBtn}>
-            Build Your Thali
-          </Link>
-            <div className={styles.featureImage}>
-    <Image
-      src="/images/thali-engine.png"
-      alt=""
-      fill
-      draggable={false}
-    />
+  <div className={styles.featureBody}>
+    <h3>{feature.title}</h3>
+    <span className={styles.featureAccent} aria-hidden="true"></span>
+    <p>{feature.description}</p>
   </div>
-        </div>
 
-        <div className={styles.featureCard}>
-          <h3>Instant Catering</h3>
-          <p>Pre-book catering packs for events and office gatherings.</p>
-          <Link href="/services/swadisht/instant-catering" className={styles.featureBtn}>
-            Plan Catering
-          </Link>
-            <div className={styles.featureImage}>
-    <Image
-      src="/images/catering-trays.png"
-      alt=""
-      fill
-      draggable={false}
-    />
+  <div className={styles.featureCta}>
+    <span>{feature.cta}</span>
+    <span aria-hidden="true">→</span>
   </div>
-        </div>
-
-        <div className={styles.featureCard}>
-          <h3>Regional Soul</h3>
-          <p>Explore authentic cuisines from across India.</p>
-          <Link href="/services/swadisht/regional-soul" className={styles.featureBtn}>
-            Explore Regions
-          </Link>
-           <div   className={`${styles.featureImage} ${styles.regionalImage}`}>
-    <Image
-      src="/images/regional-india.png"
-      alt=""
-      fill
-      draggable={false}
-    />
-  </div>
-        </div>
-
+</Link>
+        ))}
       </div>
     </section>
   );
@@ -275,11 +269,7 @@ function MainContent() {
         
         {restaurants.length === 0 && (
           <div className={styles.emptyState}>
-            <div className={styles.emptyIcon}>
-              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ opacity: 0.4 }}>
-                <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
-              </svg>
-            </div>
+            <div className={styles.emptyIcon}>🔍</div>
             <h3 className={styles.emptyTitle}>No restaurants found</h3>
             <p className={styles.emptyText}>Try adjusting your filters</p>
             <button 
@@ -331,6 +321,7 @@ export default function SwadishttPage() {
       <div className={styles.pageContent}>
        <CategorySection />
 <DiscoverFeatures />
+<HeroSection />
 <MainContent />
       </div>
     </div>

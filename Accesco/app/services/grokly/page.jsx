@@ -8,7 +8,7 @@
 
 import { useState, useMemo, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { GroklyProvider, useGrokly } from './contexts/GroklyContext';
+import { useGrokly } from './contexts/GroklyContext';
 import GroklyHeader from './components/GroklyHeader';
 import MobileHeader from './components/MobileHeader';
 import CategoryNav from './components/CategoryNav';
@@ -23,49 +23,7 @@ import { categories, products, getProductsByCategory, searchProducts } from './l
 import './styles/variables.css';
 import './styles/globals.css';
 import JsonLd from '../../../components/JsonLd';
-
-const dishes = {
-  tikka: {
-    name: 'Paneer Tikka Masala',
-    image: 'https://images.unsplash.com/photo-1631452180519-c014fe946bc7?w=600&auto=format&fit=crop&q=80',
-    itemsCount: 6,
-    price: 249,
-    ingredients: [
-      { id: 'dish-paneer', name: 'Milky Mist Paneer', unit: '200 g', price: 82, mrp: 130, image: 'https://images.unsplash.com/photo-1631452180519-c014fe946bc7?w=120&auto=format&fit=crop&q=80' },
-      { id: 'dish-marinade', name: 'Everest Tikhalal Powder Pouch', unit: '100 g', price: 52, mrp: 60, image: 'https://m.media-amazon.com/images/I/71UnlVpvTgL._SL1500_.jpg' },
-      { id: 'dish-yogurt', name: 'Milky Mist Greek Yogurt', unit: '100 g', price: 35, mrp: 55, image: 'https://images.unsplash.com/photo-1488477181946-6428a0291777?w=120&auto=format&fit=crop&q=80' },
-      { id: 'dish-ggpaste', name: 'Catch Ginger Garlic Paste', unit: '100 g', price: 17, mrp: 28, image: 'https://images.unsplash.com/photo-1608686207856-001b95cf60ca?w=120&auto=format&fit=crop&q=80' },
-      { id: 'veg-001', name: 'Tomato - Hybrid', unit: '500 g', price: 28, mrp: 35, image: 'https://images.unsplash.com/photo-1607305387299-a3d9611cd469?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D' },
-      { id: 'veg-002', name: 'Onion', unit: '1 kg', price: 35, mrp: 40, image: 'https://images.unsplash.com/photo-1587049633312-d628ae50a8ae?q=80&w=880&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D' },
-    ]
-  },
-  biryani: {
-    name: 'Paneer Biryani',
-    image: 'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=600&auto=format&fit=crop&q=80',
-    itemsCount: 5,
-    price: 744,
-    ingredients: [
-      { id: 'dish-paneer', name: 'Milky Mist Paneer', unit: '200 g', price: 82, mrp: 130, image: 'https://images.unsplash.com/photo-1631452180519-c014fe946bc7?w=120&auto=format&fit=crop&q=80' },
-      { id: 'atta-002', name: 'India Gate Basmati Rice', unit: '5 kg', price: 525, mrp: 575, image: 'https://cdn.grofers.com/cdn-cgi/image/f=auto,fit=scale-down,q=70,metadata=none,w=120/app/images/products/sliding_image/483632a.jpg' },
-      { id: 'dish-ggpaste', name: 'Catch Ginger Garlic Paste', unit: '100 g', price: 17, mrp: 28, image: 'https://images.unsplash.com/photo-1608686207856-001b95cf60ca?w=120&auto=format&fit=crop&q=80' },
-      { id: 'masala-003', name: 'Everest Garam Masala', unit: '100 g', price: 85, mrp: 95, image: 'https://cdn.grofers.com/cdn-cgi/image/f=auto,fit=scale-down,q=70,metadata=none,w=120/app/images/products/sliding_image/483640a.jpg' },
-      { id: 'veg-002', name: 'Onion', unit: '1 kg', price: 35, mrp: 40, image: 'https://images.unsplash.com/photo-1587049633312-d628ae50a8ae?q=80&w=880&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D' },
-    ]
-  },
-  butter: {
-    name: 'Paneer Butter Masala',
-    image: 'https://images.unsplash.com/photo-1708782341807-ed35fc16b4ea?q=80&w=880&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-    itemsCount: 5,
-    price: 237,
-    ingredients: [
-      { id: 'dish-paneer', name: 'Milky Mist Paneer', unit: '200 g', price: 82, mrp: 130, image: 'https://images.unsplash.com/photo-1631452180519-c014fe946bc7?w=120&auto=format&fit=crop&q=80' },
-      { id: 'dairy-004', name: 'Amul Butter - Salted', unit: '100 g', price: 58, mrp: 60, image: 'https://images.unsplash.com/photo-1594233301022-8867d9d032d8?q=80&w=736&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D' },
-      { id: 'dairy-006', name: 'Amul Fresh Cream', unit: '250 ml', price: 52, mrp: 55, image: 'https://www.bbassets.com/media/uploads/p/l/40102603_3-amul-fresh-cream-25-milk-fat-low-fat.jpg' },
-      { id: 'veg-001', name: 'Tomato - Hybrid', unit: '500 g', price: 28, mrp: 35, image: 'https://images.unsplash.com/photo-1607305387299-a3d9611cd469?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D' },
-      { id: 'dish-ggpaste', name: 'Catch Ginger Garlic Paste', unit: '100 g', price: 17, mrp: 28, image: 'https://images.unsplash.com/photo-1608686207856-001b95cf60ca?w=120&auto=format&fit=crop&q=80' },
-    ]
-  }
-};
+import { dishes } from './lib/dishesData';
 
 const getIngredientImage = (item) => {
   if (!item.image || item.image.includes('grofers.com')) {
@@ -990,63 +948,208 @@ function GroklyPageContent() {
 
         {/* Main Content */}
         <main style={{ flex: 1, maxWidth: 'var(--grokly-max-width)', margin: '0 auto', width: '100%', padding: '8px 20px' }}>
-          {/* Category Grid (Blinkit-style) - Show only on main home view */}
-          {activeCategory === 'all' && !searchQuery && (
-            <div style={{ margin: '0 0 32px' }}>
-              <h3 style={{
-                fontFamily: 'var(--grokly-font-display)',
-                fontSize: '18px',
-                fontWeight: 800,
-                color: 'var(--grokly-text-primary)',
-                margin: '0 0 16px'
-              }}>
-                Browse by Category
-              </h3>
-              <div className="grokly-category-grid">
-                {categories.filter(c => c.id !== 'all').map((cat) => (
-                  <button
-                    key={cat.id}
-                    onClick={() => handleCategorySelect(cat.id)}
-                    style={{
-                      background: '#fff',
-                      border: '1px solid #f2f4f6',
-                      borderRadius: '12px',
-                      padding: '12px 8px',
-                      display: 'flex',
-                      flexDirection: 'column',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      cursor: 'pointer',
-                      textAlign: 'center',
-                      gap: '8px',
-                      boxShadow: '0 1px 3px rgba(0,0,0,0.02)',
-                      transition: 'border-color var(--grokly-transition-fast)'
-                    }}
-                  >
-                    <div style={{
-                      width: '64px',
-                      height: '64px',
-                      borderRadius: '8px',
-                      background: '#f8fafc',
-                      overflow: 'hidden',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center'
-                    }}>
-                      <img src={cat.image} alt={cat.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                    </div>
-                    <span style={{
-                      fontSize: '12px',
-                      fontWeight: 700,
-                      color: '#1a1a1a',
-                      fontFamily: 'var(--grokly-font-primary)',
-                      lineHeight: '1.2'
-                    }}>{cat.name}</span>
-                  </button>
-                ))}
-              </div>
+       {/* Category Carousel - Zepto style */}
+{activeCategory === 'all' && !searchQuery && (
+  <div style={{ margin: '0 0 32px' }}>
+    <h3 style={{
+      fontFamily: 'var(--grokly-font-display)',
+      fontSize: '22px',
+      fontWeight: 900,
+      color: 'var(--grokly-text-primary)',
+      margin: '0 0 16px'
+    }}>
+      Browse by Categories
+    </h3>
+
+    <div style={{ position: 'relative' }}>
+      <button
+        type="button"
+        onClick={() => {
+          const rail = document.getElementById('grokly-home-category-rail');
+          if (rail) rail.scrollBy({ left: -500, behavior: 'smooth' });
+        }}
+     style={{
+  position: 'absolute',
+  left: '-4px',
+  top: '50%',
+  transform: 'translateY(-50%)',
+  zIndex: 10,
+
+  width: '32px',
+  height: '32px',
+  borderRadius: '50%',
+  border: 'none',
+
+  background: '#000',
+  color: '#fff',
+  fontSize: '24px',
+  fontWeight: 900,
+  lineHeight: '1',
+  padding: 0,
+  paddingBottom: '3px',
+
+  cursor: 'pointer',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+
+  boxShadow: '0 4px 12px rgba(0,0,0,0.22)'
+}}
+      >
+        ‹
+      </button>
+
+      <div
+        id="grokly-home-category-rail"
+        className="hide-scrollbar"
+        style={{
+          display: 'flex',
+          gap: '16px',
+          overflowX: 'auto',
+          overflowY: 'hidden',
+          scrollBehavior: 'smooth',
+          scrollSnapType: 'x mandatory',
+          padding: '4px 8px 14px',
+          scrollbarWidth: 'none',
+          msOverflowStyle: 'none',
+          WebkitOverflowScrolling: 'touch'
+        }}
+      >
+        {categories.filter(c => c.id !== 'all').map((cat) => (
+          <button
+            key={cat.id}
+            onClick={() => handleCategorySelect(cat.id)}
+style={{
+  flex: '0 0 128px',
+  width: '128px',
+  minHeight: '118px',
+  background: '#fff',
+  border: '1px solid #f2f4f6',
+  borderRadius: '12px',
+  padding: '12px 8px',
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  justifyContent: 'center',
+  cursor: 'pointer',
+  textAlign: 'center',
+  gap: '8px',
+  boxShadow: '0 1px 3px rgba(0,0,0,0.02)',
+  scrollSnapAlign: 'start'
+}}
+          >
+          <div style={{
+  width: '64px',
+  height: '64px',
+  borderRadius: '8px',
+  background: '#f8fafc',
+  overflow: 'hidden',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center'
+}}>
+              <img
+                src={cat.image}
+                alt={cat.name}
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'cover'
+                }}
+              />
             </div>
-          )}
+
+            <span style={{
+  fontSize: '12px',
+  fontWeight: 700,
+  color: '#1a1a1a',
+  fontFamily: 'var(--grokly-font-primary)',
+  lineHeight: '1.2',
+  textTransform: 'uppercase'
+}}>
+              {cat.name}
+            </span>
+          </button>
+        ))}
+      </div>
+
+      <button
+        type="button"
+        onClick={() => {
+          const rail = document.getElementById('grokly-home-category-rail');
+          if (rail) rail.scrollBy({ left: 500, behavior: 'smooth' });
+        }}
+style={{
+  position: 'absolute',
+  right: '-4px',
+  top: '50%',
+  transform: 'translateY(-50%)',
+  zIndex: 10,
+
+  width: '32px',
+  height: '32px',
+  borderRadius: '50%',
+  border: 'none',
+
+  background: '#000',
+  color: '#fff',
+  fontSize: '24px',
+  fontWeight: 900,
+  lineHeight: '1',
+  padding: 0,
+  paddingBottom: '3px',
+
+  cursor: 'pointer',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+
+  boxShadow: '0 4px 12px rgba(0,0,0,0.22)'
+}}
+      >
+        ›
+      </button>
+    </div>
+
+    <style dangerouslySetInnerHTML={{
+      __html: `
+        #grokly-home-category-rail::-webkit-scrollbar {
+          display: none;
+        }
+
+        @media (max-width: 768px) {
+          #grokly-home-category-rail {
+            gap: 14px !important;
+            padding: 2px 4px 12px !important;
+          }
+
+          #grokly-home-category-rail button {
+            flex: 0 0 112px !important;
+            width: 112px !important;
+            min-height: 128px !important;
+            padding: 12px 8px !important;
+            border-radius: 14px !important;
+          }
+
+          #grokly-home-category-rail button > div {
+            width: 76px !important;
+            height: 76px !important;
+            border-radius: 13px !important;
+          }
+
+          #grokly-home-category-rail span {
+            font-size: 11px !important;
+          }
+
+          #grokly-home-category-rail + button,
+          div:has(> #grokly-home-category-rail) > button {
+            display: none !important;
+          }
+        }
+      `
+    }} />
+  </div>
+)}
 
           {/* Curated Product Sections */}
           {activeCategory === 'all' && !searchQuery && (
@@ -1330,6 +1433,9 @@ function GroklyPageContent() {
  */
 
 export default function GroklyPage() {
+  // NOTE: GroklyProvider is already supplied by grokly/layout.js (shared across
+  // all grokly routes). Wrapping again here created a second, isolated cart whose
+  // items never reached the checkout route. Use the shared provider only.
   return (
     <Suspense fallback={<div>Loading...</div>}>
       <GroklyPageContent />

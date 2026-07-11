@@ -11,7 +11,11 @@ import { useRouter } from 'next/navigation';
 import styles from './CartDrawer.module.css';
 import { useGrokly } from '../contexts/GroklyContext';
 import { products } from '../lib/groklyData';
+import { dishIngredients } from '../lib/dishesData';
 import CouponSection from './CouponSection';
+
+// Combined lookup: regular products + dish ingredients (which have their own IDs)
+const allPurchasable = [...products, ...dishIngredients];
 
 /**
  * Generate fallback image URL
@@ -42,7 +46,7 @@ export default function CartDrawer() {
   const cartItems = useMemo(() => {
     return Object.entries(cart)
       .map(([productId, quantity]) => {
-        const product = products.find(p => p.id === productId);
+        const product = allPurchasable.find(p => p.id === productId);
         return product ? { product, quantity } : null;
       })
       .filter(Boolean);

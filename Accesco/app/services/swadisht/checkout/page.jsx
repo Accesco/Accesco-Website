@@ -9,6 +9,7 @@ import { useRouter } from 'next/navigation';
 import { useSwadishtt } from '../contexts/SwadishttContext';
 import SwadishttHeader from '../components/SwadishttHeader';
 import styles from './checkout.module.css';
+import { payWithRazorpay } from '@/lib/razorpayService';
 
 const ORDERS_STORAGE_KEY = 'swadishtt-orders';
 
@@ -29,11 +30,12 @@ function CheckoutContent() {
   const [deliverySpeed, setDeliverySpeed] = useState('instant');
   const [orderPlaced, setOrderPlaced] = useState(false);
   const [lastOrderId, setLastOrderId] = useState('');
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [paymentError, setPaymentError] = useState('');
   const [placedOrder, setPlacedOrder] = useState(null);
   
   // Validation error states
   const [addressErrors, setAddressErrors] = useState({});
-  const [paymentError, setPaymentError] = useState('');
   const [isPlacingOrder, setIsPlacingOrder] = useState(false);
 
   useEffect(() => {
@@ -148,26 +150,18 @@ function CheckoutContent() {
     }
   };
 
-  const handlePlaceOrder = async () => {
-    if (isPlacingOrder) return;
-    if (!paymentMethod) {
-      setPaymentError('Please select a payment method');
-      return;
-    }
-    setIsPlacingOrder(true);
-
-    // Get customer details from delivery address (already auto-filled from accesco_user)
+  const finalizeOrder = async (paymentInfo = {}) => {
     const customerEmail = deliveryAddress.email || 'customer@accescoliving.com';
     const customerName = deliveryAddress.name || 'Valued Customer';
-
     const orderId = `SW${Date.now().toString(36).toUpperCase()}`;
     const nextOrder = {
       id: orderId,
-      status: 'PENDING',
+      status: 'CONFIRMED',
       placedAt: new Date().toISOString(),
       paymentMethod,
       customerEmail,
       customerName,
+      ...paymentInfo,
       delivery: { ...deliveryAddress },
       deliveryPartner: {
         name: 'Ravi Kumar',
@@ -200,7 +194,7 @@ function CheckoutContent() {
     persistOrder(nextOrder);
     setLastOrderId(orderId);
 
-    // Send confirmation email and advance status to CONFIRMED
+    // Send confirmation email
     try {
       const res = await fetch('/api/swadishtt/orders/update-status', {
         method: 'POST',
@@ -215,7 +209,6 @@ function CheckoutContent() {
       });
       const data = await res.json();
       if (data.success) {
-        // Update local storage status
         const orders = JSON.parse(localStorage.getItem(ORDERS_STORAGE_KEY) || '[]');
         const updated = orders.map((o) =>
           o.id === orderId ? { ...o, status: 'CONFIRMED', updatedAt: new Date().toISOString() } : o
@@ -232,6 +225,48 @@ function CheckoutContent() {
       clearCart();
       router.push(`/services/swadisht/order-tracking?id=${orderId}`);
     }, 3000);
+  };
+
+  const handlePlaceOrder = async () => {
+    if (isPlacingOrder || isProcessing) return;
+    if (!paymentMethod) {
+      setPaymentError('Please select a payment method');
+      return;
+    }
+
+    // Cash on Delivery skips the payment gateway entirely.
+    if (paymentMethod === 'cod') {
+      setIsPlacingOrder(true);
+      await finalizeOrder();
+      setIsPlacingOrder(false);
+      return;
+    }
+
+    // Digital payment: collect via Razorpay before creating the order.
+    setIsProcessing(true);
+    setPaymentError('');
+    try {
+      const payment = await payWithRazorpay({
+        amount: total,
+        receipt: `swadisht_${Date.now()}`,
+        name: 'Swadishtt',
+        description: `Swadishtt order · ${cart.length} item(s)`,
+        prefill: {
+          name: deliveryAddress.name,
+          contact: deliveryAddress.phone,
+        },
+        theme: { color: '#E23744' },
+      });
+      await finalizeOrder({
+        razorpayOrderId: payment.orderId,
+        razorpayPaymentId: payment.paymentId,
+      });
+    } catch (err) {
+      console.error('Payment failed:', err);
+      setPaymentError(err.message || 'Payment failed. Please try again.');
+    } finally {
+      setIsProcessing(false);
+    }
   };
 
   if (cart.length === 0 && !orderPlaced) {
@@ -692,12 +727,18 @@ function CheckoutContent() {
                   </div>
                 </div>
 
-                <button 
-                  className={styles.placeOrderBtn} 
+                {paymentError && (
+                  <div style={{ color: '#dc2626', fontSize: '13px', fontWeight: 600, marginBottom: '10px' }}>
+                    {paymentError}
+                  </div>
+                )}
+
+                <button
+                  className={styles.placeOrderBtn}
                   onClick={handlePlaceOrder}
-                  disabled={isPlacingOrder}
+                  disabled={isPlacingOrder || isProcessing}
                 >
-                  {isPlacingOrder ? 'Placing Order...' : `Place Order - ₹${total}`}
+                  {(isPlacingOrder || isProcessing) ? 'Processing...' : `Place Order - ₹${total}`}
                 </button>
               </div>
             )}

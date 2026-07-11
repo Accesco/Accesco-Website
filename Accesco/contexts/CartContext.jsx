@@ -324,6 +324,26 @@ export function CartProvider({ children }) {
     setCart([]);
   };
 
+  // Re-add every item from a past order back into the cart ("Order Again").
+  const reorder = (items) => {
+    if (!Array.isArray(items) || items.length === 0) return;
+    setCart(prev => {
+      const next = [...prev];
+      items.forEach(it => {
+        const idx = next.findIndex(c =>
+          c.id === it.id &&
+          c.selectedSize === it.selectedSize &&
+          c.selectedColor === it.selectedColor
+        );
+        const qty = it.quantity || 1;
+        if (idx > -1) next[idx] = { ...next[idx], quantity: next[idx].quantity + qty };
+        else next.push({ ...it, quantity: qty });
+      });
+      return next;
+    });
+    setIsCartOpen(true);
+  };
+
   const placeOrder = (orderData) => {
     const newOrder = {
       id: `INS-${Date.now()}`,
@@ -430,6 +450,7 @@ export function CartProvider({ children }) {
     removeFromCart,
     updateQuantity,
     clearCart,
+    reorder,
     placeOrder,
     updateOrderStatus,
     addToWishlist,

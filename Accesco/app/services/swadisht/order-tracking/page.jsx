@@ -252,7 +252,7 @@ export default function SwadishttTrackingPage() {
                 <span className={styles.livePulse} />
               </div>
               <div className={styles.mapWrapper}>
-                <LiveTrackingMap />
+                <LiveTrackingMap orderId={order.id} />
               </div>
               <div className={styles.addressBox}>
                 <div className={styles.iconCircle}>

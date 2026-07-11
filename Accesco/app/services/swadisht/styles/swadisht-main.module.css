@@ -2,12 +2,11 @@
 
 .page {
   min-height: 100vh;
-  background: #FFF8EF;
+  background: #ffffff;
 }
 
 .pageContent {
-  padding-top: 0;
-  background: #FFF8EF;
+  padding-top: 100px;
 }
 
 /* Hero Section - Zomato Tab Style */
@@ -119,7 +118,7 @@
 
 /* Main Content */
 .mainContent {
-  background: #FFF8EF;
+  background: #F8F9FA;
   min-height: 60vh;
 }
 
@@ -129,17 +128,15 @@
   padding: 40px 24px;
 }
 
+/* Filter Bar - Zomato Style */
 .filterBar {
-  background: rgba(255, 248, 239, 0.95);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  border-bottom: 1.5px solid #EAD9C8;
-  padding: 14px 0;
-  margin-bottom: 28px;
+  background: #ffffff;
+  border-bottom: 1px solid #E8E8E8;
+  padding: 16px 0;
+  margin-bottom: 24px;
   position: sticky;
-  top: 74px;
-  z-index: 500;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+  top: 72px;
+  z-index: 100;
 }
 
 .filterScroll {
@@ -163,27 +160,25 @@
   align-items: center;
   gap: 8px;
   background: #ffffff;
-  border: 1px solid #E2DCDD;
-  border-radius: 99px;
-  padding: 8px 18px;
-  font-size: 13px;
-  font-weight: 700;
-  color: #1A1518;
+  border: 1px solid #CFCFCF;
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 400;
+  color: #1C1C1C;
   cursor: pointer;
   white-space: nowrap;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+  transition: all 0.2s ease;
 }
 
 .filterBtn:hover {
-  border-color: #6B1D3A;
-  background: rgba(107, 29, 58, 0.04);
+  border-color: #9C9C9C;
 }
 
 .filterIcon {
-  width: 14px;
-  height: 14px;
-  color: #6B1D3A;
+  width: 16px;
+  height: 16px;
+  color: #696969;
 }
 
 .filterChip {
@@ -191,30 +186,27 @@
   align-items: center;
   gap: 6px;
   background: #ffffff;
-  border: 1px solid #E2DCDD;
-  border-radius: 99px;
-  padding: 8px 18px;
-  font-size: 13px;
-  font-weight: 600;
-  color: #6B5E65;
+  border: 1px solid #CFCFCF;
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 400;
+  color: #1C1C1C;
   cursor: pointer;
   white-space: nowrap;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+  transition: all 0.2s ease;
 }
 
 .filterChip:hover {
-  border-color: #6B1D3A;
-  color: #6B1D3A;
-  background: rgba(107, 29, 58, 0.04);
+  border-color: #9C9C9C;
+  background: #F8F8F8;
 }
 
 .filterChip.active {
-  background: #6B1D3A;
+   background: #6B1D3A;
   border-color: #6B1D3A;
   color: #ffffff;
-  font-weight: 700;
-  box-shadow: 0 4px 12px rgba(107, 29, 58, 0.24);
+  font-weight: 500;
 }
 
 /* Results Header */
@@ -239,18 +231,16 @@
 /* Restaurant Card - Exact Zomato Design */
 .restaurantCard {
   background: #ffffff;
-  border: 1px solid rgba(107, 29, 58, 0.06);
-  border-radius: 18px;
+  border: 1px solid #E8E8E8;
+  border-radius: 8px;
   overflow: hidden;
   text-decoration: none;
-  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.25s ease, border-color 0.25s ease;
-  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.02);
+  transition: all 0.2s ease;
 }
 
 .restaurantCard:hover {
-  border-color: rgba(107, 29, 58, 0.15);
-  transform: translateY(-5px);
-  box-shadow: 0 12px 30px rgba(107, 29, 58, 0.06), 0 4px 12px rgba(0, 0, 0, 0.02);
+  border-color: #CFCFCF;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.08);
 }
 
 .cardImageWrapper {
@@ -278,7 +268,7 @@
 }
 
 .restaurantCard:hover .cardImage img {
-  opacity: 0.95;
+  transform: scale(1.03);
 }
 
 .imageSkeleton {
@@ -358,9 +348,10 @@
   flex: 1;
   display: -webkit-box;
   -webkit-line-clamp: 1;
+  line-clamp: 1;
   -webkit-box-orient: vertical;
   overflow: hidden;
-} 
+}
 
 .ratingPill {
   display: flex;
@@ -391,6 +382,7 @@
   line-height: 1.4;
   display: -webkit-box;
   -webkit-line-clamp: 1;
+  line-clamp: 1;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
@@ -460,6 +452,8 @@
 
 .resetButton:hover {
   background: #C62828;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(226,55,68,0.3);
 }
 
 /* Footer */
@@ -756,471 +750,443 @@
   }
 }
 .discoverSection {
-  padding: 40px 24px;
+  padding: 66px 12px 88px;
   background: #FFF9F0;
+  overflow: hidden;
 }
 
 .featureGrid {
-  max-width: 1200px;
+  width: 100%;
+  max-width: 1510px;
   margin: 0 auto;
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 24px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 22px;
 }
 
+/* Card base */
 .featureCard {
   position: relative;
   overflow: hidden;
-
-  min-height: 280px;
-  padding: 34px 300px 34px 36px;
-
-  border-radius: 28px;
+  min-height: 575px;
+  border-radius: 30px;
+  padding: 0 24px 24px;
   text-decoration: none;
-
+  color: #ffffff;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-
-  border: 1px solid rgba(107, 29, 58, 0.08);
-  transition: all 0.35s ease;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow:
+    0 8px 24px rgba(0, 0, 0, 0.08),
+    0 18px 44px rgba(0, 0, 0, 0.06);
+  transition:
+    transform 0.28s ease,
+    box-shadow 0.28s ease;
 }
 
-.featureCard:hover {
-  /* no lift – hover is intentionally disabled */
-}
-
+/* More hue, closer to target image */
 .featureCard:nth-child(1) {
-  background: linear-gradient(135deg, #ffffff, #fff4f4);
+  background:
+    linear-gradient(
+      180deg,
+      #fde5e2 0%,
+      #e66f8f 44%,
+      #c13362 71%,
+      #951936 100%
+    );
 }
 
 .featureCard:nth-child(2) {
-  background: linear-gradient(135deg, #fffef7, #fff6d8);
+  background:
+    linear-gradient(
+      180deg,
+      #fff1cf 0%,
+      #dfba58 46%,
+      #c48b25 73%,
+      #a86c0f 100%
+    );
 }
 
 .featureCard:nth-child(3) {
-  background: linear-gradient(135deg, #ffffff, #eef8eb);
+  background:
+    linear-gradient(
+      180deg,
+      #e6f3dc 0%,
+      #8baa71 45%,
+      #52763f 72%,
+      #264819 100%
+    );
 }
 
 .featureCard:nth-child(4) {
-  background: linear-gradient(135deg, #faf7ff, #f2ebff);
+  background:
+    linear-gradient(
+      180deg,
+      #eadcff 0%,
+      #ac93ce 46%,
+      #8063a7 73%,
+      #5b407f 100%
+    );
 }
 
-.featureCard::before {
-  content: '';
-  position: absolute;
-
-  width: 420px;
-  height: 420px;
-
-  border-radius: 50%;
-  right: -180px;
-  top: -90px;
-
-  opacity: 0.75;
-  z-index: 0;
+.featureCard:hover {
+  transform: translateY(-6px);
+  box-shadow:
+    0 12px 30px rgba(0, 0, 0, 0.1),
+    0 24px 56px rgba(0, 0, 0, 0.08);
 }
 
-.featureCard:nth-child(1)::before {
-  background: #f8dede;
+.featureCard:focus-visible {
+  outline: 3px solid rgba(107, 29, 58, 0.42);
+  outline-offset: 5px;
 }
 
-.featureCard:nth-child(2)::before {
-  background: #fff0ba;
-}
-
-.featureCard:nth-child(3)::before {
-  background: #dff0d8;
-}
-
-.featureCard:nth-child(4)::before {
-  background: #eadcff;
-}
-
-.featureCard::after {
-  content: '';
-  position: absolute;
-
-  top: 44px;
-  right: 44px;
-
-  width: 60px;
-  height: 60px;
-
-  opacity: 0.35;
-  z-index: 1;
-
-  background-image: radial-gradient(#d4a017 2px, transparent 2px);
-  background-size: 12px 12px;
-}
-
-.featureCard h3,
-.featureCard p,
-.featureCard span {
-  position: relative;
-  z-index: 5;
-}
-
-.featureCard h3 {
-  color: #6B1D3A;
-
-  font-size: 2rem;
-  font-weight: 800;
-  line-height: 1.15;
-
-  margin-bottom: 14px;
-  max-width: 360px;
-}
-
-.featureCard p {
-  color: #64748b;
-
-  font-size: 1.05rem;
-  line-height: 1.65;
-
-  max-width: 340px;
-  margin-bottom: 26px;
-}
-
-.featureBtn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: fit-content;
-  padding: 16px 26px;
-  border-radius: 16px;
-  background: #6B1D3A;
-  color: white;
-  text-decoration: none;
-  font-weight: 700;
-  font-size: 17px;
-  box-shadow: 0 10px 25px rgba(107, 29, 58, 0.25);
-  transition: all 0.3s ease;
-  cursor: pointer;
-}
-
-.featureBtn:hover {
-  background: #A02050;
-  transform: translateY(-2px);
-  box-shadow: 0 14px 30px rgba(160, 32, 80, 0.32);
-}
-
+/* Image top area */
 .featureImage {
-  position: absolute;
-
-  right: -65px;
-  bottom: -18px;
-
-  width: 330px;
-  height: 245px;
-
+  position: relative;
+  z-index: 1;
+  flex: 0 0 auto;
   pointer-events: none;
-  z-index: 2;
-
-  transition: transform 0.4s ease;
+  transition: transform 0.35s ease;
 }
 
 .featureCard:hover .featureImage {
-  transform: none;
+  transform: scale(1.03);
 }
 
+.featureImg,
 .featureImage img {
   object-fit: contain;
-  opacity: 0.96;
-  user-select: none;
-  pointer-events: none;
-  -webkit-user-drag: none;
-  draggable: false;
+  object-position: center;
+  filter: drop-shadow(0 16px 24px rgba(0, 0, 0, 0.18));
 }
 
-/* Individual image tuning */
-
+/* Exact image tuning to match target */
 .featureGrid .featureCard:nth-child(1) .featureImage {
-  right: -75px;
-  bottom: -18px;
-  width: 350px;
-  height: 250px;
+  width: 128%;
+  height: 304px;
+  margin: -4px 0 8px -14%;
+  overflow: hidden;
+  background: transparent !important;
+   background:
+    linear-gradient(
+      180deg,
+      #ffd9d9 0%,
+      #f07f9d 42%,
+      #cf3a68 70%,
+      #951936 100%
+    );
 }
+
+.featureGrid .featureCard:nth-child(1) .featureImage img,
+.featureGrid .featureCard:nth-child(1) .featureImg {
+  object-fit: cover !important;
+ object-position: 55% center !important;
+  transform: scale(1.00);
+  transform-origin: center center;
+  background: transparent !important;
+  mix-blend-mode: multiply;
+}
+
 
 .featureGrid .featureCard:nth-child(2) .featureImage {
-  right: -55px;
-  bottom: -12px;
-  width: 335px;
-  height: 245px;
+  width: 100%;
+  height: 304px;
+  margin: -8px 0 8px;
+  overflow: visible;
+  background: transparent !important;
+   background:
+    linear-gradient(
+      180deg,
+      #fff0bf 0%,
+      #e8bf4c 42%,
+      #c88a20 70%,
+      #9f650c 100%
+    );
+}
+
+.featureGrid .featureCard:nth-child(2) .featureImage img,
+.featureGrid .featureCard:nth-child(2) .featureImg {
+  object-fit: contain !important;
+  object-position: center center !important;
+  transform: scale(1.56) translateX(-4%) translateY(4px);
+  transform-origin: center center;
+  background: transparent !important;
+  mix-blend-mode: multiply;
 }
 
 .featureGrid .featureCard:nth-child(3) .featureImage {
-  right: -40px;
-  bottom: -10px;
-  width: 360px;
-  height: 250px;
+  width: 148%;
+  height: 304px;
+  margin: -10px 0 8px -24%;
+  
 }
 
-.regionalImage {
-  right: -25px;
-  bottom: -20px;
-  width: 315px;
-  height: 285px;
+.featureGrid .featureCard:nth-child(4) .featureImage {
+  width: 100%;
+  height: 304px;
+  margin: -4px 0 8px;
+  overflow: visible;
+}
+
+.featureGrid .featureCard:nth-child(4) .featureImage img,
+.featureGrid .featureCard:nth-child(4) .featureImg {
+  object-fit: contain !important;
+  object-position: center center !important;
+  transform: scale(1.25) translateY(18px);
+  transform-origin: center center;
+}
+
+/* Text block */
+.featureBody {
+  position: relative;
+  z-index: 2;
+}
+
+.featureBody h3,
+.featureCard h3 {
+  font-family: inherit;
+  font-size: 33px;
+  font-weight: 900;
+  line-height: 1.04;
+  letter-spacing: -0.05em;
+  color: #ffffff;
+  margin: 0;
+  max-width: 235px;
+}
+
+.featureAccent {
+  display: block;
+  width: 50px;
+  height: 5px;
+  border-radius: 999px;
+  margin: 18px 0 18px;
+}
+
+.featureCard:nth-child(1) .featureAccent {
+  background: #f69ab9;
+}
+
+.featureCard:nth-child(2) .featureAccent {
+  background: #ffe15f;
+}
+
+.featureCard:nth-child(3) .featureAccent {
+  background: #a6d976;
+}
+
+.featureCard:nth-child(4) .featureAccent {
+  background: #b99aff;
+}
+
+.featureBody p,
+.featureCard p {
+  font-family: inherit;
+  font-size: 17px;
+  font-weight: 600;
+  line-height: 1.52;
+  color: rgba(255, 255, 255, 0.96);
+  margin: 0;
+  max-width: 250px;
+}
+
+/* CTA */
+.featureCta {
+  position: relative;
+  z-index: 2;
+  margin-top: auto;
+  width: 100%;
+  min-height: 52px;
+  padding: 0 22px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.96);
+  color: #6B1D3A;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 900;
+  line-height: 1;
+  box-shadow:
+    0 10px 24px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.85);
+  transition:
+    background-color 0.22s ease,
+    transform 0.22s ease,
+    box-shadow 0.22s ease;
+}
+.featureCta span:first-child {
+  font-weight: 900;
+}
+
+.featureCard:hover .featureCta {
+  background: #ffffff;
+  transform: translateY(-2px);
+  box-shadow:
+    0 14px 30px rgba(0, 0, 0, 0.13),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+.featureCta span:first-child {
+  white-space: nowrap;
+}
+
+.featureCta span:last-child {
+  font-size: 24px;
+  line-height: 1;
+  transform: translateY(-1px);
+}
+
+/* If your JSX still uses direct span button instead of featureCta */
+.featureCard > span:not(.featureAccent) {
+  position: relative;
+  z-index: 2;
+  margin-top: auto;
+  width: 100%;
+  min-height: 52px;
+  padding: 0 22px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.96);
+  color: #6B1D3A;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 900;
+  line-height: 1;
+  box-shadow:
+    0 10px 24px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.85);
+}
+
+/* Remove old decorative pieces */
+.featureCard::before,
+.featureCard::after {
+  display: none !important;
+  content: none !important;
 }
 
 /* Tablet */
+@media (max-width: 1180px) {
+  .discoverSection {
+    padding: 52px 18px 72px;
+  }
 
-@media (max-width: 1024px) {
+  .featureGrid {
+    max-width: 760px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 22px;
+  }
+
   .featureCard {
-    padding: 30px 250px 30px 30px;
-  }
-
-  .featureCard h3 {
-    font-size: 1.7rem;
-  }
-
-  .featureCard p {
-    font-size: 0.98rem;
-    max-width: 300px;
-  }
-
-  .featureImage {
-    width: 290px;
-    height: 220px;
+    min-height: 575px;
   }
 }
 
-/* Mobile */
-
+/* Mobile swipe */
 @media (max-width: 768px) {
   .discoverSection {
-    padding: 24px 12px;
-  }
-
-  .featureGrid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
-  }
-
-  .featureCard {
-    min-height: 210px;
-    padding: 16px 110px 16px 16px;
-
-    border-radius: 18px;
-  }
-
-  .featureCard::before {
-    width: 230px;
-    height: 230px;
-
-    right: -120px;
-    top: -40px;
-  }
-
-  .featureCard::after {
-    top: 20px;
-    right: 20px;
-
-    width: 44px;
-    height: 44px;
-
-    background-size: 10px 10px;
-  }
-
-  .featureCard h3 {
-    font-size: 15px;
-    line-height: 1.15;
-
-    margin-bottom: 8px;
-    max-width: 140px;
-  }
-
-  .featureCard p {
-    font-size: 12px;
-    line-height: 1.35;
-
-    max-width: 150px;
-    margin-bottom: 10px;
-  }
-
-  .featureCard span {
-    padding: 10px 14px;
-
-    font-size: 11px;
-    border-radius: 12px;
-  }
-
-  .featureImage {
-    right: -45px;
-    bottom: -8px;
-
-    width: 170px;
-    height: 145px;
-  }
-
-  .featureGrid .featureCard:nth-child(1) .featureImage {
-    right: -55px;
-    bottom: -6px;
-
-    width: 180px;
-    height: 145px;
-  }
-
-  .featureGrid .featureCard:nth-child(2) .featureImage {
-    right: -50px;
-    bottom: -5px;
-
-    width: 175px;
-    height: 145px;
-  }
-
-  .featureGrid .featureCard:nth-child(3) .featureImage {
-    right: -45px;
-    bottom: -4px;
-
-    width: 185px;
-    height: 145px;
-  }
-
-  .regionalImage {
-    right: -35px;
-    bottom: -10px;
-
-    width: 160px;
-    height: 155px;
-  }
-}
-
-/* Very small mobile */
-
-/* Very small mobile - 2 column compact discovery cards */
-
-@media (max-width: 480px) {
-  .discoverSection {
-    padding: 18px 8px;
-  }
-
-  .featureGrid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 10px;
-  }
-
-  .featureCard {
-    min-height: 175px;
-    padding: 14px 78px 14px 12px;
-    border-radius: 18px;
-  }
-
-  .featureCard::before {
-    width: 210px;
-    height: 210px;
-    right: -125px;
-    top: -42px;
-  }
-
-  .featureCard::after {
-    width: 34px;
-    height: 34px;
-    top: 18px;
-    right: 18px;
-    background-size: 8px 8px;
-  }
-
-  .featureCard h3 {
-    font-size: 14px;
-    line-height: 1.12;
-    max-width: 105px;
-    margin-bottom: 8px;
-  }
-
-  .featureCard p {
-    font-size: 11px;
-    line-height: 1.32;
-    max-width: 105px;
-    margin-bottom: 10px;
-
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
+    padding: 34px 0 52px;
     overflow: hidden;
   }
 
-  .featureCard span {
-    font-size: 10px;
-    line-height: 1.1;
-    padding: 8px 10px;
-    border-radius: 11px;
-    box-shadow: none;
-    max-width: 108px;
-  }
-
-  .featureImage {
-    right: -58px;
-    bottom: -8px;
-    width: 145px;
-    height: 122px;
-  }
-
-  .featureGrid .featureCard:nth-child(1) .featureImage {
-    right: -60px;
-    bottom: -8px;
-    width: 150px;
-    height: 124px;
-  }
-
-  .featureGrid .featureCard:nth-child(2) .featureImage {
-    right: -62px;
-    bottom: -6px;
-    width: 150px;
-    height: 124px;
-  }
-
-  .featureGrid .featureCard:nth-child(3) .featureImage {
-    right: -62px;
-    bottom: -8px;
-    width: 155px;
-    height: 126px;
-  }
-
-  .regionalImage {
-    right: -42px;
-    bottom: -8px;
-    width: 128px;
-    height: 128px;
-  }
-}
-/* Extra tiny phones */
-
-@media (max-width: 370px) {
   .featureGrid {
-    gap: 8px;
+    max-width: none;
+    display: flex;
+    gap: 16px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 0 18px 12px;
+    scroll-snap-type: x mandatory;
+    scroll-padding-left: 18px;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    -webkit-overflow-scrolling: touch;
   }
 
-  .featureCard {
-    min-height: 160px;
-    padding: 12px 64px 12px 10px;
-  }
-
-  .featureCard h3 {
-    font-size: 12.5px;
-    max-width: 90px;
-  }
-
-  .featureCard p {
+  .featureGrid::-webkit-scrollbar {
     display: none;
   }
 
-  .featureCard span {
-    font-size: 9px;
-    padding: 7px 8px;
-    max-width: 90px;
+  .featureCard {
+    flex: 0 0 86%;
+    width: 86%;
+    min-height: 575px;
+    padding: 0 24px 24px;
+    border-radius: 30px;
+    scroll-snap-align: start;
   }
 
-  .featureImage {
-    right: -52px;
-    width: 125px;
-    height: 105px;
+  .featureGrid .featureCard:nth-child(1) .featureImage,
+  .featureGrid .featureCard:nth-child(2) .featureImage,
+  .featureGrid .featureCard:nth-child(3) .featureImage {
+    width: 146%;
+    height: 302px;
+    margin: -8px 0 8px -23%;
   }
 
-  .regionalImage {
-    right: -38px;
-    width: 112px;
-    height: 112px;
+  .featureGrid .featureCard:nth-child(4) .featureImage {
+    width: 122%;
+    height: 302px;
+    margin: -8px 0 8px -11%;
+  }
+
+  .featureBody h3,
+  .featureCard h3 {
+    font-size: 32px;
+    line-height: 1.04;
+    max-width: 245px;
+  }
+
+  .featureBody p,
+  .featureCard p {
+    font-size: 17px;
+    max-width: 260px;
+  }
+
+  .featureCta,
+  .featureCard > span:not(.featureAccent) {
+    min-height: 54px;
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .featureCard {
+    flex-basis: 88%;
+    width: 88%;
+    min-height: 545px;
+  }
+
+  .featureGrid .featureCard:nth-child(1) .featureImage,
+  .featureGrid .featureCard:nth-child(2) .featureImage,
+  .featureGrid .featureCard:nth-child(3) .featureImage {
+    height: 270px;
+  }
+
+  .featureGrid .featureCard:nth-child(4) .featureImage {
+    height: 270px;
+  }
+
+  .featureBody h3,
+  .featureCard h3 {
+    font-size: 30px;
+  }
+
+  .featureBody p,
+  .featureCard p {
+    font-size: 16px;
+  }
+
+  .featureCta,
+  .featureCard > span:not(.featureAccent) {
+    min-height: 52px;
+    border-radius: 17px;
+    font-size: 15px;
   }
 }
 @media (max-width: 768px) {
@@ -1231,5 +1197,660 @@
 @media (max-width: 768px) {
   .page {
     padding-top: 80px;
+  }
+}
+
+
+/* Mobile optimization for Discovery Cards */
+@media (max-width: 768px) {
+  .discoverSection {
+    padding: 28px 0 46px;
+    overflow: hidden;
+  }
+
+  .featureGrid {
+    max-width: none;
+    display: flex;
+    grid-template-columns: none;
+    gap: 14px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 0 16px 14px;
+    scroll-snap-type: x mandatory;
+    scroll-padding-left: 16px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .featureGrid::-webkit-scrollbar {
+    display: none;
+  }
+
+  .featureCard {
+    flex: 0 0 86vw;
+    width: 86vw;
+    max-width: 360px;
+    min-height: 540px;
+    border-radius: 28px;
+    padding: 0 20px 20px;
+    scroll-snap-align: start;
+  }
+
+  .featureImage {
+    height: 260px;
+    margin-bottom: 6px;
+  }
+
+  .featureBody h3,
+  .featureCard h3 {
+    font-size: 30px;
+    line-height: 1.05;
+    max-width: 230px;
+  }
+
+  .featureAccent {
+    width: 46px;
+    height: 5px;
+    margin: 16px 0 16px;
+  }
+
+  .featureBody p,
+  .featureCard p {
+    font-size: 16px;
+    line-height: 1.5;
+    max-width: 245px;
+  }
+
+  .featureCta {
+    min-height: 52px;
+    padding: 0 20px;
+    border-radius: 17px;
+    font-size: 15px;
+    font-weight: 900;
+  }
+
+  .featureCta span:first-child {
+    font-weight: 900;
+  }
+
+  .featureCta span:last-child {
+    font-size: 23px;
+  }
+
+  /* SwipeEat mobile image */
+  .featureGrid .featureCard:nth-child(1) .featureImage {
+    width: 128%;
+    height: 260px;
+    margin: 0 0 6px -14%;
+    overflow: hidden;
+    background: transparent !important;
+  }
+
+  .featureGrid .featureCard:nth-child(1) .featureImage img,
+  .featureGrid .featureCard:nth-child(1) .featureImg {
+    object-fit: cover !important;
+    object-position: 16% center !important;
+    transform: scale(1.14);
+    transform-origin: center center;
+    background: transparent !important;
+    mix-blend-mode: multiply;
+  }
+
+  /* Thali mobile image */
+  .featureGrid .featureCard:nth-child(2) .featureImage {
+    width: 100%;
+    height: 260px;
+    margin: -4px 0 6px;
+    overflow: visible;
+    background: transparent !important;
+  }
+
+  .featureGrid .featureCard:nth-child(2) .featureImage img,
+  .featureGrid .featureCard:nth-child(2) .featureImg {
+    object-fit: contain !important;
+    object-position: center center !important;
+    transform: scale(1.36) translateX(-3%) translateY(4px);
+    transform-origin: center center;
+    background: transparent !important;
+    mix-blend-mode: multiply;
+  }
+
+  /* Instant Catering mobile image */
+  .featureGrid .featureCard:nth-child(3) .featureImage {
+    width: 100%;
+    height: 260px;
+    margin: -4px 0 6px;
+    overflow: visible;
+    background: transparent !important;
+  }
+
+  .featureGrid .featureCard:nth-child(3) .featureImage img,
+  .featureGrid .featureCard:nth-child(3) .featureImg {
+    object-fit: contain !important;
+    object-position: center center !important;
+    transform: scale(1.28) translateY(4px);
+    transform-origin: center center;
+    background: transparent !important;
+    mix-blend-mode: multiply;
+  }
+
+  /* Regional Soul mobile image */
+  .featureGrid .featureCard:nth-child(4) .featureImage {
+    width: 100%;
+    height: 260px;
+    margin: -4px 0 6px;
+    overflow: visible;
+    background: transparent !important;
+  }
+
+  .featureGrid .featureCard:nth-child(4) .featureImage img,
+  .featureGrid .featureCard:nth-child(4) .featureImg {
+    object-fit: contain !important;
+    object-position: center center !important;
+    transform: scale(1.24) translateY(10px);
+    transform-origin: center center;
+    background: transparent !important;
+    mix-blend-mode: multiply;
+  }
+}
+
+@media (max-width: 480px) {
+  .featureCard {
+    flex: 0 0 88vw;
+    width: 88vw;
+    min-height: 520px;
+    border-radius: 26px;
+    padding: 0 18px 18px;
+  }
+
+  .featureBody h3,
+  .featureCard h3 {
+    font-size: 28px;
+  }
+
+  .featureBody p,
+  .featureCard p {
+    font-size: 15px;
+  }
+
+  .featureCta {
+    min-height: 50px;
+    font-size: 14px;
+  }
+
+  .featureGrid .featureCard:nth-child(1) .featureImage,
+  .featureGrid .featureCard:nth-child(2) .featureImage,
+  .featureGrid .featureCard:nth-child(3) .featureImage,
+  .featureGrid .featureCard:nth-child(4) .featureImage {
+    height: 242px;
+  }
+}
+
+/* EatClub-style restaurant listing */
+.mainContent {
+  background: #ffffff;
+}
+
+.container {
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 36px 42px 80px;
+}
+
+.filterBar {
+  display: none;
+}
+
+.resultsHeader {
+  margin-bottom: 34px;
+}
+
+.resultsTitle {
+  font-family: 'Sora', 'DM Sans', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 34px;
+  font-weight: 800;
+  color: #000000;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  margin: 0;
+}
+
+.restaurantGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  column-gap: 42px;
+  row-gap: 76px;
+}
+
+.restaurantCard {
+  display: block;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  overflow: visible;
+  text-decoration: none;
+  color: inherit;
+  box-shadow: none;
+  transition: transform 0.22s ease;
+}
+
+.restaurantCard:hover {
+  transform: translateY(-3px);
+  border-color: transparent;
+  box-shadow: none;
+}
+
+.cardImageWrapper {
+  position: relative;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 8.8;
+  overflow: visible;
+  background: #f5f5f5;
+  border-radius: 10px;
+}
+
+.restaurantImage {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  object-position: center center;
+  border-radius: 10px;
+  transition: transform 0.22s ease;
+}
+
+.restaurantCard:hover .restaurantImage {
+  transform: scale(1.01);
+}
+
+.restaurantLogoBadge {
+  position: absolute;
+  right: 22px;
+  bottom: -34px;
+  width: 82px;
+  height: 82px;
+  border-radius: 50%;
+  background: #f3dca7;
+  color: #7c5c2f;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Sora', 'DM Sans', system-ui, sans-serif;
+  font-size: 23px;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.08);
+  z-index: 3;
+}
+
+.cardContent {
+  padding: 18px 18px 0;
+}
+
+.restaurantName {
+  font-family: 'Sora', 'DM Sans', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 26px;
+  font-weight: 800;
+  color: #000000;
+  letter-spacing: -0.045em;
+  line-height: 1.18;
+  margin: 0 96px 10px 0;
+  display: block;
+  overflow: visible;
+}
+
+.restaurantSubtitle {
+  font-family: 'DM Sans', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 18px;
+  font-weight: 500;
+  color: #667085;
+  line-height: 1.4;
+  margin: 0 0 14px;
+}
+
+.restaurantDivider {
+  width: 100%;
+  height: 1px;
+  background: #d9d9d9;
+  margin-bottom: 12px;
+}
+
+.restaurantStatusRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'DM Sans', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 16px;
+  font-weight: 800;
+  color: #4a4a4a;
+  line-height: 1.3;
+}
+
+.restaurantStatusIcon {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #24a6aa;
+  color: #ffffff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 900;
+  flex-shrink: 0;
+}
+
+/* Hide old Zomato-style elements if any old JSX remains */
+.imageOverlay,
+.offerTag,
+.vegBadge,
+.cardTop,
+.ratingPill,
+.cardFooter,
+.metaInfo {
+  display: none !important;
+}
+
+@media (max-width: 1024px) {
+  .container {
+    padding: 32px 28px 64px;
+  }
+
+  .restaurantGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 28px;
+    row-gap: 64px;
+  }
+
+  .resultsTitle {
+    font-size: 30px;
+  }
+
+  .restaurantName {
+    font-size: 24px;
+  }
+
+  .restaurantSubtitle {
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 28px 18px 56px;
+  }
+
+  .restaurantGrid {
+    grid-template-columns: 1fr;
+    row-gap: 56px;
+  }
+
+  .resultsHeader {
+    margin-bottom: 24px;
+  }
+
+  .resultsTitle {
+    font-size: 28px;
+  }
+
+  .cardImageWrapper {
+    aspect-ratio: 16 / 9;
+  }
+
+  .restaurantLogoBadge {
+    width: 70px;
+    height: 70px;
+    right: 16px;
+    bottom: -28px;
+    font-size: 19px;
+  }
+
+  .cardContent {
+    padding: 16px 10px 0;
+  }
+
+  .restaurantName {
+    font-size: 23px;
+    margin-right: 84px;
+  }
+
+  .restaurantSubtitle {
+    font-size: 15px;
+  }
+
+  .restaurantStatusRow {
+    font-size: 14px;
+  }
+}
+/* Restore original Swadishtt restaurant typography only */
+.resultsTitle {
+  font-size: 28px !important;
+  font-weight: 700 !important;
+  color: #6B1D3A !important;
+  letter-spacing: -0.02em !important;
+  line-height: normal !important;
+  margin: 0 !important;
+  font-family: inherit !important;
+}
+
+.restaurantName {
+  font-size: 17px !important;
+  font-weight: 500 !important;
+  color: #6B1D3A !important;
+  letter-spacing: -0.01em !important;
+  line-height: 1.3 !important;
+  font-family: inherit !important;
+}
+
+/* For new EatClub-style JSX */
+.restaurantSubtitle {
+  font-size: 13px !important;
+  font-weight: 400 !important;
+  color: #696969 !important;
+  line-height: 1.4 !important;
+  font-family: inherit !important;
+}
+
+.restaurantStatusRow {
+  font-size: 13px !important;
+  font-weight: 400 !important;
+  color: #696969 !important;
+  line-height: 1.4 !important;
+  font-family: inherit !important;
+}
+
+/* Safety: if old JSX classes are still present */
+.cuisines {
+  font-size: 13px !important;
+  font-weight: 400 !important;
+  color: #696969 !important;
+  line-height: 1.4 !important;
+  font-family: inherit !important;
+}
+
+.metaInfo {
+  font-size: 13px !important;
+  font-weight: 400 !important;
+  color: #696969 !important;
+  line-height: 1.4 !important;
+  font-family: inherit !important;
+}
+
+.deliveryTime,
+.priceForTwo {
+  font-weight: 400 !important;
+  font-family: inherit !important;
+}
+/* Restaurant card shadow box like reference */
+.restaurantCard {
+  display: block !important;
+  background: #ffffff !important;
+  border-radius: 12px !important;
+  overflow: hidden !important;
+  text-decoration: none !important;
+  color: inherit !important;
+  box-shadow: none !important;
+  transition:
+    transform 0.22s ease,
+    box-shadow 0.22s ease !important;
+}
+
+/* Shadow box on hover */
+.restaurantCard:hover {
+  background: #ffffff !important;
+  transform: translateY(-4px) !important;
+  box-shadow:
+    0 16px 36px rgba(0, 0, 0, 0.10),
+    0 6px 14px rgba(0, 0, 0, 0.06) !important;
+}
+
+/* Image should sit cleanly inside the card */
+.cardImageWrapper {
+  border-radius: 0 !important;
+  overflow: visible !important;
+}
+
+.restaurantImage {
+  border-radius: 0 !important;
+  display: block !important;
+}
+
+/* Keep the content padded like the reference card */
+.cardContent {
+  background: #ffffff !important;
+  padding: 16px 18px 22px !important;
+}
+
+/* Keep logo badge visible above card */
+.restaurantLogoBadge {
+  z-index: 5 !important;
+}
+
+.restaurantLogoBadge {
+  position: absolute;
+  right: 22px;
+  bottom: -34px;
+  width: 82px;
+  height: 82px;
+  border-radius: 50%;
+  background: #f3dca7;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #7c5c2f;
+  font-size: 23px;
+  font-weight: 800;
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.08);
+  z-index: 5;
+}
+
+.restaurantLogoImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+}
+/* Reduce vertical space between restaurant cards */
+.restaurantGrid {
+  row-gap: 38px !important;
+  column-gap: 42px !important;
+}
+
+@media (max-width: 1024px) {
+  .restaurantGrid {
+    row-gap: 34px !important;
+    column-gap: 28px !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .restaurantGrid {
+    row-gap: 30px !important;
+  }
+}
+
+/* Reduce restaurant logo circle size */
+.restaurantLogoBadge {
+  width: 64px !important;
+  height: 64px !important;
+  right: 18px !important;
+  bottom: -26px !important;
+  font-size: 18px !important;
+}
+
+.restaurantLogoImage {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  object-position: center !important;
+}
+
+/* Reduce restaurant card box size */
+.restaurantGrid {
+  grid-template-columns: repeat(3, minmax(0, 380px)) !important;
+  justify-content: center !important;
+  column-gap: 28px !important;
+  row-gap: 26px !important;
+}
+
+.restaurantCard {
+  max-width: 380px !important;
+  width: 100% !important;
+}
+
+.cardImageWrapper {
+  aspect-ratio: 16 / 8.2 !important;
+}
+
+.cardContent {
+  padding: 14px 16px 18px !important;
+}
+
+.restaurantLogoBadge {
+  width: 54px !important;
+  height: 54px !important;
+  right: 14px !important;
+  bottom: -20px !important;
+  font-size: 15px !important;
+}
+
+.restaurantName {
+  margin-right: 70px !important;
+  margin-bottom: 6px !important;
+}
+
+.restaurantSubtitle {
+  margin-bottom: 10px !important;
+}
+
+.restaurantDivider {
+  margin-bottom: 10px !important;
+}
+
+@media (max-width: 1024px) {
+  .restaurantGrid {
+    grid-template-columns: repeat(2, minmax(0, 360px)) !important;
+    column-gap: 24px !important;
+    row-gap: 24px !important;
+  }
+
+  .restaurantCard {
+    max-width: 360px !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .restaurantGrid {
+    grid-template-columns: 1fr !important;
+    row-gap: 22px !important;
+  }
+
+  .restaurantCard {
+    max-width: 420px !important;
+    margin: 0 auto !important;
   }
 }

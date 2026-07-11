@@ -9,7 +9,13 @@ import styles from '../../../profile/orders/orders.module.css';
 
 export default function InstaStyleOrdersPage() {
   const router = useRouter();
-  const { orders: contextOrders } = useCart();
+  const { orders: contextOrders, reorder } = useCart();
+
+  const handleReorder = (e, order) => {
+    e.stopPropagation();
+    reorder(order.items || []);
+    router.push('/services/instastyle');
+  };
   const [orders, setOrders] = useState([]);
   const [filter, setFilter] = useState('all');
   const [isLoading, setIsLoading] = useState(true);
@@ -104,8 +110,8 @@ export default function InstaStyleOrdersPage() {
                   <div className={styles.viewDetails}>
                     View Details <span>→</span>
                   </div>
-                  {order.status !== 'DELIVERED' && (
-                    <button 
+                  {order.status !== 'DELIVERED' ? (
+                    <button
                       className={styles.reorderBtn}
                       style={{ background: '#111', color: 'white', marginTop: '8px' }}
                       onClick={(e) => {
@@ -114,6 +120,14 @@ export default function InstaStyleOrdersPage() {
                       }}
                     >
                       Track Order
+                    </button>
+                  ) : (
+                    <button
+                      className={styles.reorderBtn}
+                      style={{ background: '#111', color: 'white', marginTop: '8px' }}
+                      onClick={(e) => handleReorder(e, order)}
+                    >
+                      Order Again
                     </button>
                   )}
                 </div>
