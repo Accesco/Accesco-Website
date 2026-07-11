@@ -1,0 +1,216 @@
+/* foryou.module.css */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 120px 20px 60px 20px;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.title {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: #111827;
+  margin-bottom: 12px;
+}
+
+.subtitle {
+  font-size: 1.125rem;
+  color: #4b5563;
+}
+
+.emptyState {
+  text-align: center;
+  padding: 60px 20px;
+  background-color: #f9fafb;
+  border-radius: 16px;
+  border: 1px dashed #d1d5db;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.emptyState h2 {
+  font-size: 1.5rem;
+  color: #374151;
+  margin-bottom: 16px;
+}
+
+.emptyState p {
+  color: #6b7280;
+  margin-bottom: 24px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+}
+
+@media (min-width: 640px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (min-width: 1280px) {
+  .grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.card {
+  background: white;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+.imageWrapper {
+  position: relative;
+  width: 100%;
+  height: 200px;
+  overflow: hidden;
+}
+
+.image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.matchBadge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background-color: #10b981;
+  color: white;
+  font-weight: 700;
+  font-size: 0.875rem;
+  padding: 4px 12px;
+  border-radius: 20px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  z-index: 10;
+}
+
+.cardContent {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 8px;
+}
+
+.dishName {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.vegIndicator {
+  width: 16px;
+  height: 16px;
+  border: 2px solid;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.vegIndicator.veg {
+  border-color: #16a34a;
+}
+
+.vegIndicator.nonVeg {
+  border-color: #dc2626;
+}
+
+.vegIndicator span {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.vegIndicator.veg span {
+  background-color: #16a34a;
+}
+
+.vegIndicator.nonVeg span {
+  background-color: #dc2626;
+}
+
+.restaurantName {
+  font-size: 0.875rem;
+  color: #6b7280;
+  margin: 0 0 12px 0;
+}
+
+.price {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 16px;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.tag {
+  background-color: #f3f4f6;
+  color: #4b5563;
+  font-size: 0.75rem;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-weight: 500;
+}
+
+.actionArea {
+  margin-top: auto;
+}
+
+.addToCartBtn {
+  width: 100%;
+  background-color: #dc2626;
+  color: white;
+  border: none;
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.addToCartBtn:hover {
+  background-color: #b91c1c;
+}

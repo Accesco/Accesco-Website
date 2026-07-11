@@ -17,6 +17,7 @@ import styles from './styles/swadisht-main.module.css';
 import CategorySection from './components/CategorySection';
 import Image from 'next/image';
 import JsonLd from '../../../components/JsonLd';
+import { SwipeModal } from './components/TinderSwipeFeature';
 
 const discoveryFont = Nunito({
   subsets: ['latin'],
@@ -24,10 +25,8 @@ const discoveryFont = Nunito({
   display: 'swap',
 });
 
-// Hero Section Component
+// HeroSection Component
 function HeroSection() {
-  const [activeTab, setActiveTab] = useState('delivery');
-  
  return (
   <div className={styles.hero}>
 
@@ -37,22 +36,6 @@ function HeroSection() {
 
 // Filter Bar Component
 function FilterBar({ filters, onFilterChange }) {
-  const [sortOpen, setSortOpen] = useState(false);
-  const [cuisineOpen, setCuisineOpen] = useState(false);
-  
-  const sortOptions = [
-    { value: 'relevance', label: 'Relevance' },
-    { value: 'rating', label: 'Rating' },
-    { value: 'deliveryTime', label: 'Delivery Time' },
-    { value: 'priceLowToHigh', label: 'Cost: Low to High' },
-    { value: 'priceHighToLow', label: 'Cost: High to Low' }
-  ];
-  
-  const cuisineOptions = [
-    'North Indian', 'South Indian', 'Chinese', 'Biryani', 
-    'Mughlai', 'Tandoor', 'Fast Food', 'Desserts'
-  ];
-  
   return (
     <div className={styles.filterBar}>
       <div className={styles.filterScroll}>
@@ -94,6 +77,7 @@ function FilterBar({ filters, onFilterChange }) {
 }
 
 // Restaurant Card Component
+/* eslint-disable @next/next/no-img-element */
 function RestaurantCard({ restaurant }) {
   const initials = restaurant.name
     .split(' ')
@@ -310,6 +294,8 @@ const serviceSchema = {
   },
 };
 export default function SwadishttPage() {
+  const [isSwipeModalOpen, setIsSwipeModalOpen] = useState(false);
+
   return (
     <>
       <JsonLd data={serviceSchema} />
@@ -319,12 +305,37 @@ export default function SwadishttPage() {
       <SwadishttHeader />
 
       <div className={styles.pageContent}>
+        <div style={{ width: '100%', display: 'flex', justifyContent: 'center', padding: '32px 0', position: 'relative', zIndex: 50 }}>
+          <button
+            onClick={() => setIsSwipeModalOpen(true)}
+            style={{
+              backgroundColor: '#dc2626',
+              color: 'white',
+              fontWeight: 'bold',
+              padding: '16px 32px',
+              borderRadius: '8px',
+              boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              border: 'none',
+              cursor: 'pointer',
+              fontSize: '1.125rem',
+              transition: 'background-color 0.2s',
+            }}
+            onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#b91c1c'}
+            onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#dc2626'}
+          >
+            🔥 Customize Your Taste Profile
+          </button>
+        </div>
        <CategorySection />
 <DiscoverFeatures />
 <HeroSection />
 <MainContent />
       </div>
     </div>
+    {isSwipeModalOpen && <SwipeModal onClose={() => setIsSwipeModalOpen(false)} />}
     </>
   );
 }

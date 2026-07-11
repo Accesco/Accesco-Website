@@ -6,8 +6,10 @@
  * @description Tinder-style food discovery - swipe to like or skip dishes
  */
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
+import { motion, useMotionValue, useTransform, useAnimation } from 'framer-motion';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useSwadishtt } from '../contexts/SwadishttContext';
 import SwadishttHeader from '../components/SwadishttHeader';
 import styles from './swipe-eat.module.css';
@@ -86,55 +88,62 @@ const DISH_CARDS = [
 ];
 
 function SwipeCard({ dish, onSwipe, isTop }) {
-  const [dragX, setDragX] = useState(0);
-  const [isDragging, setIsDragging] = useState(false);
-  const startX = useRef(0);
+  const x = useMotionValue(0);
+  const controls = useAnimation();
 
-  const handleMouseDown = (e) => {
-    setIsDragging(true);
-    startX.current = e.clientX;
+  const targetScale = isTop ? 1 : 0.95;
+  const targetY = isTop ? 0 : 20;
+
+  useEffect(() => {
+    controls.start({ 
+      scale: targetScale, 
+      y: targetY,
+      transition: { type: 'spring', stiffness: 300, damping: 20 }
+    });
+  }, [isTop, targetScale, targetY, controls]);
+
+  const rotate = useTransform(x, [-200, 200], [-15, 15]);
+  const likeOpacity = useTransform(x, [0, 100], [0, 1]);
+  const skipOpacity = useTransform(x, [0, -100], [0, 1]);
+
+  const handleDragEnd = async (e, info) => {
+    if (info.offset.x > 100) {
+      await controls.start({ x: 500, opacity: 0, transition: { duration: 0.3 } });
+      onSwipe('like');
+    } else if (info.offset.x < -100) {
+      await controls.start({ x: -500, opacity: 0, transition: { duration: 0.3 } });
+      onSwipe('skip');
+    } else {
+      controls.start({ x: 0, transition: { type: 'spring', stiffness: 300, damping: 20 } });
+    }
   };
-
-  const handleMouseMove = (e) => {
-    if (!isDragging) return;
-    setDragX(e.clientX - startX.current);
-  };
-
-  const handleMouseUp = () => {
-    if (!isDragging) return;
-    setIsDragging(false);
-    if (dragX > 100) onSwipe('like');
-    else if (dragX < -100) onSwipe('skip');
-    else setDragX(0);
-  };
-
-  const rotation = dragX * 0.08;
-  const likeOpacity = Math.min(dragX / 100, 1);
-  const skipOpacity = Math.min(-dragX / 100, 1);
 
   return (
-    <div
+    <motion.div
       className={`${styles.swipeCard} ${isTop ? styles.topCard : styles.backCard}`}
       style={{
-        transform: isTop ? `translateX(${dragX}px) rotate(${rotation}deg)` : 'scale(0.95) translateY(20px)',
-        transition: isDragging ? 'none' : 'all 0.3s ease',
-        cursor: isDragging ? 'grabbing' : 'grab',
+        x,
+        rotate: isTop ? rotate : 0,
         zIndex: isTop ? 10 : 5,
+        cursor: 'grab',
       }}
-      onMouseDown={handleMouseDown}
-      onMouseMove={handleMouseMove}
-      onMouseUp={handleMouseUp}
-      onMouseLeave={handleMouseUp}
+      initial={{ scale: targetScale, y: targetY }}
+      animate={controls}
+      drag={isTop ? "x" : false}
+      dragConstraints={{ left: 0, right: 0 }}
+      dragElastic={0.8}
+      whileTap={{ cursor: 'grabbing' }}
+      onDragEnd={handleDragEnd}
     >
       {/* Like / Skip overlays */}
       {isTop && (
         <>
-          <div className={styles.likeOverlay} style={{ opacity: likeOpacity }}>
+          <motion.div className={styles.likeOverlay} style={{ opacity: likeOpacity }}>
             <span>❤️ LIKE</span>
-          </div>
-          <div className={styles.skipOverlay} style={{ opacity: skipOpacity }}>
+          </motion.div>
+          <motion.div className={styles.skipOverlay} style={{ opacity: skipOpacity }}>
             <span>✕ SKIP</span>
-          </div>
+          </motion.div>
         </>
       )}
 
@@ -181,11 +190,12 @@ function SwipeCard({ dish, onSwipe, isTop }) {
           ))}
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }
 
 function SwipeEatContent() {
+  const router = useRouter();
   const { addToCart } = useSwadishtt();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [liked, setLiked] = useState([]);
@@ -214,6 +224,16 @@ function SwipeEatContent() {
     else setSkipped((prev) => prev.slice(0, -1));
     setLastAction(null);
   };
+
+  useEffect(() => {
+    if (isDone) {
+      // Ensure data is saved first
+      localStorage.setItem('swadisht_user_preferences', JSON.stringify(liked));
+      
+      // Execute redirect
+      router.push('/services/swadisht/foryou');
+    }
+  }, [isDone, liked, router]);
 
   return (
     <div className={styles.pageContent}>
