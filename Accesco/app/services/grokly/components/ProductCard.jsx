@@ -125,34 +125,7 @@ const getProductImage = (productId, category) => {
   return images[index];
 };
 
-/**
- * Get product emoji based on category (fallback)
- * @param {string} category - Product category
- * @returns {string} Emoji
- */
-const getCategoryEmoji = (category) => {
-  const emojiMap = {
-    'vegetables-fruits': '🥬',
-    'dairy-breakfast': '🥛',
-    'munchies': '🍿',
-    'cold-drinks': '🥤',
-    'instant-frozen': '🍕',
-    'tea-coffee': '☕',
-    'bakery-biscuits': '🍪',
-    'sweet-tooth': '🍫',
-    'atta-rice-dal': '🌾',
-    'masala-oil': '🌶️',
-    'sauces-spreads': '🍯',
-    'organic-healthy': '🥗',
-    'baby-care': '👶',
-    'pharma-wellness': '💊',
-    'cleaning': '🧹',
-    'home-office': '🏠',
-    'personal-care': '🧴',
-    'pet-care': '🐾'
-  };
-  return emojiMap[category] || '🛒';
-};
+// Emojis removed to conform with professional design standards.
 
 /**
  * ProductCard Component
@@ -176,7 +149,6 @@ function ProductCard({ product }) {
   
   const quantity = getProductQuantity(product.id);
   const stars = generateStars(product.rating);
-  const categoryEmoji = getCategoryEmoji(product.category);
 
   // Set initial image URL state to the product's actual image, falling back to Unsplash
   const [imgUrl, setImgUrl] = useState(product.image || getProductImage(product.id, product.category));
@@ -288,8 +260,12 @@ function ProductCard({ product }) {
           onDragStart={(e) => e.preventDefault()}
           onError={handleImageError}
         />
-        <div className={styles.pimgPlaceholder} style={{ display: 'none' }}>
-          <span className={styles.pimgEmoji}>{categoryEmoji}</span>
+        <div className={styles.pimgPlaceholder} style={{ display: 'none', alignItems: 'center', justifyContent: 'center', height: '100%', background: '#F3F4F6' }}>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" strokeWidth="2">
+            <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
+            <line x1="3" y1="6" x2="21" y2="6" />
+            <path d="M16 10a4 4 0 0 1-8 0" />
+          </svg>
         </div>
         {/* Wishlist Heart Button - TOP RIGHT */}
         <button
@@ -318,8 +294,11 @@ function ProductCard({ product }) {
         {/* Product Name */}
         <h3 className={styles.pname}>{product.name}</h3>
 
-        {/* Brand */}
-        <div className={styles.pbrand}>{product.brand}</div>
+        {/* Brand and SKU */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div className={styles.pbrand}>{product.brand}</div>
+          <span style={{ fontSize: '10px', color: '#9CA3AF', fontFamily: 'monospace', letterSpacing: '0.05em' }}>{product.sku}</span>
+        </div>
 
         {/* Rating */}
         <div className={styles.pstars} aria-label={`Rating: ${product.rating} out of 5 stars`}>

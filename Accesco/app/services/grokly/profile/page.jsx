@@ -148,6 +148,11 @@ function GroklyProfileInner() {
 
   // Wishlist (stored in localStorage)
   const [wishlist, setWishlist] = useState([]);
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   useEffect(() => {
     try {
@@ -314,6 +319,14 @@ function GroklyProfileInner() {
       day: 'numeric', month: 'short', year: 'numeric'
     });
   };
+
+  if (!isMounted) {
+    return (
+      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#fff', color: '#111' }}>
+        Loading Profile...
+      </div>
+    );
+  }
 
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', background: 'var(--grokly-bg)' }}>

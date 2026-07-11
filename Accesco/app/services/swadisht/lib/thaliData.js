@@ -7,6 +7,7 @@
 export const THALI_RECIPES = [
   {
     id: 'sunday-lunch-thali',
+    sku: 'SWD-TLI-SNDY-01',
     name: 'Sunday Lunch Thali',
     category: 'Traditional',
     festival: null,
@@ -139,6 +140,7 @@ export const THALI_RECIPES = [
   },
   {
     id: 'eid-special-thali',
+    sku: 'SWD-TLI-EIDS-02',
     name: 'Eid Special Thali',
     category: 'Festival',
     festival: 'Eid-ul-Fitr',
@@ -257,11 +259,12 @@ export const THALI_RECIPES = [
   },
   {
     id: 'onam-sadya-thali',
+    sku: 'SWD-TLI-ONAM-03',
     name: 'Onam Sadya',
     category: 'Festival',
     festival: 'Onam',
     description: 'Traditional Kerala feast on banana leaf',
-     image: '/images/thalis/onam.jpg',
+    image: '/images/thalis/onam.jpg',
     price: 599,
     serves: 1,
     prepTime: '90 mins',
@@ -384,11 +387,12 @@ export const THALI_RECIPES = [
   },
   {
     id: 'navratri-thali',
+    sku: 'SWD-TLI-NVRT-04',
     name: 'Navratri Vrat Thali',
     category: 'Festival',
     festival: 'Navratri',
     description: 'Special fasting meal for Navratri',
-     image: '/images/thalis/navratri.jpg',
+    image: '/images/thalis/navratri.jpg',
     price: 399,
     serves: 1,
     prepTime: '40 mins',
@@ -483,7 +487,6 @@ export const THALI_RECIPES = [
     rating: 4.6,
     reviewCount: 289,
     isBestseller: false,
-    specialNote: 'Prepared with rock salt and vrat-approved ingredients only'
   }
 ];
 

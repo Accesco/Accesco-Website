@@ -607,6 +607,16 @@ export const products = [
   }
 ];
 
+products.forEach(p => {
+  if (!p.sku) {
+    const catCode = p.category ? p.category.split('-')[0].substring(0, 3).toUpperCase() : 'GEN';
+    const itemCode = p.name ? p.name.replace(/[^a-zA-Z]/g, '').substring(0, 3).toUpperCase() : 'ITM';
+    const idNum = p.id ? p.id.replace(/[^0-9]/g, '') : '00';
+    const padNum = idNum ? idNum.padStart(2, '0') : '01';
+    p.sku = `GRL-${catCode}-${itemCode}-${padNum}`;
+  }
+});
+
 export function getProductsByCategory(categoryId) {
   if (categoryId === 'all') return products;
   return products.filter(p => p.category === categoryId);

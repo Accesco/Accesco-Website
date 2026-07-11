@@ -288,8 +288,10 @@ export default function CheckoutPage() {
         deliverySpeed,
         speedDiscount,
         address: formData,
+        customerEmail: formData.email,
+        customerName: formData.fullName,
         paymentMethod: formData.paymentMethod,
-        eta: deliverySpeed === 'batched' ? batchedETA : (deliveryETA || null),
+        eta: deliverySpeed === 'batched' ? (typeof batchedETA !== 'undefined' ? batchedETA : null) : (deliveryETA || null),
         ...paymentInfo,
       });
       router.push(`/services/instastyle/order-tracking?id=${order.id}`);

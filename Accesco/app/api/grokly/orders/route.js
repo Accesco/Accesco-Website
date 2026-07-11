@@ -136,6 +136,7 @@ export async function GET(request) {
     const orderId = searchParams.get('id');
     const userId = searchParams.get('userId');
     const email = searchParams.get('email');
+    const deviceId = searchParams.get('deviceId');
 
     const { db } = await import('@/lib/firebase');
     const { collection, doc, getDoc, getDocs, query, orderBy, limit, where } = await import('firebase/firestore');
@@ -147,6 +148,20 @@ export async function GET(request) {
         return NextResponse.json({ error: 'Order not found.' }, { status: 404 });
       }
       return NextResponse.json({ order: { id: docSnap.id, ...docSnap.data() } });
+    }
+
+    // Fetch orders by deviceId
+    if (deviceId) {
+      const q = query(
+        collection(db, 'grokly_orders'),
+        where('deviceId', '==', deviceId),
+        limit(100)
+      );
+      const snapshot = await getDocs(q);
+      const orders = [];
+      snapshot.forEach(d => orders.push({ id: d.id, ...d.data() }));
+      orders.sort((a, b) => new Date(b.timestamp || b.createdAt) - new Date(a.timestamp || a.createdAt));
+      return NextResponse.json({ orders });
     }
 
     // Fetch orders by userId

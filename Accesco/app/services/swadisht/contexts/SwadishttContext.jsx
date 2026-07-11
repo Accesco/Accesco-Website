@@ -501,6 +501,15 @@ export function SwadishttProvider({ children }) {
     if (typeof window === 'undefined') return;
 
     try {
+      const storedUser = localStorage.getItem('accesco_user');
+      if (storedUser) {
+        setUser(JSON.parse(storedUser));
+      }
+    } catch (e) {
+      console.error('Error reading accesco_user:', e);
+    }
+
+    try {
       const stored = localStorage.getItem('userLocation');
       const hydrated = parseStoredUserLocationToSwadishttLocation(stored);
       if (hydrated) {

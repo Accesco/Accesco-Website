@@ -52,15 +52,48 @@ export default function InstaStyleLanding() {
 
   const [introVisible, setIntroVisible] = useState(true);
   const [introRendered, setIntroRendered] = useState(true);
+  const [videoProgress, setVideoProgress] = useState(0);
 
   useEffect(() => {
     // Fade out at exactly 9s, unmount after fade completes
     const t1 = setTimeout(() => setIntroVisible(false), 9000);
     const t2 = setTimeout(() => setIntroRendered(false), 9800);
     introTimersRef.current = [t1, t2];
+
+    // Drive progress bar from a timer (fallback for when video hasn't loaded yet)
+    const totalDuration = 9000;
+    const tickInterval = 90;
+    let elapsed = 0;
+    const progressTimer = setInterval(() => {
+      elapsed += tickInterval;
+      setVideoProgress(Math.min((elapsed / totalDuration) * 100, 100));
+    }, tickInterval);
+    introTimersRef.current.push(progressTimer);
+
+    // Attempt to play the video once it has loaded enough data
+    const video = introVideoRef.current;
+    if (video) {
+      const attemptPlay = () => {
+        video.muted = true;
+        const playPromise = video.play();
+        if (playPromise !== undefined) {
+          playPromise.catch(() => {
+            console.warn('[InstaStyle] Intro video autoplay blocked.');
+          });
+        }
+      };
+
+      if (video.readyState >= 3) {
+        attemptPlay();
+      } else {
+        video.addEventListener('canplay', attemptPlay, { once: true });
+      }
+    }
+
     return () => {
       clearTimeout(t1);
       clearTimeout(t2);
+      clearInterval(progressTimer);
     };
   }, []);
 
@@ -72,12 +105,13 @@ export default function InstaStyleLanding() {
   };
 
   const handleSkipIntro = () => {
-    // Clear auto-dismiss timers
-    introTimersRef.current.forEach(clearTimeout);
+    // Clear auto-dismiss timers and progress interval
+    introTimersRef.current.forEach((t) => { clearTimeout(t); clearInterval(t); });
     // Pause video immediately
     if (introVideoRef.current) introVideoRef.current.pause();
     // Fade out, then unmount after animation
     setIntroVisible(false);
+    setVideoProgress(100);
     setTimeout(() => setIntroRendered(false), 800);
   };
 
@@ -365,7 +399,7 @@ export default function InstaStyleLanding() {
         left: 0,
         width: '100vw',
         height: '100vh',
-        background: '#d6d6d6',
+        background: '#0d0d0d',
         zIndex: 99999,
         overflow: 'hidden',
         opacity: introVisible ? 1 : 0,
@@ -376,8 +410,9 @@ export default function InstaStyleLanding() {
         <video
           ref={introVideoRef}
           autoPlay
-          muted
+          muted={true}
           playsInline
+          preload="auto"
           onTimeUpdate={handleVideoTimeUpdate}
           style={{
             position: 'absolute',
@@ -393,6 +428,15 @@ export default function InstaStyleLanding() {
         >
           <source src="/images/instastylevideo.mp4" type="video/mp4" />
         </video>
+
+        {/* Dark gradient overlay so branding/controls are always readable */}
+        <div style={{
+          position: 'absolute',
+          inset: 0,
+          background: 'linear-gradient(to bottom, rgba(0,0,0,0.25) 0%, transparent 40%, transparent 60%, rgba(0,0,0,0.55) 100%)',
+          zIndex: 1,
+          pointerEvents: 'none',
+        }} />
 
         {/* Skip button — high zIndex ensures it is always clickable above video */}
         <button
@@ -431,7 +475,7 @@ export default function InstaStyleLanding() {
         {/* Branding label */}
         <div style={{
           position: 'absolute',
-          bottom: '32px',
+          bottom: '52px',
           left: '50%',
           transform: 'translateX(-50%)',
           color: '#fff',
@@ -445,6 +489,25 @@ export default function InstaStyleLanding() {
           pointerEvents: 'none',
         }}>
           InstaStyle by Accesco Living
+        </div>
+
+        {/* Progress bar — shows auto-dismiss countdown */}
+        <div style={{
+          position: 'absolute',
+          bottom: 0,
+          left: 0,
+          width: '100%',
+          height: '3px',
+          background: 'rgba(255,255,255,0.2)',
+          zIndex: 100000,
+        }}>
+          <div style={{
+            height: '100%',
+            width: `${videoProgress}%`,
+            background: 'rgba(255,255,255,0.9)',
+            transition: 'width 0.09s linear',
+            borderRadius: '0 2px 2px 0',
+          }} />
         </div>
       </div>
     )}

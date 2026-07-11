@@ -203,7 +203,9 @@ export default function CartDrawer() {
                     {/* Product Info */}
                     <div className={styles.itemInfo}>
                       <h4 className={styles.itemName}>{product.name}</h4>
-                      <p className={styles.itemUnit}>{product.unit}</p>
+                      <p className={styles.itemUnit}>
+                        {product.unit} <span style={{ fontSize: '9px', color: '#9CA3AF', fontFamily: 'monospace', marginLeft: '6px' }}>{product.sku}</span>
+                      </p>
                       
                       {/* Price Row */}
                       <div className={styles.itemPriceRow}>

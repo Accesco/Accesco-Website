@@ -95,7 +95,7 @@ function PlanCard({ plan, onSubscribe }) {
   return (
     <div className={`${styles.planCard} ${plan.popular ? styles.popularPlan : ''}`}>
       {plan.popular && (
-        <div className={styles.popularBadge}>⭐ Most Popular</div>
+        <div className={styles.popularBadge}>Most Popular</div>
       )}
       
       <div className={styles.planHeader} style={{ borderTopColor: plan.color }}>
@@ -225,9 +225,9 @@ export default function SubscriptionPage() {
             Enjoy exclusive benefits, discounts, and free delivery on every order
           </p>
           <div className={styles.heroBadges}>
-            <span className={styles.heroBadge}>💰 Save up to ₹1500/month</span>
-            <span className={styles.heroBadge}>🚚 Free Delivery</span>
-            <span className={styles.heroBadge}>⭐ Exclusive Access</span>
+            <span className={styles.heroBadge}>Save up to ₹1500/month</span>
+            <span className={styles.heroBadge}>Free Delivery</span>
+            <span className={styles.heroBadge}>Exclusive Access</span>
           </div>
         </div>
       </div>

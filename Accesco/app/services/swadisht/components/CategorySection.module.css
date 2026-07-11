@@ -40,15 +40,20 @@
 .categoryScroller::-webkit-scrollbar {
   display: none;
 }
-
 .categoryCard {
-  flex: 0 0 108px;
-  width: 108px;
-  min-width: 108px;
-  color: #1A0A0F;
   text-align: center;
   text-decoration: none;
   scroll-snap-align: start;
+  color: #111827;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  transition: opacity 0.2s ease;
+}
+
+.categoryCard:hover {
+  opacity: 0.85;
 }
 
 .imageWrap {
@@ -58,10 +63,10 @@
   border-radius: 28px;
   overflow: hidden;
   background: #ffffff;
-  border: 1px solid rgba(107, 29, 58, 0.08);
-  box-shadow: 0 10px 24px rgba(26, 10, 15, 0.065);
   display: grid;
   place-items: center;
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.09);
+  border: 1px solid rgba(0, 0, 0, 0.04);
 }
 
 .imageWrap img {

@@ -18,10 +18,9 @@ import {
 } from 'lucide-react';
 
 export default function GroklyCheckout() {
-  const { cart, placeOrder, location } = useGrokly();
+  const { cart, placeOrder, location, cartHydrated } = useGrokly();
   const router = useRouter();
   const { user, signIn } = useAuth();
-  const [isMounted, setIsMounted] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [showAuth, setShowAuth] = useState(false);
   const [paymentError, setPaymentError] = useState('');
@@ -33,10 +32,6 @@ export default function GroklyCheckout() {
   });
 
   useEffect(() => {
-    setIsMounted(true);
-  }, []);
-
-  useEffect(() => {
     if (location) {
       setCustomerDetails(prev => ({
         ...prev,
@@ -44,6 +39,7 @@ export default function GroklyCheckout() {
       }));
     }
   }, [location]);
+
   const [eta , setEta] = useState(0);
   const [deliverySpeed, setDeliverySpeed] = useState('instant');
 
@@ -172,8 +168,6 @@ export default function GroklyCheckout() {
     setPaymentError('');
 
     try {
-      // Collect payment via Razorpay before the order is created — never place
-      // an order first and hope the payment follows.
       const payment = await payWithRazorpay({
         amount: total,
         receipt: `grokly_${Date.now()}`,
@@ -195,7 +189,8 @@ export default function GroklyCheckout() {
         deliverySpeed,
         discount,
         eta: resolvedEta,
-        items: cartItems.map(i => ({ id: i.product.id, name: i.product.name, price: i.product.price, quantity: i.quantity })),
+        items: cartItems.map(i => ({ id: i.product.id, name: i.product.name, price: i.product.price, quantity: i.quantity, sku: i.product.sku || '' })),
+        totals: { subtotal, deliveryFee, discount, total },
         paymentMethod: 'razorpay',
         razorpayOrderId: payment.orderId,
         razorpayPaymentId: payment.paymentId,
@@ -216,8 +211,6 @@ export default function GroklyCheckout() {
   };
 
   const handlePlaceOrder = () => {
-    // Require login before an order can be placed, so it's tied to a real user
-    // (and shows up later in their Order History). Not logged in → open OTP login.
     if (!user) {
       setShowAuth(true);
       return;
@@ -225,7 +218,6 @@ export default function GroklyCheckout() {
     submitOrder(user);
   };
 
-  // After a successful login from the checkout gate, continue placing the order.
   const handleAuthSuccess = (userData) => {
     signIn(userData);
     setShowAuth(false);
@@ -278,17 +270,15 @@ export default function GroklyCheckout() {
     fetchEta();
   }, []); 
 
-  if (!isMounted) {
-    return (
-      <div className={styles.emptyCartContainer}>
-        <ShoppingBag size={48} className={styles.emptyCartIcon} />
-        <h1>Loading secure checkout...</h1>
-        <p>Please wait while we secure your session and load your cart items.</p>
-      </div>
-    );
-  }
-
   if (cartItems.length === 0 && !isProcessing) {
+    // Show loading spinner while cart is still hydrating from Firestore
+    if (!cartHydrated) {
+      return (
+        <div className={styles.emptyCartContainer}>
+          <p style={{ color: '#888', fontSize: '15px' }}>Loading your cart...</p>
+        </div>
+      );
+    }
     return (
       <div className={styles.emptyCartContainer}>
         <ShoppingBag size={48} className={styles.emptyCartIcon} />

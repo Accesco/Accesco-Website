@@ -13,7 +13,7 @@ export default function SwadishttHeader() {
   // Custom Modal States
   const [showLocationModal, setShowLocationModal] = useState(false);
 
-  const { location, updateLocation, getCartCount, searchQuery, setSearchQuery } = useSwadishtt();
+  const { location, updateLocation, getCartCount, searchQuery, setSearchQuery, user } = useSwadishtt();
   
   const cartCount = getCartCount();
 
@@ -35,14 +35,7 @@ export default function SwadishttHeader() {
       <header className={`${styles.header} ${scrolled ? styles.scrolled : ''}`}>
         <div className={styles.container}>
           <div className={styles.headerContent}>
-            <Link
-              href="/"
-              className={styles.backBtn}
-              aria-label="Back to Accesco"
-            >
-              <span className={styles.backDesktop}>← Back</span>
-              <span className={styles.backMobile}>←</span>
-            </Link>
+
             
             {/* Logo */}
             <Link href="/services/swadisht" className={styles.logo}>
@@ -121,7 +114,9 @@ export default function SwadishttHeader() {
                 <svg className={styles.navIcon} viewBox="0 0 20 20" fill="currentColor">
                   <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd"/>
                 </svg>
-                <span className={styles.navText}>Profile</span>
+                <span className={styles.navText}>
+                  {user?.name ? user.name.split(' ')[0] : 'Profile'}
+                </span>
               </Link>
 
               <Link 
