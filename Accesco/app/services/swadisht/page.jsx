@@ -17,7 +17,7 @@ import styles from './styles/swadisht-main.module.css';
 import CategorySection from './components/CategorySection';
 import Image from 'next/image';
 import JsonLd from '../../../components/JsonLd';
-import { SwipeModal } from './components/TinderSwipeFeature';
+import { SwipeModal } from './components/SwadishtSwipeFeature';
 
 const discoveryFont = Nunito({
   subsets: ['latin'],
@@ -27,11 +27,11 @@ const discoveryFont = Nunito({
 
 // HeroSection Component
 function HeroSection() {
- return (
-  <div className={styles.hero}>
+  return (
+    <div className={styles.hero}>
 
-  </div>
-);
+    </div>
+  );
 }
 
 // Filter Bar Component
@@ -41,33 +41,33 @@ function FilterBar({ filters, onFilterChange }) {
       <div className={styles.filterScroll}>
         <button className={styles.filterBtn}>
           <svg className={styles.filterIcon} viewBox="0 0 20 20" fill="currentColor">
-            <path d="M3 3a1 1 0 011-1h12a1 1 0 011 1v3a1 1 0 01-.293.707L12 11.414V15a1 1 0 01-.293.707l-2 2A1 1 0 018 17v-5.586L3.293 6.707A1 1 0 013 6V3z"/>
+            <path d="M3 3a1 1 0 011-1h12a1 1 0 011 1v3a1 1 0 01-.293.707L12 11.414V15a1 1 0 01-.293.707l-2 2A1 1 0 018 17v-5.586L3.293 6.707A1 1 0 013 6V3z" />
           </svg>
           Filters
         </button>
-        
-        <button 
+
+        <button
           className={`${styles.filterChip} ${filters.rating === 4 ? styles.active : ''}`}
           onClick={() => onFilterChange({ rating: filters.rating === 4 ? null : 4 })}
         >
           Rating: 4.0+
         </button>
-        
+
         <button
           className={`${styles.filterChip} ${filters.pureVeg ? styles.active : ''}`}
           onClick={() => onFilterChange({ pureVeg: !filters.pureVeg })}
         >
           Pure Veg
         </button>
-        
+
         <button className={styles.filterChip}>
           Offers
         </button>
-        
+
         <button className={styles.filterChip}>
           Outdoor Seating
         </button>
-        
+
         <button className={styles.filterChip}>
           Open Now
         </button>
@@ -99,18 +99,18 @@ function RestaurantCard({ restaurant }) {
           }}
         />
 
-      <div className={styles.restaurantLogoBadge}>
-  <img
-    src={restaurant.logoImage || restaurant.coverImage}
-    alt={`${restaurant.name} logo`}
-    className={styles.restaurantLogoImage}
-    loading="lazy"
-    onError={(e) => {
-      e.currentTarget.style.display = 'none';
-      e.currentTarget.parentElement.textContent = initials;
-    }}
-  />
-</div>
+        <div className={styles.restaurantLogoBadge}>
+          <img
+            src={restaurant.logoImage || restaurant.coverImage}
+            alt={`${restaurant.name} logo`}
+            className={styles.restaurantLogoImage}
+            loading="lazy"
+            onError={(e) => {
+              e.currentTarget.style.display = 'none';
+              e.currentTarget.parentElement.textContent = initials;
+            }}
+          />
+        </div>
       </div>
 
       <div className={styles.cardContent}>
@@ -173,28 +173,28 @@ function DiscoverFeatures() {
       <div className={styles.featureGrid}>
         {features.map((feature) => (
           <Link key={feature.href} href={feature.href} className={styles.featureCard}>
-  <div className={styles.featureImage}>
-    <Image
-      src={feature.image}
-      alt={feature.alt}
-      fill
-      sizes="(max-width: 768px) 86vw, (max-width: 1024px) 44vw, 23vw"
-      priority={false}
-      className={styles.featureImg}
-    />
-  </div>
+            <div className={styles.featureImage}>
+              <Image
+                src={feature.image}
+                alt={feature.alt}
+                fill
+                sizes="(max-width: 768px) 86vw, (max-width: 1024px) 44vw, 23vw"
+                priority={false}
+                className={styles.featureImg}
+              />
+            </div>
 
-  <div className={styles.featureBody}>
-    <h3>{feature.title}</h3>
-    <span className={styles.featureAccent} aria-hidden="true"></span>
-    <p>{feature.description}</p>
-  </div>
+            <div className={styles.featureBody}>
+              <h3>{feature.title}</h3>
+              <span className={styles.featureAccent} aria-hidden="true"></span>
+              <p>{feature.description}</p>
+            </div>
 
-  <div className={styles.featureCta}>
-    <span>{feature.cta}</span>
-    <span aria-hidden="true">→</span>
-  </div>
-</Link>
+            <div className={styles.featureCta}>
+              <span>{feature.cta}</span>
+              <span aria-hidden="true">→</span>
+            </div>
+          </Link>
         ))}
       </div>
     </section>
@@ -203,10 +203,10 @@ function DiscoverFeatures() {
 function MainContent() {
   const { filters, updateFilters } = useSwadishtt();
   const [restaurants, setRestaurants] = useState(RESTAURANTS);
-  
+
   useEffect(() => {
     const filtered = filterRestaurants(filters);
-    
+
     // Apply sorting
     let sorted = [...filtered];
     switch (filters.sortBy) {
@@ -230,33 +230,33 @@ function MainContent() {
         // relevance - keep original order
         break;
     }
-    
+
     setRestaurants(sorted);
   }, [filters]);
-  
+
   return (
     <div className={styles.mainContent}>
       <div className={styles.container}>
         <FilterBar filters={filters} onFilterChange={updateFilters} />
-        
+
         <div className={styles.resultsHeader}>
           <h2 className={styles.resultsTitle}>
             {restaurants.length} restaurants delivering to you
           </h2>
         </div>
-        
+
         <div className={styles.restaurantGrid}>
           {restaurants.map(restaurant => (
             <RestaurantCard key={restaurant.id} restaurant={restaurant} />
           ))}
         </div>
-        
+
         {restaurants.length === 0 && (
           <div className={styles.emptyState}>
             <div className={styles.emptyIcon}>🔍</div>
             <h3 className={styles.emptyTitle}>No restaurants found</h3>
             <p className={styles.emptyText}>Try adjusting your filters</p>
-            <button 
+            <button
               className={styles.resetButton}
               onClick={() => updateFilters({
                 pureVeg: false,
@@ -299,43 +299,43 @@ export default function SwadishttPage() {
   return (
     <>
       <JsonLd data={serviceSchema} />
-    <div className={styles.page}>
-      {/* Premium Brand Hero Banner */}
-      <SwadishttHero />
-      <SwadishttHeader />
+      <div className={styles.page}>
+        {/* Premium Brand Hero Banner */}
+        <SwadishttHero />
+        <SwadishttHeader />
 
-      <div className={styles.pageContent}>
-        <div style={{ width: '100%', display: 'flex', justifyContent: 'center', padding: '32px 0', position: 'relative', zIndex: 50 }}>
-          <button
-            onClick={() => setIsSwipeModalOpen(true)}
-            style={{
-              backgroundColor: '#dc2626',
-              color: 'white',
-              fontWeight: 'bold',
-              padding: '16px 32px',
-              borderRadius: '8px',
-              boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
-              border: 'none',
-              cursor: 'pointer',
-              fontSize: '1.125rem',
-              transition: 'background-color 0.2s',
-            }}
-            onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#b91c1c'}
-            onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#dc2626'}
-          >
-            🔥 Customize Your Taste Profile
-          </button>
+        <div className={styles.pageContent}>
+          <div style={{ width: '100%', display: 'flex', justifyContent: 'center', padding: '32px 0', position: 'relative', zIndex: 50 }}>
+            <button
+              onClick={() => setIsSwipeModalOpen(true)}
+              style={{
+                backgroundColor: '#dc2626',
+                color: 'white',
+                fontWeight: 'bold',
+                padding: '16px 32px',
+                borderRadius: '8px',
+                boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                border: 'none',
+                cursor: 'pointer',
+                fontSize: '1.125rem',
+                transition: 'background-color 0.2s',
+              }}
+              onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#b91c1c'}
+              onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#dc2626'}
+            >
+              🔥 Customize Your Taste Profile
+            </button>
+          </div>
+          <CategorySection />
+          <DiscoverFeatures />
+          <HeroSection />
+          <MainContent />
         </div>
-       <CategorySection />
-<DiscoverFeatures />
-<HeroSection />
-<MainContent />
       </div>
-    </div>
-    {isSwipeModalOpen && <SwipeModal onClose={() => setIsSwipeModalOpen(false)} />}
+      {isSwipeModalOpen && <SwipeModal onClose={() => setIsSwipeModalOpen(false)} />}
     </>
   );
 }
