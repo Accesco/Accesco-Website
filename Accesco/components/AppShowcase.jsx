@@ -318,7 +318,13 @@ export default function AppShowcase() {
         {/* Right Panel: Clean Form Wrapper */}
         <div className={styles.rightPanel}>
           
-  
+         <div className={styles.brandLogoRow}>
+  <img
+    src="/images/asterik.png"
+    alt="Accesco mark"
+    className={styles.brandAsterisk}
+  />
+</div>
 
 <div className={styles.waitlistStar} aria-hidden="true">
   ✱
