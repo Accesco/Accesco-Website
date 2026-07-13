@@ -484,7 +484,6 @@
     height: 11%;
   }
 }
-<<<<<<< HEAD
 .brandAsterisk {
   width: 80px;
   height: 80px;
@@ -495,23 +494,12 @@
           hue-rotate(323deg)
           brightness(81%)
           contrast(111%);
-=======
-
-.waitlistStar {
-  color: #ec006c;
-  font-size: 42px;
-  font-weight: 900;
-  line-height: 1;
-  margin-bottom: 18px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: flex-start;
 }
+@media (min-width: 769px) and (resolution: 1.25dppx) {
 
-@media (max-width: 768px) {
-  .waitlistStar {
-    font-size: 34px;
-    margin-bottom: 14px;
+  .downloadAppSection{
+    max-width: 880px !important;
+    margin-inline: auto;
   }
->>>>>>> origin/main
+
 }

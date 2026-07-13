@@ -3945,3 +3945,79 @@ background:
     right: -12px !important;
   }
 }
+/* QUICK FIX: desktop screens at 125% scaling / DPR 1.25 */
+@media (min-width: 769px) and (resolution: 1.25dppx) {
+  .deliveryHeadingFrame h2 {
+    font-size: clamp(2rem, 4vw, 3.6rem) !important;
+    line-height: 1.02 !important;
+  }
+
+  .deliveryHeadingFrame h2 span {
+    font-size: clamp(0.9rem, 2.8vw, 1.55rem) !important;
+  }
+
+  .deliveryHeadingFrame {
+    max-width: 1120px !important;
+  }
+
+  .popBurger,
+  .popPizza,
+  .popGrocery,
+  .popHoodie,
+  .popSalad,
+  .popJeans {
+    transform: scale(0.88);
+  }
+}
+/* FORCE XPENSE METER SHORTER */
+
+.xpense-page-wrapper {
+  padding: 1rem 1.5rem !important;
+}
+
+.xpense-container {
+  padding: 18px !important;
+}
+
+.xpense-layout {
+  gap: 1.2rem !important;
+  align-items: stretch !important;
+}
+
+.left-hero-card {
+  padding: 24px 34px !important;
+}
+
+.right-dashboard-card {
+  padding: 1.2rem !important;
+  gap: 0.9rem !important;
+  min-height: 420px !important;
+}
+
+.black-card-inner {
+  padding: 1rem !important;
+}
+
+.dashboard-grid-content {
+  gap: 0.9rem !important;
+}
+
+.features-list {
+  gap: 10px !important;
+}
+
+.hero-heading {
+  font-size: 3.8rem !important;
+  line-height: 0.9 !important;
+}
+
+.hero-subtitle {
+  margin-bottom: 14px !important;
+}
+
+.hero-asterisk {
+  width: 70px !important;
+  height: 70px !important;
+  max-width: 70px !important;
+  min-width: 70px !important;
+}
