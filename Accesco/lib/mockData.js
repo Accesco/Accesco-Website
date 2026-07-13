@@ -30,6 +30,7 @@ export const products = [
   // ── New Premium Products ──
   {
     id: 'prod_039',
+    sku: 'INS-MEN-WLOV-39',
     name: 'Sleek Wool Overcoat',
     brand: 'PremiumLine',
     category: 'men',
@@ -58,6 +59,7 @@ export const products = [
   },
   {
     id: 'prod_040',
+    sku: 'INS-MEN-CGJG-40',
     name: 'Urban Cargo Joggers',
     brand: 'Urban Basics',
     category: 'men',
@@ -86,6 +88,7 @@ export const products = [
   },
   {
     id: 'prod_041',
+    sku: 'INS-WMN-VLTG-41',
     name: 'Velvet Evening Gown',
     brand: 'ElegantTouch',
     category: 'women',
@@ -114,6 +117,7 @@ export const products = [
   },
   {
     id: 'prod_042',
+    sku: 'INS-WMN-OKNS-42',
     name: 'Oversized Knit Sweater',
     brand: 'TrendSetters',
     category: 'women',
@@ -142,6 +146,7 @@ export const products = [
   },
   {
     id: 'prod_043',
+    sku: 'INS-KID-HWJK-43',
     name: 'Kids Hooded Windbreaker',
     brand: 'Urban Basics',
     category: 'kids',
@@ -170,6 +175,7 @@ export const products = [
   },
   {
     id: 'prod_044',
+    sku: 'INS-KID-CBPD-44',
     name: 'Chambray Play Dress',
     brand: 'ElegantTouch',
     category: 'kids',
@@ -198,6 +204,7 @@ export const products = [
   },
   {
     id: 'prod_045',
+    sku: 'INS-ACC-MLCH-45',
     name: 'Minimalist Leather Cardholder',
     brand: 'StyleHub',
     category: 'accessories',
@@ -226,6 +233,7 @@ export const products = [
   },
   {
     id: 'prod_046',
+    sku: 'INS-ACC-RTSG-46',
     name: 'Retro Acetate Sunglasses',
     brand: 'TrendSetters',
     category: 'accessories',
@@ -254,6 +262,7 @@ export const products = [
   },
   {
     id: 'prod_013',
+    sku: 'INS-MEN-VSJK-13',
     name: 'Vintage Suede Jacket',
     brand: 'PremiumLine',
     category: 'men',
@@ -282,6 +291,7 @@ export const products = [
   },
   {
     id: 'prod_014',
+    sku: 'INS-WMN-PSMD-14',
     name: 'Pleated Satin Midi Dress',
     brand: 'ElegantTouch',
     category: 'women',
@@ -310,6 +320,7 @@ export const products = [
   },
   {
     id: 'prod_015',
+    sku: 'INS-KID-HDDJ-15',
     name: 'Kids Hooded Denim Jacket',
     brand: 'TrendSetters',
     category: 'kids',
@@ -338,6 +349,7 @@ export const products = [
   },
   {
     id: 'prod_016',
+    sku: 'INS-ACC-AVSG-16',
     name: 'Urban Aviator Sunglasses',
     brand: 'StyleHub',
     category: 'accessories',
@@ -366,6 +378,7 @@ export const products = [
   },
   {
     id: 'prod_017',
+    sku: 'INS-WMN-CPJK-17',
     name: 'Women\'s Cropped Puffer Jacket',
     brand: 'ModernFit',
     category: 'women',
@@ -1218,6 +1231,16 @@ export function sortProducts(products, sortBy) {
   }
 }
 
+products.forEach(p => {
+  if (!p.sku) {
+    const catCode = p.category ? p.category.substring(0, 3).toUpperCase() : 'GEN';
+    const nameCode = p.name ? p.name.replace(/[^a-zA-Z]/g, '').substring(0, 3).toUpperCase() : 'ITM';
+    const idNum = p.id ? p.id.replace(/[^0-9]/g, '') : '00';
+    const padNum = idNum ? idNum.padStart(2, '0') : '01';
+    p.sku = `INS-${catCode}-${nameCode}-${padNum}`;
+  }
+});
+
 // Hydrate custom products from localStorage dynamically on client side initialization
 if (typeof window !== 'undefined') {
   try {
@@ -1236,4 +1259,5 @@ if (typeof window !== 'undefined') {
     console.error("Failed to hydrate custom products in mockData:", error);
   }
 }
+
 

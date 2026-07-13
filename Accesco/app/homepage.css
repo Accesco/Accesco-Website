@@ -3602,93 +3602,346 @@ background:
   max-width: 100px !important;
   border-radius: 0 !important;
 }
-@media (max-width: 1440px) {
 
-  .hero-title{
-    font-size: 4rem;
-  }
-
-  .hero-sub{
-    font-size: 1.15rem;
-    max-width: 620px;
-  }
-
-  .hero-grid{
-    max-width: 760px;
-  }
-
-}
-/* QUICK FIX: desktop screens at 125% scaling / DPR 1.25 */
-@media (min-width: 769px) and (resolution: 1.25dppx) {
-  .deliveryHeadingFrame h2 {
-    font-size: clamp(2rem, 4vw, 3.6rem) !important;
-    line-height: 1.02 !important;
-  }
-
-  .deliveryHeadingFrame h2 span {
-    font-size: clamp(0.9rem, 2.8vw, 1.55rem) !important;
+/* Mobile floating images for delivery section */
+@media (max-width: 768px) {
+  #services {
+    overflow: hidden !important;
   }
 
   .deliveryHeadingFrame {
-    max-width: 1120px !important;
+    position: relative !important;
+    overflow: visible !important;
+    padding-left: 48px !important;
+    padding-right: 48px !important;
   }
 
-  .popBurger,
-  .popPizza,
-  .popGrocery,
-  .popHoodie,
-  .popSalad,
+  .deliveryHeadingFrame > h2,
+  .deliveryHeadingFrame > p {
+    position: relative !important;
+    z-index: 2 !important;
+  }
+
+  .floatingHeroItems {
+    display: block !important;
+    position: absolute !important;
+    inset: 0 !important;
+    z-index: 1 !important;
+    pointer-events: none !important;
+    overflow: visible !important;
+  }
+
+  .popItem {
+    display: block !important;
+    position: absolute !important;
+    height: auto !important;
+    object-fit: contain !important;
+    border-radius: 0 !important;
+    opacity: 0.9;
+    filter: drop-shadow(0 12px 20px rgba(0, 0, 0, 0.16));
+  }
+
+  .popBurger {
+    width: 66px !important;
+    top: -22px !important;
+    left: -6px !important;
+  }
+
+  .popPizza {
+    width: 70px !important;
+    top: 170px !important;
+    left: -32px !important;
+  }
+
+  .popGrocery {
+    width: 94px !important;
+    top: 390px !important;
+    left: -18px !important;
+  }
+
+  .popHoodie {
+    width: 64px !important;
+    top: -18px !important;
+    right: -4px !important;
+  }
+
+  .popSalad {
+    width: 82px !important;
+    top: 210px !important;
+    right: -28px !important;
+  }
+
   .popJeans {
-    transform: scale(0.88);
+    width: 72px !important;
+    top: 430px !important;
+    right: -10px !important;
   }
 }
-/* FORCE XPENSE METER SHORTER */
 
-.xpense-page-wrapper {
-  padding: 1rem 1.5rem !important;
+@media (max-width: 480px) {
+  .deliveryHeadingFrame {
+    padding-left: 38px !important;
+    padding-right: 38px !important;
+  }
+
+  .popBurger {
+    width: 54px !important;
+    top: -18px !important;
+    left: -10px !important;
+  }
+
+  .popPizza {
+    width: 58px !important;
+    top: 150px !important;
+    left: -28px !important;
+  }
+
+  .popGrocery {
+    width: 78px !important;
+    top: 360px !important;
+    left: -18px !important;
+  }
+
+  .popHoodie {
+    width: 54px !important;
+    top: -16px !important;
+    right: -8px !important;
+  }
+
+  .popSalad {
+    width: 68px !important;
+    top: 190px !important;
+    right: -28px !important;
+  }
+
+  .popJeans {
+    width: 62px !important;
+    top: 395px !important;
+    right: -12px !important;
+  }
 }
 
-.xpense-container {
-  padding: 18px !important;
+/* Mobile floating images - visible + slide-in */
+@media (max-width: 768px) {
+  #services {
+    overflow: hidden !important;
+  }
+
+  .deliveryHeadingFrame {
+    position: relative !important;
+    overflow: visible !important;
+    z-index: 5 !important;
+    padding-left: 54px !important;
+    padding-right: 54px !important;
+    margin-bottom: 76px !important;
+  }
+
+  .deliveryHeadingFrame h2,
+  .deliveryHeadingFrame p {
+    position: relative !important;
+    z-index: 10 !important;
+  }
+
+  .floatingHeroItems {
+    display: block !important;
+    position: absolute !important;
+    inset: 0 !important;
+    z-index: 2 !important;
+    pointer-events: none !important;
+    overflow: visible !important;
+  }
+
+  .floatingHeroItems .popItem {
+    display: block !important;
+    position: absolute !important;
+    height: auto !important;
+    object-fit: contain !important;
+    border-radius: 0 !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    filter: drop-shadow(0 14px 22px rgba(0, 0, 0, 0.18)) !important;
+    will-change: transform, opacity;
+  }
+
+  .floatingHeroItems .popBurger {
+    width: 64px !important;
+    top: -14px !important;
+    left: -2px !important;
+    animation: mobileBurgerSlide 0.9s ease-out both !important;
+  }
+
+  .floatingHeroItems .popPizza {
+    width: 68px !important;
+    top: 145px !important;
+    left: -26px !important;
+    animation: mobilePizzaSlide 1s ease-out both !important;
+  }
+
+  .floatingHeroItems .popGrocery {
+    width: 86px !important;
+    top: 315px !important;
+    left: -24px !important;
+    animation: mobileGrocerySlide 1.08s ease-out both !important;
+  }
+
+  .floatingHeroItems .popHoodie {
+    width: 62px !important;
+    top: -12px !important;
+    right: -2px !important;
+    animation: mobileHoodieSlide 0.95s ease-out both !important;
+  }
+
+  .floatingHeroItems .popSalad {
+    width: 78px !important;
+    top: 165px !important;
+    right: -24px !important;
+    animation: mobileSaladSlide 1.05s ease-out both !important;
+  }
+
+  .floatingHeroItems .popJeans {
+    width: 70px !important;
+    top: 330px !important;
+    right: -12px !important;
+    animation: mobileJeansSlide 1.12s ease-out both !important;
+  }
+
+  .services-container-wrapper {
+    position: relative !important;
+    z-index: 8 !important;
+  }
 }
 
-.xpense-layout {
-  gap: 1.2rem !important;
-  align-items: stretch !important;
+@media (max-width: 480px) {
+  .deliveryHeadingFrame {
+    padding-left: 50px !important;
+    padding-right: 50px !important;
+    margin-bottom: 70px !important;
+  }
+
+  .floatingHeroItems .popBurger {
+    width: 56px !important;
+    top: -10px !important;
+    left: -2px !important;
+  }
+
+  .floatingHeroItems .popPizza {
+    width: 58px !important;
+    top: 138px !important;
+    left: -22px !important;
+  }
+
+  .floatingHeroItems .popGrocery {
+    width: 76px !important;
+    top: 300px !important;
+    left: -22px !important;
+  }
+
+  .floatingHeroItems .popHoodie {
+    width: 54px !important;
+    top: -8px !important;
+    right: -2px !important;
+  }
+
+  .floatingHeroItems .popSalad {
+    width: 68px !important;
+    top: 158px !important;
+    right: -22px !important;
+  }
+
+  .floatingHeroItems .popJeans {
+    width: 62px !important;
+    top: 315px !important;
+    right: -10px !important;
+  }
 }
 
-.left-hero-card {
-  padding: 30px 38px !important;
-}
-.right-dashboard-card {
-  padding: 1.4rem !important;
-  gap: 1rem !important;
-  min-height: 460px !important;
-}
-.black-card-inner {
-  padding: 1rem !important;
-}
-
-.dashboard-grid-content {
-  gap: 0.9rem !important;
+/* Mobile slide animations */
+@keyframes mobileBurgerSlide {
+  from {
+    opacity: 0;
+    transform: translate(-90px, -50px) scale(0.55) rotate(-28deg);
+  }
+  to {
+    opacity: 1;
+    transform: translate(0, 0) scale(1) rotate(-8deg);
+  }
 }
 
-.features-list {
-  gap: 10px !important;
+@keyframes mobilePizzaSlide {
+  from {
+    opacity: 0;
+    transform: translate(-95px, 50px) scale(0.55) rotate(28deg);
+  }
+  to {
+    opacity: 1;
+    transform: translate(0, 0) scale(1) rotate(-12deg);
+  }
 }
 
-.hero-heading {
-  font-size: 3.8rem !important;
-  line-height: 0.9 !important;
+@keyframes mobileGrocerySlide {
+  from {
+    opacity: 0;
+    transform: translate(-90px, 60px) scale(0.55) rotate(-16deg);
+  }
+  to {
+    opacity: 1;
+    transform: translate(0, 0) scale(1) rotate(0deg);
+  }
 }
 
-.hero-subtitle {
-  margin-bottom: 14px !important;
+@keyframes mobileHoodieSlide {
+  from {
+    opacity: 0;
+    transform: translate(90px, -50px) scale(0.55) rotate(28deg);
+  }
+  to {
+    opacity: 1;
+    transform: translate(0, 0) scale(1) rotate(6deg);
+  }
 }
 
-.hero-asterisk {
-  width: 70px !important;
-  height: 70px !important;
-  max-width: 70px !important;
-  min-width: 70px !important;
+@keyframes mobileSaladSlide {
+  from {
+    opacity: 0;
+    transform: translate(95px, 50px) scale(0.55) rotate(-20deg);
+  }
+  to {
+    opacity: 1;
+    transform: translate(0, 0) scale(1) rotate(5deg);
+  }
+}
+
+@keyframes mobileJeansSlide {
+  from {
+    opacity: 0;
+    transform: translate(90px, 60px) scale(0.55) rotate(20deg);
+  }
+  to {
+    opacity: 1;
+    transform: translate(0, 0) scale(1) rotate(0deg);
+  }
+}
+
+/* Jeans mobile position fix - keep original size, move slightly up only */
+@media (max-width: 768px) {
+  .floatingHeroItems .popJeans {
+    width: 70px !important;
+    top: 315px !important;
+    right: -14px !important;
+    z-index: 1 !important;
+    opacity: 0.9 !important;
+  }
+
+  .services-container-wrapper {
+    position: relative !important;
+    z-index: 20 !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .floatingHeroItems .popJeans {
+    width: 62px !important;
+    top: 285px !important;
+    right: -12px !important;
+  }
 }

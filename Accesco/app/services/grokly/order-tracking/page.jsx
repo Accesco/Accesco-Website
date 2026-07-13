@@ -1,11 +1,16 @@
 'use client';
 
-import { Suspense, useState, useEffect, useRef } from 'react';
+import { Suspense, useState, useEffect, useRef, useMemo } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useGrokly } from '../contexts/GroklyContext';
 import styles from './tracking.module.css';
 import Link from 'next/link';
 import { mockRiderData } from '@/lib/mockRiderData';
+import { subscribeToRiderLocation, startRiderSimulation, computeRoutePosition, stepProgressTowards } from '@/lib/riderTrackingService';
+
+// Track which orders already have a running simulation this session, so a
+// refresh / strict-mode double-mount doesn't spawn duplicate rider feeds.
+const startedSimulations = new Set();
 
 // Production-ready SVG Icons to replace emojis
 
@@ -85,8 +90,74 @@ function GroklyTrackingContent() {
   const orderId = searchParams.get('id');
   const eta = searchParams.get('eta') || '12';
   const { orders } = useGrokly();
-  
-  const order = orders.find(o => o.id === orderId);
+
+  // Local state for the current order so we can fall back to localStorage
+  // and respond to updates immediately after placing an order.
+  const [currentOrder, setCurrentOrder] = useState(() => {
+    try {
+      const saved = typeof window !== 'undefined' ? localStorage.getItem('grokly_orders') : null;
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed)) {
+          return parsed.find(o => o.id === orderId) || null;
+        }
+      }
+    } catch (e) {
+      // ignore
+    }
+    return null;
+  });
+
+  // Keep local order in sync with context orders
+  useEffect(() => {
+    if (!orderId) return;
+    const found = orders.find(o => o.id === orderId);
+    if (found) {
+      setCurrentOrder(found);
+      // also persist to localStorage for robustness
+      try {
+        const existing = JSON.parse(localStorage.getItem('grokly_orders') || '[]');
+        const updated = [found, ...existing.filter(o => o.id !== found.id)];
+        localStorage.setItem('grokly_orders', JSON.stringify(updated));
+      } catch (e) {}
+    }
+  }, [orders, orderId]);
+
+  const order = currentOrder || orders.find(o => o.id === orderId);
+
+  // Resolve the real delivery ("Your door") coordinates: prefer the order's saved
+  // coordinates, fall back to the currently detected location, then a default.
+  const getHomeLatLng = () => {
+    if (order?.deliveryLat && order?.deliveryLng) {
+      return [order.deliveryLat, order.deliveryLng];
+    }
+    try {
+      const raw = typeof window !== 'undefined' ? localStorage.getItem('userLocation') : null;
+      if (raw) {
+        const loc = JSON.parse(raw);
+        const lat = parseFloat(loc.latitude ?? loc.lat);
+        const lng = parseFloat(loc.longitude ?? loc.lng ?? loc.lon);
+        if (!Number.isNaN(lat) && !Number.isNaN(lng)) return [lat, lng];
+      }
+    } catch (e) {
+      console.error('Failed to resolve delivery coordinates:', e);
+    }
+    return [12.9592, 77.7610]; // fallback
+  };
+
+  // Option 1 (until real dark-store locations exist): place the store ~1.5 km from
+  // the customer so the rider always starts nearby and the trip looks realistic
+  // in any city, instead of a fixed Bangalore hub.
+  const getHubLatLng = ([homeLat, homeLng]) => {
+    const OFFSET = 0.012; // ~1.3 km in latitude
+    return [homeLat + OFFSET, homeLng + OFFSET];
+  };
+
+  // Stable store/home coordinates for this order.
+  const homeCoords = useMemo(() => getHomeLatLng(), [order?.deliveryLat, order?.deliveryLng]);
+  const hubCoords = useMemo(() => getHubLatLng(homeCoords), [homeCoords]);
+  // Actual driving route (roads) from store → home, fetched from OSRM.
+  const [roadRoute, setRoadRoute] = useState([]);
 
   // States for interactive custom features
   const [chatOpen, setChatOpen] = useState(false);
@@ -104,6 +175,8 @@ function GroklyTrackingContent() {
   // Maps loading states
   const miniMapRef = useRef(null);
   const miniMapInstanceRef = useRef(null);
+  const riderMarkerRef = useRef(null);
+  const roadPolylineRef = useRef(null);
   const [mapsLoaded, setMapsLoaded] = useState(false);
   const [mapResetKey, setMapResetKey] = useState(0);
 
@@ -155,23 +228,25 @@ function GroklyTrackingContent() {
       const L = window.L;
       if (!L) return;
 
-      const hubCoords = [12.9698, 77.7499]; // Whitefield Hub (Store Node)
-      const homeCoords = [12.9592, 77.7610]; // Home
-      const center = [12.9645, 77.75545]; // Centered precisely between both points
+      // hubCoords / homeCoords come from the memoized values above.
+      const center = [
+        (hubCoords[0] + homeCoords[0]) / 2,
+        (hubCoords[1] + homeCoords[1]) / 2,
+      ]; // Midpoint between store and home
 
       const miniMap = L.map(miniMapRef.current, {
-        zoomControl: false,
-        scrollWheelZoom: false,
+        zoomControl: true,
+        scrollWheelZoom: true,
         dragging: true,
-        doubleClickZoom: false,
+        doubleClickZoom: true,
         boxZoom: false,
         attributionControl: false
       }).setView(center, 14);
 
       miniMapInstanceRef.current = miniMap;
 
-      // CartoDB Positron elegant minimal desaturated map layer (Matching input_file_12.png exactly)
-      L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+      // CartoDB Voyager — detailed street map with roads/labels visible (Swiggy/Zomato-style)
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
         maxZoom: 20
       }).addTo(miniMap);
 
@@ -210,60 +285,23 @@ function GroklyTrackingContent() {
         iconAnchor: [10, 10]
       });
 
-      // Interactive pulsing scooter rider pin with a production-level SVG icon (Replacing the emoji)
+      // Delivery rider marker using the branded scooter illustration.
+      // Wrapped in a div so the inner <img> can be flipped to face the travel direction.
       const riderIcon = L.divIcon({
-        html: `<div style="
-          background: linear-gradient(135deg, #0c831f 0%, #064a10 100%);
-          width: 34px;
-          height: 34px;
-          border-radius: 50%;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          border: 2px solid white;
-          box-shadow: 0 4px 15px rgba(12,131,31,0.4);
-          position: relative;
-        ">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="5" cy="18" r="3" />
-            <circle cx="19" cy="18" r="3" />
-            <path d="M12 18V12l4-4h4" />
-            <path d="M12 12H8l-3-3V5a2 2 0 0 1 2-2h3" />
-          </svg>
-          <div style="
-            position: absolute;
-            top: -26px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #ffffff;
-            color: #0c831f;
-            border: 1.5px solid rgba(12,131,31,0.18);
-            font-size: 9.5px;
-            font-weight: 800;
-            padding: 2px 8px;
-            border-radius: 6px;
-            white-space: nowrap;
-            box-shadow: 0 4px 12px rgba(12,131,31,0.15);
-          ">0.6 km</div>
-        </div>`,
+        html: `<img class="rider-scooter-img" src="/images/delivery-rider.png"
+                 style="width:38px;height:68px;transition:transform 0.3s ease;" />`,
         className: 'custom-rider-icon',
-        iconSize: [34, 34],
-        iconAnchor: [17, 17]
+        iconSize: [38, 68],
+        iconAnchor: [19, 60],
       });
 
-      // Render green dashed routing track line matching input_file_12.png perfectly
-      L.polyline([hubCoords, homeCoords], {
-        color: '#0c831f',
-        weight: 3.5,
-        opacity: 0.8,
-        dashArray: '6, 8'
-      }).addTo(miniMap);
-
+      // The road route polyline is drawn by a separate effect once OSRM returns it.
       L.marker(hubCoords, { icon: greenDotIcon }).addTo(miniMap);
       L.marker(homeCoords, { icon: orangeDotIcon }).addTo(miniMap);
-      
-      // Place the dynamic rider marker at an intermediate position along the route (60% of progress)
-      L.marker([12.9640, 77.7550], { icon: riderIcon }).addTo(miniMap);
+
+      // Place the rider marker; its position is driven live by the Firestore feed below.
+      // Movement is animated at 60fps client-side, so no CSS transition is needed here.
+      riderMarkerRef.current = L.marker(hubCoords, { icon: riderIcon }).addTo(miniMap);
 
       setMapsLoaded(true);
 
@@ -293,7 +331,135 @@ function GroklyTrackingContent() {
         miniMapInstanceRef.current = null;
       }
     };
-  }, [mapResetKey]);
+    // Re-init the map when the resolved delivery coordinates change.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [mapResetKey, order?.deliveryLat, order?.deliveryLng]);
+
+  // Fetch the actual driving route (roads) from store → home via OSRM, so the
+  // path follows streets like Swiggy/Zomato instead of a straight line.
+  useEffect(() => {
+    let cancelled = false;
+    const fetchRoute = async () => {
+      try {
+        const start = `${hubCoords[1]},${hubCoords[0]}`;
+        const end = `${homeCoords[1]},${homeCoords[0]}`;
+        const res = await fetch(
+          `https://router.project-osrm.org/route/v1/driving/${start};${end}?overview=full&geometries=geojson`
+        );
+        const data = await res.json();
+        if (cancelled) return;
+        if (data.routes?.length) {
+          setRoadRoute(data.routes[0].geometry.coordinates.map((c) => [c[1], c[0]]));
+        } else {
+          setRoadRoute([hubCoords, homeCoords]); // straight fallback
+        }
+      } catch (e) {
+        if (!cancelled) setRoadRoute([hubCoords, homeCoords]); // straight fallback
+      }
+    };
+    fetchRoute();
+    return () => { cancelled = true; };
+  }, [hubCoords, homeCoords]);
+
+  // Draw / update the route polyline along the roads and fit the map to it.
+  useEffect(() => {
+    const map = miniMapInstanceRef.current;
+    if (!map || !window.L || !mapsLoaded) return;
+    const L = window.L;
+
+    if (roadPolylineRef.current) {
+      map.removeLayer(roadPolylineRef.current);
+      roadPolylineRef.current = null;
+    }
+    const line = roadRoute.length >= 2 ? roadRoute : [hubCoords, homeCoords];
+    roadPolylineRef.current = L.polyline(line, {
+      color: '#0c831f',
+      weight: 4,
+      opacity: 0.85,
+    }).addTo(map);
+
+    // Start on the store; the rider-follow loop keeps the camera centered on the
+    // scooter. Users can zoom in/out freely — their chosen zoom is preserved.
+    try {
+      map.setView(hubCoords, 15);
+    } catch (e) {
+      console.error('setView failed:', e);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [roadRoute, mapsLoaded]);
+
+  // Live rider tracking. The simulator (or a real rider app later) writes a
+  // `progress` value to Firestore; the client animates the marker smoothly along
+  // the exact road geometry at 60fps (accuracy) and consumes the trail behind it.
+  useEffect(() => {
+    if (!orderId || !mapsLoaded || roadRoute.length < 2) return;
+
+    const path = roadRoute.map(([lat, lng]) => ({ lat, lng }));
+    const from = path[0];
+    const to = path[path.length - 1];
+    const waypoints = path.slice(1, -1);
+
+    const RIDE_DURATION_MS = 3 * 60 * 1000;
+
+    // Start the stand-in rider feed once per order this session.
+    let stopSim = () => {};
+    if (!startedSimulations.has(orderId)) {
+      startedSimulations.add(orderId);
+      stopSim = startRiderSimulation(orderId, from, to, {
+        waypoints,
+        durationMs: RIDE_DURATION_MS,
+        tickMs: 1000,
+        rider: {
+          riderName: mockRiderData.rider.name,
+          riderPhone: mockRiderData.rider.phone,
+        },
+      });
+    }
+
+    // Target progress comes from Firestore; display progress moves toward it at a
+    // bounded speed each frame — fast enough to stay responsive to real updates,
+    // but capped so the marker can never visually teleport across the map.
+    const maxStepPerFrame = (4 / (RIDE_DURATION_MS / 1000)) / 60;
+    let targetProgress = 0;
+    let displayProgress = 0;
+    let raf;
+
+    const animate = () => {
+      displayProgress = stepProgressTowards(displayProgress, targetProgress, maxStepPerFrame);
+
+      const { lat, lng, heading, remaining } = computeRoutePosition(roadRoute, displayProgress);
+
+      if (riderMarkerRef.current) {
+        riderMarkerRef.current.setLatLng([lat, lng]);
+        const el = riderMarkerRef.current.getElement();
+        const img = el && el.querySelector('.rider-scooter-img');
+        if (img) {
+          const facingRight = heading > 0 && heading < 180; // heading east = moving right
+          img.style.transform = facingRight ? 'scaleX(1)' : 'scaleX(-1)';
+        }
+      }
+      // Trail consumption: only draw the route still ahead of the rider.
+      if (roadPolylineRef.current && remaining.length >= 2) {
+        roadPolylineRef.current.setLatLngs(remaining);
+      }
+      // Follow the rider like Google Maps driver tracking.
+      const map = miniMapInstanceRef.current;
+      if (map) map.setView([lat, lng], map.getZoom(), { animate: false });
+
+      raf = requestAnimationFrame(animate);
+    };
+    raf = requestAnimationFrame(animate);
+
+    const unsubscribe = subscribeToRiderLocation(orderId, (data) => {
+      if (data && typeof data.progress === 'number') targetProgress = data.progress;
+    });
+
+    return () => {
+      cancelAnimationFrame(raf);
+      unsubscribe();
+      stopSim();
+    };
+  }, [orderId, mapsLoaded, roadRoute]);
 
   if (!order) {
     return (
@@ -651,8 +817,8 @@ function GroklyTrackingContent() {
           <MapPinIcon className={styles.pinkPinIcon} />
         </div>
         <div className={styles.metaCardContent}>
-          <strong>{order.customerName || 'Accesco Customer24'}</strong>
-          <p>Bengaluru</p>
+          <strong>{order.customerName || 'Accesco Customer'}</strong>
+          <p>{order.address || 'Bengaluru'}</p>
           <p className={styles.metaSubtext}>{order.phone || '+91 9022217467'}</p>
         </div>
       </div>

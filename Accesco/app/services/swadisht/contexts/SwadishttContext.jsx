@@ -501,6 +501,15 @@ export function SwadishttProvider({ children }) {
     if (typeof window === 'undefined') return;
 
     try {
+      const storedUser = localStorage.getItem('accesco_user');
+      if (storedUser) {
+        setUser(JSON.parse(storedUser));
+      }
+    } catch (e) {
+      console.error('Error reading accesco_user:', e);
+    }
+
+    try {
       const stored = localStorage.getItem('userLocation');
       const hydrated = parseStoredUserLocationToSwadishttLocation(stored);
       if (hydrated) {
@@ -628,6 +637,26 @@ export function SwadishttProvider({ children }) {
     setCart([]);
   };
 
+  // Re-add every item from a past order back into the cart ("Order Again").
+  const reorder = (items) => {
+    if (!Array.isArray(items) || items.length === 0) return;
+    setCart(prevCart => {
+      const next = [...prevCart];
+      items.forEach(it => {
+        const customizations = it.customizations || {};
+        const qty = it.quantity || 1;
+        const idx = next.findIndex(
+          c => c.id === it.id &&
+               JSON.stringify(c.customizations || {}) === JSON.stringify(customizations)
+        );
+        if (idx > -1) next[idx] = { ...next[idx], quantity: next[idx].quantity + qty };
+        else next.push({ ...it, quantity: qty, customizations });
+      });
+      return next;
+    });
+    setCartOpen(true);
+  };
+
   const getCartTotal = () => {
     return cart.reduce((total, item) => {
       let itemPrice = item.price;
@@ -681,6 +710,7 @@ export function SwadishttProvider({ children }) {
     updateQuantity,
     updateCartQuantity,
     clearCart,
+    reorder,
     getCartTotal,
     getCartCount,
     

@@ -7,9 +7,6 @@ import {
   Utensils, 
   Shirt, 
   GlassWater,
-  User,
-  Mail,
-  Phone,
   ArrowRight,
   ArrowLeft,
   Check,
@@ -20,6 +17,8 @@ import { auth } from '../lib/firebase';
 import {
   addWaitlistEntry,
   validateWaitlistEntry,
+  sendOtpEmailVerification,
+  verifyOtpEmailCode,
 } from '../lib/waitlistService';
 
 export default function AppShowcase() {
@@ -39,6 +38,12 @@ export default function AppShowcase() {
   const [phoneVerified, setPhoneVerified] = useState(false);
   const [confirmationResult, setConfirmationResult] = useState(null);
   const recaptchaVerifierRef = useRef(null);
+
+  // Optional email verification state
+  const [emailCode, setEmailCode] = useState('');
+  const [emailCodeSent, setEmailCodeSent] = useState(false);
+  const [emailVerified, setEmailVerified] = useState(false);
+  const [emailLoading, setEmailLoading] = useState(false);
 
   const interestOptions = [
     { id: 'grokly', label: 'Groceries & Essentials', icon: <ShoppingCart size={22} /> },
@@ -62,36 +67,91 @@ export default function AppShowcase() {
     return '+91' + stripped.replace(/\D/g, '');
   }
 
+  // Create + render the invisible reCAPTCHA once and reuse it (Firebase's recommended
+  // pattern). Rendering ahead of time means the widget is already loaded before the
+  // user sends an OTP, so the send itself is much faster.
+  const ensureRecaptcha = () => {
+    if (!recaptchaVerifierRef.current) {
+      recaptchaVerifierRef.current = new RecaptchaVerifier(auth, 'recaptcha-container', {
+        size: 'invisible',
+      });
+      recaptchaVerifierRef.current.render().catch((e) => console.error('reCAPTCHA render failed:', e));
+    }
+    return recaptchaVerifierRef.current;
+  };
+
   const sendPhoneOtp = async () => {
     if (!form.phone?.trim()) {
       setError('Please enter your phone number first');
       return;
     }
 
+    // Prevent overlapping sends while one is still in flight
+    if (loading) return;
+
     setLoading(true);
     setError('');
 
     try {
-      const container = document.getElementById('recaptcha-container');
-      if (container) {
-        container.innerHTML = '';
-      }
-
-      const verifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
-        size: 'invisible',
-      });
-      recaptchaVerifierRef.current = verifier;
-
+      const verifier = ensureRecaptcha();
       const phoneNumber = normalizePhone(form.phone.trim());
       const result = await signInWithPhoneNumber(auth, phoneNumber, verifier);
       setConfirmationResult(result);
       setPhoneCodeSent(true);
     } catch (err) {
       console.error('Phone OTP send failed:', err);
+      // Reset the verifier so the next attempt starts from a clean state
+      if (recaptchaVerifierRef.current) {
+        recaptchaVerifierRef.current.clear();
+        recaptchaVerifierRef.current = null;
+      }
       setError(err.message || 'Failed to send OTP. Check your phone number and try again.');
       setPhoneCodeSent(false);
     } finally {
       setLoading(false);
+    }
+  };
+
+  // Optional: send an email verification code
+  const sendEmailOtp = async () => {
+    if (!form.email?.trim()) {
+      setError('Please enter your email first');
+      return;
+    }
+
+    setEmailLoading(true);
+    setError('');
+
+    try {
+      await sendOtpEmailVerification(form.email.trim());
+      setEmailCodeSent(true);
+      setEmailVerified(false);
+    } catch (err) {
+      console.error('Email OTP send failed:', err);
+      setError(err.message || 'Failed to send email code');
+    } finally {
+      setEmailLoading(false);
+    }
+  };
+
+  // Optional: verify the email code the user entered
+  const verifyEmailOtp = async () => {
+    if (!/^\d{6}$/.test(emailCode.trim())) {
+      setError('Please enter a valid 6-digit email code.');
+      return;
+    }
+
+    setEmailLoading(true);
+    setError('');
+
+    try {
+      await verifyOtpEmailCode(form.email.trim(), emailCode.trim());
+      setEmailVerified(true);
+    } catch (err) {
+      console.error('Email OTP verify failed:', err);
+      setError(err.message || 'Email verification failed');
+    } finally {
+      setEmailLoading(false);
     }
   };
 
@@ -158,6 +218,7 @@ export default function AppShowcase() {
         email: form.email,
         phone: form.phone,
         interests: form.interests.join(', '),
+        emailVerified, // optional — true only if the user chose to verify their email
       });
 
       await signOut(auth);
@@ -167,6 +228,9 @@ export default function AppShowcase() {
       setPhoneCodeSent(false);
       setPhoneVerified(false);
       setConfirmationResult(null);
+      setEmailCode('');
+      setEmailCodeSent(false);
+      setEmailVerified(false);
       setCurrentStep(1);
       setTimeout(() => setSuccess(false), 5000);
     } catch (err) {
@@ -182,6 +246,22 @@ export default function AppShowcase() {
       setLoading(false);
     }
   };
+
+  // Pre-warm the invisible reCAPTCHA on mount so the first OTP send is fast
+  useEffect(() => {
+    try {
+      ensureRecaptcha();
+    } catch (e) {
+      console.error('reCAPTCHA warm-up failed:', e);
+    }
+    return () => {
+      if (recaptchaVerifierRef.current) {
+        recaptchaVerifierRef.current.clear();
+        recaptchaVerifierRef.current = null;
+      }
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     const stack = document.getElementById('stack');
@@ -246,13 +326,16 @@ export default function AppShowcase() {
   />
 </div>
 
-          <h3 className={styles.cardTitle}>Get Early Access</h3>
-          
-          <p className={styles.cardSubtitle}>
-            {currentStep === 1 && "Join the waitlist and be the first to experience India's most intelligent commerce platform."}
-            {currentStep === 2 && "What interests you? Choose at least one category to curate your feed."}
-            {currentStep === 3 && "Security verification. Enter the 6-digit passcode sent to your phone."}
-          </p>
+<div className={styles.waitlistStar} aria-hidden="true">
+  ✱
+</div>
+
+<h3 className={styles.cardTitle}>Get Early Access</h3>
+<p className={styles.cardSubtitle}>
+  {currentStep === 1 && "Join the waitlist for early access to Accesco Living’s unified commerce platform, built for groceries, food delivery, fashion, dining, home services, and member-only launch benefits."}
+  {currentStep === 2 && "Select the experiences you are most interested in so we can personalize your early access updates, offers, and launch notifications."}
+  {currentStep === 3 && "Verify your phone number to secure your waitlist entry and receive important early access updates safely."}
+</p>
 
           {success && (
             <div className={styles.successMessage}>
@@ -273,39 +356,39 @@ export default function AppShowcase() {
             {currentStep === 1 && (
               <div className={styles.inputsStack}>
                 <div className={styles.inputWrapper}>
-                  <User size={18} className={styles.inputIcon} />
-                  <input
-                    type="text"
-                    className={styles.formInput}
-                    placeholder="Full Name"
-                    value={form.name}
-                    onChange={(e) => setForm({ ...form, name: e.target.value })}
-                  />
-                </div>
+
+  <input
+    type="text"
+    className={styles.formInput}
+    placeholder="Enter your full name"
+    value={form.name}
+    onChange={(e) => setForm({ ...form, name: e.target.value })}
+  />
+</div>
 
                 <div className={styles.inputWrapper}>
-                  <Mail size={18} className={styles.inputIcon} />
+  
                   <input
                     type="email"
                     className={styles.formInput}
-                    placeholder="Email Address"
+                    placeholder="your@email.com"
                     value={form.email}
                     onChange={(e) => setForm({ ...form, email: e.target.value })}
                     required
                   />
                 </div>
 
-                <div className={styles.inputWrapper}>
-                  <Phone size={18} className={styles.inputIcon} />
-                  <input
-                    type="tel"
-                    className={styles.formInput}
-                    placeholder="Phone Number"
-                    value={form.phone}
-                    onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                    required
-                  />
-                </div>
+               <div className={styles.inputWrapper}>
+  
+  <input
+    type="tel"
+    className={styles.formInput}
+    placeholder="Enter your phone number"
+    value={form.phone}
+    onChange={(e) => setForm({ ...form, phone: e.target.value })}
+    required
+  />
+</div>
 
                 <button type="button" className={styles.submitButton} onClick={handleNext}>
                   <span>Join Waitlist</span>
@@ -392,6 +475,74 @@ export default function AppShowcase() {
                   </p>
                 )}
 
+                {/* Optional Email Verification */}
+                <div
+                  className={styles.verificationSection}
+                  style={{ marginTop: '20px', paddingTop: '20px', borderTop: '1px dashed #d1a5c4' }}
+                >
+                  <div className={styles.verificationInfo}>
+                    <p style={{ fontWeight: 600 }}>
+                      Verify your email <span style={{ color: '#888', fontWeight: 400 }}>(optional)</span>
+                    </p>
+                    {emailVerified ? (
+                      <p style={{ color: '#22c55e' }}>Email verified successfully.</p>
+                    ) : (
+                      <p style={{ fontSize: '0.9rem', color: '#666' }}>
+                        Optionally verify <strong>{form.email}</strong> for a more secure account.
+                      </p>
+                    )}
+                  </div>
+
+                  {!emailVerified && (
+                    <>
+                      {!emailCodeSent ? (
+                        <button
+                          type="button"
+                          className={styles.navButton}
+                          onClick={sendEmailOtp}
+                          disabled={emailLoading}
+                          style={{ width: '100%' }}
+                        >
+                          {emailLoading ? 'Sending...' : 'Send email code'}
+                        </button>
+                      ) : (
+                        <>
+                          <div className={styles.formGroup}>
+                            <label className={styles.formLabel}>Email Code</label>
+                            <input
+                              type="text"
+                              className={styles.formInput}
+                              placeholder="Enter 6-digit code"
+                              value={emailCode}
+                              onChange={(e) => setEmailCode(e.target.value)}
+                              maxLength={6}
+                              style={{ textAlign: 'center', fontSize: '24px', letterSpacing: '8px' }}
+                            />
+                          </div>
+                          <div className={styles.buttonGroup}>
+                            <button
+                              type="button"
+                              className={styles.resendCode}
+                              onClick={sendEmailOtp}
+                              disabled={emailLoading}
+                            >
+                              Resend Code
+                            </button>
+                            <button
+                              type="button"
+                              className={styles.navButton}
+                              onClick={verifyEmailOtp}
+                              disabled={emailLoading}
+                            >
+                              {emailLoading ? 'Verifying...' : 'Verify Email'}
+                            </button>
+                          </div>
+                        </>
+                      )}
+                    </>
+                  )}
+                </div>
+
                 <div className={styles.buttonGroup}>
                   <button type="button" className={styles.prevButton} onClick={handlePrev}>
                     <ArrowLeft size={16} />
@@ -417,12 +568,11 @@ export default function AppShowcase() {
           <div className={styles.trustRow}>
             <div className={styles.trustLeft}>
               <div className={styles.trustItem}>
-                <span>👥</span>
                 <span>Join 12,000+ members</span>
               </div>
               <div className={styles.trustDivider}></div>
               <div className={styles.trustItem}>
-                <span>🔒</span>
+                <span></span>
                 <span>Secure &amp; Spam-Free</span>
               </div>
             </div>

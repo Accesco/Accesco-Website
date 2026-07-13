@@ -4,29 +4,32 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useGrokly } from '../contexts/GroklyContext';
 import { products } from '../lib/groklyData';
+import { dishIngredients } from '../lib/dishesData';
 import styles from './checkout.module.css';
+
+// Combined lookup: regular products + dish ingredients (which have their own IDs)
+const allPurchasable = [...products, ...dishIngredients];
 import { useAuth } from '../../../components/AuthProvider';
+import AuthModal from '../../../components/AuthModal';
+import { payWithRazorpay } from '@/lib/razorpayService';
 import { 
   ArrowLeft, MapPin, Phone, User, CreditCard, 
   ShieldCheck, ShoppingBag, Clock, Zap, Sparkles 
 } from 'lucide-react';
 
 export default function GroklyCheckout() {
-  const { cart, placeOrder, location } = useGrokly();
+  const { cart, placeOrder, location, cartHydrated } = useGrokly();
   const router = useRouter();
-  const { user } = useAuth();
-  const [isMounted, setIsMounted] = useState(false);
+  const { user, signIn } = useAuth();
   const [isProcessing, setIsProcessing] = useState(false);
+  const [showAuth, setShowAuth] = useState(false);
+  const [paymentError, setPaymentError] = useState('');
   const [isLoadingLocation, setIsLoadingLocation] = useState(false);
   const [customerDetails, setCustomerDetails] = useState({
     name: 'Accesco Customer',
     address: location || 'Bengaluru',
     phone: '+91 9022217637'
   });
-
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
 
   useEffect(() => {
     if (location) {
@@ -36,6 +39,7 @@ export default function GroklyCheckout() {
       }));
     }
   }, [location]);
+
   const [eta , setEta] = useState(0);
   const [deliverySpeed, setDeliverySpeed] = useState('instant');
 
@@ -53,7 +57,7 @@ export default function GroklyCheckout() {
 
 
   const cartItems = Object.entries(cart)
-    .map(([id, qty]) => ({ product: products.find(p => p.id === id), quantity: qty }))
+    .map(([id, qty]) => ({ product: allPurchasable.find(p => p.id === id), quantity: qty }))
     .filter(item => item.product);
 
   const handleCreateBasket = () => {
@@ -140,29 +144,84 @@ export default function GroklyCheckout() {
   const discount = deliverySpeed === 'batched' ? 20 : 0;
   const total = Math.max(0, subtotal + deliveryFee + 2 - discount);
 
-  const handlePlaceOrder = () => {
-    setIsProcessing(true);
-    const resolvedEta = deliverySpeed === 'batched' ? (eta ? eta + 15 : 25) : eta;
-    const order = placeOrder({
-      total,
-      subtotal,
-      deliveryFee,
-      deliverySpeed,
-      discount,
-      eta: resolvedEta,
-      items: cartItems.map(i => ({ id: i.product.id, name: i.product.name, price: i.product.price, quantity: i.quantity })),
-      paymentMethod: 'UPI',
-      address: customerDetails.address,
-      customerName: customerDetails.name,
-      phone: customerDetails.phone,
-      customerEmail: user?.email || null,
-      userId: user?.uid || user?.id || null,
-    });
+  // Reads the customer's real delivery coordinates from the detected/selected
+  // location so the tracking map can show the actual "Your door" position.
+  const getDeliveryCoords = () => {
+    try {
+      const raw = localStorage.getItem('userLocation');
+      if (!raw) return {};
+      const loc = JSON.parse(raw);
+      const lat = parseFloat(loc.latitude ?? loc.lat);
+      const lng = parseFloat(loc.longitude ?? loc.lng ?? loc.lon);
+      if (!Number.isNaN(lat) && !Number.isNaN(lng)) {
+        return { deliveryLat: lat, deliveryLng: lng };
+      }
+    } catch (e) {
+      console.error('Failed to read delivery coordinates:', e);
+    }
+    return {};
+  };
 
-    setTimeout(() => {
-      setIsProcessing(false);
+  // Places the order for a specific logged-in user, after payment succeeds.
+  const submitOrder = async (activeUser) => {
+    setIsProcessing(true);
+    setPaymentError('');
+
+    try {
+      const payment = await payWithRazorpay({
+        amount: total,
+        receipt: `grokly_${Date.now()}`,
+        name: 'Grokly',
+        description: `Grokly order · ${cartItems.length} item(s)`,
+        prefill: {
+          name: activeUser?.name || customerDetails.name,
+          email: activeUser?.email || '',
+          contact: activeUser?.phone || customerDetails.phone,
+        },
+        theme: { color: '#0c831f' },
+      });
+
+      const resolvedEta = deliverySpeed === 'batched' ? (eta ? eta + 15 : 25) : eta;
+      const order = placeOrder({
+        total,
+        subtotal,
+        deliveryFee,
+        deliverySpeed,
+        discount,
+        eta: resolvedEta,
+        items: cartItems.map(i => ({ id: i.product.id, name: i.product.name, price: i.product.price, quantity: i.quantity, sku: i.product.sku || '' })),
+        totals: { subtotal, deliveryFee, discount, total },
+        paymentMethod: 'razorpay',
+        razorpayOrderId: payment.orderId,
+        razorpayPaymentId: payment.paymentId,
+        address: customerDetails.address,
+        customerName: activeUser?.name || customerDetails.name,
+        phone: activeUser?.phone || customerDetails.phone,
+        customerEmail: activeUser?.email || null,
+        userId: activeUser?.uid || activeUser?.id || null,
+        ...getDeliveryCoords(),
+      });
+
       router.push(`/services/grokly/order-tracking?id=${order.id}&eta=${resolvedEta}`);
-    }, 2000);
+    } catch (err) {
+      console.error('Payment failed:', err);
+      setPaymentError(err.message || 'Payment failed. Please try again.');
+      setIsProcessing(false);
+    }
+  };
+
+  const handlePlaceOrder = () => {
+    if (!user) {
+      setShowAuth(true);
+      return;
+    }
+    submitOrder(user);
+  };
+
+  const handleAuthSuccess = (userData) => {
+    signIn(userData);
+    setShowAuth(false);
+    submitOrder(userData);
   };
 
   useEffect(() => {
@@ -211,17 +270,15 @@ export default function GroklyCheckout() {
     fetchEta();
   }, []); 
 
-  if (!isMounted) {
-    return (
-      <div className={styles.emptyCartContainer}>
-        <ShoppingBag size={48} className={styles.emptyCartIcon} />
-        <h1>Loading secure checkout...</h1>
-        <p>Please wait while we secure your session and load your cart items.</p>
-      </div>
-    );
-  }
-
   if (cartItems.length === 0 && !isProcessing) {
+    // Show loading spinner while cart is still hydrating from Firestore
+    if (!cartHydrated) {
+      return (
+        <div className={styles.emptyCartContainer}>
+          <p style={{ color: '#888', fontSize: '15px' }}>Loading your cart...</p>
+        </div>
+      );
+    }
     return (
       <div className={styles.emptyCartContainer}>
         <ShoppingBag size={48} className={styles.emptyCartIcon} />
@@ -404,15 +461,30 @@ export default function GroklyCheckout() {
             <span>To Pay</span>
             <span>₹{total}</span>
           </div>
-          <button 
-            className={styles.placeOrderBtn} 
+          {paymentError && (
+            <div style={{ color: '#dc2626', fontSize: '13px', fontWeight: 600, marginBottom: '10px' }}>
+              {paymentError}
+            </div>
+          )}
+          <button
+            className={styles.placeOrderBtn}
             onClick={handlePlaceOrder}
             disabled={isProcessing}
           >
-            {isProcessing ? 'Processing Order...' : `Pay & Place Order · ₹${total}`}
+            {isProcessing
+              ? 'Processing Payment...'
+              : !user
+                ? `Login & Place Order · ₹${total}`
+                : `Pay & Place Order · ₹${total}`}
           </button>
         </div>
       </div>
+
+      <AuthModal
+        isOpen={showAuth}
+        onClose={() => setShowAuth(false)}
+        onSuccess={handleAuthSuccess}
+      />
     </div>
   );
 }

@@ -168,7 +168,7 @@ export function GroklyHero() {
             fontSize: '0.88rem', textDecoration: 'none',
             transition: 'all 0.25s',
           }}>
-            Shop Now →
+            Shop Now
           </Link>
 
           <span style={{
@@ -274,9 +274,7 @@ useEffect(() => {
           width: 100%;
           height: 100%;
           object-fit: cover;
-          object-position: center 60%;
-          transform: scale(1.02);
-          transition: opacity 0.45s ease, transform 0.45s ease;
+          object-position: center center;
         }
 
         .hero-arrow-sw {
@@ -301,16 +299,15 @@ useEffect(() => {
 
         .hero-arrow-sw:hover {
           background: rgba(0,0,0,0.38);
-          transform: translateY(-50%) scale(1.05);
         }
 
         .hero-arrow-left-sw {
-  left: 14px;
-}
+          left: 14px;
+        }
 
-.hero-arrow-right-sw {
-  right: 14px;
-}
+        .hero-arrow-right-sw {
+          right: 14px;
+        }
 
         .hero-dots-sw {
           position: absolute;
@@ -337,59 +334,49 @@ useEffect(() => {
           background: #fff;
         }
 
-@media (max-width: 768px) {
-.swadishtt-hero-section {
-    padding: 40px 16px 15px !important;
-  }
-  .hero-card-sw {
-  height: 300px !important;
-}
-  
+        @media (max-width: 1024px) {
+          .hero-card-sw {
+            aspect-ratio: 1850 / 900 !important;
+          }
+        }
 
-.hero-card-sw {
-  width: calc(100% + 8px) !important;
-  margin-left: -4px !important;
-  height: 300px !important;
-  border-radius: 24px !important;
-}
-
-  .hero-inner-sw img {
-    object-position: center center !important;
-    transform: scale(1.05);
-  }
-
-  
-
-  .hero-content-swadishtt {
-  position: absolute !important;
-  left: 20px !important;
-  right: 20px !important;
-  bottom: 58px !important;
-  top: auto !important;
-  padding: 0 !important;
-  margin: 0 !important;
-}
-
-  .hero-content-swadishtt p {
-    font-size: 0.74rem !important;
-    line-height: 1.35 !important;
-    margin: 0 !important;
-    max-width: 220px !important;
-  }
-
-  .hero-cta-sw {
-    display: none !important;
-  }
-
-  .hero-arrow-sw {
-    display: none !important;
-  }
-
-  .hero-dots-sw {
-    bottom: 12px !important;
-    z-index: 5 !important;
-  }
-}`}</style>
+        @media (max-width: 768px) {
+          .swadishtt-hero-section {
+            padding: 40px 16px 15px !important;
+          }
+          .hero-card-sw {
+            aspect-ratio: 16 / 9 !important;
+            border-radius: 16px !important;
+          }
+          .hero-content-swadishtt {
+            position: absolute !important;
+            left: 20px !important;
+            right: 20px !important;
+            bottom: 30px !important;
+            top: auto !important;
+            padding: 0 !important;
+            margin: 0 !important;
+          }
+          .hero-content-swadishtt h1 {
+            font-size: 1.6rem !important;
+            margin-bottom: 8px !important;
+          }
+          .hero-content-swadishtt p {
+            font-size: 0.85rem !important;
+            max-width: 100% !important;
+          }
+          .hero-cta-sw {
+            display: none !important;
+          }
+          .hero-arrow-sw {
+            display: none !important;
+          }
+          .hero-dots-sw {
+            bottom: 12px !important;
+            z-index: 5 !important;
+          }
+        }
+      `}</style>
 
       <div
         className="hero-card-sw"
@@ -398,8 +385,8 @@ useEffect(() => {
         style={{
           position: 'relative',
           width: '100%',
-          maxWidth: '1680px',
-          height: 'clamp(460px, 50vw, 660px)',
+          maxWidth: '1850px',
+          aspectRatio: '1850 / 720',
           margin: '0 auto',
           borderRadius: '34px',
           overflow: 'hidden',
@@ -525,7 +512,7 @@ useEffect(() => {
           boxShadow: '0 10px 24px rgba(226,55,68,0.28)',
         }}
       >
-        Order Food →
+        Order Food
       </Link>
 
       <span

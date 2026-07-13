@@ -78,6 +78,15 @@ function GroklyProfileInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
+  // "Order Again": re-add all of a past order's items to the cart, then open it.
+  const handleReorder = (order) => {
+    (order.items || []).forEach(item => {
+      if (item?.id) addToCart(item.id, item.quantity || 1);
+    });
+    openCart();
+    router.push('/services/grokly');
+  };
+
   const [headerSearchQuery, setHeaderSearchQuery] = useState('');
   const handleSearchChange = (query) => {
     setHeaderSearchQuery(query);
@@ -139,6 +148,11 @@ function GroklyProfileInner() {
 
   // Wishlist (stored in localStorage)
   const [wishlist, setWishlist] = useState([]);
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   useEffect(() => {
     try {
@@ -305,6 +319,14 @@ function GroklyProfileInner() {
       day: 'numeric', month: 'short', year: 'numeric'
     });
   };
+
+  if (!isMounted) {
+    return (
+      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#fff', color: '#111' }}>
+        Loading Profile...
+      </div>
+    );
+  }
 
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', background: 'var(--grokly-bg)' }}>
@@ -490,9 +512,19 @@ function GroklyProfileInner() {
                           <div className={styles.orderStatus} data-status={order.status}>
                             {order.status.replace(/_/g, ' ')}
                           </div>
-                          <Link href={`/services/grokly/order-tracking?id=${order.id}`} className={styles.trackLink}>
-                            Track Order
-                          </Link>
+                          <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                            <button
+                              type="button"
+                              onClick={() => handleReorder(order)}
+                              className={styles.trackLink}
+                              style={{ border: 'none', cursor: 'pointer', background: '#0c831f', color: '#fff' }}
+                            >
+                              Order Again
+                            </button>
+                            <Link href={`/services/grokly/order-tracking?id=${order.id}`} className={styles.trackLink}>
+                              Track Order
+                            </Link>
+                          </div>
                         </div>
                       ))}
                     </div>

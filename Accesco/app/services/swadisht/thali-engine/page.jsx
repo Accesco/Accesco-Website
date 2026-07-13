@@ -9,6 +9,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import SwadishttHeader from '../components/SwadishttHeader';
+import { useSwadishtt } from '../contexts/SwadishttContext';
 import { THALI_RECIPES, getThalisByCategory } from '../lib/thaliData';
 import styles from './thali-engine.module.css';
 
@@ -60,6 +61,7 @@ function CategoryFilter({ activeCategory, onCategoryChange }) {
 
 // 3. Main Thali Card Component (With Standardized Buy Options)
 function ThaliCard({ thali }) {
+  const { addToCart } = useSwadishtt();
   const [showStory, setShowStory] = useState(false);
 
   // Logic to ensure every thali has exactly 3 options like Sunday Thali
@@ -96,13 +98,16 @@ function ThaliCard({ thali }) {
             e.target.src = `https://placehold.co/400x300/520B24/FFFFFF/png?text=${encodeURIComponent(thali.name)}`;
           }}
         />
-        {thali.isBestseller && <div className={styles.bestsellerBadge}>⭐ Bestseller</div>}
+        {thali.isBestseller && <div className={styles.bestsellerBadge}>Bestseller</div>}
       </div>
       
       <div className={styles.cardContent}>
         <div className={styles.cardHeader}>
-          <h3 className={styles.thaliName}>{thali.name}</h3>
-          <div className={styles.ratingBadge}>★ {thali.rating}</div>
+          <div>
+            <h3 className={styles.thaliName}>{thali.name}</h3>
+            <span className={styles.skuText}>SKU: {thali.sku}</span>
+          </div>
+          <div className={styles.ratingBadge}>{thali.rating}</div>
         </div>
         
         <p className={styles.description}>{thali.description}</p>
@@ -156,21 +161,39 @@ function ThaliCard({ thali }) {
         
         <div className={styles.cookingOptions}>
           <h4 className={styles.optionsTitle}>Choose Your Option:</h4>
-          {standardizedOptions.map((option, idx) => (
-            <div key={idx} className={styles.cookingOption}>
-              <div className={styles.optionInfo}>
-                <span className={styles.optionName}>{option.name}</span>
-                <span className={styles.optionDesc}>{option.description}</span>
-                <span className={styles.optionDelivery}>
-                  Delivery: <strong>{option.deliveryTime}</strong>
-                </span>
+          {standardizedOptions.map((option, idx) => {
+            const optionSku = `${thali.sku}-${option.name.toUpperCase().replace(/\s+/g, '-')}`;
+            return (
+              <div key={idx} className={styles.cookingOption}>
+                <div className={styles.optionInfo}>
+                  <span className={styles.optionName}>{option.name}</span>
+                  <span className={styles.optionDesc}>{option.description}</span>
+                  <span className={styles.optionDelivery}>
+                    Delivery: <strong>{option.deliveryTime}</strong>
+                  </span>
+                </div>
+                <div className={styles.optionPrice}>
+                  <span className={styles.price}>₹{option.price}</span>
+                  <button
+                    className={styles.addBtn}
+                    onClick={() => {
+                      addToCart({
+                        id: `${thali.id}-${idx}`,
+                        name: `${thali.name} (${option.name})`,
+                        price: option.price,
+                        image: thali.image,
+                        sku: optionSku,
+                        restaurant: 'Swadishtt Festivals',
+                        quantity: 1
+                      });
+                    }}
+                  >
+                    ADD
+                  </button>
+                </div>
               </div>
-              <div className={styles.optionPrice}>
-                <span className={styles.price}>₹{option.price}</span>
-                <button className={styles.addBtn}>ADD</button>
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
         
         <Link href={`/services/swadisht/`} className={styles.viewDetailsBtn}>

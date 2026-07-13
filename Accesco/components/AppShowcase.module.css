@@ -99,6 +99,19 @@
 .inputWrapper {
   position: relative;
   width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.inputLabel {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: #6B5B65;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  line-height: 1;
 }
 
 .inputIcon {
@@ -113,7 +126,7 @@
 .formInput {
   width: 100%;
   height: 52px;
-  padding: 0 16px 0 48px;
+  padding: 0 16px;
   border: 1px solid #e2e2e2;
   border-radius: 12px;
   font-size: 0.95rem;
@@ -471,6 +484,7 @@
     height: 11%;
   }
 }
+<<<<<<< HEAD
 .brandAsterisk {
   width: 80px;
   height: 80px;
@@ -481,4 +495,23 @@
           hue-rotate(323deg)
           brightness(81%)
           contrast(111%);
+=======
+
+.waitlistStar {
+  color: #ec006c;
+  font-size: 42px;
+  font-weight: 900;
+  line-height: 1;
+  margin-bottom: 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+@media (max-width: 768px) {
+  .waitlistStar {
+    font-size: 34px;
+    margin-bottom: 14px;
+  }
+>>>>>>> origin/main
 }
