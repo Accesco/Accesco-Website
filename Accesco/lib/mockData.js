@@ -1144,6 +1144,81 @@ export const products = [
   }
 ];
 
+const normalizeCategoryId = (value) => {
+  if (!value) return '';
+
+  if (typeof value === 'string') {
+    return value.trim().toLowerCase();
+  }
+
+  if (typeof value === 'object') {
+    return normalizeCategoryId(value.id || value.slug || value.name);
+  }
+
+  return '';
+};
+
+const normalizeColorName = (value) => {
+  if (!value) return '';
+
+  if (typeof value === 'string') {
+    return value.trim().toLowerCase();
+  }
+
+  if (typeof value === 'object') {
+    return normalizeColorName(value.name || value.color || value.label);
+  }
+
+  return '';
+};
+
+const normalizeSizeValue = (value) => {
+  if (value === undefined || value === null) return '';
+  return String(value).trim();
+};
+
+export function getProductCategoryIds(product) {
+  if (!product) return [];
+
+  if (Array.isArray(product.categories) && product.categories.length > 0) {
+    return [...new Set(product.categories.map(normalizeCategoryId).filter(Boolean))];
+  }
+
+  const categoryId = normalizeCategoryId(product.category);
+  return categoryId ? [categoryId] : [];
+}
+
+export function getProductVariants(product) {
+  if (!product) return [];
+
+  if (Array.isArray(product.variants) && product.variants.length > 0) {
+    return product.variants.map((variant) => ({
+      ...variant,
+      size: normalizeSizeValue(variant.size),
+      color: normalizeColorName(variant.color || variant.colorName || variant.color_id || variant.colorId),
+      stock: typeof variant.stock === 'number' ? variant.stock : Number(variant.stock || 0),
+      price: variant.price !== undefined && variant.price !== null ? variant.price : (product.discountedPrice || product.price),
+    }));
+  }
+
+  const sizes = Array.isArray(product.sizes) && product.sizes.length > 0
+    ? product.sizes
+    : Object.keys(product.inventory || {});
+  const colors = Array.isArray(product.colors) && product.colors.length > 0
+    ? product.colors
+    : [null];
+
+  return sizes.flatMap((size) => {
+    return colors.map((color) => ({
+      size: normalizeSizeValue(size),
+      color: normalizeColorName(color),
+      stock: product.inventory?.[size] || 0,
+      price: product.discountedPrice || product.price,
+      image: color?.images?.[0] || product.images?.[0]?.url || '',
+    }));
+  });
+}
+
 // Helper functions
 export function getProductById(id) {
   return products.find(p => p.id === id);

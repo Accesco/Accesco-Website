@@ -1,6 +1,6 @@
 /**
  * ProductCard Component Styles
- * @version 1.0.0
+ * @version 2.0.0 — Harvest Ledger redesign
  */
 
 .pcard {
@@ -17,7 +17,6 @@
   height: 100%;
 }
 
-
 /* ═══════════════════════════════════════════════
    BADGES
 ═══════════════════════════════════════════════ */
@@ -27,14 +26,15 @@
   top: 8px;
   left: 8px;
   z-index: var(--grokly-z-base);
-  background: #f0fff4;
+  background: var(--grokly-primary-extra-light);
   color: var(--grokly-primary);
   font-size: var(--grokly-font-size-xs);
   font-weight: var(--grokly-font-weight-extrabold);
   padding: 3px 7px;
   border-radius: var(--grokly-radius-full);
-  border: 1px solid #c6f6d5;
+  border: 1px solid var(--grokly-border);
   line-height: 1;
+  font-family: var(--grokly-font-mono);
 }
 
 .bestBadge {
@@ -42,23 +42,25 @@
   top: 8px;
   left: 8px;
   z-index: var(--grokly-z-base);
-  background: #fff8e1;
-  color: #e65100;
+  background: #FCF3E3;
+  color: var(--grokly-lime-2);
   font-size: 9px;
   font-weight: var(--grokly-font-weight-extrabold);
   padding: 3px 6px;
   border-radius: var(--grokly-radius-full);
-  border: 1px solid #ffe082;
+  border: 1px solid #EAD7B0;
   line-height: 1;
   display: flex;
   align-items: center;
   gap: 2px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
 }
 
 .bestBadge.premium {
-  background: #faf5ff;
-  color: #7c3aed;
-  border-color: #e9d5ff;
+  background: #F1EEE6;
+  color: var(--grokly-primary);
+  border-color: var(--grokly-border);
 }
 
 /* ═══════════════════════════════════════════════
@@ -67,14 +69,13 @@
 
 .pimgWrap {
   width: 100%;
-  height: 160px;
-  flex-shrink: 0;
-  background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+  aspect-ratio: 1;
+  background: var(--grokly-primary-extra-light);
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 12px;
-  overflow: visible;
+  padding: 10px;
+  overflow: hidden;
   position: relative;
 }
 
@@ -90,18 +91,18 @@
 }
 
 .pimgPlaceholder {
-  width: calc(100% - 24px);
-  height: calc(100% - 24px);
+  width: 100%;
+  height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
   background: rgba(255, 255, 255, 0.5);
   border-radius: var(--grokly-radius-md);
   position: absolute;
-  top: 12px;
-  left: 12px;
-  right: 12px;
-  bottom: 12px;
+  top: 10px;
+  left: 10px;
+  right: 10px;
+  bottom: 10px;
 }
 
 .pimgEmoji {
@@ -111,7 +112,7 @@
 }
 
 /* ═══════════════════════════════════════════════
-   DELIVERY BADGE
+   DELIVERY BADGE — reads like a stamped ticket line
 ═══════════════════════════════════════════════ */
 
 .pdeliv {
@@ -119,12 +120,14 @@
   align-items: center;
   gap: 4px;
   padding: 5px 10px;
-  background: #f0fdf4;
+  background: var(--grokly-primary-extra-light);
   font-size: var(--grokly-font-size-xs);
   font-weight: var(--grokly-font-weight-extrabold);
   color: var(--grokly-primary);
-  border-top: 1px solid #dcfce7;
-  border-bottom: 1px solid #dcfce7;
+  border-top: 1px solid var(--grokly-border);
+  border-bottom: 1px solid var(--grokly-border);
+  font-family: var(--grokly-font-mono);
+  letter-spacing: 0.2px;
 }
 
 /* ═══════════════════════════════════════════════
@@ -143,6 +146,7 @@
   font-size: 11px;
   font-weight: var(--grokly-font-weight-bold);
   color: var(--grokly-text-muted);
+  font-family: var(--grokly-font-mono);
 }
 
 .pname {
@@ -156,7 +160,7 @@
   -webkit-box-orient: vertical;
   overflow: hidden;
   margin: 0;
-  min-height: 2.6em;
+  font-family: var(--grokly-font-primary);
 }
 
 .pbrand {
@@ -181,7 +185,7 @@
 .pratingNum {
   color: var(--grokly-text-muted);
   font-size: 10px;
-  font-family: var(--grokly-font-primary);
+  font-family: var(--grokly-font-mono);
   font-weight: var(--grokly-font-weight-semibold);
 }
 
@@ -206,6 +210,7 @@
   font-weight: var(--grokly-font-weight-extrabold);
   color: var(--grokly-text-primary);
   line-height: 1;
+  font-family: var(--grokly-font-mono);
 }
 
 .pmrp {
@@ -215,6 +220,7 @@
   text-decoration: line-through;
   line-height: 1;
   margin-top: 2px;
+  font-family: var(--grokly-font-mono);
 }
 
 /* ═══════════════════════════════════════════════
@@ -282,7 +288,9 @@
   font-size: 13px;
   font-weight: 800;
   color: var(--grokly-text-white);
+  font-family: var(--grokly-font-mono);
 }
+
 /* ═══════════════════════════════════════════════
    RESPONSIVE
 ═══════════════════════════════════════════════ */
@@ -311,7 +319,6 @@
   outline-offset: 2px;
 }
 
-/* Reduced motion support */
 @media (prefers-reduced-motion: reduce) {
   .pcard,
   .pimg,
@@ -322,14 +329,13 @@
   }
 }
 
-
 /* Stock Badge */
 .stockBadge {
   position: absolute;
   bottom: 8px;
   left: 8px;
-  background: #fee2e2;
-  color: #dc2626;
+  background: #F5E6E5;
+  color: var(--grokly-error);
   font-size: 10px;
   font-weight: 800;
   padding: 4px 8px;
@@ -340,12 +346,8 @@
 }
 
 @keyframes stockPulse {
-  0%, 100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.7;
-  }
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
 }
 
 /* Wishlist Heart Button */
@@ -362,9 +364,9 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  z-index: 10;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-  transition: background 0.15s ease, transform 0.15s ease;
+  z-index: 3;
+  box-shadow: 0 1px 4px rgba(42, 33, 26, 0.10);
+  transition: background 0.15s ease;
 }
 
 .wishlistBtn:hover {
