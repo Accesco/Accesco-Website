@@ -80,11 +80,9 @@ const router = useRouter();
   const strokeDashoffset = circumference - (percentageUsed / 100) * circumference;
 
   // Handle CTA button click
-  const handleExploreClick = () => {
-    if (dashboardRef.current) {
-      dashboardRef.current.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
+ const handleExploreClick = () => {
+  router.push('/xpense-meter');
+};
 
   // Helper to render lucide icons dynamically
   const getIcon = (iconName, className = '') => {
@@ -104,7 +102,7 @@ const router = useRouter();
 
   // Switch to the full interactive dashboard app
 const navigateToDashboard = () => {
-  router.push('/calculator');
+  router.push('/xpense-meter');
 };
   // Sync state between transaction list and categories when in active dashboard mode
   useEffect(() => {
