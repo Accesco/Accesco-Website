@@ -141,18 +141,79 @@ background-position: center -15px;
   transform: translateY(-1px);
   box-shadow: 0 6px 18px rgba(255, 67, 153, .4);
 }
+/* ================= MOBILE HERO ================= */
 @media (max-width: 768px) {
   .lib-hero {
-    min-height: 360px;
-    padding: 22px 18px;
+    position: relative;
+    min-height: 520px;
+    padding: 120px 20px 70px;
+    align-items: flex-start;
+    overflow: hidden;
+
+    background-color: #AA0152;
+    background: url("/images/black-pink.png") center center / cover no-repeat;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center bottom;
   }
 
-  .lib-hero-center h1 {
-    font-size: 82px;
-    letter-spacing: -3px;
+  .lib-hero::before {
+    display: none;
+  }
+
+  .lib-hero-content {
+    position: relative;
+    z-index: 2;
+    margin-top: 120px;
+    text-align: center;
+    width: 100%;
+  }
+
+  .lib-hero-content h1 {
+    font-size:clamp(5rem, 18vw, 7rem);
+    line-height: 1;
+    letter-spacing: -1px;
+    margin-bottom: 18px;
+  }
+
+  .lib-hero-content p {
+    font-size: 15px;
+    line-height: 1.6;
+    max-width: 100%;
+    margin: 0 auto 28px;
+    padding: 0 8px;
+  }
+
+    .lib-search-bar {
+    width: 100%;
+    display: flex;
+    flex-direction: row;   /* keep horizontal */
+    align-items: center;
+    gap: 0;
+    padding: 6px;
+    border-radius: 999px;
+  }
+
+  .lib-search-bar input {
+    flex: 1;
+    width: auto;
+    padding: 0 18px;
+    text-align: left;
+    height: 48px;
+  }
+
+  .lib-search-bar button {
+    width: 95px;
+     display: flex;
+align-items: center;
+justify-content: center;
+text-align: center;
+padding: 0;
+
+    height: 48px;
+    white-space: nowrap;
   }
 }
-
 
 
 
