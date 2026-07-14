@@ -9,130 +9,214 @@
 /* ── HERO ── */
 .lib-hero {
   position: relative;
-  min-height: 520px;
+ min-height:560px;
+  background: #AA0152;
+
   display: flex;
+  justify-content: center;
   align-items: center;
-  padding: 100px 48px 80px;
+
+   padding:90px 24px 70px;
   overflow: hidden;
-  background: #0d0408;
-  border-radius: 0 0 40px 40px;
-  margin-bottom: 0;
-  border-bottom: 1px solid rgba(200, 150, 62, 0.15);
 }
-
-.lib-hero-video {
+.lib-hero::before {
+  content: "";
   position: absolute;
   inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  opacity: 0.45;
-  z-index: 0;
-}
 
-.lib-hero-overlay {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(135deg, rgba(26,10,15,0.96) 0%, rgba(45,8,24,0.85) 50%, rgba(26,10,15,0.4) 100%),
-              radial-gradient(circle at center, rgba(200,150,62,0.15) 0%, transparent 60%);
+  background-image: url("/images/black-pink.png");
+background-size: cover;
+background-repeat: no-repeat;
+background-position: center -15px;
+
   z-index: 1;
+  pointer-events: none;
+  opacity: 1; /* reduce if you want the waves lighter */
 }
+.lib-hero-center,
+.lib-hero-content {
+  position: relative;
+  z-index: 2;
+}
+.lib-hero-center {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 
 .lib-hero-content {
   position: relative;
   z-index: 2;
-  max-width: 720px;
+  max-width: 900px;
+   width: 100%;
+    text-align: center;
+    margin-top:65px;
   color: #fff;
 }
+.lib-search-bar button{
+    padding:12px 30px;
+    font-size:14px;
+    font-weight:700;
+}
 
-.lib-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  font-family: 'Sora', sans-serif;
-  font-size: 10px;
+
+
+.lib-hero-content h1 {
+  font-family: inherit; /* Baloo from layout */
   font-weight: 700;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  color: #C8963E;
-  margin-bottom: 24px;
-  background: rgba(200, 150, 62, 0.12);
-  border: 1px solid rgba(200, 150, 62, 0.25);
-  padding: 6px 14px;
-  border-radius: 9999px;
-  backdrop-filter: blur(8px);
-}
-
-.lib-badge .dot {
-  width: 8px;
-  height: 8px;
-  background: #C8963E;
-  box-shadow: 0 0 8px #C8963E;
-  border-radius: 50%;
-  display: inline-block;
-  animation: libPulse 2s infinite;
-}
-
-.lib-title {
-  font-family: 'Sora', sans-serif;
-  font-size: clamp(2rem, 4vw, 3.2rem);
-  font-weight: 800;
-  line-height: 1.1;
+  font-size: clamp(4rem, 7vw, 5.8rem); /* ~64px-92px */
+  line-height: 0.95;
+  letter-spacing: -2px;
   color: #fff;
-  margin: 0 0 16px;
-  letter-spacing: -0.03em;
+  margin: 0 0 22px;
 }
 
-.lib-gradient-text {
-  background: linear-gradient(135deg, #c8963e 0%, #fce0ad 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
+.lib-hero-content p {
+  max-width: 620px;
+  margin: 0 auto 34px;
 
-.lib-hero-subtitle {
-  font-family: 'DM Sans', sans-serif;
-  font-size: clamp(0.95rem, 1.5vw, 1.1rem);
-  line-height: 1.65;
-  color: rgba(255, 255, 255, 0.7);
-  margin: 0 0 32px;
-  max-width: 600px;
+  font-family: "Inter", sans-serif;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.6;
+  color: rgba(255,255,255,.82);
 }
+.lib-search-bar {
+  width: min(620px, 100%);
+  margin: 0 auto;
 
-.lib-stats-bar {
   display: flex;
   align-items: center;
-  gap: 20px;
-  flex-wrap: wrap;
+
+  padding: 6px;
+  border-radius: 999px;
+
+  background: rgba(18, 8, 18, 0.85);
+  border: 1px solid rgba(255,255,255,0.15);
+
+  backdrop-filter: blur(10px);
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,.04),
+    0 8px 24px rgba(0,0,0,.25);
 }
 
-.lib-stat-item {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
+.lib-search-bar input {
+  flex: 1;
 
-.lib-stat-num {
-  font-family: 'Sora', sans-serif;
-  font-size: 1.5rem;
-  font-weight: 800;
+  background: transparent;
+  border: none;
+  outline: none;
+
+  padding: 0 22px;
+
   color: #fff;
-  line-height: 1;
+  font-size: 15px;
+  font-family: "Inter", sans-serif;
 }
 
-.lib-stat-label {
-  font-family: 'DM Sans', sans-serif;
-  font-size: 0.7rem;
-  color: rgba(255, 255, 255, 0.4);
-  text-transform: uppercase;
-  letter-spacing: 1px;
+.lib-search-bar input::placeholder {
+  color: rgba(255,255,255,.55);
 }
 
-.lib-stat-divider {
-  width: 1px;
-  height: 28px;
-  background: rgba(255, 255, 255, 0.15);
+.lib-search-bar button {
+  border: none;
+  outline: none;
+
+  padding: 13px 28px;
+  border-radius: 999px;
+
+  background: linear-gradient(135deg, #ff4fa5, #ff2b8d);
+  color: #fff;
+
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+
+  transition: .25s;
 }
+
+.lib-search-bar button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(255, 67, 153, .4);
+}
+/* ================= MOBILE HERO ================= */
+@media (max-width: 768px) {
+  .lib-hero {
+    position: relative;
+    min-height: 520px;
+    padding: 120px 20px 70px;
+    align-items: flex-start;
+    overflow: hidden;
+
+    background-color: #AA0152;
+    background: url("/images/black-pink.png") center center / cover no-repeat;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center bottom;
+  }
+
+  .lib-hero::before {
+    display: none;
+  }
+
+  .lib-hero-content {
+    position: relative;
+    z-index: 2;
+    margin-top: 120px;
+    text-align: center;
+    width: 100%;
+  }
+
+  .lib-hero-content h1 {
+    font-size:clamp(5rem, 18vw, 7rem);
+    line-height: 1;
+    letter-spacing: -1px;
+    margin-bottom: 18px;
+  }
+
+  .lib-hero-content p {
+    font-size: 15px;
+    line-height: 1.6;
+    max-width: 100%;
+    margin: 0 auto 28px;
+    padding: 0 8px;
+  }
+
+    .lib-search-bar {
+    width: 100%;
+    display: flex;
+    flex-direction: row;   /* keep horizontal */
+    align-items: center;
+    gap: 0;
+    padding: 6px;
+    border-radius: 999px;
+  }
+
+  .lib-search-bar input {
+    flex: 1;
+    width: auto;
+    padding: 0 18px;
+    text-align: left;
+    height: 48px;
+  }
+
+  .lib-search-bar button {
+    width: 95px;
+     display: flex;
+align-items: center;
+justify-content: center;
+text-align: center;
+padding: 0;
+
+    height: 48px;
+    white-space: nowrap;
+  }
+}
+
+
+
 
 /* ── SEGMENT TABS ── */
 .lib-tabs-wrap {
@@ -370,16 +454,13 @@
 
 /* ── RESPONSIVE ── */
 @media (max-width: 768px) {
-  .lib-hero {
-    min-height: 360px;
-    padding: 100px 22px 40px;
-    border-radius: 0 0 28px 28px;
-  }
+ 
 
+  
   .lib-hero-video { display: none; }
-  .lib-hero-overlay { display: none; }
+ 
 
-  .lib-title { font-size: 1.65rem; }
+ 
 
   .lib-tabs {
     padding: 0 16px;

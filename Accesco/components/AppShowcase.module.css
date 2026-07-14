@@ -1,330 +1,278 @@
-.waitlistContainer {
-  max-width: 1200px;
-  margin: 0 auto;
+.waitlistCard {
+  background: #ffffff;
+  border-radius: 24px;
+  padding: 24px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.03);
+  border: 1px solid #f0f0f0;
   display: grid;
-  grid-template-columns: 0.85fr 1.15fr;
-  gap: 80px;
+  grid-template-columns: 0.95fr 1.05fr; /* Matches the balanced layout ratio */
+  gap: 40px;
+  max-width: 1040px;
+  margin: 0 auto;
   align-items: stretch;
+  box-sizing: border-box;
 }
 
-.waitlistInfo {
-  max-width: 540px;
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-}
-
+/* Reduced size for a balanced, premium editorial header */
 .waitlistTitle {
-  font-family: 'Proxima Nova', sans-serif;
-  font-size: clamp(2rem, 4vw, 3.2rem);
-  font-weight: 900;
-  color: #1A0A0F;
-  margin: 0 0 20px;
+  font-family: 'Sora', 'Proxima Nova', sans-serif;
+  font-size: clamp(2.2rem, 4vw, 3.2rem); /* Reduced to a clean, well-proportioned scale */
+  font-weight: 850;
+  color: #12060B; /* Matches the rich charcoal-black from the image */
+  margin: 0 0 16px;
   letter-spacing: -0.04em;
-  line-height: 1.08;
+  line-height: 1.1;
   text-align: center;
 }
 
 .waitlistTitle .highlight {
-  color: #7A0042;
+  color: #700457; /* Matches the rich burgundy-purple from the image */
 }
 
+/* Expanded to allow the subtitle text to stay on a single line on desktop viewports */
 .waitlistSubtitle {
-  font-family: 'Proxima Nova', sans-serif;
+  font-family: 'DM Sans', sans-serif;
   font-size: 1.05rem;
   color: #6B5B65;
   margin: 0 auto 36px;
   line-height: 1.7;
   text-align: center;
-  max-width: 640px;
+  max-width: 1100px; /* Allows a single line on desktop, wraps naturally on mobile */
+  width: 100%;
 }
 
-.waitlistFeatures {
-  display: none;
-}
-
-.postersSectionWrapper {
-  max-width: 1200px;
-  margin: 80px auto 0;
-  padding: 48px 40px 40px;
-  background: #fff;
-  border-radius: 32px;
-border: none;
+.leftPanel {
   position: relative;
+  border-radius: 18px;
   overflow: hidden;
-}
-
-.postersSectionWrapper::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background: linear-gradient(90deg, transparent, #7A0042, #C8963E, transparent);
-  opacity: 0.5;
-    display: none;
-}
-
-.postersHeadingRow {
   display: flex;
-  align-items: center;
-  gap: 14px;
-  margin-bottom: 32px;
+  align-items: flex-end; /* Ensures alignment to the absolute bottom of the column frame */
+  justify-content: center;
+  /* Premium brand gradient seamlessly blends with the top edges of your poster background */
+  background: linear-gradient(135deg, #7A0042, #1A0A0F); 
 }
 
-.postersSectionHeading {
-  font-family: 'Sora', sans-serif;
-  font-size: clamp(1.4rem, 3vw, 2rem);
-  font-weight: 800;
-  color: #1A0A0F;
-  letter-spacing: -0.03em;
-  margin: 0;
-}
-
-.postersSectionHighlight {
-  background: linear-gradient(135deg, #7A0042 0%, #C8963E 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-.postersBadge {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  padding: 4px 12px;
-  border-radius: 999px;
-  background: linear-gradient(135deg, rgba(122, 0, 66, 0.08), rgba(200, 150, 62, 0.1));
-  border: 1px solid rgba(122, 0, 66, 0.15);
-  font-family: 'DM Sans', sans-serif;
-  font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: #7A0042;
-}
-
-.postersSection {
-  max-width: 1200px;
-  margin: 0 auto;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 28px;
-  padding: 0 20px;
-}
-
-.postersTiltCard {
-  border-radius: 16px;
-  overflow: hidden;
-  box-shadow: 0 4px 16px rgba(26, 10, 15, 0.08);
-  border: 1px solid rgba(122, 0, 66, 0.08);
-  transition: transform 0.12s ease, box-shadow 0.12s ease;
-  will-change: transform;
-  cursor: default;
-}
-
-.postersTiltCard:hover {
-  box-shadow: 0 8px 24px rgba(26, 10, 15, 0.13);
-}
-
-.postersTiltImg {
+.posterImage {
   width: 100%;
   height: 100%;
+  object-fit: contain; /* Prevents text cutting off on the left/right */
+  object-position: bottom center; /* Keeps the bottom illustrations perfectly flush with the rounded corners */
   display: block;
-  object-fit: cover;
-  pointer-events: none;
 }
 
-.waitlistPosterWrap {
-  border-radius: 24px;
-  overflow: hidden;
-  box-shadow: 0 30px 60px rgba(26, 10, 15, 0.15);
-  border: 1px solid rgba(122, 0, 66, 0.1);
-  display: flex;
-  flex-direction: column;
-}
-
-.waitlistPosterImg {
-  width: 100%;
-  height: 100%;
-  display: block;
-  object-fit: cover;
-  object-position: center;
-  flex: 1;
-}
-
-.featureText h4 {
-  font-family: 'Sora', sans-serif;
-  font-size: 0.9rem;
-  font-weight: 700;
-  color: #1A0A0F;
-  margin: 0 0 3px;
-}
-
-.featureText p {
-  font-family: 'DM Sans', sans-serif;
-  font-size: 0.82rem;
-  color: #6B5B65;
-  margin: 0;
-}
-
-/* Form card */
-.waitlistFormWrapper {
-  background: #fff;
-  border-radius: 28px;
-  padding: 44px;
-  box-shadow: 0 12px 50px rgba(122, 0, 66, 0.07), 0 4px 14px rgba(0, 0, 0, 0.04);
-  border: 1px solid rgba(122, 0, 66, 0.09);
-  position: relative;
-  overflow: hidden;
-  max-width: 580px;
-  width: 100%;
-  margin: 0 auto;
+.rightPanel {
+  padding: 16px 12px;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  height: 100%;
-  box-sizing: border-box;
 }
 
-.waitlistFormWrapper form {
+.brandLogoRow {
   display: flex;
-  flex-direction: column;
-}
-
-.waitlistFormWrapper::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 3px;
- border: 2px solid #700457;
-  background-size: 200%;
-  animation: wlShimmer 3s ease infinite;
-}
-
-@keyframes wlShimmer {
-  0%, 100% { background-position: 0% center; }
-  50% { background-position: 100% center; }
-}
-
-.formHeader {
-  text-align: center;
-  margin-bottom: 28px;
-}
-
-.formTitle {
-  font-family: 'Sora', sans-serif;
-  font-size: 1.3rem;
-  font-weight: 800;
-  color: #1A0A0F;
-  margin: 0 0 6px;
-  letter-spacing: -0.02em;
-}
-
-.formDescription {
-  font-family: 'DM Sans', sans-serif;
-  font-size: 0.88rem;
-  color: #6B5B65;
-  margin: 0;
-}
-
-/* Step indicator */
-.stepIndicator {
-  display: flex;
-  justify-content: center;
-  gap: 8px;
-  margin-bottom: 28px;
-}
-
-.stepDot {
-  height: 4px;
-  width: 24px;
-  border-radius: 9999px;
-  background: rgba(122, 0, 66, 0.12);
-  transition: all 0.35s;
-}
-
-.stepDotActive {
- background: #700457 !important;
-  width: 48px !important;
-}
-
-/* Inputs */
-.formGroup {
   margin-bottom: 20px;
 }
 
-.formLabel {
-  display: block;
+.cardTitle {
   font-family: 'Sora', sans-serif;
-  font-size: 0.68rem;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
+  font-size: 2.1rem;
+  font-weight: 800;
+  color: #1A0A0F;
+  margin: 0 0 8px;
+  letter-spacing: -0.03em;
+}
+
+.cardSubtitle {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.95rem;
   color: #6B5B65;
-  margin-bottom: 8px;
+  line-height: 1.55;
+  margin: 0 0 32px;
+}
+
+.inputsStack {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+}
+
+.inputWrapper {
+  position: relative;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.inputLabel {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: #6B5B65;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  line-height: 1;
+}
+
+.inputIcon {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #8C7B83;
+  pointer-events: none;
 }
 
 .formInput {
   width: 100%;
-  padding: 14px 18px;
-  border: 1.5px solid rgba(122, 0, 66, 0.14);
+  height: 52px;
+  padding: 0 16px;
+  border: 1px solid #e2e2e2;
   border-radius: 12px;
   font-size: 0.95rem;
   font-family: 'DM Sans', sans-serif;
-  transition: all 0.22s;
-  background: #FAFAF9;
-  box-sizing: border-box;
   color: #1A0A0F;
+  background: #FAFAF9;
   outline: none;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
 }
 
 .formInput:focus {
   border-color: #7A0042;
-  box-shadow: 0 0 0 3px rgba(122, 0, 66, 0.08);
-  background: #fff;
+  background: #ffffff;
+  box-shadow: 0 0 0 4px rgba(122, 0, 66, 0.05);
 }
 
-.formInput::placeholder {
-  color: rgba(107, 91, 101, 0.45);
+.submitButton {
+  width: 100%;
+  height: 52px;
+  background: #7A0042; /* Premium brand deep purple wine */
+  color: #ffffff;
+  border: none;
+  border-radius: 12px;
+  font-family: 'Sora', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: 0 4px 14px rgba(122, 0, 66, 0.15);
+  transition: all 0.2s ease;
 }
 
-/* Interests */
+.submitButton:hover {
+  background: #600033;
+  box-shadow: 0 6px 18px rgba(122, 0, 66, 0.25);
+  transform: translateY(-1px);
+}
+
+.submitButton:active {
+  transform: translateY(0);
+}
+
+/* Trust Section Badges */
+.trustRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 24px;
+}
+
+.trustLeft {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.trustItem {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.8rem;
+  color: #6B5B65;
+  font-weight: 500;
+}
+
+.trustDivider {
+  width: 1px;
+  height: 12px;
+  background: #eaeaea;
+}
+
+.launchBadge {
+  background: #FFF2F0; /* Soft warm orange background */
+  color: #D47A55; /* Symmetrical accent color */
+  font-family: 'DM Sans', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 6px;
+  letter-spacing: 0.02em;
+}
+
+/* Bento Interests Selector View (Step 2) */
 .interestsGrid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 10px;
-  margin-bottom: 20px;
+  gap: 12px;
+  margin-bottom: 8px;
 }
 
 .interestCard {
-  padding: 18px 14px;
-  border: 1.5px solid rgba(122, 0, 66, 0.12);
-  border-radius: 14px;
-  cursor: pointer;
-  transition: all 0.22s;
-  text-align: center;
   background: #FAFAF9;
+  border: 1px solid #eaeaea;
+  border-radius: 12px;
+  padding: 16px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transition: all 0.2s ease;
+  position: relative;
 }
 
 .interestCard:hover {
-  border-color: rgba(122, 0, 66, 0.3);
-  background: rgba(122, 0, 66, 0.03);
+  border-color: rgba(122, 0, 66, 0.2);
+  background: #ffffff;
 }
 
 .interestCardSelected {
   border-color: #7A0042 !important;
-  background: rgba(122, 0, 66, 0.05) !important;
+  background: rgba(122, 0, 66, 0.03) !important;
+}
+
+.interestCardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .interestIcon {
-  display: flex;
-  justify-content: center;
   color: #7A0042;
-  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.customCheckbox {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(122, 0, 66, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #ffffff;
+}
+
+.customCheckboxActive {
+  background: #7A0042;
+  border-color: #7A0042;
+  color: #ffffff;
 }
 
 .interestLabel {
@@ -332,178 +280,119 @@ border: none;
   font-size: 0.82rem;
   font-weight: 600;
   color: #1A0A0F;
+  line-height: 1.3;
 }
 
-/* Verification */
-.verificationSection {
-  text-align: center;
-}
-
-.verificationInfo {
-  background: rgba(122, 0, 66, 0.04);
-  border: 1px solid rgba(122, 0, 66, 0.1);
-  border-radius: 12px;
-  padding: 14px 16px;
-  margin-bottom: 20px;
-  font-family: 'DM Sans', sans-serif;
-  font-size: 0.88rem;
-  color: #6B5B65;
-  line-height: 1.6;
-}
-
-.resendCode {
-  background: none;
-  border: none;
-  color: #7A0042;
-  font-family: 'Sora', sans-serif;
-  font-weight: 700;
-  font-size: 0.82rem;
-  cursor: pointer;
-  text-decoration: underline;
-  margin-top: 10px;
-}
-
-/* Buttons */
 .buttonGroup {
   display: flex;
-  gap: 10px;
-  margin-top: 20px;
+  gap: 12px;
+  width: 100%;
 }
 
-.navButton {
-  flex: 1;
-  padding: 15px;
-  border: 1.5px solid rgba(122, 0, 66, 0.18);
-  background: #fff;
+.prevButton {
+  flex: 0.35;
+  height: 52px;
+  background: #ffffff;
+  border: 1.5px solid rgba(122, 0, 66, 0.2);
+  border-radius: 12px;
   color: #7A0042;
-  border-radius: 12px;
   font-family: 'Sora', sans-serif;
+  font-weight: 700;
   font-size: 0.85rem;
-  font-weight: 700;
   cursor: pointer;
-  transition: all 0.22s;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-}
-
-.navButton:hover:not(:disabled) {
-  border-color: #7A0042;
-  background: rgba(122, 0, 66, 0.04);
-}
-
-.navButton:disabled {
-  opacity: 0.45;
-  cursor: not-allowed;
-}
-
-.submitButton {
-  width: 100%;
-  padding: 16px;
-  background: #7A0042;
-  color: #FFFDF8;
-  border: none;
-  border-radius: 12px;
-  font-family: 'Sora', sans-serif;
-  font-size: 0.9rem;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.3s;
-  position: relative;
-  overflow: hidden;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  box-shadow: 0 4px 22px rgba(122, 0, 66, 0.3);
-  margin-top: 20px;
-}
-
-.submitButton::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.12), transparent);
-  transition: left 0.5s;
-}
-
-.submitButton:hover:not(:disabled)::before {
-  left: 100%;
-}
-
-.submitButton:hover:not(:disabled) {
-  transform: none;
-  box-shadow: 0 10px 30px rgba(122, 0, 66, 0.4);
-  background: #5A0031;
-}
-
-.submitButton:disabled {
-  opacity: 0.65;
-  cursor: not-allowed;
-  transform: none;
-}
-
-/* Spinner */
-.loadingSpinner {
-  display: inline-block;
-  width: 14px;
-  height: 14px;
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  border-radius: 50%;
-  border-top-color: #fff;
-  animation: spin 0.8s linear infinite;
-  margin-right: 8px;
-}
-
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
-
-/* Feedback messages */
-.successMessage {
-  background: linear-gradient(135deg, #10b981, #059669);
-  color: #fff;
-  padding: 14px 18px;
-  border-radius: 12px;
-  text-align: center;
-  font-family: 'DM Sans', sans-serif;
-  font-weight: 600;
-  font-size: 0.9rem;
-  margin-bottom: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+}
+
+.prevButton:hover {
+  background: rgba(122, 0, 66, 0.03);
+}
+
+/* Verification Code view styling (Step 3) */
+.verificationCard {
+  background: rgba(122, 0, 66, 0.02);
+  border: 1px dashed rgba(122, 0, 66, 0.15);
+  border-radius: 12px;
+  padding: 20px;
+  text-align: center;
+  margin-bottom: 8px;
+}
+
+.verificationShield {
+  color: #7A0042;
+  margin: 0 auto 8px;
+}
+
+.verificationSubtitle {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.85rem;
+  color: #6B5B65;
+  margin: 0;
+  line-height: 1.4;
+}
+
+.otpInputContainer {
+  width: 100%;
+}
+
+.otpHelperText {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.82rem;
+  color: #6B5B65;
+  text-align: center;
+  margin-top: -8px;
+  margin-bottom: 8px;
+}
+
+.resendCodeButton {
+  background: none;
+  border: none;
+  color: #7A0042;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 0;
+  font-family: 'DM Sans', sans-serif;
+}
+
+/* System Alerts */
+.successMessage {
+  background: #f0fdf4;
+  color: #15803d;
+  padding: 14px;
+  border-radius: 12px;
+  text-align: center;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 600;
+  font-size: 0.84rem;
+  margin-bottom: 16px;
+  border: 1px solid rgba(21, 128, 61, 0.12);
 }
 
 .errorMessage {
   background: #fef2f2;
-  color: #dc2626;
-  padding: 12px 16px;
+  color: #b91c1c;
+  padding: 12px 14px;
   border-radius: 10px;
   font-family: 'DM Sans', sans-serif;
-  font-size: 0.86rem;
-  margin-bottom: 18px;
-  border: 1px solid rgba(220, 38, 38, 0.2);
+  font-size: 0.82rem;
+  margin-bottom: 16px;
+  border: 1px solid rgba(185, 28, 28, 0.12);
 }
 
+/* Responsive constraints matching the Sorcerer template breakpoints */
 @media (max-width: 900px) {
-  .waitlistContainer {
+  .waitlistCard {
     grid-template-columns: 1fr;
-    gap: 50px;
+    gap: 32px;
+    padding: 20px;
   }
-  .waitlistInfo {
-    max-width: 100%;
-  }
-  .postersSectionWrapper {
-    margin-top: 48px;
-    padding: 32px 20px 28px;
-    border-radius: 20px;
-  }
-  .postersSection {
-    grid-template-columns: 1fr;
-    gap: 20px;
-    padding: 0;
+  .leftPanel {
+    height: 340px;
   }
 }
 
@@ -511,23 +400,25 @@ border: none;
   .interestsGrid {
     grid-template-columns: 1fr;
   }
-  .buttonGroup {
+  .trustRow {
     flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
   }
-  .waitlistFormWrapper {
-    padding: 28px 20px;
-    border-radius: 20px !important;
+  .launchBadge {
+    align-self: flex-start;
   }
 }
+
+/* Unchanged bottom app download segments */
 .downloadAppSection {
-  max-width: 950px;   /* try 900–1000px */
+  max-width: 1040px;
   width: 100%;
   margin: 56px auto 0;
   position: relative;
   padding: 0;
   box-sizing: border-box;
 }
-
 
 .downloadAppImageDesktop {
   width: 100%;
@@ -542,7 +433,6 @@ border: none;
   border-radius: 24px;
 }
 
-/* Desktop hotspots */
 .playStoreHotspot,
 .appStoreHotspot {
   position: absolute;
@@ -594,19 +484,22 @@ border: none;
     height: 11%;
   }
 }
-.deliveryHeadingFrame {
-  position: relative;
-  isolation: isolate;
+.brandAsterisk {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+   filter: brightness(0) saturate(100%)
+          invert(12%) sepia(92%)
+          saturate(5435%)
+          hue-rotate(323deg)
+          brightness(81%)
+          contrast(111%);
 }
+@media (min-width: 769px) and (resolution: 1.25dppx) {
 
-.deliveryHeadingFrame::before {
-  content: "";
-  position: absolute;
-  inset: -9px -220px -50px -220px;
-  background-image: url("/images/pink-wave-bg.png");
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  opacity: 0.12;
-  z-index: -1;
-  pointer-events: none;}
+  .downloadAppSection{
+    max-width: 880px !important;
+    margin-inline: auto;
+  }
+
+}

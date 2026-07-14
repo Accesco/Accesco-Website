@@ -7,6 +7,7 @@ import VideoModal from '@/components/VideoModal';
 import Footer from '@/components/Footer';
 import './style.css';
 
+
 const videos = [
   {
     id: 1,
@@ -142,61 +143,29 @@ export default function AccescoLibraryPage() {
       <AccescoHeader />
 
       <main className="lib-container">
-        {/* ── HERO ── */}
-        <section className="lib-hero">
-          <video
-            className="lib-hero-video"
-            autoPlay muted loop playsInline
-            poster="/images/qtc-mobile-hero.jpg"
-          >
-            <source src="/images/qtcbackground.mp4" type="video/mp4" />
-          </video>
-          <div className="lib-hero-overlay" />
+  {/* ── HERO ── */}
+<section className="lib-hero">
+  <div className="lib-hero-content">
+    <h1>Watch the brand<br />come alive.</h1>
 
-          <div className="lib-hero-content">
-            <h1 className="lib-title">
-              Your gateway to <span className="lib-gradient-text">knowledge & insight.</span>
-            </h1>
-            <p className="lib-hero-subtitle">
-              Explore curated resources, high-definition video walkthroughs, and expert knowledge
-              designed exclusively for the Accesco Living community.
-            </p>
-            <div className="lib-stats-bar">
-              <div className="lib-stat-item">
-                <span className="lib-stat-num">11</span>
-                <span className="lib-stat-label">Videos</span>
-              </div>
-              <div className="lib-stat-divider" />
-              <div className="lib-stat-item">
-                <span className="lib-stat-num">3</span>
-                <span className="lib-stat-label">Segments</span>
-              </div>
-              <div className="lib-stat-divider" />
-              <div className="lib-stat-item">
-                <span className="lib-stat-num">∞</span>
-                <span className="lib-stat-label">Growing</span>
-              </div>
-            </div>
-          </div>
-        </section>
+    <p>
+      Every film, story and magazine that defines Accesco Living —
+      <br />
+      collected in one intelligent library.
+    </p>
 
-        {/* ── SEGMENT TABS ── */}
-        <div className="lib-tabs-wrap">
-          <div className="lib-tabs">
-            {segments.map((seg) => (
-              <button
-                key={seg.id}
-                className={`lib-tab-btn ${activeSegment === seg.id ? 'active' : ''}`}
-                onClick={() => setActiveSegment(seg.id)}
-              >
-                <span className="lib-tab-icon">
-                  <i className={seg.iconClass}></i>
-                </span>
-                <span className="lib-tab-label">{seg.label}</span>
-              </button>
-            ))}
-          </div>
-        </div>
+   <div className="lib-search-bar">
+  <input
+    type="text"
+    placeholder="Search videos & magazines..."
+    value={searchQuery}
+    onChange={(e) => setSearchQuery(e.target.value)}
+  />
+
+  <button>Search</button>
+</div>
+  </div>
+</section>
 
         {/* ── SEGMENT: RESOURCE LIBRARY ── */}
         {activeSegment === 'resources' && (

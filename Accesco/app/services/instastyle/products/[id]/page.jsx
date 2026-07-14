@@ -183,6 +183,17 @@ export default function ProductDetailPage() {
             <div className={styles.header}>
               <p className={styles.brand}>{product.brand}</p>
               <h1 className={styles.productName}>{product.name}</h1>
+              <p
+                style={{
+                  fontSize: "12px",
+                  color: "#9CA3AF",
+                  fontFamily: "monospace",
+                  marginTop: "4px",
+                  letterSpacing: "0.05em",
+                }}
+              >
+                SKU: {product.sku}
+              </p>
 
               {/* Rating */}
               <div className={styles.rating}>

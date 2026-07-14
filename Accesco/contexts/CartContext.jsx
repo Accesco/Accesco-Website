@@ -1,8 +1,9 @@
 'use client';
 
-import { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useState, useEffect, useRef } from 'react';
 import { db } from '@/lib/firebase';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { useAuth } from '@/app/components/AuthProvider';
 
 const CartContext = createContext();
 
@@ -24,13 +25,15 @@ function getDeviceId() {
 }
 
 export function CartProvider({ children }) {
+  const { user } = useAuth();
   const [cart, setCart] = useState([]);
   const [wishlist, setWishlist] = useState([]);
   const [orders, setOrders] = useState([]);
   const [inventory, setInventory] = useState({}); // { productId: { size: count } }
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const isHydrated = useRef(false);
 
-  // Load data from localStorage on mount
+  // Load data from localStorage/Firestore on mount/user change
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
@@ -45,19 +48,69 @@ export function CartProvider({ children }) {
       }
     };
 
-    loadData(CART_STORAGE_KEY, setCart);
     loadData(WISHLIST_STORAGE_KEY, setWishlist);
-    loadData(ORDERS_STORAGE_KEY, setOrders);
     loadData(INVENTORY_STORAGE_KEY, setInventory);
+
+    // Hydrate orders from cloud
+    const fetchOrdersFromCloud = async () => {
+      try {
+        const devId = getDeviceId();
+        let queryParam = '';
+        if (user) {
+          queryParam = user.uid ? `userId=${encodeURIComponent(user.uid)}` : `email=${encodeURIComponent(user.email)}`;
+        } else if (devId) {
+          queryParam = `deviceId=${encodeURIComponent(devId)}`;
+        } else {
+          return;
+        }
+
+        const res = await fetch(`/api/instastyle/orders?${queryParam}`);
+        if (res.ok) {
+          const data = await res.json();
+          if (data.orders) {
+            setOrders(data.orders);
+            return;
+          }
+        }
+      } catch (error) {
+        console.warn('Orders cloud read fallback to local only:', error);
+      }
+
+      // Fallback
+      loadData(ORDERS_STORAGE_KEY, setOrders);
+    };
+
+    // Hydrate cart from Firestore
+    const hydrateCartFromCloud = async () => {
+      const identifier = user?.uid || user?.email || getDeviceId();
+      if (!identifier) return;
+      try {
+        const snapshot = await getDoc(doc(db, 'instastyle_carts', identifier));
+        if (snapshot.exists()) {
+          const remoteCart = snapshot.data()?.cart;
+          if (Array.isArray(remoteCart) && remoteCart.length > 0) {
+            setCart(remoteCart);
+            isHydrated.current = true;
+            return;
+          }
+        }
+      } catch (error) {
+        console.warn('Cart cloud read fallback to local only:', error);
+      }
+      
+      // Fallback
+      loadData(CART_STORAGE_KEY, setCart);
+      isHydrated.current = true;
+    };
 
     // Hydrate wishlist from cloud
     const hydrateWishlistFromCloud = async () => {
       const deviceId = getDeviceId();
       if (!deviceId) return;
       try {
-        const snapshot = await getDoc(doc(db, 'instastyle_wishlists', deviceId));
-        if (snapshot.exists()) {
-          const remoteItems = snapshot.data()?.items;
+        const docSnap = await getDoc(doc(db, 'instastyle_wishlists', deviceId));
+        if (docSnap.exists()) {
+          const remoteItems = docSnap.data()?.items;
           if (Array.isArray(remoteItems) && remoteItems.length > 0) {
             setWishlist((current) => (current.length > 0 ? current : remoteItems));
           }
@@ -66,13 +119,33 @@ export function CartProvider({ children }) {
         console.warn('Wishlist cloud read fallback to local only:', error?.message || error);
       }
     };
-    hydrateWishlistFromCloud();
-  }, []);
 
-  // Save data to localStorage whenever it changes
+    hydrateCartFromCloud();
+    hydrateWishlistFromCloud();
+    fetchOrdersFromCloud();
+  }, [user]);
+
+  // Save cart to localStorage and Firestore whenever it changes
   useEffect(() => {
+    if (!isHydrated.current) return;
+
     localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cart));
-  }, [cart]);
+
+    const syncCart = async () => {
+      const identifier = user?.uid || user?.email || getDeviceId();
+      if (!identifier) return;
+      try {
+        await setDoc(doc(db, 'instastyle_carts', identifier), {
+          cart,
+          updatedAt: Date.now(),
+        }, { merge: true });
+      } catch (error) {
+        console.warn('Cart sync fallback to local only:', error);
+      }
+    };
+
+    syncCart();
+  }, [cart, user]);
 
   useEffect(() => {
     localStorage.setItem(ORDERS_STORAGE_KEY, JSON.stringify(orders));
@@ -251,6 +324,26 @@ export function CartProvider({ children }) {
     setCart([]);
   };
 
+  // Re-add every item from a past order back into the cart ("Order Again").
+  const reorder = (items) => {
+    if (!Array.isArray(items) || items.length === 0) return;
+    setCart(prev => {
+      const next = [...prev];
+      items.forEach(it => {
+        const idx = next.findIndex(c =>
+          c.id === it.id &&
+          c.selectedSize === it.selectedSize &&
+          c.selectedColor === it.selectedColor
+        );
+        const qty = it.quantity || 1;
+        if (idx > -1) next[idx] = { ...next[idx], quantity: next[idx].quantity + qty };
+        else next.push({ ...it, quantity: qty });
+      });
+      return next;
+    });
+    setIsCartOpen(true);
+  };
+
   const placeOrder = (orderData) => {
     const newOrder = {
       id: `INS-${Date.now()}`,
@@ -357,6 +450,7 @@ export function CartProvider({ children }) {
     removeFromCart,
     updateQuantity,
     clearCart,
+    reorder,
     placeOrder,
     updateOrderStatus,
     addToWishlist,

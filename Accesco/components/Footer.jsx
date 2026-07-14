@@ -87,13 +87,21 @@ export default function Footer() {
             </div>
           </div>
         </div>
+        <div className="footer-watermark">
+  accesco
+</div>
 
         <div className="footer-divider-faint"></div>
 
-        {/* Bottom Bar */}
-        <div className="bottom-bar">
-          <span className="copyright-text" suppressHydrationWarning>© {currentYear} Accesco Living. All rights reserved.</span>
-        </div>
+       <div className="bottom-bar">
+  <span className="copyright-text">
+    © {currentYear} Accesco Living. All rights reserved.
+  </span>
+
+  <span className="copyright-text">
+    Bengaluru, Karnataka • India
+  </span>
+</div>
         
       </div>
     </footer>

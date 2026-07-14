@@ -1,11 +1,5 @@
 'use client';
 
-/**
- * Profile Page
- * @page /services/swadisht/profile
- * @description Customer profile for Swadishtt
- */
-
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import SwadishttHeader from '../components/SwadishttHeader';
@@ -15,8 +9,8 @@ const ORDERS_STORAGE_KEY = 'swadishtt-orders';
 
 function formatMoney(value) {
   const amount = Number(value || 0);
-  if (!Number.isFinite(amount)) return 'Rs 0';
-  return `Rs ${amount.toLocaleString('en-IN')}`;
+  if (!Number.isFinite(amount)) return '₹0';
+  return `₹${amount.toLocaleString('en-IN')}`;
 }
 
 function formatDate(value) {
@@ -31,18 +25,6 @@ function formatDate(value) {
   });
 }
 
-function formatMonthYear(value) {
-  if (!value) return '2026';
-  const parsed = new Date(value);
-  if (Number.isNaN(parsed.getTime())) return '2026';
-  return parsed.toLocaleDateString('en-IN', { month: 'short', year: 'numeric' });
-}
-
-function getItemCount(items) {
-  if (!Array.isArray(items)) return 0;
-  return items.reduce((sum, item) => sum + (item?.quantity || 1), 0);
-}
-
 export default function SwadishttProfilePage() {
   const [profile, setProfile] = useState({
     name: '',
@@ -50,33 +32,38 @@ export default function SwadishttProfilePage() {
     email: '',
     address: '',
     city: '',
+    pincode: '',
   });
   const [orders, setOrders] = useState([]);
   const [healthMode, setHealthMode] = useState(false);
 
-const handleHealthModeToggle = () => {
-  const nextValue = !healthMode;
+  // Address editing state
+  const [editingAddress, setEditingAddress] = useState(false);
+  const [editAddress, setEditAddress] = useState('');
+  const [editCity, setEditCity] = useState('');
+  const [editPincode, setEditPincode] = useState('');
+  const [addressSaved, setAddressSaved] = useState(false);
 
-  setHealthMode(nextValue);
-  localStorage.setItem('swadishtt-health-mode', JSON.stringify(nextValue));
-
-  if (nextValue) {
-    window.location.href = '/services/swadisht/healthy-mode';
-  }
-};
+  const handleHealthModeToggle = () => {
+    const nextValue = !healthMode;
+    setHealthMode(nextValue);
+    localStorage.setItem('swadishtt-health-mode', JSON.stringify(nextValue));
+    if (nextValue) {
+      window.location.href = '/services/swadisht/healthy-mode';
+    }
+  };
 
   useEffect(() => {
-  if (typeof window === 'undefined') return;
+    if (typeof window === 'undefined') return;
 
-  try {
-    const rawHealthMode = localStorage.getItem('swadishtt-health-mode');
-    if (rawHealthMode) setHealthMode(JSON.parse(rawHealthMode));
-  } catch (error) {
-    console.error('Error reading health mode:', error);
-  }
+    try {
+      const rawHealthMode = localStorage.getItem('swadishtt-health-mode');
+      if (rawHealthMode) setHealthMode(JSON.parse(rawHealthMode));
+    } catch (error) {
+      console.error('Error reading health mode:', error);
+    }
 
-  // Edited Jabez: hydrate profile details from localStorage.
-  let storedUser = null;
+    let storedUser = null;
     let storedLocation = null;
 
     try {
@@ -96,30 +83,44 @@ const handleHealthModeToggle = () => {
     const resolvedName = typeof storedUser?.name === 'string' ? storedUser.name : '';
     const resolvedPhone = typeof storedUser?.phone === 'string' ? storedUser.phone : '';
     const resolvedEmail = typeof storedUser?.email === 'string' ? storedUser.email : '';
+
     const resolvedCity =
       (typeof storedLocation?.city === 'string' && storedLocation.city) ||
       (typeof storedLocation?.state === 'string' && storedLocation.state) ||
       (typeof storedLocation?.region === 'string' && storedLocation.region) ||
       '';
+
+    const resolvedPincode =
+      (typeof storedLocation?.pincode === 'string' && storedLocation.pincode) ||
+      (typeof storedLocation?.postalCode === 'string' && storedLocation.postalCode) ||
+      (typeof storedLocation?.pincode === 'number' ? String(storedLocation.pincode) : '') ||
+      '';
+
     const resolvedAddress =
       (typeof storedLocation?.fullAddress === 'string' && storedLocation.fullAddress) ||
       (typeof storedLocation?.formattedAddress === 'string' && storedLocation.formattedAddress) ||
       (typeof storedLocation?.displayAddress === 'string' && storedLocation.displayAddress) ||
       (typeof storedLocation?.area === 'string' && resolvedCity
         ? `${storedLocation.area}, ${resolvedCity}`
-        : (typeof storedLocation?.area === 'string' ? storedLocation.area : '')) ||
+        : typeof storedLocation?.area === 'string'
+        ? storedLocation.area
+        : '') ||
       '';
 
-    setProfile((prev) => ({
-      ...prev,
-      name: prev.name || resolvedName,
-      phone: prev.phone || resolvedPhone,
-      email: prev.email || resolvedEmail,
-      address: prev.address || resolvedAddress,
-      city: prev.city || resolvedCity,
-    }));
+    setProfile({
+      name: resolvedName,
+      phone: resolvedPhone,
+      email: resolvedEmail,
+      address: resolvedAddress,
+      city: resolvedCity,
+      pincode: resolvedPincode,
+    });
 
-    // Edited Jabez: load Swadishtt order summary for profile stats.
+    // Initialize edit fields
+    setEditAddress(resolvedAddress);
+    setEditCity(resolvedCity);
+    setEditPincode(resolvedPincode);
+
     try {
       const rawOrders = localStorage.getItem(ORDERS_STORAGE_KEY);
       if (rawOrders) {
@@ -131,260 +132,310 @@ const handleHealthModeToggle = () => {
     }
   }, []);
 
-  const latestOrder = orders[0];
-  const latestTotal = latestOrder?.totals?.total ?? 0;
-  const totalSpent = orders.reduce(
-    (sum, order) => sum + (Number(order?.totals?.total) || 0),
-    0
-  );
+  const handleSaveAddress = () => {
+    const updatedProfile = {
+      ...profile,
+      address: editAddress,
+      city: editCity,
+      pincode: editPincode,
+    };
+    setProfile(updatedProfile);
+
+    // Save back to userLocation in localStorage (shared with main Accesco page)
+    try {
+      const rawLocation = localStorage.getItem('userLocation');
+      const storedLocation = rawLocation ? JSON.parse(rawLocation) : {};
+      const updated = {
+        ...storedLocation,
+        fullAddress: editAddress,
+        formattedAddress: editAddress,
+        displayAddress: editAddress,
+        city: editCity,
+        area: editAddress.split(',')[0]?.trim() || editAddress,
+        pincode: editPincode,
+        postalCode: editPincode,
+      };
+      localStorage.setItem('userLocation', JSON.stringify(updated));
+    } catch (error) {
+      console.error('Error saving userLocation:', error);
+    }
+
+    setEditingAddress(false);
+    setAddressSaved(true);
+    setTimeout(() => setAddressSaved(false), 3000);
+  };
+
+  const handleCancelEdit = () => {
+    setEditAddress(profile.address);
+    setEditCity(profile.city);
+    setEditPincode(profile.pincode);
+    setEditingAddress(false);
+  };
+
+  const totalSpent = orders.reduce((sum, order) => sum + (Number(order?.totals?.total) || 0), 0);
   const avgSpend = orders.length ? Math.round(totalSpent / orders.length) : 0;
-  const addressLine = [profile.address, profile.city]
-    .filter((part) => typeof part === 'string' && part.trim())
-    .join(', ');
-  const tasteTags = Array.isArray(latestOrder?.items)
-    ? latestOrder.items
-        .map((item) => item?.restaurant || item?.name)
-        .filter((label) => typeof label === 'string' && label.trim())
-        .slice(0, 4)
-    : [];
   const recentOrders = orders.slice(0, 3);
-  const firstOrder = orders.length ? orders[orders.length - 1] : null;
-  const memberSince = formatMonthYear(firstOrder?.placedAt);
 
   return (
     <div className={styles.page}>
       <SwadishttHeader />
 
-      <div className={styles.shell}>
-        <section className={styles.profileBoard}>
+      {/* Address saved toast */}
+      {addressSaved && (
+        <div className={styles.savedToast}>Address saved successfully!</div>
+      )}
+
+      <div className={styles.container}>
+        <div className={styles.dashboardLayout}>
+          {/* Left Column: Sidebar Card */}
           <aside className={styles.sidebar}>
             <div className={styles.profileCard}>
-              <div className={styles.profileTop}>
-                <div className={styles.avatar}>
-                  {(profile.name || 'S').charAt(0).toUpperCase()}
+              <div className={styles.avatar}>
+                {(profile.name || 'U').charAt(0).toUpperCase()}
+              </div>
+              <h2 className={styles.profileName}>{profile.name || 'Accesco User'}</h2>
+              <p className={styles.profilePhone}>
+                {profile.phone || 'No phone number linked'}
+              </p>
+              <p className={styles.profileEmail}>
+                {profile.email || 'No email linked'}
+              </p>
+
+              <div className={styles.statsGrid}>
+                <div className={styles.statBox}>
+                  <span className={styles.statVal}>{orders.length}</span>
+                  <span className={styles.statLabel}>Orders</span>
                 </div>
-                <div className={styles.profileIdentity}>
-                  <span className={styles.memberBadge}>Swadishtt member</span>
-                  <h1 className={styles.memberName}>{profile.name || 'Accesco Customer'}</h1>
-                  <p className={styles.memberMeta}>
-                    {profile.phone || 'Phone not added'}
-                    {profile.email ? ` | ${profile.email}` : ''}
+                <div className={styles.statBox}>
+                  <span className={styles.statVal}>{formatMoney(totalSpent)}</span>
+                  <span className={styles.statLabel}>Total Spent</span>
+                </div>
+              </div>
+
+              <div className={styles.quickActions}>
+                <Link href="/services/swadisht" className={`${styles.quickActionBtn} ${styles.quickActionPrimary}`}>
+                  Start New Order
+                </Link>
+                <Link href="/services/swadisht/orders" className={`${styles.quickActionBtn} ${styles.quickActionSecondary}`}>
+                  View All Orders
+                </Link>
+              </div>
+
+              <div className={styles.healthToggleCard}>
+                <div className={styles.healthInfo}>
+                  <span className={styles.healthLabel}>Precision Health Mode</span>
+                  <p className={styles.healthDesc}>
+                    {healthMode ? 'Healthier alternatives enabled.' : 'Filter menu by nutrition value.'}
                   </p>
                 </div>
-
-              </div>
-              <div className={styles.profileActions}>
-                <Link href="/services/swadisht" className={styles.primaryBtn}>
-                  Start new order
-                </Link>
-                <Link href="/services/swadisht/orders" className={styles.secondaryBtn}>
-                  View orders
-                </Link>
-              </div>
-              <div className={styles.healthModeCard}>
-  <div>
-    <span className={styles.healthModeLabel}>Health Mode</span>
-    <p className={styles.healthModeText}>
-      {healthMode
-        ? 'We will prioritise healthier meal suggestions.'
-        : 'Turn on for healthier food recommendations.'}
-    </p>
-  </div>
-
-  <button
-    type="button"
-    className={`${styles.healthToggle} ${healthMode ? styles.healthToggleOn : ''}`}
-    onClick={handleHealthModeToggle}
-    aria-pressed={healthMode}
-  >
-    <span />
-  </button>
-</div>
-              <div className={styles.profileInfo}>
-                <div className={styles.infoRow}>
-                  <span>Delivery hub</span>
-                  <span>{addressLine || 'Add address in checkout'}</span>
-                </div>
-                <div className={styles.infoRow}>
-                  <span>Member since</span>
-                  <span>{memberSince}</span>
-                </div>
+                <button
+                  type="button"
+                  className={`${styles.healthToggleBtn} ${healthMode ? styles.healthToggleBtnOn : ''}`}
+                  onClick={handleHealthModeToggle}
+                  aria-pressed={healthMode}
+                >
+                  <span className={styles.toggleKnob} />
+                </button>
               </div>
             </div>
-
-            <div className={styles.tasteCard}>
-              <div className={styles.cardHeader}>
-                <h2>Taste profile</h2>
-                <span>Based on latest order</span>
-              </div>
-              <div className={styles.chipRow}>
-                {tasteTags.length > 0 ? (
-                  tasteTags.map((tag) => (
-                    <span key={tag} className={styles.chip}>
-                      {tag}
-                    </span>
-                  ))
-                ) : (
-                  <span className={styles.chipMuted}>No taste data yet</span>
-                )}
-              </div>
-            </div>
-
           </aside>
 
-          <main className={styles.mainColumn}>
-          <div className={styles.welcomeBar}>
-  <div>
-    <h1 className={styles.welcomeTitle}>
-      Welcome back, 
-      {profile.name || "User"}
-    </h1>
-
-    <p className={styles.welcomeSubtitle}>
-     Discover your next gourmet experience.
-    </p>
-  </div>
-
-  <div className={styles.headerIcons}>
-  
-
-    <div className={styles.profileMini}>
-      {(profile.name || "S").charAt(0).toUpperCase()}
-    </div>
-  </div>
-</div>
-            <section className={styles.bannerCard}>
-              <div>
-                <span className={styles.bannerKicker}>Next order</span>
-               <h2 className={styles.bannerTitle}>
-  Ready for your next
-  <br />
-  meal?
-</h2>
-                <p className={styles.bannerCopy}>
-                  We keep your favorites close and your delivery fast.
-                </p>
+          {/* Right Column: Details Pane */}
+          <main className={styles.detailsPane}>
+            {/* Browse Premium Offerings */}
+            <section className={styles.panelCard}>
+              <div className={styles.panelHeaderRow}>
+                <h3 className={styles.panelTitle}>Browse Premium Offerings</h3>
+                <Link href="/services/swadisht" className={styles.panelLink}>
+                  Browse All →
+                </Link>
               </div>
-              <div className={styles.bannerActions}>
-                <Link href="/services/swadisht" className={styles.bannerBtn}>
-                  Browse restaurants
+              <p className={styles.panelSubtitle}>
+                Order from authentic local kitchens, explore curated menus, and craft custom thalis.
+              </p>
+              <div className={styles.cuisinePromoGrid}>
+                <Link href="/services/swadisht/categories" className={styles.cuisinePromoCard}>
+                  <div className={styles.cuisinePromoBg} style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=500&fit=crop)' }}></div>
+                  <div className={styles.cuisinePromoOverlay}></div>
+                  <div className={styles.cuisinePromoInfo}>
+                    <h4>Royal Biryanis</h4>
+                    <span>Explore Categories →</span>
+                  </div>
+                </Link>
+                <Link href="/services/swadisht" className={styles.cuisinePromoCard}>
+                  <div className={styles.cuisinePromoBg} style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=500&fit=crop)' }}></div>
+                  <div className={styles.cuisinePromoOverlay}></div>
+                  <div className={styles.cuisinePromoInfo}>
+                    <h4>Signature Restaurants</h4>
+                    <span>Order Now →</span>
+                  </div>
+                </Link>
+                <Link href="/services/swadisht/thali-engine" className={styles.cuisinePromoCard}>
+                  <div className={styles.cuisinePromoBg} style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1546833998-877b37c2e5c6?w=500&fit=crop)' }}></div>
+                  <div className={styles.cuisinePromoOverlay}></div>
+                  <div className={styles.cuisinePromoInfo}>
+                    <h4>Artisanal Thalis</h4>
+                    <span>Build Thali →</span>
+                  </div>
+                </Link>
+                <Link href="/services/swadisht/regional-soul" className={styles.cuisinePromoCard}>
+                  <div className={styles.cuisinePromoBg} style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1587474260584-136574528ed5?w=500&fit=crop)' }}></div>
+                  <div className={styles.cuisinePromoOverlay}></div>
+                  <div className={styles.cuisinePromoInfo}>
+                    <h4>Regional Flavors</h4>
+                    <span>Explore India →</span>
+                  </div>
                 </Link>
               </div>
             </section>
 
-            <div className={styles.metricsGrid}>
-              <div className={styles.metricCard}>
-                <span>Orders</span>
-                <strong>{orders.length}</strong>
-                <small>All time</small>
-              </div>
-              <div className={styles.metricCard}>
-                <span>Total spend</span>
-                <strong>{formatMoney(totalSpent)}</strong>
-                <small>Across all orders</small>
-              </div>
-              <div className={styles.metricCard}>
-                <span>Average basket</span>
-                <strong>{formatMoney(avgSpend)}</strong>
-                <small>Based on history</small>
-              </div>
-              <div className={styles.metricCard}>
-                <span>Latest order</span>
-                <strong>{latestOrder ? formatDate(latestOrder.placedAt) : 'No orders'}</strong>
-                <small>{latestOrder ? latestOrder.status : 'Start ordering'}</small>
-              </div>
-            </div>
-
-            <section className={styles.ordersPanel}>
-              <div className={styles.sectionHeader}>
-                <div>
-                  <h2 className={styles.sectionTitle}>Recent orders</h2>
-                  <p className={styles.sectionSub}>A quick view of your latest deliveries.</p>
-                </div>
-                <Link href="/services/swadisht/orders" className={styles.sectionLink}>
-                  See all
-                </Link>
+            {/* Delivery Addresses */}
+            <section className={styles.panelCard}>
+              <div className={styles.panelHeaderRow}>
+                <h3 className={styles.panelTitle}>Saved Delivery Address</h3>
+                {!editingAddress && (
+                  <button
+                    type="button"
+                    className={styles.editAddressBtn}
+                    onClick={() => setEditingAddress(true)}
+                  >
+                    Edit
+                  </button>
+                )}
               </div>
 
-              {recentOrders.length === 0 ? (
-                <div className={styles.emptyState}>
-                  <p className={styles.emptyTitle}>No Swadishtt orders yet</p>
-                  <p className={styles.emptyText}>
-                    Start exploring restaurants to build your taste profile.
-                  </p>
-                  <Link href="/services/swadisht" className={styles.primaryBtn}>
-                    Browse restaurants
-                  </Link>
+              {editingAddress ? (
+                <div className={styles.addressEditForm}>
+                  <div className={styles.editFormGroup}>
+                    <label className={styles.editLabel}>Full Address</label>
+                    <textarea
+                      className={styles.editTextarea}
+                      value={editAddress}
+                      onChange={(e) => setEditAddress(e.target.value)}
+                      rows={3}
+                      placeholder="House/flat no, street, area, landmark..."
+                    />
+                  </div>
+                  <div className={styles.editFormRow}>
+                    <div className={styles.editFormGroup}>
+                      <label className={styles.editLabel}>City</label>
+                      <input
+                        type="text"
+                        className={styles.editInput}
+                        value={editCity}
+                        onChange={(e) => setEditCity(e.target.value)}
+                        placeholder="City"
+                      />
+                    </div>
+                    <div className={styles.editFormGroup}>
+                      <label className={styles.editLabel}>Pincode</label>
+                      <input
+                        type="text"
+                        className={styles.editInput}
+                        value={editPincode}
+                        onChange={(e) => setEditPincode(e.target.value)}
+                        placeholder="6-digit pincode"
+                        maxLength={6}
+                      />
+                    </div>
+                  </div>
+                  <div className={styles.editActions}>
+                    <button type="button" className={styles.cancelEditBtn} onClick={handleCancelEdit}>
+                      Cancel
+                    </button>
+                    <button type="button" className={styles.saveAddressBtn} onClick={handleSaveAddress}>
+                      Save Address
+                    </button>
+                  </div>
                 </div>
               ) : (
-                <div className={styles.orderList}>
-                  {recentOrders.map((order, index) => {
-                    const items = Array.isArray(order.items) ? order.items : [];
-                    const itemCount = getItemCount(items);
-                    const previewItems = items.slice(0, 3);
-                    const moreCount = items.length - previewItems.length;
-
-                    return (
-                      <article key={order.id || index} className={styles.orderRow}>
-                        <div className={styles.orderMeta}>
-  <div className={styles.orderHeader}>
-    <div className={styles.orderId}>
-      {order.id || `Order ${index + 1}`}
-    </div>
-
-    <div className={styles.orderSub}>
-      {formatDate(order.placedAt)} | {itemCount} items
-    </div>
-  </div>
-
-  <div className={styles.orderItems}>
-    {previewItems.map((item, itemIndex) => (
-      <span
-        key={`${order.id || index}-${item.id || itemIndex}`}
-        className={styles.itemTag}
-      >
-        {item.name}
-      </span>
-    ))}
-
-    {moreCount > 0 ? (
-      <span className={styles.itemMore}>
-        +{moreCount} more
-      </span>
-    ) : null}
-  </div>
-</div>
-                        <div className={styles.orderSummary}>
-                          <span className={styles.statusBadge}>{order.status || 'Placed'}</span>
-                          <strong className={styles.orderTotal}>
-                            {formatMoney(order?.totals?.total ?? 0)}
-                          </strong>
-                        </div>
-                      </article>
-                    );
-                  })}
+                <div className={styles.addressList}>
+                  {profile.address ? (
+                    <div className={styles.addressItem}>
+                      <div className={styles.addressIconWrap}>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                          <circle cx="12" cy="10" r="3"/>
+                        </svg>
+                      </div>
+                      <div className={styles.addressInfo}>
+                        <span className={styles.addressTag}>Default Delivery Address</span>
+                        <p className={styles.addressText}>
+                          {profile.address}
+                          {profile.city && `, ${profile.city}`}
+                          {profile.pincode && ` — ${profile.pincode}`}
+                        </p>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className={styles.emptyAddressRow}>
+                      <p className={styles.emptyPanelText}>No saved delivery address. Click Edit to add one.</p>
+                      <button type="button" className={styles.addAddressBtn} onClick={() => setEditingAddress(true)}>
+                        + Add Address
+                      </button>
+                    </div>
+                  )}
                 </div>
               )}
             </section>
 
-            <div className={styles.utilityGrid}>
-              <section className={styles.utilityCard}>
-                <h3>Saved address</h3>
-                <p>{addressLine || 'Add an address in checkout for faster reorders.'}</p>
-                <Link href="/services/swadisht/checkout" className={styles.utilityLink}>
-                  Update address
+            {/* Preferred Payment Methods */}
+            <section className={styles.panelCard}>
+              <h3 className={styles.panelTitle}>Preferred Payment Methods</h3>
+              <div className={styles.paymentMethods}>
+                <div className={styles.paymentMethodItem}>
+                  <div className={styles.payIconWrap}>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/>
+                    </svg>
+                  </div>
+                  <div className={styles.paymentInfo}>
+                    <span className={styles.payName}>UPI Payments (Auto-Saved)</span>
+                    <p className={styles.payDetails}>Google Pay, PhonePe, Paytm</p>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            {/* Recent Orders Widget */}
+            <section className={styles.panelCard}>
+              <div className={styles.panelHeaderRow}>
+                <h3 className={styles.panelTitle}>Recent Swadishtt Orders</h3>
+                <Link href="/services/swadisht/orders" className={styles.panelLink}>
+                  View All →
                 </Link>
-              </section>
-              <section className={styles.utilityCard}>
-                <h3>Payment preference</h3>
-                <p>{latestOrder?.paymentMethod || 'Add a payment method in checkout.'}</p>
-                <Link href="/services/swadisht/checkout" className={styles.utilityLink}>
-                  Manage in checkout
-                </Link>
-              </section>
-            </div>
+              </div>
+
+              <div className={styles.recentOrdersList}>
+                {recentOrders.length > 0 ? (
+                  recentOrders.map((order, idx) => (
+                    <Link
+                      key={order.id || idx}
+                      href={`/services/swadisht/order-tracking?id=${order.id}`}
+                      className={styles.orderRow}
+                    >
+                      <div className={styles.orderMeta}>
+                        <span className={styles.orderId}>#{order.id}</span>
+                        <span className={styles.orderDate}>{formatDate(order.placedAt)}</span>
+                      </div>
+                      <div className={styles.orderCostRow}>
+                        <span className={styles.orderItemsCount}>
+                          {order.items?.length || 1} {order.items?.length === 1 ? 'item' : 'items'}
+                        </span>
+                        <span className={styles.orderCost}>{formatMoney(order.totals?.total || order.total)}</span>
+                      </div>
+                      <span className={`${styles.statusBadge} ${styles[order.status?.toLowerCase()] || ''}`}>
+                        {order.status || 'Placed'}
+                      </span>
+                    </Link>
+                  ))
+                ) : (
+                  <p className={styles.emptyPanelText}>No orders found in history.</p>
+                )}
+              </div>
+            </section>
           </main>
-        </section>
+        </div>
       </div>
     </div>
   );

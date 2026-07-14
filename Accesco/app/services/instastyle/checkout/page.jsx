@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { useCart } from '@/contexts/CartContext';
 import styles from './checkout.module.css';
 import Select from '@/components/instastyle/Select';
+import { payWithRazorpay } from '@/lib/razorpayService';
 
 export default function CheckoutPage() {
   const router = useRouter();
@@ -26,6 +27,7 @@ export default function CheckoutPage() {
 
   const [errors, setErrors] = useState({});
   const [isProcessing, setIsProcessing] = useState(false);
+  const [paymentError, setPaymentError] = useState('');
 
   // Location detection states
   const [isLocating, setIsLocating] = useState(false);
@@ -275,23 +277,58 @@ export default function CheckoutPage() {
     }
 
     setIsProcessing(true);
+    setPaymentError('');
 
-    const order = placeOrder({
-      total: finalTotal,
-      subtotal,
-      tax,
-      deliveryFee,
-      deliverySpeed,
-      speedDiscount,
-      address: formData,
-      paymentMethod: formData.paymentMethod,
-      eta: deliverySpeed === 'batched' ? batchedETA : (deliveryETA || null),
-    });
-
-    setTimeout(() => {
-      setIsProcessing(false);
+    const placeTheOrder = (paymentInfo = {}) => {
+      const order = placeOrder({
+        total: finalTotal,
+        subtotal,
+        tax,
+        deliveryFee,
+        deliverySpeed,
+        speedDiscount,
+        address: formData,
+        customerEmail: formData.email,
+        customerName: formData.fullName,
+        paymentMethod: formData.paymentMethod,
+        eta: deliverySpeed === 'batched' ? (typeof batchedETA !== 'undefined' ? batchedETA : null) : (deliveryETA || null),
+        ...paymentInfo,
+      });
       router.push(`/services/instastyle/order-tracking?id=${order.id}`);
-    }, 2000);
+    };
+
+    // Cash on Delivery skips the payment gateway entirely.
+    if (formData.paymentMethod === 'cod') {
+      setTimeout(() => {
+        setIsProcessing(false);
+        placeTheOrder();
+      }, 1500);
+      return;
+    }
+
+    // Digital payment: collect payment via Razorpay before the order is created.
+    try {
+      const payment = await payWithRazorpay({
+        amount: finalTotal,
+        receipt: `instastyle_${Date.now()}`,
+        name: 'InstaStyle',
+        description: `InstaStyle order · ${cart.length} item(s)`,
+        prefill: {
+          name: formData.fullName,
+          email: formData.email,
+          contact: formData.phone,
+        },
+        theme: { color: '#111111' },
+      });
+      placeTheOrder({
+        razorpayOrderId: payment.orderId,
+        razorpayPaymentId: payment.paymentId,
+      });
+    } catch (err) {
+      console.error('Payment failed:', err);
+      setPaymentError(err.message || 'Payment failed. Please try again.');
+      setIsProcessing(false);
+    }
   };
 
   if (cart.length === 0) {
@@ -503,12 +540,20 @@ export default function CheckoutPage() {
                 </div>
               </section>
 
+              {paymentError && (
+                <div style={{ color: '#dc2626', fontSize: '13px', fontWeight: 600, marginBottom: '10px' }}>
+                  {paymentError}
+                </div>
+              )}
+
               <button
                 type="submit"
                 className={styles.placeOrderBtn}
                 disabled={isProcessing}
               >
-                {isProcessing ? 'Processing...' : `Place Order - ₹${finalTotal.toLocaleString()}`}
+                {isProcessing
+                  ? (formData.paymentMethod === 'cod' ? 'Processing...' : 'Processing Payment...')
+                  : `Place Order - ₹${finalTotal.toLocaleString()}`}
               </button>
             </form>
           </div>

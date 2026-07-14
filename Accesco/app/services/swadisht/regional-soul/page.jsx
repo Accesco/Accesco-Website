@@ -5,7 +5,40 @@ import { useSwadishtt } from '../contexts/SwadishttContext';
 import SwadishttHeader from '../components/SwadishttHeader';
 import { STATES } from './statesData';
 import styles from './regional-soul.module.css';
-import { Sparkles, MapPin, ArrowLeft, Star, Heart, Flame } from 'lucide-react';
+
+function IconMapPin() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+      <circle cx="12" cy="10" r="3" />
+    </svg>
+  );
+}
+
+function IconArrowLeft() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <line x1="19" y1="12" x2="5" y2="12" />
+      <polyline points="12 19 5 12 12 5" />
+    </svg>
+  );
+}
+
+function IconStar({ filled }) {
+  return (
+    <svg width="12" height="12" viewBox="0 0 24 24" fill={filled ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+    </svg>
+  );
+}
+
+function IconHeart({ filled }) {
+  return (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill={filled ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+    </svg>
+  );
+}
 
 export default function RegionalSoulPage() {
   const { addToCart } = useSwadishtt();
@@ -48,14 +81,12 @@ export default function RegionalSoulPage() {
           <section
             className={styles.hero}
             style={{
-           backgroundImage:
-  "linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1587474260584-136574528ed5?auto=format&fit=crop&w=2000&q=80')",
+              backgroundImage:
+                "linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1587474260584-136574528ed5?auto=format&fit=crop&w=2000&q=80')",
             }}
           >
             <div className={styles.heroContent}>
-              <span className={styles.heroKicker}>
-                <Sparkles size={14} /> Curated Culinary Preservation
-              </span>
+              <span className={styles.heroKicker}>Curated Culinary Preservation</span>
 
               <h1 className={styles.heroTitle}>
                 Discover the <br />
@@ -109,7 +140,12 @@ export default function RegionalSoulPage() {
                   onClick={() => handleSelectState(state)}
                   className={styles.stateCard}
                 >
-                  <img src={state.heroImage} alt={state.name} className={styles.stateCardImg} />
+                  <img 
+                    src={state.heroImage} 
+                    alt={state.name} 
+                    className={styles.stateCardImg} 
+                    onError={(e) => { e.target.src = "https://images.unsplash.com/photo-1546833998-877b37c2e5c6?w=600&h=400&fit=crop"; }}
+                  />
                   <div className={styles.stateCardCover} />
 
                   <div className={styles.stateCardContent}>
@@ -123,7 +159,7 @@ export default function RegionalSoulPage() {
 
                     <div className={styles.stateCardFooter}>
                       <span>{state.region}</span>
-                      <MapPin size={14} />
+                      <IconMapPin />
                     </div>
                   </div>
                 </article>
@@ -140,7 +176,7 @@ export default function RegionalSoulPage() {
             }}
           >
             <button type="button" onClick={() => setView('hub')} className={styles.backBtn}>
-              <ArrowLeft size={14} /> Back to Explorer
+              <IconArrowLeft /> Back to Explorer
             </button>
 
             <div className={styles.detailHeroContent}>
@@ -161,41 +197,43 @@ export default function RegionalSoulPage() {
           </section>
 
           <section className={styles.tapestrySection}>
-  <div className={styles.storyLayout}>
-    <div className={styles.storyTextBlock}>
-      <h2 className={styles.tapestryTitle}>
-        {selectedState.traditionalCookingTitle}
-      </h2>
-      <p className={styles.tapestryText}>
-        {selectedState.traditionalCookingStory}
-      </p>
-    </div>
+            <div className={styles.storyLayout}>
+              <div className={styles.storyTextBlock}>
+                <h2 className={styles.tapestryTitle}>{selectedState.traditionalCookingTitle}</h2>
+                <p className={styles.tapestryText}>{selectedState.traditionalCookingStory}</p>
+              </div>
 
-    <div className={styles.storyImagesTop}>
-      {selectedState.traditionalImages.map((img, index) => (
-        <div key={index} className={styles.storySmallImage}>
-          <img src={img} alt={`${selectedState.name} tradition ${index + 1}`} />
-        </div>
-      ))}
-    </div>
+              <div className={styles.storyImagesTop}>
+                {selectedState.traditionalImages.map((img, index) => (
+                  <div key={index} className={styles.storySmallImage}>
+                    <img 
+                      src={img} 
+                      alt={`${selectedState.name} tradition ${index + 1}`} 
+                      onError={(e) => { e.target.src = index === 0 ? "https://images.unsplash.com/photo-1524492412937-b28074a5d7da?w=500&fit=crop" : "https://images.unsplash.com/photo-1477587458883-47145ed94245?w=500&fit=crop"; }}
+                    />
+                  </div>
+                ))}
+              </div>
 
-    <div className={styles.storyMainImage}>
-      <img
-        src={selectedState.specialDishImage || selectedState.heroImage}
-        alt={selectedState.culinaryAlchemistTitle}
-      />
-      <div className={styles.storyImageTag}>
-        <strong>{selectedState.culinaryAlchemistTitle}</strong>
-        <span>{selectedState.chefNote}</span>
-      </div>
-    </div>
+              <div className={styles.storyMainImage}>
+                <img
+                  src={selectedState.specialDishImage || selectedState.heroImage}
+                  alt={selectedState.culinaryAlchemistTitle}
+                  onError={(e) => { e.target.src = "https://images.unsplash.com/photo-1626777552726-4a6b54c97e46?w=600&fit=crop"; }}
+                />
+                <div className={styles.storyImageTag}>
+                  <strong>{selectedState.culinaryAlchemistTitle}</strong>
+                  <span>{selectedState.chefNote}</span>
+                </div>
+              </div>
 
-    <div className={styles.storyCard}>
-      <h3>{selectedState.culinaryAlchemistTitle}</h3>
-      <p>{selectedState.culinaryAlchemistStory}</p>
-    </div>
-  </div>
-</section>
+              <div className={styles.storyCard}>
+                <h3>{selectedState.culinaryAlchemistTitle}</h3>
+                <p>{selectedState.culinaryAlchemistStory}</p>
+              </div>
+            </div>
+          </section>
+
           <section className={styles.menuContainer}>
             <div className={styles.menuHeader}>
               <span className={styles.menuLabel}>Artisan Specials</span>
@@ -209,11 +247,15 @@ export default function RegionalSoulPage() {
                   {dish.badge && <span className={styles.dishBadgeLabel}>{dish.badge}</span>}
 
                   <span className={styles.dishRatingBadge}>
-                    <Star size={12} fill="currentColor" /> {dish.rating}
+                    <IconStar filled /> {dish.rating}
                   </span>
 
                   <div className={styles.dishImgWrapper}>
-                    <img src={dish.image} alt={dish.name} />
+                    <img 
+                      src={dish.image} 
+                      alt={dish.name} 
+                      onError={(e) => { e.target.src = `https://placehold.co/400x300/6B1D3A/FFFFFF/png?text=${encodeURIComponent(dish.name)}`; }}
+                    />
                     <span className={styles.dishVegMarker}>
                       <span className={`${styles.vegColorDot} ${dish.isVeg ? styles.vegDotGreen : styles.vegDotRed}`} />
                       {dish.isVeg ? 'Veg' : 'Non-Veg'}
@@ -240,7 +282,7 @@ export default function RegionalSoulPage() {
                           className={styles.addTrayBtn}
                           style={{ padding: '10px 12px' }}
                         >
-                          <Heart size={14} fill={wishlist[dish.id] ? 'currentColor' : 'none'} />
+                          <IconHeart filled={wishlist[dish.id]} />
                         </button>
 
                         <button type="button" onClick={() => handleAddToCart(dish)} className={styles.addTrayBtn}>

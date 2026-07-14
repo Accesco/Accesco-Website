@@ -1,78 +1,7 @@
 import { NextResponse } from 'next/server';
+import { sendInstaStyleConfirmation } from '@/lib/mailService';
 
 export const dynamic = 'force-dynamic';
-
-function buildInstaStyleOrderEmailHtml({ customerName, orderId, items, subtotal, deliveryFee, discount, total, deliverySpeed, address }) {
-  const itemsHtml = items.map(item => `
-    <tr>
-      <td style="padding:10px 0;border-bottom:1px solid #f0ece8;">
-        <strong>${item.name}</strong>
-        ${item.brand ? `<br/><span style="color:#888;font-size:12px;">${item.brand}</span>` : ''}
-        ${item.size ? `<span style="color:#888;font-size:12px;"> · Size ${item.size}</span>` : ''}
-      </td>
-      <td style="padding:10px 0;border-bottom:1px solid #f0ece8;text-align:center;">x${item.quantity}</td>
-      <td style="padding:10px 0;border-bottom:1px solid #f0ece8;text-align:right;">₹${((item.discountedPrice || item.price) * item.quantity).toLocaleString('en-IN')}</td>
-    </tr>
-  `).join('');
-
-  const etaLabel = deliverySpeed === 'batched'
-    ? '~25 min (batched delivery)'
-    : '~11 min (express)';
-
-  return `
-    <div style="font-family:'Georgia',serif;max-width:560px;margin:0 auto;padding:40px 24px;color:#1a1a1a;">
-      <div style="border-top:3px solid #1a1a1a;padding-top:24px;margin-bottom:32px;">
-        <p style="margin:0 0 6px;font-size:11px;text-transform:uppercase;letter-spacing:2px;color:#888;">Order Confirmed</p>
-        <h1 style="margin:0;font-size:28px;font-weight:400;letter-spacing:-0.5px;">InstaStyle</h1>
-        <p style="margin:4px 0 0;font-size:12px;color:#888;">by Accesco Living</p>
-      </div>
-
-      <p style="font-size:15px;line-height:1.8;margin:0 0 24px;">
-        Hi ${customerName || 'there'} — your order is confirmed and being prepared.
-        Estimated delivery: <strong>${etaLabel}</strong>.
-      </p>
-
-      <p style="font-size:12px;color:#888;margin:0 0 4px;">Order · <code style="background:#f5f5f0;padding:2px 6px;">${orderId}</code></p>
-      <p style="font-size:12px;color:#888;margin:0 0 32px;">Ship to: ${address}</p>
-
-      <table style="width:100%;border-collapse:collapse;font-size:14px;margin-bottom:24px;">
-        <thead>
-          <tr>
-            <th style="text-align:left;padding:8px 0;border-bottom:1px solid #1a1a1a;font-size:11px;text-transform:uppercase;letter-spacing:1px;font-weight:400;">Item</th>
-            <th style="text-align:center;padding:8px 0;border-bottom:1px solid #1a1a1a;font-size:11px;text-transform:uppercase;font-weight:400;">Qty</th>
-            <th style="text-align:right;padding:8px 0;border-bottom:1px solid #1a1a1a;font-size:11px;text-transform:uppercase;font-weight:400;">Price</th>
-          </tr>
-        </thead>
-        <tbody>${itemsHtml}</tbody>
-      </table>
-
-      <table style="width:100%;font-size:14px;margin-bottom:32px;">
-        <tr>
-          <td style="padding:5px 0;color:#666;">Subtotal</td>
-          <td style="padding:5px 0;text-align:right;">₹${subtotal.toLocaleString('en-IN')}</td>
-        </tr>
-        <tr>
-          <td style="padding:5px 0;color:#666;">Delivery</td>
-          <td style="padding:5px 0;text-align:right;">${deliveryFee === 0 ? '<span style="color:#2d6a4f;">FREE</span>' : `₹${deliveryFee}`}</td>
-        </tr>
-        ${discount > 0 ? `
-        <tr>
-          <td style="padding:5px 0;color:#2d6a4f;">Batched Saving</td>
-          <td style="padding:5px 0;text-align:right;color:#2d6a4f;">-₹${discount}</td>
-        </tr>` : ''}
-        <tr>
-          <td style="padding:12px 0 4px;font-size:16px;font-weight:600;border-top:1px solid #1a1a1a;">Total</td>
-          <td style="padding:12px 0 4px;text-align:right;font-size:16px;font-weight:600;border-top:1px solid #1a1a1a;">₹${total.toLocaleString('en-IN')}</td>
-        </tr>
-      </table>
-
-      <p style="font-size:12px;color:#999;border-top:1px solid #f0ece8;padding-top:20px;margin:0;">
-        InstaStyle by Accesco Living · 
-        <a href="https://www.accescoliving.com/services/instastyle/orders" style="color:#1a1a1a;">View your orders</a>
-      </p>
-    </div>
-  `;
-}
 
 export async function POST(request) {
   try {
@@ -96,25 +25,31 @@ export async function POST(request) {
       console.error('[instastyle/orders] Firestore write failed:', dbErr);
     }
 
-    // Send confirmation email
-    if (customerEmail) {
-      const apiKey = process.env.RESEND_API_KEY;
-      if (apiKey) {
-        const fromEmail = process.env.RESEND_FROM_EMAIL || 'Accesco <noreply@accescoliving.com>';
-        fetch('https://api.resend.com/emails', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${apiKey}`,
-          },
-          body: JSON.stringify({
-            from: fromEmail,
-            to: [customerEmail],
-            subject: `Your InstaStyle order is confirmed — ${order.id}`,
-            html: buildInstaStyleOrderEmailHtml(order),
-          }),
-        }).catch((err) => console.error('[instastyle/orders] Email failed:', err));
-      }
+    // Send confirmation email using the rich template from mailService
+    const emailTo = customerEmail || order.customerEmail;
+    if (emailTo) {
+      const customerName = order.customerName || order.address?.fullName || 'Customer';
+      // Build totals object from top-level fields if nested totals not present
+      const totals = order.totals || {
+        subtotal: order.subtotal || 0,
+        shippingFee: order.deliveryFee || 0,
+        deliveryFee: order.deliveryFee || 0,
+        gst: order.tax || 0,
+        total: order.total || 0,
+        discount: order.speedDiscount || 0,
+      };
+      // Build shippingAddress from address form data if not present
+      const shippingAddress = order.shippingAddress || (order.address ? {
+        line1: order.address.addressLine1 || order.address.line1 || '',
+        city: order.address.city || '',
+        pincode: order.address.pincode || '',
+      } : {});
+
+      sendInstaStyleConfirmation({
+        order: { ...order, totals, shippingAddress },
+        customerName,
+        email: emailTo,
+      }).catch((err) => console.error('[instastyle/orders] Email failed:', err));
     }
 
     return NextResponse.json({ success: true, orderId: order.id }, { status: 200 });
@@ -128,10 +63,14 @@ export async function GET(request) {
   try {
     const { searchParams } = new URL(request.url);
     const orderId = searchParams.get('id');
+    const userId = searchParams.get('userId');
+    const email = searchParams.get('email');
+    const deviceId = searchParams.get('deviceId');
 
     const { db } = await import('@/lib/firebase');
-    const { collection, doc, getDoc, getDocs, query, orderBy, limit } = await import('firebase/firestore');
+    const { collection, doc, getDoc, getDocs, query, orderBy, limit, where } = await import('firebase/firestore');
 
+    // Fetch single order by ID
     if (orderId) {
       const docSnap = await getDoc(doc(db, 'instastyle_orders', orderId));
       if (!docSnap.exists()) {
@@ -140,6 +79,49 @@ export async function GET(request) {
       return NextResponse.json({ order: { id: docSnap.id, ...docSnap.data() } });
     }
 
+    // Fetch orders by deviceId
+    if (deviceId) {
+      const q = query(
+        collection(db, 'instastyle_orders'),
+        where('deviceId', '==', deviceId),
+        limit(100)
+      );
+      const snapshot = await getDocs(q);
+      const orders = [];
+      snapshot.forEach(d => orders.push({ id: d.id, ...d.data() }));
+      orders.sort((a, b) => new Date(b.timestamp || b.createdAt) - new Date(a.timestamp || a.createdAt));
+      return NextResponse.json({ orders });
+    }
+
+    // Fetch orders by userId
+    if (userId) {
+      const q = query(
+        collection(db, 'instastyle_orders'),
+        where('userId', '==', userId),
+        limit(100)
+      );
+      const snapshot = await getDocs(q);
+      const orders = [];
+      snapshot.forEach(d => orders.push({ id: d.id, ...d.data() }));
+      orders.sort((a, b) => new Date(b.timestamp || b.createdAt) - new Date(a.timestamp || a.createdAt));
+      return NextResponse.json({ orders });
+    }
+
+    // Fetch orders by email
+    if (email) {
+      const q = query(
+        collection(db, 'instastyle_orders'),
+        where('customerEmail', '==', email),
+        limit(100)
+      );
+      const snapshot = await getDocs(q);
+      const orders = [];
+      snapshot.forEach(d => orders.push({ id: d.id, ...d.data() }));
+      orders.sort((a, b) => new Date(b.timestamp || b.createdAt) - new Date(a.timestamp || a.createdAt));
+      return NextResponse.json({ orders });
+    }
+
+    // Fetch all orders (admin — most recent 50)
     const q = query(collection(db, 'instastyle_orders'), orderBy('createdAt', 'desc'), limit(50));
     const snapshot = await getDocs(q);
     const orders = [];

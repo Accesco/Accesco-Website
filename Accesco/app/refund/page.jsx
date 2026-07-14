@@ -37,9 +37,9 @@ export default function RefundPage() {
               Accesco Living Private Limited<br />
               CIN: U47912WB2025PTC285309<br />
               Bengaluru, Karnataka, India<br /><br />
-              <strong>EFFECTIVE DATE</strong><br />
+              <strong>EFFECTIVE DATE</strong>
               02 June 2026 (Subject to revision with 30 days notice)<br /><br />
-              <strong>JURISDICTION</strong><br />
+              <strong>JURISDICTION</strong>
               Republic of India<br />
               Governing law: IT Act 2000, Consumer Protection Act 2019, Indian Contract Act 1872
             </div>
@@ -517,12 +517,12 @@ export default function RefundPage() {
 
           <section className="policy-section">
             <div className="disclosure-card" style={{ borderLeft: '4px solid #c8963e' }}>
-              <strong>FOR ACCESCO LIVING PRIVATE LIMITED</strong><br /><br />
+              <strong>FOR ACCESCO LIVING PRIVATE LIMITED</strong>
               Authorised Signatory<br />
               Founder & CEO<br />
-              Bengaluru, Karnataka<br /><br />
-              <strong>EFFECTIVE DATE:</strong> 02 June 2026<br />
-              <strong>Next review:</strong> 02 June 2027<br />
+              Bengaluru, Karnataka<br /><br/>
+              <strong>EFFECTIVE DATE:</strong> 02 June 2026<br /><br/>
+              <strong>Next review:</strong> 02 June 2027<br /><br/>
               <strong>DOCUMENT VERSION:</strong> Version 1.0 (Supersedes all prior versions)<br /><br />
               <span style={{ fontSize: '0.82rem', opacity: 0.8 }}>
                 Accesco Living Private Limited · CIN: U47912WB2025PTC285309 · Bengaluru, Karnataka, India · accescoliving.com ·

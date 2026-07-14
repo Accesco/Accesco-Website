@@ -48,7 +48,7 @@ export function validateWaitlistEntry(data) {
 
 /**
  * Save a waitlist signup to Firestore.
- * @param {{ name?: string; email: string; phone: string }} data
+ * @param {{ name?: string; email: string; phone: string; emailVerified?: boolean }} data
  * @returns {Promise<string>} New document id
  * @throws {Error} if validation fails
  */
@@ -65,6 +65,8 @@ export async function addWaitlistEntry(data) {
     name,
     email,
     phone: data.phone.trim(),
+    phoneVerified: true,           // Phone OTP is mandatory before saving
+    emailVerified: !!data.emailVerified, // Email OTP is optional
     createdAt: serverTimestamp(),
   });
 
@@ -78,6 +80,10 @@ export async function addWaitlistEntry(data) {
   return docRef.id;
 }
 
+/**
+ * Send an optional email verification OTP.
+ * @param {string} email
+ */
 export async function sendOtpEmailVerification(email) {
   const response = await fetch('/api/send-otp', {
     method: 'POST',
@@ -87,12 +93,17 @@ export async function sendOtpEmailVerification(email) {
 
   const payload = await parseJsonResponse(response);
   if (!response.ok) {
-    throw new Error(payload?.error || 'Failed to send OTP');
+    throw new Error(payload?.error || 'Failed to send email OTP');
   }
 
   return payload;
 }
 
+/**
+ * Verify an optional email OTP code.
+ * @param {string} email
+ * @param {string} otp
+ */
 export async function verifyOtpEmailCode(email, otp) {
   const response = await fetch('/api/verify-otp', {
     method: 'POST',
@@ -102,8 +113,9 @@ export async function verifyOtpEmailCode(email, otp) {
 
   const payload = await parseJsonResponse(response);
   if (!response.ok) {
-    throw new Error(payload?.error || 'OTP verification failed');
+    throw new Error(payload?.error || 'Email OTP verification failed');
   }
 
   return payload;
 }
+
