@@ -434,15 +434,17 @@ setFilteredPosts(visibleBlogs);
                  
 <Image
   src={
-    post.title?.includes('Dark Stores')
-      ? '/images/blogs/dark-stores.jpg'
-      : post.title?.includes('Sunday Meal Prep')
-      ? '/images/blogs/meal-prep.jpg'
-      : post.title?.includes('All-in-One Smart Lifestyle Ecosystem')
-      ? '/images/blogs/accesco-ecosystem.jpg'
-      : post.title?.includes('Best Grocery Delivery Service')
-      ? '/images/blogs/grocery-delivery.jpg'
-      : post.image || '/images/download (2).png'
+    post.title?.includes('What a City Actually Demands of You')
+  ? '/images/blogs/what-a-city-actually-demands.jpg'
+  : post.title?.includes('Dark Stores')
+  ? '/images/blogs/dark-stores.jpg'
+  : post.title?.includes('Sunday Meal Prep')
+  ? '/images/blogs/meal-prep.jpg'
+  : post.title?.includes('All-in-One Smart Lifestyle Ecosystem')
+  ? '/images/blogs/accesco-ecosystem.jpg'
+  : post.title?.includes('Best Grocery Delivery Service')
+  ? '/images/blogs/grocery-delivery.jpg'
+  : post.image || '/images/download (2).png'
   }
   alt={post.title}
   fill

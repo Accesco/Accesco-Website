@@ -412,9 +412,9 @@
 
 /* Unchanged bottom app download segments */
 .downloadAppSection {
-  max-width: 1040px;
+  max-width: 900px;
   width: 100%;
-  margin: 56px auto 0;
+  margin: 48px auto 0;
   position: relative;
   padding: 0;
   box-sizing: border-box;
@@ -498,8 +498,12 @@
 @media (min-width: 769px) and (resolution: 1.25dppx) {
 
   .downloadAppSection{
-    max-width: 880px !important;
-    margin-inline: auto;
+    max-width: 780px !important;   /* smaller banner */
+    margin: 48px auto 0;
+  }
+
+  .downloadAppImageDesktop{
+    border-radius: 20px;
   }
 
 }

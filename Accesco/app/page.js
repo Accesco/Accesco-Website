@@ -1471,6 +1471,9 @@ const [typing, setTyping] = useState(false)
   );
 }
 
+
+
+
 export default function HomePage() {
   const [isClient, setIsClient] = useState(false);
   const scrollRef = useRef(null);

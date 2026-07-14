@@ -80,11 +80,9 @@ const router = useRouter();
   const strokeDashoffset = circumference - (percentageUsed / 100) * circumference;
 
   // Handle CTA button click
-  const handleExploreClick = () => {
-    if (dashboardRef.current) {
-      dashboardRef.current.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
+ const handleExploreClick = () => {
+  router.push('/xpense-meter');
+};
 
   // Helper to render lucide icons dynamically
   const getIcon = (iconName, className = '') => {
