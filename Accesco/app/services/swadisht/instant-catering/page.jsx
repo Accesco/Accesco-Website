@@ -1,31 +1,34 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import SwadishttHeader from '../components/SwadishttHeader';
+import Image from 'next/image';
 import styles from './instant-catering.module.css';
 
+// ── Catering Packages Initial Data ──
 const CATERING_PACKAGES = [
   {
     id: 'cp-small',
-    name: 'Home Gathering Pack',
+    name: 'Small Gathering',
     categoryLabel: 'Home Events',
     serves: '10–15 guests',
     price: 2999,
     originalPrice: 3499,
-    deliveryTime: '4–5 hours advance',
+    deliveryTime: '4–5 hrs',
     accentColor: '#1D4ED8',
     accentLight: '#EFF6FF',
     popular: false,
+    image: 'https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=600&auto=format&fit=crop&q=80',
     includes: [
-      '2 Starters',
-      '3 Main Courses',
-      '2 Breads',
-      '1 Rice Dish',
-      '1 Dessert',
-      'Welcome Beverages',
+      '2 Starters (Veg & Non-veg options)',
+      '3 Main Courses with side dishes',
+      '2 Types of Indian Breads',
+      '1 Rice Dish (Pulao/Biryani)',
+      '1 Traditional Indian Dessert',
+      'Welcome Beverages (Masala Chai/Cooler)',
     ],
     extras: [],
-    description: 'Perfect for house parties, family get-togethers, kitty parties, and casual celebrations.',
+    description: 'A comforting everyday spread perfect for house parties, casual get-togethers, and kitty parties.',
     customizable: true,
   },
   {
@@ -35,70 +38,73 @@ const CATERING_PACKAGES = [
     serves: '20–25 guests',
     price: 4999,
     originalPrice: 5999,
-    deliveryTime: '4–5 hours advance',
-    accentColor: '#7C3AED',
-    accentLight: '#F5F3FF',
+    deliveryTime: '4–5 hrs',
+    accentColor: '#E11D48',
+    accentLight: '#FFF1F2',
     popular: true,
+    image: 'https://images.unsplash.com/photo-1530103862676-de8c9debad1d?w=600&auto=format&fit=crop&q=80',
     includes: [
-      '3 Starters',
-      '4 Main Courses',
-      '3 Breads',
-      '2 Rice Dishes',
-      '2 Desserts',
-      'Celebration Cake',
-      'Beverages',
-      'Disposable Crockery',
+      '3 Starters (Crispy snacks & tikka)',
+      '4 Main Courses (Premium selection)',
+      '3 Indian Bread Options',
+      '2 Rice Dishes (Biryani & Ghee rice)',
+      '2 Traditional Desserts',
+      'Celebration Cake (Custom flavor)',
+      'Beverages & Disposable Crockery',
     ],
     extras: ['Decoration', 'Table Setting', 'Candles'],
-    description: 'Make birthdays unforgettable — complete curated menus with cake, décor options and more.',
+    description: 'Our most-loved pack — festive, generous, and photo-ready menu with custom cake options included.',
     customizable: true,
   },
   {
     id: 'cp-office',
-    name: 'Corporate Lunch Pack',
+    name: 'Office Lunch Pack',
     categoryLabel: 'Corporate',
     serves: '15–20 guests',
     price: 3499,
     originalPrice: 4299,
-    deliveryTime: '3–4 hours advance',
+    deliveryTime: '3–4 hrs',
     accentColor: '#059669',
     accentLight: '#ECFDF5',
     popular: false,
+    image: 'https://images.unsplash.com/photo-1544025162-d76694265947?w=600&auto=format&fit=crop&q=80',
     includes: [
-      '2 Starters',
-      '3 Main Courses',
-      '2 Breads',
-      '1 Rice Dish',
-      'Salad Station',
-      'Beverages',
+      '2 Starters (Perfect office finger food)',
+      '3 Main Courses (Light & wholesome)',
+      '2 Breads (Rotis & Paranthas)',
+      '1 Light Rice Dish (Jeera rice)',
+      'Salad Station & Condiments',
+      'Refreshing Beverages',
     ],
     extras: [],
-    description: 'Professional packaging, corporate-appropriate portions — ideal for team lunches and office events.',
+    description: 'Individually packed, easy to serve, zero-fuss portions ideal for team lunches and office presentations.',
     customizable: true,
   },
   {
     id: 'cp-wedding',
-    name: 'Intimate Wedding Pack',
+    name: 'Mini Wedding Pack',
     categoryLabel: 'Weddings',
     serves: '40–50 guests',
     price: 9999,
     originalPrice: 13999,
-    deliveryTime: '6–8 hours advance',
+    deliveryTime: '6–8 hrs',
     accentColor: '#B45309',
     accentLight: '#FFFBEB',
     popular: false,
+    premium: true,
+    image: 'https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?w=600&auto=format&fit=crop&q=80',
     includes: [
-      '4 Starters',
-      '6 Main Courses',
-      '4 Breads',
-      '2 Rice Dishes',
-      '3 Desserts',
-      'Welcome Drinks',
-      '2 Serving Staff',
-      'Premium Crockery',
+      '4 Starters (Assorted tandoor & platter)',
+      '6 Main Courses (Gourmet regional specialties)',
+      '4 Premium Bread Options',
+      '2 Rice Dishes (Grand Awadhi Biryani)',
+      '3 Traditional Desserts',
+      'Welcome Drinks & Fruit Punch',
+      '2 Serving Staff included',
+      'Premium biodegradable crockery',
     ],
     extras: ['Floral Arrangement', 'Welcome Signage', 'Serving Counter'],
-    description: 'Intimate wedding receptions, engagement ceremonies, and milestone celebrations — made memorable.',
+    description: 'A premium multi-course spread built for milestone days, engagement ceremonies, and receptions.',
     customizable: true,
   },
 ];
@@ -106,55 +112,96 @@ const CATERING_PACKAGES = [
 const DIETARY_OPTIONS = ['Veg Only', 'Non-Veg', 'Mixed', 'Jain', 'No Onion-Garlic'];
 const CUISINE_OPTIONS = ['North Indian', 'South Indian', 'Mughlai', 'Continental', 'Chinese', 'Mixed'];
 
-const HOW_IT_WORKS = [
+const HOW_IT_WORKS_STEPS = [
   {
     num: '01',
-    label: 'Choose Package',
-    desc: 'Browse our curated catering packs — from intimate home parties to weddings.',
+    label: 'Choose package',
+    desc: 'Browse our curated catering packs — from intimate home parties to wedding feasts.',
   },
   {
     num: '02',
-    label: 'Customize',
-    desc: 'Pick your dietary preferences, cuisine style, and any special requests.',
+    label: 'Customise',
+    desc: 'Set dietary preferences, cuisine style, and optionally add specialized extras.',
   },
   {
     num: '03',
     label: 'Schedule',
-    desc: 'Pick your event date and preferred delivery time window with ease.',
+    desc: 'Pick your delivery date and preferred time window with ease.',
   },
   {
     num: '04',
-    label: 'We Deliver',
-    desc: 'Fresh food arrives 4–5 hours before your event, packaged professionally.',
+    label: 'We deliver',
+    desc: 'Fresh food arrives 4–5 hrs before your event starts, packed professionally.',
   },
 ];
 
-function CheckIcon({ color }) {
+const TESTIMONIALS = [
+  {
+    stars: 5,
+    text: "Ordered the Birthday Pack for 22 people — food arrived hot, portions were generous, and the cake was absolutely fresh! Everyone loved it.",
+    name: "Priya M.",
+    event: "Birthday Celebration",
+    initials: "PM",
+  },
+  {
+    stars: 5,
+    text: "The Office Lunch Pack was perfect for our team of 18. Clean packaging, delicious taste, and prompt delivery. Highly recommended for corporates.",
+    name: "Rohan K.",
+    event: "Corporate Lunch",
+    initials: "RK",
+  },
+  {
+    stars: 5,
+    text: "Mini Wedding Pack exceeded expectations. The main course selection was highly authentic. The included serving staff were professional and helpful.",
+    name: "Sneha D.",
+    event: "Engagement Ceremony",
+    initials: "SD",
+  },
+];
+
+// ── SVG Check Icon ──
+function CheckIcon({ color = 'currentColor', size = 16 }) {
   return (
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
       <polyline points="20 6 9 17 4 12" />
     </svg>
   );
 }
 
+// ── Individual Package Card Component ──
 function PackageCard({ pkg, onBook }) {
   const [expanded, setExpanded] = useState(false);
   const [dietary, setDietary] = useState('');
   const [cuisine, setCuisine] = useState('');
 
   const savings = pkg.originalPrice - pkg.price;
+  const isDarkCard = pkg.popular; // Birthday Card is styled as the dark bento block
 
   return (
-    <div className={`${styles.packageCard} ${pkg.popular ? styles.popularCard : ''}`}>
-      {pkg.popular && <div className={styles.popularBadge}>Most Popular</div>}
+    <article 
+      className={`${styles.packageCard} ${isDarkCard ? styles.darkCard : ''}`}
+      id={`pkg-${pkg.id}`}
+    >
+      {pkg.popular && <span className={styles.badge}>Most Popular</span>}
+      {pkg.premium && <span className={`${styles.badge} ${styles.premiumBadge}`}>Premium</span>}
 
-      <div className={styles.packageTopBar} style={{ background: pkg.accentColor }} />
+      <div className={styles.cardTop}>
+        <Image
+          src={pkg.image}
+          alt={pkg.name}
+          fill
+          sizes="(max-width: 768px) 100vw, 25vw"
+          priority={pkg.popular}
+        />
+        <div className={styles.cardTopBar} style={{ backgroundColor: pkg.accentColor }} />
+      </div>
 
-      <div className={styles.packageHeader}>
+      <div className={styles.cardBody}>
         <span className={styles.categoryLabel}>{pkg.categoryLabel}</span>
-        <h3 className={styles.packageName}>{pkg.name}</h3>
-        <p className={styles.packageServes}>
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ marginRight: '6px' }}>
+        <h3 className={styles.pkgName}>{pkg.name}</h3>
+        
+        <p className={styles.pkgServes}>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
             <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
             <circle cx="9" cy="7" r="4" />
             <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
@@ -162,168 +209,212 @@ function PackageCard({ pkg, onBook }) {
           </svg>
           Serves {pkg.serves}
         </p>
-      </div>
 
-      <div className={styles.packagePricingRow} style={{ background: pkg.accentLight }}>
-        <div className={styles.priceLeft}>
-          <span className={styles.packagePrice} style={{ color: pkg.accentColor }}>₹{pkg.price.toLocaleString()}</span>
-          <div className={styles.priceSubRow}>
-            <span className={styles.packageOriginalPrice}>₹{pkg.originalPrice.toLocaleString()}</span>
-            <span className={styles.savingsTag}>Save ₹{savings}</span>
+        <p className={styles.pkgDesc}>{pkg.description}</p>
+
+        <div className={styles.priceSection}>
+          <div className={styles.priceWrapper}>
+            <span className={styles.actualPrice}>₹{pkg.price.toLocaleString()}</span>
+            <div className={styles.originalPriceRow}>
+              <span className={styles.originalPrice}>₹{pkg.originalPrice.toLocaleString()}</span>
+              <span className={styles.discountBadge}>Save ₹{savings}</span>
+            </div>
           </div>
+          <span className={styles.deliveryNote}>
+            {pkg.deliveryTime} Delivery
+          </span>
         </div>
-        <div className={styles.priceRight}>
-          <span className={styles.packageDelivery}>{pkg.deliveryTime}</span>
-        </div>
-      </div>
 
-      <p className={styles.packageDesc}>{pkg.description}</p>
-
-      <div className={styles.includesList}>
-        <h4 className={styles.includesTitle}>What's Included</h4>
-        <div className={styles.includesGrid}>
-          {pkg.includes.map((item) => (
-            <div key={item} className={styles.includeItem}>
-              <CheckIcon color={pkg.accentColor} />
+        <h4 className={styles.checklistTitle}>What's included</h4>
+        <div className={styles.checklist}>
+          {pkg.includes.map((item, idx) => (
+            <div key={idx} className={styles.checkItem}>
+              <span className={styles.checkIconWrapper}>
+                <CheckIcon color={pkg.accentColor} size={13} />
+              </span>
               <span>{item}</span>
             </div>
           ))}
         </div>
-      </div>
 
-      {pkg.extras.length > 0 && (
-        <div className={styles.extrasRow}>
-          <span className={styles.extrasLabel}>Optional add-ons:</span>
-          {pkg.extras.map((e) => (
-            <span key={e} className={styles.extraTag}>{e}</span>
-          ))}
-        </div>
-      )}
-
-      {/* Customize panel */}
-      {expanded && (
-        <div className={styles.customizePanel}>
-          <h4 className={styles.customizeTitle}>Customize Your Order</h4>
-          <div className={styles.customizeRow}>
-            <label className={styles.customizeLabel}>Dietary Preference</label>
-            <div className={styles.optionChips}>
+        {/* Expandable Customization Section */}
+        {expanded && (
+          <div className={styles.customizePanel}>
+            <h4 className={styles.customSectionTitle}>Dietary Preference</h4>
+            <div className={styles.chipsContainer}>
               {DIETARY_OPTIONS.map((opt) => (
                 <button
                   key={opt}
                   type="button"
-                  className={`${styles.optionChip} ${dietary === opt ? styles.optionChipActive : ''}`}
-                  style={dietary === opt ? { borderColor: pkg.accentColor, color: pkg.accentColor } : {}}
+                  className={`${styles.chip} ${dietary === opt ? styles.chipActive : ''}`}
                   onClick={() => setDietary(dietary === opt ? '' : opt)}
+                  aria-pressed={dietary === opt}
                 >
                   {opt}
                 </button>
               ))}
             </div>
-          </div>
-          <div className={styles.customizeRow}>
-            <label className={styles.customizeLabel}>Cuisine Style</label>
-            <div className={styles.optionChips}>
+
+            <h4 className={styles.customSectionTitle}>Cuisine Style</h4>
+            <div className={styles.chipsContainer}>
               {CUISINE_OPTIONS.map((opt) => (
                 <button
                   key={opt}
                   type="button"
-                  className={`${styles.optionChip} ${cuisine === opt ? styles.optionChipActive : ''}`}
-                  style={cuisine === opt ? { borderColor: pkg.accentColor, color: pkg.accentColor } : {}}
+                  className={`${styles.chip} ${cuisine === opt ? styles.chipActive : ''}`}
                   onClick={() => setCuisine(cuisine === opt ? '' : opt)}
+                  aria-pressed={cuisine === opt}
                 >
                   {opt}
                 </button>
               ))}
             </div>
           </div>
-        </div>
-      )}
+        )}
 
-      <div className={styles.packageActions}>
-        <button
-          type="button"
-          className={styles.detailsBtn}
-          onClick={() => setExpanded(!expanded)}
-        >
-          {expanded ? 'Collapse' : 'Customize'}
-        </button>
-        <button
-          type="button"
-          className={styles.bookBtn}
-          style={{ background: pkg.accentColor }}
-          onClick={() => onBook({ ...pkg, selectedDietary: dietary, selectedCuisine: cuisine })}
-        >
-          Book Now
-        </button>
+        <div className={styles.cardActions}>
+          <button
+            type="button"
+            className={styles.customizeBtn}
+            onClick={() => setExpanded(!expanded)}
+            aria-expanded={expanded}
+          >
+            {expanded ? 'Hide Options' : 'Customise'}
+          </button>
+          <button
+            type="button"
+            className={styles.bookNowBtn}
+            onClick={() => onBook({ ...pkg, selectedDietary: dietary, selectedCuisine: cuisine })}
+          >
+            Book Now
+          </button>
+        </div>
       </div>
-    </div>
+    </article>
   );
 }
 
+// ── Interactive Multi-Step Booking Modal Component ──
 function BookingModal({ pkg, onClose, onSuccess }) {
   const [step, setStep] = useState(1);
   const [date, setDate] = useState('');
   const [time, setTime] = useState('');
-  const [address, setAddress] = useState('');
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
+  const [address, setAddress] = useState('');
   const [notes, setNotes] = useState('');
-  const [submitting, setSubmitting] = useState(false);
   const [errors, setErrors] = useState({});
+  const [submitting, setSubmitting] = useState(false);
+  const [apiError, setApiError] = useState('');
 
-  // Auto-fill from localStorage
+  const modalRef = useRef(null);
+
+  // Lock scrolling & keyboard event listener
+  useEffect(() => {
+    document.body.style.overflow = 'hidden';
+    
+    // Focus first element
+    if (modalRef.current) {
+      const focusable = modalRef.current.querySelectorAll('button, input, textarea');
+      if (focusable.length > 0) {
+        focusable[0].focus();
+      }
+    }
+
+    const handleEscape = (e) => {
+      if (e.key === 'Escape') onClose();
+    };
+
+    window.addEventListener('keydown', handleEscape);
+    return () => {
+      document.body.style.overflow = '';
+      window.removeEventListener('keydown', handleEscape);
+    };
+  }, [onClose]);
+
+  // Autofill details from localStorage
   useEffect(() => {
     try {
       const storedUser = JSON.parse(localStorage.getItem('accesco_user') || '{}');
       if (storedUser.name) setName(storedUser.name);
       if (storedUser.phone) setPhone(storedUser.phone);
       if (storedUser.email) setEmail(storedUser.email);
-    } catch {}
+    } catch (e) {
+      console.warn('Storage read error', e);
+    }
+
     try {
-      const storedLocation = JSON.parse(localStorage.getItem('userLocation') || '{}');
-      const addr =
-        storedLocation?.fullAddress ||
-        storedLocation?.formattedAddress ||
-        storedLocation?.displayAddress ||
-        (storedLocation?.area && storedLocation?.city
-          ? `${storedLocation.area}, ${storedLocation.city}`
-          : '');
-      if (addr) setAddress(addr);
-    } catch {}
+      const storedLoc = JSON.parse(localStorage.getItem('userLocation') || '{}');
+      const formatted =
+        storedLoc?.fullAddress ||
+        storedLoc?.formattedAddress ||
+        storedLoc?.displayAddress ||
+        (storedLoc?.area && storedLoc?.city ? `${storedLoc.area}, ${storedLoc.city}` : '');
+      if (formatted) setAddress(formatted);
+    } catch (e) {
+      console.warn('Location storage read error', e);
+    }
   }, []);
 
-  if (!pkg) return null;
-
-  const stepLabels = ['Schedule', 'Address & Contact', 'Confirm'];
   const minDate = new Date().toISOString().split('T')[0];
 
   const validateStep2 = () => {
     const errs = {};
-    if (!address.trim()) errs.address = 'Please enter a delivery address';
-    if (!name.trim()) errs.name = 'Please enter your name';
-    if (!phone.trim()) errs.phone = 'Please enter your phone number';
-    if (!email.trim()) errs.email = 'Please enter your email';
-    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) errs.email = 'Enter a valid email';
+    const trimmedName = name.trim();
+    const trimmedPhone = phone.trim();
+    const trimmedEmail = email.trim();
+    const trimmedAddress = address.trim();
+
+    if (!trimmedName) errs.name = 'Please enter your name';
+    
+    // Indian 10-digit phone format validation
+    if (!trimmedPhone) {
+      errs.phone = 'Please enter your phone number';
+    } else if (!/^[6-9]\d{9}$/.test(trimmedPhone)) {
+      errs.phone = 'Enter a valid 10-digit Indian phone number';
+    }
+
+    if (!trimmedEmail) {
+      errs.email = 'Please enter your email';
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmedEmail)) {
+      errs.email = 'Enter a valid email address';
+    }
+
+    if (!trimmedAddress) errs.address = 'Please enter the delivery address';
+
     setErrors(errs);
     return Object.keys(errs).length === 0;
   };
 
-  const handleConfirm = async () => {
+  const handleStep2Submit = (e) => {
+    e.preventDefault();
+    if (validateStep2()) {
+      setStep(3);
+    }
+  };
+
+  const handleConfirmOrder = async () => {
     setSubmitting(true);
-    const cateringOrderId = `CAT-${Date.now().toString(36).toUpperCase()}`;
+    setApiError('');
+    const bookingId = `CAT-${Date.now().toString(36).toUpperCase()}`;
+
+    // Persist details to localStorage for future use
     try {
-      // Send catering enquiry email via API
-      await fetch('/api/swadishtt/orders/update-status', {
+      localStorage.setItem('accesco_user', JSON.stringify({ name, phone, email }));
+    } catch (e) {}
+
+    try {
+      const response = await fetch('/api/swadishtt/orders/update-status', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          orderId: cateringOrderId,
+          orderId: bookingId,
           newStatus: 'CONFIRMED',
           customerEmail: email,
           customerName: name,
           orderData: {
-            id: cateringOrderId,
+            id: bookingId,
             type: 'catering',
             package: pkg.name,
             serves: pkg.serves,
@@ -332,158 +423,124 @@ function BookingModal({ pkg, onClose, onSuccess }) {
             time,
             delivery: { address, name, phone, email },
             notes,
-            dietary: pkg.selectedDietary,
-            cuisine: pkg.selectedCuisine,
+            dietary: pkg.selectedDietary || 'Standard (No preferences)',
+            cuisine: pkg.selectedCuisine || 'Standard (Pre-selected)',
             placedAt: new Date().toISOString(),
             totals: { total: pkg.price },
           },
         }),
       });
+
+      if (!response.ok) {
+        throw new Error('Server responded with an error during booking.');
+      }
+
+      // Success logic
+      onSuccess();
+      onClose();
     } catch (err) {
-      console.error('Catering booking email failed:', err);
+      console.error('Booking API call failed:', err);
+      setApiError('Something went wrong while securing your order. Please check your network and try again.');
+    } finally {
+      setSubmitting(false);
     }
-    setSubmitting(false);
-    onSuccess?.();
-    onClose();
   };
 
   return (
-    <div className={styles.modalOverlay} onClick={onClose}>
-      <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
-        <div className={styles.modalHeader} style={{ borderBottom: `3px solid ${pkg.accentColor}` }}>
-          <div>
-            <h2 className={styles.modalTitle}>Book {pkg.name}</h2>
-            <p className={styles.modalSubtitle}>Serves {pkg.serves} · ₹{pkg.price.toLocaleString()}</p>
+    <div 
+      className={styles.modalOverlay} 
+      onClick={onClose}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="modal-title"
+    >
+      <div 
+        className={styles.modal} 
+        onClick={(e) => e.stopPropagation()}
+        ref={modalRef}
+      >
+        {/* Header */}
+        <div className={styles.modalHeader}>
+          <div className={styles.modalHeaderLeft}>
+            <h2 id="modal-title">Book {pkg.name}</h2>
+            <p>Serves {pkg.serves} · ₹{pkg.price.toLocaleString()}</p>
           </div>
-          <button className={styles.modalClose} onClick={onClose} aria-label="Close">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-              <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
+          <button 
+            type="button" 
+            className={styles.modalClose} 
+            onClick={onClose}
+            aria-label="Close modal"
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+              <line x1="18" y1="6" x2="6" y2="18" />
+              <line x1="6" y1="6" x2="18" y2="18" />
             </svg>
           </button>
         </div>
 
+        {/* Stepper */}
         <div className={styles.stepIndicator}>
-          {[1, 2, 3].map((s) => (
-            <div key={s} className={`${styles.step} ${step >= s ? styles.stepActive : ''}`}>
-              <span
-                className={styles.stepNum}
-                style={step >= s ? { borderColor: pkg.accentColor, color: pkg.accentColor, background: pkg.accentLight } : {}}
-              >
-                {step > s ? 'Check' : s}
-              </span>
-              <span className={styles.stepLabel}>{stepLabels[s - 1]}</span>
-            </div>
-          ))}
+          <div className={`${styles.step} ${step >= 1 ? styles.stepActive : ''}`}>
+            <span className={styles.stepNum}>1</span>
+            <span className={styles.stepLabel}>Schedule</span>
+          </div>
+          <div className={`${styles.step} ${step >= 2 ? styles.stepActive : ''}`}>
+            <span className={styles.stepNum}>2</span>
+            <span className={styles.stepLabel}>Details</span>
+          </div>
+          <div className={`${styles.step} ${step >= 3 ? styles.stepActive : ''}`}>
+            <span className={styles.stepNum}>3</span>
+            <span className={styles.stepLabel}>Confirm</span>
+          </div>
         </div>
 
-        {/* Step 1: Schedule */}
+        {/* Step 1: Date & Time */}
         {step === 1 && (
           <div className={styles.stepContent}>
-            <h3 className={styles.stepTitle}>When do you need delivery?</h3>
+            <h3 className={styles.stepTitle}>When is your event?</h3>
+            
             <div className={styles.formRow}>
-              <label className={styles.formLabel}>Event Date *</label>
+              <label className={styles.formLabel} htmlFor="event-date">Event Date *</label>
               <input
                 type="date"
+                id="event-date"
                 className={styles.formInput}
                 value={date}
                 onChange={(e) => setDate(e.target.value)}
                 min={minDate}
+                required
               />
             </div>
+
             <div className={styles.formRow}>
-              <label className={styles.formLabel}>Delivery Time *</label>
+              <label className={styles.formLabel} htmlFor="event-time">Delivery Time *</label>
               <input
                 type="time"
+                id="event-time"
                 className={styles.formInput}
                 value={time}
                 onChange={(e) => setTime(e.target.value)}
+                required
               />
             </div>
-            <div className={styles.deliveryNoteBox} style={{ borderLeftColor: pkg.accentColor }}>
-              <strong>Lead time:</strong> {pkg.deliveryTime} — food arrives fresh, ready to serve.
-            </div>
-            <button
-              className={styles.nextBtn}
-              style={{ background: pkg.accentColor }}
-              onClick={() => setStep(2)}
-              disabled={!date || !time}
-            >
-              Continue
-            </button>
-          </div>
-        )}
 
-        {/* Step 2: Address & Contact */}
-        {step === 2 && (
-          <div className={styles.stepContent}>
-            <h3 className={styles.stepTitle}>Delivery Address & Contact</h3>
-
-            <div className={styles.formRow}>
-              <label className={styles.formLabel}>Full Name *</label>
-              <input
-                type="text"
-                className={`${styles.formInput} ${errors.name ? styles.inputError : ''}`}
-                value={name}
-                onChange={(e) => { setName(e.target.value); setErrors({ ...errors, name: '' }); }}
-                placeholder="Your full name"
-              />
-              {errors.name && <span className={styles.fieldError}>{errors.name}</span>}
-            </div>
-
-            <div className={styles.formRowSplit}>
-              <div className={styles.formRow}>
-                <label className={styles.formLabel}>Phone *</label>
-                <input
-                  type="tel"
-                  className={`${styles.formInput} ${errors.phone ? styles.inputError : ''}`}
-                  value={phone}
-                  onChange={(e) => { setPhone(e.target.value); setErrors({ ...errors, phone: '' }); }}
-                  placeholder="10-digit number"
-                />
-                {errors.phone && <span className={styles.fieldError}>{errors.phone}</span>}
-              </div>
-              <div className={styles.formRow}>
-                <label className={styles.formLabel}>Email *</label>
-                <input
-                  type="email"
-                  className={`${styles.formInput} ${errors.email ? styles.inputError : ''}`}
-                  value={email}
-                  onChange={(e) => { setEmail(e.target.value); setErrors({ ...errors, email: '' }); }}
-                  placeholder="For booking confirmation"
-                />
-                {errors.email && <span className={styles.fieldError}>{errors.email}</span>}
-              </div>
-            </div>
-
-            <div className={styles.formRow}>
-              <label className={styles.formLabel}>Delivery Address *</label>
-              <textarea
-                className={`${styles.formTextarea} ${errors.address ? styles.inputError : ''}`}
-                placeholder="Full address including landmark, floor, building name..."
-                value={address}
-                onChange={(e) => { setAddress(e.target.value); setErrors({ ...errors, address: '' }); }}
-                rows={3}
-              />
-              {errors.address && <span className={styles.fieldError}>{errors.address}</span>}
-            </div>
-
-            <div className={styles.formRow}>
-              <label className={styles.formLabel}>Special Requests (Optional)</label>
-              <textarea
-                className={styles.formTextarea}
-                placeholder="Allergies, dietary notes, or kitchen instructions..."
-                value={notes}
-                onChange={(e) => setNotes(e.target.value)}
-                rows={2}
-              />
+            <div className={styles.deliveryNoteBox}>
+              <strong>Notice Period Required:</strong> This pack requires a minimum of {pkg.deliveryTime} prep-and-delivery lead time. We suggest scheduling delivery 1 hour before guests arrive.
             </div>
 
             <div className={styles.stepBtns}>
-              <button type="button" className={styles.backBtn} onClick={() => setStep(1)}>Back</button>
+              <button 
+                type="button" 
+                className={styles.backBtn} 
+                onClick={onClose}
+              >
+                Cancel
+              </button>
               <button
+                type="button"
                 className={styles.nextBtn}
-                style={{ background: pkg.accentColor }}
-                onClick={() => { if (validateStep2()) setStep(3); }}
+                onClick={() => setStep(2)}
+                disabled={!date || !time}
               >
                 Continue
               </button>
@@ -491,67 +548,179 @@ function BookingModal({ pkg, onClose, onSuccess }) {
           </div>
         )}
 
-        {/* Step 3: Confirm */}
+        {/* Step 2: Contact Details */}
+        {step === 2 && (
+          <form className={styles.stepContent} onSubmit={handleStep2Submit}>
+            <h3 className={styles.stepTitle}>Where should we deliver?</h3>
+
+            <div className={styles.formRow}>
+              <label className={styles.formLabel} htmlFor="contact-name">Full Name *</label>
+              <input
+                type="text"
+                id="contact-name"
+                className={`${styles.formInput} ${errors.name ? styles.inputError : ''}`}
+                value={name}
+                onChange={(e) => { setName(e.target.value); setErrors(prev => ({ ...prev, name: '' })); }}
+                placeholder="Enter your full name"
+                required
+              />
+              {errors.name && <span className={styles.fieldError}>{errors.name}</span>}
+            </div>
+
+            <div className={styles.formRowSplit}>
+              <div className={styles.formRow}>
+                <label className={styles.formLabel} htmlFor="contact-phone">Phone Number *</label>
+                <input
+                  type="tel"
+                  id="contact-phone"
+                  className={`${styles.formInput} ${errors.phone ? styles.inputError : ''}`}
+                  value={phone}
+                  onChange={(e) => { setPhone(e.target.value); setErrors(prev => ({ ...prev, phone: '' })); }}
+                  placeholder="10-digit mobile number"
+                  maxLength="10"
+                  required
+                />
+                {errors.phone && <span className={styles.fieldError}>{errors.phone}</span>}
+              </div>
+
+              <div className={styles.formRow}>
+                <label className={styles.formLabel} htmlFor="contact-email">Email Address *</label>
+                <input
+                  type="email"
+                  id="contact-email"
+                  className={`${styles.formInput} ${errors.email ? styles.inputError : ''}`}
+                  value={email}
+                  onChange={(e) => { setEmail(e.target.value); setErrors(prev => ({ ...prev, email: '' })); }}
+                  placeholder="you@example.com"
+                  required
+                />
+                {errors.email && <span className={styles.fieldError}>{errors.email}</span>}
+              </div>
+            </div>
+
+            <div className={styles.formRow}>
+              <label className={styles.formLabel} htmlFor="delivery-addr">Delivery Address *</label>
+              <textarea
+                id="delivery-addr"
+                className={`${styles.formTextarea} ${errors.address ? styles.inputError : ''}`}
+                value={address}
+                onChange={(e) => { setAddress(e.target.value); setErrors(prev => ({ ...prev, address: '' })); }}
+                placeholder="Building, street, Landmark, City & PIN code"
+                rows="2"
+                required
+              />
+              {errors.address && <span className={styles.fieldError}>{errors.address}</span>}
+            </div>
+
+            <div className={styles.formRow}>
+              <label className={styles.formLabel} htmlFor="special-notes">Special Instructions (Optional)</label>
+              <textarea
+                id="special-notes"
+                className={styles.formTextarea}
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
+                placeholder="Specify any spice preferences, food allergies, or landmark details..."
+                rows="2"
+              />
+            </div>
+
+            <div className={styles.stepBtns}>
+              <button 
+                type="button" 
+                className={styles.backBtn} 
+                onClick={() => setStep(1)}
+              >
+                Back
+              </button>
+              <button
+                type="submit"
+                className={styles.nextBtn}
+              >
+                Continue
+              </button>
+            </div>
+          </form>
+        )}
+
+        {/* Step 3: Review & Finalize */}
         {step === 3 && (
           <div className={styles.stepContent}>
-            <h3 className={styles.stepTitle}>Confirm Your Booking</h3>
+            <h3 className={styles.stepTitle}>Confirm Booking Details</h3>
 
-            <div className={styles.summaryCard} style={{ borderColor: pkg.accentColor }}>
+            <div className={styles.summaryCard}>
               <div className={styles.summaryRow}>
-                <span>Package</span>
+                <span>Selected Package:</span>
                 <span className={styles.summaryVal}>{pkg.name}</span>
               </div>
               <div className={styles.summaryRow}>
-                <span>Serves</span>
+                <span>Serves:</span>
                 <span className={styles.summaryVal}>{pkg.serves}</span>
               </div>
+              
               {pkg.selectedDietary && (
                 <div className={styles.summaryRow}>
-                  <span>Dietary</span>
+                  <span>Dietary Preference:</span>
                   <span className={styles.summaryVal}>{pkg.selectedDietary}</span>
                 </div>
               )}
+
               {pkg.selectedCuisine && (
                 <div className={styles.summaryRow}>
-                  <span>Cuisine</span>
+                  <span>Cuisine Choice:</span>
                   <span className={styles.summaryVal}>{pkg.selectedCuisine}</span>
                 </div>
               )}
+
               <div className={styles.summaryRow}>
-                <span>Date & Time</span>
+                <span>Delivery On:</span>
                 <span className={styles.summaryVal}>{date} at {time}</span>
               </div>
+
               <div className={styles.summaryRow}>
-                <span>Contact</span>
-                <span className={styles.summaryVal}>{name} · {phone}</span>
+                <span>Deliver To:</span>
+                <span className={styles.summaryVal}>{name} ({phone})</span>
               </div>
+
               <div className={styles.summaryRow}>
-                <span>Email</span>
-                <span className={styles.summaryVal}>{email}</span>
+                <span>Address:</span>
+                <span className={styles.summaryVal} style={{ maxWidth: '240px' }}>{address}</span>
               </div>
-              <div className={styles.summaryRow}>
-                <span>Address</span>
-                <span className={styles.summaryVal} style={{ maxWidth: '180px', textAlign: 'right' }}>{address}</span>
-              </div>
+
+              {notes.trim() && (
+                <div className={styles.summaryRow}>
+                  <span>Special Request:</span>
+                  <span className={styles.summaryVal} style={{ fontStyle: 'italic' }}>{notes}</span>
+                </div>
+              )}
+
               <div className={`${styles.summaryRow} ${styles.summaryTotal}`}>
-                <span>Total</span>
-                <span className={styles.summaryPrice} style={{ color: pkg.accentColor }}>₹{pkg.price.toLocaleString()}</span>
+                <span>Grand Total:</span>
+                <span className={styles.summaryPrice}>₹{pkg.price.toLocaleString()}</span>
               </div>
             </div>
 
             <div className={styles.cancellationNote}>
-              Free cancellation up to 2 hours before delivery. A confirmation will be sent to {email}.
+              <strong>Flexible Policy:</strong> Enjoy free cancellation and full refund up to 2 hours before scheduled delivery.
             </div>
 
+            {apiError && <div style={{ color: '#dc2626', fontSize: '13px', fontWeight: '600', marginBottom: '16px' }}>{apiError}</div>}
+
             <div className={styles.stepBtns}>
-              <button type="button" className={styles.backBtn} onClick={() => setStep(2)}>Back</button>
-              <button
-                className={styles.confirmBtn}
-                style={{ background: pkg.accentColor }}
-                onClick={handleConfirm}
+              <button 
+                type="button" 
+                className={styles.backBtn} 
+                onClick={() => setStep(2)}
                 disabled={submitting}
               >
-                {submitting ? 'Confirming...' : `Confirm & Pay ₹${pkg.price.toLocaleString()}`}
+                Back
+              </button>
+              <button
+                type="button"
+                className={styles.confirmBtn}
+                onClick={handleConfirmOrder}
+                disabled={submitting}
+              >
+                {submitting ? 'Securing Booking...' : 'Confirm Booking'}
               </button>
             </div>
           </div>
@@ -561,138 +730,264 @@ function BookingModal({ pkg, onClose, onSuccess }) {
   );
 }
 
-function InstantCateringContent() {
-  const [bookingPkg, setBookingPkg] = useState(null);
-  const [bookingSuccess, setBookingSuccess] = useState(false);
+// ── Main Page Implementation ──
+export default function InstantCateringPage() {
+  const [selectedPkg, setSelectedPkg] = useState(null);
+  const [toastMessage, setToastMessage] = useState('');
+  const [toastVisible, setToastVisible] = useState(false);
+
+  const packagesRef = useRef(null);
+  const howItWorksRef = useRef(null);
+  const storiesRef = useRef(null);
+
+  // Auto-dismiss success toast after 5 seconds
+  useEffect(() => {
+    if (toastVisible) {
+      const timer = setTimeout(() => {
+        setToastVisible(false);
+      }, 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [toastVisible]);
+
+  const triggerScroll = (elementRef) => {
+    if (elementRef.current) {
+      elementRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  const handleBookingSuccess = () => {
+    setToastMessage('Booking secured successfully! A confirmation email and SMS was sent.');
+    setToastVisible(true);
+  };
 
   return (
     <div className={styles.pageContent}>
       <SwadishttHeader />
 
-      {/* Hero */}
-      <div className={styles.hero}>
+      {/* Hero Section */}
+      <section className={styles.hero}>
         <div className={styles.heroContent}>
-          <p className={styles.heroKicker}>Professional Catering · Delivered Fresh</p>
-          <h1 className={styles.heroTitle}>Instant Catering<br />for Every Occasion</h1>
-          <p className={styles.heroSub}>
-            Pre-curated packs for gatherings of all sizes — home parties, birthdays, corporate events, and weddings. No menu planning needed.
-          </p>
-          <div className={styles.heroBadges}>
-            <span className={styles.heroBadge}>4–5 Hr Delivery</span>
-            <span className={styles.heroBadge}>Zero Hassle</span>
-            <span className={styles.heroBadge}>Free Cancellation</span>
-            <span className={styles.heroBadge}>4.8 Rated</span>
+          <div className={styles.heroLeft}>
+            <span className={styles.heroKicker}>Instant Catering</span>
+            <h1 className={styles.heroTitle}>
+              Celebration-ready food, <span>delivered to your door.</span>
+            </h1>
+            <p className={styles.heroSub}>
+              Pre-curated packs for gatherings of 10–50 guests. No elaborate planning needed — simply pick a pack, customise it to your preferences, and we will handle the rest beautifully.
+            </p>
+
+            <div className={styles.heroBadges}>
+              <div className={styles.heroBadge}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" />
+                </svg>
+                4–5 hr delivery
+              </div>
+              <div className={styles.heroBadge}>
+                <CheckIcon color="#059669" size={13} />
+                No menu planning
+              </div>
+              <div className={styles.heroBadge}>
+                <CheckIcon color="#059669" size={13} />
+                Free cancellation
+              </div>
+              <div className={styles.heroBadge}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2" /><line x1="16" y1="2" x2="16" y2="6" /><line x1="8" y1="2" x2="8" y2="6" /><line x1="3" y1="10" x2="21" y2="10" />
+                </svg>
+                Same-day available
+              </div>
+            </div>
+
+            <div className={styles.heroButtons}>
+              <button 
+                type="button" 
+                className={styles.primaryHeroBtn}
+                onClick={() => triggerScroll(packagesRef)}
+              >
+                Plan My Catering
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" />
+                </svg>
+              </button>
+              <button 
+                type="button" 
+                className={styles.secondaryHeroBtn}
+                onClick={() => triggerScroll(packagesRef)}
+              >
+                View Packages
+              </button>
+            </div>
           </div>
-          <a href="#packages" className={styles.heroBtn}>View Packages</a>
+
+          <div className={styles.heroRight}>
+            <div className={styles.heroImageContainer}>
+              <Image
+                src="https://images.unsplash.com/photo-1555507036-ab1f4038808a?w=800&auto=format&fit=crop&q=80"
+                alt="Delicious Indian Gourmet Catered Food Tray Display"
+                fill
+                priority
+              />
+            </div>
+          </div>
         </div>
+      </section>
+
+      {/* Dark Statistics Strip */}
+      <section className={styles.statsStrip}>
+        <div className={styles.statsContainer}>
+          <div className={styles.statItem}>
+            <span className={styles.statValue}>0</span>
+            <span className={styles.statLabel}>Events catered</span>
+          </div>
+          <div className={styles.statItem}>
+            <span className={styles.statValue}>0</span>
+            <span className={styles.statLabel}>Average rating</span>
+          </div>
+          <div className={styles.statItem}>
+            <span className={styles.statValue}>Same-Day</span>
+            <span className={styles.statLabel}>Booking available</span>
+          </div>
+          <div className={styles.statItem}>
+            <span className={styles.statValue}>0</span>
+            <span className={styles.statLabel}>Guests supported</span>
+          </div>
+        </div>
+      </section>
+
+      {/* Main Content Sections */}
+      <div className={styles.container}>
+        
+        {/* Packages Section */}
+        <section id="packages" ref={packagesRef} style={{ scrollMarginTop: '80px', marginBottom: '80px' }}>
+          <div className={styles.sectionHeader}>
+            <h2>Choose your package</h2>
+            <p>All packages include delivery, hygienic packaging, fresh preparation, and a dedicated catering support contact.</p>
+          </div>
+
+          <div className={styles.packagesGrid}>
+            {CATERING_PACKAGES.map((pkg) => (
+              <PackageCard 
+                key={pkg.id} 
+                pkg={pkg} 
+                onBook={setSelectedPkg} 
+              />
+            ))}
+          </div>
+        </section>
       </div>
 
-      {/* Success toast */}
-      {bookingSuccess && (
-        <div className={styles.successToast}>
-          Booking confirmed! Check your email for details.
-          <button type="button" onClick={() => setBookingSuccess(false)}>✕</button>
-        </div>
-      )}
-
-      <div className={styles.container}>
-
-        {/* Trust Strip */}
-        <div className={styles.trustStrip}>
-          <div className={styles.trustItem}>
-            <span className={styles.trustIcon}>
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="8" r="7" /><path d="M8.21 13.89L7 23l5-3 5 3-1.21-9.12" /></svg>
-            </span>
-            <div>
-              <strong>500+</strong>
-              <span>Events Catered</span>
-            </div>
-          </div>
-          <div className={styles.trustDivider} />
-          <div className={styles.trustItem}>
-            <span className={styles.trustIcon}>
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" /></svg>
-            </span>
-            <div>
-              <strong>4.8/5</strong>
-              <span>Average Rating</span>
-            </div>
-          </div>
-          <div className={styles.trustDivider} />
-          <div className={styles.trustItem}>
-            <span className={styles.trustIcon}>
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" /></svg>
-            </span>
-            <div>
-              <strong>50+</strong>
-              <span>Expert Chefs</span>
-            </div>
-          </div>
-          <div className={styles.trustDivider} />
-          <div className={styles.trustItem}>
-            <span className={styles.trustIcon}>
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" /></svg>
-            </span>
-            <div>
-              <strong>100%</strong>
-              <span>Fresh Ingredients</span>
-            </div>
-          </div>
-        </div>
-
-        {/* How It Works */}
-        <div className={styles.howItWorks}>
+      {/* How It Works Section */}
+      <section id="how-it-works" ref={howItWorksRef} style={{ scrollMarginTop: '80px' }} className={styles.howItWorksBg}>
+        <div className={styles.container}>
           <div className={styles.sectionHeader}>
-            <span className={styles.sectionKicker}>Simple Process</span>
-            <h2 className={styles.sectionTitle}>How It Works</h2>
+            <h2>How it works</h2>
+            <p>From kitchen preparation directly to your celebration table in four easy steps.</p>
           </div>
-          <div className={styles.stepsRow}>
-            {HOW_IT_WORKS.map((s, idx) => (
-              <div key={s.num} className={styles.howStep}>
-                <div className={styles.howStepNum}>{s.num}</div>
-                <h4 className={styles.howStepLabel}>{s.label}</h4>
-                <p className={styles.howStepDesc}>{s.desc}</p>
-                {idx < HOW_IT_WORKS.length - 1 && <div className={styles.stepConnector} />}
+
+          <div className={styles.timelineRow}>
+            {HOW_IT_WORKS_STEPS.map((step, idx) => (
+              <div className={styles.timelineStep} key={step.num}>
+                <div className={styles.timelineStepNum}>
+                  {step.num}
+                </div>
+                <h3 className={styles.timelineStepLabel}>{step.label}</h3>
+                <p className={styles.timelineStepDesc}>{step.desc}</p>
+                {idx < HOW_IT_WORKS_STEPS.length - 1 && (
+                  <div className={styles.stepConnector} />
+                )}
               </div>
             ))}
           </div>
         </div>
+      </section>
 
-        {/* Packages */}
-        <div id="packages">
-          <div className={styles.sectionHeader}>
-            <span className={styles.sectionKicker}>Curated Menus</span>
-            <h2 className={styles.sectionTitle}>Choose Your Package</h2>
-            <p className={styles.sectionSub}>All packages include fresh preparation, professional packaging, and timely delivery.</p>
-          </div>
-          <div className={styles.packagesGrid}>
-            {CATERING_PACKAGES.map((pkg) => (
-              <PackageCard key={pkg.id} pkg={pkg} onBook={setBookingPkg} />
-            ))}
+      {/* Testimonials Section */}
+      <section id="stories" ref={storiesRef} style={{ scrollMarginTop: '80px' }} className={styles.testimonialsBg}>
+        <div className={styles.container}>
+          <div className={styles.testimonialsLayout}>
+            <div className={styles.chiliDecor}>
+              <div className={styles.chiliIllustration} aria-hidden="true">🌶️🌶️</div>
+            </div>
+
+            <div>
+              <div className={styles.sectionHeader} style={{ textAlign: 'left', margin: '0 0 36px 0', maxWidth: '100%' }}>
+                <h2>What our customers say</h2>
+                <p>500+ successful events and counting — here’s a look at how a few of our celebrations went.</p>
+              </div>
+
+              <div className={styles.testimonialsGrid}>
+                {TESTIMONIALS.map((t, idx) => (
+                  <div className={styles.testimonialCard} key={idx}>
+                    <div className={styles.starsRow} aria-label="5 out of 5 stars">
+                      {Array.from({ length: t.stars }).map((_, sIdx) => (
+                        <svg key={sIdx} width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                        </svg>
+                      ))}
+                    </div>
+                    <p className={styles.reviewText}>"{t.text}"</p>
+                    <div className={styles.authorRow}>
+                      <div className={styles.authorAvatar} aria-hidden="true">
+                        {t.initials}
+                      </div>
+                      <div className={styles.authorInfo}>
+                        <span className={styles.authorName}>{t.name}</span>
+                        <span className={styles.authorEvent}>{t.event}</span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
+      </section>
 
-        {/* CTA Banner */}
-        <div className={styles.ctaBanner}>
-          <div className={styles.ctaContent}>
-            <h3>Ready to make your event special?</h3>
-            <p>Book in minutes — we handle the rest.</p>
-          </div>
-          <a href="#packages" className={styles.ctaBtn}>Book Now</a>
+      {/* Call to Action Section */}
+      <section className={styles.ctaSection}>
+        <div className={styles.ctaContainer}>
+          <h2 className={styles.ctaTitle}>Ready to plan your next event?</h2>
+          <p className={styles.ctaSub}>Pick a pre-curated package and get your premium catering locked-in in under 2 minutes.</p>
+          <button 
+            type="button" 
+            className={styles.ctaMainBtn}
+            onClick={() => triggerScroll(packagesRef)}
+          >
+            Book Now
+          </button>
         </div>
-      </div>
+      </section>
 
-      {bookingPkg && (
+      {/* Footer */}
+      <footer className={styles.footer}>
+        <p>© 2026 Swadishtt · Instant Catering · A part of Accesco Living</p>
+      </footer>
+
+      {/* Interactive Booking Modal */}
+      {selectedPkg && (
         <BookingModal
-          pkg={bookingPkg}
-          onClose={() => setBookingPkg(null)}
-          onSuccess={() => setBookingSuccess(true)}
+          pkg={selectedPkg}
+          onClose={() => setSelectedPkg(null)}
+          onSuccess={handleBookingSuccess}
         />
+      )}
+
+      {/* Success Toast */}
+      {toastVisible && (
+        <div className={styles.successToast} role="alert">
+          <span>{toastMessage}</span>
+          <button 
+            type="button" 
+            className={styles.toastCloseBtn} 
+            onClick={() => setToastVisible(false)}
+            aria-label="Dismiss message"
+          >
+            ✕
+          </button>
+        </div>
       )}
     </div>
   );
-}
-
-export default function InstantCateringPage() {
-  return <InstantCateringContent />;
 }
