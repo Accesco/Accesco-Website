@@ -22,6 +22,11 @@ const nextConfig = {
         destination: 'https://accescoliving.com/:path*',
         permanent: true,
       },
+      {
+        source: '/xpense_meter',
+        destination: '/xpense-meter',
+        permanent: true,
+      },
     ];
   },
 

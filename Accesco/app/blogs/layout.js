@@ -10,6 +10,9 @@ export const metadata = {
   title: "Blog | Insights on Commerce, Farming & Sustainable Living",
   description:
     "Read the Accesco Living blog — stories, insights and updates on FarmChain sourcing, household intelligence, sustainable fashion and the future of circular commerce in India.",
+  alternates: {
+    canonical: 'https://accescoliving.com/blogs',
+  },
 };
 
 export default function Layout({ children }) {

@@ -47,7 +47,7 @@ function buildContactAckHtml({ fullName }) {
       </p>
       <p style="margin:0 0 16px;line-height:1.7;font-size:15px;color:#333;">
         In the meantime, explore what we're building at 
-        <a href="https://www.accescoliving.com" style="color:#1a1a1a;font-weight:600;">accescoliving.com</a>.
+        <a href="https://accescoliving.com" style="color:#1a1a1a;font-weight:600;">accescoliving.com</a>.
       </p>
       <p style="margin:32px 0 0;font-size:13px;color:#999;">— The Accesco Team</p>
     </div>

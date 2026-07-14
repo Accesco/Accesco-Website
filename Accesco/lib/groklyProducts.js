@@ -26,7 +26,7 @@ export const products = [
   {
     id: 'veg-001', name: 'Tomato - Hybrid', brand: 'Fresho', category: 'vegetables-fruits',
     price: 28, mrp: 35, discount: 20, unit: '500 g', deliveryTime: '11 MINS',
-    image: 'https://bittmanproject.com/wp-content/uploads/engin-akyurt-HrCatSbULFY-unsplash-1536x1152.jpg',
+    image: 'https://images.pexels.com/photos/33499935/pexels-photo-33499935.jpeg',
     inStock: true, tags: ['Bestseller'], rating: 4.2, reviews: 1240
   },
   {
@@ -44,7 +44,7 @@ export const products = [
   {
     id: 'veg-004', name: 'Capsicum - Green', brand: 'Fresho', category: 'vegetables-fruits',
     price: 45, mrp: 55, discount: 18, unit: '500 g', deliveryTime: '11 MINS',
-    image: 'https://encrypted-tbn1.gstatic.com/shopping?q=tbn:ANd9GcRohaOfIlSYh5TqW2TuBDKjFGld9KPnOCMFr0VGdD4lMacqV7skC_Fz_kIuzMNzKpIJ-AV4LK1obXbDq6yD8CPEPd0u9hcN2g',
+    image: 'https://images.pexels.com/photos/2893635/pexels-photo-2893635.jpeg',
     inStock: true, rating: 4.0, reviews: 450
   },
   {
@@ -62,7 +62,7 @@ export const products = [
   {
     id: 'veg-007', name: 'Cauliflower', brand: 'Fresho', category: 'vegetables-fruits',
     price: 42, mrp: 50, discount: 16, unit: '1 pc', deliveryTime: '11 MINS',
-    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQAdvd65y45I_CZd_8SrBnLaDLAWUjJpo_B13lCPysQsQ&s=10',
+    image: 'https://images.pexels.com/photos/7572005/pexels-photo-7572005.jpeg',
     inStock: true, rating: 4.1, reviews: 340
   },
   {
@@ -172,13 +172,13 @@ export const products = [
   {
     id: 'dairy-005', name: 'Amul Cheese Slices', brand: 'Amul', category: 'dairy-breakfast',
     price: 135, mrp: 145, discount: 6, unit: '200 g', deliveryTime: '11 MINS',
-    image: 'https://encrypted-tbn1.gstatic.com/shopping?q=tbn:ANd9GcS6DV-4j73k7Hw-KWfWWN-ArSqiOSVUDuI-2qtSqllU6DYZ8lIBZ__Q_xIYiw2biaAc9EvIRZjvQsG3UvCEKdco1GssmMLFAryEQbu4N8xgW9rPyeR6Llzdow',
+    image: 'https://images.pexels.com/photos/36040972/pexels-photo-36040972.jpeg',
     inStock: true, tags: ['Bestseller'], rating: 4.6, reviews: 1890
   },
   {
     id: 'dairy-006', name: 'Amul Fresh Cream', brand: 'Amul', category: 'dairy-breakfast',
     price: 52, mrp: 55, discount: 5, unit: '250 ml', deliveryTime: '11 MINS',
-    image: 'https://encrypted-tbn0.gstatic.com/shopping?q=tbn:ANd9GcQsHLc5tmVNB-f1cEfE7ykVw3JiFJDGrMfFKT3eMB6fOe9X69JNxBLWrFLtfB_Zpa8CX-FziT0YdBFIxcKA_S2Wf4SMVpDt',
+    image: 'https://images.pexels.com/photos/5908003/pexels-photo-5908003.jpeg',
     inStock: true, rating: 4.5, reviews: 1230
   },
   {
@@ -222,7 +222,7 @@ export const products = [
   {
     id: 'munch-003', name: "Haldiram's Aloo Bhujia", brand: "Haldiram's", category: 'munchies',
     price: 55, mrp: 60, discount: 8, unit: '200 g', deliveryTime: '11 MINS',
-    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQQ0uwjB22P65gWpKVrJLeL89SeN-GSfbk8FVb9oPteFg&s',
+    image: 'https://images.pexels.com/photos/7033900/pexels-photo-7033900.jpeg',
     inStock: true, tags: ['Bestseller'], rating: 4.6, reviews: 3890
   },
   {
@@ -234,19 +234,19 @@ export const products = [
   {
     id: 'munch-005', name: 'Doritos Nacho Cheese', brand: 'Doritos', category: 'munchies',
     price: 30, mrp: 30, discount: 0, unit: '60 g', deliveryTime: '11 MINS',
-    image: 'https://encrypted-tbn0.gstatic.com/shopping?q=tbn:ANd9GcRRd8FwrLpcJ94_p1G8TUI5J8S--mvEl58ExDTU5RMshTDmZ5jXQx8U_uw38gBmcvDEMUV58XVciiVncQt3k2ydg09UzTKBGHdhCWcRVM4',
+    image: 'https://images.pexels.com/photos/7033900/pexels-photo-7033900.jpeg',
     inStock: true, rating: 4.5, reviews: 1890
   },
   {
     id: 'munch-006', name: 'Pringles Original', brand: 'Pringles', category: 'munchies',
     price: 99, mrp: 110, discount: 10, unit: '107 g', deliveryTime: '11 MINS',
-    image: 'https://encrypted-tbn3.gstatic.com/shopping?q=tbn:ANd9GcQjLSArDEfU7CVp9LrdC1Jx4BR0U_DXY8x4vDMBv8LUL6k7waAFJ_ytPTBVhk_MTSix-V21HGLIBE0a47wPPB6R83Obw2UnO7qieWbXL_XZbscJG2_Si6tN_Q',
+    image: 'https://images.pexels.com/photos/34466116/pexels-photo-34466116.jpeg',
     inStock: true, rating: 4.6, reviews: 2670
   },
   {
     id: 'munch-007', name: "Haldiram's Moong Dal", brand: "Haldiram's", category: 'munchies',
     price: 50, mrp: 55, discount: 9, unit: '200 g', deliveryTime: '11 MINS',
-    image: 'https://www.haldirams.com/media/catalog/product/cache/71134970afb779eb7860339989626b7e/m/o/moong_dal_1_1.jpg',
+    image: 'https://images.pexels.com/photos/12865862/pexels-photo-12865862.jpeg',
     inStock: true, rating: 4.5, reviews: 1560
   },
   {
@@ -272,13 +272,13 @@ export const products = [
   {
     id: 'drink-001', name: 'Coca-Cola Soft Drink', brand: 'Coca-Cola', category: 'cold-drinks',
     price: 40, mrp: 45, discount: 11, unit: '750 ml', deliveryTime: '11 MINS',
-    image: 'https://encrypted-tbn2.gstatic.com/shopping?q=tbn:ANd9GcTib0fQ31yzglF2Igh51qPqrstRCLMFQwRVXysw1q3UI6vPyVcJMfIoYaChGwxnC75Z6bS6yUZ2NTkhT_5eMLjaWwsK7W_EesOWlvkXr2bN2dvA9dka1gpJfQ',
+    image: 'https://images.pexels.com/photos/15205136/pexels-photo-15205136.jpeg',
     inStock: true, tags: ['Bestseller'], rating: 4.5, reviews: 3450
   },
   {
     id: 'drink-002', name: 'Sprite Lime Flavoured Soft Drink', brand: 'Sprite', category: 'cold-drinks',
     price: 40, mrp: 45, discount: 11, unit: '750 ml', deliveryTime: '11 MINS',
-    image: 'https://cdn.grofers.com/cdn-cgi/image/f=auto,fit=scale-down,q=70,metadata=none,w=540/da/cms-assets/cms/product/70d53a08-e366-445e-a02c-84609edb4b7d.png',
+    image: 'https://images.pexels.com/photos/4045205/pexels-photo-4045205.jpeg',
     inStock: true, tags: ['Bestseller'], rating: 4.4, reviews: 2890
   },
   {
@@ -330,7 +330,7 @@ export const products = [
   {
     id: 'tea-002', name: 'Nescafe Classic Coffee', brand: 'Nescafe', category: 'tea-coffee',
     price: 320, mrp: 350, discount: 8, unit: '200 g', deliveryTime: '11 MINS',
-    image: 'https://encrypted-tbn3.gstatic.com/shopping?q=tbn:ANd9GcQuw4KJh5EHOrt86Qvx30UOlIeBfK7WwXL9oW2lnUnkE0Owom-IPNlYOe0LAukG5gK7AZthMV6jfT6msf7LoyuK0JEb69TXZFBYMZtZuofKhErQ-nsJ_kDPAiY',
+    image: 'https://images.pexels.com/photos/7507583/pexels-photo-7507583.jpeg',
     inStock: true, tags: ['Bestseller'], rating: 4.7, reviews: 3890
   },
   {
@@ -364,19 +364,19 @@ export const products = [
   {
     id: 'sweet-001', name: 'Cadbury Dairy Milk Chocolate', brand: 'Cadbury', category: 'sweet-tooth',
     price: 45, mrp: 50, discount: 10, unit: '55 g', deliveryTime: '11 MINS',
-    image: 'https://rukminim1.flixcart.com/image/1536/1536/xif0q/rakhi-set/g/r/0/1-cwrs010021-caratwala-original-imags7ghhvscyenp.jpeg?q=90',
+    image: 'https://images.pexels.com/photos/4113363/pexels-photo-4113363.jpeg',
     inStock: true, tags: ['Bestseller'], rating: 4.8, reviews: 8900
   },
   {
     id: 'sweet-002', name: 'KitKat Chocolate', brand: 'KitKat', category: 'sweet-tooth',
     price: 20, mrp: 20, discount: 0, unit: '27 g', deliveryTime: '11 MINS',
-    image: 'https://encrypted-tbn2.gstatic.com/shopping?q=tbn:ANd9GcQGvm8rjcAmw7_V-jS_RPBSSvkg-KLeTUr4TqjUZs-XPvp3pFYwldy04dBzCYIh3vGCQ0c12ytmnoj_zxmqSe46QvVMQ9o7GWd1N3RS94yZWPEtHfere6laTQ',
+    image: 'https://images.pexels.com/photos/15911875/pexels-photo-15911875.jpeg',
     inStock: true, rating: 4.6, reviews: 5670
   },
   {
     id: 'sweet-003', name: '5 Star Chocolate', brand: '5 Star', category: 'sweet-tooth',
     price: 10, mrp: 10, discount: 0, unit: '22 g', deliveryTime: '11 MINS',
-    image: 'https://rukminim2.flixcart.com/image/1536/1536/xif0q/chocolate/e/p/y/-original-imahzn5pyjjedtpy.jpeg?q=90',
+    image: 'https://images.pexels.com/photos/32402905/pexels-photo-32402905.jpeg',
     inStock: true, rating: 4.5, reviews: 3450
   },
 
@@ -384,7 +384,7 @@ export const products = [
   {
     id: 'atta-001', name: 'Aashirvaad Whole Wheat Atta', brand: 'Aashirvaad', category: 'atta-rice-dal',
     price: 285, mrp: 310, discount: 8, unit: '5 kg', deliveryTime: '11 MINS',
-    image: 'https://encrypted-tbn0.gstatic.com/shopping?q=tbn:ANd9GcSHrbIi4MG08IKpFCL-U-cqdwZdtDuutpEH030v0BmViJfSA-SKKrx3IbslJJ0rPzSGyNFCPvW-9zuZFxAsecdNKBGCwJhk',
+    image: 'https://images.pexels.com/photos/5441094/pexels-photo-5441094.jpeg',
     inStock: true, tags: ['Bestseller'], rating: 4.7, reviews: 6780
   },
   {
@@ -404,7 +404,7 @@ export const products = [
   {
     id: 'masala-001', name: 'Fortune Sunflower Refined Oil', brand: 'Fortune', category: 'masala-oil',
     price: 185, mrp: 200, discount: 7, unit: '1 l', deliveryTime: '11 MINS',
-    image: 'https://encrypted-tbn3.gstatic.com/shopping?q=tbn:ANd9GcS5zvO9nxNwh5LzZ-M_QqBHH2Yg_KEI5hxSTTLBXlmViR5y8LnmMuJOnP5Y0x5CqESjRdt9VGWhqihi3T5ACVR1_iXVsNkl',
+    image: 'https://images.pexels.com/photos/31275834/pexels-photo-31275834.jpeg',
     inStock: true, tags: ['Bestseller'], rating: 4.5, reviews: 3890
   },
   {
@@ -416,7 +416,7 @@ export const products = [
   {
     id: 'masala-003', name: 'Everest Garam Masala', brand: 'Everest', category: 'masala-oil',
     price: 85, mrp: 95, discount: 10, unit: '100 g', deliveryTime: '11 MINS',
-    image: 'https://rukminim1.flixcart.com/image/1536/1536/jyafukw0/spice-masala/f/b/p/100-garam-masala-100-gram-box-everest-powder-original-imafgdfbzyupkdzn.jpeg?q=90',
+    image: 'https://images.pexels.com/photos/2802527/pexels-photo-2802527.jpeg',
     inStock: true, rating: 4.5, reviews: 1890
   },
 
@@ -456,7 +456,7 @@ export const products = [
   {
     id: 'gym-001', name: 'Yoga Bar 26g Protein Milk Shake - Chocolate', brand: 'Yogabar', category: 'organic-healthy',
     price: 98, mrp: 131, discount: 25, unit: '250 ml', deliveryTime: '11 MINS',
-    image: 'https://encrypted-tbn0.gstatic.com/shopping?q=tbn:ANd9GcSqZEIW4lsAadP_AemecJ4X8jJsma_3aC5ReGRLoOtI9fK4IIeyQ6-Ue1hAJyE-VFwF6trZXNr0WG-Y0WidClZUu6n-gvgQ',
+    image: 'https://images.pexels.com/photos/18142621/pexels-photo-18142621.jpeg',
     inStock: true, tags: ['Premium'], rating: 4.6, reviews: 320
   },
   {
@@ -486,19 +486,19 @@ export const products = [
   {
     id: 'gym-006', name: 'Oziva Bioactive Plant Protein - Vanilla', brand: 'Oziva', category: 'organic-healthy',
     price: 1559, mrp: 2799, discount: 44, unit: '1 kg', deliveryTime: '11 MINS',
-    image: 'https://rukminim1.flixcart.com/image/1536/1536/xif0q/protein-supplement/r/k/l/-original-imah3acfyzzua4pv.jpeg?q=90',
+    image: 'https://images.pexels.com/photos/13779116/pexels-photo-13779116.jpeg',
     inStock: true, rating: 4.5, reviews: 460
   },
   {
     id: 'gym-007', name: 'Yoga Bar Power Up 20g - Coffee Crush', brand: 'Yogabar', category: 'organic-healthy',
     price: 94, mrp: 125, discount: 24, unit: '70 g', deliveryTime: '11 MINS',
-    image: 'https://cdn.zeptonow.com/production/ik-seo/tr:w-470,ar-3000-3000,pr-true,f-auto,q-40,dpr-2/cms/product_variant/b623f44e-8047-4e12-bf86-51ce852a8ff3/Yoga-Bar-Power-Up-20g-Protein-Bar-Coffee-Crush-No-Added-Sugar-Whey-Protein-Concentrate-Isolate.jpg',
+    image: 'https://images.pexels.com/photos/13111782/pexels-photo-13111782.jpeg',
     inStock: true, rating: 4.4, reviews: 180
   },
   {
     id: 'gym-008', name: 'Yoga Bar Protein Minis - Choco Peanut Butter', brand: 'Yogabar', category: 'organic-healthy',
     price: 121, mrp: 175, discount: 30, unit: '7 x 20 g', deliveryTime: '11 MINS',
-    image: 'https://cdn.zeptonow.com/production/ik-seo/tr:w-470,ar-3000-3000,pr-true,f-auto,q-40,dpr-2/cms/product_variant/f1a9dbd5-48c7-4461-bab8-9a89f7839fdd/Yoga-Bar-Protein-Minis-Choco-Peanut-Butter-7-Pieces-4g-Protein-High-Fibre.jpeg',
+    image: 'https://images.pexels.com/photos/6208140/pexels-photo-6208140.jpeg',
     inStock: true, rating: 4.5, reviews: 220
   },
 
@@ -534,13 +534,13 @@ export const products = [
   {
     id: 'clean-001', name: 'Vim Dishwash Gel', brand: 'Vim', category: 'cleaning',
     price: 125, mrp: 140, discount: 10, unit: '750 ml', deliveryTime: '11 MINS',
-    image: 'https://rukminim1.flixcart.com/image/1536/1536/ky4qgsw0/dish-washing-bar/g/z/y/dish-cleaning-gel-with-power-of-lemons-750-ml-1-750-vim-original-imagafmbyff9448w.jpeg?q=90',
+    image: 'https://images.pexels.com/photos/10573258/pexels-photo-10573258.jpeg',
     inStock: true, rating: 4.5, reviews: 2340
   },
   {
     id: 'clean-002', name: 'Harpic Toilet Cleaner', brand: 'Harpic', category: 'cleaning',
     price: 185, mrp: 210, discount: 11, unit: '1 l', deliveryTime: '11 MINS',
-    image: 'https://rukminim3.flixcart.com/image/1114/972/xif0q/toilet-cleaner/q/g/j/-original-imahgafbwru2zg5z.jpeg?q=60&crop=false',
+    image: 'https://images.pexels.com/photos/5217885/pexels-photo-5217885.jpeg',
     inStock: true, rating: 4.6, reviews: 1890
   },
 
@@ -562,7 +562,7 @@ export const products = [
   {
     id: 'personal-002', name: 'Dove Soap', brand: 'Dove', category: 'personal-care',
     price: 65, mrp: 75, discount: 13, unit: '100 g', deliveryTime: '11 MINS',
-    image: 'https://encrypted-tbn3.gstatic.com/shopping?q=tbn:ANd9GcSNvD6tlj9od2Jfsrx9RAIcwuIyjAUHEExkcIkNmitBB_z59apx78vaPCtgLsawXS3gR_iLYD_QYp9NlOXO9fs5T4pr03IG',
+    image: 'https://images.pexels.com/photos/6690839/pexels-photo-6690839.jpeg',
     inStock: true, rating: 4.7, reviews: 3890
   },
 
@@ -584,7 +584,7 @@ export const products = [
   {
     id: 'dish-paneer', name: 'Milky Mist Paneer', brand: 'Milky Mist', category: 'dairy-breakfast',
     price: 82, mrp: 130, discount: 37, unit: '200 g', deliveryTime: '11 MINS',
-    image: 'https://instamart-media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto,h_600/NI_CATALOG/IMAGES/CIW/2024/11/15/21652c20-7ab6-434f-8f41-30e8e1a8d839_688_1.png',
+    image: 'https://images.pexels.com/photos/19460144/pexels-photo-19460144.jpeg',
     inStock: true, tags: ['Bestseller', 'Protein Rich'], rating: 4.6, reviews: 860
   },
   {
@@ -596,7 +596,7 @@ export const products = [
   {
     id: 'dish-yogurt', name: 'Milky Mist Greek Yogurt', brand: 'Milky Mist', category: 'dairy-breakfast',
     price: 35, mrp: 55, discount: 36, unit: '1 pc (100 g)', deliveryTime: '11 MINS',
-    image: 'https://instamart-media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto,h_600/NI_CATALOG/IMAGES/ciw/2025/12/17/0d351d02-7e7a-40c0-b600-6f9048b54094_7BXZQMWFVT_MN_16122025.png',
+    image: 'https://images.pexels.com/photos/4006347/pexels-photo-4006347.jpeg',
     inStock: true, rating: 4.6, reviews: 260
   },
   {
@@ -611,107 +611,107 @@ export const products = [
   // ── Vegetables & Fruits (9 new) ──
   { id: 'veg-011', name: 'Spinach', brand: 'Fresho', category: 'vegetables-fruits', price: 25, mrp: 32, discount: 22, unit: '200 g', deliveryTime: '11 MINS', image: 'https://images.unsplash.com/photo-1576045057995-568f588f82fb?w=150&h=150&fit=crop', inStock: true, tags: ['Bestseller'], rating: 4.3, reviews: 620 },
   { id: 'veg-012', name: 'Garlic', brand: 'Fresho', category: 'vegetables-fruits', price: 30, mrp: 38, discount: 21, unit: '100 g', deliveryTime: '11 MINS', image: 'https://m.media-amazon.com/images/I/71vpJSiNYeL.jpg', inStock: true, rating: 4.4, reviews: 880 },
-  { id: 'veg-013', name: 'Ginger', brand: 'Fresho', category: 'vegetables-fruits', price: 28, mrp: 35, discount: 20, unit: '100 g', deliveryTime: '11 MINS', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRoULYd8tLrXG5jtpwewia6WvKqE2Io_mlmLIq0abcRng&s=10', inStock: true, rating: 4.2, reviews: 490 },
-  { id: 'veg-014', name: 'Green Chilli', brand: 'Fresho', category: 'vegetables-fruits', price: 18, mrp: 24, discount: 25, unit: '100 g', deliveryTime: '11 MINS', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTr_HXQc_sJUaln_u6qrReV705KtCbWUvRn_WybH1abw&s=10', inStock: true, rating: 4.0, reviews: 310 },
+  { id: 'veg-013', name: 'Ginger', brand: 'Fresho', category: 'vegetables-fruits', price: 28, mrp: 35, discount: 20, unit: '100 g', deliveryTime: '11 MINS', image: 'https://images.pexels.com/photos/2893635/pexels-photo-2893635.jpeg', inStock: true, rating: 4.2, reviews: 490 },
+  { id: 'veg-014', name: 'Green Chilli', brand: 'Fresho', category: 'vegetables-fruits', price: 18, mrp: 24, discount: 25, unit: '100 g', deliveryTime: '11 MINS', image: 'https://images.pexels.com/photos/7572005/pexels-photo-7572005.jpeg', inStock: true, rating: 4.0, reviews: 310 },
   { id: 'veg-015', name: 'Banana - Robusta', brand: 'Fresho', category: 'vegetables-fruits', price: 42, mrp: 50, discount: 16, unit: '6 pcs', deliveryTime: '11 MINS', image: 'https://images.unsplash.com/photo-1571771894821-ce9b6c11b08e?w=150&h=150&fit=crop', inStock: true, tags: ['Bestseller'], rating: 4.5, reviews: 1420 },
   { id: 'veg-016', name: 'Apple - Royal Gala', brand: 'Fresho', category: 'vegetables-fruits', price: 120, mrp: 150, discount: 20, unit: '4 pcs (apx 700 g)', deliveryTime: '11 MINS', image: 'https://images.unsplash.com/photo-1567306226416-28f0efdc88ce?w=150&h=150&fit=crop', inStock: true, tags: ['Bestseller'], rating: 4.6, reviews: 2100 },
   { id: 'veg-017', name: 'Mango - Alphonso', brand: 'Fresho', category: 'vegetables-fruits', price: 160, mrp: 200, discount: 20, unit: '3 pcs (apx 600 g)', deliveryTime: '11 MINS', image: 'https://images.unsplash.com/photo-1601493700631-2b16ec4b4716?w=150&h=150&fit=crop', inStock: true, tags: ['Bestseller'], rating: 4.8, reviews: 3200 },
   { id: 'veg-018', name: 'Sweet Corn', brand: 'Fresho', category: 'vegetables-fruits', price: 35, mrp: 45, discount: 22, unit: '2 pcs', deliveryTime: '11 MINS', image: 'https://images.unsplash.com/photo-1551754655-cd27e38d2076?w=150&h=150&fit=crop', inStock: true, rating: 4.3, reviews: 520 },
-  { id: 'veg-029', name: 'Bottle Gourd (Lauki)', brand: 'Fresho', category: 'vegetables-fruits', price: 30, mrp: 38, discount: 21, unit: '1 pc (apx 500 g)', deliveryTime: '11 MINS', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTkuMilB-za1FPp0b_kvZIco0l7Y-jxN0NxC-LRz9cdcYHzJw2MkG7W7Ko&s=10', inStock: true, rating: 4.0, reviews: 240 },
+  { id: 'veg-029', name: 'Bottle Gourd (Lauki)', brand: 'Fresho', category: 'vegetables-fruits', price: 30, mrp: 38, discount: 21, unit: '1 pc (apx 500 g)', deliveryTime: '11 MINS', image: 'https://images.pexels.com/photos/2893635/pexels-photo-2893635.jpeg', inStock: true, rating: 4.0, reviews: 240 },
 
   // ── Dairy & Breakfast (7 new) ──
   { id: 'dairy-011', name: 'Amul Mozzarella Cheese Block', brand: 'Amul', category: 'dairy-breakfast', price: 110, mrp: 130, discount: 15, unit: '200 g', deliveryTime: '11 MINS', image: 'https://www.bbassets.com/media/uploads/p/l/100019887_3-amul-pizza-cheese-mozzarella.jpg', inStock: true, tags: ['Bestseller'], rating: 4.7, reviews: 1850 },
-  { id: 'dairy-012', name: 'Mother Dairy Mishti Doi', brand: 'Mother Dairy', category: 'dairy-breakfast', price: 40, mrp: 50, discount: 20, unit: '400 g', deliveryTime: '11 MINS', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSm3Nn7jUvezDRhmBzqoC23bUHn7VSVyfR7pp38H8vZWQ&s', inStock: true, rating: 4.5, reviews: 920 },
-  { id: 'dairy-013', name: 'Epigamia Greek Yogurt - Mango', brand: 'Epigamia', category: 'dairy-breakfast', price: 60, mrp: 75, discount: 20, unit: '90 g', deliveryTime: '11 MINS', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSEYA3Q8O8_DOyhnC9cSI0NcUdf2ypBzRZrUN-VCBE-kA&s=10p', inStock: true, tags: ['Bestseller'], rating: 4.6, reviews: 1340 },
-  { id: 'dairy-014', name: 'Amul Cream - Fresh', brand: 'Amul', category: 'dairy-breakfast', price: 30, mrp: 38, discount: 21, unit: '100 ml', deliveryTime: '11 MINS', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTgMTl70xTp2l4H9d0DaECIgoqAl76-9Sv3B7Kw0IYBCA&s=10', inStock: true, rating: 4.4, reviews: 660 },
-  { id: 'dairy-015', name: 'Saffola Oats - Classic', brand: 'Saffola', category: 'dairy-breakfast', price: 130, mrp: 165, discount: 21, unit: '500 g', deliveryTime: '11 MINS', image: 'https://encrypted-tbn3.gstatic.com/shopping?q=tbn:ANd9GcRS5B-FYjXYuCpr2lXoWikB3f_hgoX6PvN-6goJu6ZWw6v2y3JpzB23XcJvVkI3YPAgXBl4omxMVd5TsPViAj1eU2oIuGOnibAH-vUbV7625XFXxQPxKb3fqSLhXl_FYSwTpa3s8y7Hs4o&usqp=CAc', inStock: true, tags: ['Bestseller'], rating: 4.5, reviews: 2200 },
-  { id: 'dairy-016', name: 'Kellogg Corn Flakes - Original', brand: 'Kellogg', category: 'dairy-breakfast', price: 125, mrp: 155, discount: 19, unit: '500 g', deliveryTime: '11 MINS', image: 'https://encrypted-tbn0.gstatic.com/shopping?q=tbn:ANd9GcQaGvZ0nfvwbSvyoa-Ibwpa0N2QzA1nPyS8JqfDBV5Rh0hgAmJsbrd4dikRXZ78ilFeGwXUSuH-pXwjNrbx6y_1drncZ7Rs', inStock: true, tags: ['Bestseller'], rating: 4.4, reviews: 1800 },
-  { id: 'dairy-017', name: 'Amul Lassi - Rose', brand: 'Amul', category: 'dairy-breakfast', price: 30, mrp: 38, discount: 21, unit: '200 ml', deliveryTime: '11 MINS', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRGfuG4tYYn1ODd9U3jkis3jkAXIy3AJ-mHTN4Obncr8A&s=10', inStock: true, rating: 4.3, reviews: 780 },
+  { id: 'dairy-012', name: 'Mother Dairy Mishti Doi', brand: 'Mother Dairy', category: 'dairy-breakfast', price: 40, mrp: 50, discount: 20, unit: '400 g', deliveryTime: '11 MINS', image: 'https://images.pexels.com/photos/36040972/pexels-photo-36040972.jpeg', inStock: true, rating: 4.5, reviews: 920 },
+  { id: 'dairy-013', name: 'Epigamia Greek Yogurt - Mango', brand: 'Epigamia', category: 'dairy-breakfast', price: 60, mrp: 75, discount: 20, unit: '90 g', deliveryTime: '11 MINS', image: 'https://images.pexels.com/photos/5908003/pexels-photo-5908003.jpeg', inStock: true, tags: ['Bestseller'], rating: 4.6, reviews: 1340 },
+  { id: 'dairy-014', name: 'Amul Cream - Fresh', brand: 'Amul', category: 'dairy-breakfast', price: 30, mrp: 38, discount: 21, unit: '100 ml', deliveryTime: '11 MINS', image: 'https://images.pexels.com/photos/36040972/pexels-photo-36040972.jpeg', inStock: true, rating: 4.4, reviews: 660 },
+  { id: 'dairy-015', name: 'Saffola Oats - Classic', brand: 'Saffola', category: 'dairy-breakfast', price: 130, mrp: 165, discount: 21, unit: '500 g', deliveryTime: '11 MINS', image: 'https://images.pexels.com/photos/5908003/pexels-photo-5908003.jpeg', inStock: true, tags: ['Bestseller'], rating: 4.5, reviews: 2200 },
+  { id: 'dairy-016', name: 'Kellogg Corn Flakes - Original', brand: 'Kellogg', category: 'dairy-breakfast', price: 125, mrp: 155, discount: 19, unit: '500 g', deliveryTime: '11 MINS', image: 'https://images.pexels.com/photos/36040972/pexels-photo-36040972.jpeg', inStock: true, tags: ['Bestseller'], rating: 4.4, reviews: 1800 },
+  { id: 'dairy-017', name: 'Amul Lassi - Rose', brand: 'Amul', category: 'dairy-breakfast', price: 30, mrp: 38, discount: 21, unit: '200 ml', deliveryTime: '11 MINS', image: 'https://images.pexels.com/photos/5908003/pexels-photo-5908003.jpeg', inStock: true, rating: 4.3, reviews: 780 },
 
   // ── Munchies (8 new) ──
-  { id: 'munch-001', name: "Lay's Classic Salted Chips", brand: "Lay's", category: 'munchies', price: 20, mrp: 20, discount: 0, unit: '52 g', deliveryTime: '11 MINS', image: 'https://m.media-amazon.com/images/I/71axGdrNHoL._AC_UF894,1000_QL80_.jpg', inStock: true, tags: ['Bestseller'], rating: 4.3, reviews: 3100 },
-  { id: 'munch-003', name: 'Kurkure Masala Munch', brand: 'Kurkure', category: 'munchies', price: 10, mrp: 10, discount: 0, unit: '22 g', deliveryTime: '11 MINS', image: 'https://m.media-amazon.com/images/I/71LyKlizpuL._AC_UF894,1000_QL80_.jpg', inStock: true, tags: ['Bestseller'], rating: 4.2, reviews: 4100 },
-  { id: 'munch-004', name: 'Bingo! Mad Angles', brand: 'Bingo', category: 'munchies', price: 20, mrp: 20, discount: 0, unit: '55 g', deliveryTime: '11 MINS', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQpPNQiIWynamBqxS6WutTYiP-SXwJeDrJ-yvHeEi0dCQ&s=10', inStock: true, rating: 4.1, reviews: 1640 },
-  { id: 'munch-006', name: 'Parle G Biscuits', brand: 'Parle', category: 'munchies', price: 10, mrp: 10, discount: 0, unit: '200 g', deliveryTime: '11 MINS', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS-y8mvkxDAFuGVNBrAx03J_FIImpY0yO7p01NXe-7V7Q&s=10', inStock: true, tags: ['Bestseller'], rating: 4.5, reviews: 5600 },
-  { id: 'munch-007', name: 'Too Yumm! Multigrain Chips', brand: 'Too Yumm', category: 'munchies', price: 25, mrp: 30, discount: 17, unit: '65 g', deliveryTime: '11 MINS', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRmrvjdNPPU-WpYSpYohydfOLTERTCldWyinDy1GE6KJg&s=10', inStock: true, rating: 4.0, reviews: 820 },
-  { id: 'munch-008', name: 'Pringles Original', brand: 'Pringles', category: 'munchies', price: 115, mrp: 150, discount: 23, unit: '134 g', deliveryTime: '11 MINS', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSzGczMEwP6anVJzG9hDGfUxuJ4oi75BwuA_CVpOED8Ww&s=10', inStock: true, rating: 4.6, reviews: 2800 },
+  { id: 'munch-011', name: "Lay's Classic Salted Chips", brand: "Lay's", category: 'munchies', price: 20, mrp: 20, discount: 0, unit: '52 g', deliveryTime: '11 MINS', image: 'https://m.media-amazon.com/images/I/71axGdrNHoL._AC_UF894,1000_QL80_.jpg', inStock: true, tags: ['Bestseller'], rating: 4.3, reviews: 3100 },
+  { id: 'munch-012', name: 'Kurkure Masala Munch', brand: 'Kurkure', category: 'munchies', price: 10, mrp: 10, discount: 0, unit: '22 g', deliveryTime: '11 MINS', image: 'https://m.media-amazon.com/images/I/71LyKlizpuL._AC_UF894,1000_QL80_.jpg', inStock: true, tags: ['Bestseller'], rating: 4.2, reviews: 4100 },
+  { id: 'munch-013', name: 'Bingo! Mad Angles', brand: 'Bingo', category: 'munchies', price: 20, mrp: 20, discount: 0, unit: '55 g', deliveryTime: '11 MINS', image: 'https://images.pexels.com/photos/34466116/pexels-photo-34466116.jpeg', inStock: true, rating: 4.1, reviews: 1640 },
+  { id: 'munch-014', name: 'Parle G Biscuits', brand: 'Parle', category: 'munchies', price: 10, mrp: 10, discount: 0, unit: '200 g', deliveryTime: '11 MINS', image: 'https://images.pexels.com/photos/7033900/pexels-photo-7033900.jpeg', inStock: true, tags: ['Bestseller'], rating: 4.5, reviews: 5600 },
+  { id: 'munch-015', name: 'Too Yumm! Multigrain Chips', brand: 'Too Yumm', category: 'munchies', price: 25, mrp: 30, discount: 17, unit: '65 g', deliveryTime: '11 MINS', image: 'https://images.pexels.com/photos/34466116/pexels-photo-34466116.jpeg', inStock: true, rating: 4.0, reviews: 820 },
+  { id: 'munch-016', name: 'Pringles Original', brand: 'Pringles', category: 'munchies', price: 115, mrp: 150, discount: 23, unit: '134 g', deliveryTime: '11 MINS', image: 'https://images.pexels.com/photos/7033900/pexels-photo-7033900.jpeg', inStock: true, rating: 4.6, reviews: 2800 },
 
   // ── Cold Drinks & Juices (6 new) ──
   { id: 'drinks-001', name: 'Coca Cola - Can', brand: 'Coca Cola', category: 'cold-drinks', price: 45, mrp: 50, discount: 10, unit: '330 ml', deliveryTime: '11 MINS', image: 'https://images.unsplash.com/photo-1554866585-cd94860890b7?w=150&h=150&fit=crop', inStock: true, tags: ['Bestseller'], rating: 4.3, reviews: 4100 },
-  { id: 'drinks-002', name: 'Tropicana Orange Juice', brand: 'Tropicana', category: 'cold-drinks', price: 90, mrp: 110, discount: 18, unit: '1 L', deliveryTime: '11 MINS', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSVYprOE9NSRseRU9SROKgNBQDMETQkWRIoBVrjRjqG9Q&s', inStock: true, tags: ['Bestseller'], rating: 4.4, reviews: 2600 },
-  { id: 'drinks-003', name: 'Paper Boat Aamras', brand: 'Paper Boat', category: 'cold-drinks', price: 35, mrp: 45, discount: 22, unit: '250 ml', deliveryTime: '11 MINS', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSrZ6w3C5YSw93QUxfzXnmaPQGLfQLBu6FDtZI-Oi8oJA&s=10', inStock: true, rating: 4.5, reviews: 1780 },
-  { id: 'drinks-004', name: 'Red Bull Energy Drink', brand: 'Red Bull', category: 'cold-drinks', price: 125, mrp: 150, discount: 17, unit: '250 ml', deliveryTime: '11 MINS', image: 'https://encrypted-tbn1.gstatic.com/shopping?q=tbn:ANd9GcSME0I7AuVN7WJZPiHXUXkUVZYq2c1P4w0hnoXqxmXzBJQzknkDapGsB7fw3Id9t1uc6YYPIs111EnpyIncqoWOIxQnoc157BIXkUEyrXT4', inStock: true, rating: 4.4, reviews: 2100 },
-  { id: 'drinks-005', name: 'Sprite - Bottle', brand: 'Sprite', category: 'cold-drinks', price: 40, mrp: 45, discount: 11, unit: '750 ml', deliveryTime: '11 MINS', image: 'https://encrypted-tbn3.gstatic.com/shopping?q=tbn:ANd9GcSkRLd4TTIbvfegN-1KWbnBLWSHzrByzUKxYUWUsHCFsRiEQkOjzxGMQMaWlOonMP4J0WdWPkaL-WimX7PiAmB5lTqMpFbwkSi_DgtrOe9Ly5M0F6WUxsfRPpY', inStock: true, tags: ['Bestseller'], rating: 4.2, reviews: 3400 },
-  { id: 'drinks-006', name: 'Real Mixed Fruit Juice', brand: 'Real', category: 'cold-drinks', price: 75, mrp: 90, discount: 17, unit: '1 L', deliveryTime: '11 MINS', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSgZK-FZp16Jje34qZUB5wmmpkZPbeDSF9kKU3qepaxlA&s=10', inStock: true, rating: 4.3, reviews: 1560 },
+  { id: 'drinks-002', name: 'Tropicana Orange Juice', brand: 'Tropicana', category: 'cold-drinks', price: 90, mrp: 110, discount: 18, unit: '1 L', deliveryTime: '11 MINS', image: 'https://images.pexels.com/photos/15205136/pexels-photo-15205136.jpeg', inStock: true, tags: ['Bestseller'], rating: 4.4, reviews: 2600 },
+  { id: 'drinks-003', name: 'Paper Boat Aamras', brand: 'Paper Boat', category: 'cold-drinks', price: 35, mrp: 45, discount: 22, unit: '250 ml', deliveryTime: '11 MINS', image: 'https://images.pexels.com/photos/4045205/pexels-photo-4045205.jpeg', inStock: true, rating: 4.5, reviews: 1780 },
+  { id: 'drinks-004', name: 'Red Bull Energy Drink', brand: 'Red Bull', category: 'cold-drinks', price: 125, mrp: 150, discount: 17, unit: '250 ml', deliveryTime: '11 MINS', image: 'https://images.pexels.com/photos/15205136/pexels-photo-15205136.jpeg', inStock: true, rating: 4.4, reviews: 2100 },
+  { id: 'drinks-005', name: 'Sprite - Bottle', brand: 'Sprite', category: 'cold-drinks', price: 40, mrp: 45, discount: 11, unit: '750 ml', deliveryTime: '11 MINS', image: 'https://images.pexels.com/photos/4045205/pexels-photo-4045205.jpeg', inStock: true, tags: ['Bestseller'], rating: 4.2, reviews: 3400 },
+  { id: 'drinks-006', name: 'Real Mixed Fruit Juice', brand: 'Real', category: 'cold-drinks', price: 75, mrp: 90, discount: 17, unit: '1 L', deliveryTime: '11 MINS', image: 'https://images.pexels.com/photos/15205136/pexels-photo-15205136.jpeg', inStock: true, rating: 4.3, reviews: 1560 },
 
   // ── Instant & Frozen (6 new) ──
-  { id: 'instant-003', name: 'McCain Smiles Potato Snacks', brand: 'McCain', category: 'instant-frozen', price: 130, mrp: 165, discount: 21, unit: '415 g', deliveryTime: '11 MINS', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQyHRhvgLHcpQdd5u-hgVFP9s79dTIfre0w6-2dHR1qzg&s=10', inStock: true, tags: ['Bestseller'], rating: 4.6, reviews: 2800 },
-  { id: 'instant-004', name: 'Haldiram Instant Poha', brand: 'Haldiram', category: 'instant-frozen', price: 45, mrp: 55, discount: 18, unit: '240 g', deliveryTime: '11 MINS', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRJsz4-CPq3swtGBgNOFdBGaOmtxUrH3PLTi3huv78phA&s=10', inStock: true, rating: 4.2, reviews: 1100 },
+  { id: 'instant-007', name: 'McCain Smiles Potato Snacks', brand: 'McCain', category: 'instant-frozen', price: 130, mrp: 165, discount: 21, unit: '415 g', deliveryTime: '11 MINS', image: 'https://images.pexels.com/photos/4518673/pexels-photo-4518673.jpeg', inStock: true, tags: ['Bestseller'], rating: 4.6, reviews: 2800 },
+  { id: 'instant-004', name: 'Haldiram Instant Poha', brand: 'Haldiram', category: 'instant-frozen', price: 45, mrp: 55, discount: 18, unit: '240 g', deliveryTime: '11 MINS', image: 'https://images.pexels.com/photos/6940988/pexels-photo-6940988.jpeg', inStock: true, rating: 4.2, reviews: 1100 },
   { id: 'instant-005', name: 'Ching Schezwan Chutney', brand: "Ching's", category: 'instant-frozen', price: 55, mrp: 70, discount: 21, unit: '250 g', deliveryTime: '11 MINS', image: 'data:image/jpeg;base64,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', inStock: true, rating: 4.4, reviews: 1980 },
-  { id: 'instant-006', name: 'MTR Instant Poha Mix', brand: 'MTR', category: 'instant-frozen', price: 55, mrp: 70, discount: 21, unit: '500 g', deliveryTime: '11 MINS', image: 'https://encrypted-tbn1.gstatic.com/shopping?q=tbn:ANd9GcQ3nPvdCKtoIK4MZiWjL4XRcbvuVfJbshAlxwqzNzX4x0MARCdE6c5xc_crjV_y_mRciwePrXEDRF-kdoAvbQA3cC7VC1sU', inStock: true, rating: 4.3, reviews: 900 },
+  { id: 'instant-006', name: 'MTR Instant Poha Mix', brand: 'MTR', category: 'instant-frozen', price: 55, mrp: 70, discount: 21, unit: '500 g', deliveryTime: '11 MINS', image: 'https://images.pexels.com/photos/4518673/pexels-photo-4518673.jpeg', inStock: true, rating: 4.3, reviews: 900 },
 
   // ── Tea & Coffee (5 new) ──
-  { id: 'tea-001', name: 'Tata Tea Gold', brand: 'Tata Tea', category: 'tea-coffee', price: 130, mrp: 165, discount: 21, unit: '250 g', deliveryTime: '11 MINS', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQg6JdzDIKVqHi3u59_AyEglK2reGE518lu0H90M_4Zlg&s=10', inStock: true, tags: ['Bestseller'], rating: 4.6, reviews: 4800 },
-  { id: 'tea-002', name: 'Nescafe Classic Instant Coffee', brand: 'Nescafe', category: 'tea-coffee', price: 95, mrp: 120, discount: 21, unit: '50 g', deliveryTime: '11 MINS', image: 'https://encrypted-tbn3.gstatic.com/shopping?q=tbn:ANd9GcSRucBGs3GIwJ6UXJvwY7trXwc_irMUkoWn_pXpw0iNTxaQ6oIroGrdbWSFNYtiLEnW0IKGrMVVIcgJy6yN3BvRWC-q8XpfXA', inStock: true, tags: ['Bestseller'], rating: 4.5, reviews: 3600 },
-  { id: 'tea-003', name: 'Bru Roasted & Ground Coffee', brand: 'Bru', category: 'tea-coffee', price: 75, mrp: 95, discount: 21, unit: '100 g', deliveryTime: '11 MINS', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSBjcYxgTsjJLta2Ztw__inoPGFbpqC-WNLB6hRYP5uMA&s', inStock: true, rating: 4.4, reviews: 2100 },
+  { id: 'tea-006', name: 'Tata Tea Gold', brand: 'Tata Tea', category: 'tea-coffee', price: 130, mrp: 165, discount: 21, unit: '250 g', deliveryTime: '11 MINS', image: 'https://images.pexels.com/photos/7507583/pexels-photo-7507583.jpeg', inStock: true, tags: ['Bestseller'], rating: 4.6, reviews: 4800 },
+  { id: 'tea-007', name: 'Nescafe Classic Instant Coffee', brand: 'Nescafe', category: 'tea-coffee', price: 95, mrp: 120, discount: 21, unit: '50 g', deliveryTime: '11 MINS', image: 'https://images.pexels.com/photos/7507583/pexels-photo-7507583.jpeg', inStock: true, tags: ['Bestseller'], rating: 4.5, reviews: 3600 },
+  { id: 'tea-008', name: 'Bru Roasted & Ground Coffee', brand: 'Bru', category: 'tea-coffee', price: 75, mrp: 95, discount: 21, unit: '100 g', deliveryTime: '11 MINS', image: 'https://images.pexels.com/photos/7507583/pexels-photo-7507583.jpeg', inStock: true, rating: 4.4, reviews: 2100 },
   { id: 'tea-004', name: "Lipton Green Tea - Honey Lemon", brand: 'Lipton', category: 'tea-coffee', price: 175, mrp: 220, discount: 20, unit: '25 bags', deliveryTime: '11 MINS', image: 'data:image/jpeg;base64,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', inStock: true, rating: 4.3, reviews: 1560 },
-  { id: 'tea-005', name: 'Blue Tokai Filter Coffee', brand: 'Blue Tokai', category: 'tea-coffee', price: 395, mrp: 450, discount: 12, unit: '250 g', deliveryTime: '11 MINS', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTEjoYdNwu_Dd3ui6KWDfuEpGBwHRtRf7Va_OgcRzcmMA&s=10', inStock: true, tags: ['Bestseller'], rating: 4.8, reviews: 2800 },
+  { id: 'tea-005', name: 'Blue Tokai Filter Coffee', brand: 'Blue Tokai', category: 'tea-coffee', price: 395, mrp: 450, discount: 12, unit: '250 g', deliveryTime: '11 MINS', image: 'https://images.pexels.com/photos/7507583/pexels-photo-7507583.jpeg', inStock: true, tags: ['Bestseller'], rating: 4.8, reviews: 2800 },
 
   // ── Bakery & Biscuits (5 new) ──
-  { id: 'bakery-001', name: 'Britannia Good Day Cashew Cookies', brand: 'Britannia', category: 'bakery-biscuits', price: 30, mrp: 35, discount: 14, unit: '100 g', deliveryTime: '11 MINS', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQpH6vDwvxGy6JrmG_YfFinf8b4u6c0aFmoO0xr7i49Ew&s=10', inStock: true, tags: ['Bestseller'], rating: 4.5, reviews: 3900 },
-  { id: 'bakery-002', name: "Oreo Original Cookies", brand: 'Oreo', category: 'bakery-biscuits', price: 35, mrp: 40, discount: 12, unit: '120 g', deliveryTime: '11 MINS', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRB6ixaY80fz1W8mUfx7zVhF_0Js8YOirPZfFAtLByUzV1MilcJQW7iJ6U&s=10', inStock: true, tags: ['Bestseller'], rating: 4.7, reviews: 5200 },
-  { id: 'bakery-003', name: 'Monginis Butterscotch Pastry', brand: 'Monginis', category: 'bakery-biscuits', price: 60, mrp: 75, discount: 20, unit: '1 pc', deliveryTime: '11 MINS', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqnryX_OLakTbTjUV3H6hty5yK2LO838Omw9iM4RhDZg&s=10', inStock: true, rating: 4.3, reviews: 880 },
-  { id: 'bakery-005', name: 'Britannia Multigrain Bread', brand: 'Britannia', category: 'bakery-biscuits', price: 48, mrp: 58, discount: 17, unit: '400 g (16 slices)', deliveryTime: '11 MINS', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQhW9GFmJseVmJk_-cTIciZlvG8KXFjrUnuB9WHze_49g&s=10', inStock: true, tags: ['Bestseller'], rating: 4.4, reviews: 1780 },
+  { id: 'bakery-006', name: 'Britannia Good Day Cashew Cookies', brand: 'Britannia', category: 'bakery-biscuits', price: 30, mrp: 35, discount: 14, unit: '100 g', deliveryTime: '11 MINS', image: 'https://images.pexels.com/photos/7543099/pexels-photo-7543099.jpeg', inStock: true, tags: ['Bestseller'], rating: 4.5, reviews: 3900 },
+  { id: 'bakery-007', name: "Oreo Original Cookies", brand: 'Oreo', category: 'bakery-biscuits', price: 35, mrp: 40, discount: 12, unit: '120 g', deliveryTime: '11 MINS', image: 'https://images.pexels.com/photos/7543099/pexels-photo-7543099.jpeg', inStock: true, tags: ['Bestseller'], rating: 4.7, reviews: 5200 },
+  { id: 'bakery-008', name: 'Monginis Butterscotch Pastry', brand: 'Monginis', category: 'bakery-biscuits', price: 60, mrp: 75, discount: 20, unit: '1 pc', deliveryTime: '11 MINS', image: 'https://images.pexels.com/photos/7543099/pexels-photo-7543099.jpeg', inStock: true, rating: 4.3, reviews: 880 },
+  { id: 'bakery-005', name: 'Britannia Multigrain Bread', brand: 'Britannia', category: 'bakery-biscuits', price: 48, mrp: 58, discount: 17, unit: '400 g (16 slices)', deliveryTime: '11 MINS', image: 'https://images.pexels.com/photos/7543099/pexels-photo-7543099.jpeg', inStock: true, tags: ['Bestseller'], rating: 4.4, reviews: 1780 },
 
   // ── Sweet Tooth (4 new) ──
-  { id: 'sweet-001', name: 'Dairy Milk Silk Chocolate', brand: 'Cadbury', category: 'sweet-tooth', price: 99, mrp: 130, discount: 24, unit: '60 g', deliveryTime: '11 MINS', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ5KYf9HOizK2A8F31ncHT8tUTmL80vu9cMYHvRIMNqiQ&s', inStock: true, tags: ['Bestseller'], rating: 4.8, reviews: 6400 },
-  { id: 'sweet-002', name: 'KitKat Chocolate Bar', brand: 'Nestle', category: 'sweet-tooth', price: 35, mrp: 40, discount: 12, unit: '36.5 g', deliveryTime: '11 MINS', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQALCHQ54GD6f7rCHjOH6jTZ5a5UZgstC5jKQAdbNHcwQ&s=10', inStock: true, tags: ['Bestseller'], rating: 4.5, reviews: 4200 },
-  { id: 'sweet-003', name: 'Milkmaid Condensed Milk', brand: 'Nestle', category: 'sweet-tooth', price: 75, mrp: 90, discount: 17, unit: '400 g', deliveryTime: '11 MINS', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR_26_sWPzyO91xSRcfmZ440TjQ0JcBWIxsTgJuVbIAGQ&s=10', inStock: true, rating: 4.6, reviews: 1400 },
-  { id: 'sweet-004', name: 'Munch Chocolate Bar', brand: 'Nestle', category: 'sweet-tooth', price: 10, mrp: 10, discount: 0, unit: '12.7 g', deliveryTime: '11 MINS', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTHNWvaqhRee0AsJFtgkeih89TL9PB3SPh0-nISDUAc3A&s=10', inStock: true, tags: ['Bestseller'], rating: 4.3, reviews: 3800 },
+  { id: 'sweet-005', name: 'Dairy Milk Silk Chocolate', brand: 'Cadbury', category: 'sweet-tooth', price: 99, mrp: 130, discount: 24, unit: '60 g', deliveryTime: '11 MINS', image: 'https://images.pexels.com/photos/4113363/pexels-photo-4113363.jpeg', inStock: true, tags: ['Bestseller'], rating: 4.8, reviews: 6400 },
+  { id: 'sweet-006', name: 'KitKat Chocolate Bar', brand: 'Nestle', category: 'sweet-tooth', price: 35, mrp: 40, discount: 12, unit: '36.5 g', deliveryTime: '11 MINS', image: 'https://images.pexels.com/photos/32402905/pexels-photo-32402905.jpeg', inStock: true, tags: ['Bestseller'], rating: 4.5, reviews: 4200 },
+  { id: 'sweet-007', name: 'Milkmaid Condensed Milk', brand: 'Nestle', category: 'sweet-tooth', price: 75, mrp: 90, discount: 17, unit: '400 g', deliveryTime: '11 MINS', image: 'https://images.pexels.com/photos/4113363/pexels-photo-4113363.jpeg', inStock: true, rating: 4.6, reviews: 1400 },
+  { id: 'sweet-004', name: 'Munch Chocolate Bar', brand: 'Nestle', category: 'sweet-tooth', price: 10, mrp: 10, discount: 0, unit: '12.7 g', deliveryTime: '11 MINS', image: 'https://images.pexels.com/photos/32402905/pexels-photo-32402905.jpeg', inStock: true, tags: ['Bestseller'], rating: 4.3, reviews: 3800 },
 
   // ── Atta, Rice & Dal (5 new) ──
-  { id: 'atta-011', name: 'Fortune Basmati Rice - Premium', brand: 'Fortune', category: 'atta-rice-dal', price: 145, mrp: 180, discount: 19, unit: '1 kg', deliveryTime: '11 MINS', image: 'https://encrypted-tbn3.gstatic.com/shopping?q=tbn:ANd9GcShXGB4uQE_FiDDf7Fji78C6NqcvdhRlleiY4wezELK3hod-BBpBkVoLF8uRvOe1N-JHpIsfaiIludz14WpdUZNPpJz5L80s5h26MTOSykJjfwRSgrF8NuItEo', inStock: true, tags: ['Bestseller'], rating: 4.6, reviews: 2800 },
-  { id: 'atta-012', name: 'Aashirvaad Multigrain Atta', brand: 'Aashirvaad', category: 'atta-rice-dal', price: 220, mrp: 280, discount: 21, unit: '5 kg', deliveryTime: '11 MINS', image: 'https://encrypted-tbn0.gstatic.com/shopping?q=tbn:ANd9GcRzddKb7OjZ9QW8fsvcNvKBQUVuLhn0eUFUPfDt8w4wEeTyzISRFFNl4gQzKGw3BANAwwKUuLSqaAW-9O7UlC68oNkVTiIw8AyIckpvfy0a', inStock: true, tags: ['Bestseller'], rating: 4.5, reviews: 3600 },
-  { id: 'atta-013', name: 'Tata Sampann Masoor Dal', brand: 'Tata Sampann', category: 'atta-rice-dal', price: 85, mrp: 105, discount: 19, unit: '500 g', deliveryTime: '11 MINS', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRitOgesDOAXAIMnJpExDZ1KRuXZxiIMgpckcJakNxLDA&s=10', inStock: true, rating: 4.4, reviews: 960 },
-  { id: 'atta-014', name: 'Chana Dal - Tata Sampann', brand: 'Tata Sampann', category: 'atta-rice-dal', price: 95, mrp: 120, discount: 21, unit: '500 g', deliveryTime: '11 MINS', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRTvmi8CfbAd9GbK81fHVvM0uKkU7f0BOpA1UdH3sWuUA&s=10', inStock: true, rating: 4.3, reviews: 720 },
-  { id: 'atta-015', name: 'Dawat Biryani Basmati Rice', brand: 'Dawat', category: 'atta-rice-dal', price: 190, mrp: 240, discount: 21, unit: '1 kg', deliveryTime: '11 MINS', image: 'https://encrypted-tbn0.gstatic.com/shopping?q=tbn:ANd9GcRl0PFrXvrgdtS8zah6P7cVQKSMDo6l56Oxnyyz5aAGGI_WMNp6PgeyGxnSuopmi8DJNyBPhXV1FwEzX81pqssXsZhzB9mINSI0h-qfH9aBl58dQjo4G5H5TTg', inStock: true, tags: ['Bestseller'], rating: 4.7, reviews: 4100 },
+  { id: 'atta-011', name: 'Fortune Basmati Rice - Premium', brand: 'Fortune', category: 'atta-rice-dal', price: 145, mrp: 180, discount: 19, unit: '1 kg', deliveryTime: '11 MINS', image: 'https://images.pexels.com/photos/5441094/pexels-photo-5441094.jpeg', inStock: true, tags: ['Bestseller'], rating: 4.6, reviews: 2800 },
+  { id: 'atta-012', name: 'Aashirvaad Multigrain Atta', brand: 'Aashirvaad', category: 'atta-rice-dal', price: 220, mrp: 280, discount: 21, unit: '5 kg', deliveryTime: '11 MINS', image: 'https://images.pexels.com/photos/7851798/pexels-photo-7851798.jpeg', inStock: true, tags: ['Bestseller'], rating: 4.5, reviews: 3600 },
+  { id: 'atta-013', name: 'Tata Sampann Masoor Dal', brand: 'Tata Sampann', category: 'atta-rice-dal', price: 85, mrp: 105, discount: 19, unit: '500 g', deliveryTime: '11 MINS', image: 'https://images.pexels.com/photos/5441094/pexels-photo-5441094.jpeg', inStock: true, rating: 4.4, reviews: 960 },
+  { id: 'atta-014', name: 'Chana Dal - Tata Sampann', brand: 'Tata Sampann', category: 'atta-rice-dal', price: 95, mrp: 120, discount: 21, unit: '500 g', deliveryTime: '11 MINS', image: 'https://images.pexels.com/photos/7851798/pexels-photo-7851798.jpeg', inStock: true, rating: 4.3, reviews: 720 },
+  { id: 'atta-015', name: 'Dawat Biryani Basmati Rice', brand: 'Dawat', category: 'atta-rice-dal', price: 190, mrp: 240, discount: 21, unit: '1 kg', deliveryTime: '11 MINS', image: 'https://images.pexels.com/photos/5441094/pexels-photo-5441094.jpeg', inStock: true, tags: ['Bestseller'], rating: 4.7, reviews: 4100 },
 
   // ── Masala & Oil (5 new) ──
-  { id: 'masala-011', name: 'Everest Rajwadi Garam Masala', brand: 'Everest', category: 'masala-oil', price: 55, mrp: 70, discount: 21, unit: '50 g', deliveryTime: '11 MINS', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRih-3sdsqFIx6Ug0zyS0Er6FJEGqB_UGxB4IQtGpOIiA&s=10', inStock: true, tags: ['Bestseller'], rating: 4.6, reviews: 2800 },
-  { id: 'masala-014', name: 'Patanjali Cow Ghee', brand: 'Patanjali', category: 'masala-oil', price: 180, mrp: 220, discount: 18, unit: '200 ml', deliveryTime: '11 MINS', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcStGzrAEOkoVBoF9aJ4xyM_kbg3YfG80Lr8JxV5UGqsRg&s=10', inStock: true, tags: ['Bestseller'], rating: 4.5, reviews: 2600 },
-  { id: 'masala-015', name: 'Saffola Gold Oil', brand: 'Saffola', category: 'masala-oil', price: 175, mrp: 220, discount: 20, unit: '1 L', deliveryTime: '11 MINS', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRDNRMPqgttcT1lThAt-2WbdpSnZMZ4Dcw2mOslnWo19g&s=10', inStock: true, rating: 4.3, reviews: 1440 },
+  { id: 'masala-011', name: 'Everest Rajwadi Garam Masala', brand: 'Everest', category: 'masala-oil', price: 55, mrp: 70, discount: 21, unit: '50 g', deliveryTime: '11 MINS', image: 'https://images.pexels.com/photos/31275834/pexels-photo-31275834.jpeg', inStock: true, tags: ['Bestseller'], rating: 4.6, reviews: 2800 },
+  { id: 'masala-014', name: 'Patanjali Cow Ghee', brand: 'Patanjali', category: 'masala-oil', price: 180, mrp: 220, discount: 18, unit: '200 ml', deliveryTime: '11 MINS', image: 'https://images.pexels.com/photos/2802527/pexels-photo-2802527.jpeg', inStock: true, tags: ['Bestseller'], rating: 4.5, reviews: 2600 },
+  { id: 'masala-015', name: 'Saffola Gold Oil', brand: 'Saffola', category: 'masala-oil', price: 175, mrp: 220, discount: 20, unit: '1 L', deliveryTime: '11 MINS', image: 'https://images.pexels.com/photos/31275834/pexels-photo-31275834.jpeg', inStock: true, rating: 4.3, reviews: 1440 },
 
   // ── Sauces & Spreads (4 new) ──
-  { id: 'sauce-001', name: "Maggi Hot & Sweet Tomato Chilli Sauce", brand: 'Maggi', category: 'sauces-spreads', price: 75, mrp: 90, discount: 17, unit: '400 g', deliveryTime: '11 MINS', image: 'https://encrypted-tbn2.gstatic.com/shopping?q=tbn:ANd9GcQF1h4g9Q_2yTC7yEo_tW8XNzBlrsElYlA6O7GhmjTv8VnTIBJUMX3j8CngpGZu8vjSSy81Uc2c87Wlx4tIWOM2WS5YaPjGAg', inStock: true, tags: ['Bestseller'], rating: 4.6, reviews: 3200 },
-  { id: 'sauce-002', name: "Kissan Mixed Fruit Jam", brand: 'Kissan', category: 'sauces-spreads', price: 80, mrp: 100, discount: 20, unit: '500 g', deliveryTime: '11 MINS', image: 'https://encrypted-tbn0.gstatic.com/shopping?q=tbn:ANd9GcQ6kWYGUt_66jR3Y6sA8eyKdiT6NFi14olEUQbalmtk_4RNRyT2ZEsg7cBDar1vYnOc98lKh3ZPujUSMfn_Zh-yaFt6EzypqevY9wcsSJIO-E3AqHNQpFgqzg', inStock: true, tags: ['Bestseller'], rating: 4.5, reviews: 2400 },
-  { id: 'sauce-004', name: "Heinz Tomato Ketchup", brand: 'Heinz', category: 'sauces-spreads', price: 95, mrp: 120, discount: 21, unit: '450 g', deliveryTime: '11 MINS', image: 'https://encrypted-tbn2.gstatic.com/shopping?q=tbn:ANd9GcSPrei92eefJ-ppqcU_Vt3NsWlLaEroNHUHifCn4H0ugVyLW0nZleF5qyjTxmVBmoFANaojmjRqv6AMqnpDK40yP7BgpiYtOtycnbpS4UNLDMG3WuRkKkkrKQ', inStock: true, rating: 4.5, reviews: 2900 },
+  { id: 'sauce-005', name: "Maggi Hot & Sweet Tomato Chilli Sauce", brand: 'Maggi', category: 'sauces-spreads', price: 75, mrp: 90, discount: 17, unit: '400 g', deliveryTime: '11 MINS', image: 'https://images.pexels.com/photos/12932886/pexels-photo-12932886.jpeg', inStock: true, tags: ['Bestseller'], rating: 4.6, reviews: 3200 },
+  { id: 'sauce-006', name: "Kissan Mixed Fruit Jam", brand: 'Kissan', category: 'sauces-spreads', price: 80, mrp: 100, discount: 20, unit: '500 g', deliveryTime: '11 MINS', image: 'https://images.pexels.com/photos/12932886/pexels-photo-12932886.jpeg', inStock: true, tags: ['Bestseller'], rating: 4.5, reviews: 2400 },
+  { id: 'sauce-004', name: "Heinz Tomato Ketchup", brand: 'Heinz', category: 'sauces-spreads', price: 95, mrp: 120, discount: 21, unit: '450 g', deliveryTime: '11 MINS', image: 'https://images.pexels.com/photos/12932886/pexels-photo-12932886.jpeg', inStock: true, rating: 4.5, reviews: 2900 },
 
   // ── Organic & Healthy (4 new) ──
-  { id: 'organic-002', name: 'True Elements Rolled Oats', brand: 'True Elements', category: 'organic-healthy', price: 220, mrp: 280, discount: 21, unit: '1 kg', deliveryTime: '11 MINS', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRAcGFLRPLneBUTE2vxHEJSEoHPRKpJ9ca7875WOP5hzA&s=10', inStock: true, rating: 4.5, reviews: 1640 },
-  { id: 'organic-003', name: 'Patanjali Raw Honey', brand: 'Patanjali', category: 'organic-healthy', price: 100, mrp: 125, discount: 20, unit: '250 g', deliveryTime: '11 MINS', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRMSBnfUbw0eKEb6X4Zx12h4su3QfQLPywxW5i3Zw-LOA&s=10', inStock: true, tags: ['Bestseller'], rating: 4.4, reviews: 2200 },
-  { id: 'organic-004', name: "Dr. Oetker Peanut Butter - Creamy", brand: "Dr. Oetker", category: 'organic-healthy', price: 145, mrp: 180, discount: 19, unit: '400 g', deliveryTime: '11 MINS', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTE-n08tls_IDIfa4hSPjhrCLdNw9XLtc2-1SWMg17QKNkGYPkOzDRdMc68&s=10', inStock: true, rating: 4.7, reviews: 3100 },
+  { id: 'organic-005', name: 'True Elements Rolled Oats', brand: 'True Elements', category: 'organic-healthy', price: 220, mrp: 280, discount: 21, unit: '1 kg', deliveryTime: '11 MINS', image: 'https://images.pexels.com/photos/18142621/pexels-photo-18142621.jpeg', inStock: true, rating: 4.5, reviews: 1640 },
+  { id: 'organic-003', name: 'Patanjali Raw Honey', brand: 'Patanjali', category: 'organic-healthy', price: 100, mrp: 125, discount: 20, unit: '250 g', deliveryTime: '11 MINS', image: 'https://images.pexels.com/photos/13779116/pexels-photo-13779116.jpeg', inStock: true, tags: ['Bestseller'], rating: 4.4, reviews: 2200 },
+  { id: 'organic-004', name: "Dr. Oetker Peanut Butter - Creamy", brand: "Dr. Oetker", category: 'organic-healthy', price: 145, mrp: 180, discount: 19, unit: '400 g', deliveryTime: '11 MINS', image: 'https://images.pexels.com/photos/18142621/pexels-photo-18142621.jpeg', inStock: true, rating: 4.7, reviews: 3100 },
 
   // ── Personal Care (4 new) ──
-  { id: 'care-001', name: "Dove Beauty Bar Soap", brand: 'Dove', category: 'personal-care', price: 45, mrp: 55, discount: 18, unit: '100 g', deliveryTime: '11 MINS', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQstSiALwfLNNutb2ni60LlbxOg6yjEoFp9bq0I7N2yFA&s=10', inStock: true, tags: ['Bestseller'], rating: 4.6, reviews: 3600 },
-  { id: 'care-002', name: "Head & Shoulders Anti-Dandruff Shampoo", brand: "Head & Shoulders", category: 'personal-care', price: 170, mrp: 210, discount: 19, unit: '340 ml', deliveryTime: '11 MINS', image: 'https://encrypted-tbn0.gstatic.com/shopping?q=tbn:ANd9GcRtqovsjWs1U4nlnm-DcqCCm18AatJHo3Slfl3zow-VT9FhLppeJLbJywOvlvjqZ3dsRPk9LGNX-q5Grq9Vgk9J5rjnoE1wq3CMaHvG4JF99BAP1vfN3OuKWtzQlOSItLtJ&usqp=CAc', inStock: true, tags: ['Bestseller'], rating: 4.5, reviews: 2900 },
-  { id: 'care-003', name: "Colgate MaxFresh Toothpaste", brand: 'Colgate', category: 'personal-care', price: 65, mrp: 80, discount: 19, unit: '150 g', deliveryTime: '11 MINS', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSw1ojC3rH4YrRgPO4MVx5lF5ytIs6ZWYRz4GqAr-Ddfg&s=10', inStock: true, tags: ['Bestseller'], rating: 4.5, reviews: 4200 },
-  { id: 'care-004', name: "Nivea Moisturizing Cream", brand: 'Nivea', category: 'personal-care', price: 95, mrp: 120, discount: 21, unit: '100 ml', deliveryTime: '11 MINS', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRig79ppA9jZUHr5ON6ZWtxTy8Tn8qYtKalyKdYc8pLlg&s=10', inStock: true, rating: 4.4, reviews: 1900 },
+  { id: 'care-001', name: "Dove Beauty Bar Soap", brand: 'Dove', category: 'personal-care', price: 45, mrp: 55, discount: 18, unit: '100 g', deliveryTime: '11 MINS', image: 'https://images.pexels.com/photos/7622555/pexels-photo-7622555.jpeg', inStock: true, tags: ['Bestseller'], rating: 4.6, reviews: 3600 },
+  { id: 'care-002', name: "Head & Shoulders Anti-Dandruff Shampoo", brand: "Head & Shoulders", category: 'personal-care', price: 170, mrp: 210, discount: 19, unit: '340 ml', deliveryTime: '11 MINS', image: 'https://images.pexels.com/photos/6690839/pexels-photo-6690839.jpeg', inStock: true, tags: ['Bestseller'], rating: 4.5, reviews: 2900 },
+  { id: 'care-003', name: "Colgate MaxFresh Toothpaste", brand: 'Colgate', category: 'personal-care', price: 65, mrp: 80, discount: 19, unit: '150 g', deliveryTime: '11 MINS', image: 'https://images.pexels.com/photos/7622555/pexels-photo-7622555.jpeg', inStock: true, tags: ['Bestseller'], rating: 4.5, reviews: 4200 },
+  { id: 'care-004', name: "Nivea Moisturizing Cream", brand: 'Nivea', category: 'personal-care', price: 95, mrp: 120, discount: 21, unit: '100 ml', deliveryTime: '11 MINS', image: 'https://images.pexels.com/photos/6690839/pexels-photo-6690839.jpeg', inStock: true, rating: 4.4, reviews: 1900 },
 
   // ── Cleaning (4 new) ──
-  { id: 'clean-001', name: "Surf Excel Quick Wash Detergent", brand: 'Surf Excel', category: 'cleaning', price: 95, mrp: 120, discount: 21, unit: '500 g', deliveryTime: '11 MINS', image: 'https://images.unsplash.com/photo-1585441695325-21ebee1a2f07?w=150&h=150&fit=crohttps://encrypted-tbn0.gstatic.com/shopping?q=tbn:ANd9GcTFc6H-A9RzWDqece8Yv4Qxqsu-jA280ZSJ6vIshN3AS2ktQHCAUkqATFv2qDrlkdLswFr6E0Hw5o3VSjhHwnOE75CLK2wH', inStock: true, tags: ['Bestseller'], rating: 4.6, reviews: 4100 },
-  { id: 'clean-002', name: "Vim Dishwash Liquid - Lemon", brand: 'Vim', category: 'cleaning', price: 60, mrp: 75, discount: 20, unit: '500 ml', deliveryTime: '11 MINS', image: 'https://m.media-amazon.com/images/I/51rhw--KcDL._AC_UF350,350_QL80_.jpg', inStock: true, tags: ['Bestseller'], rating: 4.5, reviews: 3200 },
-  { id: 'clean-003', name: "Harpic Power Plus Toilet Cleaner", brand: 'Harpic', category: 'cleaning', price: 80, mrp: 100, discount: 20, unit: '500 ml', deliveryTime: '11 MINS', image: 'https://encrypted-tbn1.gstatic.com/shopping?q=tbn:ANd9GcS1ofum7q8O40y_oBlKavHjQzgcapEin5HutFB9Zy65HZbE0llbzKkWoFAMGuhhBQgto2sTkDmNZqPAkYaw4j1bE9izFQQDoTN2cQzB8FRHzqgQZCZ4Q-N5Hw', inStock: true, rating: 4.4, reviews: 2400 },
-  { id: 'clean-004', name: "Dettol Original Handwash", brand: 'Dettol', category: 'cleaning', price: 75, mrp: 95, discount: 21, unit: '250 ml', deliveryTime: '11 MINS', image: 'https://encrypted-tbn2.gstatic.com/shopping?q=tbn:ANd9GcSrpiXz3E3haiAyo7F2zVr3ae9DmUME0iPC1usOnTdXJQTchCQSDchTo1m7OEqnJuBq0TkfNj4udmCM778trdOUaRfP-T9uJg', inStock: true, tags: ['Bestseller'], rating: 4.6, reviews: 3900 },
+  { id: 'clean-005', name: "Surf Excel Quick Wash Detergent", brand: 'Surf Excel', category: 'cleaning', price: 95, mrp: 120, discount: 21, unit: '500 g', deliveryTime: '11 MINS', image: 'https://images.pexels.com/photos/10573258/pexels-photo-10573258.jpeg', inStock: true, tags: ['Bestseller'], rating: 4.6, reviews: 4100 },
+  { id: 'clean-006', name: "Vim Dishwash Liquid - Lemon", brand: 'Vim', category: 'cleaning', price: 60, mrp: 75, discount: 20, unit: '500 ml', deliveryTime: '11 MINS', image: 'https://m.media-amazon.com/images/I/51rhw--KcDL._AC_UF350,350_QL80_.jpg', inStock: true, tags: ['Bestseller'], rating: 4.5, reviews: 3200 },
+  { id: 'clean-003', name: "Harpic Power Plus Toilet Cleaner", brand: 'Harpic', category: 'cleaning', price: 80, mrp: 100, discount: 20, unit: '500 ml', deliveryTime: '11 MINS', image: 'https://images.pexels.com/photos/5217885/pexels-photo-5217885.jpeg', inStock: true, rating: 4.4, reviews: 2400 },
+  { id: 'clean-004', name: "Dettol Original Handwash", brand: 'Dettol', category: 'cleaning', price: 75, mrp: 95, discount: 21, unit: '250 ml', deliveryTime: '11 MINS', image: 'https://images.pexels.com/photos/10573258/pexels-photo-10573258.jpeg', inStock: true, tags: ['Bestseller'], rating: 4.6, reviews: 3900 },
 
   // ── Pharma & Wellness (3 new) ──
-  { id: 'pharma-001', name: "Himalaya Ashwagandha Tablets", brand: 'Himalaya', category: 'pharma-wellness', price: 140, mrp: 175, discount: 20, unit: '60 tabs', deliveryTime: '11 MINS', image: 'https://encrypted-tbn0.gstatic.com/shopping?q=tbn:ANd9GcSloygWHssnVr3IXxgL7dsjtVin1siv4FFwECfxjdL1EkuVsfo501EYYDjflGv49GUSzGlgDO3fEN4Vx7qfS73YQFgyCZ8KPT3zEsrgvZwNQvnfsBvN0Q4U2lb_JUizsTmkig&usqp=CAc', inStock: true, rating: 4.5, reviews: 2100 },
-  { id: 'pharma-002', name: "Baidyanath Chyawanprash", brand: 'Baidyanath', category: 'pharma-wellness', price: 145, mrp: 185, discount: 22, unit: '500 g', deliveryTime: '11 MINS', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ9Ab3DIPU5jBpxYJE5drZ_2T3za5rZlE2YWvyACH4fYmo17ugIOplAOwI&s=10', inStock: true, tags: ['Bestseller'], rating: 4.6, reviews: 1880 },
-  { id: 'pharma-003', name: "Evion Vitamin E Capsules", brand: 'Evion', category: 'pharma-wellness', price: 90, mrp: 115, discount: 22, unit: '30 caps', deliveryTime: '11 MINS', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTg668fRczBLfNhDzLzGhfXrNMl_SPk8rtZ0MIjHq2V-Q&s=10', inStock: true, rating: 4.4, reviews: 1640 },
+  { id: 'pharma-004', name: "Himalaya Ashwagandha Tablets", brand: 'Himalaya', category: 'pharma-wellness', price: 140, mrp: 175, discount: 20, unit: '60 tabs', deliveryTime: '11 MINS', image: 'https://images.pexels.com/photos/20140029/pexels-photo-20140029.jpeg', inStock: true, rating: 4.5, reviews: 2100 },
+  { id: 'pharma-005', name: "Baidyanath Chyawanprash", brand: 'Baidyanath', category: 'pharma-wellness', price: 145, mrp: 185, discount: 22, unit: '500 g', deliveryTime: '11 MINS', image: 'https://images.pexels.com/photos/20140029/pexels-photo-20140029.jpeg', inStock: true, tags: ['Bestseller'], rating: 4.6, reviews: 1880 },
+  { id: 'pharma-003', name: "Evion Vitamin E Capsules", brand: 'Evion', category: 'pharma-wellness', price: 90, mrp: 115, discount: 22, unit: '30 caps', deliveryTime: '11 MINS', image: 'https://images.pexels.com/photos/20140029/pexels-photo-20140029.jpeg', inStock: true, rating: 4.4, reviews: 1640 },
 
   // ── Baby Care (3 new) ──
-  { id: 'baby-001', name: "Pampers Active Baby Diapers - S", brand: 'Pampers', category: 'baby-care', price: 320, mrp: 400, discount: 20, unit: '44 count', deliveryTime: '11 MINS', image: 'https://encrypted-tbn2.gstatic.com/shopping?q=tbn:ANd9GcTzjbC14L5_RwkMvKbrVLBOroEtgiuRvAA-DmkMEEpsD3xw76ZyYANSDZCwdIikVJY8kfGew30vIaEh4tYste8qbX_jqc7Mz0z-jjV9K4k0DwOWFxWmaRRhR6Jtm3LrCbRc&usqp=CAc', inStock: true, tags: ['Bestseller'], rating: 4.7, reviews: 4400 },
-  { id: 'baby-002', name: "Johnson's Baby Powder", brand: "Johnson's", category: 'baby-care', price: 85, mrp: 105, discount: 19, unit: '200 g', deliveryTime: '11 MINS', image: 'https://encrypted-tbn1.gstatic.com/shopping?q=tbn:ANd9GcQhumcdxHm_I0NVbIA5E7w_kPaf8-gzuMDMOpoFt8urVUDYRSEKD-5Ei9UuDSETbeQtI8DsI9esfW5k0COCskaV9zGKXEOJtOEXbBuMHsD4aY_ZEcz2f7LVFmuLSCSswG9ZYeDogw&usqp=CAc', inStock: true, tags: ['Bestseller'], rating: 4.6, reviews: 3200 },
-  { id: 'baby-003', name: "Cerelac Wheat & Honey Infant Cereal", brand: 'Cerelac', category: 'baby-care', price: 140, mrp: 175, discount: 20, unit: '300 g', deliveryTime: '11 MINS', image: 'https://encrypted-tbn1.gstatic.com/shopping?q=tbn:ANd9GcQlyQC5RtjfGbL5xSStmsLBhR8YaEYQHByveCM6PY4hjdGUlJhQ_RhfBl8hMfZqVw2Vi9t-Ti0xK4B74y4giKWYAwUjpRtKAZudCVsEOPNdcrvgKD_Yz9h7PnQ_EtpJ5qVGnaBX0IQ&usqp=CAc', inStock: true, rating: 4.5, reviews: 2100 }
+  { id: 'baby-004', name: "Pampers Active Baby Diapers - S", brand: 'Pampers', category: 'baby-care', price: 320, mrp: 400, discount: 20, unit: '44 count', deliveryTime: '11 MINS', image: 'https://images.pexels.com/photos/30344708/pexels-photo-30344708.jpeg', inStock: true, tags: ['Bestseller'], rating: 4.7, reviews: 4400 },
+  { id: 'baby-005', name: "Johnson's Baby Powder", brand: "Johnson's", category: 'baby-care', price: 85, mrp: 105, discount: 19, unit: '200 g', deliveryTime: '11 MINS', image: 'https://images.pexels.com/photos/30344708/pexels-photo-30344708.jpeg', inStock: true, tags: ['Bestseller'], rating: 4.6, reviews: 3200 },
+  { id: 'baby-003', name: "Cerelac Wheat & Honey Infant Cereal", brand: 'Cerelac', category: 'baby-care', price: 140, mrp: 175, discount: 20, unit: '300 g', deliveryTime: '11 MINS', image: 'https://images.pexels.com/photos/30344708/pexels-photo-30344708.jpeg', inStock: true, rating: 4.5, reviews: 2100 }
 ];
 
 products.forEach(p => {

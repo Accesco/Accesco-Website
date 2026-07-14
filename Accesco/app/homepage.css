@@ -4021,3 +4021,40 @@ background:
   max-width: 70px !important;
   min-width: 70px !important;
 }
+
+/* ── About Accesco Living (SEO copy) ── */
+.about-accesco-section {
+  background: #0c0d12;
+  color: #e5e7eb;
+  padding: 80px 20px;
+}
+
+.about-accesco-inner {
+  max-width: 860px;
+  margin: 0 auto;
+}
+
+.about-accesco-inner h2 {
+  font-size: 30px;
+  font-weight: 800;
+  color: #fff;
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.about-accesco-inner p {
+  font-size: 15px;
+  line-height: 1.8;
+  color: #b7bac2;
+  margin-bottom: 18px;
+}
+
+.about-accesco-inner p:last-child {
+  margin-bottom: 0;
+}
+
+@media (max-width: 640px) {
+  .about-accesco-section { padding: 56px 16px; }
+  .about-accesco-inner h2 { font-size: 24px; }
+  .about-accesco-inner p { font-size: 14px; }
+}

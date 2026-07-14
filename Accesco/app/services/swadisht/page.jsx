@@ -298,11 +298,11 @@ const serviceSchema = {
   name: "Swadishtt by Accesco Living",
   description:
     "Food delivery platform featuring restaurants, regional cuisines, catering, thali experiences and curated meal discovery.",
-  url: "https://www.accescoliving.com/services/swadisht",
+  url: "https://accescoliving.com/services/swadisht",
   provider: {
     "@type": "Organization",
     name: "Accesco Living",
-    url: "https://www.accescoliving.com",
+    url: "https://accescoliving.com",
   },
   areaServed: {
     "@type": "City",

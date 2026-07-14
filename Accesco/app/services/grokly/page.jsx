@@ -203,7 +203,7 @@ const getIngredientImage = (item) => {
       "dairy-breakfast":
         "https://images.unsplash.com/photo-1563636619-e9143da7973b?w=150&h=150&fit=crop",
       "masala-oil":
-        "https://images.unsplash.com/photo-1596040033229-a0b3b83b2e4d?w=150&h=150&fit=crop",
+        "https://images.pexels.com/photos/2802527/pexels-photo-2802527.jpeg",
       "atta-rice-dal":
         "https://images.unsplash.com/photo-1586201375761-83865001e31c?w=150&h=150&fit=crop",
       default:
@@ -370,11 +370,11 @@ function GroklyPageContent() {
     name: "Grokly by Accesco Living",
     description:
       "Farm-direct fresh groceries delivered in minutes, sourced directly from Karnataka farms via FarmChain with QR traceability.",
-    url: "https://www.accescoliving.com/services/grokly",
+    url: "https://accescoliving.com/services/grokly",
     provider: {
       "@type": "Organization",
       name: "Accesco Living",
-      url: "https://www.accescoliving.com",
+      url: "https://accescoliving.com",
     },
     areaServed: {
       "@type": "City",
@@ -405,6 +405,21 @@ function GroklyPageContent() {
     <>
       <JsonLd data={serviceSchema} />
       <JsonLd data={productListSchema} />
+      <h1
+        style={{
+          position: "absolute",
+          width: "1px",
+          height: "1px",
+          padding: 0,
+          margin: "-1px",
+          overflow: "hidden",
+          clip: "rect(0, 0, 0, 0)",
+          whiteSpace: "nowrap",
+          border: 0,
+        }}
+      >
+        Grokly — Farm-Fresh Groceries Delivered in Minutes
+      </h1>
       <div
         style={{
           minHeight: "100vh",
@@ -413,6 +428,7 @@ function GroklyPageContent() {
           background: "var(--grokly-bg)",
         }}
       >
+        {/* Desktop Header */}
         <GroklyHeader
           searchQuery={searchQuery}
           onSearchChange={handleSearchChange}

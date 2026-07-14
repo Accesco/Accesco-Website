@@ -27,10 +27,10 @@ Accesco Living Private Limited is a Bengaluru-based, pre-launch consumer commerc
 
 ## Links
 
-- Homepage: https://www.accescoliving.com/
-- About: https://www.accescoliving.com/about
-- Grokly: https://www.accescoliving.com/services/grokly
-- Swadishtt: https://www.accescoliving.com/services/swadisht
-- InstaStyle: https://www.accescoliving.com/services/instastyle
-- Blog: https://www.accescoliving.com/blogs
-- Contact: https://www.accescoliving.com/contact
+- Homepage: https://accescoliving.com/
+- About: https://accescoliving.com/about
+- Grokly: https://accescoliving.com/services/grokly
+- Swadishtt: https://accescoliving.com/services/swadisht
+- InstaStyle: https://accescoliving.com/services/instastyle
+- Blog: https://accescoliving.com/blogs
+- Contact: https://accescoliving.com/contact

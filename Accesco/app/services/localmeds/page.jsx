@@ -10,11 +10,11 @@ const serviceSchema = {
   name: "LocalMeds by Accesco Living",
   description:
     "Medicine delivery, healthcare access, consultations and lab services delivered quickly to your doorstep.",
-  url: "https://www.accescoliving.com/services/localmeds",
+  url: "https://accescoliving.com/services/localmeds",
   provider: {
     "@type": "Organization",
     name: "Accesco Living",
-    url: "https://www.accescoliving.com",
+    url: "https://accescoliving.com",
   },
   areaServed: {
     "@type": "City",

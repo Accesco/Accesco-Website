@@ -6,9 +6,12 @@ const baloo = Baloo_2({
 });
 
 export const metadata = {
-  title: "Press & Media | Accesco Living",
+  title: "Press & Media",
   description:
     "Official announcements, news coverage, resources, and official media kit from the Accesco Living ecosystem.",
+  alternates: {
+    canonical: 'https://accescoliving.com/press',
+  },
 };
 
 export default function PressLayout({ children }) {
