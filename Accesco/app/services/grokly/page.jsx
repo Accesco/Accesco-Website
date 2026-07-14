@@ -724,800 +724,302 @@ function GroklyPageContent() {
             }}
           >
             <div
+              className="dish-inner-container"
               style={{
-                display: "grid",
-                gridTemplateColumns: "220px 1fr",
-                gap: "24px",
-                alignItems: "start",
+                background:
+                  "linear-gradient(135deg, #F7F5EF 0%, #ffffff 100%)",
+                border: "1px solid #E8E2D3",
+                borderRadius: "20px",
+                overflow: "hidden",
+                position: "relative",
+                padding: "clamp(24px, 4vw, 48px)",
               }}
-              className="browse-and-dish-layout"
             >
-              <div>
-                <h3
-                  style={{
-                    fontFamily: "var(--grokly-font-display)",
-                    fontSize: "16px",
-                    fontWeight: 800,
-                    color: "var(--grokly-text-primary)",
-                    margin: "0 0 12px",
-                  }}
-                >
-                  Browse by Category
-                </h3>
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: "8px",
-                    maxHeight: "640px",
-                    overflowY: "auto",
-                    paddingRight: "4px",
-                  }}
-                  className="category-scroll-list"
-                >
-                  {categories
-                    .filter((c) => c.id !== "all")
-                    .map((cat) => (
-                      <button
-                        key={cat.id}
-                        onClick={() => handleCategorySelect(cat.id)}
-                        style={{
-                          background: "#fff",
-                          border: "1px solid #F1EEE6",
-                          borderRadius: "10px",
-                          padding: "8px",
-                          display: "flex",
-                          alignItems: "center",
-                          gap: "10px",
-                          cursor: "pointer",
-                          textAlign: "left",
-                          boxShadow: "0 1px 3px rgba(42,33,26,0.03)",
-                          transition:
-                            "border-color var(--grokly-transition-fast)",
-                          flexShrink: 0,
-                        }}
-                      >
-                        <div
-                          style={{
-                            width: "40px",
-                            height: "40px",
-                            borderRadius: "8px",
-                            background: "#F7F5EF",
-                            overflow: "hidden",
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            flexShrink: 0,
-                          }}
-                        >
-                          <img
-                            src={cat.image}
-                            alt={cat.name}
-                            style={{
-                              width: "100%",
-                              height: "100%",
-                              objectFit: "cover",
-                            }}
-                          />
-                        </div>
-                        <span
-                          style={{
-                            fontSize: "12px",
-                            fontWeight: 700,
-                            color: "#2A211A",
-                            fontFamily: "var(--grokly-font-primary)",
-                            lineHeight: "1.2",
-                          }}
-                        >
-                          {cat.name}
-                        </span>
-                      </button>
-                    ))}
-                </div>
-              </div>
-
               <div
-                className="dish-inner-container"
                 style={{
-                  background:
-                    "linear-gradient(135deg, #F7F5EF 0%, #ffffff 100%)",
-                  border: "1px solid #E8E2D3",
-                  borderRadius: "20px",
+                  position: "absolute",
+                  inset: 0,
+                  pointerEvents: "none",
                   overflow: "hidden",
-                  position: "relative",
-                  padding: "clamp(24px, 4vw, 48px)",
                 }}
               >
                 <div
                   style={{
                     position: "absolute",
-                    inset: 0,
-                    pointerEvents: "none",
-                    overflow: "hidden",
+                    top: "-60px",
+                    right: "-60px",
+                    width: "280px",
+                    height: "280px",
+                    borderRadius: "50%",
+                    background:
+                      "radial-gradient(circle, rgba(27,58,43,0.06) 0%, transparent 70%)",
                   }}
-                >
+                />
+              </div>
+
+              <div
+                className="dish-desktop-view"
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "1fr",
+                  gap: "32px",
+                  position: "relative",
+                  zIndex: 1,
+                }}
+              >
+                <div>
                   <div
                     style={{
-                      position: "absolute",
-                      top: "-60px",
-                      right: "-60px",
-                      width: "280px",
-                      height: "280px",
-                      borderRadius: "50%",
-                      background:
-                        "radial-gradient(circle, rgba(27,58,43,0.06) 0%, transparent 70%)",
+                      fontSize: "11px",
+                      fontWeight: 800,
+                      color: "#1B3A2B",
+                      textTransform: "uppercase",
+                      letterSpacing: "1.5px",
+                      marginBottom: "12px",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "6px",
                     }}
-                  />
+                  >
+                    <i className="ri-restaurant-2-fill"></i> Recipes & Bundles
+                  </div>
+                  <h2
+                    style={{
+                      fontFamily: "var(--grokly-font-display)",
+                      fontSize: "2rem",
+                      fontWeight: 900,
+                      color: "#2A211A",
+                      margin: "0 0 12px",
+                      letterSpacing: "-0.02em",
+                      lineHeight: 1.1,
+                    }}
+                  >
+                    Choose a Dish,
+                    <br />
+                    <span style={{ color: "#1B3A2B" }}>
+                      Get All Ingredients
+                    </span>
+                  </h2>
+                  <p
+                    style={{
+                      fontFamily: "var(--grokly-font-primary)",
+                      fontSize: "0.95rem",
+                      color: "#5C5347",
+                      lineHeight: 1.5,
+                      margin: "0 0 24px",
+                    }}
+                  >
+                    Select a recipe below. We will bundle the fresh
+                    ingredients so you can cook it at home. Customize items
+                    before adding.
+                  </p>
+
+                  <div style={{ display: "flex", gap: "12px" }}>
+                    {Object.entries(dishes).map(([key, dish]) => {
+                      const isActive = selectedDishKey === key;
+                      return (
+                        <button
+                          key={key}
+                          onClick={() => setSelectedDishKey(key)}
+                          style={{
+                            background: "#ffffff",
+                            border: isActive
+                              ? "2px solid #1B3A2B"
+                              : "1px solid #E8E2D3",
+                            boxShadow: isActive
+                              ? "0 4px 12px rgba(27, 58, 43, 0.08)"
+                              : "none",
+                            borderRadius: "12px",
+                            padding: "10px",
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "8px",
+                            cursor: "pointer",
+                            textAlign: "left",
+                            transition:
+                              "background-color var(--grokly-transition-fast), border-color var(--grokly-transition-fast)",
+                            flex: "1",
+                            minWidth: 0,
+                          }}
+                          onMouseEnter={(e) => {
+                            if (!isActive)
+                              e.currentTarget.style.background = "#F7F5EF";
+                          }}
+                          onMouseLeave={(e) => {
+                            if (!isActive)
+                              e.currentTarget.style.background = "#ffffff";
+                          }}
+                        >
+                          <img
+                            src={dish.image}
+                            alt={dish.name}
+                            style={{
+                              width: "40px",
+                              height: "40px",
+                              borderRadius: "8px",
+                              objectFit: "cover",
+                              flexShrink: 0,
+                            }}
+                          />
+                          <div style={{ flex: 1, minWidth: 0 }}>
+                            <h4
+                              style={{
+                                margin: "0 0 2px",
+                                fontSize: "13px",
+                                color: "#2A211A",
+                                fontWeight: 800,
+                                whiteSpace: "nowrap",
+                                overflow: "hidden",
+                                textOverflow: "ellipsis",
+                              }}
+                            >
+                              {dish.name}
+                            </h4>
+                            <p
+                              style={{
+                                margin: 0,
+                                fontSize: "11px",
+                                color: "#9C9284",
+                                whiteSpace: "nowrap",
+                              }}
+                            >
+                              {dish.ingredients.length} items
+                            </p>
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
                 </div>
 
                 <div
-                  className="dish-desktop-view"
                   style={{
-                    display: "grid",
-                    gridTemplateColumns: "1fr",
-                    gap: "32px",
-                    position: "relative",
-                    zIndex: 1,
+                    background: "#ffffff",
+                    border: "1px solid #F1EEE6",
+                    borderRadius: "20px",
+                    padding: "24px",
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "space-between",
+                    minHeight: "440px",
+                    boxShadow: "0 4px 20px rgba(42,33,26,0.04)",
                   }}
                 >
                   <div>
                     <div
                       style={{
-                        fontSize: "11px",
-                        fontWeight: 800,
-                        color: "#1B3A2B",
-                        textTransform: "uppercase",
-                        letterSpacing: "1.5px",
-                        marginBottom: "12px",
                         display: "flex",
+                        justifyContent: "space-between",
                         alignItems: "center",
-                        gap: "6px",
+                        marginBottom: "20px",
+                        borderBottom: "1px solid #F1EEE6",
+                        paddingBottom: "12px",
                       }}
                     >
-                      <i className="ri-restaurant-2-fill"></i> Recipes & Bundles
-                    </div>
-                    <h2
-                      style={{
-                        fontFamily: "var(--grokly-font-display)",
-                        fontSize: "2rem",
-                        fontWeight: 900,
-                        color: "#2A211A",
-                        margin: "0 0 12px",
-                        letterSpacing: "-0.02em",
-                        lineHeight: 1.1,
-                      }}
-                    >
-                      Choose a Dish,
-                      <br />
-                      <span style={{ color: "#1B3A2B" }}>
-                        Get All Ingredients
+                      <h3
+                        style={{
+                          margin: 0,
+                          color: "#2A211A",
+                          fontSize: "18px",
+                          fontWeight: 800,
+                        }}
+                      >
+                        Ingredients for {dishes[selectedDishKey].name}
+                      </h3>
+                      <span
+                        style={{
+                          fontSize: "13px",
+                          color: "#1B3A2B",
+                          fontWeight: 700,
+                        }}
+                      >
+                        {dishes[selectedDishKey].ingredients.length} Fresh
+                        items
                       </span>
-                    </h2>
-                    <p
+                    </div>
+
+                    <div
                       style={{
-                        fontFamily: "var(--grokly-font-primary)",
-                        fontSize: "0.95rem",
-                        color: "#5C5347",
-                        lineHeight: 1.5,
-                        margin: "0 0 24px",
+                        display: "grid",
+                        gridTemplateColumns:
+                          "repeat(auto-fill, minmax(220px, 1fr))",
+                        gap: "12px",
                       }}
                     >
-                      Select a recipe below. We will bundle the fresh
-                      ingredients so you can cook it at home. Customize items
-                      before adding.
-                    </p>
-
-                    <div style={{ display: "flex", gap: "12px" }}>
-                      {Object.entries(dishes).map(([key, dish]) => {
-                        const isActive = selectedDishKey === key;
+                      {dishes[selectedDishKey].ingredients.map((ing) => {
+                        const qty = getProductQuantity(ing.id);
                         return (
-                          <button
-                            key={key}
-                            onClick={() => setSelectedDishKey(key)}
+                          <div
+                            key={ing.id}
                             style={{
-                              background: "#ffffff",
-                              border: isActive
-                                ? "2px solid #1B3A2B"
-                                : "1px solid #E8E2D3",
-                              boxShadow: isActive
-                                ? "0 4px 12px rgba(27, 58, 43, 0.08)"
-                                : "none",
+                              background: "#fff",
                               borderRadius: "12px",
-                              padding: "10px",
+                              padding: "12px",
                               display: "flex",
                               alignItems: "center",
-                              gap: "8px",
-                              cursor: "pointer",
-                              textAlign: "left",
-                              transition:
-                                "background-color var(--grokly-transition-fast), border-color var(--grokly-transition-fast)",
-                              flex: "1",
-                              minWidth: 0,
-                            }}
-                            onMouseEnter={(e) => {
-                              if (!isActive)
-                                e.currentTarget.style.background = "#F7F5EF";
-                            }}
-                            onMouseLeave={(e) => {
-                              if (!isActive)
-                                e.currentTarget.style.background = "#ffffff";
+                              gap: "12px",
+                              border: "1px solid #F1EEE6",
                             }}
                           >
                             <img
-                              src={dish.image}
-                              alt={dish.name}
+                              src={getIngredientImage(ing)}
+                              alt={ing.name}
+                              onError={(e) => {
+                                e.target.src =
+                                  "https://images.unsplash.com/photo-1542838132-92c53300491e?w=150&h=150&fit=crop";
+                              }}
                               style={{
-                                width: "40px",
-                                height: "40px",
+                                width: "48px",
+                                height: "48px",
                                 borderRadius: "8px",
                                 objectFit: "cover",
-                                flexShrink: 0,
+                                background: "#F7F5EF",
                               }}
                             />
                             <div style={{ flex: 1, minWidth: 0 }}>
-                              <h4
+                              <h5
                                 style={{
                                   margin: "0 0 2px",
-                                  fontSize: "13px",
+                                  fontSize: "12px",
                                   color: "#2A211A",
-                                  fontWeight: 800,
-                                  whiteSpace: "nowrap",
+                                  fontWeight: 700,
                                   overflow: "hidden",
                                   textOverflow: "ellipsis",
-                                }}
-                              >
-                                {dish.name}
-                              </h4>
-                              <p
-                                style={{
-                                  margin: 0,
-                                  fontSize: "11px",
-                                  color: "#9C9284",
                                   whiteSpace: "nowrap",
                                 }}
                               >
-                                {dish.ingredients.length} items
+                                {ing.name}
+                              </h5>
+                              <p
+                                style={{
+                                  margin: "0 0 4px",
+                                  fontSize: "10px",
+                                  color: "#9C9284",
+                                }}
+                              >
+                                {ing.unit}
                               </p>
-                            </div>
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </div>
-
-                  <div
-                    style={{
-                      background: "#ffffff",
-                      border: "1px solid #F1EEE6",
-                      borderRadius: "20px",
-                      padding: "24px",
-                      display: "flex",
-                      flexDirection: "column",
-                      justifyContent: "space-between",
-                      minHeight: "440px",
-                      boxShadow: "0 4px 20px rgba(42,33,26,0.04)",
-                    }}
-                  >
-                    <div>
-                      <div
-                        style={{
-                          display: "flex",
-                          justifyContent: "space-between",
-                          alignItems: "center",
-                          marginBottom: "20px",
-                          borderBottom: "1px solid #F1EEE6",
-                          paddingBottom: "12px",
-                        }}
-                      >
-                        <h3
-                          style={{
-                            margin: 0,
-                            color: "#2A211A",
-                            fontSize: "18px",
-                            fontWeight: 800,
-                          }}
-                        >
-                          Ingredients for {dishes[selectedDishKey].name}
-                        </h3>
-                        <span
-                          style={{
-                            fontSize: "13px",
-                            color: "#1B3A2B",
-                            fontWeight: 700,
-                          }}
-                        >
-                          {dishes[selectedDishKey].ingredients.length} Fresh
-                          items
-                        </span>
-                      </div>
-
-                      <div
-                        style={{
-                          display: "grid",
-                          gridTemplateColumns:
-                            "repeat(auto-fill, minmax(220px, 1fr))",
-                          gap: "12px",
-                        }}
-                      >
-                        {dishes[selectedDishKey].ingredients.map((ing) => {
-                          const qty = getProductQuantity(ing.id);
-                          return (
-                            <div
-                              key={ing.id}
-                              style={{
-                                background: "#fff",
-                                borderRadius: "12px",
-                                padding: "12px",
-                                display: "flex",
-                                alignItems: "center",
-                                gap: "12px",
-                                border: "1px solid #F1EEE6",
-                              }}
-                            >
-                              <img
-                                src={getIngredientImage(ing)}
-                                alt={ing.name}
-                                onError={(e) => {
-                                  e.target.src =
-                                    "https://images.unsplash.com/photo-1542838132-92c53300491e?w=150&h=150&fit=crop";
-                                }}
-                                style={{
-                                  width: "48px",
-                                  height: "48px",
-                                  borderRadius: "8px",
-                                  objectFit: "cover",
-                                  background: "#F7F5EF",
-                                }}
-                              />
-                              <div style={{ flex: 1, minWidth: 0 }}>
-                                <h5
-                                  style={{
-                                    margin: "0 0 2px",
-                                    fontSize: "12px",
-                                    color: "#2A211A",
-                                    fontWeight: 700,
-                                    overflow: "hidden",
-                                    textOverflow: "ellipsis",
-                                    whiteSpace: "nowrap",
-                                  }}
-                                >
-                                  {ing.name}
-                                </h5>
-                                <p
-                                  style={{
-                                    margin: "0 0 4px",
-                                    fontSize: "10px",
-                                    color: "#9C9284",
-                                  }}
-                                >
-                                  {ing.unit}
-                                </p>
-                                <div
-                                  style={{
-                                    fontSize: "11px",
-                                    fontWeight: 700,
-                                    color: "#2A211A",
-                                  }}
-                                >
-                                  ₹{ing.price}{" "}
-                                  <span
-                                    style={{
-                                      fontSize: "9px",
-                                      textDecoration: "line-through",
-                                      color: "#9C9284",
-                                      fontWeight: "normal",
-                                    }}
-                                  >
-                                    ₹{ing.mrp}
-                                  </span>
-                                </div>
-                              </div>
-                              <div style={{ flexShrink: 0 }}>
-                                {qty > 0 ? (
-                                  <div
-                                    style={{
-                                      display: "flex",
-                                      alignItems: "center",
-                                      gap: "6px",
-                                      background: "#1B3A2B",
-                                      color: "#fff",
-                                      borderRadius: "6px",
-                                      padding: "4px 6px",
-                                    }}
-                                  >
-                                    <button
-                                      onClick={() => decrementQuantity(ing.id)}
-                                      style={{
-                                        background: "none",
-                                        border: "none",
-                                        color: "#fff",
-                                        fontWeight: "bold",
-                                        cursor: "pointer",
-                                        fontSize: "12px",
-                                        padding: "0 2px",
-                                      }}
-                                    >
-                                      -
-                                    </button>
-                                    <span
-                                      style={{
-                                        fontSize: "11px",
-                                        fontWeight: "bold",
-                                        minWidth: "10px",
-                                        textAlign: "center",
-                                      }}
-                                    >
-                                      {qty}
-                                    </span>
-                                    <button
-                                      onClick={() => incrementQuantity(ing.id)}
-                                      style={{
-                                        background: "none",
-                                        border: "none",
-                                        color: "#fff",
-                                        fontWeight: "bold",
-                                        cursor: "pointer",
-                                        fontSize: "12px",
-                                        padding: "0 2px",
-                                      }}
-                                    >
-                                      +
-                                    </button>
-                                  </div>
-                                ) : (
-                                  <button
-                                    onClick={() => addToCart(ing.id, 1)}
-                                    style={{
-                                      background: "#fff",
-                                      border: "1px solid #1B3A2B",
-                                      color: "#1B3A2B",
-                                      borderRadius: "6px",
-                                      padding: "5px 10px",
-                                      fontSize: "10px",
-                                      fontWeight: 800,
-                                      cursor: "pointer",
-                                      transition:
-                                        "background-color var(--grokly-transition-fast), color var(--grokly-transition-fast)",
-                                    }}
-                                    onMouseEnter={(e) => {
-                                      e.currentTarget.style.background =
-                                        "#1B3A2B";
-                                      e.currentTarget.style.color = "#fff";
-                                    }}
-                                    onMouseLeave={(e) => {
-                                      e.currentTarget.style.background = "#fff";
-                                      e.currentTarget.style.color = "#1B3A2B";
-                                    }}
-                                  >
-                                    ADD
-                                  </button>
-                                )}
-                              </div>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    </div>
-
-                    <div
-                      style={{
-                        marginTop: "24px",
-                        paddingTop: "20px",
-                        borderTop: "1px solid #F1EEE6",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "space-between",
-                      }}
-                    >
-                      <div>
-                        <div
-                          style={{
-                            fontSize: "11px",
-                            color: "#9C9284",
-                            textTransform: "uppercase",
-                            letterSpacing: "1px",
-                          }}
-                        >
-                          Bundle Total
-                        </div>
-                        <div
-                          style={{
-                            fontSize: "24px",
-                            fontWeight: 900,
-                            color: "#1B3A2B",
-                          }}
-                        >
-                          ₹{dishes[selectedDishKey].price}
-                        </div>
-                      </div>
-                      <button
-                        onClick={handleAddAll}
-                        style={{
-                          background: "#1B3A2B",
-                          color: "#ffffff",
-                          border: "none",
-                          borderRadius: "9999px",
-                          padding: "14px 32px",
-                          fontSize: "14px",
-                          fontWeight: 800,
-                          cursor: "pointer",
-                          display: "flex",
-                          alignItems: "center",
-                          gap: "8px",
-                          boxShadow: "0 4px 12px rgba(27,58,43,0.18)",
-                          transition:
-                            "background-color var(--grokly-transition-fast)",
-                        }}
-                        onMouseEnter={(e) => {
-                          e.currentTarget.style.background = "#12271D";
-                        }}
-                        onMouseLeave={(e) => {
-                          e.currentTarget.style.background = "#1B3A2B";
-                        }}
-                      >
-                        <i className="ri-shopping-basket-line"></i> Add All
-                        Ingredients
-                      </button>
-                    </div>
-                  </div>
-                </div>
-
-                <div
-                  className="dish-mobile-view"
-                  style={{
-                    display: "none",
-                    position: "relative",
-                    zIndex: 1,
-                  }}
-                >
-                  <div style={{ marginBottom: "16px", textAlign: "center" }}>
-                    <div
-                      style={{
-                        fontSize: "10px",
-                        fontWeight: 800,
-                        color: "#1B3A2B",
-                        textTransform: "uppercase",
-                        letterSpacing: "1px",
-                        marginBottom: "8px",
-                        display: "inline-flex",
-                        alignItems: "center",
-                        gap: "4px",
-                      }}
-                    >
-                      <i className="ri-restaurant-2-fill"></i> Cook at Home
-                    </div>
-                    <h3
-                      style={{
-                        margin: "0 0 4px",
-                        fontSize: "1.25rem",
-                        fontWeight: 900,
-                        color: "#2A211A",
-                      }}
-                    >
-                      Cook with Fresh Ingredients
-                    </h3>
-                    <p
-                      style={{
-                        margin: 0,
-                        fontSize: "0.8rem",
-                        color: "#5C5347",
-                      }}
-                    >
-                      Choose a dish to get all ingredients in one tap.
-                    </p>
-                  </div>
-
-                  <div
-                    style={{
-                      background: "#fff",
-                      borderRadius: "24px",
-                      padding: "16px",
-                      border: "1px solid #E8E2D3",
-                      boxShadow: "0 8px 30px rgba(42, 33, 26, 0.06)",
-                    }}
-                  >
-                    <div
-                      style={{
-                        background: "#F7F5EF",
-                        padding: "10px",
-                        borderRadius: "12px",
-                        marginBottom: "16px",
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "8px",
-                        border: "1px solid #E8E2D3",
-                        fontSize: "12px",
-                        color: "#9C9284",
-                      }}
-                    >
-                      <i className="ri-search-line"></i> Try searching "Paneer
-                      Chilli"
-                    </div>
-
-                    <div style={{ marginBottom: "16px" }}>
-                      <div
-                        style={{
-                          fontSize: "11px",
-                          fontWeight: 800,
-                          color: "#9C9284",
-                          marginBottom: "8px",
-                          textTransform: "uppercase",
-                          letterSpacing: "0.5px",
-                        }}
-                      >
-                        Popular Dishes
-                      </div>
-                      <div
-                        style={{
-                          display: "flex",
-                          gap: "8px",
-                          overflowX: "auto",
-                          paddingBottom: "4px",
-                        }}
-                        className="hide-scrollbar"
-                      >
-                        {Object.entries(dishes).map(([key, dish]) => {
-                          const isActive = selectedDishKey === key;
-                          return (
-                            <button
-                              key={key}
-                              onClick={() => setSelectedDishKey(key)}
-                              style={{
-                                flex: "0 0 auto",
-                                background: isActive ? "#F7F5EF" : "#F1EEE6",
-                                border: isActive
-                                  ? "1px solid #1B3A2B"
-                                  : "1px solid #E8E2D3",
-                                borderRadius: "12px",
-                                padding: "8px 12px",
-                                display: "flex",
-                                alignItems: "center",
-                                gap: "8px",
-                                cursor: "pointer",
-                              }}
-                            >
-                              <i
-                                className="ri-restaurant-line"
-                                style={{
-                                  color: isActive ? "#1B3A2B" : "#9C9284",
-                                  fontSize: "14px",
-                                }}
-                              ></i>
-                              <span
+                              <div
                                 style={{
                                   fontSize: "11px",
                                   fontWeight: 700,
-                                  color: isActive ? "#1B3A2B" : "#5C5347",
+                                  color: "#2A211A",
                                 }}
                               >
-                                {dish.name.replace("Paneer ", "")}
-                              </span>
-                            </button>
-                          );
-                        })}
-                      </div>
-                    </div>
-
-                    <div
-                      style={{
-                        background: "#ffffff",
-                        borderRadius: "16px",
-                        padding: "12px",
-                        border: "1px solid #F1EEE6",
-                      }}
-                    >
-                      <div
-                        style={{
-                          display: "flex",
-                          justifyContent: "space-between",
-                          alignItems: "center",
-                          marginBottom: "12px",
-                          borderBottom: "1px solid #F1EEE6",
-                          paddingBottom: "8px",
-                        }}
-                      >
-                        <span
-                          style={{
-                            fontSize: "12px",
-                            fontWeight: 800,
-                            color: "#2A211A",
-                          }}
-                        >
-                          {dishes[selectedDishKey].name}
-                        </span>
-                        <span
-                          style={{
-                            fontSize: "10px",
-                            color: "#1B3A2B",
-                            fontWeight: 700,
-                          }}
-                        >
-                          {dishes[selectedDishKey].ingredients.length} items
-                          &middot; ₹{dishes[selectedDishKey].price}
-                        </span>
-                      </div>
-
-                      <div
-                        style={{
-                          display: "flex",
-                          flexDirection: "column",
-                          gap: "8px",
-                        }}
-                      >
-                        {dishes[selectedDishKey].ingredients.map((item) => {
-                          const qty = getProductQuantity(item.id);
-                          return (
-                            <div
-                              key={item.id}
-                              style={{
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "space-between",
-                                padding: "8px 0",
-                                borderBottom: "1px solid #F7F5EF",
-                              }}
-                            >
-                              <div
-                                style={{
-                                  display: "flex",
-                                  alignItems: "center",
-                                  gap: "10px",
-                                }}
-                              >
-                                <img
-                                  src={getIngredientImage(item)}
-                                  alt={item.name}
-                                  onError={(e) => {
-                                    e.target.src =
-                                      "https://images.unsplash.com/photo-1542838132-92c53300491e?w=150&h=150&fit=crop";
-                                  }}
+                                ₹{ing.price}{" "}
+                                <span
                                   style={{
-                                    width: "36px",
-                                    height: "36px",
-                                    borderRadius: "6px",
-                                    objectFit: "cover",
+                                    fontSize: "9px",
+                                    textDecoration: "line-through",
+                                    color: "#9C9284",
+                                    fontWeight: "normal",
                                   }}
-                                />
-                                <div>
-                                  <div
-                                    style={{
-                                      fontSize: "11px",
-                                      fontWeight: 700,
-                                      color: "#2A211A",
-                                    }}
-                                  >
-                                    {item.name}
-                                  </div>
-                                  <div
-                                    style={{
-                                      fontSize: "9px",
-                                      color: "#9C9284",
-                                    }}
-                                  >
-                                    {item.unit}
-                                  </div>
-                                  <div
-                                    style={{
-                                      fontSize: "10px",
-                                      fontWeight: 700,
-                                      color: "#2A211A",
-                                    }}
-                                  >
-                                    ₹{item.price}{" "}
-                                    <span
-                                      style={{
-                                        fontSize: "8px",
-                                        textDecoration: "line-through",
-                                        color: "#9C9284",
-                                        fontWeight: "normal",
-                                      }}
-                                    >
-                                      ₹{item.mrp}
-                                    </span>
-                                  </div>
-                                </div>
+                                >
+                                  ₹{ing.mrp}
+                                </span>
                               </div>
-
+                            </div>
+                            <div style={{ flexShrink: 0 }}>
                               {qty > 0 ? (
                                 <div
                                   style={{
@@ -1531,7 +1033,7 @@ function GroklyPageContent() {
                                   }}
                                 >
                                   <button
-                                    onClick={() => decrementQuantity(item.id)}
+                                    onClick={() => decrementQuantity(ing.id)}
                                     style={{
                                       background: "none",
                                       border: "none",
@@ -1555,7 +1057,7 @@ function GroklyPageContent() {
                                     {qty}
                                   </span>
                                   <button
-                                    onClick={() => incrementQuantity(item.id)}
+                                    onClick={() => incrementQuantity(ing.id)}
                                     style={{
                                       background: "none",
                                       border: "none",
@@ -1571,7 +1073,7 @@ function GroklyPageContent() {
                                 </div>
                               ) : (
                                 <button
-                                  onClick={() => addToCart(item.id, 1)}
+                                  onClick={() => addToCart(ing.id, 1)}
                                   style={{
                                     background: "#fff",
                                     border: "1px solid #1B3A2B",
@@ -1581,40 +1083,444 @@ function GroklyPageContent() {
                                     fontSize: "10px",
                                     fontWeight: 800,
                                     cursor: "pointer",
+                                    transition:
+                                      "background-color var(--grokly-transition-fast), color var(--grokly-transition-fast)",
+                                  }}
+                                  onMouseEnter={(e) => {
+                                    e.currentTarget.style.background =
+                                      "#1B3A2B";
+                                    e.currentTarget.style.color = "#fff";
+                                  }}
+                                  onMouseLeave={(e) => {
+                                    e.currentTarget.style.background = "#fff";
+                                    e.currentTarget.style.color = "#1B3A2B";
                                   }}
                                 >
                                   ADD
                                 </button>
                               )}
                             </div>
-                          );
-                        })}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  <div
+                    style={{
+                      marginTop: "24px",
+                      paddingTop: "20px",
+                      borderTop: "1px solid #F1EEE6",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    <div>
+                      <div
+                        style={{
+                          fontSize: "11px",
+                          color: "#9C9284",
+                          textTransform: "uppercase",
+                          letterSpacing: "1px",
+                        }}
+                      >
+                        Bundle Total
+                      </div>
+                      <div
+                        style={{
+                          fontSize: "24px",
+                          fontWeight: 900,
+                          color: "#1B3A2B",
+                        }}
+                      >
+                        ₹{dishes[selectedDishKey].price}
                       </div>
                     </div>
-
                     <button
                       onClick={handleAddAll}
                       style={{
-                        width: "100%",
                         background: "#1B3A2B",
-                        color: "#fff",
+                        color: "#ffffff",
                         border: "none",
-                        borderRadius: "12px",
-                        padding: "12px",
-                        marginTop: "16px",
-                        fontSize: "13px",
+                        borderRadius: "9999px",
+                        padding: "14px 32px",
+                        fontSize: "14px",
                         fontWeight: 800,
                         cursor: "pointer",
                         display: "flex",
                         alignItems: "center",
-                        justifyContent: "center",
-                        gap: "6px",
+                        gap: "8px",
+                        boxShadow: "0 4px 12px rgba(27,58,43,0.18)",
+                        transition:
+                          "background-color var(--grokly-transition-fast)",
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.background = "#12271D";
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.background = "#1B3A2B";
                       }}
                     >
                       <i className="ri-shopping-basket-line"></i> Add All
                       Ingredients
                     </button>
                   </div>
+                </div>
+              </div>
+
+              <div
+                className="dish-mobile-view"
+                style={{
+                  display: "none",
+                  position: "relative",
+                  zIndex: 1,
+                }}
+              >
+                <div style={{ marginBottom: "16px", textAlign: "center" }}>
+                  <div
+                    style={{
+                      fontSize: "10px",
+                      fontWeight: 800,
+                      color: "#1B3A2B",
+                      textTransform: "uppercase",
+                      letterSpacing: "1px",
+                      marginBottom: "8px",
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: "4px",
+                    }}
+                  >
+                    <i className="ri-restaurant-2-fill"></i> Cook at Home
+                  </div>
+                  <h3
+                    style={{
+                      margin: "0 0 4px",
+                      fontSize: "1.25rem",
+                      fontWeight: 900,
+                      color: "#2A211A",
+                    }}
+                  >
+                    Cook with Fresh Ingredients
+                  </h3>
+                  <p
+                    style={{
+                      margin: 0,
+                      fontSize: "0.8rem",
+                      color: "#5C5347",
+                    }}
+                  >
+                    Choose a dish to get all ingredients in one tap.
+                  </p>
+                </div>
+
+                <div
+                  style={{
+                    background: "#fff",
+                    borderRadius: "24px",
+                    padding: "16px",
+                    border: "1px solid #E8E2D3",
+                    boxShadow: "0 8px 30px rgba(42, 33, 26, 0.06)",
+                  }}
+                >
+                  <div
+                    style={{
+                      background: "#F7F5EF",
+                      padding: "10px",
+                      borderRadius: "12px",
+                      marginBottom: "16px",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "8px",
+                      border: "1px solid #E8E2D3",
+                      fontSize: "12px",
+                      color: "#9C9284",
+                    }}
+                  >
+                    <i className="ri-search-line"></i> Try searching "Paneer
+                    Chilli"
+                  </div>
+
+                  <div style={{ marginBottom: "16px" }}>
+                    <div
+                      style={{
+                        fontSize: "11px",
+                        fontWeight: 800,
+                        color: "#9C9284",
+                        marginBottom: "8px",
+                        textTransform: "uppercase",
+                        letterSpacing: "0.5px",
+                      }}
+                    >
+                      Popular Dishes
+                    </div>
+                    <div
+                      style={{
+                        display: "flex",
+                        gap: "8px",
+                        overflowX: "auto",
+                        paddingBottom: "4px",
+                      }}
+                      className="hide-scrollbar"
+                    >
+                      {Object.entries(dishes).map(([key, dish]) => {
+                        const isActive = selectedDishKey === key;
+                        return (
+                          <button
+                            key={key}
+                            onClick={() => setSelectedDishKey(key)}
+                            style={{
+                              flex: "0 0 auto",
+                              background: isActive ? "#F7F5EF" : "#F1EEE6",
+                              border: isActive
+                                ? "1px solid #1B3A2B"
+                                : "1px solid #E8E2D3",
+                              borderRadius: "12px",
+                              padding: "8px 12px",
+                              display: "flex",
+                              alignItems: "center",
+                              gap: "8px",
+                              cursor: "pointer",
+                            }}
+                          >
+                            <i
+                              className="ri-restaurant-line"
+                              style={{
+                                color: isActive ? "#1B3A2B" : "#9C9284",
+                                fontSize: "14px",
+                              }}
+                            ></i>
+                            <span
+                              style={{
+                                fontSize: "11px",
+                                fontWeight: 700,
+                                color: isActive ? "#1B3A2B" : "#5C5347",
+                              }}
+                            >
+                              {dish.name.replace("Paneer ", "")}
+                            </span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  <div
+                    style={{
+                      background: "#ffffff",
+                      borderRadius: "16px",
+                      padding: "12px",
+                      border: "1px solid #F1EEE6",
+                    }}
+                  >
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                        marginBottom: "12px",
+                        borderBottom: "1px solid #F1EEE6",
+                        paddingBottom: "8px",
+                      }}
+                    >
+                      <span
+                        style={{
+                          fontSize: "12px",
+                          fontWeight: 800,
+                          color: "#2A211A",
+                        }}
+                      >
+                        {dishes[selectedDishKey].name}
+                      </span>
+                      <span
+                        style={{
+                          fontSize: "10px",
+                          color: "#1B3A2B",
+                          fontWeight: 700,
+                        }}
+                      >
+                        {dishes[selectedDishKey].ingredients.length} items
+                        &middot; ₹{dishes[selectedDishKey].price}
+                      </span>
+                    </div>
+
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: "8px",
+                      }}
+                    >
+                      {dishes[selectedDishKey].ingredients.map((item) => {
+                        const qty = getProductQuantity(item.id);
+                        return (
+                          <div
+                            key={item.id}
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "space-between",
+                              padding: "8px 0",
+                              borderBottom: "1px solid #F7F5EF",
+                            }}
+                          >
+                            <div
+                              style={{
+                                display: "flex",
+                                alignItems: "center",
+                                gap: "10px",
+                              }}
+                            >
+                              <img
+                                src={getIngredientImage(item)}
+                                alt={item.name}
+                                onError={(e) => {
+                                  e.target.src =
+                                    "https://images.unsplash.com/photo-1542838132-92c53300491e?w=150&h=150&fit=crop";
+                                }}
+                                style={{
+                                  width: "36px",
+                                  height: "36px",
+                                  borderRadius: "6px",
+                                  objectFit: "cover",
+                                }}
+                              />
+                              <div>
+                                <div
+                                  style={{
+                                    fontSize: "11px",
+                                    fontWeight: 700,
+                                    color: "#2A211A",
+                                  }}
+                                >
+                                  {item.name}
+                                </div>
+                                <div
+                                  style={{
+                                    fontSize: "9px",
+                                    color: "#9C9284",
+                                  }}
+                                >
+                                  {item.unit}
+                                </div>
+                                <div
+                                  style={{
+                                    fontSize: "10px",
+                                    fontWeight: 700,
+                                    color: "#2A211A",
+                                  }}
+                                >
+                                  ₹{item.price}{" "}
+                                  <span
+                                    style={{
+                                      fontSize: "8px",
+                                      textDecoration: "line-through",
+                                      color: "#9C9284",
+                                      fontWeight: "normal",
+                                    }}
+                                  >
+                                    ₹{item.mrp}
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+
+                            {qty > 0 ? (
+                              <div
+                                style={{
+                                  display: "flex",
+                                  alignItems: "center",
+                                  gap: "6px",
+                                  background: "#1B3A2B",
+                                  color: "#fff",
+                                  borderRadius: "6px",
+                                  padding: "4px 6px",
+                                }}
+                              >
+                                <button
+                                  onClick={() => decrementQuantity(item.id)}
+                                  style={{
+                                    background: "none",
+                                    border: "none",
+                                    color: "#fff",
+                                    fontWeight: "bold",
+                                    cursor: "pointer",
+                                    fontSize: "12px",
+                                    padding: "0 2px",
+                                  }}
+                                >
+                                  -
+                                </button>
+                                <span
+                                  style={{
+                                    fontSize: "11px",
+                                    fontWeight: "bold",
+                                    minWidth: "10px",
+                                    textAlign: "center",
+                                  }}
+                                >
+                                  {qty}
+                                </span>
+                                <button
+                                  onClick={() => incrementQuantity(item.id)}
+                                  style={{
+                                    background: "none",
+                                    border: "none",
+                                    color: "#fff",
+                                    fontWeight: "bold",
+                                    cursor: "pointer",
+                                    fontSize: "12px",
+                                    padding: "0 2px",
+                                  }}
+                                >
+                                  +
+                                </button>
+                              </div>
+                            ) : (
+                              <button
+                                onClick={() => addToCart(item.id, 1)}
+                                style={{
+                                  background: "#fff",
+                                  border: "1px solid #1B3A2B",
+                                  color: "#1B3A2B",
+                                  borderRadius: "6px",
+                                  padding: "5px 10px",
+                                  fontSize: "10px",
+                                  fontWeight: 800,
+                                  cursor: "pointer",
+                                }}
+                              >
+                                ADD
+                              </button>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  <button
+                    onClick={handleAddAll}
+                    style={{
+                      width: "100%",
+                      background: "#1B3A2B",
+                      color: "#fff",
+                      border: "none",
+                      borderRadius: "12px",
+                      padding: "12px",
+                      marginTop: "16px",
+                      fontSize: "13px",
+                      fontWeight: 800,
+                      cursor: "pointer",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      gap: "6px",
+                    }}
+                  >
+                    <i className="ri-shopping-basket-line"></i> Add All
+                    Ingredients
+                  </button>
                 </div>
               </div>
 
@@ -1636,20 +1542,6 @@ function GroklyPageContent() {
             }
             .dish-mobile-view {
               display: block !important;
-            }
-            .browse-and-dish-layout {
-              grid-template-columns: 1fr !important;
-            }
-            .category-scroll-list {
-              flex-direction: row !important;
-              max-height: none !important;
-              overflow-x: auto !important;
-              overflow-y: hidden !important;
-              padding-bottom: 4px !important;
-            }
-            .category-scroll-list button {
-              flex-shrink: 0 !important;
-              min-width: 140px !important;
             }
           }
           .grokly-category-layout {
