@@ -70,7 +70,7 @@ const CATEGORIES = [
     slug: 'coastal',
     name: 'Coastal & Seafood',
     desc: 'Fragrant fish curries, prawn ghee roasts, coconut stews, and mangalorean delicacies.',
-    image: 'https://images.unsplash.com/photo-1574484284002-952d92a03a52?w=800&fit=crop',
+    image: 'https://images.unsplash.com/photo-1781684081404-5c090011b53e?w=800&fit=crop',
     color: '#0369A1',
     keywords: ['coastal', 'seafood', 'fish'],
   },

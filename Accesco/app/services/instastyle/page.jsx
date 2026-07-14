@@ -24,11 +24,11 @@ const serviceSchema = {
   name: "InstaStyle by Accesco Living",
   description:
     "Fashion discovery, styling, try-at-home experiences, curated collections and premium apparel delivery.",
-  url: "https://www.accescoliving.com/services/instastyle",
+  url: "https://accescoliving.com/services/instastyle",
   provider: {
     "@type": "Organization",
     name: "Accesco Living",
-    url: "https://www.accescoliving.com",
+    url: "https://accescoliving.com",
   },
   areaServed: {
     "@type": "City",

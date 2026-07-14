@@ -104,7 +104,7 @@ const router = useRouter();
 
   // Switch to the full interactive dashboard app
 const navigateToDashboard = () => {
-  router.push('/xpense_meter');
+  router.push('/xpense-meter');
 };
   // Sync state between transaction list and categories when in active dashboard mode
   useEffect(() => {
@@ -413,13 +413,13 @@ const navigateToDashboard = () => {
           {/* LEFT HERO CARD */}
           <div className="left-hero-card">
             <div>
- <h1 className="hero-heading">
+ <h2 className="hero-heading">
   <div className="hero-heading-top">
     <span>Introducing</span>
 
     <Image
       src="/images/asterik.png"
-      alt=""
+      alt="Sparkle icon"
       width={30}
       height={30}
       className="hero-asterisk"
@@ -427,7 +427,7 @@ const navigateToDashboard = () => {
   </div>
 
   <div>Xpense Meter!</div>
-</h1>
+</h2>
               <p className="hero-subtitle">
                 Your smart spending companion for Grocery, Food & Fashion - all in one place.
               </p>

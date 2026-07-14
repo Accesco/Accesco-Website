@@ -8,7 +8,6 @@ import AccescoHeader from '../components/AccescoHeader';
 import Hero from '../components/Hero';
 import AppShowcase from '../components/AppShowcase';
 import Footer from '../components/Footer';
-import JsonLd from '../components/JsonLd';
 import XpenseIntro from '@/components/XpenseIntro';
 
 const CHATBOT_LOGO = '/logo.png';
@@ -1477,19 +1476,6 @@ export default function HomePage() {
   const scrollRef = useRef(null);
   const deliveryRef = useRef(null);
 const [deliveryVisible, setDeliveryVisible] = useState(false);
-const softwareApplicationSchema = {
-  "@context": "https://schema.org",
-  "@type": "SoftwareApplication",
-  "name": "Accesco Living",
-  "operatingSystem": "Android, iOS",
-  "applicationCategory": "ShoppingApplication",
-  "url": "https://www.accescoliving.com",
-  "offers": {
-    "@type": "Offer",
-    "price": "0",
-    "priceCurrency": "INR"
-  }
-};
   useEffect(() => {
     setIsClient(true);
   }, []);
@@ -1519,7 +1505,6 @@ const softwareApplicationSchema = {
 
  return (
   <>
-    <JsonLd data={softwareApplicationSchema} />
     <AccescoHeader />
       <main>
         {/* ── Hero Section ── */}
@@ -1732,6 +1717,32 @@ fontSize: 'clamp(2.45rem, 4.9vw, 4.4rem)',
         <XpenseIntro />
         {/* ── Waitlist / App Showcase ── */}
         <AppShowcase />
+
+        {/* ── About Accesco Living (SEO copy) ── */}
+        <section className="about-accesco-section" aria-label="About Accesco Living">
+          <div className="about-accesco-inner">
+            <h2>India&apos;s Intelligent Circular Commerce Ecosystem</h2>
+            <p>
+              Accesco Living is Bengaluru&apos;s intelligent commerce ecosystem, bringing
+              groceries, food, fashion, and financial tools together in one unified app.
+              Through Grokly, our farm-direct grocery service, customers get fresh
+              vegetables and everyday essentials delivered in as little as 11 minutes,
+              sourced straight from Karnataka farms with live QR traceability and
+              transparent pricing. Swadishtt connects you to local restaurants, regional
+              cuisines, curated thalis, and instant catering, while InstaStyle delivers
+              trending fashion, apparel, and lifestyle products right to your door.
+            </p>
+            <p>
+              What makes Accesco Living different is the circular design of the whole
+              platform: every service — from Grokly&apos;s grocery delivery to Swadishtt&apos;s
+              food discovery, InstaStyle&apos;s fashion marketplace, and the Xpense Meter
+              personal finance sandbox — shares one account, one wallet, and one delivery
+              network. Instead of juggling separate apps for groceries, meals, clothing,
+              and budgeting, households across Bengaluru can manage all of it from a
+              single intelligent hub built for everyday Indian life.
+            </p>
+          </div>
+        </section>
       </main>
       <Footer />
 
