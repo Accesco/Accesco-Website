@@ -288,9 +288,7 @@ export default function HomePage() {
             <p>
               <strong>Address:</strong> Accesco living,Jaladarshini Layout, Bengaluru -560094, Karnataka, India
             </p>
-            <p>
-  <strong>GSTIN:</strong> 19ABECA4405B1Z6
-</p>
+  
 <p className="business-card-link">
   <a
     href="/accesco-business-card.pdf"
