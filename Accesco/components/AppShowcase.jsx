@@ -284,12 +284,12 @@ export default function AppShowcase() {
   }, []);
 
   return (
-    <section id="waitlist" style={{ padding: '80px 20px', background: '#FAFAF9', position: 'relative' }}>
+    <section id="waitlist" className={styles.waitlistSection}>
 
       <div id="recaptcha-container"></div>
 
       {/* Centered Heading Block Positioned Symmetrically Above the Card */}
-      <div style={{ maxWidth: '1200px', margin: '0 auto 48px', padding: '0', textAlign: 'center' }}>
+      <div className={styles.waitlistHeadingBlock}>
         <h2 className={styles.waitlistTitle}>
           Join the <span className={styles.highlight}>Revolution</span>
         </h2>
@@ -350,7 +350,7 @@ export default function AppShowcase() {
           )}
 
           {/* Form Step Router */}
-          <form onSubmit={handleSubmit} style={{ width: '100%' }}>
+          <form onSubmit={handleSubmit} className={styles.fullWidthForm}>
             
             {/* Step 1: Base Inputs */}
             {currentStep === 1 && (
@@ -426,7 +426,7 @@ export default function AppShowcase() {
                     <ArrowLeft size={16} />
                     <span>Back</span>
                   </button>
-                  <button type="button" className={styles.submitButton} onClick={handleNext} style={{ flex: 1 }}>
+                  <button type="button" className={`${styles.submitButton} ${styles.flexOneButton}`} onClick={handleNext}>
                     <span>Continue</span>
                     <ArrowRight size={18} />
                   </button>
@@ -451,13 +451,12 @@ export default function AppShowcase() {
                 <div className={styles.inputWrapper}>
                   <input
                     type="text"
-                    className={styles.formInput}
+                    className={`${styles.formInput} ${styles.centeredOtpInput}`}
                     placeholder="Enter 6-digit OTP"
                     value={form.verificationCode}
                     onChange={(e) => setForm({ ...form, verificationCode: e.target.value })}
                     maxLength={6}
                     required
-                    style={{ textAlign: 'center', fontSize: '1.2rem', letterSpacing: '4px', padding: '0' }}
                   />
                 </div>
 
@@ -477,17 +476,16 @@ export default function AppShowcase() {
 
                 {/* Optional Email Verification */}
                 <div
-                  className={styles.verificationSection}
-                  style={{ marginTop: '20px', paddingTop: '20px', borderTop: '1px dashed #d1a5c4' }}
+                  className={`${styles.verificationSection} ${styles.verifyEmailBlock}`}
                 >
                   <div className={styles.verificationInfo}>
-                    <p style={{ fontWeight: 600 }}>
-                      Verify your email <span style={{ color: '#888', fontWeight: 400 }}>(optional)</span>
+                    <p className={styles.verifyEmailTitle}>
+                      Verify your email <span className={styles.verifyEmailOptionalTag}>(optional)</span>
                     </p>
                     {emailVerified ? (
-                      <p style={{ color: '#22c55e' }}>Email verified successfully.</p>
+                      <p className={styles.verifyEmailSuccess}>Email verified successfully.</p>
                     ) : (
-                      <p style={{ fontSize: '0.9rem', color: '#666' }}>
+                      <p className={styles.verifyEmailHint}>
                         Optionally verify <strong>{form.email}</strong> for a more secure account.
                       </p>
                     )}
@@ -498,10 +496,9 @@ export default function AppShowcase() {
                       {!emailCodeSent ? (
                         <button
                           type="button"
-                          className={styles.navButton}
+                          className={`${styles.navButton} ${styles.fullWidthButton}`}
                           onClick={sendEmailOtp}
                           disabled={emailLoading}
-                          style={{ width: '100%' }}
                         >
                           {emailLoading ? 'Sending...' : 'Send email code'}
                         </button>
@@ -511,12 +508,11 @@ export default function AppShowcase() {
                             <label className={styles.formLabel}>Email Code</label>
                             <input
                               type="text"
-                              className={styles.formInput}
+                              className={`${styles.formInput} ${styles.emailOtpInput}`}
                               placeholder="Enter 6-digit code"
                               value={emailCode}
                               onChange={(e) => setEmailCode(e.target.value)}
                               maxLength={6}
-                              style={{ textAlign: 'center', fontSize: '24px', letterSpacing: '8px' }}
                             />
                           </div>
                           <div className={styles.buttonGroup}>
@@ -548,7 +544,7 @@ export default function AppShowcase() {
                     <ArrowLeft size={16} />
                     <span>Back</span>
                   </button>
-                  <button type="submit" className={styles.submitButton} disabled={loading} style={{ flex: 1 }}>
+                  <button type="submit" className={`${styles.submitButton} ${styles.flexOneButton}`} disabled={loading}>
                     {loading ? (
                       <span>Joining...</span>
                     ) : (

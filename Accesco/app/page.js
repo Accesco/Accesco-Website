@@ -8,7 +8,6 @@ import AccescoHeader from '../components/AccescoHeader';
 import Hero from '../components/Hero';
 import AppShowcase from '../components/AppShowcase';
 import Footer from '../components/Footer';
-import JsonLd from '../components/JsonLd';
 import XpenseIntro from '@/components/XpenseIntro';
 
 const CHATBOT_LOGO = '/logo.png';
@@ -1472,24 +1471,14 @@ const [typing, setTyping] = useState(false)
   );
 }
 
+
+
+
 export default function HomePage() {
   const [isClient, setIsClient] = useState(false);
   const scrollRef = useRef(null);
   const deliveryRef = useRef(null);
 const [deliveryVisible, setDeliveryVisible] = useState(false);
-const softwareApplicationSchema = {
-  "@context": "https://schema.org",
-  "@type": "SoftwareApplication",
-  "name": "Accesco Living",
-  "operatingSystem": "Android, iOS",
-  "applicationCategory": "ShoppingApplication",
-  "url": "https://www.accescoliving.com",
-  "offers": {
-    "@type": "Offer",
-    "price": "0",
-    "priceCurrency": "INR"
-  }
-};
   useEffect(() => {
     setIsClient(true);
   }, []);
@@ -1519,7 +1508,6 @@ const softwareApplicationSchema = {
 
  return (
   <>
-    <JsonLd data={softwareApplicationSchema} />
     <AccescoHeader />
       <main>
         {/* ── Hero Section ── */}
@@ -1534,12 +1522,7 @@ const softwareApplicationSchema = {
         {/* ── Services Section ── */}
        <section
   id="services"
-  style={{
-    padding: 'clamp(60px, 8vw, 100px) 0',
-    background: '#FFFDF8',
-    position: 'relative'
-  }}
->       
+>
 
           <div className="intelligencePosterRow">
 
@@ -1589,21 +1572,11 @@ const softwareApplicationSchema = {
   </div>
 
 </div>
-          <div style={{
-            position: 'absolute', inset: 0,
-            backgroundImage: 'radial-gradient(circle at 20% 50%, rgba(122,0,66,0.03) 0%, transparent 60%), radial-gradient(circle at 80% 20%, rgba(200,150,62,0.03) 0%, transparent 60%)',
-            pointerEvents: 'none',
-          }} />
+          <div className="servicesRadialOverlay" />
 
   <div
     ref={deliveryRef}
     className={`deliveryHeadingFrame ${deliveryVisible ? "is-visible" : ""}`}
-    style={{
-      maxWidth: '1280px',
-      margin: '0 auto',
-      padding: '0 clamp(20px, 4vw, 40px)',
-      position: 'relative'
-    }}
   >
 <div className="floatingHeroItems">
   <img src="/images/burger.png" className="popItem popBurger" alt="Burger" />
@@ -1613,33 +1586,14 @@ const softwareApplicationSchema = {
   <img src="/images/salad.png" className="popItem popSalad" alt="Salad" />
   <img src="/images/Jeans.png" className="popItem popJeans" alt="Jeans" />
 </div>
-              <h2 style={{
-                fontFamily: "'Inter', sans-serif",
-                fontWeight: 800,
-fontSize: 'clamp(2.45rem, 4.9vw, 4.4rem)',
-                color: '#1A0A0F', letterSpacing: '-0.04em',
-                margin: '0 0 8px', lineHeight: 1.1,
-              }}>
+              <h2 className="deliveryHeadingTitle">
                 India solved delivery in 10 minutes.<br />
-                <span style={{
-  fontFamily: "'Inter', sans-serif",
-  color: '#2B1A24',
-  fontWeight: 550,
-  fontSize: 'clamp(1rem, 3.8vw, 2rem)',
-  lineHeight: 1.2,
-}}>
+                <span className="deliveryHeadingSubtitle">
   Nobody solved the household in 10 years.
 </span>
 
               </h2>
-              <p style={{
- fontFamily: "'Plus Jakarta Sans', sans-serif",
-  fontSize: 'clamp(1.15rem, 1.5vw, 1.4rem)',
-  color: '#6B5B65',
-  maxWidth: '900px',
-  lineHeight: 1.5,
-  
-}}>
+              <p className="deliveryHeadingDesc">
                 Groceries, food and fashion at your doorstep in minutes — sourced straight from producers, built to circulate, and engineered so the value of everything you buy keeps working for your household—Intelligent Hyperlocal delivery app that fits your life. </p>
             </div>   {/* deliveryHeadingFrame */}
           
@@ -1661,13 +1615,13 @@ fontSize: 'clamp(2.45rem, 4.9vw, 4.4rem)',
 
                 <div ref={scrollRef} id="services-scroll-container" className="services-grid">
                   {/* Card 1: Grokly */}
-                  <div style={{ textDecoration: 'none', display: 'block' }}>
+                  <div className="serviceCardLinkWrap">
                     <div className="service-premium-card grokly-card">
                       <div className="service-card-visual">
-                        <Image src="/images/grokly-new1.png" alt="Grokly Groceries" fill style={{ objectFit: 'cover' }} />
+                        <Image src="/images/grokly-new1.png" alt="Grokly Groceries" fill className="serviceCardVisualImage" />
                       </div>
                       <div className="service-icon-circle">
-                        <Image src="/images/grokly-icon.png" alt="Grokly" width={40} height={40} style={{ objectFit: 'contain', width: '100%', height: '100%' }} />
+                        <Image src="/images/grokly-icon.png" alt="Grokly" width={40} height={40} className="serviceIconCircleImage" />
                       </div>
                       <div className="service-card-body">
                         <h3 className="service-card-name">Grokly</h3>
@@ -1678,13 +1632,13 @@ fontSize: 'clamp(2.45rem, 4.9vw, 4.4rem)',
                   </div>
 
                   {/* Card 2: Swadishtt */}
-                  <div style={{ textDecoration: 'none', display: 'block' }}>
+                  <div className="serviceCardLinkWrap">
                     <div className="service-premium-card swadisht-card">
                       <div className="service-card-visual">
-                        <Image src="/images/swadisht/swadisht_logo1.JPG" alt="Swadishtt Meals" fill style={{ objectFit: 'cover' }} />
+                        <Image src="/images/swadisht/swadisht_logo1.JPG" alt="Swadishtt Meals" fill className="serviceCardVisualImage" />
                       </div>
                       <div className="service-icon-circle">
-                        <Image src="/images/swadisht/swadisht_logo.JPG" alt="Swadishtt" width={40} height={40} style={{ objectFit: 'contain', width: '100%', height: '100%' }} />
+                        <Image src="/images/swadisht/swadisht_logo.JPG" alt="Swadishtt" width={40} height={40} className="serviceIconCircleImage" />
                       </div>
                       <div className="service-card-body">
                         <h3 className="service-card-name">Swadishtt</h3>
@@ -1695,13 +1649,13 @@ fontSize: 'clamp(2.45rem, 4.9vw, 4.4rem)',
                   </div>
 
                   {/* Card 3: InstaStyle */}
-                  <div style={{ textDecoration: 'none', display: 'block' }}>
+                  <div className="serviceCardLinkWrap">
                     <div className="service-premium-card instastyle-card">
                       <div className="service-card-visual">
-                        <Image src="/images/fashion-new1.png" alt="InstaStyle Fashion" fill style={{ objectFit: 'cover' }} />
+                        <Image src="/images/fashion-new1.png" alt="InstaStyle Fashion" fill className="serviceCardVisualImage" />
                       </div>
                       <div className="service-icon-circle">
-                        <Image src="/images/instastyle-logo.png" alt="InstaStyle" width={40} height={40} style={{ objectFit: 'contain', width: '100%', height: '100%' }} />
+                        <Image src="/images/instastyle-logo.png" alt="InstaStyle" width={40} height={40} className="serviceIconCircleImage" />
                       </div>
                       <div className="service-card-body">
                         <h3 className="service-card-name">InstaStyle</h3>
@@ -1732,6 +1686,32 @@ fontSize: 'clamp(2.45rem, 4.9vw, 4.4rem)',
         <XpenseIntro />
         {/* ── Waitlist / App Showcase ── */}
         <AppShowcase />
+
+        {/* ── About Accesco Living (SEO copy) ── */}
+        <section className="about-accesco-section" aria-label="About Accesco Living">
+          <div className="about-accesco-inner">
+            <h2>India&apos;s Intelligent Circular Commerce Ecosystem</h2>
+            <p>
+              Accesco Living is Bengaluru&apos;s intelligent commerce ecosystem, bringing
+              groceries, food, fashion, and financial tools together in one unified app.
+              Through Grokly, our farm-direct grocery service, customers get fresh
+              vegetables and everyday essentials delivered in as little as 11 minutes,
+              sourced straight from Karnataka farms with live QR traceability and
+              transparent pricing. Swadishtt connects you to local restaurants, regional
+              cuisines, curated thalis, and instant catering, while InstaStyle delivers
+              trending fashion, apparel, and lifestyle products right to your door.
+            </p>
+            <p>
+              What makes Accesco Living different is the circular design of the whole
+              platform: every service — from Grokly&apos;s grocery delivery to Swadishtt&apos;s
+              food discovery, InstaStyle&apos;s fashion marketplace, and the Xpense Meter
+              personal finance sandbox — shares one account, one wallet, and one delivery
+              network. Instead of juggling separate apps for groceries, meals, clothing,
+              and budgeting, households across Bengaluru can manage all of it from a
+              single intelligent hub built for everyday Indian life.
+            </p>
+          </div>
+        </section>
       </main>
       <Footer />
 

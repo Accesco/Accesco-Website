@@ -12,7 +12,7 @@ export default function AccescoStories() {
       title: "Grokly: India's Smart Grocery Delivery System That Runs Your Household Automatically",
       description:
         'Discover how Grokly uses intelligent automation to manage your pantry and ensure you never run out of essentials.',
-      image: '/images/blog-grokly.jpg',
+      image: '/images/blog-tech-1.png',
       link: '#'
     },
     {
@@ -22,7 +22,7 @@ export default function AccescoStories() {
       title: 'Accesco Living: A Story That Started Long Before the Company',
       description:
         "Step behind the scenes of the vision that built India's first daily-living ecosystem for the modern consumer.",
-      image: '/images/blog-accesco.jpg',
+      image: '/images/blog-business-2.png',
       link: '#'
     },
     {
@@ -32,7 +32,7 @@ export default function AccescoStories() {
       title: 'A Day With Accesco Living: How Life Changes When Everything Works Together',
       description:
         'Explore how a unified ecosystem of groceries, fashion, and finance streamlines every part of your routine.',
-      image: '/images/blog-lifestyle.jpg',
+      image: '/images/blog-lifestyle-1.png',
       link: '#'
     }
   ];

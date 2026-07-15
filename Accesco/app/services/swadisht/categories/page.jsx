@@ -14,7 +14,7 @@ const CATEGORIES = [
     slug: 'biryani',
     name: 'Biryani',
     desc: 'Slow-cooked dum biryanis layered with fragrant basmati, saffron, and hand-ground spices from across India.',
-    image: 'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=800&fit=crop',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTtWQFgd3t1sPPSxlnk-0TT5KOM6GnliFxVKqudAMSTA&s=10',
     color: '#B45309',
     keywords: ['biryani', 'rice'],
   },
@@ -30,7 +30,7 @@ const CATEGORIES = [
     slug: 'north-indian',
     name: 'North Indian',
     desc: 'Creamy paneer gravies, slow-cooked dal makhani, and hot breads fresh from the tandoor.',
-    image: 'https://images.unsplash.com/photo-1603894584373-5ac82b2ae398?w=800&fit=crop',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTftiT69wz6z3dEf33yG9g6Onl6kgnx4vghIVbE0Rhdvw&s=10',
     color: '#7C3AED',
     keywords: ['north indian', 'mughlai', 'tandoor', 'main course'],
   },
@@ -70,7 +70,7 @@ const CATEGORIES = [
     slug: 'coastal',
     name: 'Coastal & Seafood',
     desc: 'Fragrant fish curries, prawn ghee roasts, coconut stews, and mangalorean delicacies.',
-    image: 'https://images.unsplash.com/photo-1574484284002-952d92a03a52?w=800&fit=crop',
+    image: 'https://images.unsplash.com/photo-1781684081404-5c090011b53e?w=800&fit=crop',
     color: '#0369A1',
     keywords: ['coastal', 'seafood', 'fish'],
   },
@@ -118,7 +118,7 @@ const CATEGORIES = [
     slug: 'thalis',
     name: 'Thalis & Meals',
     desc: 'Complete balanced thalis with dal, sabzi, chapati, rice, salad, and a satisfying sweet.',
-    image: 'https://images.unsplash.com/photo-1546833998-877b37c2e5c6?w=800&fit=crop',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQnBRuSfkm7XxxIHlanWg9FwCYk65P7i_qsbWRXdOH1Lw&s=10',
     color: '#9333EA',
     keywords: ['thali', 'meal', 'combo'],
   },
@@ -282,7 +282,7 @@ export default function CategoriesPage() {
                     <div className={styles.cardArrow}>
                       <span>Explore</span>
                       <svg className={styles.arrowIcon} viewBox="0 0 20 20" fill="currentColor">
-                        <path fillRule="evenodd" d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd"/>
+                        <path fillRule="evenodd" d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
                       </svg>
                     </div>
                   </div>

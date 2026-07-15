@@ -1,6 +1,6 @@
 /**
  * GroklyHeader Styles - Desktop Header
- * @version 1.0.0
+ * @version 2.0.0 — Harvest Ledger redesign
  */
 
 .topbar {
@@ -9,7 +9,7 @@
   position: sticky;
   top: 0;
   z-index: 1000;
-  box-shadow: 0 2px 8px rgba(0,0,0,.06);
+  box-shadow: 0 2px 8px rgba(42, 33, 26, .06);
 }
 
 .topbarInner {
@@ -74,6 +74,7 @@
   font-weight: 900;
   color: var(--grokly-text-primary);
   line-height: 1.2;
+  font-family: var(--grokly-font-mono);
 }
 
 .locName {
@@ -109,7 +110,7 @@
 .deskSearch:focus-within {
   border-color: var(--grokly-primary);
   background: var(--grokly-bg-white);
-  box-shadow: 0 0 0 4px rgba(12,131,31,.1);
+  box-shadow: 0 0 0 4px rgba(27, 58, 43, .1);
 }
 
 .deskSearch input {
@@ -153,8 +154,8 @@
   align-items: center;
   gap: 6px;
   padding: 8px 16px;
-  background: linear-gradient(135deg,#f0fdf4,#dcfce7);
-  border: 1.5px solid #bbf7d0;
+  background: var(--grokly-primary-light);
+  border: 1.5px solid var(--grokly-border);
   border-radius: var(--grokly-radius-full);
   flex-shrink: 0;
 }
@@ -178,9 +179,9 @@
   align-items: center;
   gap: 8px;
   padding: 10px 16px;
-  background: #f8f9fa;
-  color: #374151;
-  border: 1px solid #e5e7eb;
+  background: var(--grokly-bg);
+  color: var(--grokly-text-secondary);
+  border: 1px solid var(--grokly-border);
   border-radius: 8px;
   font-size: 14px;
   font-weight: 700;
@@ -192,8 +193,8 @@
 }
 
 .hdrCart:hover {
-  background: #f3f4f6;
-  border-color: #cbd5e1;
+  background: var(--grokly-primary-light);
+  border-color: var(--grokly-primary);
 }
 
 .hdrCart.hasItems {
@@ -218,6 +219,7 @@
   align-items: center;
   gap: 8px;
   font-weight: 800;
+  font-family: var(--grokly-font-mono);
 }
 
 .cartDivider {
@@ -229,7 +231,7 @@
   padding: 8px 16px;
   border: none;
   background: none;
-  color: #374151;
+  color: var(--grokly-text-secondary);
   font-size: 15px;
   font-weight: 700;
   flex-shrink: 0;
@@ -260,9 +262,9 @@
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  background: #f0fdf4;
-  border: 1.5px solid #bbf7d0;
-  color: #0c831f;
+  background: var(--grokly-primary-extra-light);
+  border: 1.5px solid var(--grokly-border);
+  color: var(--grokly-primary);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -274,7 +276,7 @@
 .profileName {
   font-size: 14px;
   font-weight: 700;
-  color: #374151;
+  color: var(--grokly-text-secondary);
   transition: color var(--grokly-transition-fast);
 }
 
@@ -286,4 +288,4 @@
   .topbar {
     display: none;
   }
-}
+}

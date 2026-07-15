@@ -235,7 +235,7 @@ export function buildOrderConfirmationEmail({ order, customerName }) {
       </table>
 
       <p style="font-size:13px;color:#999;margin:32px 0 0;">
-        — Swadishtt by Accesco Living · <a href="https://www.accescoliving.com/services/swadisht/order-tracking?id=${orderId}" style="color:#1a1a1a;font-weight:700;text-decoration:underline;">Track Order #${orderId}</a>
+        — Swadishtt by Accesco Living · <a href="https://accescoliving.com/services/swadisht/order-tracking?id=${orderId}" style="color:#1a1a1a;font-weight:700;text-decoration:underline;">Track Order #${orderId}</a>
       </p>
     </div>
   `;
@@ -381,7 +381,7 @@ export function buildInstaStyleOrderEmail({ order, customerName }) {
 
       <p style="font-size:12px;color:#999;border-top:1px solid #f0ece8;padding-top:20px;margin:0;">
         InstaStyle by Accesco Living · 
-        <a href="https://www.accescoliving.com/services/instastyle/orders/${orderId}" style="color:#1a1a1a;font-weight:700;text-decoration:underline;">View Order #${orderId}</a>
+        <a href="https://accescoliving.com/services/instastyle/orders/${orderId}" style="color:#1a1a1a;font-weight:700;text-decoration:underline;">View Order #${orderId}</a>
       </p>
     </div>
   `;

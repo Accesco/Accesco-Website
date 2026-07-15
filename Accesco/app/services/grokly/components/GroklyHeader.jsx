@@ -61,9 +61,9 @@ export default function GroklyHeader({
           <div className={styles.locText}>
             <div className={styles.locLabel}>Delivery in 11 minutes</div>
             <div className={styles.locName}>
-              {location}
-              <span className={styles.locArrow} aria-hidden="true"> ▼</span>
-            </div>
+  {location?.split(',')[0] || "Select Location"}
+  <span className={styles.locArrow} aria-hidden="true"> ▼</span>
+</div>
           </div>
         </button>
 

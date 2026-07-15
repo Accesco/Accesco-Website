@@ -234,7 +234,6 @@ export default function AccescoHeader() {
               width={36}
               height={36}
               priority
-              style={{ objectFit: 'contain' }}
             />
             <div className={styles.logoText}>
               <span className={styles.logoName}>Accesco</span>
@@ -271,8 +270,7 @@ export default function AccescoHeader() {
                     height="12" 
                     viewBox="0 0 12 12" 
                     fill="none"
-                    className={styles.locationIcon}
-                    style={{ transform: isLocationOpen ? 'rotate(180deg)' : 'rotate(0deg)' }}
+                    className={`${styles.locationIcon} ${isLocationOpen ? styles.locationIconOpen : ''}`}
                   >
                     <path 
                       d="M3 4.5L6 7.5L9 4.5" 

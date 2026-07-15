@@ -7,4 +7,4 @@ Disallow: /auth/
 Disallow: /profile/
 
 # Sitemap location
-Sitemap: https://www.accescoliving.com/sitemap.xml
+Sitemap: https://accescoliving.com/sitemap.xml

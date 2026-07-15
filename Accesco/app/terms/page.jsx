@@ -3,7 +3,7 @@ import AccescoHeader from '../../components/AccescoHeader';
 import Footer from '../../components/Footer';
 
 export const metadata = {
-  title: 'Terms & Conditions | Accesco Living',
+  title: 'Terms & Conditions',
   description: 'Read the Accesco Living terms and conditions — the legal contract between Accesco Living Private Limited and its users covering service, payments, cancellations and conduct.',
 };
 
