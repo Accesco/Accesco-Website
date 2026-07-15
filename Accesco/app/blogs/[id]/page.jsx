@@ -7,17 +7,31 @@ import { HeaderActions, ShareRow } from './PostActions';
 
 export const revalidate = 60;
 
+const SITE_URL = 'https://accescoliving.com';
 const HIDDEN_TITLES = ['AccesGo: Moving People, Respecting Lives\n'];
 
-async function getPost(id) {
+function isVisible(post) {
+  return post && !HIDDEN_TITLES.includes(post.title);
+}
+
+async function getPostData(id) {
   const data = await fetchBlogs();
-  const post = data.find((p) => p.id === id);
-  if (!post || HIDDEN_TITLES.includes(post.title)) return null;
-  return post;
+  const visible = data.filter(isVisible);
+  const post = visible.find((p) => p.id === id) || null;
+  return { post, visible };
+}
+
+function getRelatedPosts(post, allPosts, limit = 3) {
+  const others = allPosts.filter((p) => p.id !== post.id);
+  const sameCategory = others.filter(
+    (p) => p.category?.toLowerCase() === post.category?.toLowerCase()
+  );
+  const rest = others.filter((p) => !sameCategory.includes(p));
+  return [...sameCategory, ...rest].slice(0, limit);
 }
 
 export async function generateMetadata({ params }) {
-  const post = await getPost(params.id);
+  const { post } = await getPostData(params.id);
 
   if (!post) {
     return { title: 'Article Not Found | Accesco Living' };
@@ -29,27 +43,95 @@ export async function generateMetadata({ params }) {
     title: `${post.title} | Accesco Living Blog`,
     description,
     alternates: {
-      canonical: `https://accescoliving.com/blogs/${params.id}`,
+      canonical: `${SITE_URL}/blogs/${params.id}`,
     },
     openGraph: {
       title: post.title,
       description,
       type: 'article',
+      url: `${SITE_URL}/blogs/${params.id}`,
       publishedTime: post.date || undefined,
       images: post.image ? [{ url: post.image }] : undefined,
     },
   };
 }
 
+function ArticleSchema({ post, id }) {
+  const postUrl = `${SITE_URL}/blogs/${id}`;
+  const description = post.excerpt || (post.content || '').slice(0, 160);
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BlogPosting',
+    mainEntityOfPage: { '@type': 'WebPage', '@id': postUrl },
+    headline: post.title,
+    description,
+    image: post.image ? [post.image] : undefined,
+    author: {
+      '@type': 'Organization',
+      name: post.author || 'ACCESCO Editorial Team',
+      url: SITE_URL,
+    },
+    publisher: {
+      '@type': 'Organization',
+      name: 'Accesco Living',
+      logo: {
+        '@type': 'ImageObject',
+        url: `${SITE_URL}/images/ac-logo.png`,
+      },
+    },
+    datePublished: post.date || undefined,
+    dateModified: post.date || undefined,
+  };
+
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+    />
+  );
+}
+
+function RelatedPosts({ posts }) {
+  if (!posts.length) return null;
+
+  return (
+    <section className="related-posts">
+      <h2 className="related-posts-title">Related Stories</h2>
+      <div className="related-posts-grid">
+        {posts.map((post) => (
+          <Link key={post.id} href={`/blogs/${post.id}`} className="related-post-card">
+            <div className="related-post-visual">
+              <Image
+                src={post.image || '/images/download (2).png'}
+                alt={post.title}
+                fill
+                style={{ objectFit: 'cover' }}
+                unoptimized
+              />
+            </div>
+            <div className="related-post-body">
+              <span className="related-post-category">{post.category}</span>
+              <h3>{post.title}</h3>
+            </div>
+          </Link>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 export default async function BlogPostPage({ params }) {
-  const post = await getPost(params.id);
+  const { post, visible } = await getPostData(params.id);
 
   if (!post) {
     notFound();
   }
 
+  const relatedPosts = getRelatedPosts(post, visible);
+
   return (
     <article className="blog-post-page">
+      <ArticleSchema post={post} id={params.id} />
       <div className="blog-post-container">
         <header className="post-header">
           <Link href="/blogs" className="back-button">
@@ -114,6 +196,8 @@ export default async function BlogPostPage({ params }) {
 
           <ShareRow post={post} />
         </footer>
+
+        <RelatedPosts posts={relatedPosts} />
       </div>
     </article>
   );

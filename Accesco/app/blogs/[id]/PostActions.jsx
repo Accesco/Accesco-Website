@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../../components/AuthProvider';
 import { getUserBookmarks, addBookmark, removeBookmark } from '../../../lib/bookmarkService';
+import { getBacklinkEmbedSnippet } from '../../../lib/backlinkEmbed';
 
 function buildShareUrls(post, url) {
   const text = `Check out this article: ${post.title}`;
@@ -109,6 +110,16 @@ export function HeaderActions({ post }) {
   );
 }
 
+async function copyBacklinkEmbed(post) {
+  const snippet = getBacklinkEmbedSnippet(post);
+  try {
+    await navigator.clipboard.writeText(snippet);
+    alert('Backlink embed code copied — paste it into outreach emails or partner sites.');
+  } catch (err) {
+    console.error('Failed to copy embed code:', err);
+  }
+}
+
 export function ShareRow({ post }) {
   return (
     <div className="post-share-section">
@@ -125,6 +136,13 @@ export function ShareRow({ post }) {
         </button>
         <button className="share-btn" title="Copy link" onClick={() => sharePost(post, 'copy')}>
           <i className="ri-link"></i>
+        </button>
+        <button
+          className="share-btn"
+          title="Copy partner backlink embed code"
+          onClick={() => copyBacklinkEmbed(post)}
+        >
+          <i className="ri-code-line"></i>
         </button>
       </div>
     </div>
