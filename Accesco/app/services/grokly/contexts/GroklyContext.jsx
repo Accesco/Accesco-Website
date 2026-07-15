@@ -274,24 +274,41 @@ export function GroklyProvider({ children }) {
   const toggleCart = () => setIsCartOpen(prev => !prev);
 
   const updateLocation = (newLocation) => {
-    setLocation(newLocation);
-    if (typeof window !== 'undefined') {
-      try {
-        const existing = localStorage.getItem(LOCATION_STORAGE_KEY);
-        const parsed = existing ? JSON.parse(existing) : {};
-        localStorage.setItem(LOCATION_STORAGE_KEY, JSON.stringify({
+  const locationText =
+    typeof newLocation === 'object'
+      ? newLocation.fullAddress ||
+        newLocation.displayAddress ||
+        newLocation.address ||
+        'Unknown Location'
+      : newLocation;
+
+  setLocation(locationText);
+
+  if (typeof window !== 'undefined') {
+    try {
+      const existing = localStorage.getItem(LOCATION_STORAGE_KEY);
+      const parsed = existing ? JSON.parse(existing) : {};
+
+      localStorage.setItem(
+        LOCATION_STORAGE_KEY,
+        JSON.stringify({
           ...parsed,
-          displayAddress: newLocation,
-          fullAddress: parsed.fullAddress || newLocation
-        }));
-      } catch (e) {
-        localStorage.setItem(LOCATION_STORAGE_KEY, JSON.stringify({
-          displayAddress: newLocation,
-          fullAddress: newLocation
-        }));
-      }
+          ...(typeof newLocation === 'object' ? newLocation : {}),
+          displayAddress: locationText,
+          fullAddress: locationText,
+        })
+      );
+    } catch (e) {
+      localStorage.setItem(
+        LOCATION_STORAGE_KEY,
+        JSON.stringify({
+          displayAddress: locationText,
+          fullAddress: locationText,
+        })
+      );
     }
-  };
+  }
+};
   const openLocationModal = () => setIsLocationModalOpen(true);
   const closeLocationModal = () => setIsLocationModalOpen(false);
 

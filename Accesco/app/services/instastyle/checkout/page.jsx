@@ -32,7 +32,12 @@ export default function CheckoutPage() {
   // Location detection states
   const [isLocating, setIsLocating] = useState(false);
   const [locationError, setLocationError] = useState('');
-  
+
+  // Manual address search states (new)
+  const [addressSearch, setAddressSearch] = useState('');
+  const [addressSuggestions, setAddressSuggestions] = useState([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+
   // Dynamic ETA state
   const [deliveryETA, setDeliveryETA] = useState(null);
 
@@ -269,6 +274,87 @@ export default function CheckoutPage() {
     );
   };
 
+  // ── Manual address search (new) ────────────────────────────────────
+  // Debounced — fires ~350ms after the user stops typing, calling the
+  // shared /api/location/autocomplete endpoint (same one used by Grokly).
+  const handleAddressSearch = (value) => {
+    setAddressSearch(value);
+    if (typeof window !== 'undefined' && window.__instastyleAddressSearchTimeout) {
+      clearTimeout(window.__instastyleAddressSearchTimeout);
+    }
+
+    if (value.trim().length < 3) {
+      setAddressSuggestions([]);
+      setShowSuggestions(false);
+      return;
+    }
+
+    window.__instastyleAddressSearchTimeout = setTimeout(async () => {
+      try {
+        const res = await fetch('/api/location/autocomplete', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ query: value }),
+        });
+        const data = await res.json();
+        setAddressSuggestions(data.suggestions || []);
+        setShowSuggestions(true);
+      } catch {
+        setAddressSuggestions([]);
+      }
+    }, 350);
+  };
+
+  // When a suggestion is picked, reverse-geocode its coordinates through the
+  // same /api/location endpoint used by GPS detection, so both paths fill
+  // the form identically (and state stays restricted to the 7-state list).
+  const handleSuggestionSelect = async (suggestion) => {
+    setShowSuggestions(false);
+    setAddressSearch(suggestion.label);
+    setIsLocating(true);
+    setLocationError('');
+
+    try {
+      const res = await fetch('/api/location', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ latitude: suggestion.latitude, longitude: suggestion.longitude }),
+      });
+      const locationData = await safeReadJson(res);
+      if (!res.ok) {
+        throw new Error(locationData?.message || locationData?.error || 'Failed to resolve address.');
+      }
+
+      const streetNumber = locationData?.streetNumber || '';
+      const street = locationData?.street || '';
+      const area = locationData?.area || locationData?.neighbourhood || '';
+      const primaryLine = [streetNumber, street].filter(Boolean).join(' ').trim();
+
+      setFormData((prev) => ({
+        ...prev,
+        addressLine1: primaryLine || area || suggestion.fullAddress,
+        addressLine2: primaryLine ? area : locationData?.neighbourhood || '',
+        landmark: locationData?.landmark || prev.landmark,
+        city: locationData?.city || '',
+        state: coerceStateForSelect(locationData?.state), // unchanged — still restricted to 7 states
+        pincode: locationData?.postalCode || '',
+      }));
+
+      setErrors((prev) => ({
+        ...prev,
+        addressLine1: '',
+        city: '',
+        state: '',
+        pincode: '',
+      }));
+    } catch (error) {
+      setLocationError(error?.message || 'Failed to resolve selected address.');
+    } finally {
+      setIsLocating(false);
+    }
+  };
+  // ────────────────────────────────────────────────────────────────────
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -425,6 +511,36 @@ export default function CheckoutPage() {
                   </div>
                 )}
 
+                {/* Manual address search (new) */}
+                <div style={{ position: 'relative', marginBottom: '1rem' }}>
+                  <input
+                    type="text"
+                    placeholder="Or search your address manually..."
+                    value={addressSearch}
+                    onChange={(e) => handleAddressSearch(e.target.value)}
+                    onFocus={() => addressSuggestions.length && setShowSuggestions(true)}
+                    style={{ width: '100%', padding: '10px 12px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '14px' }}
+                  />
+                  {showSuggestions && addressSuggestions.length > 0 && (
+                    <ul style={{
+                      position: 'absolute', top: '100%', left: 0, right: 0, zIndex: 20,
+                      background: '#fff', border: '1px solid #ddd', borderRadius: 6,
+                      maxHeight: 200, overflowY: 'auto', listStyle: 'none', margin: 0, padding: 0,
+                    }}>
+                      {addressSuggestions.map((s, i) => (
+                        <li
+                          key={i}
+                          onClick={() => handleSuggestionSelect(s)}
+                          style={{ padding: '10px 12px', cursor: 'pointer', borderBottom: '1px solid #f0f0f0' }}
+                        >
+                          <div style={{ fontWeight: 600, fontSize: 14 }}>{s.label}</div>
+                          <div style={{ fontSize: 12, color: '#777' }}>{s.fullAddress}</div>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+
                 <div className={styles.formGrid}>
                   <div className={`${styles.formGroup} ${styles.fullWidth}`}>
                     <label htmlFor="addressLine1">Address Line 1 *</label>
@@ -480,10 +596,7 @@ export default function CheckoutPage() {
                     <Select 
                       label="State *"
                       value={formData.state}
-                      options={[
-                        'Delhi', 'Maharashtra', 'Karnataka', 'Tamil Nadu', 
-                        'Gujarat', 'Rajasthan', 'Uttar Pradesh'
-                      ]}
+                      options={STATE_OPTIONS}
                       onChange={(val) => handleInputChange({ target: { name: 'state', value: val } })}
                       placeholder="Select State"
                     />

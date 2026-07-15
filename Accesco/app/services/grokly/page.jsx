@@ -19,12 +19,12 @@ import CartDrawer from './components/CartDrawer';
 import LocationModal from './components/LocationModal';
 import FloatingCartBar from './components/FloatingCartBar';
 import BottomNav from './components/BottomNav';
-import { categories, products, getProductsByCategory, searchProducts } from './lib/groklyData';
+import { categories, getProductsByCategory, searchProducts } from './lib/groklyData';
+import {useProducts} from './hooks/useProducts';
 import './styles/variables.css';
 import './styles/globals.css';
 import JsonLd from '../../../components/JsonLd';
 import { dishes } from './lib/dishesData';
-
 const getIngredientImage = (item) => {
   if (!item.image || item.image.includes('grofers.com')) {
     const categoryImages = {
@@ -63,6 +63,7 @@ function GroklyPageContent() {
   const [selectedDishKey, setSelectedDishKey] = useState('tikka');
   const [currentSlide, setCurrentSlide] = useState(0);
   const { getProductQuantity, addToCart, incrementQuantity, decrementQuantity, openCart } = useGrokly();
+  const {products,isLoading:productsLoading} = useProducts('grokly');
 
   useEffect(() => {
     setSearchQuery(searchParams.get('search') || '');

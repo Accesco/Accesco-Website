@@ -103,7 +103,7 @@ export default function InstaStyleHeader() {
     };
   }, []);
 
-  // Locatoion usEffect
+  // Location useEffect
   useEffect(() => {
     const saved = localStorage.getItem('instastyle_location');
 
@@ -111,7 +111,7 @@ export default function InstaStyleHeader() {
       try {
         const parsed = JSON.parse(saved);
 
-        if (parsed.location) {
+        if (typeof parsed.location === 'string' && parsed.location.trim()) {
           setSelectedLocation(parsed.location);
         }
       } catch (err) {
@@ -597,15 +597,19 @@ export default function InstaStyleHeader() {
         isOpen={isLocationModalOpen}
         onClose={() => setIsLocationModalOpen(false)}
         onLocationSelect={(location) => {
-          setSelectedLocation(location);
+          const addressText = location?.fullAddress || 'Select Location';
+         setSelectedLocation(addressText);
 
           localStorage.setItem(
-            'instastyle_location',
-            JSON.stringify({
-              location,
-              timestamp: Date.now(),
-            })
-          );
+          'instastyle_location',
+          JSON.stringify({
+             location: addressText,
+            lat: location?.lat ?? null,
+           lng: location?.lng ?? null,
+           accuracy: location?.accuracy ?? null,
+                        timestamp: Date.now(),
+          })
+         );
         }}
       />
 
