@@ -821,16 +821,17 @@ export default function InstantCateringPage() {
             </div>
           </div>
 
-          <div className={styles.heroRight}>
-            <div className={styles.heroImageContainer}>
-              <Image
-                src="https://images.unsplash.com/photo-1555507036-ab1f4038808a?w=800&auto=format&fit=crop&q=80"
-                alt="Delicious Indian Gourmet Catered Food Tray Display"
-                fill
-                priority
-              />
-            </div>
-          </div>
+       <div className={styles.heroRight}>
+  <div className={styles.heroImageContainer}>
+    <Image
+      src="/images/food-dishes.png"
+      alt="Swadishtt Catering"
+      fill
+      priority
+      className={styles.heroFoodImage}
+    />
+  </div>
+</div>
         </div>
       </section>
 
@@ -854,29 +855,37 @@ export default function InstantCateringPage() {
             <span className={styles.statLabel}>Guests supported</span>
           </div>
         </div>
-      </section>
+        </section>   
+<section className={styles.packagesSection}>
+  <div className={styles.container}>
 
-      {/* Main Content Sections */}
-      <div className={styles.container}>
-        
-        {/* Packages Section */}
-        <section id="packages" ref={packagesRef} style={{ scrollMarginTop: '80px', marginBottom: '80px' }}>
-          <div className={styles.sectionHeader}>
-            <h2>Choose your package</h2>
-            <p>All packages include delivery, hygienic packaging, fresh preparation, and a dedicated catering support contact.</p>
-          </div>
-
-          <div className={styles.packagesGrid}>
-            {CATERING_PACKAGES.map((pkg) => (
-              <PackageCard 
-                key={pkg.id} 
-                pkg={pkg} 
-                onBook={setSelectedPkg} 
-              />
-            ))}
-          </div>
-        </section>
+    <section
+      id="packages"
+      ref={packagesRef}
+      style={{ scrollMarginTop: '80px', marginBottom: '80px' }}
+    >
+      <div className={styles.sectionHeader}>
+        <h2>Choose your package</h2>
+        <p>
+          All packages include delivery, hygienic packaging, fresh preparation,
+          and a dedicated catering support contact.
+        </p>
       </div>
+
+      <div className={styles.packagesGrid}>
+        {CATERING_PACKAGES.map((pkg) => (
+          <PackageCard
+            key={pkg.id}
+            pkg={pkg}
+            onBook={setSelectedPkg}
+          />
+        ))}
+      </div>
+    </section>
+
+  </div>
+</section>
+      
 
       {/* How It Works Section */}
       <section id="how-it-works" ref={howItWorksRef} style={{ scrollMarginTop: '80px' }} className={styles.howItWorksBg}>
@@ -907,10 +916,17 @@ export default function InstantCateringPage() {
       <section id="stories" ref={storiesRef} style={{ scrollMarginTop: '80px' }} className={styles.testimonialsBg}>
         <div className={styles.container}>
           <div className={styles.testimonialsLayout}>
-            <div className={styles.chiliDecor}>
-              <div className={styles.chiliIllustration} aria-hidden="true">🌶️🌶️</div>
-            </div>
-
+           
+<div className={styles.chiliDecor}>
+  <Image
+    src="/images/ic3.png"
+    alt=""
+    width={260}
+    height={420}
+    className={styles.chiliImage}
+    aria-hidden="true"
+  />
+</div>
             <div>
               <div className={styles.sectionHeader} style={{ textAlign: 'left', margin: '0 0 36px 0', maxWidth: '100%' }}>
                 <h2>What our customers say</h2>

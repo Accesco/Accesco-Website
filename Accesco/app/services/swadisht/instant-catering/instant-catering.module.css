@@ -1,5 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=DM+Serif+Display:ital@0;1&display=swap');
-
+@import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=DM+Serif+Display:ital@0;1&display=swap');
 /* ── CSS Variable Configuration ── */
 
 
@@ -16,13 +16,26 @@
 /* ── Hero Section ── */
 .hero {
   position: relative;
-  background: linear-gradient(135deg, #fff7ef 0%, #ffeede 100%);
+  overflow: hidden;
+
   padding: 80px 24px;
+  min-height: 520px;
+
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 520px;
-  overflow: hidden;
+
+  background: #fff7ef; /* fallback */
+}
+.hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+
+  background: url("/images/ic1.png") center center / cover no-repeat;
+
+  z-index: 0;
+  pointer-events: none;
 }
 
 .heroContent {
@@ -51,18 +64,26 @@
   letter-spacing: 2.5px;
   margin-bottom: 16px;
 }
-
 .heroTitle {
-  font-family: 'DM Serif Display', Georgia, serif;
-  font-size: clamp(36px, 5vw, 56px);
+  font-family: "Baloo 2", cursive;
+  font-size: clamp(2.2rem, 4vw, 3.6rem);
+  font-weight: 600;
+  font-style: italic;
   color: var(--primary-red);
-  font-weight: 400;
-  line-height: 1.15;
-  margin: 0 0 16px 0;
-  letter-spacing: -0.5px;
+  line-height: 1.05;
+  letter-spacing: -0.3px;
+  margin: 0 0 16px;
 }
 
 .heroTitle span {
+   font-family: "Baloo 2", cursive;
+  font-size: clamp(2.2rem, 4vw, 3.6rem);
+  font-weight: 600;
+  font-style: italic;
+  color: var(--primary-red);
+  line-height: 1.05;
+  letter-spacing: -0.3px;
+  margin: 0 0 16px;
   display: block;
 }
 
@@ -140,28 +161,53 @@
   border-color: var(--primary-red);
 }
 
-.heroRight {
-  position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+.heroRight{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  position:relative;
 }
 
-.heroImageContainer {
-  position: relative;
-  width: 100%;
-  max-width: 480px;
-  aspect-ratio: 4 / 3;
-  border-radius: 20px;
-  overflow: hidden;
-  box-shadow: 0 12px 36px rgba(107, 29, 58, 0.15);
-  border: 4px solid var(--white);
+.heroImageContainer{
+  position:relative;
+  width:100%;
+  max-width:700px;
+  height:500px;
+  overflow:visible;
+}
+
+.heroFoodImage{
+  transform:scale(1.18) translateX(20px);
+  object-fit:contain;
+  object-position:center;
+  filter:
+    drop-shadow(0 30px 45px rgba(0,0,0,.18));
 }
 
 .heroDecorations {
   position: absolute;
   inset: -20px;
   pointer-events: none;
+  z-index: 1;
+}
+.packagesSection {
+  position: relative;
+  overflow: hidden;
+}
+
+.packagesSection::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+
+  background: url("/images/ic2.png") center center / cover no-repeat;
+
+  z-index: 0;
+  pointer-events: none;
+}
+
+.packagesSection .container {
+  position: relative;
   z-index: 1;
 }
 
@@ -678,38 +724,33 @@
 .testimonialsBg {
   background-color: var(--pale-blush);
 }
-
 .testimonialsLayout {
   display: grid;
-  grid-template-columns: 0.3fr 1.7fr;
+   grid-template-columns: 200px 1fr;/* give the image more space */
   gap: 40px;
   align-items: center;
 }
 
 .chiliDecor {
   display: flex;
-  flex-direction: column;
-  align-items: center;
   justify-content: center;
-  padding: 24px;
+  align-items: center;
 }
 
-.chiliIllustration {
-  font-size: 72px;
-  filter: drop-shadow(0 4px 10px rgba(158, 27, 27, 0.15));
-  animation: float 4s ease-in-out infinite;
-}
-
-@keyframes float {
-  0% { transform: translateY(0px) rotate(0deg); }
-  50% { transform: translateY(-10px) rotate(5deg); }
-  100% { transform: translateY(0px) rotate(0deg); }
+.chiliImage {
+  width: 5000px;
+  max-width: 450px;
+  height: auto;
+  object-fit: contain;
+  display: block;
 }
 
 .testimonialsGrid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 .testimonialCard {
@@ -1222,17 +1263,18 @@
     gap: 20px;
   }
 
-  .chiliDecor {
-    flex-direction: row;
-    gap: 16px;
-    padding: 0;
+
+}
+@media (max-width: 768px) {
+  .testimonialsLayout {
+    grid-template-columns: 1fr;
+    gap: 24px;
   }
 
-  .chiliIllustration {
-    font-size: 48px;
+  .chiliDecor {
+    display: none;
   }
 }
-
 @media (max-width: 768px) {
   .statsContainer {
     grid-template-columns: repeat(2, 1fr);
@@ -1287,3 +1329,24 @@
     border-radius: 0;
   }
 }
+@media (max-width:768px){
+
+.heroContent{
+    grid-template-columns:1fr;
+    gap:30px;
+}
+
+.heroRight{
+    order:-1;
+}
+
+.heroImageContainer{
+    max-width:420px;
+    height:300px;
+    margin:auto;
+}
+
+.heroFoodImage{
+    transform:none;
+}
+} 
