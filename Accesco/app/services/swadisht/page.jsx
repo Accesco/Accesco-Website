@@ -448,7 +448,7 @@ export default function App() {
             </div>
             
             <div className={styles.pureVegGrid} id="pure-veg-grid">
-              {pureVegRestaurants.map(rest => (
+              {pureVegRestaurants.slice(0, 4).map(rest => (
                 <Link
   key={rest.id}
   href={`/services/swadisht/restaurant/${rest.slug}`}

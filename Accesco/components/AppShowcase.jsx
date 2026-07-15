@@ -30,7 +30,20 @@ export default function AppShowcase() {
     interests: [],
     verificationCode: '',
   });
+const [feedbackScore, setFeedbackScore] = useState(null);
+const [feedbackSubmitted, setFeedbackSubmitted] = useState(false);
 
+const handleFeedbackSubmit = () => {
+  if (feedbackScore === null) return;
+
+  // Add Firebase/API submission here later
+  console.log({
+    user: form.name || 'User',
+    score: feedbackScore,
+  });
+
+  setFeedbackSubmitted(true);
+};
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState('');
@@ -580,7 +593,125 @@ export default function AppShowcase() {
         </div>
 
       </div>
+{/* Feedback Section */}
+<section className={styles.feedbackSection}>
+  <div className={styles.feedbackCard}>
+    <div className={styles.feedbackHeader}>
+      <div className={styles.feedbackBubbleOne}></div>
+      <div className={styles.feedbackBubbleTwo}></div>
 
+      <div className={styles.feedbackHeaderContent}>
+        <span className={styles.feedbackEyebrow}>
+          Your opinion matters
+        </span>
+
+        <h2 className={styles.feedbackTitle}>
+          How are we doing?
+        </h2>
+
+        <p className={styles.feedbackHeaderText}>
+          It’ll be really quick, we promise.
+        </p>
+      </div>
+    </div>
+
+    <div className={styles.feedbackBody}>
+      {!feedbackSubmitted ? (
+        <>
+          <p className={styles.feedbackGreeting}>
+            Hi {form.name?.trim() || 'User'},
+          </p>
+
+          <p className={styles.feedbackDescription}>
+            Thank you for being part of the Accesco Living community.
+            Your feedback helps us create a smarter and more convenient
+            experience for everyone.
+          </p>
+
+          <h3 className={styles.feedbackQuestion}>
+            How likely are you to recommend Accesco Living to your
+            friends and family?
+          </h3>
+
+          <div
+            className={styles.ratingScale}
+            role="radiogroup"
+            aria-label="Recommendation score"
+          >
+            {Array.from({ length: 11 }, (_, index) => (
+              <button
+                key={index}
+                type="button"
+                role="radio"
+                aria-checked={feedbackScore === index}
+                aria-label={`${index} out of 10`}
+                className={`${styles.ratingButton} ${
+                  feedbackScore === index
+                    ? styles.ratingButtonSelected
+                    : ''
+                }`}
+                onClick={() => setFeedbackScore(index)}
+              >
+                <span className={styles.ratingNumber}>{index}</span>
+
+                <span className={styles.ratingDot}>
+                  {feedbackScore === index && (
+                    <span className={styles.ratingDotInner}></span>
+                  )}
+                </span>
+              </button>
+            ))}
+          </div>
+
+          <div className={styles.ratingLabels}>
+            <span>Not at all likely</span>
+            <span>Extremely likely</span>
+          </div>
+
+          <button
+            type="button"
+            className={styles.feedbackSubmitButton}
+            disabled={feedbackScore === null}
+            onClick={handleFeedbackSubmit}
+          >
+            Submit Feedback
+            <ArrowRight size={18} />
+          </button>
+
+          <p className={styles.feedbackRegards}>
+            Warm regards,
+            <br />
+            <strong>Team Accesco</strong>
+          </p>
+        </>
+      ) : (
+        <div className={styles.feedbackSuccess}>
+          <div className={styles.feedbackSuccessIcon}>
+            <Check size={30} strokeWidth={3} />
+          </div>
+
+          <h3>Thank you, {form.name?.trim() || 'User'}!</h3>
+
+          <p>
+            Your feedback has been recorded. We appreciate you helping
+            us improve Accesco Living.
+          </p>
+
+          <button
+            type="button"
+            className={styles.feedbackResetButton}
+            onClick={() => {
+              setFeedbackScore(null);
+              setFeedbackSubmitted(false);
+            }}
+          >
+            Change my response
+          </button>
+        </div>
+      )}
+    </div>
+  </div>
+</section>
       {/* Unchanged bottom app download segments */}
       <div className={styles.downloadAppSection}>
         <img

@@ -1407,10 +1407,7 @@
 }
 
 @media (max-width: 480px) {
-  .featureRow {
-    grid-template-columns: 1fr;
-    margin-top: -20px;
-  }
+  
   
   .restaurantGrid {
     grid-template-columns: 1fr;
@@ -1476,4 +1473,1100 @@
 
   padding-top: 0 !important;
   padding-bottom: 0 !important;
+}
+/* =========================================================
+   SWADISHTT — COMPLETE MOBILE UI FIX
+   PASTE AT THE ABSOLUTE END OF swadisht-main.module.css
+   ========================================================= */
+
+@media screen and (max-width: 768px) {
+
+  /* ---------- GLOBAL MOBILE RESET ---------- */
+
+  .page {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
+  .page *,
+  .page *::before,
+  .page *::after {
+    box-sizing: border-box;
+  }
+
+  .pageContent {
+    margin-top: 64px;
+    width: 100%;
+    overflow-x: hidden;
+  }
+
+  .heroSection,
+  .cravingsSection,
+  .storiesSection,
+  .trendingSection,
+  .pureVegSection,
+  .quickBitesSection,
+  .deliverySection,
+  .testimonialsSection,
+  .footer {
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
+  .cravingsSection,
+  .storiesSection,
+  .trendingSection,
+  .quickBitesSection,
+  .deliverySection,
+  .testimonialsSection {
+    width: calc(100% - 32px) !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+
+.page img {
+  max-width: 100%;
+  height: auto;
+}
+
+  /* ---------- HERO ---------- */
+
+  .heroSection {
+    min-height: auto;
+    padding: 42px 0 82px;
+    background-color: var(--sw-white);
+  }
+
+  .heroSection::before {
+    background-position: center;
+    background-size: cover;
+    opacity: 1;
+  }
+
+  .heroInner {
+    width: calc(100% - 32px);
+    min-height: 330px;
+    margin: 0 auto;
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-start;
+  }
+
+  .heroInner::after {
+    top: 95px;
+    right: -75px;
+    width: 330px;
+    height: 285px;
+    background-position: center;
+    background-size: contain;
+    opacity: 0.9;
+  }
+
+  .heroTextBlock {
+    width: 100%;
+    max-width: 100%;
+    align-items: flex-start;
+    text-align: left;
+    gap: 12px;
+    position: relative;
+    z-index: 5;
+  }
+
+  .heroTitle {
+    width: 100%;
+    max-width: 330px;
+    margin: 0;
+    font-size: clamp(34px, 10vw, 45px);
+    line-height: 1.02;
+    letter-spacing: -1px;
+  }
+
+  .heroTitleRed {
+    max-width: 300px;
+    margin-top: 7px;
+    font-size: clamp(28px, 8vw, 38px);
+    line-height: 1.05;
+    letter-spacing: -1.2px;
+  }
+
+  .heroDescription {
+    max-width: 280px;
+    margin: 0;
+    font-size: 13px;
+    line-height: 1.55;
+  }
+
+  /* ---------- FEATURE CARDS ---------- */
+
+  .featureRow {
+    width: calc(100% - 32px) !important;
+    max-width: none;
+    margin: -42px auto 0 !important;
+    padding: 0;
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 10px !important;
+    position: relative;
+    z-index: 10;
+  }
+
+  .featureCard {
+    width: 100%;
+    min-width: 0;
+    border-radius: 13px;
+    aspect-ratio: 304 / 210;
+    box-shadow: 0 7px 16px rgba(0, 0, 0, 0.12);
+  }
+
+  .featureCardImage {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* ---------- STATS ---------- */
+
+  .statsBar {
+    width: calc(100% - 32px);
+    margin: 16px auto 0;
+    padding: 15px 10px;
+    border-radius: 18px;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 17px 8px;
+  }
+
+  .statItem {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .statValue {
+    font-size: 18px;
+    line-height: 1.1;
+  }
+
+  .statLabel {
+    margin-top: 4px;
+    font-size: 8px;
+    line-height: 1.25;
+  }
+
+  /* ---------- COMMON SECTION HEADINGS ---------- */
+
+  .cravingsHeading,
+  .trendingTitle,
+  .quickBitesTitle {
+    margin: 0;
+    font-size: 21px;
+    line-height: 1.2;
+    letter-spacing: -0.4px;
+  }
+
+  .trendingSubtitle,
+  .quickBitesSubtitle {
+    display: block;
+    margin-top: 4px;
+    font-size: 11px;
+    line-height: 1.4;
+  }
+
+  .sectionHeader,
+  .quickBitesHeader {
+    width: 100%;
+    margin-bottom: 16px;
+    align-items: flex-end;
+    gap: 10px;
+  }
+
+  .sectionHeader > div,
+  .quickBitesHeader > div {
+    min-width: 0;
+    flex: 1;
+  }
+
+  .seeAllLink {
+    flex-shrink: 0;
+    font-size: 12px;
+    white-space: nowrap;
+  }
+
+  /* ---------- CRAVINGS ---------- */
+
+  .cravingsSection {
+    margin-top: 34px !important;
+    margin-bottom: 30px !important;
+  }
+
+  .cravingsHeading {
+    margin-bottom: 17px;
+  }
+
+  .cravingsRow {
+    width: calc(100% + 16px);
+    margin-right: -16px;
+    gap: 13px;
+    padding: 2px 16px 12px 0;
+    overflow-x: auto;
+    scroll-snap-type: x proximity;
+  }
+
+  .cravingItem {
+    width: 74px;
+    flex: 0 0 74px;
+    gap: 7px;
+    scroll-snap-align: start;
+    text-decoration: none;
+  }
+
+  .cravingImageWrapper {
+    width: 68px;
+    height: 68px;
+    border-width: 2px;
+  }
+
+  .cravingLabel {
+    width: 100%;
+    min-height: 29px;
+    font-size: 10.5px;
+    line-height: 1.25;
+    white-space: normal;
+  }
+
+  /* ---------- FOOD STORIES ---------- */
+
+  .storiesSection {
+    margin-top: 25px !important;
+    margin-bottom: 34px !important;
+  }
+
+  .storiesContainer {
+    width: 100%;
+    padding: 16px;
+    border-radius: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .storiesLeft {
+    width: 100%;
+    padding: 0 0 15px;
+    border-right: 0;
+    border-bottom: 1px solid var(--sw-border);
+    gap: 7px;
+  }
+
+  .storiesIcon svg {
+    width: 26px;
+    height: 26px;
+  }
+
+  .storiesTitle {
+    margin: 0;
+    font-size: 20px;
+    line-height: 1.2;
+  }
+
+  .storiesSubtitle {
+    margin: 0;
+    font-size: 11px;
+    line-height: 1.5;
+  }
+
+  .storiesBtn {
+    margin-top: 3px;
+    padding: 7px 15px;
+    font-size: 11px;
+  }
+
+  .storiesRight {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .storyCardsTrack {
+    width: calc(100% + 16px);
+    margin-right: -16px;
+    padding-right: 16px;
+    gap: 10px;
+    scroll-snap-type: x mandatory;
+  }
+
+  .storyCard {
+    flex: 0 0 130px;
+    width: 130px;
+    height: 215px;
+    border-radius: 13px;
+    scroll-snap-align: start;
+  }
+
+  .storyTitleText {
+    right: 9px;
+    bottom: 10px;
+    left: 9px;
+    font-size: 11px;
+  }
+
+  .storyView {
+    top: 8px;
+    left: 8px;
+    padding: 3px 6px;
+    font-size: 8px;
+  }
+
+  .storyArrowBtn {
+    display: none;
+  }
+
+  /* ---------- RESTAURANT CARDS ---------- */
+
+  .trendingSection,
+  .quickBitesSection {
+    margin-top: 34px !important;
+    margin-bottom: 38px !important;
+  }
+
+  .restaurantGrid,
+  .quickBitesGrid {
+    width: 100%;
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 11px !important;
+  }
+
+  .restaurantCard {
+    width: 100%;
+    min-width: 0;
+    border-radius: 12px;
+  }
+
+  .cardImageWrapper {
+    width: 100%;
+    aspect-ratio: 1.35 / 1;
+  }
+
+  .cardContent {
+    min-width: 0;
+    padding: 10px;
+  }
+
+  .restaurantName {
+    margin: 0 0 4px;
+    font-size: 13px;
+    line-height: 1.2;
+  }
+
+  .restaurantSubtitle {
+    margin: 0 0 7px;
+    font-size: 9px;
+    line-height: 1.3;
+  }
+
+  .restaurantDivider {
+    margin-top: auto;
+    margin-bottom: 7px;
+  }
+
+  .restaurantStatusRow {
+    gap: 5px;
+    font-size: 8px;
+    line-height: 1.25;
+  }
+
+  .restaurantStatusRow span {
+    min-width: 0;
+  }
+
+  .restaurantStatusRow span:last-child {
+    text-align: right;
+  }
+
+  .ratingBadge {
+    top: 7px;
+    left: 7px;
+    padding: 3px 5px;
+    border-radius: 5px;
+    font-size: 9px;
+  }
+
+  .ratingBadge svg {
+    width: 9px;
+    height: 9px;
+  }
+
+  /* ---------- PURE VEG ---------- */
+
+  .pureVegSection {
+    width: 100%;
+    min-height: auto;
+    margin: 35px 0 !important;
+    padding: 35px 0 !important;
+    background-position: center;
+    background-size: cover;
+  }
+
+  .pureVegContainer {
+    width: calc(100% - 32px);
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 18px;
+  }
+
+  .pureVegLeft {
+    width: 100%;
+    gap: 8px;
+  }
+
+  .pureVegTitle {
+    margin: 0;
+    font-size: 23px;
+  }
+
+  .pureVegSubtitle {
+    max-width: 310px;
+    margin: 0;
+    font-size: 11px;
+    line-height: 1.45;
+  }
+
+  .pureVegSeeAll {
+    padding: 7px 14px;
+    font-size: 10px;
+  }
+
+  .pureVegGrid {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .vegCardHorizontal {
+    width: 100%;
+    min-width: 0;
+    padding: 9px;
+    gap: 10px;
+    border-radius: 11px;
+  }
+
+  .vegCardImg {
+    width: 60px;
+    height: 60px;
+    border-radius: 8px;
+  }
+
+  .vegCardDetails {
+    min-width: 0;
+  }
+
+  .vegCardTitle {
+    margin: 0;
+    font-size: 13px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .vegCardMeta {
+    font-size: 10px;
+  }
+
+  .pureVegDecorLeaf {
+    right: 15px;
+    bottom: 10px;
+    left: auto;
+    opacity: 0.4;
+  }
+
+  /* ---------- DELIVERY MODE ---------- */
+
+  .deliverySection {
+    margin-top: 42px !important;
+    margin-bottom: 40px !important;
+  }
+
+  .deliveryLabel {
+    margin-bottom: 6px;
+    font-size: 9px;
+  }
+
+  .deliveryTitle {
+    max-width: 320px;
+    margin: 0 auto 20px;
+    font-size: 22px;
+    line-height: 1.2;
+  }
+
+  .deliveryGrid {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .deliveryCard {
+    width: 100%;
+    height: auto;
+    min-height: 145px;
+    padding: 17px;
+    gap: 12px;
+    border-radius: 16px;
+  }
+
+  .deliveryCardText {
+    min-width: 0;
+    max-width: calc(100% - 90px);
+    gap: 6px;
+  }
+
+  .deliveryCardTitle {
+    margin: 0;
+    font-size: 16px;
+  }
+
+  .deliveryCardDesc {
+    margin: 0;
+    font-size: 10.5px;
+    line-height: 1.45;
+  }
+
+  .deliveryCardImg {
+    width: 76px;
+    height: 76px;
+    flex-shrink: 0;
+    border-radius: 10px;
+    object-fit: contain;
+  }
+
+  /* ---------- TESTIMONIALS ---------- */
+
+  .testimonialsSection {
+    margin-top: 42px !important;
+    margin-bottom: 40px !important;
+  }
+
+  .testimonialsLabel {
+    margin-bottom: 6px;
+    font-size: 9px;
+  }
+
+  .testimonialsTitle {
+    max-width: 315px;
+    margin: 0 auto 20px;
+    font-size: 22px;
+    line-height: 1.25;
+  }
+
+  .testimonialsGrid {
+    width: calc(100% + 16px);
+    margin-right: -16px;
+    margin-bottom: 20px;
+    padding-right: 16px;
+    display: flex;
+    gap: 11px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+  }
+
+  .testimonialsGrid::-webkit-scrollbar {
+    display: none;
+  }
+
+  .testimonialCard {
+    flex: 0 0 82%;
+    width: 82%;
+    height: auto;
+    min-height: 185px;
+    padding: 16px;
+    border-radius: 14px;
+    scroll-snap-align: start;
+  }
+
+  .reviewText {
+    font-size: 11px;
+    line-height: 1.5;
+    -webkit-line-clamp: 5;
+  }
+
+  .paginationDots {
+    display: none;
+  }
+
+  /* ---------- FOOTER ---------- */
+
+  .footer {
+    width: 100%;
+    margin-top: 35px;
+    padding: 38px 0 22px;
+  }
+
+  .footerContainer {
+    width: calc(100% - 32px);
+    margin: 0 auto;
+  }
+
+  .footerGrid {
+    width: 100%;
+    margin-bottom: 28px;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 28px 18px;
+  }
+
+  .footerBrandCol {
+    grid-column: 1 / -1;
+    gap: 10px;
+  }
+
+  .footerLogo {
+    width: 43px;
+    height: 43px;
+    font-size: 27px;
+  }
+
+  .footerBrandName {
+    font-size: 21px;
+  }
+
+  .footerDesc {
+    max-width: 100%;
+    margin: 0;
+    font-size: 11px;
+    line-height: 1.55;
+  }
+
+  .socialLinks {
+    margin-top: 3px;
+  }
+
+  .socialIcon {
+    width: 31px;
+    height: 31px;
+  }
+
+  .footerLinksCol {
+    min-width: 0;
+    gap: 9px;
+  }
+
+  .footerColTitle {
+    font-size: 11px;
+    line-height: 1.3;
+  }
+
+  .footerLink {
+    font-size: 10.5px;
+    line-height: 1.35;
+    overflow-wrap: anywhere;
+  }
+
+  .footerDivider {
+    margin-bottom: 18px;
+  }
+
+  .footerCopyright {
+    font-size: 10px;
+    line-height: 1.5;
+  }
+}
+
+
+/* =========================================================
+   SMALL PHONES — 480PX AND BELOW
+   ========================================================= */
+
+@media screen and (max-width: 480px) {
+
+  .pageContent {
+    margin-top: 60px;
+  }
+
+  .heroSection {
+    padding-top: 34px;
+    padding-bottom: 75px;
+  }
+
+  .heroInner {
+    min-height: 310px;
+  }
+
+  .heroInner::after {
+    top: 105px;
+    right: -78px;
+    width: 305px;
+    height: 260px;
+  }
+
+  .heroTitle {
+    max-width: 300px;
+    font-size: clamp(32px, 10.5vw, 40px);
+  }
+
+  .heroTitleRed {
+    max-width: 275px;
+    font-size: clamp(27px, 8.5vw, 34px);
+  }
+
+  .heroDescription {
+    max-width: 245px;
+    font-size: 12px;
+  }
+
+  .featureRow {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 8px !important;
+  }
+
+  .featureCard {
+    border-radius: 11px;
+  }
+
+  .statsBar {
+    padding: 14px 8px;
+    gap: 15px 6px;
+  }
+
+  .statValue {
+    font-size: 17px;
+  }
+
+  .cravingsHeading,
+  .trendingTitle,
+  .quickBitesTitle {
+    font-size: 20px;
+  }
+
+  .restaurantGrid,
+  .quickBitesGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 9px !important;
+  }
+
+  .cardContent {
+    padding: 8px;
+  }
+
+  .restaurantName {
+    font-size: 12px;
+  }
+
+  .restaurantSubtitle {
+    font-size: 8.5px;
+  }
+
+  .restaurantStatusRow {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+    font-size: 8px;
+  }
+
+  .restaurantStatusRow span:last-child {
+    text-align: left;
+  }
+
+  .deliveryCard {
+    min-height: 140px;
+    padding: 15px;
+  }
+
+  .deliveryCardText {
+    max-width: calc(100% - 78px);
+  }
+
+  .deliveryCardImg {
+    width: 66px;
+    height: 66px;
+  }
+
+  .testimonialCard {
+    flex-basis: 88%;
+    width: 88%;
+  }
+
+  .footerGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+
+/* =========================================================
+   VERY SMALL PHONES — 360PX AND BELOW
+   ========================================================= */
+
+@media screen and (max-width: 360px) {
+
+  .heroTitle {
+    font-size: 30px;
+  }
+
+  .heroTitleRed {
+    font-size: 26px;
+  }
+
+  .heroInner::after {
+    right: -90px;
+  }
+
+  .featureRow {
+    gap: 7px !important;
+  }
+
+  .restaurantGrid,
+  .quickBitesGrid {
+    gap: 7px !important;
+  }
+
+  .restaurantName {
+    font-size: 11px;
+  }
+
+  .restaurantSubtitle {
+    font-size: 8px;
+  }
+
+  .cardContent {
+    padding: 7px;
+  }
+
+  .deliveryCard {
+    padding: 13px;
+  }
+
+  .deliveryCardTitle {
+    font-size: 14px;
+  }
+
+  .deliveryCardDesc {
+    font-size: 9.5px;
+  }
+
+  .footerGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .footerBrandCol {
+    grid-column: auto;
+  }
+}
+/* =====================================================
+   FINAL MOBILE HERO FIX
+   Keep this at the absolute end of the CSS file
+   ===================================================== */
+
+@media screen and (max-width: 768px) {
+
+  .heroSection {
+    width: 100%;
+    min-height: auto;
+    padding: 36px 0 70px !important;
+    overflow: hidden;
+  }
+
+  .heroSection::before {
+    background-position: center;
+    background-size: cover;
+  }
+
+  .heroInner {
+    width: calc(100% - 32px);
+    min-height: 470px;
+    margin: 0 auto;
+    display: block;
+    position: relative;
+    text-align: left;
+  }
+
+  /* Hero food image */
+  .heroInner::after {
+    top: auto;
+    right: -55px;
+    bottom: -5px;
+
+    width: 350px;
+    height: 300px;
+
+    background-size: contain;
+    background-position: center bottom;
+    background-repeat: no-repeat;
+
+    z-index: 1;
+    opacity: 1;
+    filter: drop-shadow(0 12px 16px rgba(0, 0, 0, 0.08));
+  }
+
+  .heroTextBlock {
+    position: relative;
+    z-index: 5;
+
+    width: 100%;
+    max-width: 100%;
+
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+
+    text-align: left;
+    gap: 12px;
+  }
+
+  .heroTitle {
+    width: 100%;
+    max-width: 330px;
+    margin: 0;
+
+    font-size: 39px;
+    line-height: 1.02;
+    letter-spacing: -1px;
+  }
+
+  .heroTitleRed {
+    display: block;
+    max-width: 310px;
+    margin-top: 7px;
+
+    font-size: 34px;
+    line-height: 1.05;
+    letter-spacing: -1px;
+  }
+
+  .heroDescription {
+    max-width: 280px;
+    margin: 0;
+
+    font-size: 13px;
+    line-height: 1.5;
+  }
+
+  /* Cards sit below hero instead of covering it */
+  .featureRow {
+    width: calc(100% - 32px) !important;
+    max-width: none;
+
+    margin: -35px auto 0 !important;
+
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 10px !important;
+
+    position: relative;
+    z-index: 10;
+  }
+
+  .featureCard {
+    width: 100%;
+    min-width: 0;
+    border-radius: 13px;
+  }
+
+  .featureCardImage {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+
+/* Smaller mobile phones */
+
+@media screen and (max-width: 480px) {
+
+  .heroSection {
+    padding-top: 30px !important;
+    padding-bottom: 62px !important;
+  }
+
+  .heroInner {
+    min-height: 430px;
+  }
+
+  .heroInner::after {
+    right: -65px;
+    bottom: 0;
+
+    width: 320px;
+    height: 270px;
+  }
+
+  .heroTitle {
+    max-width: 290px;
+    font-size: 34px;
+  }
+
+  .heroTitleRed {
+    max-width: 275px;
+    font-size: 29px;
+  }
+
+  .heroDescription {
+    max-width: 245px;
+    font-size: 12px;
+  }
+
+  .featureRow {
+    margin-top: -28px !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 8px !important;
+  }
+}
+
+
+/* Very small phones */
+
+@media screen and (max-width: 360px) {
+
+  .heroInner {
+    min-height: 405px;
+  }
+
+  .heroInner::after {
+    right: -75px;
+    width: 290px;
+    height: 245px;
+  }
+
+  .heroTitle {
+    font-size: 31px;
+  }
+
+  .heroTitleRed {
+    font-size: 27px;
+  }
+}
+@media screen and (max-width: 768px) {
+
+  /* Remove background image */
+  .heroSection::before {
+    content: none !important;
+    background: none !important;
+  }
+
+  /* Remove food image */
+  .heroInner::after {
+    content: none !important;
+    background: none !important;
+  }
+}
+@media screen and (max-width: 768px) {
+
+  .heroSection{
+    padding: 80px 0 45px;   /* was 42px 0 82px */
+  }
+
+  .heroInner{
+    min-height: auto;       /* remove the fixed 330px */
+    padding-top: 20px;      /* pushes the text down */
+    display: flex;
+    align-items: flex-start;
+  }
+
+  .heroTextBlock{
+    margin-top: 12px;       /* adjust 12–24px to taste */
+  }
 }
