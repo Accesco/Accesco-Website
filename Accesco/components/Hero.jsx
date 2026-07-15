@@ -279,7 +279,8 @@ export default function Hero() {
         muted
         loop
         playsInline
-        preload="auto"
+        preload="metadata"
+        fetchPriority="low"
       >
         <source src="/images/herovideo.MP4" type="video/mp4" />
         Your browser does not support the video tag.
@@ -289,10 +290,13 @@ export default function Hero() {
       <div className="hero-top-spacer"></div>
 
       <div className="hero-main-content">
-        <img
+        <Image
           src="/images/accesco_white.png"
           className="hero-logo-img"
           alt="Accesco Original White Logo"
+          width={2002}
+          height={1950}
+          priority
         />
 
         <h1 className="hero-title">Accesco Living</h1>

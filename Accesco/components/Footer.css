@@ -158,6 +158,11 @@ background-repeat: no-repeat;
   justify-content: center;
 }
 
+.logo-component-icon {
+  width: 32px;
+  height: auto;
+}
+
 .logo-wordmark {
   font-family: 'Montserrat', sans-serif;
 font-size:22px;

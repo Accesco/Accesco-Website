@@ -1522,12 +1522,7 @@ const [deliveryVisible, setDeliveryVisible] = useState(false);
         {/* ── Services Section ── */}
        <section
   id="services"
-  style={{
-    padding: 'clamp(60px, 8vw, 100px) 0',
-    background: '#FFFDF8',
-    position: 'relative'
-  }}
->       
+>
 
           <div className="intelligencePosterRow">
 
@@ -1577,21 +1572,11 @@ const [deliveryVisible, setDeliveryVisible] = useState(false);
   </div>
 
 </div>
-          <div style={{
-            position: 'absolute', inset: 0,
-            backgroundImage: 'radial-gradient(circle at 20% 50%, rgba(122,0,66,0.03) 0%, transparent 60%), radial-gradient(circle at 80% 20%, rgba(200,150,62,0.03) 0%, transparent 60%)',
-            pointerEvents: 'none',
-          }} />
+          <div className="servicesRadialOverlay" />
 
   <div
     ref={deliveryRef}
     className={`deliveryHeadingFrame ${deliveryVisible ? "is-visible" : ""}`}
-    style={{
-      maxWidth: '1280px',
-      margin: '0 auto',
-      padding: '0 clamp(20px, 4vw, 40px)',
-      position: 'relative'
-    }}
   >
 <div className="floatingHeroItems">
   <img src="/images/burger.png" className="popItem popBurger" alt="Burger" />
@@ -1601,33 +1586,14 @@ const [deliveryVisible, setDeliveryVisible] = useState(false);
   <img src="/images/salad.png" className="popItem popSalad" alt="Salad" />
   <img src="/images/Jeans.png" className="popItem popJeans" alt="Jeans" />
 </div>
-              <h2 style={{
-                fontFamily: "'Inter', sans-serif",
-                fontWeight: 800,
-fontSize: 'clamp(2.45rem, 4.9vw, 4.4rem)',
-                color: '#1A0A0F', letterSpacing: '-0.04em',
-                margin: '0 0 8px', lineHeight: 1.1,
-              }}>
+              <h2 className="deliveryHeadingTitle">
                 India solved delivery in 10 minutes.<br />
-                <span style={{
-  fontFamily: "'Inter', sans-serif",
-  color: '#2B1A24',
-  fontWeight: 550,
-  fontSize: 'clamp(1rem, 3.8vw, 2rem)',
-  lineHeight: 1.2,
-}}>
+                <span className="deliveryHeadingSubtitle">
   Nobody solved the household in 10 years.
 </span>
 
               </h2>
-              <p style={{
- fontFamily: "'Plus Jakarta Sans', sans-serif",
-  fontSize: 'clamp(1.15rem, 1.5vw, 1.4rem)',
-  color: '#6B5B65',
-  maxWidth: '900px',
-  lineHeight: 1.5,
-  
-}}>
+              <p className="deliveryHeadingDesc">
                 Groceries, food and fashion at your doorstep in minutes — sourced straight from producers, built to circulate, and engineered so the value of everything you buy keeps working for your household—Intelligent Hyperlocal delivery app that fits your life. </p>
             </div>   {/* deliveryHeadingFrame */}
           
@@ -1649,13 +1615,13 @@ fontSize: 'clamp(2.45rem, 4.9vw, 4.4rem)',
 
                 <div ref={scrollRef} id="services-scroll-container" className="services-grid">
                   {/* Card 1: Grokly */}
-                  <div style={{ textDecoration: 'none', display: 'block' }}>
+                  <div className="serviceCardLinkWrap">
                     <div className="service-premium-card grokly-card">
                       <div className="service-card-visual">
-                        <Image src="/images/grokly-new1.png" alt="Grokly Groceries" fill style={{ objectFit: 'cover' }} />
+                        <Image src="/images/grokly-new1.png" alt="Grokly Groceries" fill className="serviceCardVisualImage" />
                       </div>
                       <div className="service-icon-circle">
-                        <Image src="/images/grokly-icon.png" alt="Grokly" width={40} height={40} style={{ objectFit: 'contain', width: '100%', height: '100%' }} />
+                        <Image src="/images/grokly-icon.png" alt="Grokly" width={40} height={40} className="serviceIconCircleImage" />
                       </div>
                       <div className="service-card-body">
                         <h3 className="service-card-name">Grokly</h3>
@@ -1666,13 +1632,13 @@ fontSize: 'clamp(2.45rem, 4.9vw, 4.4rem)',
                   </div>
 
                   {/* Card 2: Swadishtt */}
-                  <div style={{ textDecoration: 'none', display: 'block' }}>
+                  <div className="serviceCardLinkWrap">
                     <div className="service-premium-card swadisht-card">
                       <div className="service-card-visual">
-                        <Image src="/images/swadisht/swadisht_logo1.JPG" alt="Swadishtt Meals" fill style={{ objectFit: 'cover' }} />
+                        <Image src="/images/swadisht/swadisht_logo1.JPG" alt="Swadishtt Meals" fill className="serviceCardVisualImage" />
                       </div>
                       <div className="service-icon-circle">
-                        <Image src="/images/swadisht/swadisht_logo.JPG" alt="Swadishtt" width={40} height={40} style={{ objectFit: 'contain', width: '100%', height: '100%' }} />
+                        <Image src="/images/swadisht/swadisht_logo.JPG" alt="Swadishtt" width={40} height={40} className="serviceIconCircleImage" />
                       </div>
                       <div className="service-card-body">
                         <h3 className="service-card-name">Swadishtt</h3>
@@ -1683,13 +1649,13 @@ fontSize: 'clamp(2.45rem, 4.9vw, 4.4rem)',
                   </div>
 
                   {/* Card 3: InstaStyle */}
-                  <div style={{ textDecoration: 'none', display: 'block' }}>
+                  <div className="serviceCardLinkWrap">
                     <div className="service-premium-card instastyle-card">
                       <div className="service-card-visual">
-                        <Image src="/images/fashion-new1.png" alt="InstaStyle Fashion" fill style={{ objectFit: 'cover' }} />
+                        <Image src="/images/fashion-new1.png" alt="InstaStyle Fashion" fill className="serviceCardVisualImage" />
                       </div>
                       <div className="service-icon-circle">
-                        <Image src="/images/instastyle-logo.png" alt="InstaStyle" width={40} height={40} style={{ objectFit: 'contain', width: '100%', height: '100%' }} />
+                        <Image src="/images/instastyle-logo.png" alt="InstaStyle" width={40} height={40} className="serviceIconCircleImage" />
                       </div>
                       <div className="service-card-body">
                         <h3 className="service-card-name">InstaStyle</h3>

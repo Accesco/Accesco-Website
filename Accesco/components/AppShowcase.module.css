@@ -507,3 +507,66 @@
   }
 
 }
+
+/* --- Waitlist section wrapper (extracted from inline styles) --- */
+.waitlistSection {
+  padding: 80px 20px;
+  background: #FAFAF9;
+  position: relative;
+}
+
+.waitlistHeadingBlock {
+  max-width: 1200px;
+  margin: 0 auto 48px;
+  padding: 0;
+  text-align: center;
+}
+
+.fullWidthForm {
+  width: 100%;
+}
+
+.flexOneButton {
+  flex: 1;
+}
+
+.centeredOtpInput {
+  text-align: center;
+  font-size: 1.2rem;
+  letter-spacing: 4px;
+  padding: 0;
+}
+
+.verifyEmailBlock {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px dashed #d1a5c4;
+}
+
+.verifyEmailTitle {
+  font-weight: 600;
+}
+
+.verifyEmailOptionalTag {
+  color: #888;
+  font-weight: 400;
+}
+
+.verifyEmailSuccess {
+  color: #22c55e;
+}
+
+.verifyEmailHint {
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.fullWidthButton {
+  width: 100%;
+}
+
+.emailOtpInput {
+  text-align: center;
+  font-size: 24px;
+  letter-spacing: 8px;
+}
