@@ -283,6 +283,11 @@
 .locationIcon {
   transition: transform 0.25s;
   flex-shrink: 0;
+  transform: rotate(0deg);
+}
+
+.locationIconOpen {
+  transform: rotate(180deg);
 }
 
 .locationDropdown {

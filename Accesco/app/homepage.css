@@ -3220,14 +3220,17 @@ background:
 
 .chart-bar.mid {
   background-color: #cccccc;
+  height: 32px;
 }
 
 .chart-bar.high {
   background-color: #ffffff;
+  height: 50px;
 }
 
 .chart-bar.low {
   background-color: #555555;
+  height: 22px;
 }
 
 .chart-labels-text {
@@ -3243,6 +3246,73 @@ background:
   border: 0;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
   margin: 1rem 0;
+}
+
+.dashboard-divider--tight {
+  margin: 0.75rem 0;
+}
+
+.dashboard-divider--tighter {
+  margin: 0.5rem 0;
+}
+
+/* --- Xpense Intro: layout/utility modifiers (extracted from inline styles) --- */
+.spend-category-name-fixed {
+  min-width: 60px;
+  display: inline-block;
+}
+
+.spend-list-item--indented {
+  padding-left: 8px;
+}
+
+.spend-icon-box--sm {
+  width: 32px;
+  height: 32px;
+}
+
+.spend-category-name--muted {
+  font-size: 0.8rem;
+  color: #9ca3af;
+}
+
+.spend-amount--sm {
+  font-size: 0.8rem;
+  color: #e5e7eb;
+}
+
+.details-actions-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.budget-slider-group {
+  width: 60%;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.budget-slider-label {
+  font-size: 0.65rem;
+  color: #9ca3af;
+  text-align: right;
+}
+
+.budget-slider-input {
+  width: 100%;
+  accent-color: #ffffff;
+  height: 3px;
+}
+
+.budget-period-label {
+  font-size: 0.75rem;
+  color: #9ca3af;
+}
+
+.icon-ml-2 {
+  margin-left: 2px;
 }
 
 /* --- Card Row Summary --- */
@@ -3426,6 +3496,7 @@ background:
 
 .horizontal-progress-fill {
   height: 100%;
+  width: var(--fill-pct, 0%);
   background-color: #ffffff;
   border-radius: 9999px;
   transition: width 0.8s cubic-bezier(0.16, 1, 0.3, 1);
@@ -3601,6 +3672,68 @@ background:
   height: 100px !important;
   max-width: 100px !important;
   border-radius: 0 !important;
+}
+
+/* --- Services Section (extracted from inline styles) --- */
+#services {
+  padding: clamp(60px, 8vw, 100px) 0;
+  background: #FFFDF8;
+  position: relative;
+}
+
+.servicesRadialOverlay {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle at 20% 50%, rgba(122, 0, 66, 0.03) 0%, transparent 60%), radial-gradient(circle at 80% 20%, rgba(200, 150, 62, 0.03) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+.deliveryHeadingFrame {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 clamp(20px, 4vw, 40px);
+  position: relative;
+}
+
+.deliveryHeadingTitle {
+  font-family: 'Inter', sans-serif;
+  font-weight: 800;
+  font-size: clamp(2.45rem, 4.9vw, 4.4rem);
+  color: #1A0A0F;
+  letter-spacing: -0.04em;
+  margin: 0 0 8px;
+  line-height: 1.1;
+}
+
+.deliveryHeadingSubtitle {
+  font-family: 'Inter', sans-serif;
+  color: #2B1A24;
+  font-weight: 550;
+  font-size: clamp(1rem, 3.8vw, 2rem);
+  line-height: 1.2;
+}
+
+.deliveryHeadingDesc {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: clamp(1.15rem, 1.5vw, 1.4rem);
+  color: #6B5B65;
+  max-width: 900px;
+  line-height: 1.5;
+}
+
+.serviceCardLinkWrap {
+  text-decoration: none;
+  display: block;
+}
+
+.serviceCardVisualImage {
+  object-fit: cover;
+}
+
+.serviceIconCircleImage {
+  object-fit: contain;
+  width: 100%;
+  height: 100%;
 }
 
 /* Mobile floating images for delivery section */

@@ -528,10 +528,7 @@ const navigateToDashboard = () => {
                           <div className="spend-icon-box">
                             {getIcon(cat.icon)}
                           </div>
-                         <span
-  className="spend-category-name"
-  style={{ minWidth: "60px", display: "inline-block" }}
->
+                         <span className="spend-category-name spend-category-name-fixed">
   {cat.name}
 </span>
                         </div>
@@ -543,9 +540,9 @@ const navigateToDashboard = () => {
                   {/* Vertical Bar Chart */}
                   <div className="bar-chart-container">
                     <div className="bars-row">
-                      <div className="chart-bar mid" style={{ height: '32px' }} />
-                      <div className="chart-bar high" style={{ height: '50px' }} />
-                      <div className="chart-bar low" style={{ height: '22px' }} />
+                      <div className="chart-bar mid" />
+                      <div className="chart-bar high" />
+                      <div className="chart-bar low" />
                     </div>
                     <span className="chart-labels-text">High / Mid / Low</span>
                   </div>
@@ -555,14 +552,14 @@ const navigateToDashboard = () => {
                 {viewDetails && (
                   <div className="expanded-details-container">
                     {extraCategories.map((cat) => (
-                      <div className="spend-list-item" key={cat.id} style={{ paddingLeft: '8px' }}>
+                      <div className="spend-list-item spend-list-item--indented" key={cat.id}>
                         <div className="spend-item-left">
-                          <div className="spend-icon-box" style={{ width: '32px', height: '32px' }}>
+                          <div className="spend-icon-box spend-icon-box--sm">
                             {getIcon(cat.icon)}
                           </div>
-                          <span className="spend-category-name" style={{ fontSize: '0.8rem', color: '#9ca3af' }}>{cat.name}</span>
+                          <span className="spend-category-name spend-category-name--muted">{cat.name}</span>
                         </div>
-                        <span className="spend-amount" style={{ fontSize: '0.8rem', color: '#e5e7eb' }}>₹{cat.amount.toLocaleString()}</span>
+                        <span className="spend-amount spend-amount--sm">₹{cat.amount.toLocaleString()}</span>
                       </div>
                     ))}
                   </div>
@@ -578,32 +575,32 @@ const navigateToDashboard = () => {
                     </span>
                   </div>
 
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <button 
+                  <div className="details-actions-row">
+                    <button
                       className="glossy-btn-silver"
                       onClick={() => setViewDetails(!viewDetails)}
                     >
                       {viewDetails ? 'Hide details' : 'View details'}
                     </button>
-                    
+
                     {activeTab === 'Budget' && (
-                      <div style={{ width: '60%', display: 'flex', flexDirection: 'column', gap: '2px' }}>
-                        <label style={{ fontSize: '0.65rem', color: '#9ca3af', textAlign: 'right' }}>Set Slider Budget</label>
-                        <input 
-                          type="range" 
-                          min="10000" 
-                          max="30000" 
-                          step="500" 
+                      <div className="budget-slider-group">
+                        <label className="budget-slider-label">Set Slider Budget</label>
+                        <input
+                          type="range"
+                          min="10000"
+                          max="30000"
+                          step="500"
                           value={budgetLimit}
                           onChange={(e) => setBudgetLimit(Number(e.target.value))}
-                          style={{ width: '100%', accentColor: '#ffffff', height: '3px' }}
+                          className="budget-slider-input"
                         />
                       </div>
                     )}
                   </div>
                 </div>
 
-                <hr className="dashboard-divider" style={{ margin: '0.75rem 0' }} />
+                <hr className="dashboard-divider dashboard-divider--tight" />
 
                 <p className="card-footer-small-desc">
                   <span>(12) categories auto-sorted</span>
@@ -626,7 +623,7 @@ const navigateToDashboard = () => {
                     <span className="budget-val-label">
                       of <span className="budget-val-total">₹{budgetLimit.toLocaleString()}</span>
                     </span>
-                    <span style={{ fontSize: '0.75rem', color: '#9ca3af' }}>monthly budget</span>
+                    <span className="budget-period-label">monthly budget</span>
                   </div>
 
                   <div className="radial-ring-wrapper">
@@ -650,7 +647,7 @@ const navigateToDashboard = () => {
 
                 {/* Horizontal Bar */}
                 <div className="horizontal-progress-track">
-                  <div className="horizontal-progress-fill" style={{ width: `${percentageUsed}%` }} />
+                  <div className="horizontal-progress-fill" style={{ '--fill-pct': `${percentageUsed}%` }} />
                 </div>
 
                 {/* Smart Insight Box */}
@@ -678,14 +675,14 @@ const navigateToDashboard = () => {
                 {/* Action Buttons */}
                 <div className="action-buttons-row">
                   <button className="glossy-btn-outline highlighted">
-                    On track <Check size={12} style={{ marginLeft: '2px' }} />
+                    On track <Check size={12} className="icon-ml-2" />
                   </button>
                   <button onClick={navigateToDashboard} className="glossy-btn-outline">
-                    Go to Xpense Meter <ArrowRight size={12} style={{ marginLeft: '2px' }} />
+                    Go to Xpense Meter <ArrowRight size={12} className="icon-ml-2" />
                   </button>
                 </div>
 
-                <hr className="dashboard-divider" style={{ margin: '0.5rem 0' }} />
+                <hr className="dashboard-divider dashboard-divider--tighter" />
 
                 {/* Setup Row */}
                 <div className="setup-bottom-row">
