@@ -16,6 +16,15 @@
   --ac-muted:           #6B5B65;
   --ac-border:          rgba(122, 0, 66, 0.12);
   --ac-bg-warm:         #FFF5EE;
+    --primary-red: #9e1b1b;
+  --dark-red: #7c1212;
+  --charcoal: #1e1e1e;
+  --cream: #fffaf4;
+  --peach-light: #fff2e4;
+  --pale-blush: #fdf5f5;
+  --text-dark: #242424;
+  --text-muted: #757575;
+  --white: #ffffff;
 
   /* Typography */
   --font-sora:    'Sora', sans-serif;

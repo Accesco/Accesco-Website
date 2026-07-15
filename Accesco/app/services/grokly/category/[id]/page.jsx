@@ -99,7 +99,7 @@ export default function GroklyCategoryPage() {
     "itemListElement": filteredProducts.slice(0, 10).map((product, index) => ({
       "@type": "ListItem",
       "position": index + 1,
-      "url": `https://www.accescoliving.com/services/grokly`,
+      "url": `https://accescoliving.com/services/grokly`,
       "name": product.name,
       "image": product.image,
       "offers": {

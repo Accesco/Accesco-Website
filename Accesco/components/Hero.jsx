@@ -302,7 +302,7 @@ export default function Hero() {
         </div>
 
         <div className="hero-sub">
-          Delivering Groceries, Food, and Fashion under one unified platform
+          Accesco | India’s Intelligent delivery app
         </div>
 
 

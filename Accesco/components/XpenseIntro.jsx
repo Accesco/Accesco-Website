@@ -80,11 +80,9 @@ const router = useRouter();
   const strokeDashoffset = circumference - (percentageUsed / 100) * circumference;
 
   // Handle CTA button click
-  const handleExploreClick = () => {
-    if (dashboardRef.current) {
-      dashboardRef.current.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
+ const handleExploreClick = () => {
+  router.push('/xpense-meter');
+};
 
   // Helper to render lucide icons dynamically
   const getIcon = (iconName, className = '') => {
@@ -104,7 +102,7 @@ const router = useRouter();
 
   // Switch to the full interactive dashboard app
 const navigateToDashboard = () => {
-  router.push('/calculator');
+  router.push('/xpense-meter');
 };
   // Sync state between transaction list and categories when in active dashboard mode
   useEffect(() => {
@@ -274,7 +272,7 @@ const navigateToDashboard = () => {
                         onChange={(e) => setNewTxCategory(e.target.value)}
                         style={{ width: '100%', padding: '0.75rem', background: '#1c1d24', border: '1px solid #2d2e38', borderRadius: '8px', color: '#ffffff', fontSize: '0.85rem', outline: 'none', height: '41px' }}
                       >
-                        <option value="grocery">Grocery</option>
+                        <option value="grocery">Grocery </option>
                         <option value="food">Food</option>
                         <option value="fashion">Fashion</option>
                         <option value="entertainment">Entertainment</option>
@@ -413,13 +411,13 @@ const navigateToDashboard = () => {
           {/* LEFT HERO CARD */}
           <div className="left-hero-card">
             <div>
- <h1 className="hero-heading">
+ <h2 className="hero-heading">
   <div className="hero-heading-top">
     <span>Introducing</span>
 
     <Image
       src="/images/asterik.png"
-      alt=""
+      alt="Sparkle icon"
       width={30}
       height={30}
       className="hero-asterisk"
@@ -427,7 +425,7 @@ const navigateToDashboard = () => {
   </div>
 
   <div>Xpense Meter!</div>
-</h1>
+</h2>
               <p className="hero-subtitle">
                 Your smart spending companion for Grocery, Food & Fashion - all in one place.
               </p>
@@ -466,9 +464,13 @@ const navigateToDashboard = () => {
             </div>
 
             <div>
-              <button onClick={handleExploreClick} className="glossy-btn-main" id="cta-explore">
-                Explore Xpense Meter
-              </button>
+             <button
+  onClick={navigateToDashboard}
+  className="glossy-btn-main"
+  id="cta-explore"
+>
+  Explore Xpense Meter
+</button>
 
               <div className="left-card-footer">
                 <span className="footer-item">
@@ -526,7 +528,12 @@ const navigateToDashboard = () => {
                           <div className="spend-icon-box">
                             {getIcon(cat.icon)}
                           </div>
-                          <span className="spend-category-name">{cat.name}</span>
+                         <span
+  className="spend-category-name"
+  style={{ minWidth: "60px", display: "inline-block" }}
+>
+  {cat.name}
+</span>
                         </div>
                         <span className="spend-amount">₹{cat.amount.toLocaleString()}</span>
                       </div>

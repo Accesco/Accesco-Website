@@ -639,32 +639,55 @@
     display: flex;
   }
 
+  /* Cart panel slides in from right on mobile.
+     padding-top clears the persistent app/site header (≈68px)
+     so the cart title and close button are never obscured. */
   .cartSection {
     position: fixed;
     right: 0;
     top: 0;
     bottom: 0;
     width: min(360px, 100vw);
-    border-radius: 0;
+    border-radius: 20px 0 0 20px;
     z-index: 999;
     transform: translateX(100%);
     transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
     max-height: 100vh;
-    border-radius: 20px 0 0 20px;
+    /* Push content below the site header */
+    padding-top: 72px;
+    /* Ensure the panel itself is still full-height */
+    box-sizing: border-box;
   }
 
   .cartOpen {
     transform: translateX(0);
   }
 
+  /* Close button: always anchored to the very top of the cart panel,
+     so it sits just below the app header */
   .cartClose {
     display: flex;
+    position: absolute;
+    top: 20px;
+    right: 16px;
+    z-index: 10;
+  }
+
+  /* Cart header row: ensure it is never covered */
+  .cartHeader {
+    padding-top: 4px;
   }
 }
 
 @media (max-width: 480px) {
   .page {
     padding: 76px 10px 100px;
+  }
+
+  .cartSection {
+    width: 100vw;
+    border-radius: 0;
+    padding-top: 68px;
   }
 
   .cardContainer {

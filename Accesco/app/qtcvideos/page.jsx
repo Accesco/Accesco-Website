@@ -144,7 +144,7 @@ export default function QTCPage() {
             muted
             loop
             playsInline
-            poster="/assets/hero_poster.jpg"
+            poster="/images/qtc-mobile-hero.jpg"
           >
             <source src="/images/qtcbackground.mp4" type="video/mp4" />
           </video>

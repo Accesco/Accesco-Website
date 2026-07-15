@@ -147,6 +147,7 @@
   padding: 24px 40px;
   max-width: 1600px;
   margin: 0 auto;
+  box-sizing: border-box;
 }
 
 /* Camera Section */
@@ -163,6 +164,7 @@
   position: relative;
   width: 100%;
   max-width: 800px;
+  /* Desktop: fixed 400px height. Mobile overrides use aspect-ratio. */
   height: 400px;
   margin: 0 auto;
 }
@@ -772,45 +774,230 @@
   margin: 0;
 }
 
-/* Responsive */
-@media (max-width: 1024px) {
+/* ─────────────────────────────────────────
+   Responsive — Tablets (769px – 1023px)
+───────────────────────────────────────── */
+@media (max-width: 1023px) {
   .mainContent {
     grid-template-columns: 1fr;
-    padding: 20px;
+    padding: 20px 24px;
+    gap: 20px;
+  }
+
+  .cameraSection {
+    gap: 20px;
+  }
+
+  .cameraContainer {
+    max-width: 100%;
+    height: auto;
+    /* Letterbox ratio: 4:3 gives a roomy camera view on tablets */
+    aspect-ratio: 4 / 3;
   }
 
   .productSidebar {
     max-height: none;
     position: static;
+    padding: 24px;
+    border-radius: 24px;
   }
 
-  .header {
-    padding: 16px 20px;
+  /* On tablet the product list flows horizontally for quick scanning */
+  .productList {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 10px;
+    overflow-y: visible;
+    overflow-x: auto;
+  }
+
+  .productItem {
+    flex: 0 0 calc(50% - 5px);
+    min-width: 200px;
   }
 
   .title {
     font-size: 20px;
   }
-}
 
-@media (max-width: 768px) {
-  .header {
-    flex-wrap: wrap;
-    gap: 12px;
-    top: 64px;
+  .featuresGrid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
   }
 
-  .headerActions {
-    width: 100%;
-    justify-content: center;
+  .featuresSection {
+    padding: 48px 24px;
+  }
+}
+
+/* ─────────────────────────────────────────
+   Responsive — Mobile (≤ 768px)
+───────────────────────────────────────── */
+@media (max-width: 768px) {
+  .virtualTryOnPage {
+    padding-top: 64px;
+  }
+
+  .mainContent {
+    padding: 16px;
+    gap: 16px;
   }
 
   .cameraContainer {
-    aspect-ratio: 3/4;
+    border-radius: 16px;
+    /* Portrait-style ratio is natural for mobile cameras */
+    aspect-ratio: 3 / 4;
+    height: auto;
+    max-height: 70vh;
   }
 
+  .cameraPlaceholder h2 {
+    font-size: 18px;
+  }
+
+  .cameraPlaceholder p {
+    font-size: 13px;
+  }
+
+  /* Larger touch targets for camera controls */
   .cameraControls {
+    gap: 12px;
+    padding: 16px 12px;
+  }
+
+  .controlBtn {
+    padding: 12px 18px;
+    font-size: 14px;
+    min-height: 44px;
+    touch-action: manipulation;
+  }
+
+  .captureButton {
+    width: 68px;
+    height: 68px;
+    min-width: 44px;
+    min-height: 44px;
+    touch-action: manipulation;
+  }
+
+  .captureCircle {
+    width: 52px;
+    height: 52px;
+  }
+
+  /* Sidebar: compact horizontal chip row on phones */
+  .productSidebar {
+    padding: 16px;
+    border-radius: 20px;
+    max-height: none;
+    position: static;
+  }
+
+  .sidebarTitle {
+    font-size: 18px;
+    margin-bottom: 14px;
+  }
+
+  /* Product list: compact 2-column grid on mobile */
+  .productList {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    overflow-y: visible;
+    max-height: none;
+    margin-bottom: 12px;
+    padding-right: 0;
+  }
+
+  .productItem {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 10px;
+    min-height: 44px;
+    touch-action: manipulation;
+  }
+
+  .productThumbnail {
+    width: 48px;
+    height: 48px;
+  }
+
+  .productInfo h4 {
+    font-size: 12px;
+  }
+
+  .productCategory {
+    font-size: 11px;
+  }
+
+  .categoryTabs {
+    gap: 6px;
+    margin-bottom: 14px;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x mandatory;
+  }
+
+  .categoryTab {
+    padding: 7px 14px;
+    font-size: 13px;
+    scroll-snap-align: start;
+    min-height: 36px;
+    touch-action: manipulation;
+  }
+
+  .instructions {
+    padding: 16px;
+    border-radius: 16px;
+  }
+
+  .instructions h3 {
+    font-size: 16px;
+  }
+
+  .instructions li {
+    font-size: 13px;
+    margin-bottom: 8px;
+  }
+
+  .featuresGrid {
+    grid-template-columns: 1fr;
     gap: 16px;
+  }
+
+  .featuresSection {
+    padding: 32px 16px;
+  }
+
+  .featuresSection h2 {
+    font-size: 24px;
+  }
+
+  .featureCard {
+    padding: 24px 16px;
+  }
+
+  .browseMoreBtn {
+    padding: 14px;
+    font-size: 14px;
+    min-height: 44px;
+  }
+}
+
+/* ─────────────────────────────────────────
+   Responsive — Small phones (≤ 480px)
+───────────────────────────────────────── */
+@media (max-width: 480px) {
+  .mainContent {
+    padding: 12px;
+    gap: 12px;
+  }
+
+  .cameraContainer {
+    border-radius: 14px;
+    /* Full-portrait mode on very small screens */
+    aspect-ratio: 9 / 16;
+    max-height: 60vh;
   }
 
   .captureButton {
@@ -819,22 +1006,31 @@
   }
 
   .captureCircle {
-    width: 45px;
-    height: 45px;
+    width: 46px;
+    height: 46px;
   }
 
   .controlBtn {
-    padding: 10px 16px;
-    font-size: 14px;
+    padding: 10px 14px;
+    font-size: 13px;
   }
 
-  .featuresGrid {
+  .productSidebar {
+    padding: 12px;
+    border-radius: 16px;
+  }
+
+  /* On the smallest screens, product list goes single column */
+  .productList {
     grid-template-columns: 1fr;
-    gap: 20px;
+  }
+
+  .sidebarTitle {
+    font-size: 16px;
   }
 
   .featuresSection {
-    padding: 40px 20px;
+    padding: 24px 12px;
   }
 }
 
