@@ -2,10 +2,10 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import { RecaptchaVerifier, signInWithPhoneNumber, signOut } from 'firebase/auth';
-import { 
-  ShoppingCart, 
-  Utensils, 
-  Shirt, 
+import {
+  ShoppingCart,
+  Utensils,
+  Shirt,
   GlassWater,
   ArrowRight,
   ArrowLeft,
@@ -218,7 +218,7 @@ export default function AppShowcase() {
         email: form.email,
         phone: form.phone,
         interests: form.interests.join(', '),
-        emailVerified, // optional — true only if the user chose to verify their email
+        emailVerified, // optional — true if waitlist user verified their email
       });
 
       await signOut(auth);
@@ -300,7 +300,7 @@ export default function AppShowcase() {
 
       {/* Main 1:1 Sorcerer Grid Card Wrapper */}
       <div className={styles.waitlistCard}>
-        
+
         {/* Left Panel: Flush Poster Image */}
         <div className={styles.leftPanel}>
           <img
@@ -317,25 +317,25 @@ export default function AppShowcase() {
 
         {/* Right Panel: Clean Form Wrapper */}
         <div className={styles.rightPanel}>
-          
-         <div className={styles.brandLogoRow}>
-  <img
-    src="/images/asterik.png"
-    alt="Accesco mark"
-    className={styles.brandAsterisk}
-  />
-</div>
 
-<div className={styles.waitlistStar} aria-hidden="true">
-  ✱
-</div>
+          <div className={styles.brandLogoRow}>
+            <img
+              src="/images/asterik.png"
+              alt="Accesco mark"
+              className={styles.brandAsterisk}
+            />
+          </div>
 
-<h3 className={styles.cardTitle}>Get Early Access</h3>
-<p className={styles.cardSubtitle}>
-  {currentStep === 1 && "Join the waitlist for early access to Accesco Living’s unified commerce platform, built for groceries, food delivery, fashion, dining, home services, and member-only launch benefits."}
-  {currentStep === 2 && "Select the experiences you are most interested in so we can personalize your early access updates, offers, and launch notifications."}
-  {currentStep === 3 && "Verify your phone number to secure your waitlist entry and receive important early access updates safely."}
-</p>
+          <div className={styles.waitlistStar} aria-hidden="true">
+            ✱
+          </div>
+
+          <h3 className={styles.cardTitle}>Get Early Access</h3>
+          <p className={styles.cardSubtitle}>
+            {currentStep === 1 && "Join the waitlist for early access to Accesco Living’s unified commerce platform, built for groceries, food delivery, fashion, dining, home services, and member-only launch benefits."}
+            {currentStep === 2 && "Select the experiences you are most interested in so we can personalize your early access updates, offers, and launch notifications."}
+            {currentStep === 3 && "Verify your phone number to secure your waitlist entry and receive important early access updates safely."}
+          </p>
 
           {success && (
             <div className={styles.successMessage}>
@@ -351,23 +351,23 @@ export default function AppShowcase() {
 
           {/* Form Step Router */}
           <form onSubmit={handleSubmit} className={styles.fullWidthForm}>
-            
+
             {/* Step 1: Base Inputs */}
             {currentStep === 1 && (
               <div className={styles.inputsStack}>
                 <div className={styles.inputWrapper}>
 
-  <input
-    type="text"
-    className={styles.formInput}
-    placeholder="Enter your full name"
-    value={form.name}
-    onChange={(e) => setForm({ ...form, name: e.target.value })}
-  />
-</div>
+                  <input
+                    type="text"
+                    className={styles.formInput}
+                    placeholder="Enter your full name"
+                    value={form.name}
+                    onChange={(e) => setForm({ ...form, name: e.target.value })}
+                  />
+                </div>
 
                 <div className={styles.inputWrapper}>
-  
+
                   <input
                     type="email"
                     className={styles.formInput}
@@ -378,17 +378,17 @@ export default function AppShowcase() {
                   />
                 </div>
 
-               <div className={styles.inputWrapper}>
-  
-  <input
-    type="tel"
-    className={styles.formInput}
-    placeholder="Enter your phone number"
-    value={form.phone}
-    onChange={(e) => setForm({ ...form, phone: e.target.value })}
-    required
-  />
-</div>
+                <div className={styles.inputWrapper}>
+
+                  <input
+                    type="tel"
+                    className={styles.formInput}
+                    placeholder="Enter your phone number"
+                    value={form.phone}
+                    onChange={(e) => setForm({ ...form, phone: e.target.value })}
+                    required
+                  />
+                </div>
 
                 <button type="button" className={styles.submitButton} onClick={handleNext}>
                   <span>Join Waitlist</span>

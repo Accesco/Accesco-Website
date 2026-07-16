@@ -30,31 +30,31 @@ export const products = [
   {
     id: 'grok2-001', name: 'Fish Fillet - Rohu', brand: 'FreshCatch', category: 'seafood',
     price: 220, mrp: 260, discount: 15, unit: '500 g', deliveryTime: '11 MINS',
-    image: 'https://images.pexels.com/photos/3296402/pexels-photo-3296402.jpeg?w=300',
+    image: 'https://www.bing.com/images/search?view=detailV2&ccid=tzSG4vrg&id=C1A269D87564C4BA3EFFD9CB5904E34E60524E38&thid=OIP.tzSG4vrgsu0IFjX7yh4TKQHaE8&mediaurl=https%3a%2f%2fstatic.vecteezy.com%2fsystem%2fresources%2fpreviews%2f011%2f224%2f689%2fnon_2x%2ffish-fillet-on-wooden-board-with-ingredients-for-cooking-fresh-raw-pangasius-fish-fillet-with-herb-and-spices-black-pepper-lemon-lime-meat-dolly-fish-tilapia-striped-catfish-free-photo.JPG&exph=980&expw=1468&q=Fish+Fillet&FORM=IRPRST&ck=53D7152854CDC0A2979D4B85282F8940&selectedIndex=0&itb=0',
     inStock: true, tags: ['Bestseller'], rating: 4.5, reviews: 120
   },
   {
     id: 'grok2-002', name: 'Prawns - Medium', brand: 'FreshCatch', category: 'seafood',
     price: 380, mrp: 420, discount: 9, unit: '500 g', deliveryTime: '11 MINS',
-    image: 'https://images.pexels.com/photos/566346/pexels-photo-566346.jpeg?w=300',
+    image: 'hhttps://www.bing.com/images/search?view=detailV2&ccid=K2GSx5yi&id=6F65C0B48EB2BC5E208B0BB97BF3A39D893F82B0&thid=OIP.K2GSx5yiBKoV44CoNyMtHwHaE8&mediaurl=https%3a%2f%2foceansbestlk.com%2fwp-content%2fuploads%2f2025%2f11%2fprawns-medium.jpg&exph=1000&expw=1500&q=Prawns+-+Medium&FORM=IRPRST&ck=0FC061FA3B79A2F3BB1E69307CA71BC8&selectedIndex=1&itb=0',
     inStock: true, tags: ['Premium'], rating: 4.5, reviews: 120
   },
   {
     id: 'grok2-003', name: 'Tuna Steak', brand: 'OceanFresh', category: 'seafood',
     price: 450, mrp: 510, discount: 11, unit: '200 g', deliveryTime: '11 MINS',
-    image: 'https://images.pexels.com/photos/12511124/pexels-photo-12511124.jpeg?w=300',
+    image: 'https://tse3.mm.bing.net/th/id/OIP.bj4IKh-jNArkxObijQluvwHaLG?r=0&w=2667&h=4000&rs=1&pid=ImgDetMain&o=7&rm=3',
     inStock: true, tags: [], rating: 4.5, reviews: 120
   },
   {
     id: 'grok2-004', name: 'Sardines - Fresh', brand: 'OceanFresh', category: 'seafood',
     price: 110, mrp: 130, discount: 15, unit: '250 g', deliveryTime: '11 MINS',
-    image: 'https://images.pexels.com/photos/8697561/pexels-photo-8697561.jpeg?w=300',
+    image: 'https://www.seriouseats.com/thmb/gCf5Tr0ZnOC3TTxloh1-2ORrdoo=/1500x1125/filters:fill(auto,1)/__opt__aboutcom__coeus__resources__content_migration__serious_eats__seriouseats.com__2018__01__20170117-how-to-clean-sardines-vicky-wasik1-13fbba78ebbd4f78acc258f27d1d471b.jpg',
     inStock: true, tags: [], rating: 4.5, reviews: 120
   },
   {
     id: 'grok2-005', name: 'Crab - Mud', brand: 'FreshCatch', category: 'seafood',
     price: 520, mrp: 580, discount: 10, unit: '500 g', deliveryTime: '11 MINS',
-    image: 'https://images.pexels.com/photos/3296406/pexels-photo-3296406.jpeg?w=300',
+    image: 'https://www.thenews.com.pk/assets/uploads/akhbar/2020-11-07/740061_3594861_mud-crab_akhbar.jpg',
     inStock: true, tags: ['Premium'], rating: 4.5, reviews: 120
   },
   {
@@ -66,91 +66,91 @@ export const products = [
   {
     id: 'grok2-007', name: 'Mutton Keema', brand: 'PureGoat', category: 'meat-poultry',
     price: 480, mrp: 530, discount: 9, unit: '500 g', deliveryTime: '11 MINS',
-    image: 'https://images.pexels.com/photos/5718092/pexels-photo-5718092.jpeg?w=300',
+    image: 'https://tse3.mm.bing.net/th/id/OIP.czucgxt1OktWS_2rD9POHQHaFj?r=0&rs=1&pid=ImgDetMain&o=7&rm=3',
     inStock: true, tags: [], rating: 4.5, reviews: 120
   },
   {
     id: 'grok2-008', name: 'Chicken Wings', brand: 'FarmFresh', category: 'meat-poultry',
     price: 220, mrp: 260, discount: 15, unit: '500 g', deliveryTime: '11 MINS',
-    image: 'https://images.pexels.com/photos/60616/fried-chicken-restaurant-60616.jpeg?w=300',
+    image: 'https://www.bing.com/images/search?view=detailV2&ccid=jdMBDsBM&id=B78E88322C48E3772778C25C7E43C4323DE8A01B&thid=OIP.jdMBDsBMSJVuxTbFyl1nOAHaLH&mediaurl=https%3a%2f%2fwww.restlesschipotle.com%2fwp-content%2fuploads%2f2022%2f08%2fCrispy-Oven-Baked-Chicken-Wings-12.jpg&exph=1800&expw=1200&q=Chicken+Wings&FORM=IRPRST&ck=372B6CEE5940B89E0C66534A177C2F59&selectedIndex=3&itb=0',
     inStock: true, tags: [], rating: 4.5, reviews: 120
   },
   {
     id: 'grok2-009', name: 'Pork Ribs', brand: 'MeatMaster', category: 'meat-poultry',
     price: 520, mrp: 580, discount: 10, unit: '500 g', deliveryTime: '11 MINS',
-    image: 'https://images.pexels.com/photos/410648/pexels-photo-410648.jpeg?w=300',
+    image: 'https://www.bing.com/images/search?view=detailV2&ccid=gDgqSp%2fZ&id=AD28DF41304AC1501155CC3E08CE68F0428EDC6F&thid=OIP.gDgqSp_ZEzaB-CjBRFrDYgHaLH&mediaurl=https%3a%2f%2fi.pinimg.com%2foriginals%2fd4%2fab%2f50%2fd4ab505266163cd766ca6ad786bc90f6.jpg&exph=1200&expw=800&q=BBQ+Baked+Country+Style+Pork+Ribs+Recipe&FORM=IRPRST&ck=15E6C1F1FB15872585650B760115488B&selectedIndex=8&itb=0',
     inStock: true, tags: ['Premium'], rating: 4.5, reviews: 120
   },
   {
     id: 'grok2-010', name: 'Duck Leg', brand: 'MeatMaster', category: 'meat-poultry',
     price: 440, mrp: 490, discount: 10, unit: '2 pcs', deliveryTime: '11 MINS',
-    image: 'https://images.pexels.com/photos/8697553/pexels-photo-8697553.jpeg?w=300',
+    image: 'https://www.bing.com/images/search?view=detailV2&ccid=xqLa7CA4&id=D3D71F9941C40E8DE5D1887DED9C33320E83F168&thid=OIP.xqLa7CA4Oqa2uhhMSJKB5wHaF7&mediaurl=https%3a%2f%2fi.pinimg.com%2foriginals%2f5c%2ff9%2f82%2f5cf9822445c7059060e6d4a7b49639c4.jpg&exph=834&expw=1043&q=Duck+Leg&FORM=IRPRST&ck=B9E2A9A0A25D498600686BD850AA4516&selectedIndex=0&itb=0',
     inStock: true, tags: [], rating: 4.5, reviews: 120
   },
   {
     id: 'grok2-011', name: 'Veg Momos - Frozen', brand: 'MomoCo', category: 'frozen-snacks',
     price: 120, mrp: 145, discount: 17, unit: '12 pcs', deliveryTime: '11 MINS',
-    image: 'https://images.pexels.com/photos/7625056/pexels-photo-7625056.jpeg?w=300',
+    image: 'https://th.bing.com/th/id/OIP._gwRWigwlf3-AKIFhfsDLQHaHa?w=193&h=193&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3',
     inStock: true, tags: ['Bestseller'], rating: 4.5, reviews: 120
   },
   {
     id: 'grok2-012', name: 'Chicken Nuggets', brand: 'GoldenBite', category: 'frozen-snacks',
     price: 180, mrp: 210, discount: 14, unit: '400 g', deliveryTime: '11 MINS',
-    image: 'https://images.pexels.com/photos/6210764/pexels-photo-6210764.jpeg?w=300',
+    image: 'https://bakeitwithlove.com/wp-content/uploads/2021/05/Air-Fryer-Chicken-Nuggets-sq.jpg',
     inStock: true, tags: ['Bestseller'], rating: 4.5, reviews: 120
   },
   {
     id: 'grok2-013', name: 'Spring Rolls - Veg', brand: 'AsianKitchen', category: 'frozen-snacks',
     price: 140, mrp: 160, discount: 12, unit: '6 pcs', deliveryTime: '11 MINS',
-    image: 'https://images.pexels.com/photos/4518672/pexels-photo-4518672.jpeg?w=300',
+    image: 'https://tse3.mm.bing.net/th/id/OIP.0Ew2XaaDTji1teJ4QDROcgHaIG?r=0&rs=1&pid=ImgDetMain&o=7&rm=3',
     inStock: true, tags: [], rating: 4.5, reviews: 120
   },
   {
     id: 'grok2-014', name: 'French Fries - Shoestring', brand: 'CrispyBite', category: 'frozen-snacks',
     price: 90, mrp: 110, discount: 18, unit: '400 g', deliveryTime: '11 MINS',
-    image: 'https://images.pexels.com/photos/5718095/pexels-photo-5718095.jpeg?w=300',
+    image: 'https://i0.wp.com/www.aspicyperspective.com/wp-content/uploads/2021/11/Shoestring-Fries-Julienne-Cut-20.jpg?resize=1153%2C1536&ssl=1',
     inStock: true, tags: ['Bestseller'], rating: 4.5, reviews: 120
   },
   {
     id: 'grok2-015', name: 'Pizza Base - Ready', brand: 'PizzaHub', category: 'frozen-snacks',
     price: 115, mrp: 135, discount: 15, unit: '2 pcs', deliveryTime: '11 MINS',
-    image: 'https://images.pexels.com/photos/4518673/pexels-photo-4518673.jpeg?w=300',
+    image: 'hhttps://www.bbassets.com/media/uploads/p/l/40226318-2_1-super-pizza-base-half-baked-ready-to-bake.jpg',
     inStock: true, tags: [], rating: 4.5, reviews: 120
   },
   {
     id: 'grok2-016', name: 'Soy Sauce - Dark', brand: 'TasteOfAsia', category: 'international-foods',
     price: 95, mrp: 115, discount: 17, unit: '250 ml', deliveryTime: '11 MINS',
-    image: 'https://images.pexels.com/photos/1640772/pexels-photo-1640772.jpeg?w=300',
+    image: 'https://tse3.mm.bing.net/th/id/OIP.qsjyWYRGmQvqPNR55S9SEAHaJQ?r=0&rs=1&pid=ImgDetMain&o=7&rm=3',
     inStock: true, tags: [], rating: 4.5, reviews: 120
   },
   {
     id: 'grok2-017', name: 'Pasta - Penne', brand: 'ItaliaKitchen', category: 'international-foods',
     price: 110, mrp: 130, discount: 15, unit: '500 g', deliveryTime: '11 MINS',
-    image: 'https://images.pexels.com/photos/3407777/pexels-photo-3407777.jpeg?w=300',
+    image: 'https://www.bing.com/images/search?view=detailV2&ccid=b6P%2fZ4hj&id=FF7FEDC84DA1FBC09407D33324C99277D574E9E6&thid=OIP.b6P_Z4hjO6szI9CME2hrqAHaJf&mediaurl=https%3a%2f%2ftheclevermeal.com%2fwp-content%2fuploads%2f2021%2f07%2fpenne-arrabbiata_1b.jpg&exph=1500&expw=1170&q=Pasta+-+Penne&FORM=IRPRST&ck=50752409A18A05C8E2A90EAF5209268F&selectedIndex=7&itb=0',
     inStock: true, tags: [], rating: 4.5, reviews: 120
   },
   {
     id: 'grok2-018', name: 'Sriracha Chilli Sauce', brand: 'SpicyWorld', category: 'international-foods',
     price: 140, mrp: 165, discount: 15, unit: '200 g', deliveryTime: '11 MINS',
-    image: 'https://images.pexels.com/photos/1640770/pexels-photo-1640770.jpeg?w=300',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTcwGSmtiHJn04RTPH9M24ymrOkPkNifn8JMqi_jLyJoEGqIfHeW7UcT3te&s=10',
     inStock: true, tags: [], rating: 4.5, reviews: 120
   },
   {
     id: 'grok2-019', name: 'Tahini Paste', brand: 'MiddleEastFoods', category: 'international-foods',
     price: 220, mrp: 255, discount: 13, unit: '250 g', deliveryTime: '11 MINS',
-    image: 'https://images.pexels.com/photos/699953/pexels-photo-699953.jpeg?w=300',
+    image: 'https://th.bing.com/th/id/OIP.GcIr6hwlMZVeiVH1JBaWewHaHa?w=181&h=181&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3',
     inStock: true, tags: ['Premium'], rating: 4.5, reviews: 120
   },
   {
     id: 'grok2-020', name: 'Quinoa White', brand: 'HealthAisle', category: 'international-foods',
     price: 395, mrp: 450, discount: 12, unit: '500 g', deliveryTime: '11 MINS',
-    image: 'https://images.pexels.com/photos/1640769/pexels-photo-1640769.jpeg?w=300',
+    image: 'https://tse3.mm.bing.net/th/id/OIP.iAKs7ulBoab87wcuHu1KtAHaHa?r=0&rs=1&pid=ImgDetMain&o=7&rm=3',
     inStock: true, tags: ['Organic'], rating: 4.5, reviews: 120
   },
   {
     id: 'grok2-021', name: 'Whey Protein - Vanilla', brand: 'NutriPro', category: 'health-supplements',
     price: 1299, mrp: 1499, discount: 13, unit: '1 kg', deliveryTime: '11 MINS',
-    image: 'https://images.pexels.com/photos/593451/pexels-photo-593451.jpeg?w=300',
+    image: 'https://tse2.mm.bing.net/th/id/OIP.2h-vvZEl-rxQ8Zj7a3j63AHaHa?r=0&rs=1&pid=ImgDetMain&o=7&rm=3',
     inStock: true, tags: ['Premium'], rating: 4.5, reviews: 120
   },
   {
@@ -168,524 +168,524 @@ export const products = [
   {
     id: 'grok2-024', name: 'Ashwagandha Extract', brand: 'AyurNature', category: 'health-supplements',
     price: 349, mrp: 399, discount: 12, unit: '60 caps', deliveryTime: '11 MINS',
-    image: 'https://images.pexels.com/photos/3735149/pexels-photo-3735149.jpeg?w=300',
+    image: 'https://tse4.mm.bing.net/th/id/OIP.9M5Wc__djpPzsKzTuh0gAwHaHa?r=0&w=1000&h=1000&rs=1&pid=ImgDetMain&o=7&rm=3',
     inStock: true, tags: ['Organic'], rating: 4.5, reviews: 120
   },
   {
     id: 'grok2-025', name: 'Multivitamin Gummies', brand: 'KidsNutri', category: 'health-supplements',
     price: 299, mrp: 349, discount: 14, unit: '30 pcs', deliveryTime: '11 MINS',
-    image: 'https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?w=300',
+    image: 'https://www.bing.com/images/search?view=detailV2&ccid=jHJrgGJR&id=3F44ADC431E90C551992A9494AB70BF9CC633EFD&thid=OIP.jHJrgGJRBXG_NZxgl27ewgHaHa&mediaurl=https%3A%2F%2Fi5.walmartimages.com%2Fasr%2F954b2397-ad4c-4edf-8fad-8028401c33ac_1.8e90d4e61e940046387a8bedeed79376.jpeg&exph=2365&expw=2365&q=Multivitamin+Gummies&FORM=IRPRST&ck=B8A644B52852C84578E6D58C4B94FBEF&selectedIndex=2&itb=0&cw=1375&ch=659&ajaxhist=0&ajaxserp=0',
     inStock: true, tags: [], rating: 4.5, reviews: 120
   },
   {
     id: 'grok2-026', name: 'Steel Kadai - 24cm', brand: 'KitchenPro', category: 'kitchenware',
     price: 649, mrp: 749, discount: 13, unit: '1 pc', deliveryTime: '11 MINS',
-    image: 'https://images.pexels.com/photos/2988232/pexels-photo-2988232.jpeg?w=300',
+    image: 'https://www.bing.com/images/search?view=detailV2&ccid=6b%2ft5VF4&id=AAAED8BBD5D93B027DA11CD15FDAF4CFF4D12CB0&thid=OIP.6b_t5VF48QUJrnAww_wxtgHaHa&mediaurl=https%3a%2f%2fth.bing.com%2fth%2fid%2fR.e9bfede55178f10509ae7030c3fc31b6%3frik%3dsCzR9M%252f02l%252fRHA%26riu%3dhttp%253a%252f%252fwww.latifs.co.uk%252fcdn%252fshop%252ffiles%252f8906106597753.png%253fcrop%253dcenter%2526height%253d1200%2526v%253d1763125259%2526width%253d1200%26ehk%3dT9w6s0Q9Prb1aLCT0jzJGBhNAOvle2qIZZmz%252fYSVe%252bU%253d%26risl%3d%26pid%3dImgRaw%26r%3d0&exph=1200&expw=1200&q=Steel+Kadai+-+24cm&FORM=IRPRST&ck=BA8858E9536298D7EE6BC22302FFFC43&selectedIndex=0&itb=0',
     inStock: true, tags: [], rating: 4.5, reviews: 120
   },
   {
     id: 'grok2-027', name: 'Non-Stick Tawa', brand: 'CookSmart', category: 'kitchenware',
     price: 449, mrp: 519, discount: 13, unit: '1 pc', deliveryTime: '11 MINS',
-    image: 'https://images.pexels.com/photos/667838/pexels-photo-667838.jpeg?w=300',
+    image: 'https://m.media-amazon.com/images/I/71jeUINL5-L._AC_.jpg',
     inStock: true, tags: ['Bestseller'], rating: 4.5, reviews: 120
   },
   {
     id: 'grok2-028', name: 'Bamboo Cutting Board', brand: 'EcoKitchen', category: 'kitchenware',
     price: 299, mrp: 349, discount: 14, unit: '1 pc', deliveryTime: '11 MINS',
-    image: 'https://images.pexels.com/photos/1029903/pexels-photo-1029903.jpeg?w=300',
+    image: 'https://thumbs.dreamstime.com/b/eco-friendly-bamboo-cutting-board-featuring-juice-groove-ideal-chopping-fruits-vegetables-bamboo-cutting-board-juice-387501463.jpg',
     inStock: true, tags: ['Organic'], rating: 4.5, reviews: 120
   },
   {
     id: 'grok2-029', name: 'Glass Food Containers Set', brand: 'StoreSafe', category: 'kitchenware',
     price: 799, mrp: 899, discount: 11, unit: '4 pcs', deliveryTime: '11 MINS',
-    image: 'https://images.pexels.com/photos/1668860/pexels-photo-1668860.jpeg?w=300',
+    image: 'https://images-na.ssl-images-amazon.com/images/I/81TRdYFjbOL._AC_SL1500_.jpg',
     inStock: true, tags: [], rating: 4.5, reviews: 120
   },
   {
     id: 'grok2-030', name: 'Silicone Spatula Set', brand: 'FlexiCook', category: 'kitchenware',
     price: 199, mrp: 239, discount: 16, unit: '3 pcs', deliveryTime: '11 MINS',
-    image: 'https://images.pexels.com/photos/2988232/pexels-photo-2988232.jpeg?w=300',
+    image: 'https://i5.walmartimages.com/seo/Wanbasion-5-Piece-Silicone-Spatula-Set-Heat-Resistant-Colorful-Rubber-Baking-Set-Kitchen-Dishwasher-Safe-Nonstick-Cookware-Cooking-Mixing-Multicolor2_9285e841-c22c-4449-95a5-8c1a7046617c.6522c46edce7d1432ff65ca355dfe63b.jpeg',
     inStock: true, tags: [], rating: 4.5, reviews: 120
   },
   {
     id: 'grok2-031', name: 'Dragon Fruit', brand: 'Fresho', category: 'vegetables-fruits',
     price: 180, mrp: 210, discount: 14, unit: '1 pc', deliveryTime: '11 MINS',
-    image: 'https://images.pexels.com/photos/1132047/pexels-photo-1132047.jpeg?w=300',
+    image: 'https://th.bing.com/th/id/R.2d8ef0bff04fedcf73edbcbff8575769?rik=whPGEVmQWcuDvg&riu=http%3a%2f%2fspecialtyproduce.com%2fsppics%2f9461.png&ehk=ckvUlMyUTdaoRTXvJkWq4qXyX942l36UBu4FVMxV9jc%3d&risl=&pid=ImgRaw&r=0',
     inStock: true, tags: ['Exotic'], rating: 4.5, reviews: 120
   },
   {
     id: 'grok2-032', name: 'Avocado', brand: 'Fresho', category: 'vegetables-fruits',
     price: 140, mrp: 165, discount: 15, unit: '2 pcs', deliveryTime: '11 MINS',
-    image: 'https://images.pexels.com/photos/1453499/pexels-photo-1453499.jpeg?w=300',
+    image: 'https://images.healthshots.com/healthshots/en/uploads/2024/04/04153309/avocado-1.jpg',
     inStock: true, tags: ['Premium'], rating: 4.5, reviews: 120
   },
   {
     id: 'grok2-033', name: 'Kiwi Fruit', brand: 'Fresho', category: 'vegetables-fruits',
     price: 120, mrp: 145, discount: 17, unit: '4 pcs', deliveryTime: '11 MINS',
-    image: 'https://images.pexels.com/photos/3629537/pexels-photo-3629537.jpeg?w=300',
+    image: 'https://healthjade.net/wp-content/uploads/2017/09/kiwi-fruit.jpg',
     inStock: true, tags: ['Bestseller'], rating: 4.5, reviews: 120
   },
   {
     id: 'grok2-034', name: 'Broccoli Crown', brand: 'Fresho', category: 'vegetables-fruits',
     price: 85, mrp: 100, discount: 15, unit: '300 g', deliveryTime: '11 MINS',
-    image: 'https://images.pexels.com/photos/3735149/pexels-photo-3735149.jpeg?w=300',
+    image: 'https://www.kroger.com/product/images/large/front/0000000003082',
     inStock: true, tags: ['Organic'], rating: 4.5, reviews: 120
   },
   {
     id: 'grok2-035', name: 'Baby Spinach', brand: 'Fresho', category: 'vegetables-fruits',
     price: 55, mrp: 65, discount: 15, unit: '200 g', deliveryTime: '11 MINS',
-    image: 'https://images.pexels.com/photos/1643456/pexels-photo-1643456.jpeg?w=300',
+    image: 'https://thumbs.dreamstime.com/b/fresh-baby-spinach-leaves-textured-background-close-up-114689515.jpg',
     inStock: true, tags: ['Organic'], rating: 4.5, reviews: 120
   },
   {
     id: 'grok2-036', name: 'Greek Yogurt - Plain', brand: 'Danone', category: 'dairy-breakfast',
     price: 145, mrp: 169, discount: 14, unit: '400 g', deliveryTime: '11 MINS',
-    image: 'https://images.pexels.com/photos/248412/pexels-photo-248412.jpeg?w=300',
+    image: 'https://tse3.mm.bing.net/th/id/OIP.iieMkYpFuJnmQD6fgS_oZgHaFS?r=0&rs=1&pid=ImgDetMain&o=7&rm=3',
     inStock: true, tags: ['Bestseller'], rating: 4.5, reviews: 120
   },
   {
     id: 'grok2-037', name: 'Almond Milk', brand: 'Oatly', category: 'dairy-breakfast',
     price: 220, mrp: 259, discount: 15, unit: '750 mL', deliveryTime: '11 MINS',
-    image: 'https://images.pexels.com/photos/1435735/pexels-photo-1435735.jpeg?w=300',
+    image: 'hhttps://i5.walmartimages.com/asr/962f8710-05cb-4f3f-a6f9-3bce9126d3e6_1.e84fa1e230d50b0a8307d20f097c96d1.jpeg',
     inStock: true, tags: ['Vegan'], rating: 4.5, reviews: 120
   },
   {
     id: 'grok2-038', name: 'Granola - Honey Oat', brand: 'NutriMix', category: 'dairy-breakfast',
     price: 269, mrp: 309, discount: 12, unit: '500 g', deliveryTime: '11 MINS',
-    image: 'https://images.pexels.com/photos/236010/pexels-photo-236010.jpeg?w=300',
+    image: 'https://tse4.mm.bing.net/th/id/OIP.zLnuIWTcyeskGZ-Q1I4TuAHaHa?r=0&rs=1&pid=ImgDetMain&o=7&rm=3',
     inStock: true, tags: ['Bestseller'], rating: 4.5, reviews: 120
   },
   {
     id: 'grok2-039', name: 'Cream Cheese', brand: 'Britannia', category: 'dairy-breakfast',
     price: 195, mrp: 225, discount: 13, unit: '200 g', deliveryTime: '11 MINS',
-    image: 'https://images.pexels.com/photos/704569/pexels-photo-704569.jpeg?w=300',
+    image: 'https://tse3.mm.bing.net/th/id/OIP.EpRFplYNjAk95fgsxOSdKAHaE8?r=0&rs=1&pid=ImgDetMain&o=7&rm=3',
     inStock: true, tags: [], rating: 4.5, reviews: 120
   },
   {
     id: 'grok2-040', name: 'Oat Milk', brand: 'GoodMilk', category: 'dairy-breakfast',
     price: 199, mrp: 229, discount: 13, unit: '750 mL', deliveryTime: '11 MINS',
-    image: 'https://images.pexels.com/photos/821365/pexels-photo-821365.jpeg?w=300',
+    image: 'https://myquietkitchen.com/wp-content/uploads/2023/05/best-oat-milk-recipe-2.jpg',
     inStock: true, tags: ['Vegan'], rating: 4.5, reviews: 120
   },
   {
     id: 'grok2-041', name: 'Cold Brew Coffee', brand: 'BlueTokai', category: 'tea-coffee',
     price: 349, mrp: 399, discount: 12, unit: '250 ml', deliveryTime: '11 MINS',
-    image: 'https://images.pexels.com/photos/312418/pexels-photo-312418.jpeg?w=300',
+    image: 'https://www.simplyrecipes.com/thmb/7zYXgL4vpOhXfa04v7_vPO4Dv84=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/Simply-Recipes-Cold-Brew-Coffee-LEAD-6-896c6872ac3e421ca4d88f29b528b349.jpg',
     inStock: true, tags: ['Premium'], rating: 4.5, reviews: 120
   },
   {
     id: 'grok2-042', name: 'Green Tea - Jasmine', brand: 'Tetley', category: 'tea-coffee',
     price: 175, mrp: 199, discount: 12, unit: '25 bags', deliveryTime: '11 MINS',
-    image: 'https://images.pexels.com/photos/302899/pexels-photo-302899.jpeg?w=300',
+    image: 'https://twinings.com.au/cdn/shop/files/TWIN_070177227913-0.jpg?v=1698815904&width=2040',
     inStock: true, tags: ['Organic'], rating: 4.5, reviews: 120
   },
   {
     id: 'grok2-043', name: 'Matcha Powder', brand: 'ZenTea', category: 'tea-coffee',
     price: 499, mrp: 569, discount: 12, unit: '100 g', deliveryTime: '11 MINS',
-    image: 'https://images.pexels.com/photos/894695/pexels-photo-894695.jpeg?w=300',
+    image: 'https://i5.walmartimages.com/seo/Organic-Ceremonial-Matcha-Powder-Premium-Matcha-Powder-100g_72c0e0ab-2036-4551-abf6-5f83412e47a1.f63d04cbd3070d0b65564d6d80550107.jpeg',
     inStock: true, tags: ['Premium'], rating: 4.5, reviews: 120
   },
   {
     id: 'grok2-044', name: 'Turmeric Latte Mix', brand: 'GoldenSpice', category: 'tea-coffee',
     price: 249, mrp: 289, discount: 13, unit: '200 g', deliveryTime: '11 MINS',
-    image: 'https://images.pexels.com/photos/544961/pexels-photo-544961.jpeg?w=300',
+    image: 'https://tse4.mm.bing.net/th/id/OIP.bZ-cxDV1KtfThvCrHjFgVQHaHa?r=0&rs=1&pid=ImgDetMain&o=7&rm=3',
     inStock: true, tags: ['Organic'], rating: 4.5, reviews: 120
   },
   {
     id: 'grok2-045', name: 'Masala Chai Blend', brand: 'ChaiWala', category: 'tea-coffee',
     price: 145, mrp: 169, discount: 14, unit: '250 g', deliveryTime: '11 MINS',
-    image: 'https://images.pexels.com/photos/1833373/pexels-photo-1833373.jpeg?w=300',
+    image: 'https://m.media-amazon.com/images/I/71OcGOmM5cL._AC_SL1500_.jpg',
     inStock: true, tags: ['Bestseller'], rating: 4.5, reviews: 120
   },
   {
     id: 'grok2-046', name: 'Sourdough Bread', brand: 'ArtisanBake', category: 'bakery-biscuits',
     price: 189, mrp: 219, discount: 13, unit: '400 g', deliveryTime: '11 MINS',
-    image: 'https://images.pexels.com/photos/1775043/pexels-photo-1775043.jpeg?w=300',
+    image: 'https://sugarspunrun.com/wp-content/uploads/2023/02/My-sourdough-bread-recipe-1-of-1.jpg',
     inStock: true, tags: ['Artisan'], rating: 4.5, reviews: 120
   },
   {
     id: 'grok2-047', name: 'Whole Wheat Croissant', brand: 'BakeFresh', category: 'bakery-biscuits',
     price: 95, mrp: 115, discount: 17, unit: '4 pcs', deliveryTime: '11 MINS',
-    image: 'https://images.pexels.com/photos/205961/pexels-photo-205961.jpeg?w=300',
+    image: 'https://tse1.mm.bing.net/th/id/OIP.40lMoW4H2mHgt4bsIQOgPgHaFj?r=0&rs=1&pid=ImgDetMain&o=7&rm=3',
     inStock: true, tags: [], rating: 4.5, reviews: 120
   },
   {
     id: 'grok2-048', name: 'Dark Chocolate Brownie', brand: 'SweetNest', category: 'bakery-biscuits',
     price: 165, mrp: 195, discount: 15, unit: '200 g', deliveryTime: '11 MINS',
-    image: 'https://images.pexels.com/photos/3892469/pexels-photo-3892469.jpeg?w=300',
+    image: 'https://tse2.mm.bing.net/th/id/OIP.ET3mgD83t8--pCUlDUONgwHaHa?r=0&rs=1&pid=ImgDetMain&o=7&rm=3',
     inStock: true, tags: ['Bestseller'], rating: 4.5, reviews: 120
   },
   {
     id: 'grok2-049', name: 'Ragi Cookies', brand: 'HealthBake', category: 'bakery-biscuits',
     price: 120, mrp: 145, discount: 17, unit: '200 g', deliveryTime: '11 MINS',
-    image: 'https://images.pexels.com/photos/1387070/pexels-photo-1387070.jpeg?w=300',
+    image: 'https://tse1.explicit.bing.net/th/id/OIP._lJ7XyaGxMmCO4nAw5yiswHaEK?r=0&rs=1&pid=ImgDetMain&o=7&rm=3',
     inStock: true, tags: ['Organic'], rating: 4.5, reviews: 120
   },
   {
     id: 'grok2-050', name: 'Banana Walnut Loaf', brand: 'BakeFresh', category: 'bakery-biscuits',
     price: 145, mrp: 169, discount: 14, unit: '300 g', deliveryTime: '11 MINS',
-    image: 'https://images.pexels.com/photos/3338497/pexels-photo-3338497.jpeg?w=300',
+    image: 'https://nourishplate.com/wp-content/uploads/2018/06/Banana-and-Walnut-Cake5-683x1024.jpg',
     inStock: true, tags: [], rating: 4.5, reviews: 120
   },
   {
     id: 'grok2-051', name: 'Ghee - Pure Cow', brand: 'Amul', category: 'masala-oil',
     price: 699, mrp: 799, discount: 12, unit: '500 ml', deliveryTime: '11 MINS',
-    image: 'https://images.pexels.com/photos/2802527/pexels-photo-2802527.jpeg?w=300',
+    image: 'https://tse4.mm.bing.net/th/id/OIP.zzne7g5owdJ6d0tNQUuBegHaHa?r=0&rs=1&pid=ImgDetMain&o=7&rm=3',
     inStock: true, tags: ['Premium'], rating: 4.5, reviews: 120
   },
   {
     id: 'grok2-052', name: 'Mustard Oil - Cold Pressed', brand: 'KachchiGhani', category: 'masala-oil',
     price: 215, mrp: 249, discount: 13, unit: '750 mL', deliveryTime: '11 MINS',
-    image: 'https://images.pexels.com/photos/1441419/pexels-photo-1441419.jpeg?w=300',
+    image: 'https://th.bing.com/th/id/OIP.3-wqqfhhONsbm9Uqwt0YNAHaHa?r=0&o=7rm=3&rs=1&pid=ImgDetMain&o=7&rm=3',
     inStock: true, tags: [], rating: 4.5, reviews: 120
   },
   {
     id: 'grok2-053', name: 'Chaat Masala', brand: 'MDH', category: 'masala-oil',
     price: 65, mrp: 79, discount: 17, unit: '100 g', deliveryTime: '11 MINS',
-    image: 'https://images.pexels.com/photos/4198015/pexels-photo-4198015.jpeg?w=300',
+    image: 'https://tse3.mm.bing.net/th/id/OIP.dDDRNNFcrxBkHQA12cYY5AHaHa?r=0&rs=1&pid=ImgDetMain&o=7&rm=3',
     inStock: true, tags: ['Bestseller'], rating: 4.5, reviews: 120
   },
   {
     id: 'grok2-054', name: 'Biryani Masala', brand: 'Shan', category: 'masala-oil',
     price: 85, mrp: 99, discount: 14, unit: '50 g', deliveryTime: '11 MINS',
-    image: 'https://images.pexels.com/photos/6996072/pexels-photo-6996072.jpeg?w=300',
+    image: 'https://th.bing.com/th/id/OIP.QIBY7VyoyAEWBPyb7pT5YQHaI_?r=0&o=7rm=3&rs=1&pid=ImgDetMain&o=7&rm=3',
     inStock: true, tags: [], rating: 4.5, reviews: 120
   },
   {
     id: 'grok2-055', name: 'Extra Virgin Olive Oil', brand: 'Figaro', category: 'masala-oil',
     price: 649, mrp: 729, discount: 11, unit: '500 ml', deliveryTime: '11 MINS',
-    image: 'https://images.pexels.com/photos/4004471/pexels-photo-4004471.jpeg?w=300',
+    image: 'https://tse4.mm.bing.net/th/id/OIP.wIKYn-cCSFQoyLgLD5Dh7wHaHa?r=0&rs=1&pid=ImgDetMain&o=7&rm=3',
     inStock: true, tags: ['Premium'], rating: 4.5, reviews: 120
   },
 
   {
     id: 'grok-new-001', name: 'Guava Nectar Fruit Juice', brand: 'Crunchy Bites', category: 'cold-drinks',
     price: 32, mrp: 37, discount: 10, unit: '750 mL', deliveryTime: '11 MINS',
-    image: 'https://images.pexels.com/photos/544961/pexels-photo-544961.jpeg?w=300',
+    image: 'https://i5.walmartimages.com/asr/d1739cb9-e4cc-4aab-9f01-a184c38b9986_1.bb434b6c5204b2488721b1195710b003.jpeg',
     inStock: true, tags: ['New Arrival'], rating: 4.5, reviews: 11
   },
   {
     id: 'grok-new-002', name: 'Blueberry Greek Yogurt', brand: 'Grokly Fresh', category: 'dairy-breakfast',
     price: 34, mrp: 39, discount: 10, unit: '200 g', deliveryTime: '11 MINS',
-    image: 'https://images.pexels.com/photos/357573/pexels-photo-357573.jpeg?w=300',
+    image: 'https://th.bing.com/th/id/OIP.TDmiaFcZLhU5sGxCE8KP9AHaHa?r=0&o=7rm=3&rs=1&pid=ImgDetMain&o=7&rm=3',
     inStock: true, tags: ['New Arrival'], rating: 4.5, reviews: 12
   },
   {
     id: 'grok-new-003', name: 'Sour Cream & Onion Potato Crisps', brand: 'Crunchy Bites', category: 'munchies',
     price: 36, mrp: 41, discount: 10, unit: '200 g', deliveryTime: '11 MINS',
-    image: 'https://images.pexels.com/photos/1583884/pexels-photo-1583884.jpeg?w=300',
+    image: 'https://tse4.mm.bing.net/th/id/OIP.hucttx8dwducqW-WlcULIwHaHg?r=0&rs=1&pid=ImgDetMain&o=7&rm=3',
     inStock: true, tags: ['New Arrival'], rating: 4.5, reviews: 13
   },
   {
     id: 'grok-new-004', name: 'Sparkling Apple Cider', brand: 'Crunchy Bites', category: 'cold-drinks',
     price: 38, mrp: 43, discount: 10, unit: '750 mL', deliveryTime: '11 MINS',
-    image: 'https://images.pexels.com/photos/339696/pexels-photo-339696.jpeg?w=300',
+    image: 'https://www.bing.com/search?q=Sparkling+Apple+Cider&cvid=e533b9b51f93497f9909ddca79d1febd&gs_lcrp=EgRlZGdlKgYIABBFGDkyBggAEEUYOdIBBzg3NmowajeoAgiwAgE&FORM=ANAB01&PC=HCTS',
     inStock: true, tags: ['New Arrival'], rating: 4.5, reviews: 14
   },
   {
     id: 'grok-new-005', name: 'Artisanal Salted Butter', brand: 'Grokly Fresh', category: 'dairy-breakfast',
     price: 40, mrp: 45, discount: 10, unit: '200 g', deliveryTime: '11 MINS',
-    image: 'https://images.pexels.com/photos/209540/pexels-photo-209540.jpeg?w=300',
+    image: 'https://tse2.mm.bing.net/th/id/OIP.DK8fQT8cqShI8L7y6JcKmgHaFj?r=0&rs=1&pid=ImgDetMain&o=7&rm=3',
     inStock: true, tags: ['New Arrival'], rating: 4.5, reviews: 15
   },
   {
     id: 'grok-new-006', name: 'Slow Roasted Salted Cashews', brand: 'Crunchy Bites', category: 'munchies',
     price: 42, mrp: 47, discount: 10, unit: '200 g', deliveryTime: '11 MINS',
-    image: 'https://images.pexels.com/photos/952344/pexels-photo-952344.jpeg?w=300',
+    image: 'https://tse3.mm.bing.net/th/id/OIP.z9XrTcSZORj5DN86dASGuwHaHa?r=0&rs=1&pid=ImgDetMain&o=7&rm=3',
     inStock: true, tags: ['New Arrival'], rating: 4.5, reviews: 16
   },
   {
     id: 'grok-new-007', name: 'Organic Litchi Drink', brand: 'Crunchy Bites', category: 'cold-drinks',
     price: 44, mrp: 49, discount: 10, unit: '750 mL', deliveryTime: '11 MINS',
-    image: 'https://images.pexels.com/photos/158053/ketchup-fast-food-eating-158053.jpeg?w=300',
+    image: 'https://produits.bienmanger.com/39428-0w0h0_Lytchee_Eloa_Aloe_Vera_Drink.jpg',
     inStock: true, tags: ['New Arrival'], rating: 4.5, reviews: 17
   },
   {
     id: 'grok-new-008', name: 'Fresh Mozzarella Bocconcini', brand: 'Grokly Fresh', category: 'dairy-breakfast',
     price: 46, mrp: 51, discount: 10, unit: '200 g', deliveryTime: '11 MINS',
-    image: 'https://images.pexels.com/photos/302905/pexels-photo-302905.jpeg?w=300',
+    image: 'https://tse2.mm.bing.net/th/id/OIP.tATN8xZ0UCQe3LOjijMe0gHaHa?r=0&rs=1&pid=ImgDetMain&o=7&rm=3',
     inStock: true, tags: ['New Arrival'], rating: 4.5, reviews: 18
   },
   {
     id: 'grok-new-009', name: 'Jalapeno Cheddar Popcorn', brand: 'Crunchy Bites', category: 'munchies',
     price: 48, mrp: 53, discount: 10, unit: '200 g', deliveryTime: '11 MINS',
-    image: 'https://images.pexels.com/photos/1583884/pexels-photo-1583884.jpeg?w=300',
+    image: 'https://target.scene7.com/is/image/Target/GUEST_096926df-6fb6-41ce-83f5-d060a34be17f',
     inStock: true, tags: ['New Arrival'], rating: 4.5, reviews: 19
   },
   {
     id: 'grok-new-010', name: 'Sugar-Free Ginger Ale', brand: 'Crunchy Bites', category: 'cold-drinks',
     price: 50, mrp: 55, discount: 10, unit: '750 mL', deliveryTime: '11 MINS',
-    image: 'https://images.pexels.com/photos/2109099/pexels-photo-2109099.jpeg?w=300',
+    image: 'https://i5.walmartimages.com/asr/49176d73-12ee-4605-a277-1eb863ec5378.9c21b2060cd0722bc4cddc21e29d659a.jpeg',
     inStock: true, tags: ['New Arrival'], rating: 4.5, reviews: 20
   },
   {
     id: 'grok-new-011', name: 'Organic Creamy Almond Butter', brand: 'Grokly Fresh', category: 'dairy-breakfast',
     price: 52, mrp: 57, discount: 10, unit: '200 g', deliveryTime: '11 MINS',
-    image: 'https://images.pexels.com/photos/128402/pexels-photo-128402.jpeg?w=300',
+    image: 'https://m.media-amazon.com/images/I/81cAq7-0miL._SL1500_.jpg',
     inStock: true, tags: ['New Arrival'], rating: 4.5, reviews: 21
   },
   {
     id: 'grok-new-012', name: 'Dark Chocolate Oats Granola Bars', brand: 'Crunchy Bites', category: 'munchies',
     price: 54, mrp: 59, discount: 10, unit: '200 g', deliveryTime: '11 MINS',
-    image: 'https://images.pexels.com/photos/2611517/pexels-photo-2611517.jpeg?w=300',
+    image: 'https://tse3.mm.bing.net/th/id/OIP.1aYo0x4viC4b-PT8r4RDnQHaHa?r=0&rs=1&pid=ImgDetMain&o=7&rm=3',
     inStock: true, tags: ['New Arrival'], rating: 4.5, reviews: 22
   },
   {
     id: 'grok-new-013', name: 'Valencia Orange Cold Pressed Juice', brand: 'Crunchy Bites', category: 'cold-drinks',
     price: 56, mrp: 61, discount: 10, unit: '750 mL', deliveryTime: '11 MINS',
-    image: 'https://images.pexels.com/photos/96974/pexels-photo-96974.jpeg?w=300',
+    image: 'https://th.bing.com/th/id/OIP.4LKzWkOmyqn4Jae-y0rQKgHaHa?r=0&o=7rm=3&rs=1&pid=ImgDetMain&o=7&rm=3',
     inStock: true, tags: ['New Arrival'], rating: 4.5, reviews: 23
   },
   {
     id: 'grok-new-014', name: 'Free Range Brown Eggs', brand: 'Grokly Fresh', category: 'dairy-breakfast',
     price: 58, mrp: 63, discount: 10, unit: '200 g', deliveryTime: '11 MINS',
-    image: 'https://images.pexels.com/photos/277253/pexels-photo-277253.jpeg?w=300',
+    image: 'https://th.bing.com/th/id/OIP.sUucWEgy3Cqvjt96vqkReQHaFL?r=0&o=7rm=3&rs=1&pid=ImgDetMain&o=7&rm=3',
     inStock: true, tags: ['New Arrival'], rating: 4.5, reviews: 24
   },
   {
     id: 'grok-new-015', name: 'Baked Ragi & Herbs Crackers', brand: 'Crunchy Bites', category: 'munchies',
     price: 60, mrp: 65, discount: 10, unit: '200 g', deliveryTime: '11 MINS',
-    image: 'https://images.pexels.com/photos/1600711/pexels-photo-1600711.jpeg?w=300',
+    image: 'https://img-global.cpcdn.com/recipes/0cac7dc626f60048/1200x630cq80/photo.jpg',
     inStock: true, tags: ['New Arrival'], rating: 4.5, reviews: 25
   },
   {
     id: 'grok-new-016', name: 'Hydroponic Cherry Tomatoes', brand: 'Crunchy Bites', category: 'cold-drinks',
     price: 62, mrp: 67, discount: 10, unit: '750 mL', deliveryTime: '11 MINS',
-    image: 'https://images.pexels.com/photos/3407777/pexels-photo-3407777.jpeg?w=300',
+    image: 'https://tse1.mm.bing.net/th/id/OIP.fksRd6yMyPS8LTol2TruCgHaEP?r=0&rs=1&pid=ImgDetMain&o=7&rm=3',
     inStock: true, tags: ['New Arrival'], rating: 4.5, reviews: 26
   },
   {
     id: 'grok-new-017', name: 'Fresh Import Hass Avocados', brand: 'Grokly Fresh', category: 'dairy-breakfast',
     price: 64, mrp: 69, discount: 10, unit: '200 g', deliveryTime: '11 MINS',
-    image: 'https://images.pexels.com/photos/248412/pexels-photo-248412.jpeg?w=300',
+    image: 'https://tse3.mm.bing.net/th/id/OIP.u611XgknD5psGEVZJIbPcwHaE2?r=0&rs=1&pid=ImgDetMain&o=7&rm=3',
     inStock: true, tags: ['New Arrival'], rating: 4.5, reviews: 27
   },
   {
     id: 'grok-new-018', name: 'Hydroponic Romaine Lettuce', brand: 'Crunchy Bites', category: 'munchies',
     price: 66, mrp: 71, discount: 10, unit: '200 g', deliveryTime: '11 MINS',
-    image: 'https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?w=300',
+    image: 'https://th.bing.com/th/id/OIP.H5-ikF5Ic3c2qscisyqxCgHaE7?r=0&o=7rm=3&rs=1&pid=ImgDetMain&o=7&rm=3',
     inStock: true, tags: ['New Arrival'], rating: 4.5, reviews: 28
   },
   {
     id: 'grok-new-019', name: 'Organic Sona Masuri Rice', brand: 'Crunchy Bites', category: 'cold-drinks',
     price: 68, mrp: 73, discount: 10, unit: '750 mL', deliveryTime: '11 MINS',
-    image: 'https://images.pexels.com/photos/1346155/pexels-photo-1346155.jpeg?w=300',
+    image: 'https://i5.walmartimages.com/seo/Laxmi-Organic-Sona-Masoori-Rice-10lbs_5d68c36a-c513-4eef-a175-1d4220313d0a.bac65bf316ffe3dad6f406b2db89f79a.jpeg',
     inStock: true, tags: ['New Arrival'], rating: 4.5, reviews: 29
   },
   {
     id: 'grok-new-020', name: 'Unpolished Toor Dal', brand: 'Grokly Fresh', category: 'dairy-breakfast',
     price: 70, mrp: 75, discount: 10, unit: '200 g', deliveryTime: '11 MINS',
-    image: 'https://images.pexels.com/photos/1435735/pexels-photo-1435735.jpeg?w=300',
+    image: 'https://m.media-amazon.com/images/I/61HA0lc+dHL.jpg',
     inStock: true, tags: ['New Arrival'], rating: 4.5, reviews: 30
   },
   {
     id: 'grok-new-021', name: 'Gluten-Free Multi-grain Flour', brand: 'Crunchy Bites', category: 'munchies',
     price: 72, mrp: 77, discount: 10, unit: '200 g', deliveryTime: '11 MINS',
-    image: 'https://images.pexels.com/photos/1028704/pexels-photo-1028704.jpeg?w=300',
+    image: 'https://m.media-amazon.com/images/I/91b+4sD4y5L._AC_SL1500_.jpg',
     inStock: true, tags: ['New Arrival'], rating: 4.5, reviews: 31
   },
   {
     id: 'grok-new-022', name: 'Cold Pressed Yellow Mustard Oil', brand: 'Crunchy Bites', category: 'cold-drinks',
     price: 74, mrp: 79, discount: 10, unit: '750 mL', deliveryTime: '11 MINS',
-    image: 'https://images.pexels.com/photos/1071882/pexels-photo-1071882.jpeg?w=300',
+    image: 'https://tse1.mm.bing.net/th/id/OIP.oCRbTvWGdASP3f8XSaFc7QHaHa?r=0&rs=1&pid=ImgDetMain&o=7&rm=3',
     inStock: true, tags: ['New Arrival'], rating: 4.5, reviews: 32
   },
   {
     id: 'grok-new-023', name: 'Organic Alleppey Turmeric Powder', brand: 'Grokly Fresh', category: 'dairy-breakfast',
     price: 76, mrp: 81, discount: 10, unit: '200 g', deliveryTime: '11 MINS',
-    image: 'https://images.pexels.com/photos/236010/pexels-photo-236010.jpeg?w=300',
+    image: 'https://tse4.mm.bing.net/th/id/OIP.rPYXQ59jDQ140QFurqX41gHaGh?r=0&rs=1&pid=ImgDetMain&o=7&rm=3',
     inStock: true, tags: ['New Arrival'], rating: 4.5, reviews: 33
   },
   {
     id: 'grok-new-024', name: 'Extra Virgin Olive Oil', brand: 'Crunchy Bites', category: 'munchies',
     price: 78, mrp: 83, discount: 10, unit: '200 g', deliveryTime: '11 MINS',
-    image: 'https://images.pexels.com/photos/1583884/pexels-photo-1583884.jpeg?w=300',
+    image: 'https://tse4.mm.bing.net/th/id/OIP.wIKYn-cCSFQoyLgLD5Dh7wHaHa?r=0&rs=1&pid=ImgDetMain&o=7&rm=3',
     inStock: true, tags: ['New Arrival'], rating: 4.5, reviews: 34
   },
   {
     id: 'grok-new-025', name: 'Pure Aloe Vera Skin Gel', brand: 'Crunchy Bites', category: 'cold-drinks',
     price: 80, mrp: 85, discount: 10, unit: '750 mL', deliveryTime: '11 MINS',
-    image: 'https://images.pexels.com/photos/115655/pexels-photo-115655.jpeg?w=300',
+    image: 'https://tse4.mm.bing.net/th/id/OIP.C2JbQx8t6L4v5mrX5wrX6wHaHa?r=0&rs=1&pid=ImgDetMain&o=7&rm=3',
     inStock: true, tags: ['New Arrival'], rating: 4.5, reviews: 35
   },
   {
     id: 'grok-new-026', name: 'Tea Tree & Neem Face Wash', brand: 'Grokly Fresh', category: 'dairy-breakfast',
     price: 82, mrp: 87, discount: 10, unit: '200 g', deliveryTime: '11 MINS',
-    image: 'https://images.pexels.com/photos/704569/pexels-photo-704569.jpeg?w=300',
+    image: 'https://tse3.mm.bing.net/th/id/OIP.uYSdFHdPKWGY3dA0gbuMyQHaHa?r=0&rs=1&pid=ImgDetMain&o=7&rm=3',
     inStock: true, tags: ['New Arrival'], rating: 4.5, reviews: 36
   },
   {
     id: 'grok-new-027', name: 'Shea Butter Deep Nourish Lotion', brand: 'Crunchy Bites', category: 'munchies',
     price: 84, mrp: 89, discount: 10, unit: '200 g', deliveryTime: '11 MINS',
-    image: 'https://images.pexels.com/photos/952344/pexels-photo-952344.jpeg?w=300',
+    image: 'https://ourkaris.com/cdn/shop/files/SheaButterDeepNourishing.jpg?v=1712321986&width=1080',
     inStock: true, tags: ['New Arrival'], rating: 4.5, reviews: 37
   },
   {
     id: 'grok-new-028', name: 'Grain-Free Chicken Dog Food', brand: 'Crunchy Bites', category: 'cold-drinks',
     price: 86, mrp: 91, discount: 10, unit: '750 mL', deliveryTime: '11 MINS',
-    image: 'https://images.pexels.com/photos/544961/pexels-photo-544961.jpeg?w=300',
+    image: 'https://i5.walmartimages.com/seo/Freshpet-Select-Chicken-Vegetable-Formula-Roasted-Meal-Bites-Fresh-Dog-Food-Grain-Free-1-75lb-Bag_dd562607-716d-472e-b631-ee7d06d70ff2_1.804555687033c2a7b2ec13baf5890f23.jpeg',
     inStock: true, tags: ['New Arrival'], rating: 4.5, reviews: 38
   },
   {
     id: 'grok-new-029', name: 'Salmon & Tuna Cat Treats', brand: 'Grokly Fresh', category: 'dairy-breakfast',
     price: 88, mrp: 93, discount: 10, unit: '200 g', deliveryTime: '11 MINS',
-    image: 'https://images.pexels.com/photos/821365/pexels-photo-821365.jpeg?w=300',
+    image: 'https://tse3.mm.bing.net/th/id/OIP.HMYZyUE0JwpC4HGWiuuULwHaHa?r=0&rs=1&pid=ImgDetMain&o=7&rm=3',
     inStock: true, tags: ['New Arrival'], rating: 4.5, reviews: 39
   },
   {
     id: 'grok-new-030', name: 'Ayurvedic Tulsi & Ginger Cough Syrup', brand: 'Crunchy Bites', category: 'munchies',
     price: 90, mrp: 95, discount: 10, unit: '200 g', deliveryTime: '11 MINS',
-    image: 'https://images.pexels.com/photos/1583884/pexels-photo-1583884.jpeg?w=300',
+    image: 'https://cdn01.pharmeasy.in/dam/products_otc/I42053/dr-vaidyas-tulsi-ginger-cough-syrup-ayurvedic-syrup-for-cough-and-throat-irritation-pack-of-2-2-1669710667.jpg?dim=700x0&dpr=1&q=100',
     inStock: true, tags: ['New Arrival'], rating: 4.5, reviews: 40
   },
   {
     id: 'grok-new-031', name: 'Daily Multivitamin Gummies', brand: 'Crunchy Bites', category: 'cold-drinks',
     price: 92, mrp: 97, discount: 10, unit: '750 mL', deliveryTime: '11 MINS',
-    image: 'https://images.pexels.com/photos/339696/pexels-photo-339696.jpeg?w=300',
+    image: 'https://tse4.mm.bing.net/th/id/OIP.4RjanSK9jzI8l2yOQCc9sAHaHa?r=0&rs=1&pid=ImgDetMain&o=7&rm=3',
     inStock: true, tags: ['New Arrival'], rating: 4.5, reviews: 41
   },
   {
     id: 'grok-new-032', name: 'Classic Sweet Basil Pesto', brand: 'Grokly Fresh', category: 'dairy-breakfast',
     price: 94, mrp: 99, discount: 10, unit: '200 g', deliveryTime: '11 MINS',
-    image: 'https://images.pexels.com/photos/357573/pexels-photo-357573.jpeg?w=300',
+    image: 'https://tse4.mm.bing.net/th/id/OIP.WPJa5GWXm7qN2372RTBjrgHaHa?r=0&rs=1&pid=ImgDetMain&o=7&rm=3',
     inStock: true, tags: ['New Arrival'], rating: 4.5, reviews: 42
   },
   {
     id: 'grok-new-033', name: 'Spicy Szechuan Chilli Stir-Fry Paste', brand: 'Crunchy Bites', category: 'munchies',
     price: 96, mrp: 101, discount: 10, unit: '200 g', deliveryTime: '11 MINS',
-    image: 'https://images.pexels.com/photos/2611517/pexels-photo-2611517.jpeg?w=300',
+    image: 'https://tse1.mm.bing.net/th/id/OIP.S0C6tvS6eRSq1UOZ1eVD0gHaHa?r=0&rs=1&pid=ImgDetMain&o=7&rm=3',
     inStock: true, tags: ['New Arrival'], rating: 4.5, reviews: 43
   },
   {
     id: 'grok-new-034', name: 'Fresh Atlantic Salmon Fillet', brand: 'Crunchy Bites', category: 'cold-drinks',
     price: 98, mrp: 103, discount: 10, unit: '750 mL', deliveryTime: '11 MINS',
-    image: 'https://images.pexels.com/photos/158053/ketchup-fast-food-eating-158053.jpeg?w=300',
+    image: 'https://tse1.explicit.bing.net/th/id/OIP.u7JRyg5K0jYvezLI8V7R9wHaHa?r=0&rs=1&pid=ImgDetMain&o=7&rm=3',
     inStock: true, tags: ['New Arrival'], rating: 4.5, reviews: 44
   },
   {
     id: 'grok-new-035', name: 'Cleaned Tiger Prawns', brand: 'Grokly Fresh', category: 'dairy-breakfast',
     price: 100, mrp: 105, discount: 10, unit: '200 g', deliveryTime: '11 MINS',
-    image: 'https://images.pexels.com/photos/209540/pexels-photo-209540.jpeg?w=300',
+    image: 'https://cdn.grofers.com/da/cms-assets/cms/product/1c56c70e-75c6-49d8-a881-688399cd9d88.jpg',
     inStock: true, tags: ['New Arrival'], rating: 4.5, reviews: 45
   },
   {
     id: 'grok-new-036', name: 'Tender Chicken Breast Boneless', brand: 'Crunchy Bites', category: 'munchies',
     price: 102, mrp: 107, discount: 10, unit: '200 g', deliveryTime: '11 MINS',
-    image: 'https://images.pexels.com/photos/1600711/pexels-photo-1600711.jpeg?w=300',
+    image: 'https://th.bing.com/th/id/OIP.8zcGGxcmznhbFdIrGbMpzAHaEc?r=0&o=7rm=3&rs=1&pid=ImgDetMain&o=7&rm=3',
     inStock: true, tags: ['New Arrival'], rating: 4.5, reviews: 46
   },
   {
     id: 'grok-new-037', name: 'Lean Minced Mutton Keema', brand: 'Crunchy Bites', category: 'cold-drinks',
     price: 104, mrp: 109, discount: 10, unit: '750 mL', deliveryTime: '11 MINS',
-    image: 'https://images.pexels.com/photos/2109099/pexels-photo-2109099.jpeg?w=300',
+    image: 'https://th.bing.com/th/id/OIP.s-hBDZsnmKNLa1lzs955ZgHaHa?r=0&o=7rm=3&rs=1&pid=ImgDetMain&o=7&rm=3',
     inStock: true, tags: ['New Arrival'], rating: 4.5, reviews: 47
   },
   {
     id: 'grok-new-038', name: 'Frozen Cheese Corn Nuggets', brand: 'Grokly Fresh', category: 'dairy-breakfast',
     price: 106, mrp: 111, discount: 10, unit: '200 g', deliveryTime: '11 MINS',
-    image: 'https://images.pexels.com/photos/302905/pexels-photo-302905.jpeg?w=300',
+    image: 'https://tiimg.tistatic.com/fp/1/009/271/cheese-corn-nuggets-100.jpg',
     inStock: true, tags: ['New Arrival'], rating: 4.5, reviews: 48
   },
   {
     id: 'grok-new-039', name: 'Frozen Cocktail Veg Spring Rolls', brand: 'Crunchy Bites', category: 'munchies',
     price: 108, mrp: 113, discount: 10, unit: '200 g', deliveryTime: '11 MINS',
-    image: 'https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?w=300',
+    image: 'https://th.bing.com/th/id/R.5ab4810b7d5b4b1675f699fb8a89bf73?rik=TCi8xHFmQv%2fQ4A&riu=http%3a%2f%2fclickathome.com.au%2fcdn%2fshop%2ffiles%2fcocktailspringroll.webp%3fv%3d1753262514&ehk=rq5vGY7COmMkndZBVm4Dbjc89an%2b8GboTNuuXFjTx%2fU%3d&risl=&pid=ImgRaw&r=0',
     inStock: true, tags: ['New Arrival'], rating: 4.5, reviews: 49
   },
   {
     id: 'grok-new-040', name: '70% Cocoa Belgian Dark Chocolate', brand: 'Crunchy Bites', category: 'cold-drinks',
     price: 110, mrp: 115, discount: 10, unit: '750 mL', deliveryTime: '11 MINS',
-    image: 'https://images.pexels.com/photos/96974/pexels-photo-96974.jpeg?w=300',
+    image: 'https://media.nedigital.sg/fairprice/fpol/media/images/product/XL/13214054_XL1_20220320.jpg?w=1200&q=70',
     inStock: true, tags: ['New Arrival'], rating: 4.5, reviews: 50
   },
   {
     id: 'grok-new-041', name: 'Tin of Soft Rasgullas', brand: 'Grokly Fresh', category: 'dairy-breakfast',
     price: 112, mrp: 117, discount: 10, unit: '200 g', deliveryTime: '11 MINS',
-    image: 'https://images.pexels.com/photos/128402/pexels-photo-128402.jpeg?w=300',
+    image: 'https://www.mystore.in/s/62ea2c599d1398fa16dbae0a/67b31dd135d57760b6c155cd/8904004405729_1-800x800.png',
     inStock: true, tags: ['New Arrival'], rating: 4.5, reviews: 51
   },
   {
     id: 'grok-new-042', name: 'Darjeeling Loose Leaf Black Tea', brand: 'Crunchy Bites', category: 'munchies',
     price: 114, mrp: 119, discount: 10, unit: '200 g', deliveryTime: '11 MINS',
-    image: 'https://images.pexels.com/photos/1028704/pexels-photo-1028704.jpeg?w=300',
+    image: 'https://tse2.mm.bing.net/th/id/OIP.VI34WnT3BWSQE69Vdb7MsgHaHa?r=0&rs=1&pid=ImgDetMain&o=7&rm=3',
     inStock: true, tags: ['New Arrival'], rating: 4.5, reviews: 52
   },
   {
     id: 'grok-new-043', name: 'Roasted Arabica Coffee Beans', brand: 'Crunchy Bites', category: 'cold-drinks',
     price: 116, mrp: 121, discount: 10, unit: '750 mL', deliveryTime: '11 MINS',
-    image: 'https://images.pexels.com/photos/3407777/pexels-photo-3407777.jpeg?w=300',
+    image: 'https://tse1.mm.bing.net/th/id/OIP.o26AxKPqKqhJmIJVE4l5PQHaE7?r=0&rs=1&pid=ImgDetMain&o=7&rm=3',
     inStock: true, tags: ['New Arrival'], rating: 4.5, reviews: 53
   },
   {
     id: 'grok-new-044', name: 'Raw Organic Forest Honey', brand: 'Grokly Fresh', category: 'dairy-breakfast',
     price: 118, mrp: 123, discount: 10, unit: '200 g', deliveryTime: '11 MINS',
-    image: 'https://images.pexels.com/photos/277253/pexels-photo-277253.jpeg?w=300',
+    image: 'https://tse2.mm.bing.net/th/id/OIP.FpIr-euaiRGAZc_VBYwBTAHaHa?r=0&rs=1&pid=ImgDetMain&o=7&rm=3',
     inStock: true, tags: ['New Arrival'], rating: 4.5, reviews: 54
   },
   {
     id: 'grok-new-045', name: 'Organic White Quinoa Seeds', brand: 'Crunchy Bites', category: 'munchies',
     price: 120, mrp: 125, discount: 10, unit: '200 g', deliveryTime: '11 MINS',
-    image: 'https://images.pexels.com/photos/1583884/pexels-photo-1583884.jpeg?w=300',
+    image: 'https://organicandwholesale.com/wp-content/uploads/2021/11/organic_white_quinoa_seeds_1kg_front.jpg',
     inStock: true, tags: ['New Arrival'], rating: 4.5, reviews: 55
   },
   {
     id: 'grok-new-046', name: 'Tri-Ply Stainless Steel Kadai', brand: 'Crunchy Bites', category: 'cold-drinks',
     price: 122, mrp: 127, discount: 10, unit: '750 mL', deliveryTime: '11 MINS',
-    image: 'https://images.pexels.com/photos/1346155/pexels-photo-1346155.jpeg?w=300',
+    image: 'https://tse4.mm.bing.net/th/id/OIP.oeMp6jOkUeca5J1FYsPC6AHaHa?r=0&rs=1&pid=ImgDetMain&o=7&rm=3',
     inStock: true, tags: ['New Arrival'], rating: 4.5, reviews: 56
   },
   {
     id: 'grok-new-047', name: 'Cast Iron Non-Stick Tawa', brand: 'Grokly Fresh', category: 'dairy-breakfast',
     price: 124, mrp: 129, discount: 10, unit: '200 g', deliveryTime: '11 MINS',
-    image: 'https://images.pexels.com/photos/248412/pexels-photo-248412.jpeg?w=300',
+    image: 'https://m.media-amazon.com/images/I/71jozF7IThL._AC_.jpg',
     inStock: true, tags: ['New Arrival'], rating: 4.5, reviews: 57
   },
   {
     id: 'grok-new-048', name: 'Gluten-Free Penne Pasta', brand: 'Crunchy Bites', category: 'munchies',
     price: 126, mrp: 131, discount: 10, unit: '200 g', deliveryTime: '11 MINS',
-    image: 'https://images.pexels.com/photos/952344/pexels-photo-952344.jpeg?w=300',
+    image: 'https://i5.walmartimages.com/asr/5879db53-53d8-4104-822f-a658a0d43cbd.3e4f92e3db04004b8572ded6653bb68f.jpeg',
     inStock: true, tags: ['New Arrival'], rating: 4.5, reviews: 58
   },
   {
     id: 'grok-new-049', name: 'Authentic Tahini Sesame Paste', brand: 'Crunchy Bites', category: 'cold-drinks',
     price: 128, mrp: 133, discount: 10, unit: '750 mL', deliveryTime: '11 MINS',
-    image: 'https://images.pexels.com/photos/1071882/pexels-photo-1071882.jpeg?w=300',
+    image: 'https://tse4.mm.bing.net/th/id/OIP.W1AB-9LuzU-jtuXi8NOalgHaHa?r=0&rs=1&pid=ImgDetMain&o=7&rm=3',
     inStock: true, tags: ['New Arrival'], rating: 4.5, reviews: 59
   },
   {
     id: 'grok-new-050', name: 'Organic Bamboo Baby Wipes', brand: 'Grokly Fresh', category: 'dairy-breakfast',
     price: 130, mrp: 135, discount: 10, unit: '200 g', deliveryTime: '11 MINS',
-    image: 'https://images.pexels.com/photos/1435735/pexels-photo-1435735.jpeg?w=300',
+    image: 'https://tse1.mm.bing.net/th/id/OIP.ruCF5q4WFmkbV8DACaB1FwHaHa?r=0&rs=1&pid=ImgDetMain&o=7&rm=3',
     inStock: true, tags: ['New Arrival'], rating: 4.5, reviews: 60
   },
   {
     id: 'grok-new-051', name: 'Mild Baby Shampoo & Wash', brand: 'Crunchy Bites', category: 'munchies',
     price: 132, mrp: 137, discount: 10, unit: '200 g', deliveryTime: '11 MINS',
-    image: 'https://images.pexels.com/photos/1583884/pexels-photo-1583884.jpeg?w=300',
+    image: 'https://tse4.mm.bing.net/th/id/OIP.sLtC-tgduA1_Oy1p_WRqTQHaIp?r=0&rs=1&pid=ImgDetMain&o=7&rm=3',
     inStock: true, tags: ['New Arrival'], rating: 4.5, reviews: 61
   },
   {
     id: 'grok-new-052', name: 'Natural Plant-Based Dishwashing Gel', brand: 'Crunchy Bites', category: 'cold-drinks',
     price: 134, mrp: 139, discount: 10, unit: '750 mL', deliveryTime: '11 MINS',
-    image: 'https://images.pexels.com/photos/115655/pexels-photo-115655.jpeg?w=300',
+    image: 'https://www.borngood.in/cdn/shop/products/1-website.png?v=1698988609&width=1445',
     inStock: true, tags: ['New Arrival'], rating: 4.5, reviews: 62
   },
   {
     id: 'grok-new-053', name: 'Lavender Laundry Liquid Detergent', brand: 'Grokly Fresh', category: 'dairy-breakfast',
     price: 136, mrp: 141, discount: 10, unit: '200 g', deliveryTime: '11 MINS',
-    image: 'https://images.pexels.com/photos/236010/pexels-photo-236010.jpeg?w=300',
+    image: 'https://tse1.mm.bing.net/th/id/OIP.j1aT-efdXfWXOrMrr6hsiAHaHa?r=0&rs=1&pid=ImgDetMain&o=7&rm=3',
     inStock: true, tags: ['New Arrival'], rating: 4.5, reviews: 63
   },
   {
     id: 'grok-new-054', name: 'Imported Maple Syrup', brand: 'Crunchy Bites', category: 'munchies',
     price: 138, mrp: 143, discount: 10, unit: '200 g', deliveryTime: '11 MINS',
-    image: 'https://images.pexels.com/photos/2611517/pexels-photo-2611517.jpeg?w=300',
+    image: 'https://tse1.mm.bing.net/th/id/OIP.1fx3qYrsmbFEWq_J4ouTywHaHa?r=0&rs=1&pid=ImgDetMain&o=7&rm=3',
     inStock: true, tags: ['New Arrival'], rating: 4.5, reviews: 64
   },
   {
     id: 'grok-new-055', name: 'Italian Balsamic Vinegar of Modena', brand: 'Crunchy Bites', category: 'cold-drinks',
     price: 140, mrp: 145, discount: 10, unit: '750 mL', deliveryTime: '11 MINS',
-    image: 'https://images.pexels.com/photos/544961/pexels-photo-544961.jpeg?w=300',
+    image: 'https://th.bing.com/th/id/R.3b102efd936764b818d22db6fa418c75?rik=4X4rHtxNgGAa1w&riu=http%3a%2f%2fyummybazaar.com%2fcdn%2fshop%2fproducts%2feb871dc996c311b484-10df-429c-b81f-57ed0a90d709.jpg%3fv%3d1667857255&ehk=TXv6EQZEMtQ2%2fRbgfMbD6LAE2mF6ThiJUfH4Ov9OCZA%3d&risl=&pid=ImgRaw&r=0',
     inStock: true, tags: ['New Arrival'], rating: 4.5, reviews: 65
   },
 
