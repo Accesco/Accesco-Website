@@ -1660,7 +1660,12 @@ const [deliveryVisible, setDeliveryVisible] = useState(false);
                       <div className="service-card-body">
                         <h3 className="service-card-name">InstaStyle</h3>
                         <p className="service-card-desc">Outfit ready, before you are!</p>
-                        <Link href="/services/instastyle" className=" instastyle-btn">Explore Fashion</Link>
+                        <Link
+  href="/services/instastyle"
+  className="service-card-cta instastyle-btn"
+>
+  Explore Fashion
+</Link>
                       </div>
                     </div>
                   </div>
