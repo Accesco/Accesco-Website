@@ -582,6 +582,15 @@ export default function AuthModal({
         style={styles.shell}
         onClick={(e) => e.stopPropagation()}
       >
+        <button
+          type="button"
+          onClick={handleClose}
+          aria-label="Close"
+          style={styles.closeButton}
+        >
+          ✕
+        </button>
+
         <section
           className="auth-modal-left"
           style={styles.left}
@@ -1235,6 +1244,32 @@ shell: {
 
   fontFamily:
     'Arial, Helvetica, sans-serif',
+},
+
+closeButton: {
+  position: 'absolute',
+  top: 14,
+  left: 14,
+  zIndex: 10,
+
+  width: 28,
+  height: 28,
+
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+
+  padding: 0,
+  border: '1px solid rgba(255,255,255,0.25)',
+  borderRadius: '50%',
+
+  background: 'rgba(0,0,0,0.35)',
+  color: '#ffffff',
+
+  fontSize: 13,
+  lineHeight: 1,
+
+  cursor: 'pointer',
 },
 
   left: {
