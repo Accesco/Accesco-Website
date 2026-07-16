@@ -2346,12 +2346,7 @@ bottom: 0px;
   left: 50%;
   width: 100vw;
   transform: translateX(-50%);
-background:
-  linear-gradient(
-    rgba(255,255,255,0.45),
-    rgba(255,255,255,0.45)
-  ),
-  url("/images/wave-desktop.png") center/cover no-repeat;
+  background: url("/images/wave-desktop.png") center/cover no-repeat;
 
   z-index: -1;
   pointer-events: none;
@@ -3734,6 +3729,12 @@ background:
   object-fit: contain;
   width: 100%;
   height: 100%;
+}
+
+@media (min-width: 1025px) {
+  .floatingHeroItems {
+    display: none !important;
+  }
 }
 
 /* Mobile floating images for delivery section */
