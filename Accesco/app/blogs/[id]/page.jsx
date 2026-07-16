@@ -154,9 +154,19 @@ export default async function BlogPostPage({ params }) {
 
           <div className="post-author-row">
             <div className="author-info">
-              <div className="author-avatar">
-                <i className="ri-user-fill"></i>
-              </div>
+            <div className="author-avatar">
+  {post.title?.includes('Accesco Living Launches Public Beta') ? (
+    <Image
+      src="/images/blogs/founder.png"
+      alt={post.author || 'Author'}
+      width={40}
+      height={40}
+      className="author-avatar-image"
+    />
+  ) : (
+    <i className="ri-user-fill"></i>
+  )}
+</div>
               <div>
                 <p className="author-name">{post.author || 'ACCESCO Editorial Team'}</p>
                 <p className="author-meta">
