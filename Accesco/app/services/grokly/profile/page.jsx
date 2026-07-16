@@ -9,7 +9,8 @@ import {
   ArrowLeft, Search, Plus, Minus, MoreVertical, 
   Trash2, Copy, Edit3, Share2, ShoppingBag, 
   Info, CheckCircle2, ChevronRight, User, 
-  MapPin, CreditCard, Heart, ShoppingCart, LogOut
+  MapPin, CreditCard, Heart, ShoppingCart, LogOut,
+  Leaf, RefreshCw, Truck
 } from 'lucide-react';
 import styles from './profile.module.css';
 import { useAuth } from '../../../components/AuthProvider';
@@ -19,6 +20,171 @@ import BottomNav from '../components/BottomNav';
 import CartDrawer from '../components/CartDrawer';
 import '../styles/variables.css';
 import '../styles/globals.css';
+
+// ─── Reverse Commerce Sub-Component ────────────────────────────────────────
+function ReverseCommerceView({ orders, walletBalance, ecoHistory, formatDate, showToast }) {
+  const [rcTab, setRcTab] = useState('history');
+  const [historyFilter, setHistoryFilter] = useState('all');
+
+  const allReturnHistory = orders.flatMap(order => {
+    if (!order.returnItems || order.returnItems.length === 0) return [];
+    return [{
+      orderId: order.id,
+      date: order.timestamp,
+      items: order.returnItems,
+      credits: order.returnCredits || order.returnItems.reduce((s, i) => s + (i.creditsEarned || i.quantity * 10), 0),
+      status: order.status === 'DELIVERED' ? 'completed' : 'pending',
+    }];
+  });
+
+  const filteredHistory = historyFilter === 'all' ? allReturnHistory
+    : allReturnHistory.filter(r => r.status === historyFilter);
+
+  const totalGreenPoints = allReturnHistory
+    .filter(r => r.status === 'completed')
+    .reduce((s, r) => s + r.credits, 0) + walletBalance;
+
+  if (rcTab === 'points') {
+    return (
+      <>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '20px' }}>
+          <button onClick={() => setRcTab('history')} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#374151', padding: '4px' }}>
+            <ArrowLeft size={20} />
+          </button>
+          <h2 style={{ margin: 0, fontSize: '17px', fontWeight: 800, color: '#111827' }}>Green Points</h2>
+        </div>
+        <div style={{ background: 'linear-gradient(135deg, #15803d, #0c831f)', borderRadius: '20px', padding: '24px', color: '#fff', marginBottom: '20px', position: 'relative', overflow: 'hidden' }}>
+          <div style={{ position: 'absolute', right: '-20px', top: '-20px', width: '120px', height: '120px', borderRadius: '50%', background: 'rgba(255,255,255,0.06)' }} />
+          <p style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '1.5px', textTransform: 'uppercase', opacity: 0.8, margin: '0 0 8px' }}>YOUR GREEN POINTS</p>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <span style={{ fontSize: '48px', fontWeight: 900, lineHeight: 1 }}>{totalGreenPoints}</span>
+            <Leaf size={24} style={{ color: '#fff' }} />
+          </div>
+          <p style={{ fontSize: '12px', opacity: 0.85, margin: '8px 0 0' }}>Keep returning and earn more!</p>
+        </div>
+        <h3 style={{ fontSize: '14px', fontWeight: 700, color: '#374151', margin: '0 0 12px' }}>How to earn</h3>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '20px' }}>
+          {[
+            { icon: <RefreshCw size={18} style={{ color: '#15803d' }} />, title: 'Return reusable items', desc: 'Earn points by returning eligible reusable packaging like bottles and containers.' },
+            { icon: <Truck size={18} style={{ color: '#15803d' }} />, title: 'Choose next delivery return', desc: 'Return items in your next order and earn points instantly.' },
+            { icon: <Leaf size={18} style={{ color: '#15803d' }} />, title: 'Reduce waste', desc: 'Help us reduce waste and support a circular future.' },
+          ].map((tip, i) => (
+            <div key={i} style={{ display: 'flex', gap: '12px', alignItems: 'flex-start', padding: '14px', background: '#f9fafb', borderRadius: '12px', border: '1px solid #e5e7eb' }}>
+              <div style={{ flexShrink: 0, marginTop: '2px' }}>{tip.icon}</div>
+              <div>
+                <p style={{ margin: '0 0 2px', fontSize: '13px', fontWeight: 700, color: '#111827' }}>{tip.title}</p>
+                <p style={{ margin: 0, fontSize: '12px', color: '#6b7280' }}>{tip.desc}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+        {ecoHistory.length > 0 && (
+          <>
+            <h3 style={{ fontSize: '14px', fontWeight: 700, color: '#374151', margin: '0 0 12px' }}>Recent Activity</h3>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '20px' }}>
+              {ecoHistory.slice(0, 5).map(item => (
+                <div key={item.id} style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '12px', background: '#fff', borderRadius: '12px', border: '1px solid #e5e7eb' }}>
+                  <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: '#f0fdf4', border: '1px solid #bbf7d0', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                    <RefreshCw size={16} style={{ color: '#15803d' }} />
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <p style={{ margin: '0 0 2px', fontSize: '13px', fontWeight: 600, color: '#111827' }}>Returned {item.bags} bag{item.bags > 1 ? 's' : ''}</p>
+                    <p style={{ margin: 0, fontSize: '11px', color: '#9ca3af' }}>{formatDate(item.date)}</p>
+                  </div>
+                  <span style={{ fontSize: '14px', fontWeight: 800, color: '#16a34a' }}>+{item.credits}</span>
+                </div>
+              ))}
+            </div>
+          </>
+        )}
+        <button
+          style={{ width: '100%', padding: '14px', borderRadius: '14px', border: 'none', background: 'linear-gradient(135deg, #16a34a, #0c831f)', color: '#fff', fontWeight: 700, fontSize: '15px', cursor: 'pointer', boxShadow: '0 4px 14px rgba(12,131,31,0.3)' }}
+          onClick={() => showToast('Points redemption coming soon!', 'info')}
+        >
+          Redeem Points
+        </button>
+      </>
+    );
+  }
+
+  return (
+    <>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
+        <h2 style={{ margin: 0, fontSize: '17px', fontWeight: 800, color: '#111827' }}>Return History</h2>
+        <button onClick={() => setRcTab('points')} style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '8px 14px', borderRadius: '20px', border: '1.5px solid #86efac', background: '#f0fdf4', color: '#15803d', fontWeight: 700, fontSize: '12px', cursor: 'pointer' }}>
+          Green Points: {totalGreenPoints} pts
+        </button>
+      </div>
+      <div style={{ display: 'flex', gap: '8px', marginBottom: '20px' }}>
+        {['all', 'completed', 'pending'].map(tab => (
+          <button key={tab} onClick={() => setHistoryFilter(tab)} style={{ padding: '7px 16px', borderRadius: '20px', border: '1.5px solid', cursor: 'pointer', fontWeight: 600, fontSize: '12px', borderColor: historyFilter === tab ? '#15803d' : '#e5e7eb', background: historyFilter === tab ? '#15803d' : '#fff', color: historyFilter === tab ? '#fff' : '#6b7280' }}>
+            {tab.charAt(0).toUpperCase() + tab.slice(1)}
+          </button>
+        ))}
+      </div>
+      {allReturnHistory.length === 0 ? (
+        <div style={{ textAlign: 'center', padding: '48px 24px', color: '#9ca3af' }}>
+          <div style={{ fontSize: '32px', marginBottom: '12px', color: '#9ca3af' }}>[Empty]</div>
+          <p style={{ fontSize: '14px', margin: 0 }}>No return history yet.</p>
+          <p style={{ fontSize: '12px', margin: '6px 0 0', color: '#6b7280' }}>Add dairy/milk items to cart and select them for return!</p>
+        </div>
+      ) : (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+          {(historyFilter === 'all' || historyFilter === 'pending') && filteredHistory.filter(r => r.status === 'pending').map(ret => (
+            <div key={ret.orderId} style={{ background: '#fff', border: '1px solid #e5e7eb', borderRadius: '14px', padding: '14px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <span style={{ fontSize: '13px', fontWeight: 700, color: '#111827' }}>Order {ret.orderId}</span>
+                <span style={{ fontSize: '11px', fontWeight: 700, color: '#0c831f', background: '#dcfce7', padding: '3px 10px', borderRadius: '20px' }}>Next Delivery</span>
+              </div>
+              {ret.items.map(item => (
+                <div key={item.id} style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <img src={item.image} alt={item.name} style={{ width: '36px', height: '36px', borderRadius: '8px', objectFit: 'cover', border: '1px solid #e5e7eb' }} onError={e => { e.target.src = `https://placehold.co/36x36/e8f5e9/0c831f?text=${item.name[0]}`; }} />
+                  <div>
+                    <p style={{ margin: 0, fontSize: '13px', fontWeight: 600, color: '#374151' }}>{item.name}</p>
+                    <p style={{ margin: 0, fontSize: '11px', color: '#9ca3af' }}>{item.quantity} unit{item.quantity > 1 ? 's' : ''}</p>
+                  </div>
+                </div>
+              ))}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', color: '#6b7280', borderTop: '1px solid #f1f5f9', paddingTop: '8px' }}>
+                <Truck size={14} style={{ color: '#6b7280' }} />
+                <span>We'll collect during your next Grokly order.</span>
+              </div>
+            </div>
+          ))}
+          {(historyFilter === 'all' || historyFilter === 'completed') && filteredHistory.filter(r => r.status === 'completed').length > 0 && (
+            <>
+              <h3 style={{ fontSize: '13px', fontWeight: 700, color: '#374151', margin: '8px 0 4px' }}>Completed Returns</h3>
+              {filteredHistory.filter(r => r.status === 'completed').map(ret => (
+                <div key={ret.orderId} style={{ background: '#fff', border: '1px solid #e5e7eb', borderRadius: '14px', padding: '14px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <span style={{ fontSize: '13px', fontWeight: 700, color: '#111827' }}>Order {ret.orderId}</span>
+                    <span style={{ fontSize: '11px', color: '#9ca3af' }}>{formatDate(ret.date)}</span>
+                  </div>
+                  {ret.items.map(item => (
+                    <div key={item.id} style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                      <img src={item.image} alt={item.name} style={{ width: '36px', height: '36px', borderRadius: '8px', objectFit: 'cover', border: '1px solid #e5e7eb' }} onError={e => { e.target.src = `https://placehold.co/36x36/e8f5e9/0c831f?text=${item.name[0]}`; }} />
+                      <div style={{ flex: 1 }}>
+                        <p style={{ margin: 0, fontSize: '13px', fontWeight: 600, color: '#374151' }}>{item.name}</p>
+                        <p style={{ margin: 0, fontSize: '11px', color: '#9ca3af' }}>{item.quantity} unit{item.quantity > 1 ? 's' : ''}</p>
+                      </div>
+                      <span style={{ fontSize: '12px', fontWeight: 700, color: '#16a34a', whiteSpace: 'nowrap' }}>+{item.creditsEarned || item.quantity * 10} pts</span>
+                    </div>
+                  ))}
+                </div>
+              ))}
+            </>
+          )}
+          {filteredHistory.length === 0 && <div style={{ textAlign: 'center', padding: '32px', color: '#9ca3af', fontSize: '13px' }}>No {historyFilter} returns found.</div>}
+        </div>
+      )}
+      <div style={{ marginTop: '20px', display: 'flex', alignItems: 'center', gap: '8px', padding: '12px 14px', background: '#f0fdf4', borderRadius: '12px', color: '#15803d', fontSize: '12px' }}>
+        <Leaf size={14} style={{ color: '#15803d' }} />
+        <span>Green Points are added once the return is successfully completed.</span>
+      </div>
+    </>
+  );
+}
+// ─────────────────────────────────────────────────────────────────────────
 
 // Initial baskets mock data
 const INITIAL_BASKETS = [
@@ -416,7 +582,7 @@ function GroklyProfileInner() {
                 </div>
                 <div className={styles.userInfo}>
                   <h1>{profile.name}</h1>
-                  <p>{profile.phone} • {profile.email}</p>
+                  <p>{profile.phone} · {profile.email}</p>
                 </div>
               </div>
 
@@ -445,7 +611,7 @@ function GroklyProfileInner() {
 
                 <button className={styles.quickCard} onClick={() => setCurrentView('reverse-commerce')}>
                   <div className={styles.quickIconBg} style={{ background: '#e8f5e9' }}>
-                    <span style={{ fontSize: '20px' }}>♻️</span>
+                    <RefreshCw size={22} style={{ color: '#2e7d32' }} />
                   </div>
                   <span className={styles.quickLabel}>Eco-Return</span>
                 </button>
@@ -498,7 +664,7 @@ function GroklyProfileInner() {
                   className={`${styles.navTab} ${currentView === 'reverse-commerce' ? styles.activeTab : ''}`}
                   onClick={() => setCurrentView('reverse-commerce')}
                 >
-                  <span style={{ marginRight: '6px' }}>♻️</span>
+                  <RefreshCw size={18} style={{ marginRight: '6px' }} />
                   <span>Eco-Return (Reuse)</span>
                 </button>
                 <button 
@@ -552,7 +718,7 @@ function GroklyProfileInner() {
                             <div className={styles.orderId}>{order.id}</div>
                             <div className={styles.orderDate}>{formatDate(order.timestamp)}</div>
                             <div className={styles.orderItems}>
-                              {order.items.length} items · ₹{order.total}
+                              {order.items.length} items · Rs.{order.total}
                             </div>
                           </div>
                           <div className={styles.orderStatus} data-status={order.status}>
@@ -678,7 +844,7 @@ function GroklyProfileInner() {
                 <div className={styles.paneCardDetail}>
                   <div className={styles.detailCountHeader}>
                     <span>{selectedBasket.items.length} Items in Basket</span>
-                    <span className={styles.detailEstPrice}>Total Value: ₹{getBasketTotal(selectedBasket)}</span>
+                    <span className={styles.detailEstPrice}>Total Value: Rs.{getBasketTotal(selectedBasket)}</span>
                   </div>
 
                   <div className={styles.detailItemsScroll}>
@@ -700,9 +866,9 @@ function GroklyProfileInner() {
                             <h4 className={styles.detailItemName}>{prod.name}</h4>
                             <p className={styles.detailItemUnit}>{prod.unit || '1 pack'}</p>
                             <div className={styles.detailItemPricing}>
-                              <span className={styles.detailPriceActual}>₹{prod.price}</span>
+                              <span className={styles.detailPriceActual}>Rs.{prod.price}</span>
                               {prod.mrp && prod.mrp > prod.price && (
-                                <span className={styles.detailPriceMrp}>₹{prod.mrp}</span>
+                                <span className={styles.detailPriceMrp}>Rs.{prod.mrp}</span>
                               )}
                             </div>
                           </div>
@@ -733,7 +899,7 @@ function GroklyProfileInner() {
                       onClick={() => handleAddBasketToCart(selectedBasket)}
                     >
                       <ShoppingBag size={20} style={{ marginRight: 8 }} />
-                      Add Basket to Cart · ₹{getBasketTotal(selectedBasket)}
+                      Add Basket to Cart · Rs.{getBasketTotal(selectedBasket)}
                     </button>
                   </div>
                 </div>
@@ -775,9 +941,9 @@ function GroklyProfileInner() {
                               <h4 className={styles.detailItemName}>{prod.name}</h4>
                               <p className={styles.detailItemUnit}>{prod.unit || '1 pack'}</p>
                               <div className={styles.detailItemPricing}>
-                                <span className={styles.detailPriceActual}>₹{prod.price}</span>
+                                <span className={styles.detailPriceActual}>Rs.{prod.price}</span>
                                 {prod.mrp && prod.mrp > prod.price && (
-                                  <span className={styles.detailPriceMrp}>₹{prod.mrp}</span>
+                                  <span className={styles.detailPriceMrp}>Rs.{prod.mrp}</span>
                                 )}
                               </div>
                             </div>
@@ -847,111 +1013,29 @@ function GroklyProfileInner() {
                           style={{ background: '#ff3f6c' }}
                         >
                           <ShoppingBag size={18} style={{ marginRight: 8 }} />
-                          Proceed to Checkout (₹{Object.entries(cart).reduce((sum, [id, qty]) => sum + (getProductInfo(id).price * qty), 0)})
+                          Proceed to Checkout ({Object.entries(cart).reduce((sum, [id, qty]) => sum + (getProductInfo(id).price * qty), 0)})
                         </button>
                       )}
                     </div>
                   )}
                 </div>
               )}
-
-              {/* View 5: Reverse Commerce Eco-Return Dashboard */}
+              {/* View 5: Reverse Commerce — Return History + Green Points */}
               {currentView === 'reverse-commerce' && (
                 <div className={styles.paneCard}>
-                  <div className={styles.paneHeader} style={{ display: 'flex', flexDirection: 'column', gap: '8px', alignItems: 'flex-start' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <span style={{ fontSize: '24px' }}>♻️</span>
-                      <h2 className={styles.paneTitle} style={{ margin: 0 }}>Grokly Eco-Return Dashboard</h2>
-                    </div>
-                    <p style={{ margin: 0, fontSize: '13px', color: '#666' }}>Return clean packaging bags & boxes on delivery to earn Green Credits.</p>
-                  </div>
-
-                  {/* Impact Stats Grid */}
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '16px', marginTop: '20px' }}>
-                    <div style={{ background: '#f4faf5', border: '1px solid #d0ebd6', borderRadius: '16px', padding: '16px', display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                      <span style={{ fontSize: '12px', color: '#555', fontWeight: 600 }}>Total Bags Returned</span>
-                      <span style={{ fontSize: '28px', fontWeight: 800, color: '#0c831f' }}>{recycledBags}</span>
-                    </div>
-
-                    <div style={{ background: '#f4faf5', border: '1px solid #d0ebd6', borderRadius: '16px', padding: '16px', display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                      <span style={{ fontSize: '12px', color: '#555', fontWeight: 600 }}>CO2 Emissions Offset</span>
-                      <span style={{ fontSize: '28px', fontWeight: 800, color: '#0c831f' }}>{(recycledBags * 0.25).toFixed(2)} kg</span>
-                    </div>
-
-                    <div style={{ background: '#f4faf5', border: '1px solid #d0ebd6', borderRadius: '16px', padding: '16px', display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                      <span style={{ fontSize: '12px', color: '#555', fontWeight: 600 }}>Green Credits Earned</span>
-                      <span style={{ fontSize: '28px', fontWeight: 800, color: '#0c831f' }}>₹{walletBalance}</span>
-                    </div>
-                  </div>
-
-                  {/* Eco-Tier Badge */}
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginTop: '20px', padding: '16px', background: 'linear-gradient(to right, #0c831f, #059669)', borderRadius: '16px', color: '#fff' }}>
-                    <span style={{ fontSize: '32px' }}>🌱</span>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-                      <span style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '1px', opacity: 0.8, fontWeight: 700 }}>Your Eco Tier</span>
-                      <span style={{ fontSize: '18px', fontWeight: 800 }}>
-                        {recycledBags >= 15 ? 'Planet Savior' : recycledBags >= 5 ? 'Green Guardian' : 'Eco Novice'}
-                      </span>
-                      <span style={{ fontSize: '12px', opacity: 0.9 }}>
-                        {recycledBags >= 15 ? 'Awesome! You are a champion of eco-friendly returns.' : `Return ${15 - recycledBags} more bags to unlock "Planet Savior" tier.`}
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Return Guidelines */}
-                  <div style={{ marginTop: '24px' }}>
-                    <h3 style={{ fontSize: '15px', fontWeight: 700, color: '#333', marginBottom: '12px' }}>How it works</h3>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                      <div style={{ display: 'flex', gap: '12px', alignItems: 'flex-start' }}>
-                        <span style={{ background: '#eafaf0', color: '#0c831f', width: '24px', height: '24px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: '12px', flexShrink: 0 }}>1</span>
-                        <p style={{ margin: 0, fontSize: '13px', color: '#555', lineHeight: '1.4' }}>
-                          <strong>Choose Return at Checkout:</strong> Toggle the "Return packaging bags" option on the Secure Checkout page and select how many clean bags or boxes you want to return.
-                        </p>
-                      </div>
-                      <div style={{ display: 'flex', gap: '12px', alignItems: 'flex-start' }}>
-                        <span style={{ background: '#eafaf0', color: '#0c831f', width: '24px', height: '24px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: '12px', flexShrink: 0 }}>2</span>
-                        <p style={{ margin: 0, fontSize: '13px', color: '#555', lineHeight: '1.4' }}>
-                          <strong>Handover to Rider:</strong> When the delivery partner arrives at your door, hand over the empty bags/boxes to them.
-                        </p>
-                      </div>
-                      <div style={{ display: 'flex', gap: '12px', alignItems: 'flex-start' }}>
-                        <span style={{ background: '#eafaf0', color: '#0c831f', width: '24px', height: '24px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: '12px', flexShrink: 0 }}>3</span>
-                        <p style={{ margin: 0, fontSize: '13px', color: '#555', lineHeight: '1.4' }}>
-                          <strong>Get Credited Instantly:</strong> Our rider checks and confirms the return. ₹10 per bag is instantly credited to your Grokly Wallet as Green Credits!
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Return Log History */}
-                  <div style={{ marginTop: '28px' }}>
-                    <h3 style={{ fontSize: '15px', fontWeight: 700, color: '#333', marginBottom: '12px' }}>Eco-Return History</h3>
-                    {ecoHistory.length === 0 ? (
-                      <div style={{ padding: '24px', border: '1px dashed #cce0d2', borderRadius: '12px', textAlign: 'center', color: '#777', fontSize: '13px' }}>
-                        No eco-returns logged yet. Place an order and opt-in to return packaging to see history here!
-                      </div>
-                    ) : (
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                        {ecoHistory.map((item) => (
-                          <div key={item.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 16px', background: '#fff', border: '1px solid #eef2ee', borderRadius: '12px' }}>
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-                              <span style={{ fontSize: '13px', fontWeight: 700, color: '#333' }}>Returned {item.bags} bags</span>
-                              <span style={{ fontSize: '11px', color: '#777' }}>Order {item.orderId} • {formatDate(item.date)}</span>
-                            </div>
-                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '2px' }}>
-                              <span style={{ fontSize: '14px', fontWeight: 800, color: '#0c831f' }}>+₹{item.credits}</span>
-                              <span style={{ fontSize: '10px', color: '#4caf50', fontWeight: 600 }}>🌱 {item.co2Offset}kg CO2 saved</span>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
+                  <ReverseCommerceView
+                    orders={orders}
+                    walletBalance={walletBalance}
+                    ecoHistory={ecoHistory}
+                    formatDate={formatDate}
+                    showToast={showToast}
+                  />
                 </div>
               )}
             </div>
           </div>
         </div>
+
       </main>
 
       {/* Cart Drawer */}

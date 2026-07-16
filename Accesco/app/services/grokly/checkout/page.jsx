@@ -14,11 +14,12 @@ import AuthModal from '../../../components/AuthModal';
 import { payWithRazorpay } from '@/lib/razorpayService';
 import { 
   ArrowLeft, MapPin, Phone, User, CreditCard, 
-  ShieldCheck, ShoppingBag, Clock, Zap, Sparkles 
+  ShieldCheck, ShoppingBag, Clock, Zap, Sparkles,
+  RefreshCw, Leaf
 } from 'lucide-react';
 
 export default function GroklyCheckout() {
-  const { cart, placeOrder, location, cartHydrated } = useGrokly();
+  const { cart, placeOrder, location, cartHydrated, returnItems, setReturnItems } = useGrokly();
   const router = useRouter();
   const { user, signIn } = useAuth();
   const [isProcessing, setIsProcessing] = useState(false);
@@ -30,8 +31,6 @@ export default function GroklyCheckout() {
     address: location || 'Bengaluru',
     phone: '+91 9022217637'
   });
-  const [packagingOptIn, setPackagingOptIn] = useState(true);
-  const [bagsToReturn, setBagsToReturn] = useState(2);
 
   useEffect(() => {
     if (location) {
@@ -201,8 +200,10 @@ export default function GroklyCheckout() {
         phone: activeUser?.phone || customerDetails.phone,
         customerEmail: activeUser?.email || null,
         userId: activeUser?.uid || activeUser?.id || null,
-        packagingOptIn,
-        packagingBagsToReturn: bagsToReturn,
+        packagingOptIn: returnItems.length > 0,
+        packagingBagsToReturn: returnItems.reduce((s, i) => s + i.quantity, 0),
+        returnItems,
+        returnCredits: returnItems.reduce((s, i) => s + (i.creditsEarned || i.quantity * 10), 0),
         ...getDeliveryCoords(),
       });
 
@@ -389,57 +390,44 @@ export default function GroklyCheckout() {
             <p className={styles.speedFooter}>Eco saver batches deliveries along similar routes, reducing fuel burn and delivery cost.</p>
           </section>
 
-          {/* Reverse Commerce & Reusable Packaging Section */}
-          <section className={styles.section} style={{ background: '#f2faf4', borderColor: '#d0ebd6', borderWidth: '1px', borderStyle: 'solid', padding: '20px', borderRadius: '16px' }}>
-            <div className={styles.sectionHeader} style={{ marginBottom: '12px', display: 'flex', alignItems: 'center' }}>
-              <span style={{ fontSize: '20px', marginRight: '8px' }}>♻️</span>
-              <h2 style={{ color: '#0c831f', fontWeight: 'bold', margin: 0 }}>Reverse Commerce: Eco-Return</h2>
-            </div>
-            <p style={{ fontSize: '13px', color: '#444', lineHeight: '1.5', margin: '0 0 16px 0' }}>
-              Hand over clean packaging bags or insulated delivery boxes from your previous orders to our delivery partner and get <strong>₹10 cashback</strong> in your Grokly Wallet per bag returned.
-            </p>
-            
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 16px', background: '#fff', borderRadius: '12px', border: '1px solid #d8ebdcf0', marginBottom: packagingOptIn ? '12px' : 0 }}>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-                <span style={{ fontSize: '14px', fontWeight: 700, color: '#222' }}>Return packaging bags</span>
-                <span style={{ fontSize: '11px', color: '#666' }}>Handover clean empty bags to rider</span>
-              </div>
-              <input 
-                type="checkbox" 
-                checked={packagingOptIn} 
-                onChange={(e) => setPackagingOptIn(e.target.checked)}
-                style={{ width: '20px', height: '20px', accentColor: '#0c831f', cursor: 'pointer', margin: 0 }}
-              />
+          {/* Reverse Commerce: Eco-Return Section */}
+          <section className={styles.section} style={{ background: '#f0fdf4', borderColor: '#86efac', borderWidth: '1.5px', borderStyle: 'solid', padding: '18px', borderRadius: '16px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
+              <RefreshCw size={18} style={{ color: '#15803d' }} />
+              <h2 style={{ color: '#15803d', fontWeight: 800, margin: 0, fontSize: '15px' }}>Reverse Commerce · Eco-Return</h2>
             </div>
 
-            {packagingOptIn && (
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 16px', background: '#fff', borderRadius: '12px', border: '1px solid #d8ebdcf0' }}>
-                <span style={{ fontSize: '13px', fontWeight: 600, color: '#333' }}>Bags to return:</span>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-                  <button 
-                    type="button"
-                    onClick={() => setBagsToReturn(b => Math.max(1, b - 1))}
-                    style={{ width: '28px', height: '28px', borderRadius: '50%', border: '1px solid #cce0d2', background: '#f5faf6', color: '#0c831f', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', fontSize: '16px' }}
-                  >
-                    -
-                  </button>
-                  <span style={{ fontSize: '15px', fontWeight: 800, color: '#111', minWidth: '16px', textAlign: 'center' }}>{bagsToReturn}</span>
-                  <button 
-                    type="button"
-                    onClick={() => setBagsToReturn(b => Math.min(10, b + 1))}
-                    style={{ width: '28px', height: '28px', borderRadius: '50%', border: '1px solid #cce0d2', background: '#f5faf6', color: '#0c831f', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', fontSize: '16px' }}
-                  >
-                    +
-                  </button>
+            {returnItems.length === 0 ? (
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 14px', background: '#fff', borderRadius: '12px', border: '1px solid #bbf7d0' }}>
+                <div>
+                  <div style={{ fontSize: '13px', fontWeight: 700, color: '#374151' }}>No return items selected</div>
+                  <div style={{ fontSize: '11px', color: '#6b7280', marginTop: '2px' }}>Go back to cart to select packaging to return</div>
                 </div>
+                <div style={{ fontSize: '13px', fontWeight: 700, color: '#9ca3af' }}>[Empty]</div>
               </div>
-            )}
-
-            {packagingOptIn && (
-              <div style={{ marginTop: '12px', display: 'flex', alignItems: 'center', gap: '8px', color: '#0c831f', fontSize: '12px', fontWeight: 700, background: '#e3f7e7', padding: '10px 14px', borderRadius: '10px' }}>
-                <span>🌱</span>
-                <span>Est. Cashback: ₹{bagsToReturn * 10} Wallet Balance credited instantly upon delivery!</span>
-              </div>
+            ) : (
+              <>
+                <p style={{ fontSize: '12px', color: '#374151', margin: '0 0 10px', lineHeight: '1.5' }}>
+                  Hand over clean packaging to our rider when your order arrives and earn <strong style={{ color: '#15803d' }}>Green Points</strong> instantly!
+                </p>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '10px' }}>
+                  {returnItems.map(item => (
+                    <div key={item.id} style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '10px 12px', background: '#fff', borderRadius: '10px', border: '1px solid #bbf7d0' }}>
+                      <img src={item.image} alt={item.name} style={{ width: '40px', height: '40px', borderRadius: '8px', objectFit: 'cover', border: '1px solid #d1fae5' }} onError={e => { e.target.src = `https://placehold.co/40x40/e8f5e9/0c831f?text=${item.name[0]}`; }} />
+                      <div style={{ flex: 1 }}>
+                        <div style={{ fontSize: '13px', fontWeight: 700, color: '#111827' }}>{item.name}</div>
+                        <div style={{ fontSize: '11px', color: '#6b7280' }}>×{item.quantity} · Reusable</div>
+                      </div>
+                      <span style={{ fontSize: '12px', fontWeight: 700, color: '#16a34a' }}>+₹{item.creditsEarned || item.quantity * 10}</span>
+                    </div>
+                  ))}
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', background: '#dcfce7', padding: '10px 14px', borderRadius: '10px', color: '#15803d', fontSize: '12px', fontWeight: 700 }}>
+                  <Leaf size={14} style={{ color: '#15803d' }} />
+                  <span>Estimated Green Points: ₹{returnItems.reduce((s, i) => s + (i.creditsEarned || i.quantity * 10), 0)} credited on delivery</span>
+                  <button onClick={() => setReturnItems([])} style={{ marginLeft: 'auto', background: 'none', border: 'none', cursor: 'pointer', fontSize: '12px', color: '#6b7280', textDecoration: 'underline' }}>Clear</button>
+                </div>
+              </>
             )}
           </section>
           

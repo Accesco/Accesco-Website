@@ -382,7 +382,7 @@ export default function AppShowcase() {
           <h3 className={styles.cardTitle}>Get Early Access</h3>
           <p className={styles.cardSubtitle}>
             {currentStep === 1 &&
-              "Join the waitlist for early access to Accesco Living’s unified commerce platform, built for groceries, food delivery, fashion, dining, home services, and member-only launch benefits."}
+              "Join the waitlist for early access to Accesco Living's unified commerce platform, built for groceries, food delivery, fashion, dining, home services, and member-only launch benefits."}
             {currentStep === 2 &&
               "Select the experiences you are most interested in so we can personalize your early access updates, offers, and launch notifications."}
             {currentStep === 3 &&
@@ -494,7 +494,6 @@ export default function AppShowcase() {
                     onClick={handleNext}
                   >
                     <span>Continue</span>
-
                     <ArrowRight size={18} />
                   </button>
                 </div>
@@ -665,6 +664,7 @@ export default function AppShowcase() {
           </div>
         </div>
       </div>
+
       {/* Feedback Section */}
       <section className={styles.feedbackSection}>
         <div className={styles.feedbackCard}>
@@ -809,6 +809,7 @@ export default function AppShowcase() {
           </div>
         </div>
       </section>
+
       {/* Unchanged bottom app download segments */}
       <div className={styles.downloadAppSection}>
         <img
