@@ -1,15 +1,19 @@
 'use client'
 
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { db, auth } from '../../lib/firebase'
 import {
   doc,
+  getDoc,
   setDoc,
   serverTimestamp,
 } from 'firebase/firestore'
 import {
   RecaptchaVerifier,
   signInWithPhoneNumber,
+  signInWithPopup,
+  GoogleAuthProvider,
+  OAuthProvider,
   signOut,
 } from 'firebase/auth'
 import {
@@ -81,8 +85,28 @@ export default function AuthModal({
     useState(false)
   const [confirmationResult, setConfirmationResult] =
     useState(null)
+  // Seconds left before "Resend OTP" is clickable again
+  const [resendCooldown, setResendCooldown] = useState(0)
 
   const recaptchaVerifierRef = useRef(null)
+
+  useEffect(() => {
+    if (resendCooldown <= 0) return undefined
+
+    const timeout = setTimeout(
+      () => setResendCooldown((s) => s - 1),
+      1000,
+    )
+
+    return () => clearTimeout(timeout)
+  }, [resendCooldown])
+
+  // Social sign-in (Google / Apple via Firebase popup)
+  const [googleLoading, setGoogleLoading] = useState(false)
+  const [appleLoading, setAppleLoading] = useState(false)
+  // Set once a social provider returns a user who still needs phone verification
+  // (i.e. no prior account, or an existing account with phoneVerified !== true)
+  const [pendingSocialUser, setPendingSocialUser] = useState(null)
 
   // Optional email verification state
   const [emailCode, setEmailCode] = useState('')
@@ -108,10 +132,15 @@ export default function AuthModal({
     setOtpCode('')
     setPhoneCodeSent(false)
     setConfirmationResult(null)
+    setResendCooldown(0)
 
     setEmailCode('')
     setEmailCodeSent(false)
     setEmailVerified(false)
+
+    setGoogleLoading(false)
+    setAppleLoading(false)
+    setPendingSocialUser(null)
 
     if (recaptchaVerifierRef.current) {
       recaptchaVerifierRef.current.clear()
@@ -221,6 +250,7 @@ export default function AuthModal({
 
       setConfirmationResult(result)
       setPhoneCodeSent(true)
+      setResendCooldown(45)
     } catch (err) {
       console.error('Phone OTP send failed:', err)
 
@@ -230,6 +260,148 @@ export default function AuthModal({
       )
     } finally {
       setLoading(false)
+    }
+  }
+
+  // Completes sign-in for a social user whose phone was already verified on
+  // a prior visit — no OTP needed again, just restore the app session.
+  const completeVerifiedSocialUser = async (existing, firebaseUser) => {
+    await signOut(auth)
+
+    const user = {
+      name: existing.name || firebaseUser.displayName || 'Accesco User',
+      phone: existing.phone || firebaseUser.phoneNumber || null,
+      email: existing.email || firebaseUser.email || null,
+      photoURL: existing.photoURL || firebaseUser.photoURL || null,
+      uid: firebaseUser.uid,
+    }
+
+    localStorage.setItem('accesco_user', JSON.stringify(user))
+    setName(user.name)
+    setSuccess(true)
+
+    setTimeout(() => {
+      onSuccess && onSuccess(user)
+      handleClose()
+    }, 1300)
+  }
+
+  // After a Google/Apple popup succeeds: if that account already has a
+  // verified phone on file, sign the user straight in. Otherwise stash the
+  // provider profile and route to the phone-verification step — phone is
+  // mandatory for every account regardless of how it was created.
+  const handleSocialAuthResult = async (firebaseUser, provider) => {
+    const snap = await getDoc(doc(db, 'users', firebaseUser.uid))
+    const existing = snap.exists() ? snap.data() : null
+
+    if (existing?.phoneVerified) {
+      await completeVerifiedSocialUser(existing, firebaseUser)
+      return
+    }
+
+    setPendingSocialUser({
+      uid: firebaseUser.uid,
+      name: firebaseUser.displayName || '',
+      email: firebaseUser.email || '',
+      photoURL: firebaseUser.photoURL || null,
+      provider,
+    })
+
+    setName(firebaseUser.displayName || '')
+    setEmail(firebaseUser.email || '')
+    setPhone('')
+    setPhoneCodeSent(false)
+    setConfirmationResult(null)
+    setStep('social-phone')
+  }
+
+  const isPopupDismissed = (err) =>
+    err.code === 'auth/popup-closed-by-user' ||
+    err.code === 'auth/cancelled-popup-request'
+
+  const handleGoogleSignIn = async () => {
+    if (googleLoading || appleLoading) return
+
+    setGoogleLoading(true)
+    setError('')
+
+    try {
+      const provider = new GoogleAuthProvider()
+      const result = await signInWithPopup(auth, provider)
+
+      await handleSocialAuthResult(result.user, 'google')
+    } catch (err) {
+      console.error('Google sign-in failed:', err)
+
+      if (!isPopupDismissed(err)) {
+        setError(
+          err.message ||
+            'Google sign-in failed. Please try again.',
+        )
+      }
+    } finally {
+      setGoogleLoading(false)
+    }
+  }
+
+  const handleAppleSignIn = async () => {
+    if (googleLoading || appleLoading) return
+
+    setAppleLoading(true)
+    setError('')
+
+    try {
+      const provider = new OAuthProvider('apple.com')
+      provider.addScope('email')
+      provider.addScope('name')
+
+      const result = await signInWithPopup(auth, provider)
+
+      await handleSocialAuthResult(result.user, 'apple')
+    } catch (err) {
+      console.error('Apple sign-in failed:', err)
+
+      if (!isPopupDismissed(err)) {
+        setError(
+          err.message ||
+            'Apple sign-in failed. Please try again.',
+        )
+      }
+    } finally {
+      setAppleLoading(false)
+    }
+  }
+
+  // Phone step for social sign-in: same phone rules as the details form,
+  // then reuse the normal OTP-send flow.
+  const handleSocialPhoneSubmit = async (e) => {
+    e.preventDefault()
+    setError('')
+
+    const p = phone.trim()
+
+    if (!p) {
+      return setError('Please enter your phone number')
+    }
+
+    if (!/^[+\d\s\-()]{7,20}$/.test(p)) {
+      return setError(
+        'Enter a valid phone number with country code',
+      )
+    }
+
+    const docId = p.replace(/[^\d]/g, '')
+
+    if (docId.length < 7) {
+      return setError(
+        'Enter a valid phone number including digits',
+      )
+    }
+
+    setStep('verify')
+
+    if (!phoneCodeSent) {
+      sendPhoneOtp()
     }
   }
 
@@ -313,10 +485,18 @@ export default function AuthModal({
         otpCode.trim(),
       )
 
-      const n = name.trim()
       const p = phone.trim()
-      const em = email.trim()
-      const docId = p.replace(/[^\d]/g, '')
+      const n =
+        pendingSocialUser
+          ? pendingSocialUser.name || name.trim() || 'Accesco User'
+          : name.trim()
+      const em =
+        pendingSocialUser
+          ? pendingSocialUser.email || email.trim()
+          : email.trim()
+      const docId = pendingSocialUser
+        ? pendingSocialUser.uid
+        : p.replace(/[^\d]/g, '')
 
       await setDoc(
         doc(db, 'users', docId),
@@ -324,6 +504,8 @@ export default function AuthModal({
           name: n,
           phone: p,
           email: em || null,
+          photoURL: pendingSocialUser?.photoURL || null,
+          provider: pendingSocialUser?.provider || 'phone',
           phoneVerified: true,
           emailVerified,
           createdAt: serverTimestamp(),
@@ -341,6 +523,7 @@ export default function AuthModal({
         name: n,
         phone: p,
         email: em || null,
+        photoURL: pendingSocialUser?.photoURL || null,
         uid: docId,
       }
 
@@ -380,6 +563,13 @@ export default function AuthModal({
       setLoading(false)
     }
   }
+
+  const formatCooldown = (s) =>
+    `${Math.floor(s / 60)
+      .toString()
+      .padStart(2, '0')}:${(s % 60)
+      .toString()
+      .padStart(2, '0')}`
 
   const inputStyle = (field) => ({
     width: '100%',
@@ -450,6 +640,20 @@ export default function AuthModal({
                   <br />a smarter way to live and shop
                 </p>
               </>
+            ) : step === 'social-phone' ? (
+              <>
+                <h2 style={styles.heroTitle}>
+                  Verify Your
+                  <br />
+                  Phone Number
+                </h2>
+
+                <p style={styles.heroSub}>
+                  Add Your Mobile Number to
+                  <br />
+                  Secure and Complete your Account
+                </p>
+              </>
             ) : (
               <>
                 <h2 style={styles.heroTitle}>
@@ -509,17 +713,37 @@ export default function AuthModal({
                     <button
                       type="button"
                       style={styles.socialButton}
+                      onClick={handleGoogleSignIn}
+                      disabled={
+                        googleLoading ||
+                        appleLoading ||
+                        loading
+                      }
                     >
                       <GoogleIcon />
-                      <span>Google</span>
+                      <span>
+                        {googleLoading
+                          ? 'Signing in…'
+                          : 'Google'}
+                      </span>
                     </button>
 
                     <button
                       type="button"
                       style={styles.socialButton}
+                      onClick={handleAppleSignIn}
+                      disabled={
+                        googleLoading ||
+                        appleLoading ||
+                        loading
+                      }
                     >
                       <AppleIcon />
-                      <span>Apple</span>
+                      <span>
+                        {appleLoading
+                          ? 'Signing in…'
+                          : 'Apple'}
+                      </span>
                     </button>
                   </div>
 
@@ -654,6 +878,75 @@ export default function AuthModal({
                     </button>
                   </form>
                 </div>
+              ) : step === 'social-phone' ? (
+                <div style={styles.detailsScreen}>
+                  <header style={styles.signupHeader}>
+                    <h2 style={styles.signupTitle}>
+                      Verify Your Phone
+                    </h2>
+
+                    <p style={styles.signupSubtitle}>
+                      {pendingSocialUser?.name
+                        ? `Hi ${
+                            pendingSocialUser.name.split(
+                              ' ',
+                            )[0]
+                          }, add`
+                        : 'Add'}{' '}
+                      your mobile number to finish
+                      setting up your account
+                    </p>
+                  </header>
+
+                  {error && (
+                    <div style={styles.error}>
+                      {error}
+                    </div>
+                  )}
+
+                  <form
+                    onSubmit={handleSocialPhoneSubmit}
+                    style={styles.detailsForm}
+                  >
+                    <div style={styles.field}>
+                      <label style={styles.label}>
+                        Mobile Number
+                      </label>
+
+                      <input
+                        style={inputStyle('phone')}
+                        type="tel"
+                        placeholder="eg. 98765 43210"
+                        value={phone}
+                        onChange={(e) =>
+                          setPhone(e.target.value)
+                        }
+                        onFocus={() =>
+                          setFocused('phone')
+                        }
+                        onBlur={() => setFocused('')}
+                        disabled={loading}
+                        autoFocus
+                      />
+                    </div>
+
+                    <button
+                      type="submit"
+                      style={styles.submit}
+                      disabled={loading}
+                    >
+                      {loading
+                        ? 'Sending OTP...'
+                        : 'Send OTP'}
+
+                      {!loading && (
+                        <span style={styles.arrow}>
+                          →
+                        </span>
+                      )}
+                    </button>
+                  </form>
+                </div>
               ) : (
                 <form
                   onSubmit={handleVerifySubmit}
@@ -677,7 +970,11 @@ export default function AuthModal({
                         <button
                           type="button"
                           onClick={() => {
-                            setStep('details')
+                            setStep(
+                              pendingSocialUser
+                                ? 'social-phone'
+                                : 'details',
+                            )
                             setError('')
                           }}
                           disabled={loading}
@@ -741,19 +1038,21 @@ export default function AuthModal({
                       />
                     </div>
 
-                    <div style={styles.resendTimer}>
-                      <span style={styles.clockIcon}>
-                        ◷
-                      </span>
+                    {resendCooldown > 0 && (
+                      <div style={styles.resendTimer}>
+                        <span style={styles.clockIcon}>
+                          ◷
+                        </span>
 
-                      <span style={styles.resendText}>
-                        Resend OTP in
-                      </span>
+                        <span style={styles.resendText}>
+                          Resend OTP in
+                        </span>
 
-                      <span style={styles.timerValue}>
-                        00:45
-                      </span>
-                    </div>
+                        <span style={styles.timerValue}>
+                          {formatCooldown(resendCooldown)}
+                        </span>
+                      </div>
+                    )}
 
                     {/* Optional email verification is retained but hidden to match the supplied design */}
                     <div
@@ -880,12 +1179,18 @@ export default function AuthModal({
                       <button
                         type="button"
                         onClick={sendPhoneOtp}
-                        disabled={loading}
+                        disabled={
+                          loading || resendCooldown > 0
+                        }
                         style={
                           styles.bottomResendButton
                         }
                       >
-                        Resend OTP
+                        {resendCooldown > 0
+                          ? `Resend OTP (${formatCooldown(
+                              resendCooldown,
+                            )})`
+                          : 'Resend OTP'}
                       </button>
                     </div>
                   </div>
@@ -1134,7 +1439,7 @@ socialButton: {
   letterSpacing: 0,
   textTransform: 'none',
 
-  cursor: 'default',
+  cursor: 'pointer',
 },
 
   divider: {
