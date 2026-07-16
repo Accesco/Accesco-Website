@@ -3728,7 +3728,8 @@ background:
 
 .serviceCardVisualImage {
   object-fit: cover;
-}
+  object-position: center 22%;
+} 
 
 .serviceIconCircleImage {
   object-fit: contain;
@@ -4154,40 +4155,31 @@ background:
   max-width: 70px !important;
   min-width: 70px !important;
 }
-
-/* ── About Accesco Living (SEO copy) ── */
+/* ── About Accesco Living Image Section ── */
 .about-accesco-section {
-  background: #0c0d12;
-  color: #e5e7eb;
-  padding: 80px 20px;
+  width: 100%;
+  padding: 0;
+  margin: 0;
+  background: #250013;
+  overflow: hidden;
 }
 
-.about-accesco-inner {
-  max-width: 860px;
-  margin: 0 auto;
+.about-accesco-image {
+  display: block;
+  width: 100%;
+  height: auto;
+  min-height: 420px;
+  object-fit: cover;
+  object-position: center;
+  border-radius: 0;
 }
 
-.about-accesco-inner h2 {
-  font-size: 30px;
-  font-weight: 800;
-  color: #fff;
-  margin-bottom: 24px;
-  text-align: center;
+/* Tablet */
+@media (max-width: 900px) {
+  .about-accesco-image {
+    min-height: 440px;
+    object-position: center;
+  }
 }
 
-.about-accesco-inner p {
-  font-size: 15px;
-  line-height: 1.8;
-  color: #b7bac2;
-  margin-bottom: 18px;
-}
-
-.about-accesco-inner p:last-child {
-  margin-bottom: 0;
-}
-
-@media (max-width: 640px) {
-  .about-accesco-section { padding: 56px 16px; }
-  .about-accesco-inner h2 { font-size: 24px; }
-  .about-accesco-inner p { font-size: 14px; }
-}
+/* Mobile */
