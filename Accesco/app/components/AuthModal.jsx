@@ -164,15 +164,29 @@ export default function AuthModal({
   }
 
   // Converts user-entered phone to E.164 format required by Firebase
+  // const normalizePhone = (p) => {
+  //   const stripped = p.replace(/[\s\-().]/g, '')
+
+  //   if (stripped.startsWith('+')) {
+  //     return stripped
+  //   }
+
+  //   return '+91' + stripped.replace(/\D/g, '')
+  // }
+
+  //  Normalize the phone and convert it into a format the firebase accepts
   const normalizePhone = (p) => {
-    const stripped = p.replace(/[\s\-().]/g, '')
-
-    if (stripped.startsWith('+')) {
-      return stripped
-    }
-
-    return '+91' + stripped.replace(/\D/g, '')
+  if (!p || typeof p !== 'string') return '';
+  const stripped = p.replace(/[^\d+]/g, '');
+  if (stripped.startsWith('+')) {
+    return stripped;
   }
+  const digitsOnly = stripped.replace(/\D/g, '');
+  if (digitsOnly.startsWith('0')) {
+    return '+91' + digitsOnly.substring(1);
+  }
+  return '+91' + digitsOnly;
+}
 
   // Step 1 → validate details, then send phone OTP and move to verify step
   const handleDetailsSubmit = async (e) => {
@@ -467,9 +481,7 @@ export default function AuthModal({
     setError('')
 
     if (!confirmationResult) {
-      setError(
-        'Code is still being sent. Please wait a moment.',
-      )
+      setError('Code is still being sent. Please wait a moment.')
       return
     }
 
@@ -481,28 +493,38 @@ export default function AuthModal({
     setLoading(true)
 
     try {
-      await confirmationResult.confirm(
-        otpCode.trim(),
-      )
+      await confirmationResult.confirm(otpCode.trim())
 
-      const p = phone.trim()
-      const n =
-        pendingSocialUser
+      const normalizedPhone = normalizePhone(phone.trim())
+      
+      const n = pendingSocialUser
           ? pendingSocialUser.name || name.trim() || 'Accesco User'
           : name.trim()
-      const em =
-        pendingSocialUser
+          
+      const em = pendingSocialUser
           ? pendingSocialUser.email || email.trim()
           : email.trim()
+          
+      // FIX 1: Use the strict, normalized phone number as the Document ID to prevent duplicates
       const docId = pendingSocialUser
         ? pendingSocialUser.uid
-        : p.replace(/[^\d]/g, '')
+        : normalizedPhone
 
-      await setDoc(
-        doc(db, 'users', docId),
-        {
+      const userRef = doc(db, 'users', docId)
+      const userSnap = await getDoc(userRef)
+
+      // FIX 2: Check if user exists to prevent overwriting 'createdAt' and 'name'
+      if (userSnap.exists()) {
+        // Update existing user login time only
+        await setDoc(userRef, {
+          updatedAt: serverTimestamp(),
+          phoneVerified: true,
+        }, { merge: true })
+      } else {
+        // Provision entirely new user
+        await setDoc(userRef, {
           name: n,
-          phone: p,
+          phone: normalizedPhone,
           email: em || null,
           photoURL: pendingSocialUser?.photoURL || null,
           provider: pendingSocialUser?.provider || 'phone',
@@ -510,27 +532,20 @@ export default function AuthModal({
           emailVerified,
           createdAt: serverTimestamp(),
           updatedAt: serverTimestamp(),
-        },
-        {
-          merge: true,
-        },
-      )
+        })
+      }
 
-      // Sign out of Firebase Auth after the write — we only needed phone verification
       await signOut(auth)
 
       const user = {
-        name: n,
-        phone: p,
+        name: userSnap.exists() ? userSnap.data().name : n,
+        phone: normalizedPhone,
         email: em || null,
         photoURL: pendingSocialUser?.photoURL || null,
         uid: docId,
       }
 
-      localStorage.setItem(
-        'accesco_user',
-        JSON.stringify(user),
-      )
+      localStorage.setItem('accesco_user', JSON.stringify(user))
 
       setSuccess(true)
 
@@ -541,23 +556,12 @@ export default function AuthModal({
     } catch (err) {
       console.error(err)
 
-      if (
-        err.code ===
-        'auth/invalid-verification-code'
-      ) {
-        setError(
-          'Invalid OTP. Please check the code and try again.',
-        )
-      } else if (
-        err.code === 'auth/code-expired'
-      ) {
-        setError(
-          'OTP has expired. Please request a new one.',
-        )
+      if (err.code === 'auth/invalid-verification-code') {
+        setError('Invalid OTP. Please check the code and try again.')
+      } else if (err.code === 'auth/code-expired') {
+        setError('OTP has expired. Please request a new one.')
       } else {
-        setError(
-          'Something went wrong. Please try again.',
-        )
+        setError('Something went wrong. Please try again.')
       }
     } finally {
       setLoading(false)
