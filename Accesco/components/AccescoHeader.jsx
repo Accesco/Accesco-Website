@@ -246,6 +246,10 @@ export default function AccescoHeader() {
   JOIN WAITLIST
 </Link>
 
+<Link href="/referral" className={styles.waitlistLink}>
+  REFER & EARN
+</Link>
+
           <div className={styles.actions}>
             {/* Location Selector */}
               <div 

@@ -2,6 +2,7 @@ import Script from 'next/script';
 import './globals.css';
 import { AuthProvider } from './components/AuthProvider';
 import CookieConsent from './components/CookieConsent';
+import ReferralCapture from './components/ReferralCapture';
 import JsonLd from '@/components/JsonLd';
 import BreadcrumbJsonLd from '@/components/BreadcrumbJsonLd';
 export const metadata = {
@@ -121,6 +122,7 @@ export default function RootLayout({ children }) {
       <body>
         <AuthProvider>
           <BreadcrumbJsonLd />
+          <ReferralCapture />
           {children}
           <CookieConsent />
         </AuthProvider>

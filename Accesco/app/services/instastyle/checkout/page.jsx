@@ -374,6 +374,7 @@ export default function CheckoutPage() {
         deliverySpeed,
         speedDiscount,
         address: formData,
+        phone: formData.phone,
         customerEmail: formData.email,
         customerName: formData.fullName,
         paymentMethod: formData.paymentMethod,

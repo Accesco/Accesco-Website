@@ -13,13 +13,16 @@ import {
   signInWithPhoneNumber,
   signInWithPopup,
   GoogleAuthProvider,
-  OAuthProvider,
   signOut,
 } from 'firebase/auth'
 import {
   sendOtpEmailVerification,
   verifyOtpEmailCode,
 } from '../../lib/waitlistService'
+import {
+  initializeReferralProfile,
+  getStoredReferralCode,
+} from '../../lib/referralService'
 
 function GoogleIcon() {
   return (
@@ -45,20 +48,6 @@ function GoogleIcon() {
         fill="#EA4335"
         d="M12 5.95c1.47 0 2.8.51 3.84 1.51l2.88-2.88A9.68 9.68 0 0 0 12 2a10 10 0 0 0-8.95 5.47l3.35 2.61C7.19 7.71 9.4 5.95 12 5.95Z"
       />
-    </svg>
-  )
-}
-
-function AppleIcon() {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      width="17"
-      height="17"
-      fill="currentColor"
-      aria-hidden="true"
-    >
-      <path d="M18.7 12.6c0-3.1 2.5-4.6 2.6-4.7a5.54 5.54 0 0 0-4.36-2.36c-1.84-.19-3.62 1.1-4.56 1.1-.96 0-2.4-1.08-3.96-1.05a5.8 5.8 0 0 0-4.88 2.97c-2.12 3.67-.54 9.06 1.49 12.02 1.01 1.45 2.18 3.06 3.74 3 1.52-.06 2.09-.96 3.93-.96 1.82 0 2.36.96 3.95.92 1.64-.03 2.67-1.45 3.65-2.91a12.1 12.1 0 0 0 1.67-3.4 5.25 5.25 0 0 1-3.27-4.66ZM15.74 3.6A5.35 5.35 0 0 0 16.96 0a5.44 5.44 0 0 0-3.5 1.71 5.06 5.06 0 0 0-1.25 3.48 4.5 4.5 0 0 0 3.53-1.59Z" />
     </svg>
   )
 }
@@ -101,9 +90,8 @@ export default function AuthModal({
     return () => clearTimeout(timeout)
   }, [resendCooldown])
 
-  // Social sign-in (Google / Apple via Firebase popup)
+  // Social sign-in (Google via Firebase popup)
   const [googleLoading, setGoogleLoading] = useState(false)
-  const [appleLoading, setAppleLoading] = useState(false)
   // Set once a social provider returns a user who still needs phone verification
   // (i.e. no prior account, or an existing account with phoneVerified !== true)
   const [pendingSocialUser, setPendingSocialUser] = useState(null)
@@ -139,7 +127,6 @@ export default function AuthModal({
     setEmailVerified(false)
 
     setGoogleLoading(false)
-    setAppleLoading(false)
     setPendingSocialUser(null)
 
     if (recaptchaVerifierRef.current) {
@@ -320,7 +307,7 @@ export default function AuthModal({
     err.code === 'auth/cancelled-popup-request'
 
   const handleGoogleSignIn = async () => {
-    if (googleLoading || appleLoading) return
+    if (googleLoading) return
 
     setGoogleLoading(true)
     setError('')
@@ -341,34 +328,6 @@ export default function AuthModal({
       }
     } finally {
       setGoogleLoading(false)
-    }
-  }
-
-  const handleAppleSignIn = async () => {
-    if (googleLoading || appleLoading) return
-
-    setAppleLoading(true)
-    setError('')
-
-    try {
-      const provider = new OAuthProvider('apple.com')
-      provider.addScope('email')
-      provider.addScope('name')
-
-      const result = await signInWithPopup(auth, provider)
-
-      await handleSocialAuthResult(result.user, 'apple')
-    } catch (err) {
-      console.error('Apple sign-in failed:', err)
-
-      if (!isPopupDismissed(err)) {
-        setError(
-          err.message ||
-            'Apple sign-in failed. Please try again.',
-        )
-      }
-    } finally {
-      setAppleLoading(false)
     }
   }
 
@@ -518,6 +477,12 @@ export default function AuthModal({
 
       // Sign out of Firebase Auth after the write — we only needed phone verification
       await signOut(auth)
+
+      // Referral profile creation/attribution is a side effect — never let
+      // it block or fail the sign-in itself.
+      initializeReferralProfile(p, n, getStoredReferralCode()).catch((err) =>
+        console.error('Referral profile init failed:', err),
+      )
 
       const user = {
         name: n,
@@ -712,37 +677,17 @@ export default function AuthModal({
                   <div style={styles.socialRow}>
                     <button
                       type="button"
-                      style={styles.socialButton}
+                      style={styles.socialButtonFull}
                       onClick={handleGoogleSignIn}
                       disabled={
-                        googleLoading ||
-                        appleLoading ||
-                        loading
+                        googleLoading || loading
                       }
                     >
                       <GoogleIcon />
                       <span>
                         {googleLoading
                           ? 'Signing in…'
-                          : 'Google'}
-                      </span>
-                    </button>
-
-                    <button
-                      type="button"
-                      style={styles.socialButton}
-                      onClick={handleAppleSignIn}
-                      disabled={
-                        googleLoading ||
-                        appleLoading ||
-                        loading
-                      }
-                    >
-                      <AppleIcon />
-                      <span>
-                        {appleLoading
-                          ? 'Signing in…'
-                          : 'Apple'}
+                          : 'Continue with Google'}
                       </span>
                     </button>
                   </div>
@@ -1407,14 +1352,15 @@ shell: {
 
   socialRow: {
     display: 'grid',
-    gridTemplateColumns: '1fr 1fr',
+    gridTemplateColumns: '1fr',
 
     gap: 18,
 
     marginTop: 27,
   },
 
-socialButton: {
+socialButtonFull: {
+  width: '100%',
   height: 37,
 
   display: 'flex',
