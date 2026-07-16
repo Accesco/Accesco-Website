@@ -369,6 +369,44 @@ export function GroklyProvider({ children }) {
           
           if (nextStatus !== order.status) {
             hasChanged = true;
+            
+            // If the status transitioned to DELIVERED, and they opted to return packaging,
+            // let's credit their green credits in localStorage!
+            if (nextStatus === 'DELIVERED') {
+              if (order.packagingOptIn && order.packagingBagsToReturn > 0) {
+                try {
+                  const bags = parseInt(order.packagingBagsToReturn) || 0;
+                  const creditsEarned = bags * 10;
+                  
+                  // Update wallet balance
+                  const currentWallet = parseInt(localStorage.getItem('grokly_wallet_balance') || '0');
+                  localStorage.setItem('grokly_wallet_balance', (currentWallet + creditsEarned).toString());
+                  
+                  // Update recycled bags count
+                  const currentRecycled = parseInt(localStorage.getItem('grokly_recycled_bags_count') || '0');
+                  localStorage.setItem('grokly_recycled_bags_count', (currentRecycled + bags).toString());
+                  
+                  // Add a transaction log
+                  const rawHistory = localStorage.getItem('grokly_eco_history');
+                  const history = rawHistory ? JSON.parse(rawHistory) : [];
+                  history.unshift({
+                    id: `ECO-${Date.now()}`,
+                    date: new Date().toISOString(),
+                    orderId: order.id,
+                    bags,
+                    credits: creditsEarned,
+                    co2Offset: parseFloat((bags * 0.25).toFixed(2)) // 250g CO2 per paper bag
+                  });
+                  localStorage.setItem('grokly_eco_history', JSON.stringify(history));
+                  
+                  // Trigger storage event to sync other pages
+                  window.dispatchEvent(new Event('storage'));
+                } catch (e) {
+                  console.error('Failed to update eco stats:', e);
+                }
+              }
+            }
+            
             return { ...order, status: nextStatus };
           }
           return order;
