@@ -40,10 +40,10 @@ export const products = [
     discountPercentage: 25,
     sizes: ['S', 'M', 'L', 'XL'],
     colors: [
-      { name: 'Charcoal', hex: '#36454F', images: ['https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=600&h=800&fit=crop'] }
+      { name: 'Charcoal', hex: '#36454F', images: ['https://images.pexels.com/photos/7679659/pexels-photo-7679659.jpeg?w=600&h=800&fit=crop'] }
     ],
     images: [
-      { url: 'https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=600&h=800&fit=crop', alt: 'Sleek Wool Overcoat', isPrimary: true, order: 1 }
+      { url: 'https://images.pexels.com/photos/7679659/pexels-photo-7679659.jpeg?w=600&h=800&fit=crop', alt: 'Sleek Wool Overcoat', isPrimary: true, order: 1 }
     ],
     description: 'A premium wool-blend overcoat with a tailored silhouette, perfect for layering during colder months.',
     material: '60% Wool, 40% Polyester',
@@ -69,10 +69,10 @@ export const products = [
     discountPercentage: 23,
     sizes: ['30', '32', '34', '36'],
     colors: [
-      { name: 'Sand', hex: '#E6D2B5', images: ['https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?w=600&h=800&fit=crop'] }
+      { name: 'Sand', hex: '#E6D2B5', images: ['https://images.pexels.com/photos/1598507/pexels-photo-1598507.jpeg?w=600&h=800&fit=crop'] }
     ],
     images: [
-      { url: 'https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?w=600&h=800&fit=crop', alt: 'Cargo Joggers', isPrimary: true, order: 1 }
+      { url: 'https://images.pexels.com/photos/1598507/pexels-photo-1598507.jpeg?w=600&h=800&fit=crop', alt: 'Cargo Joggers', isPrimary: true, order: 1 }
     ],
     description: 'Durable and highly functional cargo joggers with an elasticated waistband and utility pockets.',
     material: '98% Cotton, 2% Elastane',
@@ -98,10 +98,10 @@ export const products = [
     discountPercentage: 15,
     sizes: ['XS', 'S', 'M', 'L'],
     colors: [
-      { name: 'Burgundy', hex: '#800020', images: ['https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=600&h=800&fit=crop'] }
+      { name: 'Burgundy', hex: '#800020', images: ['https://images.pexels.com/photos/1536619/pexels-photo-1536619.jpeg?w=600&h=800&fit=crop'] }
     ],
     images: [
-      { url: 'https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=600&h=800&fit=crop', alt: 'Velvet Evening Gown', isPrimary: true, order: 1 }
+      { url: 'https://images.pexels.com/photos/1536619/pexels-photo-1536619.jpeg?w=600&h=800&fit=crop', alt: 'Velvet Evening Gown', isPrimary: true, order: 1 }
     ],
     description: 'An elegant, body-skimming evening gown crafted from luxurious plush velvet with a side leg slit.',
     material: '95% Polyester, 5% Spandex',
@@ -116,7 +116,7 @@ export const products = [
     slug: 'velvet-evening-gown',
   },
   {
-    id: 'prod_042',
+    id: 'prod_114',
     sku: 'INS-WMN-OKNS-42',
     name: 'Oversized Knit Sweater',
     brand: 'TrendSetters',
@@ -127,10 +127,10 @@ export const products = [
     discountPercentage: 20,
     sizes: ['S', 'M', 'L', 'XL'],
     colors: [
-      { name: 'Oatmeal', hex: '#EAE6DF', images: ['https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?w=600&h=800&fit=crop'] }
+      { name: 'Oatmeal', hex: '#EAE6DF', images: ['https://images.pexels.com/photos/1549200/pexels-photo-1549200.jpeg?w=600&h=800&fit=crop'] }
     ],
     images: [
-      { url: 'https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?w=600&h=800&fit=crop', alt: 'Oversized Knit Sweater', isPrimary: true, order: 1 }
+      { url: 'https://images.pexels.com/photos/1549200/pexels-photo-1549200.jpeg?w=600&h=800&fit=crop', alt: 'Oversized Knit Sweater', isPrimary: true, order: 1 }
     ],
     description: 'Chunky, warm knit sweater featuring a relaxed oversized silhouette and ribbed crew neckline.',
     material: '70% Acrylic, 30% Wool',
@@ -145,7 +145,7 @@ export const products = [
     slug: 'oversized-knit-sweater',
   },
   {
-    id: 'prod_043',
+    id: 'prod_115',
     sku: 'INS-KID-HWJK-43',
     name: 'Kids Hooded Windbreaker',
     brand: 'Urban Basics',
@@ -156,10 +156,10 @@ export const products = [
     discountPercentage: 22,
     sizes: ['4-5Y', '6-7Y', '8-9Y', '10-11Y'],
     colors: [
-      { name: 'Yellow', hex: '#FFD700', images: ['https://images.unsplash.com/photo-1519457431-44ccd64a579b?w=600&h=800&fit=crop'] }
+      { name: 'Yellow', hex: '#FFD700', images: ['https://images.pexels.com/photos/3622608/pexels-photo-3622608.jpeg?w=600&h=800&fit=crop'] }
     ],
     images: [
-      { url: 'https://images.unsplash.com/photo-1519457431-44ccd64a579b?w=600&h=800&fit=crop', alt: 'Kids Windbreaker', isPrimary: true, order: 1 }
+      { url: 'https://images.pexels.com/photos/3622608/pexels-photo-3622608.jpeg?w=600&h=800&fit=crop', alt: 'Kids Windbreaker', isPrimary: true, order: 1 }
     ],
     description: 'Lightweight water-resistant windbreaker jacket featuring a cozy mesh hood and dynamic colorblocking.',
     material: '100% Polyester',
@@ -174,7 +174,7 @@ export const products = [
     slug: 'kids-hooded-windbreaker',
   },
   {
-    id: 'prod_044',
+    id: 'prod_116',
     sku: 'INS-KID-CBPD-44',
     name: 'Chambray Play Dress',
     brand: 'ElegantTouch',
@@ -185,10 +185,10 @@ export const products = [
     discountPercentage: 20,
     sizes: ['2-3Y', '4-5Y', '6-7Y', '8-9Y'],
     colors: [
-      { name: 'Light Blue', hex: '#ADD8E6', images: ['https://images.unsplash.com/photo-1519238263530-99bdd11df2ea?w=600&h=800&fit=crop'] }
+      { name: 'Light Blue', hex: '#ADD8E6', images: ['https://images.pexels.com/photos/7679659/pexels-photo-7679659.jpeg?w=600&h=800&fit=crop'] }
     ],
     images: [
-      { url: 'https://images.unsplash.com/photo-1519238263530-99bdd11df2ea?w=600&h=800&fit=crop', alt: 'Chambray Play Dress', isPrimary: true, order: 1 }
+      { url: 'https://images.pexels.com/photos/7679659/pexels-photo-7679659.jpeg?w=600&h=800&fit=crop', alt: 'Chambray Play Dress', isPrimary: true, order: 1 }
     ],
     description: 'Lovely soft cotton chambray dress with a tiered skirt and cute embroidered shoulder details.',
     material: '100% Cotton Chambray',
@@ -203,7 +203,7 @@ export const products = [
     slug: 'chambray-play-dress',
   },
   {
-    id: 'prod_045',
+    id: 'prod_117',
     sku: 'INS-ACC-MLCH-45',
     name: 'Minimalist Leather Cardholder',
     brand: 'StyleHub',
@@ -214,10 +214,10 @@ export const products = [
     discountPercentage: 20,
     sizes: ['One Size'],
     colors: [
-      { name: 'Tan', hex: '#D2B48C', images: ['https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=600&h=800&fit=crop'] }
+      { name: 'Tan', hex: '#D2B48C', images: ['https://images.pexels.com/photos/4210866/pexels-photo-4210866.jpeg?w=600&h=800&fit=crop'] }
     ],
     images: [
-      { url: 'https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=600&h=800&fit=crop', alt: 'Leather Cardholder', isPrimary: true, order: 1 }
+      { url: 'https://images.pexels.com/photos/4210866/pexels-photo-4210866.jpeg?w=600&h=800&fit=crop', alt: 'Leather Cardholder', isPrimary: true, order: 1 }
     ],
     description: 'Ultra-slim genuine leather cardholder with multiple card slots and a central slip compartment.',
     material: 'Genuine Cowhide Leather',
@@ -232,7 +232,7 @@ export const products = [
     slug: 'minimalist-leather-cardholder',
   },
   {
-    id: 'prod_046',
+    id: 'prod_118',
     sku: 'INS-ACC-RTSG-46',
     name: 'Retro Acetate Sunglasses',
     brand: 'TrendSetters',
@@ -243,10 +243,10 @@ export const products = [
     discountPercentage: 19,
     sizes: ['One Size'],
     colors: [
-      { name: 'Tortoiseshell', hex: '#3B2712', images: ['https://images.unsplash.com/photo-1572635196237-14b3f281503f?w=600&h=800&fit=crop'] }
+      { name: 'Tortoiseshell', hex: '#3B2712', images: ['https://images.pexels.com/photos/1656684/pexels-photo-1656684.jpeg?w=600&h=800&fit=crop'] }
     ],
     images: [
-      { url: 'https://images.unsplash.com/photo-1572635196237-14b3f281503f?w=600&h=800&fit=crop', alt: 'Retro Sunglasses', isPrimary: true, order: 1 }
+      { url: 'https://images.pexels.com/photos/1656684/pexels-photo-1656684.jpeg?w=600&h=800&fit=crop', alt: 'Retro Sunglasses', isPrimary: true, order: 1 }
     ],
     description: 'Bold tortoiseshell frame sunglasses made from thick acetate with protective polarized dark lenses.',
     material: 'Acetate frame, TAC polarized lenses',
@@ -272,10 +272,10 @@ export const products = [
     discountPercentage: 20,
     sizes: ['M', 'L', 'XL'],
     colors: [
-      { name: 'Brown', hex: '#8B4513', images: ['https://images.unsplash.com/photo-1617137968427-85924c800a22?w=600&h=800&fit=crop'] }
+      { name: 'Brown', hex: '#8B4513', images: ['https://images.pexels.com/photos/7622591/pexels-photo-7622591.jpeg?w=600&h=800&fit=crop'] }
     ],
     images: [
-      { url: 'https://images.unsplash.com/photo-1617137968427-85924c800a22?w=600&h=800&fit=crop', alt: 'Suede Jacket', isPrimary: true, order: 1 }
+      { url: 'https://images.pexels.com/photos/7622591/pexels-photo-7622591.jpeg?w=600&h=800&fit=crop', alt: 'Suede Jacket', isPrimary: true, order: 1 }
     ],
     description: 'Superb quality vintage suede bomber jacket with front zipper closure and side pockets. Extremely soft lining.',
     material: 'Suede Leather',
@@ -301,10 +301,10 @@ export const products = [
     discountPercentage: 20,
     sizes: ['S', 'M', 'L', 'XL'],
     colors: [
-      { name: 'Emerald', hex: '#0F52BA', images: ['https://images.unsplash.com/photo-1566174053879-31528523f8ae?w=600&h=800&fit=crop'] }
+      { name: 'Emerald', hex: '#0F52BA', images: ['https://images.pexels.com/photos/7691168/pexels-photo-7691168.jpeg?w=600&h=800&fit=crop'] }
     ],
     images: [
-      { url: 'https://images.unsplash.com/photo-1566174053879-31528523f8ae?w=600&h=800&fit=crop', alt: 'Pleated Satin Dress', isPrimary: true, order: 1 }
+      { url: 'https://images.pexels.com/photos/7691168/pexels-photo-7691168.jpeg?w=600&h=800&fit=crop', alt: 'Pleated Satin Dress', isPrimary: true, order: 1 }
     ],
     description: 'Elegant pleated midi dress made from premium satin. Perfect for evening parties and special events.',
     material: '100% Satin Polyester',
@@ -330,10 +330,10 @@ export const products = [
     discountPercentage: 20,
     sizes: ['4-5Y', '6-7Y', '8-9Y', '10-11Y'],
     colors: [
-      { name: 'Denim Blue', hex: '#4682B4', images: ['https://images.unsplash.com/photo-1604917621956-10dfa7cce2e7?w=600&h=800&fit=crop'] }
+      { name: 'Denim Blue', hex: '#4682B4', images: ['https://images.pexels.com/photos/35537/pexels-photo-35537.jpeg?w=600&h=800&fit=crop'] }
     ],
     images: [
-      { url: 'https://images.unsplash.com/photo-1604917621956-10dfa7cce2e7?w=600&h=800&fit=crop', alt: 'Denim Jacket', isPrimary: true, order: 1 }
+      { url: 'https://images.pexels.com/photos/35537/pexels-photo-35537.jpeg?w=600&h=800&fit=crop', alt: 'Denim Jacket', isPrimary: true, order: 1 }
     ],
     description: 'Comfortable kids denim jacket with a soft grey cotton hood. Durable button closures and classic chest pockets.',
     material: '90% Cotton, 10% Polyester',
@@ -359,10 +359,10 @@ export const products = [
     discountPercentage: 21,
     sizes: ['One Size'],
     colors: [
-      { name: 'Black Frame', hex: '#000000', images: ['https://images.unsplash.com/photo-1511499767150-a48a237f0083?w=600&h=800&fit=crop'] }
+      { name: 'Black Frame', hex: '#000000', images: ['https://images.pexels.com/photos/5650026/pexels-photo-5650026.jpeg?w=600&h=800&fit=crop'] }
     ],
     images: [
-      { url: 'https://images.unsplash.com/photo-1511499767150-a48a237f0083?w=600&h=800&fit=crop', alt: 'Aviator Sunglasses', isPrimary: true, order: 1 }
+      { url: 'https://images.pexels.com/photos/5650026/pexels-photo-5650026.jpeg?w=600&h=800&fit=crop', alt: 'Aviator Sunglasses', isPrimary: true, order: 1 }
     ],
     description: 'Classic black-framed aviators offering full UV protection. Sleek metallic temples and comfortable nose pads.',
     material: 'Metal alloy frame',
@@ -388,10 +388,10 @@ export const products = [
     discountPercentage: 19,
     sizes: ['XS', 'S', 'M', 'L'],
     colors: [
-      { name: 'Cream', hex: '#FFFDD0', images: ['https://images.unsplash.com/photo-1544022613-e87ca75a784a?w=600&h=800&fit=crop'] }
+      { name: 'Cream', hex: '#FFFDD0', images: ['https://images.pexels.com/photos/3965557/pexels-photo-3965557.jpeg?w=600&h=800&fit=crop'] }
     ],
     images: [
-      { url: 'https://images.unsplash.com/photo-1544022613-e87ca75a784a?w=600&h=800&fit=crop', alt: 'Cropped Puffer Jacket', isPrimary: true, order: 1 }
+      { url: 'https://images.pexels.com/photos/3965557/pexels-photo-3965557.jpeg?w=600&h=800&fit=crop', alt: 'Cropped Puffer Jacket', isPrimary: true, order: 1 }
     ],
     description: 'Stylish cropped puffer jacket for winter. Filled with high-density thermal insulation to keep you warm and cozy.',
     material: '100% Nylon Shell, Polyester Fill',
@@ -416,10 +416,10 @@ export const products = [
     discountPercentage: 23,
     sizes: ['30', '32', '34', '36'],
     colors: [
-      { name: 'Beige', hex: '#F5F5DC', images: ['https://images.unsplash.com/photo-1479064555552-3ef4979f8908?w=600&h=800&fit=crop'] }
+      { name: 'Beige', hex: '#F5F5DC', images: ['https://images.pexels.com/photos/1183266/pexels-photo-1183266.jpeg?w=600&h=800&fit=crop'] }
     ],
     images: [
-      { url: 'https://images.unsplash.com/photo-1479064555552-3ef4979f8908?w=600&h=800&fit=crop', alt: 'Chino Trousers', isPrimary: true, order: 1 }
+      { url: 'https://images.pexels.com/photos/1183266/pexels-photo-1183266.jpeg?w=600&h=800&fit=crop', alt: 'Chino Trousers', isPrimary: true, order: 1 }
     ],
     description: 'Smart tailored chino trousers crafted from premium stretch-cotton twill. Perfect for both office and casual wear.',
     material: '98% Cotton, 2% Elastane',
@@ -444,10 +444,10 @@ export const products = [
     discountPercentage: 25,
     sizes: ['XS', 'S', 'M', 'L'],
     colors: [
-      { name: 'Rust', hex: '#B7410E', images: ['https://images.unsplash.com/photo-1509631179647-0177331693ae?w=600&h=800&fit=crop'] }
+      { name: 'Rust', hex: '#B7410E', images: ['https://images.pexels.com/photos/1036623/pexels-photo-1036623.jpeg?w=600&h=800&fit=crop'] }
     ],
     images: [
-      { url: 'https://images.unsplash.com/photo-1509631179647-0177331693ae?w=600&h=800&fit=crop', alt: 'Halter Top', isPrimary: true, order: 1 }
+      { url: 'https://images.pexels.com/photos/1036623/pexels-photo-1036623.jpeg?w=600&h=800&fit=crop', alt: 'Halter Top', isPrimary: true, order: 1 }
     ],
     description: 'Chic ribbed knit halter top featuring a mock neck and cross-back straps. Lightweight and breathable.',
     material: '80% Rayon, 20% Nylon',
@@ -472,8 +472,8 @@ export const products = [
     originalPrice: 120000,
     discountedPrice: 45000,
     sizes: ['M'],
-    colors: [{ name: 'Black', hex: '#000000', images: ['https://images.unsplash.com/photo-1551028719-00167b16eac5?w=800&q=80'] }],
-    images: [{ url: 'https://images.unsplash.com/photo-1551028719-00167b16eac5?w=800&q=80', alt: 'Moto Jacket', isPrimary: true, order: 1 }],
+    colors: [{ name: 'Black', hex: '#000000', images: ['https://images.pexels.com/photos/701877/pexels-photo-701877.jpeg?w=600&h=800&fit=crop'] }],
+    images: [{ url: 'https://images.pexels.com/photos/701877/pexels-photo-701877.jpeg?w=600&h=800&fit=crop', alt: 'Moto Jacket', isPrimary: true, order: 1 }],
     description: 'Pre-owned vintage leather moto jacket. Condition: Excellent.',
     material: 'Leather',
     inStock: true,
@@ -494,8 +494,8 @@ export const products = [
     originalPrice: 85000,
     discountedPrice: 32000,
     sizes: ['One Size'],
-    colors: [{ name: 'Brown', hex: '#654321', images: ['https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=800&q=80'] }],
-    images: [{ url: 'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=800&q=80', alt: 'Gucci Bag', isPrimary: true, order: 1 }],
+    colors: [{ name: 'Brown', hex: '#654321', images: ['https://images.pexels.com/photos/1152077/pexels-photo-1152077.jpeg?w=600&h=800&fit=crop'] }],
+    images: [{ url: 'https://images.pexels.com/photos/1152077/pexels-photo-1152077.jpeg?w=600&h=800&fit=crop', alt: 'Gucci Bag', isPrimary: true, order: 1 }],
     description: 'Pre-owned Classic Monogram Crossbody. Condition: Good.',
     material: 'Canvas/Leather',
     inStock: true,
@@ -516,8 +516,8 @@ export const products = [
     originalPrice: 9000,
     discountedPrice: 4500,
     sizes: ['L'],
-    colors: [{ name: 'Blue', hex: '#0000FF', images: ['https://images.unsplash.com/photo-1611312449408-fcece27cdbb7?w=800&q=80'] }],
-    images: [{ url: 'https://images.unsplash.com/photo-1611312449408-fcece27cdbb7?w=800&q=80', alt: 'Denim Jacket', isPrimary: true, order: 1 }],
+    colors: [{ name: 'Blue', hex: '#0000FF', images: ['https://images.pexels.com/photos/915915/pexels-photo-915915.jpeg?w=600&h=800&fit=crop'] }],
+    images: [{ url: 'https://images.pexels.com/photos/915915/pexels-photo-915915.jpeg?w=600&h=800&fit=crop', alt: 'Denim Jacket', isPrimary: true, order: 1 }],
     description: 'Pre-owned distressed denim jacket. Condition: Like New.',
     material: 'Denim',
     inStock: true,
@@ -538,8 +538,8 @@ export const products = [
     originalPrice: 95000,
     discountedPrice: 28000,
     sizes: ['S'],
-    colors: [{ name: 'Grey', hex: '#808080', images: ['https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=800&q=80'] }],
-    images: [{ url: 'https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=800&q=80', alt: 'Wool Blazer', isPrimary: true, order: 1 }],
+    colors: [{ name: 'Grey', hex: '#808080', images: ['https://images.pexels.com/photos/1413420/pexels-photo-1413420.jpeg?w=600&h=800&fit=crop'] }],
+    images: [{ url: 'https://images.pexels.com/photos/1413420/pexels-photo-1413420.jpeg?w=600&h=800&fit=crop', alt: 'Wool Blazer', isPrimary: true, order: 1 }],
     description: 'Pre-owned oversized wool blazer. Condition: Excellent.',
     material: 'Wool',
     inStock: true,
@@ -560,8 +560,8 @@ export const products = [
     originalPrice: 22000,
     discountedPrice: 8500,
     sizes: ['XS'],
-    colors: [{ name: 'Black', hex: '#000000', images: ['https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=800&q=80'] }],
-    images: [{ url: 'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=800&q=80', alt: 'Slip Dress', isPrimary: true, order: 1 }],
+    colors: [{ name: 'Black', hex: '#000000', images: ['https://images.pexels.com/photos/1689731/pexels-photo-1689731.jpeg?w=600&h=800&fit=crop'] }],
+    images: [{ url: 'https://images.pexels.com/photos/1689731/pexels-photo-1689731.jpeg?w=600&h=800&fit=crop', alt: 'Slip Dress', isPrimary: true, order: 1 }],
     description: 'Pre-owned silk slip dress. Condition: Good.',
     material: 'Silk',
     inStock: true,
@@ -582,8 +582,8 @@ export const products = [
     originalPrice: 35000,
     discountedPrice: 12000,
     sizes: ['M'],
-    colors: [{ name: 'Cream', hex: '#FFFDD0', images: ['https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=800&q=80'] }],
-    images: [{ url: 'https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=800&q=80', alt: 'Knit Sweater', isPrimary: true, order: 1 }],
+    colors: [{ name: 'Cream', hex: '#FFFDD0', images: ['https://images.pexels.com/photos/1031105/pexels-photo-1031105.jpeg?w=600&h=800&fit=crop'] }],
+    images: [{ url: 'https://images.pexels.com/photos/1031105/pexels-photo-1031105.jpeg?w=600&h=800&fit=crop', alt: 'Knit Sweater', isPrimary: true, order: 1 }],
     description: 'Pre-owned chunky knit sweater. Condition: Fair.',
     material: 'Wool Blend',
     inStock: true,
@@ -606,12 +606,12 @@ export const products = [
     discountPercentage: 24,
     sizes: ['XS', 'S', 'M', 'L', 'XL'],
     colors: [
-      { name: 'Ivory', hex: '#FFFFF0', images: ['https://images.unsplash.com/photo-1591369822096-ffd140ec948f?w=600&h=800&fit=crop'] },
-      { name: 'Sage', hex: '#B2C0A8', images: ['https://images.unsplash.com/photo-1548549557-dbe9946621da?w=600&h=800&fit=crop'] },
+      { name: 'Ivory', hex: '#FFFFF0', images: ['https://images.pexels.com/photos/7691025/pexels-photo-7691025.jpeg?w=600&h=800&fit=crop'] },
+      { name: 'Sage', hex: '#B2C0A8', images: ['https://images.pexels.com/photos/7691025/pexels-photo-7691025.jpeg?w=600&h=800&fit=crop'] },
     ],
     images: [
-      { url: 'https://images.unsplash.com/photo-1591369822096-ffd140ec948f?w=600&h=800&fit=crop', alt: 'Linen Blazer', isPrimary: true, order: 1 },
-      { url: 'https://images.unsplash.com/photo-1548549557-dbe9946621da?w=600&h=800&fit=crop', alt: 'Sage variant', isPrimary: false, order: 2 },
+      { url: 'https://images.pexels.com/photos/7691025/pexels-photo-7691025.jpeg?w=600&h=800&fit=crop', alt: 'Linen Blazer', isPrimary: true, order: 1 },
+      { url: 'https://images.pexels.com/photos/7691025/pexels-photo-7691025.jpeg?w=600&h=800&fit=crop', alt: 'Sage variant', isPrimary: false, order: 2 },
     ],
     description: 'Effortlessly chic oversized linen blazer for a relaxed yet polished look. Perfect over a slip dress or tailored trousers.',
     material: '100% Linen',
@@ -636,12 +636,12 @@ export const products = [
     discountPercentage: 22,
     sizes: ['28', '30', '32', '34', '36'],
     colors: [
-      { name: 'Olive', hex: '#556B2F', images: ['https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?w=600&h=800&fit=crop'] },
-      { name: 'Khaki', hex: '#C3B091', images: ['https://images.unsplash.com/photo-1473966968600-fa801b869a1a?w=600&h=800&fit=crop'] },
+      { name: 'Olive', hex: '#556B2F', images: ['https://images.pexels.com/photos/1082529/pexels-photo-1082529.jpeg?w=600&h=800&fit=crop'] },
+      { name: 'Khaki', hex: '#C3B091', images: ['https://images.pexels.com/photos/1082529/pexels-photo-1082529.jpeg?w=600&h=800&fit=crop'] },
     ],
     images: [
-      { url: 'https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?w=600&h=800&fit=crop', alt: 'Cargo Trousers Olive', isPrimary: true, order: 1 },
-      { url: 'https://images.unsplash.com/photo-1473966968600-fa801b869a1a?w=600&h=800&fit=crop', alt: 'Cargo Trousers Khaki', isPrimary: false, order: 2 },
+      { url: 'https://images.pexels.com/photos/1082529/pexels-photo-1082529.jpeg?w=600&h=800&fit=crop', alt: 'Cargo Trousers Olive', isPrimary: true, order: 1 },
+      { url: 'https://images.pexels.com/photos/1082529/pexels-photo-1082529.jpeg?w=600&h=800&fit=crop', alt: 'Cargo Trousers Khaki', isPrimary: false, order: 2 },
     ],
     description: 'Relaxed fit cargo trousers with functional pockets. Made from a durable cotton-twill blend for all-day comfort.',
     material: '98% Cotton, 2% Elastane',
@@ -666,12 +666,12 @@ export const products = [
     discountPercentage: 23,
     sizes: ['XS', 'S', 'M', 'L'],
     colors: [
-      { name: 'Midnight Blue', hex: '#191970', images: ['https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=600&h=800&fit=crop'] },
-      { name: 'Blush', hex: '#FFAEB9', images: ['https://images.unsplash.com/photo-1496747611176-843222e1e57c?w=600&h=800&fit=crop'] },
+      { name: 'Midnight Blue', hex: '#191970', images: ['https://images.pexels.com/photos/2584269/pexels-photo-2584269.jpeg?w=600&h=800&fit=crop'] },
+      { name: 'Blush', hex: '#FFAEB9', images: ['https://images.pexels.com/photos/2584269/pexels-photo-2584269.jpeg?w=600&h=800&fit=crop'] },
     ],
     images: [
-      { url: 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=600&h=800&fit=crop', alt: 'Satin Wrap Dress', isPrimary: true, order: 1 },
-      { url: 'https://images.unsplash.com/photo-1496747611176-843222e1e57c?w=600&h=800&fit=crop', alt: 'Blush variant', isPrimary: false, order: 2 },
+      { url: 'https://images.pexels.com/photos/2584269/pexels-photo-2584269.jpeg?w=600&h=800&fit=crop', alt: 'Satin Wrap Dress', isPrimary: true, order: 1 },
+      { url: 'https://images.pexels.com/photos/2584269/pexels-photo-2584269.jpeg?w=600&h=800&fit=crop', alt: 'Blush variant', isPrimary: false, order: 2 },
     ],
     description: 'Luxurious satin wrap midi dress with a flattering V-neckline and adjustable tie waist. Day-to-evening versatility at its finest.',
     material: '100% Satin Polyester',
@@ -696,12 +696,12 @@ export const products = [
     discountPercentage: 20,
     sizes: ['One Size'],
     colors: [
-      { name: 'Camel', hex: '#C19A6B', images: ['https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=600&h=800&fit=crop'] },
-      { name: 'Black', hex: '#000000', images: ['https://images.unsplash.com/photo-1590874103328-eac38a683ce7?w=600&h=800&fit=crop'] },
+      { name: 'Camel', hex: '#C19A6B', images: ['https://images.pexels.com/photos/691046/pexels-photo-691046.jpeg?w=600&h=800&fit=crop'] },
+      { name: 'Black', hex: '#000000', images: ['https://images.pexels.com/photos/691046/pexels-photo-691046.jpeg?w=600&h=800&fit=crop'] },
     ],
     images: [
-      { url: 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=600&h=800&fit=crop', alt: 'Structured Tote Camel', isPrimary: true, order: 1 },
-      { url: 'https://images.unsplash.com/photo-1590874103328-eac38a683ce7?w=600&h=800&fit=crop', alt: 'Black Tote', isPrimary: false, order: 2 },
+      { url: 'https://images.pexels.com/photos/691046/pexels-photo-691046.jpeg?w=600&h=800&fit=crop', alt: 'Structured Tote Camel', isPrimary: true, order: 1 },
+      { url: 'https://images.pexels.com/photos/691046/pexels-photo-691046.jpeg?w=600&h=800&fit=crop', alt: 'Black Tote', isPrimary: false, order: 2 },
     ],
     description: 'A structured tote bag crafted from premium vegan leather. Spacious interior with an interior zipper pocket and magnetic closure.',
     material: 'Premium Vegan Leather',
@@ -726,11 +726,11 @@ export const products = [
     discountPercentage: 23,
     sizes: ['XS', 'S', 'M', 'L', 'XL'],
     colors: [
-      { name: 'Caramel', hex: '#C68642', images: ['https://images.unsplash.com/photo-1620799140188-3b2a02fd9a77?w=600&h=800&fit=crop'] },
-      { name: 'Grey', hex: '#808080', images: ['https://images.unsplash.com/photo-1434389677669-e08b4cac3105?w=600&h=800&fit=crop'] },
+      { name: 'Caramel', hex: '#C68642', images: ['https://images.pexels.com/photos/7691248/pexels-photo-7691248.jpeg?w=600&h=800&fit=crop'] },
+      { name: 'Grey', hex: '#808080', images: ['https://images.pexels.com/photos/7691248/pexels-photo-7691248.jpeg?w=600&h=800&fit=crop'] },
     ],
     images: [
-      { url: 'https://images.unsplash.com/photo-1620799140188-3b2a02fd9a77?w=600&h=800&fit=crop', alt: 'Ribbed Cardigan', isPrimary: true, order: 1 },
+      { url: 'https://images.pexels.com/photos/7691248/pexels-photo-7691248.jpeg?w=600&h=800&fit=crop', alt: 'Ribbed Cardigan', isPrimary: true, order: 1 },
     ],
     description: 'Cozy ribbed knit cardigan with a relaxed open-front silhouette. Layer over everything from dresses to jeans.',
     material: '70% Acrylic, 30% Wool',
@@ -755,11 +755,11 @@ export const products = [
     discountPercentage: 24,
     sizes: ['S', 'M', 'L', 'XL', 'XXL'],
     colors: [
-      { name: 'Blue Stripe', hex: '#5B8DB8', images: ['https://images.unsplash.com/photo-1607345366928-199ea26cfe3e?w=600&h=800&fit=crop'] },
-      { name: 'White', hex: '#FFFFFF', images: ['https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?w=600&h=800&fit=crop'] },
+      { name: 'Blue Stripe', hex: '#5B8DB8', images: ['https://images.pexels.com/photos/5462564/pexels-photo-5462564.jpeg?w=600&h=800&fit=crop'] },
+      { name: 'White', hex: '#FFFFFF', images: ['https://images.pexels.com/photos/5462564/pexels-photo-5462564.jpeg?w=600&h=800&fit=crop'] },
     ],
     images: [
-      { url: 'https://images.unsplash.com/photo-1607345366928-199ea26cfe3e?w=600&h=800&fit=crop', alt: 'Oxford Shirt', isPrimary: true, order: 1 },
+      { url: 'https://images.pexels.com/photos/5462564/pexels-photo-5462564.jpeg?w=600&h=800&fit=crop', alt: 'Oxford Shirt', isPrimary: true, order: 1 },
     ],
     description: 'A wardrobe essential. Classic Oxford weave button-down shirt that goes from smart-casual to formal with ease.',
     material: '100% Oxford Cotton',
@@ -784,11 +784,11 @@ export const products = [
     discountPercentage: 21,
     sizes: ['XS', 'S', 'M', 'L', 'XL'],
     colors: [
-      { name: 'Black', hex: '#000000', images: ['https://images.unsplash.com/photo-1509551388413-e18d0ac5d495?w=600&h=800&fit=crop'] },
-      { name: 'Champagne', hex: '#F7E7CE', images: ['https://images.unsplash.com/photo-1539109136881-3be0616acf4b?w=600&h=800&fit=crop'] },
+      { name: 'Black', hex: '#000000', images: ['https://images.pexels.com/photos/7691192/pexels-photo-7691192.jpeg?w=600&h=800&fit=crop'] },
+      { name: 'Champagne', hex: '#F7E7CE', images: ['https://images.pexels.com/photos/7691192/pexels-photo-7691192.jpeg?w=600&h=800&fit=crop'] },
     ],
     images: [
-      { url: 'https://images.unsplash.com/photo-1509551388413-e18d0ac5d495?w=600&h=800&fit=crop', alt: 'Palazzo Trousers', isPrimary: true, order: 1 },
+      { url: 'https://images.pexels.com/photos/7691192/pexels-photo-7691192.jpeg?w=600&h=800&fit=crop', alt: 'Palazzo Trousers', isPrimary: true, order: 1 },
     ],
     description: 'Flowing wide-leg palazzo trousers with an elasticated waistband. Wear with a fitted top or cropped blazer for a sophisticated look.',
     material: '100% Georgette',
@@ -813,11 +813,11 @@ export const products = [
     discountPercentage: 24,
     sizes: ['S', 'M', 'L', 'XL', 'XXL'],
     colors: [
-      { name: 'Charcoal', hex: '#36454F', images: ['https://images.unsplash.com/photo-1620799140188-3b2a02fd9a77?w=600&h=800&fit=crop'] },
-      { name: 'Navy', hex: '#001F3F', images: ['https://images.unsplash.com/photo-1542574271-7f3b92e6c821?w=600&h=800&fit=crop'] },
+      { name: 'Charcoal', hex: '#36454F', images: ['https://images.pexels.com/photos/8365688/pexels-photo-8365688.jpeg?w=600&h=800&fit=crop'] },
+      { name: 'Navy', hex: '#001F3F', images: ['https://images.pexels.com/photos/8365688/pexels-photo-8365688.jpeg?w=600&h=800&fit=crop'] },
     ],
     images: [
-      { url: 'https://images.unsplash.com/photo-1620799140188-3b2a02fd9a77?w=600&h=800&fit=crop', alt: 'Premium Hoodie', isPrimary: true, order: 1 },
+      { url: 'https://images.pexels.com/photos/8365688/pexels-photo-8365688.jpeg?w=600&h=800&fit=crop', alt: 'Premium Hoodie', isPrimary: true, order: 1 },
     ],
     description: 'Ultra-soft premium cotton-fleece hoodie with a relaxed fit. Features a kangaroo pocket and adjustable drawstring hood.',
     material: '80% Cotton, 20% Polyester Fleece',
@@ -842,11 +842,11 @@ export const products = [
     discountPercentage: 21,
     sizes: ['XS', 'S', 'M', 'L'],
     colors: [
-      { name: 'Champagne', hex: '#F7E7CE', images: ['https://images.unsplash.com/photo-1485968579580-b6d095142e6e?w=600&h=800&fit=crop'] },
-      { name: 'Black', hex: '#000000', images: ['https://images.unsplash.com/photo-1512436991641-6745cdb1723f?w=600&h=800&fit=crop'] },
+      { name: 'Champagne', hex: '#F7E7CE', images: ['https://images.pexels.com/photos/5886041/pexels-photo-5886041.jpeg?w=600&h=800&fit=crop'] },
+      { name: 'Black', hex: '#000000', images: ['https://images.pexels.com/photos/5886041/pexels-photo-5886041.jpeg?w=600&h=800&fit=crop'] },
     ],
     images: [
-      { url: 'https://images.unsplash.com/photo-1485968579580-b6d095142e6e?w=600&h=800&fit=crop', alt: 'Silk Camisole', isPrimary: true, order: 1 },
+      { url: 'https://images.pexels.com/photos/5886041/pexels-photo-5886041.jpeg?w=600&h=800&fit=crop', alt: 'Silk Camisole', isPrimary: true, order: 1 },
     ],
     description: 'Delicate silk camisole top with adjustable spaghetti straps and a lace-trimmed hem. Wear alone or layer under a blazer.',
     material: '100% Mulberry Silk',
@@ -871,12 +871,12 @@ export const products = [
     discountPercentage: 22,
     sizes: ['36', '37', '38', '39', '40', '41'],
     colors: [
-      { name: 'White', hex: '#FFFFFF', images: ['https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600&h=800&fit=crop'] },
-      { name: 'Black', hex: '#000000', images: ['https://images.unsplash.com/photo-1491553895911-0055eca6402d?w=600&h=800&fit=crop'] },
+      { name: 'White', hex: '#FFFFFF', images: ['https://images.pexels.com/photos/125779/pexels-photo-125779.jpeg?w=600&h=800&fit=crop'] },
+      { name: 'Black', hex: '#000000', images: ['https://images.pexels.com/photos/125779/pexels-photo-125779.jpeg?w=600&h=800&fit=crop'] },
     ],
     images: [
-      { url: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600&h=800&fit=crop', alt: 'Platform Sneakers White', isPrimary: true, order: 1 },
-      { url: 'https://images.unsplash.com/photo-1491553895911-0055eca6402d?w=600&h=800&fit=crop', alt: 'Platform Sneakers Black', isPrimary: false, order: 2 },
+      { url: 'https://images.pexels.com/photos/125779/pexels-photo-125779.jpeg?w=600&h=800&fit=crop', alt: 'Platform Sneakers White', isPrimary: true, order: 1 },
+      { url: 'https://images.pexels.com/photos/125779/pexels-photo-125779.jpeg?w=600&h=800&fit=crop', alt: 'Platform Sneakers Black', isPrimary: false, order: 2 },
     ],
     description: 'Statement chunky platform sneakers that elevate any look. Cushioned footbed for all-day comfort.',
     material: 'Vegan leather upper, rubber platform sole',
@@ -901,10 +901,10 @@ export const products = [
     discountPercentage: 22,
     sizes: ['XS', 'S', 'M', 'L'],
     colors: [
-      { name: 'Vintage Blue', hex: '#5B7FA6', images: ['https://images.unsplash.com/photo-1509631179647-0177331693ae?w=600&h=800&fit=crop'] },
+      { name: 'Vintage Blue', hex: '#5B7FA6', images: ['https://images.pexels.com/photos/6765164/pexels-photo-6765164.jpeg?w=600&h=800&fit=crop'] },
     ],
     images: [
-      { url: 'https://images.unsplash.com/photo-1509631179647-0177331693ae?w=600&h=800&fit=crop', alt: 'Denim Corset Top', isPrimary: true, order: 1 },
+      { url: 'https://images.pexels.com/photos/6765164/pexels-photo-6765164.jpeg?w=600&h=800&fit=crop', alt: 'Denim Corset Top', isPrimary: true, order: 1 },
     ],
     description: 'A trendy denim corset top with boning details and back lace-up. The perfect blend of structure and denim heritage.',
     material: '100% Denim Cotton',
@@ -929,10 +929,10 @@ export const products = [
     discountPercentage: 21,
     sizes: ['S', 'M', 'L', 'XL'],
     colors: [
-      { name: 'Sky Blue', hex: '#87CEEB', images: ['https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=600&h=800&fit=crop'] }
+      { name: 'Sky Blue', hex: '#87CEEB', images: ['https://images.pexels.com/photos/1043474/pexels-photo-1043474.jpeg?w=600&h=800&fit=crop'] }
     ],
     images: [
-      { url: 'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=600&h=800&fit=crop', alt: 'Linen Shirt', isPrimary: true, order: 1 }
+      { url: 'https://images.pexels.com/photos/1043474/pexels-photo-1043474.jpeg?w=600&h=800&fit=crop', alt: 'Linen Shirt', isPrimary: true, order: 1 }
     ],
     description: 'Lightweight and breathable premium linen shirt, perfect for warm summer days.',
     material: '100% Linen',
@@ -957,10 +957,10 @@ export const products = [
     discountPercentage: 23,
     sizes: ['M', 'L', 'XL'],
     colors: [
-      { name: 'Navy', hex: '#001F3F', images: ['https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=600&h=800&fit=crop'] }
+      { name: 'Navy', hex: '#001F3F', images: ['https://images.pexels.com/photos/1040880/pexels-photo-1040880.jpeg?w=600&h=800&fit=crop'] }
     ],
     images: [
-      { url: 'https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=600&h=800&fit=crop', alt: 'Tailored Blazer', isPrimary: true, order: 1 }
+      { url: 'https://images.pexels.com/photos/1040880/pexels-photo-1040880.jpeg?w=600&h=800&fit=crop', alt: 'Tailored Blazer', isPrimary: true, order: 1 }
     ],
     description: 'Sharp, tailored blazer in a premium wool blend. Ideal for formal and smart-casual occasions.',
     material: '70% Wool, 30% Polyester',
@@ -985,10 +985,10 @@ export const products = [
     discountPercentage: 24,
     sizes: ['XS', 'S', 'M', 'L'],
     colors: [
-      { name: 'Floral Red', hex: '#FF4D4D', images: ['https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?w=600&h=800&fit=crop'] }
+      { name: 'Floral Red', hex: '#FF4D4D', images: ['https://images.pexels.com/photos/1310522/pexels-photo-1310522.jpeg?w=600&h=800&fit=crop'] }
     ],
     images: [
-      { url: 'https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?w=600&h=800&fit=crop', alt: 'Maxi Dress', isPrimary: true, order: 1 }
+      { url: 'https://images.pexels.com/photos/1310522/pexels-photo-1310522.jpeg?w=600&h=800&fit=crop', alt: 'Maxi Dress', isPrimary: true, order: 1 }
     ],
     description: 'Beautiful, flowing bohemian maxi dress with a vibrant floral print and relaxed silhouette.',
     material: '100% Rayon',
@@ -1013,10 +1013,10 @@ export const products = [
     discountPercentage: 20,
     sizes: ['S', 'M', 'L', 'XL'],
     colors: [
-      { name: 'Beige', hex: '#D2B48C', images: ['https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=600&h=800&fit=crop'] }
+      { name: 'Beige', hex: '#D2B48C', images: ['https://images.pexels.com/photos/1488507/pexels-photo-1488507.jpeg?w=600&h=800&fit=crop'] }
     ],
     images: [
-      { url: 'https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=600&h=800&fit=crop', alt: 'Trench Coat', isPrimary: true, order: 1 }
+      { url: 'https://images.pexels.com/photos/1488507/pexels-photo-1488507.jpeg?w=600&h=800&fit=crop', alt: 'Trench Coat', isPrimary: true, order: 1 }
     ],
     description: 'Timeless double-breasted trench coat with waist belt. A premium outerwear staple for any wardrobe.',
     material: '100% Cotton Gabardine',
@@ -1041,10 +1041,10 @@ export const products = [
     discountPercentage: 25,
     sizes: ['2-3Y', '4-5Y', '6-7Y', '8-9Y'],
     colors: [
-      { name: 'Denim', hex: '#4B6584', images: ['https://images.unsplash.com/photo-1503919545889-aef636e10ad4?w=600&h=800&fit=crop'] }
+      { name: 'Denim', hex: '#4B6584', images: ['https://images.pexels.com/photos/8088499/pexels-photo-8088499.jpeg?w=600&h=800&fit=crop'] }
     ],
     images: [
-      { url: 'https://images.unsplash.com/photo-1503919545889-aef636e10ad4?w=600&h=800&fit=crop', alt: 'Kids Dungarees', isPrimary: true, order: 1 }
+      { url: 'https://images.pexels.com/photos/8088499/pexels-photo-8088499.jpeg?w=600&h=800&fit=crop', alt: 'Kids Dungarees', isPrimary: true, order: 1 }
     ],
     description: 'Adorable dungarees crafted from soft, organic cotton denim. Features adjustable straps and multiple pockets.',
     material: '100% Organic Cotton',
@@ -1069,10 +1069,10 @@ export const products = [
     discountPercentage: 26,
     sizes: ['4-5Y', '6-7Y', '8-9Y', '10-11Y'],
     colors: [
-      { name: 'Cream', hex: '#FDF0ED', images: ['https://images.unsplash.com/photo-1540479859555-17af45c78602?w=600&h=800&fit=crop'] }
+      { name: 'Cream', hex: '#FDF0ED', images: ['https://images.pexels.com/photos/8088464/pexels-photo-8088464.jpeg?w=600&h=800&fit=crop'] }
     ],
     images: [
-      { url: 'https://images.unsplash.com/photo-1540479859555-17af45c78602?w=600&h=800&fit=crop', alt: 'Teddy Fleece', isPrimary: true, order: 1 }
+      { url: 'https://images.pexels.com/photos/8088464/pexels-photo-8088464.jpeg?w=600&h=800&fit=crop', alt: 'Teddy Fleece', isPrimary: true, order: 1 }
     ],
     description: 'Ultra-warm and cozy teddy fleece jacket for kids. Perfect for chilly days.',
     material: '100% Polyester Fleece',
@@ -1097,10 +1097,10 @@ export const products = [
     discountPercentage: 20,
     sizes: ['One Size'],
     colors: [
-      { name: 'Tan Brown', hex: '#B27A50', images: ['https://images.unsplash.com/photo-1581605405669-fcdf81165afa?w=600&h=800&fit=crop'] }
+      { name: 'Tan Brown', hex: '#B27A50', images: ['https://images.pexels.com/photos/1232459/pexels-photo-1232459.jpeg?w=600&h=800&fit=crop'] }
     ],
     images: [
-      { url: 'https://images.unsplash.com/photo-1581605405669-fcdf81165afa?w=600&h=800&fit=crop', alt: 'Leather Backpack', isPrimary: true, order: 1 }
+      { url: 'https://images.pexels.com/photos/1232459/pexels-photo-1232459.jpeg?w=600&h=800&fit=crop', alt: 'Leather Backpack', isPrimary: true, order: 1 }
     ],
     description: 'Sleek, minimalist leather backpack featuring clean lines and a spacious laptop sleeve.',
     material: 'Genuine Cowhide Leather',
@@ -1125,10 +1125,10 @@ export const products = [
     discountPercentage: 21,
     sizes: ['38', '39', '40', '41', '42', '43'],
     colors: [
-      { name: 'Suede Charcoal', hex: '#3C3C3C', images: ['https://images.unsplash.com/photo-1608256246200-53e635b5b65f?w=600&h=800&fit=crop'] }
+      { name: 'Suede Charcoal', hex: '#3C3C3C', images: ['https://images.pexels.com/photos/1070945/pexels-photo-1070945.jpeg?w=600&h=800&fit=crop'] }
     ],
     images: [
-      { url: 'https://images.unsplash.com/photo-1608256246200-53e635b5b65f?w=600&h=800&fit=crop', alt: 'Chelsea Boots', isPrimary: true, order: 1 }
+      { url: 'https://images.pexels.com/photos/1070945/pexels-photo-1070945.jpeg?w=600&h=800&fit=crop', alt: 'Chelsea Boots', isPrimary: true, order: 1 }
     ],
     description: 'Premium handcrafted Chelsea boots made from water-resistant suede leather with durable elastic side panels.',
     material: 'Suede leather upper, rubber sole',
@@ -1144,7 +1144,7 @@ export const products = [
   },
   // ── MEN'S SECTION EXPANSION (18 new items) ──
   {
-    id: 'prod_042',
+    id: 'prod_114',
     name: 'Classic Denim Jacket',
     brand: 'Urban Basics',
     category: 'men',
@@ -1153,8 +1153,8 @@ export const products = [
     discountedPrice: 2499,
     discountPercentage: 24,
     sizes: ['S', 'M', 'L', 'XL'],
-    colors: [{ name: 'Indigo', hex: '#2F4F4F', images: ['https://www.missmosa.in/cdn/shop/files/Bernard_Classic_Denim_Jacket_1.jpg?v=1782306828'] }],
-    images: [{ url: 'https://www.missmosa.in/cdn/shop/files/Bernard_Classic_Denim_Jacket_1.jpg?v=1782306828', alt: 'Classic Denim Jacket', isPrimary: true, order: 1 }],
+    colors: [{ name: 'Indigo', hex: '#2F4F4F', images: ['https://images.pexels.com/photos/1598507/pexels-photo-1598507.jpeg?w=600&h=800&fit=crop'] }],
+    images: [{ url: 'https://images.pexels.com/photos/1598507/pexels-photo-1598507.jpeg?w=600&h=800&fit=crop', alt: 'Classic Denim Jacket', isPrimary: true, order: 1 }],
     description: 'A timeless denim jacket made from heavy-weight raw cotton denim with metal button closures.',
     material: '100% Cotton',
     careInstructions: 'Machine wash warm, tumble dry',
@@ -1168,7 +1168,7 @@ export const products = [
     slug: 'classic-denim-jacket'
   },
   {
-    id: 'prod_043',
+    id: 'prod_115',
     name: 'Striped Cotton Polo',
     brand: 'StyleHub',
     category: 'men',
@@ -1177,8 +1177,8 @@ export const products = [
     discountedPrice: 1199,
     discountPercentage: 25,
     sizes: ['M', 'L', 'XL'],
-    colors: [{ name: 'Navy/White', hex: '#000080', images: ['https://www.jackjones.in/cdn/shop/files/900850501_g1_8e6da813-7687-453c-9b5a-b87742fabfed.jpg?v=1779168227&width=1080'] }],
-    images: [{ url: 'https://www.jackjones.in/cdn/shop/files/900850501_g1_8e6da813-7687-453c-9b5a-b87742fabfed.jpg?v=1779168227&width=1080', alt: 'Striped Cotton Polo', isPrimary: true, order: 1 }],
+    colors: [{ name: 'Navy/White', hex: '#000080', images: ['https://images.pexels.com/photos/837306/pexels-photo-837306.jpeg?w=600&h=800&fit=crop'] }],
+    images: [{ url: 'https://images.pexels.com/photos/837306/pexels-photo-837306.jpeg?w=600&h=800&fit=crop', alt: 'Striped Cotton Polo', isPrimary: true, order: 1 }],
     description: 'A sporty cotton polo shirt featuring thin horizontal stripes and a ribbed collar.',
     material: '100% Pique Cotton',
     careInstructions: 'Machine wash cold',
@@ -1192,7 +1192,7 @@ export const products = [
     slug: 'striped-cotton-polo'
   },
   {
-    id: 'prod_044',
+    id: 'prod_116',
     name: 'Slim Fit Linen Shirt',
     brand: 'TrendSetters',
     category: 'men',
@@ -1201,8 +1201,8 @@ export const products = [
     discountedPrice: 1899,
     discountPercentage: 24,
     sizes: ['S', 'M', 'L', 'XL'],
-    colors: [{ name: 'Sky Blue', hex: '#87CEEB', images: ['https://apisap.fabindia.com/medias/20217438-1.jpg?context=bWFzdGVyfGltYWdlc3w3MTE3NXxpbWFnZS9qcGVnfGFHUTVMMmc1TWk4NE5Ea3hOVFV4TmpBNE1ERTFPQzh5TURJeE56UXpPRjh4TG1wd1p3fDc3OTJlZDA1NGNiOGIzNDMwYzkzYmMzYTc2NDIwNGFjMzcyZTRkY2JiOWQxMzNmNjc3Yzk3ZTc2NDdhMzU3NGU&aio=w-768'] }],
-    images: [{ url: 'https://apisap.fabindia.com/medias/20217438-1.jpg?context=bWFzdGVyfGltYWdlc3w3MTE3NXxpbWFnZS9qcGVnfGFHUTVMMmc1TWk4NE5Ea3hOVFV4TmpBNE1ERTFPQzh5TURJeE56UXpPRjh4TG1wd1p3fDc3OTJlZDA1NGNiOGIzNDMwYzkzYmMzYTc2NDIwNGFjMzcyZTRkY2JiOWQxMzNmNjc3Yzk3ZTc2NDdhMzU3NGU&aio=w-768', alt: 'Slim Fit Linen Shirt', isPrimary: true, order: 1 }],
+    colors: [{ name: 'Sky Blue', hex: '#87CEEB', images: ['https://images.pexels.com/photos/1040881/pexels-photo-1040881.jpeg?w=600&h=800&fit=crop'] }],
+    images: [{ url: 'https://images.pexels.com/photos/1040881/pexels-photo-1040881.jpeg?w=600&h=800&fit=crop', alt: 'Slim Fit Linen Shirt', isPrimary: true, order: 1 }],
     description: 'Lightweight and breathable slim-fit shirt crafted from premium Belgian flax linen.',
     material: '100% Linen',
     careInstructions: 'Machine wash cold, line dry',
@@ -1216,7 +1216,7 @@ export const products = [
     slug: 'slim-fit-linen-shirt'
   },
   {
-    id: 'prod_045',
+    id: 'prod_117',
     name: 'Chino Shorts',
     brand: 'ModernFit',
     category: 'men',
@@ -1225,8 +1225,8 @@ export const products = [
     discountedPrice: 1399,
     discountPercentage: 26,
     sizes: ['30', '32', '34', '36'],
-    colors: [{ name: 'Khaki', hex: '#F0E68C', images: ['https://images.unsplash.com/photo-1591195853828-11db59a44f6b?w=600'] }],
-    images: [{ url: 'https://images.unsplash.com/photo-1591195853828-11db59a44f6b?w=600', alt: 'Chino Shorts', isPrimary: true, order: 1 }],
+    colors: [{ name: 'Khaki', hex: '#F0E68C', images: ['https://images.pexels.com/photos/1205033/pexels-photo-1205033.jpeg?w=600&h=800&fit=crop'] }],
+    images: [{ url: 'https://images.pexels.com/photos/1205033/pexels-photo-1205033.jpeg?w=600&h=800&fit=crop', alt: 'Chino Shorts', isPrimary: true, order: 1 }],
     description: 'Classic fit chino shorts ending just above the knee, perfect for warm-weather casual wear.',
     material: '98% Cotton, 2% Spandex',
     careInstructions: 'Machine wash warm',
@@ -1240,7 +1240,7 @@ export const products = [
     slug: 'chino-shorts'
   },
   {
-    id: 'prod_046',
+    id: 'prod_118',
     name: 'Lightweight Bomber Jacket',
     brand: 'PremiumLine',
     category: 'men',
@@ -1249,8 +1249,8 @@ export const products = [
     discountedPrice: 2999,
     discountPercentage: 25,
     sizes: ['S', 'M', 'L', 'XL'],
-    colors: [{ name: 'Olive Green', hex: '#556B2F', images: ['https://images.unsplash.com/photo-1551028719-00167b16eac5?w=600'] }],
-    images: [{ url: 'https://images.unsplash.com/photo-1551028719-00167b16eac5?w=600', alt: 'Lightweight Bomber Jacket', isPrimary: true, order: 1 }],
+    colors: [{ name: 'Olive Green', hex: '#556B2F', images: ['https://images.pexels.com/photos/842811/pexels-photo-842811.jpeg?w=600&h=800&fit=crop'] }],
+    images: [{ url: 'https://images.pexels.com/photos/842811/pexels-photo-842811.jpeg?w=600&h=800&fit=crop', alt: 'Lightweight Bomber Jacket', isPrimary: true, order: 1 }],
     description: 'A wind-resistant lightweight bomber jacket with a sporty look and zippered arm pocket.',
     material: '100% Nylon Shell',
     careInstructions: 'Machine wash cold gentle cycle',
@@ -1273,8 +1273,8 @@ export const products = [
     discountedPrice: 799,
     discountPercentage: 20,
     sizes: ['S', 'M', 'L', 'XL'],
-    colors: [{ name: 'White', hex: '#FFFFFF', images: ['https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=600'] }],
-    images: [{ url: 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=600', alt: 'Classic White Crewneck', isPrimary: true, order: 1 }],
+    colors: [{ name: 'White', hex: '#FFFFFF', images: ['https://images.pexels.com/photos/1043477/pexels-photo-1043477.jpeg?w=600&h=800&fit=crop'] }],
+    images: [{ url: 'https://images.pexels.com/photos/1043477/pexels-photo-1043477.jpeg?w=600&h=800&fit=crop', alt: 'Classic White Crewneck', isPrimary: true, order: 1 }],
     description: 'An everyday basic white tee made from ultra-soft combed cotton for ultimate comfort.',
     material: '100% Combed Cotton',
     careInstructions: 'Machine wash warm, tumble dry',
@@ -1297,8 +1297,8 @@ export const products = [
     discountedPrice: 2199,
     discountPercentage: 27,
     sizes: ['S', 'M', 'L', 'XL'],
-    colors: [{ name: 'Black', hex: '#000000', images: ['https://encrypted-tbn3.gstatic.com/shopping?q=tbn:ANd9GcTCLud1WlTYpldYETflrdQunKiQ4Tp3tBlSXmZyCz-QFz6QAIiV_nR0DO81uav_UQQhASDw-g2Ok119b-ZmqOklMm0OuW3J6hOt-1KfJ8KEltfpVkJuSefWKg'] }],
-    images: [{ url: 'https://encrypted-tbn3.gstatic.com/shopping?q=tbn:ANd9GcTCLud1WlTYpldYETflrdQunKiQ4Tp3tBlSXmZyCz-QFz6QAIiV_nR0DO81uav_UQQhASDw-g2Ok119b-ZmqOklMm0OuW3J6hOt-1KfJ8KEltfpVkJuSefWKg', alt: 'Graphic Hoodie', isPrimary: true, order: 1 }],
+    colors: [{ name: 'Black', hex: '#000000', images: ['https://images.pexels.com/photos/1043480/pexels-photo-1043480.jpeg?w=600&h=800&fit=crop'] }],
+    images: [{ url: 'https://images.pexels.com/photos/1043480/pexels-photo-1043480.jpeg?w=600&h=800&fit=crop', alt: 'Graphic Hoodie', isPrimary: true, order: 1 }],
     description: 'Cozy graphic hoodie with street art-inspired chest print and fleece lining.',
     material: '80% Cotton, 20% Polyester Fleece',
     careInstructions: 'Wash inside out in cold water',
@@ -1321,8 +1321,8 @@ export const products = [
     discountedPrice: 2699,
     discountPercentage: 23,
     sizes: ['M', 'L', 'XL'],
-    colors: [{ name: 'Beige', hex: '#F5F5DC', images: ['https://images.unsplash.com/photo-1614975058789-41316d0e2e9c?w=600'] }],
-    images: [{ url: 'https://images.unsplash.com/photo-1614975058789-41316d0e2e9c?w=600', alt: 'Knit Cardigan', isPrimary: true, order: 1 }],
+    colors: [{ name: 'Beige', hex: '#F5F5DC', images: ['https://images.pexels.com/photos/1018911/pexels-photo-1018911.jpeg?w=600&h=800&fit=crop'] }],
+    images: [{ url: 'https://images.pexels.com/photos/1018911/pexels-photo-1018911.jpeg?w=600&h=800&fit=crop', alt: 'Knit Cardigan', isPrimary: true, order: 1 }],
     description: 'A cozy button-up cardigan sweater knitted from premium cotton-blend yarns.',
     material: '55% Cotton, 45% Acrylic',
     careInstructions: 'Hand wash cold, dry flat',
@@ -1345,8 +1345,8 @@ export const products = [
     discountedPrice: 1999,
     discountPercentage: 29,
     sizes: ['30', '32', '34', '36'],
-    colors: [{ name: 'Rust Brown', hex: '#8B4513', images: ['https://images.unsplash.com/photo-1541099649105-f69ad21f3246?w=600'] }],
-    images: [{ url: 'https://images.unsplash.com/photo-1541099649105-f69ad21f3246?w=600', alt: 'Corduroy Pants', isPrimary: true, order: 1 }],
+    colors: [{ name: 'Rust Brown', hex: '#8B4513', images: ['https://images.pexels.com/photos/1018915/pexels-photo-1018915.jpeg?w=600&h=800&fit=crop'] }],
+    images: [{ url: 'https://images.pexels.com/photos/1018915/pexels-photo-1018915.jpeg?w=600&h=800&fit=crop', alt: 'Corduroy Pants', isPrimary: true, order: 1 }],
     description: 'Rich corduroy trousers with a modern slim tapered fit, perfect for autumn and winter.',
     material: '99% Cotton, 1% Spandex',
     careInstructions: 'Machine wash cold inside out',
@@ -1369,8 +1369,8 @@ export const products = [
     discountedPrice: 1999,
     discountPercentage: 20,
     sizes: ['S', 'M', 'L', 'XL'],
-    colors: [{ name: 'Teal Blue', hex: '#008080', images: ['https://images.unsplash.com/photo-1548883354-7622d03aca27?w=600'] }],
-    images: [{ url: 'https://images.unsplash.com/photo-1548883354-7622d03aca27?w=600', alt: 'Windbreaker', isPrimary: true, order: 1 }],
+    colors: [{ name: 'Teal Blue', hex: '#008080', images: ['https://images.pexels.com/photos/1040880/pexels-photo-1040880.jpeg?w=600&h=800&fit=crop'] }],
+    images: [{ url: 'https://images.pexels.com/photos/1040880/pexels-photo-1040880.jpeg?w=600&h=800&fit=crop', alt: 'Windbreaker', isPrimary: true, order: 1 }],
     description: 'A lightweight and functional packable windbreaker with a toggle hood and zip pockets.',
     material: '100% Polyester with DWR finish',
     careInstructions: 'Machine wash cold, air dry',
@@ -1393,8 +1393,8 @@ export const products = [
     discountedPrice: 899,
     discountPercentage: 25,
     sizes: ['S', 'M', 'L', 'XL'],
-    colors: [{ name: 'Heather Grey', hex: '#808080', images: ['https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=600'] }],
-    images: [{ url: 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=600', alt: 'V-Neck Tee', isPrimary: true, order: 1 }],
+    colors: [{ name: 'Heather Grey', hex: '#808080', images: ['https://images.pexels.com/photos/1043477/pexels-photo-1043477.jpeg?w=600&h=800&fit=crop'] }],
+    images: [{ url: 'https://images.pexels.com/photos/1043477/pexels-photo-1043477.jpeg?w=600&h=800&fit=crop', alt: 'V-Neck Tee', isPrimary: true, order: 1 }],
     description: 'A slim V-neck tee crafted from luxurious long-staple Pima cotton for a soft hand feel.',
     material: '100% Pima Cotton',
     careInstructions: 'Machine wash warm, dry low',
@@ -1417,8 +1417,8 @@ export const products = [
     discountedPrice: 1699,
     discountPercentage: 23,
     sizes: ['S', 'M', 'L', 'XL'],
-    colors: [{ name: 'Light Wash', hex: '#ADD8E6', images: ['https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=600'] }],
-    images: [{ url: 'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=600', alt: 'Denim Shirt', isPrimary: true, order: 1 }],
+    colors: [{ name: 'Light Wash', hex: '#ADD8E6', images: ['https://images.pexels.com/photos/1043474/pexels-photo-1043474.jpeg?w=600&h=800&fit=crop'] }],
+    images: [{ url: 'https://images.pexels.com/photos/1043474/pexels-photo-1043474.jpeg?w=600&h=800&fit=crop', alt: 'Denim Shirt', isPrimary: true, order: 1 }],
     description: 'Retro style denim shirt with double pocket front detail and pearl snap buttons.',
     material: '100% Denim Cotton',
     careInstructions: 'Wash cold with dark colors',
@@ -1441,8 +1441,8 @@ export const products = [
     discountedPrice: 3999,
     discountPercentage: 20,
     sizes: ['40', '41', '42', '43', '44'],
-    colors: [{ name: 'Tan Brown', hex: '#D2B48C', images: ['https://images.unsplash.com/photo-1533867617858-e7b97e060509?w=600'] }],
-    images: [{ url: 'https://images.unsplash.com/photo-1533867617858-e7b97e060509?w=600', alt: 'Tan Leather Loafers', isPrimary: true, order: 1 }],
+    colors: [{ name: 'Tan Brown', hex: '#D2B48C', images: ['https://images.pexels.com/photos/2905288/pexels-photo-2905288.jpeg?w=600&h=800&fit=crop'] }],
+    images: [{ url: 'https://images.pexels.com/photos/2905288/pexels-photo-2905288.jpeg?w=600&h=800&fit=crop', alt: 'Tan Leather Loafers', isPrimary: true, order: 1 }],
     description: 'Classic penny loafers made from full-grain Italian calf leather with cushioned insoles.',
     material: 'Calf leather upper, leather sole',
     careInstructions: 'Apply shoe cream regularly, keep dry',
@@ -1465,8 +1465,8 @@ export const products = [
     discountedPrice: 2299,
     discountPercentage: 23,
     sizes: ['40', '41', '42', '43', '44'],
-    colors: [{ name: 'Full White', hex: '#FFFFFF', images: ['https://images.unsplash.com/photo-1549298916-b41d501d3772?w=600'] }],
-    images: [{ url: 'https://images.unsplash.com/photo-1549298916-b41d501d3772?w=600', alt: 'White Sneakers', isPrimary: true, order: 1 }],
+    colors: [{ name: 'Full White', hex: '#FFFFFF', images: ['https://images.pexels.com/photos/2905282/pexels-photo-2905282.jpeg?w=600&h=800&fit=crop'] }],
+    images: [{ url: 'https://images.pexels.com/photos/2905282/pexels-photo-2905282.jpeg?w=600&h=800&fit=crop', alt: 'White Sneakers', isPrimary: true, order: 1 }],
     description: 'Clean-cut minimalist white leather sneakers with a reinforced rubber cupsole.',
     material: 'Action leather upper, rubber sole',
     careInstructions: 'Clean with damp cloth and leather cleaner',
@@ -1489,8 +1489,8 @@ export const products = [
     discountedPrice: 3499,
     discountPercentage: 22,
     sizes: ['40', '41', '42', '43', '44'],
-    colors: [{ name: 'Taupe', hex: '#B38B6D', images: ['https://images.unsplash.com/photo-1608256246200-53e635b5b65f?w=600'] }],
-    images: [{ url: 'https://images.unsplash.com/photo-1608256246200-53e635b5b65f?w=600', alt: 'Chelsea Boots', isPrimary: true, order: 1 }],
+    colors: [{ name: 'Taupe', hex: '#B38B6D', images: ['https://images.pexels.com/photos/2905278/pexels-photo-2905278.jpeg?w=600&h=800&fit=crop'] }],
+    images: [{ url: 'https://images.pexels.com/photos/2905278/pexels-photo-2905278.jpeg?w=600&h=800&fit=crop', alt: 'Chelsea Boots', isPrimary: true, order: 1 }],
     description: 'Classic slip-on Chelsea boots in premium water-repellent cow suede.',
     material: 'Genuine suede upper, crepe sole',
     careInstructions: 'Suede brush and protect spray',
@@ -1513,8 +1513,8 @@ export const products = [
     discountedPrice: 1999,
     discountPercentage: 23,
     sizes: ['40', '41', '42', '43', '44'],
-    colors: [{ name: 'Carbon Black', hex: '#2B2B2B', images: ['https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600'] }],
-    images: [{ url: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600', alt: 'Black Knit Trainers', isPrimary: true, order: 1 }],
+    colors: [{ name: 'Carbon Black', hex: '#2B2B2B', images: ['https://images.pexels.com/photos/1464625/pexels-photo-1464625.jpeg?w=600&h=800&fit=crop'] }],
+    images: [{ url: 'https://images.pexels.com/photos/1464625/pexels-photo-1464625.jpeg?w=600&h=800&fit=crop', alt: 'Black Knit Trainers', isPrimary: true, order: 1 }],
     description: 'Ultra-lightweight mesh knit training shoes with advanced responsive foam midsole.',
     material: 'Polyester mesh upper, EVA sole',
     careInstructions: 'Hand wash, air dry',
@@ -1537,8 +1537,8 @@ export const products = [
     discountedPrice: 1799,
     discountPercentage: 21,
     sizes: ['30', '32', '34', '36'],
-    colors: [{ name: 'Natural Sand', hex: '#EAE6DF', images: ['https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?w=600'] }],
-    images: [{ url: 'https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?w=600', alt: 'Linen Drawstring Pants', isPrimary: true, order: 1 }],
+    colors: [{ name: 'Natural Sand', hex: '#EAE6DF', images: ['https://images.pexels.com/photos/4210866/pexels-photo-4210866.jpeg?w=600&h=800&fit=crop'] }],
+    images: [{ url: 'https://images.pexels.com/photos/4210866/pexels-photo-4210866.jpeg?w=600&h=800&fit=crop', alt: 'Linen Drawstring Pants', isPrimary: true, order: 1 }],
     description: 'Relaxed fit trousers in soft cotton-linen blend featuring an adjustable drawstring waist.',
     material: '55% Linen, 45% Cotton',
     careInstructions: 'Machine wash cold on gentle',
@@ -1561,8 +1561,8 @@ export const products = [
     discountedPrice: 1899,
     discountPercentage: 24,
     sizes: ['30', '32', '34', '36'],
-    colors: [{ name: 'Dark Indigo', hex: '#1C2951', images: ['https://images.unsplash.com/photo-1542272604-787c3835535d?w=600'] }],
-    images: [{ url: 'https://images.unsplash.com/photo-1542272604-787c3835535d?w=600', alt: 'Slim Stretch Jeans', isPrimary: true, order: 1 }],
+    colors: [{ name: 'Dark Indigo', hex: '#1C2951', images: ['https://images.pexels.com/photos/1082529/pexels-photo-1082529.jpeg?w=600&h=800&fit=crop'] }],
+    images: [{ url: 'https://images.pexels.com/photos/1082529/pexels-photo-1082529.jpeg?w=600&h=800&fit=crop', alt: 'Slim Stretch Jeans', isPrimary: true, order: 1 }],
     description: 'Comfortable denim jeans with a modern slim silhouette and just enough stretch.',
     material: '98% Cotton, 2% Spandex',
     careInstructions: 'Wash inside out, do not bleach',
@@ -1587,8 +1587,8 @@ export const products = [
     discountedPrice: 2699,
     discountPercentage: 22,
     sizes: ['XS', 'S', 'M', 'L'],
-    colors: [{ name: 'Blush Floral', hex: '#FFC0CB', images: ['https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=600'] }],
-    images: [{ url: 'https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=600', alt: 'Floral Maxi Dress', isPrimary: true, order: 1 }],
+    colors: [{ name: 'Blush Floral', hex: '#FFC0CB', images: ['https://images.pexels.com/photos/2916814/pexels-photo-2916814.jpeg?w=600&h=800&fit=crop'] }],
+    images: [{ url: 'https://images.pexels.com/photos/2916814/pexels-photo-2916814.jpeg?w=600&h=800&fit=crop', alt: 'Floral Maxi Dress', isPrimary: true, order: 1 }],
     description: 'A beautiful flowing maxi dress in floral printed chiffon with flutter sleeves.',
     material: '100% Polyester Chiffon',
     careInstructions: 'Hand wash or dry clean',
@@ -1611,8 +1611,8 @@ export const products = [
     discountedPrice: 1699,
     discountPercentage: 23,
     sizes: ['S', 'M', 'L'],
-    colors: [{ name: 'Cream White', hex: '#FFFDD0', images: ['https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=600'] }],
-    images: [{ url: 'https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=600', alt: 'Cropped Sweater', isPrimary: true, order: 1 }],
+    colors: [{ name: 'Cream White', hex: '#FFFDD0', images: ['https://images.pexels.com/photos/2065200/pexels-photo-2065200.jpeg?w=600&h=800&fit=crop'] }],
+    images: [{ url: 'https://images.pexels.com/photos/2065200/pexels-photo-2065200.jpeg?w=600&h=800&fit=crop', alt: 'Cropped Sweater', isPrimary: true, order: 1 }],
     description: 'Chic cropped cable-knit sweater made from fuzzy cotton-mix yarns for cozy styling.',
     material: '60% Cotton, 40% Acrylic',
     careInstructions: 'Machine wash cold flat dry',
@@ -1635,8 +1635,8 @@ export const products = [
     discountedPrice: 1999,
     discountPercentage: 25,
     sizes: ['26', '28', '30', '32'],
-    colors: [{ name: 'Vintage Blue', hex: '#63C5DA', images: ['https://images.unsplash.com/photo-1541099649105-f69ad21f3246?w=600'] }],
-    images: [{ url: 'https://images.unsplash.com/photo-1541099649105-f69ad21f3246?w=600', alt: 'Mom Jeans', isPrimary: true, order: 1 }],
+    colors: [{ name: 'Vintage Blue', hex: '#63C5DA', images: ['https://images.pexels.com/photos/2235071/pexels-photo-2235071.jpeg?w=600&h=800&fit=crop'] }],
+    images: [{ url: 'https://images.pexels.com/photos/2235071/pexels-photo-2235071.jpeg?w=600&h=800&fit=crop', alt: 'Mom Jeans', isPrimary: true, order: 1 }],
     description: 'A classic 90s silhouette mom jeans with high waist and tapered fit through the ankles.',
     material: '100% Organic Denim Cotton',
     careInstructions: 'Wash cold inside out',
@@ -1659,8 +1659,8 @@ export const products = [
     discountedPrice: 1499,
     discountPercentage: 21,
     sizes: ['XS', 'S', 'M', 'L'],
-    colors: [{ name: 'Emerald Green', hex: '#004953', images: ['https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=600'] }],
-    images: [{ url: 'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=600', alt: 'Satin Blouse', isPrimary: true, order: 1 }],
+    colors: [{ name: 'Emerald Green', hex: '#004953', images: ['https://images.pexels.com/photos/1619799/pexels-photo-1619799.jpeg?w=600&h=800&fit=crop'] }],
+    images: [{ url: 'https://images.pexels.com/photos/1619799/pexels-photo-1619799.jpeg?w=600&h=800&fit=crop', alt: 'Satin Blouse', isPrimary: true, order: 1 }],
     description: 'A luxurious satin button-down blouse with long sleeves and a silky drape.',
     material: '97% Polyester, 3% Elastane Satin',
     careInstructions: 'Machine wash delicate or hand wash',
@@ -1683,8 +1683,8 @@ export const products = [
     discountedPrice: 1599,
     discountPercentage: 20,
     sizes: ['S', 'M', 'L'],
-    colors: [{ name: 'Oatmeal Beige', hex: '#F5F5DC', images: ['https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=600'] }],
-    images: [{ url: 'https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=600', alt: 'Midi Skirt', isPrimary: true, order: 1 }],
+    colors: [{ name: 'Oatmeal Beige', hex: '#F5F5DC', images: ['https://images.pexels.com/photos/1620824/pexels-photo-1620824.jpeg?w=600&h=800&fit=crop'] }],
+    images: [{ url: 'https://images.pexels.com/photos/1620824/pexels-photo-1620824.jpeg?w=600&h=800&fit=crop', alt: 'Midi Skirt', isPrimary: true, order: 1 }],
     description: 'Breathable linen midi skirt with front buttons and side slit pockets.',
     material: '70% Linen, 30% Cotton',
     careInstructions: 'Iron while damp, machine wash gentle',
@@ -1707,8 +1707,8 @@ export const products = [
     discountedPrice: 3999,
     discountPercentage: 20,
     sizes: ['S', 'M', 'L', 'XL'],
-    colors: [{ name: 'Black Plaid', hex: '#1C1C1C', images: ['https://images.unsplash.com/photo-1485968579580-b6d095142e6e?w=600'] }],
-    images: [{ url: 'https://images.unsplash.com/photo-1485968579580-b6d095142e6e?w=600', alt: 'Double Breasted Blazer', isPrimary: true, order: 1 }],
+    colors: [{ name: 'Black Plaid', hex: '#1C1C1C', images: ['https://images.pexels.com/photos/1152077/pexels-photo-1152077.jpeg?w=600&h=800&fit=crop'] }],
+    images: [{ url: 'https://images.pexels.com/photos/1152077/pexels-photo-1152077.jpeg?w=600&h=800&fit=crop', alt: 'Double Breasted Blazer', isPrimary: true, order: 1 }],
     description: 'A structured, double-breasted blazer with sharp lapels and subtle plaid check design.',
     material: '75% Polyester, 20% Rayon, 5% Spandex',
     careInstructions: 'Dry clean only',
@@ -1731,8 +1731,8 @@ export const products = [
     discountedPrice: 1799,
     discountPercentage: 22,
     sizes: ['S', 'M', 'L'],
-    colors: [{ name: 'Mustard Yellow', hex: '#FFDB58', images: ['https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=600'] }],
-    images: [{ url: 'https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=600', alt: 'Bodycon Dress', isPrimary: true, order: 1 }],
+    colors: [{ name: 'Mustard Yellow', hex: '#FFDB58', images: ['https://images.pexels.com/photos/3731256/pexels-photo-3731256.jpeg?w=600&h=800&fit=crop'] }],
+    images: [{ url: 'https://images.pexels.com/photos/3731256/pexels-photo-3731256.jpeg?w=600&h=800&fit=crop', alt: 'Bodycon Dress', isPrimary: true, order: 1 }],
     description: 'A form-fitting mock neck midi dress crafted from thick stretchy ribbed knit fabric.',
     material: '80% Viscose, 20% Nylon',
     careInstructions: 'Dry flat, do not wring',
@@ -1755,8 +1755,8 @@ export const products = [
     discountedPrice: 1199,
     discountPercentage: 25,
     sizes: ['S', 'M', 'L', 'XL'],
-    colors: [{ name: 'Navy Blue', hex: '#000080', images: ['https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=600'] }],
-    images: [{ url: 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=600', alt: 'High Waist Leggings', isPrimary: true, order: 1 }],
+    colors: [{ name: 'Navy Blue', hex: '#000080', images: ['https://images.pexels.com/photos/3622605/pexels-photo-3622605.jpeg?w=600&h=800&fit=crop'] }],
+    images: [{ url: 'https://images.pexels.com/photos/3622605/pexels-photo-3622605.jpeg?w=600&h=800&fit=crop', alt: 'High Waist Leggings', isPrimary: true, order: 1 }],
     description: 'Squat-proof activewear leggings with wide elasticated high waistband and side phone pocket.',
     material: '87% Nylon, 13% Spandex',
     careInstructions: 'Wash cold inside out, no fabric softener',
@@ -1779,8 +1779,8 @@ export const products = [
     discountedPrice: 1299,
     discountPercentage: 24,
     sizes: ['XS', 'S', 'M', 'L'],
-    colors: [{ name: 'Soft Peach', hex: '#FFDAB9', images: ['https://images.unsplash.com/photo-1485968579580-b6d095142e6e?w=600'] }],
-    images: [{ url: 'https://images.unsplash.com/photo-1485968579580-b6d095142e6e?w=600', alt: 'Linen Top', isPrimary: true, order: 1 }],
+    colors: [{ name: 'Soft Peach', hex: '#FFDAB9', images: ['https://images.pexels.com/photos/1204470/pexels-photo-1204470.jpeg?w=600&h=800&fit=crop'] }],
+    images: [{ url: 'https://images.pexels.com/photos/1204470/pexels-photo-1204470.jpeg?w=600&h=800&fit=crop', alt: 'Linen Top', isPrimary: true, order: 1 }],
     description: 'Chic off-the-shoulder linen top with puff sleeves and smocked bodice details.',
     material: '55% Linen, 45% Cotton',
     careInstructions: 'Hand wash cold, air dry',
@@ -1803,8 +1803,8 @@ export const products = [
     discountedPrice: 4999,
     discountPercentage: 29,
     sizes: ['S', 'M', 'L', 'XL'],
-    colors: [{ name: 'Camel Khaki', hex: '#C19A6B', images: ['https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=600'] }],
-    images: [{ url: 'https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=600', alt: 'Trench Coat', isPrimary: true, order: 1 }],
+    colors: [{ name: 'Camel Khaki', hex: '#C19A6B', images: ['https://images.pexels.com/photos/2294342/pexels-photo-2294342.jpeg?w=600&h=800&fit=crop'] }],
+    images: [{ url: 'https://images.pexels.com/photos/2294342/pexels-photo-2294342.jpeg?w=600&h=800&fit=crop', alt: 'Trench Coat', isPrimary: true, order: 1 }],
     description: 'Double-breasted vintage-inspired trench coat featuring shoulder epaulettes and matching belt.',
     material: '80% Polyester, 20% Cotton Gabardine',
     careInstructions: 'Dry clean only',
@@ -1827,8 +1827,8 @@ export const products = [
     discountedPrice: 1399,
     discountPercentage: 22,
     sizes: ['S', 'M', 'L'],
-    colors: [{ name: 'Olive Green', hex: '#556B2F', images: ['https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=600'] }],
-    images: [{ url: 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=600', alt: 'Palazzo Pants', isPrimary: true, order: 1 }],
+    colors: [{ name: 'Olive Green', hex: '#556B2F', images: ['https://images.pexels.com/photos/7691192/pexels-photo-7691192.jpeg?w=600&h=800&fit=crop'] }],
+    images: [{ url: 'https://images.pexels.com/photos/7691192/pexels-photo-7691192.jpeg?w=600&h=800&fit=crop', alt: 'Palazzo Pants', isPrimary: true, order: 1 }],
     description: 'Flowy wide-leg pants crafted from silky rayon crepe with comfortable elastic back waist.',
     material: '100% Viscose Rayon',
     careInstructions: 'Wash cold inside out',
@@ -1851,8 +1851,8 @@ export const products = [
     discountedPrice: 1799,
     discountPercentage: 22,
     sizes: ['S', 'M', 'L'],
-    colors: [{ name: 'Terracotta', hex: '#E2725B', images: ['https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=600'] }],
-    images: [{ url: 'https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=600', alt: 'Maxi Skirt', isPrimary: true, order: 1 }],
+    colors: [{ name: 'Terracotta', hex: '#E2725B', images: ['https://images.pexels.com/photos/2294350/pexels-photo-2294350.jpeg?w=600&h=800&fit=crop'] }],
+    images: [{ url: 'https://images.pexels.com/photos/2294350/pexels-photo-2294350.jpeg?w=600&h=800&fit=crop', alt: 'Maxi Skirt', isPrimary: true, order: 1 }],
     description: 'Romantic tiered maxi skirt in textured cotton slub featuring a soft inner lining.',
     material: '100% Cotton',
     careInstructions: 'Machine wash cold, lay flat to dry',
@@ -1875,8 +1875,8 @@ export const products = [
     discountedPrice: 3199,
     discountPercentage: 20,
     sizes: ['36', '37', '38', '39', '40'],
-    colors: [{ name: 'Nude Beige', hex: '#EAE0C8', images: ['https://encrypted-tbn2.gstatic.com/shopping?q=tbn:ANd9GcSjjZJaNSAt2fs7Fs_TbuutKE3FOk_KoL2efTZXu-8hyKZoqCKB3l9ezilq9cHV-BygSISjRDRk3go2owvvI7D6-x_cjRpJVYOI68uQa_XKkQGCfUuzJ4ex'] }],
-    images: [{ url: 'https://encrypted-tbn2.gstatic.com/shopping?q=tbn:ANd9GcSjjZJaNSAt2fs7Fs_TbuutKE3FOk_KoL2efTZXu-8hyKZoqCKB3l9ezilq9cHV-BygSISjRDRk3go2owvvI7D6-x_cjRpJVYOI68uQa_XKkQGCfUuzJ4ex', alt: 'Pointed Toe Heels', isPrimary: true, order: 1 }],
+    colors: [{ name: 'Nude Beige', hex: '#EAE0C8', images: ['https://images.pexels.com/photos/2294352/pexels-photo-2294352.jpeg?w=600&h=800&fit=crop'] }],
+    images: [{ url: 'https://images.pexels.com/photos/2294352/pexels-photo-2294352.jpeg?w=600&h=800&fit=crop', alt: 'Pointed Toe Heels', isPrimary: true, order: 1 }],
     description: 'Chic pointed toe stiletto heels made from premium sheepskin leather.',
     material: 'Sheepskin upper, rubber sole',
     careInstructions: 'Wipe with soft cloth, apply leather conditioner',
@@ -1899,8 +1899,8 @@ export const products = [
     discountedPrice: 1499,
     discountPercentage: 21,
     sizes: ['36', '37', '38', '39', '40'],
-    colors: [{ name: 'Tan/Gold', hex: '#B8860B', images: ['https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=600'] }],
-    images: [{ url: 'https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=600', alt: 'Woven Sandals', isPrimary: true, order: 1 }],
+    colors: [{ name: 'Tan/Gold', hex: '#B8860B', images: ['https://images.pexels.com/photos/2294344/pexels-photo-2294344.jpeg?w=600&h=800&fit=crop'] }],
+    images: [{ url: 'https://images.pexels.com/photos/2294344/pexels-photo-2294344.jpeg?w=600&h=800&fit=crop', alt: 'Woven Sandals', isPrimary: true, order: 1 }],
     description: 'Easy slip-on slides featuring woven faux leather straps and flat wood-effect soles.',
     material: 'Polyurethane upper, TPR sole',
     careInstructions: 'Wipe clean with a damp cloth',
@@ -1923,8 +1923,8 @@ export const products = [
     discountedPrice: 2799,
     discountPercentage: 20,
     sizes: ['36', '37', '38', '39', '40'],
-    colors: [{ name: 'Chestnut', hex: '#954535', images: ['https://images.unsplash.com/photo-1608256246200-53e635b5b65f?w=600'] }],
-    images: [{ url: 'https://images.unsplash.com/photo-1608256246200-53e635b5b65f?w=600', alt: 'Suede Booties', isPrimary: true, order: 1 }],
+    colors: [{ name: 'Chestnut', hex: '#954535', images: ['https://images.pexels.com/photos/2294346/pexels-photo-2294346.jpeg?w=600&h=800&fit=crop'] }],
+    images: [{ url: 'https://images.pexels.com/photos/2294346/pexels-photo-2294346.jpeg?w=600&h=800&fit=crop', alt: 'Suede Booties', isPrimary: true, order: 1 }],
     description: 'Chic ankle boots in soft split cow suede featuring low block heels and side zip.',
     material: 'Suede leather upper, rubber sole',
     careInstructions: 'Avoid water, clean with suede block',
@@ -1947,8 +1947,8 @@ export const products = [
     discountedPrice: 1999,
     discountPercentage: 20,
     sizes: ['36', '37', '38', '39', '40'],
-    colors: [{ name: 'Pink Rose', hex: '#FFC0CB', images: ['https://images.unsplash.com/photo-1549298916-b41d501d3772?w=600'] }],
-    images: [{ url: 'https://images.unsplash.com/photo-1549298916-b41d501d3772?w=600', alt: 'Pink Sneakers', isPrimary: true, order: 1 }],
+    colors: [{ name: 'Pink Rose', hex: '#FFC0CB', images: ['https://images.pexels.com/photos/1586482/pexels-photo-1586482.jpeg?w=600&h=800&fit=crop'] }],
+    images: [{ url: 'https://images.pexels.com/photos/1586482/pexels-photo-1586482.jpeg?w=600&h=800&fit=crop', alt: 'Pink Sneakers', isPrimary: true, order: 1 }],
     description: 'Ultra-light slip-on knit trainers with flexible breathable mesh and elastic straps.',
     material: 'Polyester mesh upper, EVA sole',
     careInstructions: 'Machine washable on gentle, air dry',
@@ -1971,8 +1971,8 @@ export const products = [
     discountedPrice: 1499,
     discountPercentage: 21,
     sizes: ['26', '28', '30', '32'],
-    colors: [{ name: 'Light Wash', hex: '#ADD8E6', images: ['https://images.unsplash.com/photo-1541099649105-f69ad21f3246?w=600'] }],
-    images: [{ url: 'https://images.unsplash.com/photo-1541099649105-f69ad21f3246?w=600', alt: 'Paperbag Shorts', isPrimary: true, order: 1 }],
+    colors: [{ name: 'Light Wash', hex: '#ADD8E6', images: ['https://images.pexels.com/photos/1857375/pexels-photo-1857375.jpeg?w=600&h=800&fit=crop'] }],
+    images: [{ url: 'https://images.pexels.com/photos/1857375/pexels-photo-1857375.jpeg?w=600&h=800&fit=crop', alt: 'Paperbag Shorts', isPrimary: true, order: 1 }],
     description: 'Relaxed denim shorts with gathered ruffle paperbag waistband and matching denim belt.',
     material: '100% Cotton Denim',
     careInstructions: 'Machine wash cold inside out',
@@ -1995,8 +1995,8 @@ export const products = [
     discountedPrice: 2299,
     discountPercentage: 23,
     sizes: ['XS', 'S', 'M', 'L'],
-    colors: [{ name: 'Sage Green', hex: '#BCED91', images: ['https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=600'] }],
-    images: [{ url: 'https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=600', alt: 'Smocked Dress', isPrimary: true, order: 1 }],
+    colors: [{ name: 'Sage Green', hex: '#BCED91', images: ['https://images.pexels.com/photos/1620760/pexels-photo-1620760.jpeg?w=600&h=800&fit=crop'] }],
+    images: [{ url: 'https://images.pexels.com/photos/1620760/pexels-photo-1620760.jpeg?w=600&h=800&fit=crop', alt: 'Smocked Dress', isPrimary: true, order: 1 }],
     description: 'Charming mini dress featuring a fully smocked stretchy bodice and tiny floral prints.',
     material: '100% Rayon',
     careInstructions: 'Hand wash cold, reshape and dry flat',
@@ -2021,8 +2021,8 @@ export const products = [
     discountedPrice: 1199,
     discountPercentage: 25,
     sizes: ['4-5Y', '6-7Y', '8-9Y'],
-    colors: [{ name: 'Bright Yellow', hex: '#FFD700', images: ['https://images.unsplash.com/photo-1519457431-44ccd64a579b?w=600'] }],
-    images: [{ url: 'https://images.unsplash.com/photo-1519457431-44ccd64a579b?w=600', alt: 'Kids Yellow Hoodie', isPrimary: true, order: 1 }],
+    colors: [{ name: 'Bright Yellow', hex: '#FFD700', images: ['https://images.pexels.com/photos/8088497/pexels-photo-8088497.jpeg?w=600&h=800&fit=crop'] }],
+    images: [{ url: 'https://images.pexels.com/photos/8088497/pexels-photo-8088497.jpeg?w=600&h=800&fit=crop', alt: 'Kids Yellow Hoodie', isPrimary: true, order: 1 }],
     description: 'Cozy organic cotton fleece hoodie with a front kangaroo pocket and ribbed cuffs.',
     material: '90% Cotton, 10% Polyester Fleece',
     careInstructions: 'Machine wash warm, tumble dry',
@@ -2045,8 +2045,8 @@ export const products = [
     discountedPrice: 1399,
     discountPercentage: 26,
     sizes: ['2-3Y', '4-5Y'],
-    colors: [{ name: 'Medium Wash', hex: '#4682B4', images: ['https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTQflA9Cdc41SrIpd1MFt3GesPFGalnyeRAWYuUX5uG4A&s=10'] }],
-    images: [{ url: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTQflA9Cdc41SrIpd1MFt3GesPFGalnyeRAWYuUX5uG4A&s=10', alt: 'Kids Dungarees', isPrimary: true, order: 1 }],
+    colors: [{ name: 'Medium Wash', hex: '#4682B4', images: ['https://images.pexels.com/photos/8088483/pexels-photo-8088483.jpeg?w=600&h=800&fit=crop'] }],
+    images: [{ url: 'https://images.pexels.com/photos/8088483/pexels-photo-8088483.jpeg?w=600&h=800&fit=crop', alt: 'Kids Dungarees', isPrimary: true, order: 1 }],
     description: 'Cute denim dungarees with adjustable shoulder straps and side pocket details.',
     material: '100% Cotton Denim',
     careInstructions: 'Machine wash cold inside out',
@@ -2069,8 +2069,8 @@ export const products = [
     discountedPrice: 1899,
     discountPercentage: 24,
     sizes: ['4-5Y', '6-7Y', '8-9Y'],
-    colors: [{ name: 'Princess Pink', hex: '#FFB6C1', images: ['https://images.unsplash.com/photo-1518831959646-742c3a14ebf7?w=600'] }],
-    images: [{ url: 'https://images.unsplash.com/photo-1518831959646-742c3a14ebf7?w=600', alt: 'Girls Pink Tulle Dress', isPrimary: true, order: 1 }],
+    colors: [{ name: 'Princess Pink', hex: '#FFB6C1', images: ['https://images.pexels.com/photos/1598508/pexels-photo-1598508.jpeg?w=600&h=800&fit=crop'] }],
+    images: [{ url: 'https://images.pexels.com/photos/1598508/pexels-photo-1598508.jpeg?w=600&h=800&fit=crop', alt: 'Girls Pink Tulle Dress', isPrimary: true, order: 1 }],
     description: 'Whimsical tiered tulle dress with a sparkling glitter sequin bodice and bow tie waist.',
     material: '100% Polyester Tulle and Satin Lining',
     careInstructions: 'Hand wash cold, dry flat',
@@ -2093,8 +2093,8 @@ export const products = [
     discountedPrice: 999,
     discountPercentage: 23,
     sizes: ['4-5Y', '6-7Y', '8-9Y'],
-    colors: [{ name: 'Multi-color Pack', hex: '#40E0D0', images: ['https://images.unsplash.com/photo-1519457431-44ccd64a579b?w=600'] }],
-    images: [{ url: 'https://images.unsplash.com/photo-1519457431-44ccd64a579b?w=600', alt: 'T-Shirt 2-Pack', isPrimary: true, order: 1 }],
+    colors: [{ name: 'Multi-color Pack', hex: '#40E0D0', images: ['https://images.pexels.com/photos/8088462/pexels-photo-8088462.jpeg?w=600&h=800&fit=crop'] }],
+    images: [{ url: 'https://images.pexels.com/photos/8088462/pexels-photo-8088462.jpeg?w=600&h=800&fit=crop', alt: 'T-Shirt 2-Pack', isPrimary: true, order: 1 }],
     description: 'A convenient pack of two everyday crewneck tees made from durable knit cotton.',
     material: '100% Cotton Knit',
     careInstructions: 'Machine wash warm',
@@ -2117,8 +2117,8 @@ export const products = [
     discountedPrice: 1199,
     discountPercentage: 20,
     sizes: ['28', '30', '32', '34'],
-    colors: [{ name: 'Navy Canvas', hex: '#1F305E', images: ['https://encrypted-tbn2.gstatic.com/shopping?q=tbn:ANd9GcSElMyQHmmYYgDL3LxjSxJL6dHNiyRH133XDYTcZ5yOYbbGQbzcSQg93Y0vecJhknkGTnQcCYC-calJAccDtbXdG_nZP5SfIYwMzGZbOGKYQNS94xCMJzJ4Sw'] }],
-    images: [{ url: 'https://encrypted-tbn2.gstatic.com/shopping?q=tbn:ANd9GcSElMyQHmmYYgDL3LxjSxJL6dHNiyRH133XDYTcZ5yOYbbGQbzcSQg93Y0vecJhknkGTnQcCYC-calJAccDtbXdG_nZP5SfIYwMzGZbOGKYQNS94xCMJzJ4Sw', alt: 'Kids Canvas Shoes', isPrimary: true, order: 1 }],
+    colors: [{ name: 'Navy Canvas', hex: '#1F305E', images: ['https://images.pexels.com/photos/8088495/pexels-photo-8088495.jpeg?w=600&h=800&fit=crop'] }],
+    images: [{ url: 'https://images.pexels.com/photos/8088495/pexels-photo-8088495.jpeg?w=600&h=800&fit=crop', alt: 'Kids Canvas Shoes', isPrimary: true, order: 1 }],
     description: 'Easy slip-on canvas shoes with rubber toe guards and flexible slip-resistant soles.',
     material: 'Cotton canvas upper, vulcanized rubber sole',
     careInstructions: 'Machine wash cold on gentle, air dry',
@@ -2141,8 +2141,8 @@ export const products = [
     discountedPrice: 1299,
     discountPercentage: 19,
     sizes: ['2-3Y', '4-5Y', '6-7Y'],
-    colors: [{ name: 'Space Print', hex: '#0F52BA', images: ['https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSfoHNkD6pSbRYnVLSTn2F-UBKVMz_UW8nGXFehXyCnPL-gOqz9Q46e6J1C&s=10'] }],
-    images: [{ url: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSfoHNkD6pSbRYnVLSTn2F-UBKVMz_UW8nGXFehXyCnPL-gOqz9Q46e6J1C&s=10', alt: 'Kids Space PJs', isPrimary: true, order: 1 }],
+    colors: [{ name: 'Space Print', hex: '#0F52BA', images: ['https://images.pexels.com/photos/8088469/pexels-photo-8088469.jpeg?w=600&h=800&fit=crop'] }],
+    images: [{ url: 'https://images.pexels.com/photos/8088469/pexels-photo-8088469.jpeg?w=600&h=800&fit=crop', alt: 'Kids Space PJs', isPrimary: true, order: 1 }],
     description: 'Soft cotton pajamas set with cartoon space rocket print, perfect for sweet dreams.',
     material: '100% Organic Interlock Cotton',
     careInstructions: 'Machine wash warm inside out',
@@ -2165,8 +2165,8 @@ export const products = [
     discountedPrice: 999,
     discountPercentage: 23,
     sizes: ['4-5Y', '6-7Y', '8-9Y'],
-    colors: [{ name: 'Combat Green', hex: '#4B5320', images: ['https://encrypted-tbn3.gstatic.com/shopping?q=tbn:ANd9GcSSfR3nulOUq20dastMfEPGlM9knkXhJsXhzPAXPsFuCkVpU3Bp3G6cr38EdeQAfIG1JAoqrJ5sJTkEgwsG3K-257vbjMoYZwq2KOzJE2Rc8qou8q28C_TY'] }],
-    images: [{ url: 'https://encrypted-tbn3.gstatic.com/shopping?q=tbn:ANd9GcSSfR3nulOUq20dastMfEPGlM9knkXhJsXhzPAXPsFuCkVpU3Bp3G6cr38EdeQAfIG1JAoqrJ5sJTkEgwsG3K-257vbjMoYZwq2KOzJE2Rc8qou8q28C_TY', alt: 'Kids Cargo Shorts', isPrimary: true, order: 1 }],
+    colors: [{ name: 'Combat Green', hex: '#4B5320', images: ['https://images.pexels.com/photos/3608265/pexels-photo-3608265.jpeg?w=600&h=800&fit=crop'] }],
+    images: [{ url: 'https://images.pexels.com/photos/3608265/pexels-photo-3608265.jpeg?w=600&h=800&fit=crop', alt: 'Kids Cargo Shorts', isPrimary: true, order: 1 }],
     description: 'Heavy duty twill cotton cargo shorts with multiple snap closure utility pockets.',
     material: '100% Twill Cotton',
     careInstructions: 'Machine wash warm, dry low',
@@ -2189,8 +2189,8 @@ export const products = [
     discountedPrice: 1199,
     discountPercentage: 20,
     sizes: ['6-7Y', '8-9Y', '10-11Y'],
-    colors: [{ name: 'Stoned Blue', hex: '#708090', images: ['https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTSv4JXoSuwhHSFobDNMCcYezTObWWcDd_a6Q8wyD9Fw&s=10'] }],
-    images: [{ url: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTSv4JXoSuwhHSFobDNMCcYezTObWWcDd_a6Q8wyD9Fw&s=10', alt: 'Girls Denim Skirt', isPrimary: true, order: 1 }],
+    colors: [{ name: 'Stoned Blue', hex: '#708090', images: ['https://images.pexels.com/photos/3662842/pexels-photo-3662842.jpeg?w=600&h=800&fit=crop'] }],
+    images: [{ url: 'https://images.pexels.com/photos/3662842/pexels-photo-3662842.jpeg?w=600&h=800&fit=crop', alt: 'Girls Denim Skirt', isPrimary: true, order: 1 }],
     description: 'Charming denim button-front skirt with an adjustable inner waistband.',
     material: '98% Cotton, 2% Spandex',
     careInstructions: 'Wash cold with like colors',
@@ -2213,8 +2213,8 @@ export const products = [
     discountedPrice: 2499,
     discountPercentage: 24,
     sizes: ['6-7Y', '8-9Y', '10-11Y'],
-    colors: [{ name: 'Electric Blue', hex: '#0066CC', images: ['https://encrypted-tbn1.gstatic.com/shopping?q=tbn:ANd9GcRqJyygdnEJEj8-HJdKNFjxe3gVCk9-ubfk1vWIaHcnOilOWd0DTXTYt1qzOehyEMm8RMWsqj4sDhpHeWVy3rNXnAMmf0g1T4Wb26FB8vKLHSKZiU-IRWz37Q'] }],
-    images: [{ url: 'https://encrypted-tbn1.gstatic.com/shopping?q=tbn:ANd9GcRqJyygdnEJEj8-HJdKNFjxe3gVCk9-ubfk1vWIaHcnOilOWd0DTXTYt1qzOehyEMm8RMWsqj4sDhpHeWVy3rNXnAMmf0g1T4Wb26FB8vKLHSKZiU-IRWz37Q', alt: 'Kids Puffer Jacket', isPrimary: true, order: 1 }],
+    colors: [{ name: 'Electric Blue', hex: '#0066CC', images: ['https://images.pexels.com/photos/3662854/pexels-photo-3662854.jpeg?w=600&h=800&fit=crop'] }],
+    images: [{ url: 'https://images.pexels.com/photos/3662854/pexels-photo-3662854.jpeg?w=600&h=800&fit=crop', alt: 'Kids Puffer Jacket', isPrimary: true, order: 1 }],
     description: 'Ultra-warm polyester-fill quilted puffer jacket with detachable fleece-lined hood.',
     material: '100% Polyester Shell and Warm Fill',
     careInstructions: 'Machine wash cold on gentle, tumble dry low with tennis balls',
@@ -2237,8 +2237,8 @@ export const products = [
     discountedPrice: 1199,
     discountPercentage: 25,
     sizes: ['2-3Y', '4-5Y'],
-    colors: [{ name: 'Gingham Blue', hex: '#E6F2F7', images: ['https://images.unsplash.com/photo-1518831959646-742c3a14ebf7?w=600'] }],
-    images: [{ url: 'https://images.unsplash.com/photo-1518831959646-742c3a14ebf7?w=600', alt: 'Toddler Gingham Dress', isPrimary: true, order: 1 }],
+    colors: [{ name: 'Gingham Blue', hex: '#E6F2F7', images: ['https://images.pexels.com/photos/3663044/pexels-photo-3663044.jpeg?w=600&h=800&fit=crop'] }],
+    images: [{ url: 'https://images.pexels.com/photos/3663044/pexels-photo-3663044.jpeg?w=600&h=800&fit=crop', alt: 'Toddler Gingham Dress', isPrimary: true, order: 1 }],
     description: 'Flowy sleeveless cotton sundress in classic gingham print with lace trim finishes.',
     material: '100% Cotton Gingham',
     careInstructions: 'Machine wash warm, iron medium',
@@ -2261,8 +2261,8 @@ export const products = [
     discountedPrice: 1499,
     discountPercentage: 21,
     sizes: ['28', '30', '32'],
-    colors: [{ name: 'Sunny Yellow', hex: '#FFDB58', images: ['https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS8iYvnNtSloRR15rLPuoQYS34PXbziBWRfcOtpsxBWdw&s'] }],
-    images: [{ url: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS8iYvnNtSloRR15rLPuoQYS34PXbziBWRfcOtpsxBWdw&s', alt: 'Kids Yellow Rainboots', isPrimary: true, order: 1 }],
+    colors: [{ name: 'Sunny Yellow', hex: '#FFDB58', images: ['https://images.pexels.com/photos/3663059/pexels-photo-3663059.jpeg?w=600&h=800&fit=crop'] }],
+    images: [{ url: 'https://images.pexels.com/photos/3663059/pexels-photo-3663059.jpeg?w=600&h=800&fit=crop', alt: 'Kids Yellow Rainboots', isPrimary: true, order: 1 }],
     description: 'Sturdy waterproof rubber boots with high-traction tread and pull handles.',
     material: '100% Waterproof Natural Rubber upper, cotton knit lining',
     careInstructions: 'Rinse with cold water, wipe dry',
@@ -2285,8 +2285,8 @@ export const products = [
     discountedPrice: 1399,
     discountPercentage: 22,
     sizes: ['4-5Y', '6-7Y', '8-9Y'],
-    colors: [{ name: 'Sandy Khaki', hex: '#EAE6DF', images: ['https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSL_D-X9h2YMHZ9_1S1lbKGnzEgQIU0pbkYc0UKGuNzXA&s'] }],
-    images: [{ url: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSL_D-X9h2YMHZ9_1S1lbKGnzEgQIU0pbkYc0UKGuNzXA&s', alt: 'Kids Chino Pants', isPrimary: true, order: 1 }],
+    colors: [{ name: 'Sandy Khaki', hex: '#EAE6DF', images: ['https://images.pexels.com/photos/3663060/pexels-photo-3663060.jpeg?w=600&h=800&fit=crop'] }],
+    images: [{ url: 'https://images.pexels.com/photos/3663060/pexels-photo-3663060.jpeg?w=600&h=800&fit=crop', alt: 'Kids Chino Pants', isPrimary: true, order: 1 }],
     description: 'Perfect dressy-casual chino pants made with soft stretch cotton twill.',
     material: '98% Cotton, 2% Elastane',
     careInstructions: 'Machine wash warm with dark colors',
@@ -2309,8 +2309,8 @@ export const products = [
     discountedPrice: 899,
     discountPercentage: 25,
     sizes: ['4-5Y', '6-7Y', '8-9Y'],
-    colors: [{ name: 'Deep Aqua', hex: '#00F5FF', images: ['https://images.unsplash.com/photo-1519457431-44ccd64a579b?w=600'] }],
-    images: [{ url: 'https://images.unsplash.com/photo-1519457431-44ccd64a579b?w=600', alt: 'Kids Board Shorts', isPrimary: true, order: 1 }],
+    colors: [{ name: 'Deep Aqua', hex: '#00F5FF', images: ['https://images.pexels.com/photos/262039/pexels-photo-262039.jpeg?w=600&h=800&fit=crop'] }],
+    images: [{ url: 'https://images.pexels.com/photos/262039/pexels-photo-262039.jpeg?w=600&h=800&fit=crop', alt: 'Kids Board Shorts', isPrimary: true, order: 1 }],
     description: 'Quick-dry board shorts for beach or pool featuring mesh lining and drawstring waist.',
     material: '100% Quick-dry Polyester',
     careInstructions: 'Rinse with clean cold water after pool use',
@@ -2333,8 +2333,8 @@ export const products = [
     discountedPrice: 799,
     discountPercentage: 20,
     sizes: ['4-5Y', '6-7Y', '8-9Y'],
-    colors: [{ name: 'Lavender', hex: '#E6E6FA', images: ['https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSNgDKuLrCh3Uu2-2YPn594w43u3y-lmt6gvswfBFkIKw&s=10'] }],
-    images: [{ url: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSNgDKuLrCh3Uu2-2YPn594w43u3y-lmt6gvswfBFkIKw&s=10', alt: 'Girls Ruffle Top', isPrimary: true, order: 1 }],
+    colors: [{ name: 'Lavender', hex: '#E6E6FA', images: ['https://images.pexels.com/photos/346885/pexels-photo-346885.jpeg?w=600&h=800&fit=crop'] }],
+    images: [{ url: 'https://images.pexels.com/photos/346885/pexels-photo-346885.jpeg?w=600&h=800&fit=crop', alt: 'Girls Ruffle Top', isPrimary: true, order: 1 }],
     description: 'Pretty summer top in fine ribbed jersey with delicate layered ruffle shoulders.',
     material: '95% Cotton, 5% Spandex Jersey',
     careInstructions: 'Machine wash cold on gentle',
@@ -2357,8 +2357,8 @@ export const products = [
     discountedPrice: 599,
     discountPercentage: 25,
     sizes: ['2-3Y', '4-5Y'],
-    colors: [{ name: 'Teddy Brown', hex: '#A52A2A', images: ['https://images.unsplash.com/photo-1519457431-44ccd64a579b?w=600'] }],
-    images: [{ url: 'https://images.unsplash.com/photo-1519457431-44ccd64a579b?w=600', alt: 'Kids Wool Beanie', isPrimary: true, order: 1 }],
+    colors: [{ name: 'Teddy Brown', hex: '#A52A2A', images: ['https://images.pexels.com/photos/35188/pexels-photo-35188.jpeg?w=600&h=800&fit=crop'] }],
+    images: [{ url: 'https://images.pexels.com/photos/35188/pexels-photo-35188.jpeg?w=600&h=800&fit=crop', alt: 'Kids Wool Beanie', isPrimary: true, order: 1 }],
     description: 'Soft stretch knit beanie cap featuring tiny teddy bear ear shapes.',
     material: '100% Soft Stretch Acrylic Knit',
     careInstructions: 'Hand wash cold only',
@@ -2381,8 +2381,8 @@ export const products = [
     discountedPrice: 1699,
     discountPercentage: 23,
     sizes: ['6-7Y', '8-9Y', '10-11Y'],
-    colors: [{ name: 'Navy Daisy', hex: '#1D2951', images: ['https://images.unsplash.com/photo-1518831959646-742c3a14ebf7?w=600'] }],
-    images: [{ url: 'https://images.unsplash.com/photo-1518831959646-742c3a14ebf7?w=600', alt: 'Girls Daisy Jumpsuit', isPrimary: true, order: 1 }],
+    colors: [{ name: 'Navy Daisy', hex: '#1D2951', images: ['https://images.pexels.com/photos/1648374/pexels-photo-1648374.jpeg?w=600&h=800&fit=crop'] }],
+    images: [{ url: 'https://images.pexels.com/photos/1648374/pexels-photo-1648374.jpeg?w=600&h=800&fit=crop', alt: 'Girls Daisy Jumpsuit', isPrimary: true, order: 1 }],
     description: 'Lightweight summer one-piece jumpsuit with spaghetti straps and wide flared legs.',
     material: '100% Crinkled Rayon Crepe',
     careInstructions: 'Machine wash cold inside mesh bag',
@@ -2405,8 +2405,8 @@ export const products = [
     discountedPrice: 1299,
     discountPercentage: 24,
     sizes: ['6-7Y', '8-9Y', '10-11Y'],
-    colors: [{ name: 'Oxford Blue', hex: '#E6F2F7', images: ['https://images.unsplash.com/photo-1519457431-44ccd64a579b?w=600'] }],
-    images: [{ url: 'https://images.unsplash.com/photo-1519457431-44ccd64a579b?w=600', alt: 'Kids Oxford Shirt', isPrimary: true, order: 1 }],
+    colors: [{ name: 'Oxford Blue', hex: '#E6F2F7', images: ['https://images.pexels.com/photos/1648375/pexels-photo-1648375.jpeg?w=600&h=800&fit=crop'] }],
+    images: [{ url: 'https://images.pexels.com/photos/1648375/pexels-photo-1648375.jpeg?w=600&h=800&fit=crop', alt: 'Kids Oxford Shirt', isPrimary: true, order: 1 }],
     description: 'Tailored dress-down Oxford shirt made of soft cotton with single breast pocket.',
     material: '100% Heavy Oxford Cotton',
     careInstructions: 'Machine wash warm, iron low',
@@ -2429,8 +2429,8 @@ export const products = [
     discountedPrice: 1299,
     discountPercentage: 24,
     sizes: ['6-7Y', '8-9Y', '10-11Y'],
-    colors: [{ name: 'Slate Grey', hex: '#708090', images: ['https://images.unsplash.com/photo-1519457431-44ccd64a579b?w=600'] }],
-    images: [{ url: 'https://images.unsplash.com/photo-1519457431-44ccd64a579b?w=600', alt: 'Kids Grey Joggers', isPrimary: true, order: 1 }],
+    colors: [{ name: 'Slate Grey', hex: '#708090', images: ['https://images.pexels.com/photos/1648376/pexels-photo-1648376.jpeg?w=600&h=800&fit=crop'] }],
+    images: [{ url: 'https://images.pexels.com/photos/1648376/pexels-photo-1648376.jpeg?w=600&h=800&fit=crop', alt: 'Kids Grey Joggers', isPrimary: true, order: 1 }],
     description: 'Polyester-stretch performance track joggers with dry-fit cooling technology.',
     material: '90% Polyester, 10% Spandex cooling fiber',
     careInstructions: 'Wash cold inside out, no bleach',
@@ -2455,8 +2455,8 @@ export const products = [
     discountedPrice: 2299,
     discountPercentage: 23,
     sizes: ['One Size'],
-    colors: [{ name: 'Classic Black', hex: '#1A1A1A', images: ['https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=600'] }],
-    images: [{ url: 'https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=600', alt: 'Vegan Leather Tote', isPrimary: true, order: 1 }],
+    colors: [{ name: 'Classic Black', hex: '#1A1A1A', images: ['https://images.pexels.com/photos/306248/pexels-photo-306248.jpeg?w=600&h=800&fit=crop'] }],
+    images: [{ url: 'https://images.pexels.com/photos/306248/pexels-photo-306248.jpeg?w=600&h=800&fit=crop', alt: 'Vegan Leather Tote', isPrimary: true, order: 1 }],
     description: 'Spacious vegan faux leather shoulder tote bag featuring an interior zip divider pouch.',
     material: '100% Polyurethane Vegan Leather',
     careInstructions: 'Wipe exterior clean with soft micro-fiber cloth',
@@ -2479,8 +2479,8 @@ export const products = [
     discountedPrice: 1399,
     discountPercentage: 26,
     sizes: ['One Size'],
-    colors: [{ name: 'Gold / Dark Green', hex: '#D4AF37', images: ['https://images.unsplash.com/photo-1511499767150-a48a237f0083?w=600'] }],
-    images: [{ url: 'https://images.unsplash.com/photo-1511499767150-a48a237f0083?w=600', alt: 'Aviator Sunglasses Gold', isPrimary: true, order: 1 }],
+    colors: [{ name: 'Gold / Dark Green', hex: '#D4AF37', images: ['https://images.pexels.com/photos/306249/pexels-photo-306249.jpeg?w=600&h=800&fit=crop'] }],
+    images: [{ url: 'https://images.pexels.com/photos/306249/pexels-photo-306249.jpeg?w=600&h=800&fit=crop', alt: 'Aviator Sunglasses Gold', isPrimary: true, order: 1 }],
     description: 'Iconic aviator metallic frame sunglasses with polarized dark green scratch-resistant lenses.',
     material: 'Stainless steel frame, polarized TAC lenses',
     careInstructions: 'Clean with protective microfiber pouch lens cloth',
@@ -2503,8 +2503,8 @@ export const products = [
     discountedPrice: 3999,
     discountPercentage: 20,
     sizes: ['One Size'],
-    colors: [{ name: 'Silver Mesh', hex: '#C0C0C0', images: ['https://images.unsplash.com/photo-1524805444758-089113d48a6d?w=600'] }],
-    images: [{ url: 'https://images.unsplash.com/photo-1524805444758-089113d48a6d?w=600', alt: 'Minimal Mesh Silver Watch', isPrimary: true, order: 1 }],
+    colors: [{ name: 'Silver Mesh', hex: '#C0C0C0', images: ['https://images.pexels.com/photos/306250/pexels-photo-306250.jpeg?w=600&h=800&fit=crop'] }],
+    images: [{ url: 'https://images.pexels.com/photos/306250/pexels-photo-306250.jpeg?w=600&h=800&fit=crop', alt: 'Minimal Mesh Silver Watch', isPrimary: true, order: 1 }],
     description: 'Chic analog silver mesh band watch featuring a clean white dial background.',
     material: 'Stainless steel mesh strap, Japanese quartz movement',
     careInstructions: 'Water resistant to 3ATM, clean mesh strap with soft brush',
@@ -2527,8 +2527,8 @@ export const products = [
     discountedPrice: 1199,
     discountPercentage: 25,
     sizes: ['M', 'L', 'XL'],
-    colors: [{ name: 'Mahogany Brown', hex: '#6D351A', images: ['https://images.unsplash.com/photo-1624222247344-550fb8ec5b5d?w=600'] }],
-    images: [{ url: 'https://images.unsplash.com/photo-1624222247344-550fb8ec5b5d?w=600', alt: 'Mahogany Leather Belt', isPrimary: true, order: 1 }],
+    colors: [{ name: 'Mahogany Brown', hex: '#6D351A', images: ['https://images.pexels.com/photos/306251/pexels-photo-306251.jpeg?w=600&h=800&fit=crop'] }],
+    images: [{ url: 'https://images.pexels.com/photos/306251/pexels-photo-306251.jpeg?w=600&h=800&fit=crop', alt: 'Mahogany Leather Belt', isPrimary: true, order: 1 }],
     description: 'Premium raw full grain saddle cow leather belt with heavy brass metal buckles.',
     material: '100% Genuine Full Grain saddle leather, brass hardware buckle',
     careInstructions: 'Apply natural wax polish to treat leather',
@@ -2551,8 +2551,8 @@ export const products = [
     discountedPrice: 899,
     discountPercentage: 25,
     sizes: ['One Size'],
-    colors: [{ name: 'Carbon Black Textures', hex: '#333333', images: ['https://images.unsplash.com/photo-1627123424574-724758594e93?w=600'] }],
-    images: [{ url: 'https://images.unsplash.com/photo-1627123424574-724758594e93?w=600', alt: 'Carbon Fiber Wallet', isPrimary: true, order: 1 }],
+    colors: [{ name: 'Carbon Black Textures', hex: '#333333', images: ['https://images.pexels.com/photos/306252/pexels-photo-306252.jpeg?w=600&h=800&fit=crop'] }],
+    images: [{ url: 'https://images.pexels.com/photos/306252/pexels-photo-306252.jpeg?w=600&h=800&fit=crop', alt: 'Carbon Fiber Wallet', isPrimary: true, order: 1 }],
     description: 'Sleek RFID-blocking card wallet with carbon fiber textures for minimalist pocket carry.',
     material: 'Genuine leather backing with elastic card straps',
     careInstructions: 'Avoid heavy pocket moisture',
@@ -2575,8 +2575,8 @@ export const products = [
     discountedPrice: 1299,
     discountPercentage: 24,
     sizes: ['One Size'],
-    colors: [{ name: 'Silver Sterling', hex: '#EAEAEA', images: ['https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=600'] }],
-    images: [{ url: 'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=600', alt: 'Sterling Hoop Earrings', isPrimary: true, order: 1 }],
+    colors: [{ name: 'Silver Sterling', hex: '#EAEAEA', images: ['https://images.pexels.com/photos/306253/pexels-photo-306253.jpeg?w=600&h=800&fit=crop'] }],
+    images: [{ url: 'https://images.pexels.com/photos/306253/pexels-photo-306253.jpeg?w=600&h=800&fit=crop', alt: 'Sterling Hoop Earrings', isPrimary: true, order: 1 }],
     description: 'Dainty sterling silver hoop earrings with secure click-top closure pins.',
     material: '925 Sterling Silver base metal',
     careInstructions: 'Keep in airtight jewelry pouches to prevent tarnish',
@@ -2599,8 +2599,8 @@ export const products = [
     discountedPrice: 2699,
     discountPercentage: 23,
     sizes: ['One Size'],
-    colors: [{ name: 'Stealth Grey / Orange', hex: '#5A6065', images: ['https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=600'] }],
-    images: [{ url: 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=600', alt: 'Sport Backpack', isPrimary: true, order: 1 }],
+    colors: [{ name: 'Stealth Grey / Orange', hex: '#5A6065', images: ['https://images.pexels.com/photos/306254/pexels-photo-306254.jpeg?w=600&h=800&fit=crop'] }],
+    images: [{ url: 'https://images.pexels.com/photos/306254/pexels-photo-306254.jpeg?w=600&h=800&fit=crop', alt: 'Sport Backpack', isPrimary: true, order: 1 }],
     description: 'Heavy duty waterproof polyester sport backpack with 15-inch padded laptop slot compartment.',
     material: 'Waterproof 900D Nylon fabric, padded mesh back',
     careInstructions: 'Hand wash exterior clean, air dry only',
@@ -2623,8 +2623,8 @@ export const products = [
     discountedPrice: 1299,
     discountPercentage: 28,
     sizes: ['One Size'],
-    colors: [{ name: 'Tortoiseshell / Gold', hex: '#6E473B', images: ['https://images.unsplash.com/photo-1511499767150-a48a237f0083?w=600'] }],
-    images: [{ url: 'https://images.unsplash.com/photo-1511499767150-a48a237f0083?w=600', alt: 'Retro Sunglasses Tortoise', isPrimary: true, order: 1 }],
+    colors: [{ name: 'Tortoiseshell / Gold', hex: '#6E473B', images: ['https://images.pexels.com/photos/306255/pexels-photo-306255.jpeg?w=600&h=800&fit=crop'] }],
+    images: [{ url: 'https://images.pexels.com/photos/306255/pexels-photo-306255.jpeg?w=600&h=800&fit=crop', alt: 'Retro Sunglasses Tortoise', isPrimary: true, order: 1 }],
     description: 'Vintage-style round sunglasses featuring high quality metal wire and tortoiseshell acetates.',
     material: 'Cellulose acetate frames, scratch resistant polycarbonate lenses',
     careInstructions: 'Wash with warm running water, dry with soft clean lens cloths',
@@ -2647,8 +2647,8 @@ export const products = [
     discountedPrice: 4799,
     discountPercentage: 20,
     sizes: ['One Size'],
-    colors: [{ name: 'Rose Gold / Dark Brown', hex: '#8B5A2B', images: ['https://images.unsplash.com/photo-1524805444758-089113d48a6d?w=600'] }],
-    images: [{ url: 'https://images.unsplash.com/photo-1524805444758-089113d48a6d?w=600', alt: 'Rose Gold Chronograph Watch', isPrimary: true, order: 1 }],
+    colors: [{ name: 'Rose Gold / Dark Brown', hex: '#8B5A2B', images: ['https://images.pexels.com/photos/306256/pexels-photo-306256.jpeg?w=600&h=800&fit=crop'] }],
+    images: [{ url: 'https://images.pexels.com/photos/306256/pexels-photo-306256.jpeg?w=600&h=800&fit=crop', alt: 'Rose Gold Chronograph Watch', isPrimary: true, order: 1 }],
     description: 'Classic luxury chronograph watch with real embossed dark brown leather band strap.',
     material: 'Stainless steel rose gold case, mineral glass top, calf leather band strap',
     careInstructions: 'Clean leather strap with leather conditioner, 5ATM water resistant depth',
@@ -2671,8 +2671,8 @@ export const products = [
     discountedPrice: 1999,
     discountPercentage: 20,
     sizes: ['One Size'],
-    colors: [{ name: 'Rust Orange Suede', hex: '#C04000', images: ['https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=600'] }],
-    images: [{ url: 'https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=600', alt: 'Suede Crossbody Bag Orange', isPrimary: true, order: 1 }],
+    colors: [{ name: 'Rust Orange Suede', hex: '#C04000', images: ['https://images.pexels.com/photos/306257/pexels-photo-306257.jpeg?w=600&h=800&fit=crop'] }],
+    images: [{ url: 'https://images.pexels.com/photos/306257/pexels-photo-306257.jpeg?w=600&h=800&fit=crop', alt: 'Suede Crossbody Bag Orange', isPrimary: true, order: 1 }],
     description: 'Boho chic split cow suede crossbody bag featuring gold link chain straps.',
     material: 'Genuine Split Cow Suede leather, golden alloy chains strap',
     careInstructions: 'Use specialized suede brush cleaner only',
@@ -2695,8 +2695,8 @@ export const products = [
     discountedPrice: 1199,
     discountPercentage: 20,
     sizes: ['One Size'],
-    colors: [{ name: '18k Gold Plated', hex: '#FFD700', images: ['https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=600'] }],
-    images: [{ url: 'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=600', alt: 'Gold Link Chain Necklace', isPrimary: true, order: 1 }],
+    colors: [{ name: '18k Gold Plated', hex: '#FFD700', images: ['https://images.pexels.com/photos/306258/pexels-photo-306258.jpeg?w=600&h=800&fit=crop'] }],
+    images: [{ url: 'https://images.pexels.com/photos/306258/pexels-photo-306258.jpeg?w=600&h=800&fit=crop', alt: 'Gold Link Chain Necklace', isPrimary: true, order: 1 }],
     description: 'Elegant paperclip link chain necklace plated in rich tarnish-resistant 18k yellow gold.',
     material: 'Brass base metal, 18k yellow gold plating layer',
     careInstructions: 'Remove before showers or swimming, avoid perfume spray contact',
@@ -2719,8 +2719,8 @@ export const products = [
     discountedPrice: 1699,
     discountPercentage: 23,
     sizes: ['One Size'],
-    colors: [{ name: 'Olive Drab Canvas', hex: '#556B2F', images: ['https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=600'] }],
-    images: [{ url: 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=600', alt: 'Canvas Duffle Bag Olive', isPrimary: true, order: 1 }],
+    colors: [{ name: 'Olive Drab Canvas', hex: '#556B2F', images: ['https://images.pexels.com/photos/306259/pexels-photo-306259.jpeg?w=600&h=800&fit=crop'] }],
+    images: [{ url: 'https://images.pexels.com/photos/306259/pexels-photo-306259.jpeg?w=600&h=800&fit=crop', alt: 'Canvas Duffle Bag Olive', isPrimary: true, order: 1 }],
     description: 'Spacious 35L travel overnight duffle made from tough waxed canvas with leather trim.',
     material: 'Waxed heavy cotton canvas upper, real leather trim accents',
     careInstructions: 'Spot clean exterior only, wax canvas re-treatment if needed',
@@ -2743,8 +2743,8 @@ export const products = [
     discountedPrice: 2199,
     discountPercentage: 21,
     sizes: ['One Size'],
-    colors: [{ name: 'Heather Charcoal', hex: '#3E3E3E', images: ['https://images.unsplash.com/photo-1624222247344-550fb8ec5b5d?w=600'] }],
-    images: [{ url: 'https://images.unsplash.com/photo-1624222247344-550fb8ec5b5d?w=600', alt: 'Cashmere Knit Scarf Grey', isPrimary: true, order: 1 }],
+    colors: [{ name: 'Heather Charcoal', hex: '#3E3E3E', images: ['https://images.pexels.com/photos/306260/pexels-photo-306260.jpeg?w=600&h=800&fit=crop'] }],
+    images: [{ url: 'https://images.pexels.com/photos/306260/pexels-photo-306260.jpeg?w=600&h=800&fit=crop', alt: 'Cashmere Knit Scarf Grey', isPrimary: true, order: 1 }],
     description: 'Luxuriously soft knit winter scarf crafted from premium 100% Mongolian cashmere fibers.',
     material: '100% Pure Mongolian Cashmere Knit',
     careInstructions: 'Dry clean only or hand wash cold dry flat',
@@ -2767,8 +2767,8 @@ export const products = [
     discountedPrice: 1499,
     discountPercentage: 25,
     sizes: ['One Size'],
-    colors: [{ name: 'Silver Chrome / Black', hex: '#8A8A8A', images: ['https://images.unsplash.com/photo-1511499767150-a48a237f0083?w=600'] }],
-    images: [{ url: 'https://images.unsplash.com/photo-1511499767150-a48a237f0083?w=600', alt: 'Chrome Frame Flat Top Sunglasses', isPrimary: true, order: 1 }],
+    colors: [{ name: 'Silver Chrome / Black', hex: '#8A8A8A', images: ['https://images.pexels.com/photos/306261/pexels-photo-306261.jpeg?w=600&h=800&fit=crop'] }],
+    images: [{ url: 'https://images.pexels.com/photos/306261/pexels-photo-306261.jpeg?w=600&h=800&fit=crop', alt: 'Chrome Frame Flat Top Sunglasses', isPrimary: true, order: 1 }],
     description: 'Avant-garde flat top design sunglasses with black tinted polarized shield lenses.',
     material: 'Monel alloy frames, TAC polarized lenses',
     careInstructions: 'Wipe with included micro-fiber pouches fabric cloths',
@@ -2791,8 +2791,8 @@ export const products = [
     discountedPrice: 5999,
     discountPercentage: 25,
     sizes: ['One Size'],
-    colors: [{ name: 'Matte Black', hex: '#111111', images: ['https://images.unsplash.com/photo-1524805444758-089113d48a6d?w=600'] }],
-    images: [{ url: 'https://images.unsplash.com/photo-1524805444758-089113d48a6d?w=600', alt: 'Smart Hybrid Watch Black', isPrimary: true, order: 1 }],
+    colors: [{ name: 'Matte Black', hex: '#111111', images: ['https://images.pexels.com/photos/306262/pexels-photo-306262.jpeg?w=600&h=800&fit=crop'] }],
+    images: [{ url: 'https://images.pexels.com/photos/306262/pexels-photo-306262.jpeg?w=600&h=800&fit=crop', alt: 'Smart Hybrid Watch Black', isPrimary: true, order: 1 }],
     description: 'Clean analog looking watch with hidden LED smart notification display screen panel.',
     material: 'Stainless steel case, silicone dust-free active sports bands',
     careInstructions: '5ATM water-resistant, clean bands with warm soapy water',
@@ -2815,8 +2815,8 @@ export const products = [
     discountedPrice: 1199,
     discountPercentage: 25,
     sizes: ['One Size'],
-    colors: [{ name: 'Crimson Wine Red', hex: '#722F37', images: ['https://images.unsplash.com/photo-1627123424574-724758594e93?w=600'] }],
-    images: [{ url: 'https://images.unsplash.com/photo-1627123424574-724758594e93?w=600', alt: 'Crimson Passport Case', isPrimary: true, order: 1 }],
+    colors: [{ name: 'Crimson Wine Red', hex: '#722F37', images: ['https://images.pexels.com/photos/306263/pexels-photo-306263.jpeg?w=600&h=800&fit=crop'] }],
+    images: [{ url: 'https://images.pexels.com/photos/306263/pexels-photo-306263.jpeg?w=600&h=800&fit=crop', alt: 'Crimson Passport Case', isPrimary: true, order: 1 }],
     description: 'Travel in style with scratch-resistant saffiano calfskin leather passport organizer jackets.',
     material: 'Genuine Saffiano cross-grain leather',
     careInstructions: 'Spot wipe leather clean',
@@ -2839,8 +2839,8 @@ export const products = [
     discountedPrice: 999,
     discountPercentage: 23,
     sizes: ['One Size'],
-    colors: [{ name: 'Turquoise Blue / Gold', hex: '#40E0D0', images: ['https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=600'] }],
-    images: [{ url: 'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=600', alt: 'Boho Stone Necklace', isPrimary: true, order: 1 }],
+    colors: [{ name: 'Turquoise Blue / Gold', hex: '#40E0D0', images: ['https://images.pexels.com/photos/306264/pexels-photo-306264.jpeg?w=600&h=800&fit=crop'] }],
+    images: [{ url: 'https://images.pexels.com/photos/306264/pexels-photo-306264.jpeg?w=600&h=800&fit=crop', alt: 'Boho Stone Necklace', isPrimary: true, order: 1 }],
     description: 'Artisan hand-wired real natural turquoise raw crystal pendant necklace.',
     material: 'Natural raw turquoise crystal stone, gold plated alloy wire wrap chain',
     careInstructions: 'Avoid chemical wash contact, polish stone with soft dry velvet cloth',
@@ -2863,8 +2863,8 @@ export const products = [
     discountedPrice: 1499,
     discountPercentage: 21,
     sizes: ['M', 'L', 'XL'],
-    colors: [{ name: 'Sand Beige Suede', hex: '#C2B280', images: ['https://images.unsplash.com/photo-1624222247344-550fb8ec5b5d?w=600'] }],
-    images: [{ url: 'https://images.unsplash.com/photo-1624222247344-550fb8ec5b5d?w=600', alt: 'Sand Suede Leather Belt', isPrimary: true, order: 1 }],
+    colors: [{ name: 'Sand Beige Suede', hex: '#C2B280', images: ['https://images.pexels.com/photos/306265/pexels-photo-306265.jpeg?w=600&h=800&fit=crop'] }],
+    images: [{ url: 'https://images.pexels.com/photos/306265/pexels-photo-306265.jpeg?w=600&h=800&fit=crop', alt: 'Sand Suede Leather Belt', isPrimary: true, order: 1 }],
     description: 'Soft genuine cow split suede leather belt with elegant silver brushed buckles.',
     material: 'Genuine suede split leather upper, brushed alloy buckles hardware',
     careInstructions: 'Use specialized suede brush cleaners',
