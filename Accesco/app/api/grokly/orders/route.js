@@ -98,6 +98,14 @@ export async function POST(request) {
       // Don't fail the request — email still goes out
     }
 
+    // If this is the user's first order, bundle in any pending referral gifts
+    if (order.phone) {
+      const { markFirstOrderAndFulfillGifts } = await import('@/lib/referralFulfillment');
+      markFirstOrderAndFulfillGifts({ phone: order.phone, orderId: order.id, vertical: 'grokly' }).catch(
+        (err) => console.error('[grokly/orders] Referral fulfillment failed:', err),
+      );
+    }
+
     // Send order confirmation email if email is provided
     const emailTo = customerEmail || order.customerEmail;
     if (emailTo) {

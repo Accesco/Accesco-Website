@@ -38,6 +38,15 @@ export async function POST(request) {
         customerName,
         email: customerEmail,
       });
+
+      // If this is the user's first order, bundle in any pending referral gifts
+      const phone = orderData?.delivery?.phone;
+      if (phone) {
+        const { markFirstOrderAndFulfillGifts } = await import('@/lib/referralFulfillment');
+        markFirstOrderAndFulfillGifts({ phone, orderId, vertical: 'swadisht' }).catch((err) =>
+          console.error('[swadishtt/orders/update-status] Referral fulfillment failed:', err),
+        );
+      }
     } else {
       result = await sendSwadishttStatusUpdate({
         order: { ...orderData, id: orderId },

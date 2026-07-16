@@ -1,21 +1,28 @@
 'use client'
 
-import { useRef, useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { db, auth } from '../../lib/firebase'
 import {
   doc,
+  getDoc,
   setDoc,
   serverTimestamp,
 } from 'firebase/firestore'
 import {
   RecaptchaVerifier,
   signInWithPhoneNumber,
+  signInWithPopup,
+  GoogleAuthProvider,
   signOut,
 } from 'firebase/auth'
 import {
   sendOtpEmailVerification,
   verifyOtpEmailCode,
 } from '../../lib/waitlistService'
+import {
+  initializeReferralProfile,
+  getStoredReferralCode,
+} from '../../lib/referralService'
 
 function GoogleIcon() {
   return (
@@ -29,54 +36,17 @@ function GoogleIcon() {
         fill="#4285F4"
         d="M21.6 12.23c0-.72-.06-1.4-.2-2.06H12v3.9h5.38a4.6 4.6 0 0 1-2 3.02v2.53h3.24c1.9-1.75 2.98-4.32 2.98-7.39Z"
       />
-
       <path
         fill="#34A853"
         d="M12 22c2.7 0 4.97-.9 6.62-2.38l-3.24-2.53c-.9.6-2.05.96-3.38.96-2.6 0-4.81-1.76-5.6-4.13H3.05v2.61A10 10 0 0 0 12 22Z"
       />
-
       <path
         fill="#FBBC05"
         d="M6.4 13.92A6 6 0 0 1 6.08 12c0-.67.12-1.32.32-1.92V7.47H3.05A10 10 0 0 0 2 12c0 1.61.38 3.14 1.05 4.53l3.35-2.61Z"
       />
-
       <path
         fill="#EA4335"
         d="M12 5.95c1.47 0 2.8.51 3.84 1.51l2.88-2.88A9.68 9.68 0 0 0 12 2a10 10 0 0 0-8.95 5.47l3.35 2.61C7.19 7.71 9.4 5.95 12 5.95Z"
-      />
-    </svg>
-  )
-}
-
-function AppleIcon() {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      width="17"
-      height="17"
-      fill="currentColor"
-      aria-hidden="true"
-    >
-      <path d="M18.7 12.6c0-3.1 2.5-4.6 2.6-4.7a5.54 5.54 0 0 0-4.36-2.36c-1.84-.19-3.62 1.1-4.56 1.1-.96 0-2.4-1.08-3.96-1.05a5.8 5.8 0 0 0-4.88 2.97c-2.12 3.67-.54 9.06 1.49 12.02 1.01 1.45 2.18 3.06 3.74 3 1.52-.06 2.09-.96 3.93-.96 1.82 0 2.36.96 3.95.92 1.64-.03 2.67-1.45 3.65-2.91a12.1 12.1 0 0 0 1.67-3.4 5.25 5.25 0 0 1-3.27-4.66ZM15.74 3.6A5.35 5.35 0 0 0 16.96 0a5.44 5.44 0 0 0-3.5 1.71 5.06 5.06 0 0 0-1.25 3.48 4.5 4.5 0 0 0 3.53-1.59Z" />
-    </svg>
-  )
-}
-
-function BackIcon() {
-  return (
-    <svg
-      width="16"
-      height="16"
-      viewBox="0 0 24 24"
-      fill="none"
-      aria-hidden="true"
-    >
-      <path
-        d="M15 18L9 12L15 6"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
       />
     </svg>
   )
@@ -97,26 +67,41 @@ export default function AuthModal({
   const [success, setSuccess] = useState(false)
   const [focused, setFocused] = useState('')
 
-  // OTP flow: 'details' collects info,
-  // 'verify' does phone OTP and optional email OTP.
+  // OTP flow: 'details' collects info, 'verify' does phone (mandatory) + email (optional) OTP
   const [step, setStep] = useState('details')
   const [otpCode, setOtpCode] = useState('')
   const [phoneCodeSent, setPhoneCodeSent] =
     useState(false)
-
   const [confirmationResult, setConfirmationResult] =
     useState(null)
+  // Seconds left before "Resend OTP" is clickable again
+  const [resendCooldown, setResendCooldown] = useState(0)
 
   const recaptchaVerifierRef = useRef(null)
 
-  // Optional email verification state.
+  useEffect(() => {
+    if (resendCooldown <= 0) return undefined
+
+    const timeout = setTimeout(
+      () => setResendCooldown((s) => s - 1),
+      1000,
+    )
+
+    return () => clearTimeout(timeout)
+  }, [resendCooldown])
+
+  // Social sign-in (Google via Firebase popup)
+  const [googleLoading, setGoogleLoading] = useState(false)
+  // Set once a social provider returns a user who still needs phone verification
+  // (i.e. no prior account, or an existing account with phoneVerified !== true)
+  const [pendingSocialUser, setPendingSocialUser] = useState(null)
+
+  // Optional email verification state
   const [emailCode, setEmailCode] = useState('')
   const [emailCodeSent, setEmailCodeSent] =
     useState(false)
-
   const [emailVerified, setEmailVerified] =
     useState(false)
-
   const [emailLoading, setEmailLoading] =
     useState(false)
 
@@ -135,10 +120,14 @@ export default function AuthModal({
     setOtpCode('')
     setPhoneCodeSent(false)
     setConfirmationResult(null)
+    setResendCooldown(0)
 
     setEmailCode('')
     setEmailCodeSent(false)
     setEmailVerified(false)
+
+    setGoogleLoading(false)
+    setPendingSocialUser(null)
 
     if (recaptchaVerifierRef.current) {
       recaptchaVerifierRef.current.clear()
@@ -151,17 +140,6 @@ export default function AuthModal({
     onClose()
   }
 
-  const handleBack = () => {
-    if (step === 'verify') {
-      setStep('details')
-      setError('')
-      setOtpCode('')
-      return
-    }
-
-    handleClose()
-  }
-
   const handleFirstNameChange = (value) => {
     setFirstName(value)
     setName(`${value} ${lastName}`.trim())
@@ -172,7 +150,7 @@ export default function AuthModal({
     setName(`${firstName} ${value}`.trim())
   }
 
-  // Converts the entered phone number to E.164 format.
+  // Converts user-entered phone to E.164 format required by Firebase
   const normalizePhone = (p) => {
     const stripped = p.replace(/[\s\-().]/g, '')
 
@@ -183,7 +161,7 @@ export default function AuthModal({
     return '+91' + stripped.replace(/\D/g, '')
   }
 
-  // Validate details and send the phone OTP.
+  // Step 1 → validate details, then send phone OTP and move to verify step
   const handleDetailsSubmit = async (e) => {
     e.preventDefault()
     setError('')
@@ -229,7 +207,7 @@ export default function AuthModal({
   }
 
   const sendPhoneOtp = async () => {
-    // Prevent a second reCAPTCHA widget while one is loading.
+    // Prevent a second reCAPTCHA widget from being created while one is still loading
     if (loading) return
 
     setLoading(true)
@@ -259,6 +237,7 @@ export default function AuthModal({
 
       setConfirmationResult(result)
       setPhoneCodeSent(true)
+      setResendCooldown(45)
     } catch (err) {
       console.error('Phone OTP send failed:', err)
 
@@ -271,7 +250,121 @@ export default function AuthModal({
     }
   }
 
-  // Optional email OTP.
+  // Completes sign-in for a social user whose phone was already verified on
+  // a prior visit — no OTP needed again, just restore the app session.
+  const completeVerifiedSocialUser = async (existing, firebaseUser) => {
+    await signOut(auth)
+
+    const user = {
+      name: existing.name || firebaseUser.displayName || 'Accesco User',
+      phone: existing.phone || firebaseUser.phoneNumber || null,
+      email: existing.email || firebaseUser.email || null,
+      photoURL: existing.photoURL || firebaseUser.photoURL || null,
+      uid: firebaseUser.uid,
+    }
+
+    localStorage.setItem('accesco_user', JSON.stringify(user))
+    setName(user.name)
+    setSuccess(true)
+
+    setTimeout(() => {
+      onSuccess && onSuccess(user)
+      handleClose()
+    }, 1300)
+  }
+
+  // After a Google/Apple popup succeeds: if that account already has a
+  // verified phone on file, sign the user straight in. Otherwise stash the
+  // provider profile and route to the phone-verification step — phone is
+  // mandatory for every account regardless of how it was created.
+  const handleSocialAuthResult = async (firebaseUser, provider) => {
+    const snap = await getDoc(doc(db, 'users', firebaseUser.uid))
+    const existing = snap.exists() ? snap.data() : null
+
+    if (existing?.phoneVerified) {
+      await completeVerifiedSocialUser(existing, firebaseUser)
+      return
+    }
+
+    setPendingSocialUser({
+      uid: firebaseUser.uid,
+      name: firebaseUser.displayName || '',
+      email: firebaseUser.email || '',
+      photoURL: firebaseUser.photoURL || null,
+      provider,
+    })
+
+    setName(firebaseUser.displayName || '')
+    setEmail(firebaseUser.email || '')
+    setPhone('')
+    setPhoneCodeSent(false)
+    setConfirmationResult(null)
+    setStep('social-phone')
+  }
+
+  const isPopupDismissed = (err) =>
+    err.code === 'auth/popup-closed-by-user' ||
+    err.code === 'auth/cancelled-popup-request'
+
+  const handleGoogleSignIn = async () => {
+    if (googleLoading) return
+
+    setGoogleLoading(true)
+    setError('')
+
+    try {
+      const provider = new GoogleAuthProvider()
+      const result = await signInWithPopup(auth, provider)
+
+      await handleSocialAuthResult(result.user, 'google')
+    } catch (err) {
+      console.error('Google sign-in failed:', err)
+
+      if (!isPopupDismissed(err)) {
+        setError(
+          err.message ||
+            'Google sign-in failed. Please try again.',
+        )
+      }
+    } finally {
+      setGoogleLoading(false)
+    }
+  }
+
+  // Phone step for social sign-in: same phone rules as the details form,
+  // then reuse the normal OTP-send flow.
+  const handleSocialPhoneSubmit = async (e) => {
+    e.preventDefault()
+    setError('')
+
+    const p = phone.trim()
+
+    if (!p) {
+      return setError('Please enter your phone number')
+    }
+
+    if (!/^[+\d\s\-()]{7,20}$/.test(p)) {
+      return setError(
+        'Enter a valid phone number with country code',
+      )
+    }
+
+    const docId = p.replace(/[^\d]/g, '')
+
+    if (docId.length < 7) {
+      return setError(
+        'Enter a valid phone number including digits',
+      )
+    }
+
+    setStep('verify')
+
+    if (!phoneCodeSent) {
+      sendPhoneOtp()
+    }
+  }
+
+  // Optional: send an email verification code
   const sendEmailOtp = async () => {
     if (!email.trim()) {
       setError('Please add an email first')
@@ -297,7 +390,7 @@ export default function AuthModal({
     }
   }
 
-  // Optional email OTP verification.
+  // Optional: verify the email code
   const verifyEmailOtp = async () => {
     if (!/^\d{6}$/.test(emailCode.trim())) {
       setError(
@@ -327,15 +420,13 @@ export default function AuthModal({
     }
   }
 
-  // Verify phone OTP and save the user.
+  // Step 2 → verify phone OTP (mandatory), then save the user
   const handleVerifySubmit = async (e) => {
     e.preventDefault()
     setError('')
 
     if (!confirmationResult) {
-      setError(
-        'Code is still being sent. Please wait a moment.',
-      )
+      setError('Code is still being sent. Please wait a moment.')
       return
     }
 
@@ -347,21 +438,29 @@ export default function AuthModal({
     setLoading(true)
 
     try {
-      await confirmationResult.confirm(
-        otpCode.trim(),
-      )
+      await confirmationResult.confirm(otpCode.trim())
 
-      const n = name.trim()
       const p = phone.trim()
-      const em = email.trim()
-      const docId = p.replace(/[^\d]/g, '')
+      const n =
+        pendingSocialUser
+          ? pendingSocialUser.name || name.trim() || 'Accesco User'
+          : name.trim()
+      const em =
+        pendingSocialUser
+          ? pendingSocialUser.email || email.trim()
+          : email.trim()
+      const docId = pendingSocialUser
+        ? pendingSocialUser.uid
+        : p.replace(/[^\d]/g, '')
 
       await setDoc(
         doc(db, 'users', docId),
         {
           name: n,
-          phone: p,
+          phone: normalizedPhone,
           email: em || null,
+          photoURL: pendingSocialUser?.photoURL || null,
+          provider: pendingSocialUser?.provider || 'phone',
           phoneVerified: true,
           emailVerified,
           createdAt: serverTimestamp(),
@@ -372,20 +471,24 @@ export default function AuthModal({
         },
       )
 
-      // Firebase Auth was only required for phone verification.
+      // Sign out of Firebase Auth after the write — we only needed phone verification
       await signOut(auth)
 
+      // Referral profile creation/attribution is a side effect — never let
+      // it block or fail the sign-in itself.
+      initializeReferralProfile(p, n, getStoredReferralCode()).catch((err) =>
+        console.error('Referral profile init failed:', err),
+      )
+
       const user = {
-        name: n,
-        phone: p,
+        name: userSnap.exists() ? userSnap.data().name : n,
+        phone: normalizedPhone,
         email: em || null,
+        photoURL: pendingSocialUser?.photoURL || null,
         uid: docId,
       }
 
-      localStorage.setItem(
-        'accesco_user',
-        JSON.stringify(user),
-      )
+      localStorage.setItem('accesco_user', JSON.stringify(user))
 
       setSuccess(true)
 
@@ -396,28 +499,24 @@ export default function AuthModal({
     } catch (err) {
       console.error(err)
 
-      if (
-        err.code ===
-        'auth/invalid-verification-code'
-      ) {
-        setError(
-          'Invalid OTP. Please check the code and try again.',
-        )
-      } else if (
-        err.code === 'auth/code-expired'
-      ) {
-        setError(
-          'OTP has expired. Please request a new one.',
-        )
+      if (err.code === 'auth/invalid-verification-code') {
+        setError('Invalid OTP. Please check the code and try again.')
+      } else if (err.code === 'auth/code-expired') {
+        setError('OTP has expired. Please request a new one.')
       } else {
-        setError(
-          'Something went wrong. Please try again.',
-        )
+        setError('Something went wrong. Please try again.')
       }
     } finally {
       setLoading(false)
     }
   }
+
+  const formatCooldown = (s) =>
+    `${Math.floor(s / 60)
+      .toString()
+      .padStart(2, '0')}:${(s % 60)
+      .toString()
+      .padStart(2, '0')}`
 
   const inputStyle = (field) => ({
     width: '100%',
@@ -429,13 +528,17 @@ export default function AuthModal({
     border:
       focused === field
         ? '1px solid #c50062'
-        : '1px solid #d7d7d7',
+        : '1px solid #2d2d2d',
 
     borderRadius: 5,
     outline: 'none',
 
-    background: '#ffffff',
-    color: '#171717',
+    background:
+      focused === field
+        ? '#242424'
+        : '#202020',
+
+    color: '#ffffff',
 
     fontFamily: 'inherit',
     fontSize: 10,
@@ -443,11 +546,10 @@ export default function AuthModal({
 
     boxShadow:
       focused === field
-        ? '0 0 0 2px rgba(197,0,98,0.11)'
+        ? '0 0 0 2px rgba(197,0,98,0.12)'
         : 'none',
 
-    transition:
-      'border-color 150ms ease, box-shadow 150ms ease',
+    transition: '150ms ease',
   })
 
   if (!isOpen) return null
@@ -462,6 +564,15 @@ export default function AuthModal({
         style={styles.shell}
         onClick={(e) => e.stopPropagation()}
       >
+        <button
+          type="button"
+          onClick={handleClose}
+          aria-label="Close"
+          style={styles.closeButton}
+        >
+          ✕
+        </button>
+
         <section
           className="auth-modal-left"
           style={styles.left}
@@ -483,6 +594,20 @@ export default function AuthModal({
                   <br />
                   Join Accesco Living and Experience
                   <br />a smarter way to live and shop
+                </p>
+              </>
+            ) : step === 'social-phone' ? (
+              <>
+                <h2 style={styles.heroTitle}>
+                  Verify Your
+                  <br />
+                  Phone Number
+                </h2>
+
+                <p style={styles.heroSub}>
+                  Add Your Mobile Number to
+                  <br />
+                  Secure and Complete your Account
                 </p>
               </>
             ) : (
@@ -507,20 +632,6 @@ export default function AuthModal({
           className="auth-modal-right"
           style={styles.right}
         >
-          <button
-            type="button"
-            style={styles.backButton}
-            onClick={handleBack}
-            aria-label={
-              step === 'verify'
-                ? 'Back to details'
-                : 'Close login'
-            }
-          >
-            <BackIcon />
-            <span>Back</span>
-          </button>
-
           {success ? (
             <div style={styles.success}>
               <div style={styles.successCircle}>
@@ -538,7 +649,7 @@ export default function AuthModal({
             </div>
           ) : (
             <>
-              {/* Required by Firebase Phone Authentication */}
+              {/* Invisible reCAPTCHA container required by Firebase Phone Auth */}
               <div id="am-recaptcha-container" />
 
               {step === 'details' ? (
@@ -557,18 +668,18 @@ export default function AuthModal({
                   <div style={styles.socialRow}>
                     <button
                       type="button"
-                      style={styles.socialButton}
+                      style={styles.socialButtonFull}
+                      onClick={handleGoogleSignIn}
+                      disabled={
+                        googleLoading || loading
+                      }
                     >
                       <GoogleIcon />
-                      <span>Google</span>
-                    </button>
-
-                    <button
-                      type="button"
-                      style={styles.socialButton}
-                    >
-                      <AppleIcon />
-                      <span>Apple</span>
+                      <span>
+                        {googleLoading
+                          ? 'Signing in…'
+                          : 'Continue with Google'}
+                      </span>
                     </button>
                   </div>
 
@@ -703,6 +814,75 @@ export default function AuthModal({
                     </button>
                   </form>
                 </div>
+              ) : step === 'social-phone' ? (
+                <div style={styles.detailsScreen}>
+                  <header style={styles.signupHeader}>
+                    <h2 style={styles.signupTitle}>
+                      Verify Your Phone
+                    </h2>
+
+                    <p style={styles.signupSubtitle}>
+                      {pendingSocialUser?.name
+                        ? `Hi ${
+                            pendingSocialUser.name.split(
+                              ' ',
+                            )[0]
+                          }, add`
+                        : 'Add'}{' '}
+                      your mobile number to finish
+                      setting up your account
+                    </p>
+                  </header>
+
+                  {error && (
+                    <div style={styles.error}>
+                      {error}
+                    </div>
+                  )}
+
+                  <form
+                    onSubmit={handleSocialPhoneSubmit}
+                    style={styles.detailsForm}
+                  >
+                    <div style={styles.field}>
+                      <label style={styles.label}>
+                        Mobile Number
+                      </label>
+
+                      <input
+                        style={inputStyle('phone')}
+                        type="tel"
+                        placeholder="eg. 98765 43210"
+                        value={phone}
+                        onChange={(e) =>
+                          setPhone(e.target.value)
+                        }
+                        onFocus={() =>
+                          setFocused('phone')
+                        }
+                        onBlur={() => setFocused('')}
+                        disabled={loading}
+                        autoFocus
+                      />
+                    </div>
+
+                    <button
+                      type="submit"
+                      style={styles.submit}
+                      disabled={loading}
+                    >
+                      {loading
+                        ? 'Sending OTP...'
+                        : 'Send OTP'}
+
+                      {!loading && (
+                        <span style={styles.arrow}>
+                          →
+                        </span>
+                      )}
+                    </button>
+                  </form>
+                </div>
               ) : (
                 <form
                   onSubmit={handleVerifySubmit}
@@ -726,7 +906,11 @@ export default function AuthModal({
                         <button
                           type="button"
                           onClick={() => {
-                            setStep('details')
+                            setStep(
+                              pendingSocialUser
+                                ? 'social-phone'
+                                : 'details',
+                            )
                             setError('')
                           }}
                           disabled={loading}
@@ -790,21 +974,23 @@ export default function AuthModal({
                       />
                     </div>
 
-                    <div style={styles.resendTimer}>
-                      <span style={styles.clockIcon}>
-                        ◷
-                      </span>
+                    {resendCooldown > 0 && (
+                      <div style={styles.resendTimer}>
+                        <span style={styles.clockIcon}>
+                          ◷
+                        </span>
 
-                      <span style={styles.resendText}>
-                        Resend OTP in
-                      </span>
+                        <span style={styles.resendText}>
+                          Resend OTP in
+                        </span>
 
-                      <span style={styles.timerValue}>
-                        00:45
-                      </span>
-                    </div>
+                        <span style={styles.timerValue}>
+                          {formatCooldown(resendCooldown)}
+                        </span>
+                      </div>
+                    )}
 
-                    {/* Optional email verification logic retained */}
+                    {/* Optional email verification is retained but hidden to match the supplied design */}
                     <div
                       style={
                         styles.hiddenEmailVerification
@@ -880,7 +1066,9 @@ export default function AuthModal({
 
                             <button
                               type="button"
-                              onClick={verifyEmailOtp}
+                              onClick={
+                                verifyEmailOtp
+                              }
                               disabled={emailLoading}
                               style={styles.miniButton}
                             >
@@ -927,12 +1115,18 @@ export default function AuthModal({
                       <button
                         type="button"
                         onClick={sendPhoneOtp}
-                        disabled={loading}
+                        disabled={
+                          loading || resendCooldown > 0
+                        }
                         style={
                           styles.bottomResendButton
                         }
                       >
-                        Resend OTP
+                        {resendCooldown > 0
+                          ? `Resend OTP (${formatCooldown(
+                              resendCooldown,
+                            )})`
+                          : 'Resend OTP'}
                       </button>
                     </div>
                   </div>
@@ -944,7 +1138,7 @@ export default function AuthModal({
 
         <style jsx>{`
           input::placeholder {
-            color: #8a8a8a;
+            color: #656565;
             opacity: 1;
           }
 
@@ -963,8 +1157,8 @@ export default function AuthModal({
               min-height: 531px !important;
 
               grid-template-columns: 1fr !important;
+
               padding: 0 !important;
-              transform: none !important;
             }
 
             .auth-modal-left {
@@ -973,13 +1167,14 @@ export default function AuthModal({
 
             .auth-modal-right {
               min-height: 531px !important;
-              padding: 58px 32px 28px !important;
+
+              padding: 34px 32px 28px !important;
             }
           }
 
           @media (max-width: 390px) {
             .auth-modal-right {
-              padding: 58px 22px 24px !important;
+              padding: 30px 22px 24px !important;
             }
           }
         `}</style>
@@ -1000,13 +1195,12 @@ backdrop: {
 
   padding: 16,
 
-  background: 'rgba(20, 20, 20, 0.92)',
-
+  background: 'rgba(255, 255, 255, 0.72)',
   backdropFilter: 'blur(10px)',
   WebkitBackdropFilter: 'blur(10px)',
 },
 
-  shell: {
+shell: {
   position: 'relative',
 
   width: 'min(820px, calc(100vw - 32px))',
@@ -1025,15 +1219,41 @@ backdrop: {
 
   overflow: 'hidden',
 
-  background: '#ffffff',
-  border: '1px solid #ffffff',
+  background: '#000000',
 
   boxShadow:
-    '0 30px 85px rgba(0,0,0,0.45)',
+    '0 30px 85px rgba(0,0,0,0.68)',
 
   fontFamily:
     'Arial, Helvetica, sans-serif',
 },
+
+closeButton: {
+  position: 'absolute',
+  top: 14,
+  left: 14,
+  zIndex: 10,
+
+  width: 28,
+  height: 28,
+
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+
+  padding: 0,
+  border: '1px solid rgba(255,255,255,0.25)',
+  borderRadius: '50%',
+
+  background: 'rgba(0,0,0,0.35)',
+  color: '#ffffff',
+
+  fontSize: 13,
+  lineHeight: 1,
+
+  cursor: 'pointer',
+},
+
   left: {
     position: 'relative',
 
@@ -1102,48 +1322,19 @@ backdrop: {
     letterSpacing: '-0.01em',
   },
 
-right: {
-  position: 'relative',
-  minWidth: 0,
+  right: {
+    position: 'relative',
+    minWidth: 0,
 
-  boxSizing: 'border-box',
-  padding: '52px 31px 27px',
+    boxSizing: 'border-box',
+    padding: '27px 6px 8px 0',
 
-  overflowY: 'auto',
+    overflowY: 'auto',
 
-  background: '#ffffff',
-  color: '#171717',
+    background: '#000000',
+    color: '#ffffff',
 
-  border: '1px solid #ffffff',
-
-  scrollbarWidth: 'none',
-},
-
-  backButton: {
-    position: 'absolute',
-    top: 16,
-    left: 17,
-    zIndex: 10,
-
-    display: 'inline-flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-
-    gap: 4,
-
-    padding: '5px 7px',
-
-    border: 0,
-    borderRadius: 5,
-
-    background: 'transparent',
-    color: '#292929',
-
-    fontSize: 10,
-    lineHeight: 1,
-    fontWeight: 600,
-
-    cursor: 'pointer',
+    scrollbarWidth: 'none',
   },
 
   detailsScreen: {
@@ -1158,7 +1349,7 @@ right: {
   signupTitle: {
     margin: 0,
 
-    color: '#111111',
+    color: '#ffffff',
 
     fontSize: 25,
     lineHeight: 1.12,
@@ -1169,7 +1360,7 @@ right: {
   signupSubtitle: {
     margin: '8px 0 0',
 
-    color: 'rgba(0,0,0,0.68)',
+    color: 'rgba(255,255,255,0.88)',
 
     fontSize: 10,
     lineHeight: 1.35,
@@ -1178,42 +1369,41 @@ right: {
 
   socialRow: {
     display: 'grid',
-    gridTemplateColumns: '1fr 1fr',
+    gridTemplateColumns: '1fr',
 
     gap: 18,
 
     marginTop: 27,
   },
 
-  socialButton: {
-    height: 37,
+socialButtonFull: {
+  width: '100%',
+  height: 37,
 
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
 
-    gap: 10,
-    padding: 0,
+  gap: 10,
+  padding: 0,
 
-    boxSizing: 'border-box',
+  boxSizing: 'border-box',
 
-    border: '1px solid #d8d8d8',
-    borderRadius: 5,
+  border: '1px solid #2b2b2b',
+  borderRadius: 5,
 
-    background: '#ffffff',
-    color: '#171717',
+  background: '#202020',
+  color: '#eeeeee',
 
-    fontFamily:
-      'Arial, Helvetica, sans-serif',
+  fontFamily: 'Arial, Helvetica, sans-serif',
+  fontSize: 11,
+  fontWeight: 500,
+  lineHeight: 1,
+  letterSpacing: 0,
+  textTransform: 'none',
 
-    fontSize: 11,
-    fontWeight: 500,
-    lineHeight: 1,
-    letterSpacing: 0,
-    textTransform: 'none',
-
-    cursor: 'default',
-  },
+  cursor: 'pointer',
+},
 
   divider: {
     display: 'grid',
@@ -1228,11 +1418,11 @@ right: {
   dividerLine: {
     height: 1,
 
-    background: '#dddddd',
+    background: '#292929',
   },
 
   dividerText: {
-    color: 'rgba(0,0,0,0.65)',
+    color: 'rgba(255,255,255,0.58)',
 
     fontSize: 7,
     lineHeight: 1,
@@ -1242,12 +1432,11 @@ right: {
     margin: '0 0 10px',
     padding: '6px 8px',
 
-    border:
-      '1px solid rgba(197,0,98,0.28)',
+    border: '1px solid rgba(197,0,98,0.3)',
     borderRadius: 4,
 
-    background: 'rgba(197,0,98,0.07)',
-    color: '#b50058',
+    background: 'rgba(197,0,98,0.1)',
+    color: '#ff65a1',
 
     fontSize: 9,
     lineHeight: 1.3,
@@ -1280,15 +1469,15 @@ right: {
   },
 
   label: {
-    color: '#171717',
+    color: 'rgba(255,255,255,0.92)',
 
     fontSize: 9,
     lineHeight: 1,
-    fontWeight: 600,
+    fontWeight: 500,
   },
 
   optional: {
-    color: 'rgba(0,0,0,0.55)',
+    color: 'rgba(255,255,255,0.56)',
 
     fontSize: 8,
     fontStyle: 'normal',
@@ -1346,7 +1535,7 @@ right: {
   verifyTitle: {
     margin: 0,
 
-    color: '#111111',
+    color: '#ffffff',
 
     fontSize: 26,
     lineHeight: 1.1,
@@ -1357,7 +1546,7 @@ right: {
   verifySubtitle: {
     margin: '13px 0 0',
 
-    color: 'rgba(0,0,0,0.58)',
+    color: 'rgba(255,255,255,0.58)',
 
     fontSize: 9,
     lineHeight: 1.4,
@@ -1373,7 +1562,7 @@ right: {
   },
 
   phoneText: {
-    color: '#c50062',
+    color: '#cf0066',
 
     fontSize: 10,
     fontWeight: 600,
@@ -1385,7 +1574,7 @@ right: {
     border: 0,
 
     background: 'transparent',
-    color: '#c50062',
+    color: '#cf0066',
 
     fontSize: 9,
 
@@ -1396,12 +1585,11 @@ right: {
     margin: '14px 0 -42px',
     padding: '6px 8px',
 
-    border:
-      '1px solid rgba(197,0,98,0.28)',
+    border: '1px solid rgba(197,0,98,0.3)',
     borderRadius: 4,
 
-    background: 'rgba(197,0,98,0.07)',
-    color: '#b50058',
+    background: 'rgba(197,0,98,0.1)',
+    color: '#ff65a1',
 
     fontSize: 9,
     lineHeight: 1.3,
@@ -1432,20 +1620,20 @@ right: {
 
     boxSizing: 'border-box',
 
-    border: '1px solid #d4d4d4',
+    border: '1px solid #2c2c2c',
     borderRadius: 5,
 
-    background: '#f8f8f8',
-    color: '#171717',
+    background: '#202020',
+    color: '#ffffff',
 
     fontSize: 18,
     fontWeight: 600,
   },
 
   otpBoxActive: {
-    borderColor: '#c50062',
+    borderColor: '#cf0066',
 
-    boxShadow: '0 0 0 1px #c50062',
+    boxShadow: '0 0 0 1px #cf0066',
   },
 
   otpRealInput: {
@@ -1482,18 +1670,18 @@ right: {
   },
 
   clockIcon: {
-    color: '#c50062',
+    color: '#cf0066',
 
     fontSize: 12,
     lineHeight: 1,
   },
 
   resendText: {
-    color: 'rgba(0,0,0,0.55)',
+    color: 'rgba(255,255,255,0.54)',
   },
 
   timerValue: {
-    color: '#c50062',
+    color: '#cf0066',
 
     fontWeight: 600,
   },
@@ -1544,7 +1732,7 @@ right: {
   },
 
   bottomResendText: {
-    color: 'rgba(0,0,0,0.55)',
+    color: 'rgba(255,255,255,0.54)',
 
     fontSize: 9,
   },
@@ -1555,7 +1743,7 @@ right: {
     border: 0,
 
     background: 'transparent',
-    color: '#c50062',
+    color: '#cf0066',
 
     fontSize: 9,
 
@@ -1592,13 +1780,13 @@ right: {
     fontWeight: 800,
 
     boxShadow:
-      '0 16px 38px rgba(197,0,98,0.25)',
+      '0 16px 38px rgba(197,0,98,0.3)',
   },
 
   successTitle: {
     margin: '0 0 7px',
 
-    color: '#111111',
+    color: '#ffffff',
 
     fontSize: 25,
     fontWeight: 700,
@@ -1607,7 +1795,7 @@ right: {
   successText: {
     margin: 0,
 
-    color: 'rgba(0,0,0,0.65)',
+    color: 'rgba(255,255,255,0.66)',
 
     fontSize: 11,
   },
@@ -1615,7 +1803,7 @@ right: {
   successNote: {
     margin: 0,
 
-    color: '#15803d',
+    color: '#4ade80',
 
     fontSize: 11,
     fontWeight: 650,
@@ -1624,7 +1812,7 @@ right: {
   mutedNote: {
     margin: 0,
 
-    color: 'rgba(0,0,0,0.5)',
+    color: 'rgba(255,255,255,0.5)',
 
     fontSize: 11,
   },
@@ -1633,11 +1821,11 @@ right: {
     width: '100%',
     height: 36,
 
-    border: '1px solid #d5d5d5',
+    border: '1px solid #333333',
     borderRadius: 5,
 
-    background: '#ffffff',
-    color: '#171717',
+    background: '#202020',
+    color: '#ffffff',
 
     fontSize: 10,
     fontWeight: 600,
@@ -1672,11 +1860,11 @@ right: {
   miniButtonMuted: {
     height: 35,
 
-    border: '1px solid #d5d5d5',
+    border: '1px solid #333333',
     borderRadius: 5,
 
-    background: '#ffffff',
-    color: 'rgba(0,0,0,0.7)',
+    background: '#202020',
+    color: 'rgba(255,255,255,0.7)',
 
     fontSize: 10,
     fontWeight: 600,
