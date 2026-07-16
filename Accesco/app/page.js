@@ -1940,7 +1940,7 @@ const [deliveryVisible, setDeliveryVisible] = useState(false);
           background: #fff;
           border-radius: 24px;
           border: 1px solid rgba(122,0,66,0.08);
-          overflow: hidden;
+          overflow: hidden !important;
           transition: transform 0.35s ease, box-shadow 0.35s ease;
           height: 100%;
           display: flex;
@@ -1953,6 +1953,16 @@ const [deliveryVisible, setDeliveryVisible] = useState(false);
           height: 200px;
           position: relative;
           overflow: hidden;
+          background: transparent;
+        }
+
+        .serviceCardVisualImage {
+          object-fit: cover !important;
+          object-position: center !important;
+          opacity: 1 !important;
+          filter: none !important;
+          mix-blend-mode: normal !important;
+          background: transparent !important;
         }
 
         .service-card-body {
