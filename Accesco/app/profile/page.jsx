@@ -10,6 +10,12 @@ import "./profile.css";
 
 const exploreLinks = [
   {
+    label: "Invite & Earn",
+    href: "/referral",
+    icon: "ri-gift-line",
+    text: "Refer friends and unlock milestone gifts",
+  },
+  {
     label: "Accesco Library",
     href: "/accesco-library",
     icon: "ri-play-circle-line",

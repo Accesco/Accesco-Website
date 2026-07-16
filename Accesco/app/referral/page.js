@@ -2,54 +2,128 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
-import { getLeaderboard, getUserReferralStats } from '../../lib/referralService';
+import { useAuth } from '../components/AuthProvider';
+import AuthModal from '../components/AuthModal';
+import {
+  getLeaderboard,
+  getUserReferralStats,
+  subscribeToReferralStats,
+  claimMilestoneGift,
+} from '../../lib/referralService';
+import {
+  REFERRAL_MILESTONES,
+  COINS_PER_REFERRAL,
+  getGiftChoicesForMilestone,
+} from '../../lib/giftCatalog';
 import './referral.css';
 
 const milestones = [
-  { referrals: 1, coins: 20 },
-  { referrals: 3, coins: 40 },
-  { referrals: 5, coins: 60 },
-  { referrals: 10, coins: 100, bonus: '+ Giveaway' },
-  { referrals: 20, coins: 150, bonus: '+ Giveaway' },
-  { referrals: 30, coins: 200, bonus: '+ Better Gift' },
-  { referrals: 40, coins: 250, bonus: '+ Best Gift' },
-];
+  { referrals: 1 },
+  { referrals: 3 },
+  { referrals: 5 },
+  { referrals: 10, bonus: '+ Giveaway' },
+  { referrals: 20, bonus: '+ Giveaway' },
+  { referrals: 30, bonus: '+ Better Gift' },
+  { referrals: 40, bonus: '+ Best Gift' },
+].map((m) => ({ ...m, coins: m.referrals * COINS_PER_REFERRAL }));
 
-const rewardTiers = [
-  {
-    range: '10 – 19',
-    minimum: 10,
-    coins: 100,
-    description: '3 gift choices under ₹500',
-  },
-  {
-    range: '20 – 29',
-    minimum: 20,
-    coins: 150,
-    description: '5 gift choices under ₹700',
-  },
-  {
-    range: '30 – 39',
-    minimum: 30,
-    coins: 200,
-    description: '7 gift choices under ₹1,000',
-  },
-  {
-    range: '40 – 50',
-    minimum: 40,
-    coins: 250,
-    description: '10 gift choices under ₹1,500',
-  },
-];
+const rewardTiers = REFERRAL_MILESTONES.map((tier) => ({
+  id: tier.id,
+  range: `${tier.minReferrals} – ${tier.maxReferrals}`,
+  minimum: tier.minReferrals,
+  coins: tier.minReferrals * COINS_PER_REFERRAL,
+  description: `${tier.choiceCount} gift choices under ₹${tier.priceCap.toLocaleString('en-IN')}`,
+}));
+
+function RewardCard({ tier, referralCount, claim, user, onClaim, onRequireLogin }) {
+  const unlocked = referralCount >= tier.minimum;
+  const [picking, setPicking] = useState(false);
+  const [selectedGift, setSelectedGift] = useState('');
+  const [claiming, setClaiming] = useState(false);
+  const choices = getGiftChoicesForMilestone(tier.id);
+
+  const handleChooseClick = () => {
+    if (!user) {
+      onRequireLogin();
+      return;
+    }
+    setPicking(true);
+  };
+
+  const handleConfirm = async () => {
+    if (!selectedGift) return;
+    setClaiming(true);
+    try {
+      await onClaim(tier.id, selectedGift);
+      setPicking(false);
+    } finally {
+      setClaiming(false);
+    }
+  };
+
+  return (
+    <article className={`rewardCard ${unlocked ? 'unlocked' : ''}`}>
+      <h3>{tier.range}</h3>
+      <p>Referrals</p>
+
+      <div className="rewardCoins">
+        <span>₹</span>
+        <strong>{tier.coins} Coins</strong>
+      </div>
+
+      <small>{tier.description}</small>
+
+      {claim ? (
+        <>
+          <button type="button" disabled>
+            🎁 {claim.giftName}
+          </button>
+          <small style={{ color: '#850043', fontWeight: 700 }}>
+            {claim.status === 'pending_first_order'
+              ? 'Delivered with your first order'
+              : claim.status === 'fulfilled_pending_dispatch'
+              ? 'Ready to ship'
+              : 'Delivered'}
+          </small>
+        </>
+      ) : picking ? (
+        <div className="shareInputRow" style={{ marginTop: 10 }}>
+          <select
+            value={selectedGift}
+            onChange={(e) => setSelectedGift(e.target.value)}
+            style={{ width: '100%', minWidth: 0, height: 46, padding: '0 10px', border: '1px solid #e7dbd5', borderRadius: 10, font: 'inherit', fontSize: 11 }}
+          >
+            <option value="">Choose…</option>
+            {choices.map((g) => (
+              <option key={g.id} value={g.id}>
+                {g.name} (₹{g.price})
+              </option>
+            ))}
+          </select>
+          <button type="button" onClick={handleConfirm} disabled={!selectedGift || claiming}>
+            {claiming ? '…' : 'Confirm'}
+          </button>
+        </div>
+      ) : (
+        <button type="button" onClick={handleChooseClick} disabled={!unlocked}>
+          {unlocked ? 'Choose Reward' : `Unlocks at ${tier.minimum}`}
+          <span>⌄</span>
+        </button>
+      )}
+    </article>
+  );
+}
 
 export default function ReferralPage() {
+  const { user, signIn } = useAuth();
   const [leaderboard, setLeaderboard] = useState([]);
-  const [email, setEmail] = useState('');
+  const [phoneLookup, setPhoneLookup] = useState('');
   const [inviteEmail, setInviteEmail] = useState('');
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [copied, setCopied] = useState(false);
+  const [isAuthOpen, setIsAuthOpen] = useState(false);
 
   useEffect(() => {
     async function loadLeaderboard() {
@@ -64,33 +138,45 @@ export default function ReferralPage() {
     loadLeaderboard();
   }, []);
 
+  // Logged-in users get their live referral profile automatically —
+  // no manual lookup needed, and it updates in real time as referrals/claims happen.
+  useEffect(() => {
+    if (!user?.phone) return undefined;
+
+    const unsubscribe = subscribeToReferralStats(user.phone, setStats);
+    return unsubscribe;
+  }, [user?.phone]);
+
   const referralCount = Number(stats?.referralCount || 0);
   const coins = Number(stats?.coins || 0);
 
   const referralLink = stats?.referralCode
     ? `https://accescoliving.com/?ref=${stats.referralCode}`
-    : 'Your referral link appears after checking your email';
+    : user
+    ? 'Setting up your referral link…'
+    : 'Log in to get your referral link';
 
   const progress = useMemo(() => {
     const maximum = milestones[milestones.length - 1].referrals;
     return Math.min((referralCount / maximum) * 100, 100);
   }, [referralCount]);
 
+  // Manual lookup — only needed for logged-out visitors checking a phone number
   async function handleCheckStats(event) {
     event.preventDefault();
 
-    if (!email.trim()) return;
+    if (!phoneLookup.trim()) return;
 
     setLoading(true);
     setError('');
 
     try {
-      const result = await getUserReferralStats(email);
+      const result = await getUserReferralStats(phoneLookup);
 
       if (!result) {
         setStats(null);
         setError(
-          'No waitlist profile was found for this email. Please register on the waitlist first.'
+          'No referral profile was found for this phone number. Please sign up first.'
         );
         return;
       }
@@ -101,6 +187,17 @@ export default function ReferralPage() {
       setError('We could not load your referral details. Please try again.');
     } finally {
       setLoading(false);
+    }
+  }
+
+  async function handleClaim(tierId, giftId) {
+    if (!user?.phone) return;
+    setError('');
+    try {
+      await claimMilestoneGift(user.phone, tierId, giftId);
+      // subscribeToReferralStats pushes the updated claim automatically
+    } catch (err) {
+      setError(err.message || 'Failed to claim gift');
     }
   }
 
@@ -120,9 +217,9 @@ export default function ReferralPage() {
 
     if (!inviteEmail.trim() || !stats?.referralCode) return;
 
-    const subject = encodeURIComponent('Join me on the Accesco waitlist');
+    const subject = encodeURIComponent('Join me on Accesco Living');
     const body = encodeURIComponent(
-      `Join the Accesco waitlist using my referral link:\n\n${referralLink}`
+      `Join Accesco Living using my referral link:\n\n${referralLink}`
     );
 
     window.location.href = `mailto:${inviteEmail}?subject=${subject}&body=${body}`;
@@ -133,7 +230,7 @@ export default function ReferralPage() {
 
     const encodedLink = encodeURIComponent(referralLink);
     const text = encodeURIComponent(
-      'Join me on the Accesco waitlist and unlock exclusive rewards.'
+      'Join me on Accesco Living and unlock exclusive rewards.'
     );
 
     const links = {
@@ -154,9 +251,26 @@ export default function ReferralPage() {
         </Link>
 
         <nav className="referralNavigation">
-          <Link href="/login" className="loginButton">
-            Login
+          <Link href="/" className="loginButton">
+            Home
           </Link>
+
+          {user ? (
+            <Link href="/profile" className="loginButton">
+              {user.name?.split(' ')[0] || 'Account'}
+            </Link>
+          ) : (
+            <a
+              href="#"
+              className="loginButton"
+              onClick={(e) => {
+                e.preventDefault();
+                setIsAuthOpen(true);
+              }}
+            >
+              Login
+            </a>
+          )}
 
           <Link href="/#download" className="getAppButton">
             Get App
@@ -208,28 +322,30 @@ export default function ReferralPage() {
             </div>
           </div>
 
-          <form className="statsLookup" onSubmit={handleCheckStats}>
-            <label htmlFor="referral-email">
-              Check your referral progress
-            </label>
+          {!user && (
+            <form className="statsLookup" onSubmit={handleCheckStats}>
+              <label htmlFor="referral-phone">
+                Check your referral progress
+              </label>
 
-            <div>
-              <input
-                id="referral-email"
-                type="email"
-                value={email}
-                onChange={(event) => setEmail(event.target.value)}
-                placeholder="your@email.com"
-                required
-              />
+              <div>
+                <input
+                  id="referral-phone"
+                  type="tel"
+                  value={phoneLookup}
+                  onChange={(event) => setPhoneLookup(event.target.value)}
+                  placeholder="Your phone number"
+                  required
+                />
 
-              <button type="submit" disabled={loading}>
-                {loading ? 'Checking...' : 'Check Stats'}
-              </button>
-            </div>
+                <button type="submit" disabled={loading}>
+                  {loading ? 'Checking...' : 'Check Stats'}
+                </button>
+              </div>
 
-            {error && <p className="errorMessage">{error}</p>}
-          </form>
+              {error && <p className="errorMessage">{error}</p>}
+            </form>
+          )}
         </section>
 
         <div className="referralLayout">
@@ -309,36 +425,20 @@ export default function ReferralPage() {
                 </div>
               </div>
 
+              {error && user && <p className="errorMessage">{error}</p>}
+
               <div className="rewardGrid">
-                {rewardTiers.map((tier) => {
-                  const unlocked = referralCount >= tier.minimum;
-
-                  return (
-                    <article
-                      className={`rewardCard ${
-                        unlocked ? 'unlocked' : ''
-                      }`}
-                      key={tier.range}
-                    >
-                      <h3>{tier.range}</h3>
-                      <p>Referrals</p>
-
-                      <div className="rewardCoins">
-                        <span>₹</span>
-                        <strong>{tier.coins} Coins</strong>
-                      </div>
-
-                      <small>{tier.description}</small>
-
-                      <button type="button" disabled>
-                        {unlocked
-                          ? 'Choose Reward'
-                          : `Unlocks at ${tier.minimum}`}
-                        <span>⌄</span>
-                      </button>
-                    </article>
-                  );
-                })}
+                {rewardTiers.map((tier) => (
+                  <RewardCard
+                    key={tier.id}
+                    tier={tier}
+                    referralCount={referralCount}
+                    claim={stats?.milestoneClaims?.[tier.id] || null}
+                    user={user}
+                    onClaim={handleClaim}
+                    onRequireLogin={() => setIsAuthOpen(true)}
+                  />
+                ))}
               </div>
             </div>
 
@@ -432,16 +532,16 @@ export default function ReferralPage() {
               <div>
                 <span>♟</span>
                 <p>
-                  Your referral count updates as soon as a person registers
-                  on the waitlist.
+                  Your referral count updates as soon as a person signs up
+                  with your link.
                 </p>
               </div>
 
               <div>
                 <span>🚚</span>
                 <p>
-                  Selected gifts will be delivered after the first order
-                  together.
+                  Selected gifts will be delivered together with your first
+                  order.
                 </p>
               </div>
             </div>
@@ -463,14 +563,14 @@ export default function ReferralPage() {
                   No referrers yet. Be the first!
                 </div>
               ) : (
-                leaderboard.map((user, index) => (
-                  <article className="leaderboardRow" key={`${user.name}-${index}`}>
+                leaderboard.map((entry, index) => (
+                  <article className="leaderboardRow" key={`${entry.name}-${index}`}>
                     <span className={`rankBadge rank${index + 1}`}>
                       {index + 1}
                     </span>
 
                     <span className={`avatar avatar${index + 1}`}>
-                      {(user.name || 'A')
+                      {(entry.name || 'A')
                         .split(' ')
                         .map((part) => part[0])
                         .join('')
@@ -479,12 +579,12 @@ export default function ReferralPage() {
                     </span>
 
                     <div className="leaderboardUser">
-                      <strong>{user.name || 'Anonymous'}</strong>
-                      <small>{user.referralCount || 0} referrals</small>
+                      <strong>{entry.name || 'Anonymous'}</strong>
+                      <small>{entry.referralCount || 0} referrals</small>
                     </div>
 
                     <div className="leaderboardCoins">
-                      <strong>{user.coins || 0}</strong>
+                      <strong>{entry.coins || 0}</strong>
                       <small>Coins</small>
                     </div>
                   </article>
@@ -494,6 +594,15 @@ export default function ReferralPage() {
           </aside>
         </div>
       </main>
+
+      <AuthModal
+        isOpen={isAuthOpen}
+        onClose={() => setIsAuthOpen(false)}
+        onSuccess={(userData) => {
+          signIn(userData);
+          setIsAuthOpen(false);
+        }}
+      />
     </div>
   );
 }
