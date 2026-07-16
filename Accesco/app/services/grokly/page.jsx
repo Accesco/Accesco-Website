@@ -1,7 +1,7 @@
 /**
  * Grokly Main Page - Modular Version
  * 11-Minute Grocery Delivery Service
- * @version 2.0.0
+ * @version 2.3.1
  */
 
 'use client';
@@ -278,7 +278,7 @@ function GroklyPageContent() {
               maxWidth: "var(--grokly-max-width)",
               margin: "0 auto",
               width: "100%",
-              padding: "16px 20px",
+              padding: "16px 20px 0", // Reduced bottom padding to 0
             }}
           >
             <div
@@ -291,6 +291,7 @@ function GroklyPageContent() {
                 boxShadow: "0 8px 30px rgba(42, 33, 26, 0.12)",
               }}
             >
+              {/* Slide 0: General Info */}
               <div
                 onClick={() => {
                   const mainContent = document.querySelector("main");
@@ -413,6 +414,8 @@ function GroklyPageContent() {
                   </div>
                 </div>
               </div>
+
+              {/* Slide 1: Grokly Fresh Groceries Curated Just For You */}
               <div
                 onClick={() => {
                   const mainContent = document.querySelector("main");
@@ -432,8 +435,8 @@ function GroklyPageContent() {
                 }}
               >
                 <img
-                  src="/images/banners/groklyhero2.png"
-                  alt="Grokly New Hero Banner"
+                  src="/images/banners/hero-grokly1.jpg.png"
+                  alt="Grokly Fresh Groceries Curated Just For You Banner"
                   style={{
                     width: "100%",
                     height: "100%",
@@ -443,36 +446,7 @@ function GroklyPageContent() {
                 />
               </div>
 
-              <div
-                onClick={() => {
-                  const mainContent = document.querySelector("main");
-                  if (mainContent) {
-                    mainContent.scrollIntoView({
-                      behavior: "smooth",
-                      block: "start",
-                    });
-                  }
-                }}
-                style={{
-                  position: "absolute",
-                  inset: 0,
-                  opacity: currentSlide === 2 ? 1 : 0,
-                  pointerEvents: currentSlide === 2 ? "auto" : "none",
-                  transition: "opacity 0.8s ease-in-out",
-                }}
-              >
-                <img
-                  src="/images/banners/hero-grokly.jpg"
-                  alt="Grokly Banner"
-                  style={{
-                    width: "100%",
-                    height: "100%",
-                    objectFit: "cover",
-                    objectPosition: "center",
-                  }}
-                />
-              </div>
-
+              {/* Slide Indicators */}
               <div
                 style={{
                   position: "absolute",
@@ -484,7 +458,7 @@ function GroklyPageContent() {
                   zIndex: 10,
                 }}
               >
-                {[0, 1, 2].map((index) => (
+                {[0, 1].map((index) => (
                   <button
                     key={index}
                     onClick={(e) => {
@@ -509,10 +483,11 @@ function GroklyPageContent() {
                 ))}
               </div>
 
+              {/* Left Arrow Navigation */}
               <button
                 onClick={(e) => {
                   e.stopPropagation();
-                  setCurrentSlide((prev) => (prev === 0 ? 2 : prev - 1));
+                  setCurrentSlide((prev) => (prev === 0 ? 1 : prev - 1));
                 }}
                 style={{
                   position: "absolute",
@@ -546,10 +521,12 @@ function GroklyPageContent() {
                   style={{ display: "block", margin: "auto" }}
                 ></i>
               </button>
+
+              {/* Right Arrow Navigation */}
               <button
                 onClick={(e) => {
                   e.stopPropagation();
-                  setCurrentSlide((prev) => (prev === 2 ? 0 : prev + 1));
+                  setCurrentSlide((prev) => (prev === 1 ? 0 : prev + 1));
                 }}
                 style={{
                   position: "absolute",
@@ -593,7 +570,7 @@ function GroklyPageContent() {
               maxWidth: "var(--grokly-max-width)",
               margin: "0 auto",
               width: "100%",
-              padding: "24px 20px 0",
+              padding: "0 20px 0", // Reduced top padding to 0
             }}
           >
             <div
@@ -2106,9 +2083,6 @@ function GroklyPageContent() {
 }
 
 export default function GroklyPage() {
-  // NOTE: GroklyProvider is already supplied by grokly/layout.js (shared across
-  // all grokly routes). Wrapping again here created a second, isolated cart whose
-  // items never reached the checkout route. Use the shared provider only.
   return (
     <Suspense fallback={<div>Loading...</div>}>
       <GroklyPageContent />

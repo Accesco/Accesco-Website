@@ -494,6 +494,7 @@ export default function AppShowcase() {
                     onClick={handleNext}
                   >
                     <span>Continue</span>
+
                     <ArrowRight size={18} />
                   </button>
                 </div>

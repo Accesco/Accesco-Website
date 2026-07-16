@@ -2348,8 +2348,8 @@ bottom: 0px;
   left: 50%;
   width: 100vw;
   transform: translateX(-50%);
-  background: url("/images/wave-desktop.png") center/cover no-repeat;
-
+  background: url("/images/wave-desktop6.png") center/cover no-repeat;
+opacity:0.5;
   z-index: -1;
   pointer-events: none;
 }
