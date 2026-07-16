@@ -460,7 +460,7 @@ export default function InstaStyleLanding() {
             width: '100%',
             height: '100%',
             objectFit: 'cover',
-            objectPosition: 'center top',
+            objectPosition: 'center',
             display: 'block',
             zIndex: 0,
             opacity: videoLoading ? 0 : 1,
