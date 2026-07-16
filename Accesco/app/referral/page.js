@@ -1,184 +1,499 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import Link from 'next/link';
 import { getLeaderboard, getUserReferralStats } from '../../lib/referralService';
-import AccescoHeader from '../../components/AccescoHeader';
-import Footer from '../../components/Footer';
-import '../homepage.css'; // For common styles
+import './referral.css';
+
+const milestones = [
+  { referrals: 1, coins: 20 },
+  { referrals: 3, coins: 40 },
+  { referrals: 5, coins: 60 },
+  { referrals: 10, coins: 100, bonus: '+ Giveaway' },
+  { referrals: 20, coins: 150, bonus: '+ Giveaway' },
+  { referrals: 30, coins: 200, bonus: '+ Better Gift' },
+  { referrals: 40, coins: 250, bonus: '+ Best Gift' },
+];
+
+const rewardTiers = [
+  {
+    range: '10 – 19',
+    minimum: 10,
+    coins: 100,
+    description: '3 gift choices under ₹500',
+  },
+  {
+    range: '20 – 29',
+    minimum: 20,
+    coins: 150,
+    description: '5 gift choices under ₹700',
+  },
+  {
+    range: '30 – 39',
+    minimum: 30,
+    coins: 200,
+    description: '7 gift choices under ₹1,000',
+  },
+  {
+    range: '40 – 50',
+    minimum: 40,
+    coins: 250,
+    description: '10 gift choices under ₹1,500',
+  },
+];
 
 export default function ReferralPage() {
   const [leaderboard, setLeaderboard] = useState([]);
   const [email, setEmail] = useState('');
-  const [myStats, setMyStats] = useState(null);
-  const [loadingStats, setLoadingStats] = useState(false);
+  const [inviteEmail, setInviteEmail] = useState('');
+  const [stats, setStats] = useState(null);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     async function loadLeaderboard() {
       try {
-        const topUsers = await getLeaderboard();
-        setLeaderboard(topUsers);
+        const users = await getLeaderboard();
+        setLeaderboard(users.slice(0, 3));
       } catch (err) {
-        console.error("Failed to load leaderboard");
+        console.error('Unable to load leaderboard:', err);
       }
     }
+
     loadLeaderboard();
   }, []);
 
-  const handleCheckStats = async (e) => {
-    e.preventDefault();
-    if (!email) return;
-    setLoadingStats(true);
+  const referralCount = Number(stats?.referralCount || 0);
+  const coins = Number(stats?.coins || 0);
+
+  const referralLink = stats?.referralCode
+    ? `https://accescoliving.com/?ref=${stats.referralCode}`
+    : 'Your referral link appears after checking your email';
+
+  const progress = useMemo(() => {
+    const maximum = milestones[milestones.length - 1].referrals;
+    return Math.min((referralCount / maximum) * 100, 100);
+  }, [referralCount]);
+
+  async function handleCheckStats(event) {
+    event.preventDefault();
+
+    if (!email.trim()) return;
+
+    setLoading(true);
     setError('');
+
     try {
-      const stats = await getUserReferralStats(email);
-      if (stats) {
-        setMyStats(stats);
-      } else {
-        setError('No waitlist profile found for this email. Have you signed up yet?');
+      const result = await getUserReferralStats(email);
+
+      if (!result) {
+        setStats(null);
+        setError(
+          'No waitlist profile was found for this email. Please register on the waitlist first.'
+        );
+        return;
       }
+
+      setStats(result);
     } catch (err) {
-      setError('Error fetching stats');
+      console.error(err);
+      setError('We could not load your referral details. Please try again.');
     } finally {
-      setLoadingStats(false);
+      setLoading(false);
     }
-  };
+  }
 
-  const getTierStatus = (coins) => {
-    if (coins >= 60) return { tier: 3, label: 'Platinum Tier', nextRef: 0 };
-    if (coins >= 40) return { tier: 2, label: 'Gold Tier', nextRef: 5 };
-    if (coins >= 20) return { tier: 1, label: 'Silver Tier', nextRef: 3 };
-    return { tier: 0, label: 'Bronze Tier', nextRef: 1 };
-  };
+  async function copyReferralLink() {
+    if (!stats?.referralCode) return;
 
-  const myTier = myStats ? getTierStatus(myStats.coins) : { tier: 0 };
+    await navigator.clipboard.writeText(referralLink);
+    setCopied(true);
+
+    window.setTimeout(() => {
+      setCopied(false);
+    }, 1800);
+  }
+
+  function sendInvite(event) {
+    event.preventDefault();
+
+    if (!inviteEmail.trim() || !stats?.referralCode) return;
+
+    const subject = encodeURIComponent('Join me on the Accesco waitlist');
+    const body = encodeURIComponent(
+      `Join the Accesco waitlist using my referral link:\n\n${referralLink}`
+    );
+
+    window.location.href = `mailto:${inviteEmail}?subject=${subject}&body=${body}`;
+  }
+
+  function shareTo(platform) {
+    if (!stats?.referralCode) return;
+
+    const encodedLink = encodeURIComponent(referralLink);
+    const text = encodeURIComponent(
+      'Join me on the Accesco waitlist and unlock exclusive rewards.'
+    );
+
+    const links = {
+      x: `https://twitter.com/intent/tweet?text=${text}&url=${encodedLink}`,
+      linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${encodedLink}`,
+      facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodedLink}`,
+    };
+
+    window.open(links[platform], '_blank', 'noopener,noreferrer');
+  }
 
   return (
-    <div style={{ minHeight: '100vh', background: '#fafafa', fontFamily: 'inherit' }}>
-      <AccescoHeader />
+    <div className="referralPage">
+      <header className="referralHeader">
+        <Link href="/" className="referralBrand" aria-label="Accesco home">
+          <span className="referralLogo">A</span>
+          <span>JOIN WAITLIST</span>
+        </Link>
 
-      <main style={{ paddingTop: '120px', paddingBottom: '80px', maxWidth: '1200px', margin: '0 auto', px: '20px' }}>
-        <div style={{ textAlign: 'center', marginBottom: '60px' }}>
-          <h1 style={{ fontSize: '48px', fontWeight: '900', color: '#1a0014', marginBottom: '16px', fontFamily: 'Davetica, sans-serif' }}>
-            Invite & Earn <span style={{ color: '#7A0042' }}>Rewards</span>
-          </h1>
-          <p style={{ fontSize: '18px', color: '#6b5a6b', maxWidth: '600px', margin: '0 auto' }}>
-            Join the Accesco Waitlist revolution. Invite your friends, climb the leaderboard, and unlock exclusive Mega Gifts!
-          </p>
-        </div>
+        <nav className="referralNavigation">
+          <Link href="/login" className="loginButton">
+            Login
+          </Link>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '40px', padding: '0 20px' }}>
-          
-          {/* Left Column - My Stats */}
+          <Link href="/#download" className="getAppButton">
+            Get App
+          </Link>
+        </nav>
+      </header>
+
+      <main className="referralMain">
+        <section className="referralHero">
           <div>
-            <div style={{ background: '#fff', borderRadius: '24px', padding: '32px', boxShadow: '0 10px 40px rgba(122,0,66,0.08)' }}>
-              <h2 style={{ fontSize: '24px', fontWeight: '800', marginBottom: '24px' }}>Your Target</h2>
-              
-              {!myStats ? (
-                <form onSubmit={handleCheckStats}>
-                  <p style={{ fontSize: '14px', color: '#666', marginBottom: '16px' }}>Enter your waitlist email to check your stats or get your unique link.</p>
-                  <input
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="your@email.com"
-                    required
-                    style={{ width: '100%', padding: '16px', borderRadius: '12px', border: '2px solid #e5e7eb', marginBottom: '16px', boxSizing: 'border-box' }}
-                  />
-                  {error && <p style={{ color: 'red', fontSize: '14px', margin: '-8px 0 16px' }}>{error}</p>}
-                  <button 
-                    type="submit" 
-                    disabled={loadingStats}
-                    style={{ width: '100%', padding: '16px', background: '#000', color: '#fff', borderRadius: '12px', fontWeight: 'bold', cursor: 'pointer' }}
-                  >
-                    {loadingStats ? 'Checking...' : 'Check My Stats'}
-                  </button>
-                </form>
-              ) : (
+            <h1>
+              Earn Together.
+              <br />
+              Unlock Exclusive <span>Rewards.</span>
+            </h1>
+
+            <p>
+              Invite your friends, climb the leaderboard,
+              <br />
+              and unlock exclusive mega gifts.
+            </p>
+
+            <div className="quickStats">
+              <div className="quickStat">
+                <span className="quickIcon">♟</span>
                 <div>
-                  <div style={{ background: '#f9fafb', padding: '24px', borderRadius: '16px', marginBottom: '24px', textAlign: 'center' }}>
-                    <h3 style={{ margin: '0 0 8px', color: '#6b5a6b' }}>Total Coins Earned</h3>
-                    <div style={{ fontSize: '48px', fontWeight: '900', color: '#7A0042', fontFamily: 'Davetica, sans-serif' }}>
-                      {myStats.coins}
-                    </div>
-                  </div>
+                  <strong>{referralCount}</strong>
+                  <small>Referrals</small>
+                </div>
+              </div>
 
-                  <div style={{ marginBottom: '24px' }}>
-                    <p style={{ margin: '0 0 8px', fontWeight: '600' }}>Your Referral Link:</p>
-                    <div style={{ display: 'flex', gap: '8px' }}>
-                      <input 
-                        type="text" 
-                        readOnly 
-                        value={`https://accescoliving.com/?ref=${myStats.referralCode}`}
-                        style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid #ccc', background: '#eee' }}
-                      />
-                      <button 
-                        onClick={() => {
-                          navigator.clipboard.writeText(`https://accescoliving.com/?ref=${myStats.referralCode}`);
-                          alert('Copied!');
-                        }}
-                        style={{ padding: '0 16px', background: '#25D366', color: '#fff', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold' }}>
-                        Share
+              <div className="quickStat">
+                <span className="quickIcon coinIcon">₹</span>
+                <div>
+                  <strong>{coins}</strong>
+                  <small>Coins Earned</small>
+                </div>
+              </div>
+
+              <div className="quickStat">
+                <span className="quickIcon">▥</span>
+                <div>
+                  <strong>
+                    {stats?.rank ? `#${stats.rank}` : '—'}
+                  </strong>
+                  <small>Your Rank</small>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <form className="statsLookup" onSubmit={handleCheckStats}>
+            <label htmlFor="referral-email">
+              Check your referral progress
+            </label>
+
+            <div>
+              <input
+                id="referral-email"
+                type="email"
+                value={email}
+                onChange={(event) => setEmail(event.target.value)}
+                placeholder="your@email.com"
+                required
+              />
+
+              <button type="submit" disabled={loading}>
+                {loading ? 'Checking...' : 'Check Stats'}
+              </button>
+            </div>
+
+            {error && <p className="errorMessage">{error}</p>}
+          </form>
+        </section>
+
+        <div className="referralLayout">
+          <section className="referralDashboard">
+            <div className="sectionHeading">
+              <span className="headingIcon">🎁</span>
+
+              <div>
+                <h2>Your Referral Progress</h2>
+                <p>Invite more friends and unlock bigger rewards.</p>
+              </div>
+            </div>
+
+            <div className="meterScroller">
+              <div className="meter">
+                <div className="meterTrack">
+                  <div
+                    className="meterFill"
+                    style={{ width: `${progress}%` }}
+                  />
+                </div>
+
+                <div className="meterMilestones">
+                  {milestones.map((milestone) => {
+                    const reached = referralCount >= milestone.referrals;
+
+                    return (
+                      <div
+                        className={`milestone ${
+                          reached ? 'reached' : ''
+                        }`}
+                        key={milestone.referrals}
+                      >
+                        <span className="milestoneDot">
+                          {reached ? '✓' : ''}
+                        </span>
+
+                        <strong>{milestone.referrals}</strong>
+
+                        <small>
+                          {milestone.referrals === 1
+                            ? 'Referral'
+                            : 'Referrals'}
+                        </small>
+
+                        <b>{milestone.coins}</b>
+                        <small>Coins</small>
+
+                        {milestone.bonus && (
+                          <em>{milestone.bonus}</em>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+
+            <div className="currentProgress">
+              <span>♟</span>
+              <p>
+                You have <strong>{referralCount} referrals</strong> and{' '}
+                <strong>{coins} coins</strong>
+              </p>
+            </div>
+
+            <div className="rewardsSection">
+              <div className="sectionHeading compactHeading">
+                <span className="headingIcon">🎁</span>
+
+                <div>
+                  <h2>Choose Your Reward</h2>
+                  <p>
+                    Reach a milestone and choose one gift from the available
+                    options.
+                  </p>
+                </div>
+              </div>
+
+              <div className="rewardGrid">
+                {rewardTiers.map((tier) => {
+                  const unlocked = referralCount >= tier.minimum;
+
+                  return (
+                    <article
+                      className={`rewardCard ${
+                        unlocked ? 'unlocked' : ''
+                      }`}
+                      key={tier.range}
+                    >
+                      <h3>{tier.range}</h3>
+                      <p>Referrals</p>
+
+                      <div className="rewardCoins">
+                        <span>₹</span>
+                        <strong>{tier.coins} Coins</strong>
+                      </div>
+
+                      <small>{tier.description}</small>
+
+                      <button type="button" disabled>
+                        {unlocked
+                          ? 'Choose Reward'
+                          : `Unlocks at ${tier.minimum}`}
+                        <span>⌄</span>
                       </button>
-                    </div>
-                  </div>
+                    </article>
+                  );
+                })}
+              </div>
+            </div>
 
-                  <hr style={{ border: 'none', borderTop: '1px solid #eee', margin: '24px 0' }} />
+            <section className="shareSection">
+              <div className="referralLinkBlock">
+                <label>Your Referral Link</label>
+                <p>Share your unique link anywhere.</p>
 
-                  <h3 style={{ margin: '0 0 16px' }}>Mega Gift Status: {myTier.label}</h3>
-                  <div style={{ border: '1px solid #e5e7eb', borderRadius: '12px', overflow: 'hidden' }}>
-                    <div style={{ padding: '16px', background: myTier.tier >= 1 ? '#f0fdf4' : '#fff', opacity: myTier.tier >= 1 ? 1 : 0.5, borderBottom: '1px solid #e5e7eb' }}>
-                      <strong>Tier 1 (1 Referral)</strong> - Small Gift Unlocked
-                    </div>
-                    <div style={{ padding: '16px', background: myTier.tier >= 2 ? '#f0fdf4' : '#fff', opacity: myTier.tier >= 2 ? 1 : 0.5, borderBottom: '1px solid #e5e7eb' }}>
-                      <strong>Tier 2 (3 Referrals)</strong> - Silver Gift Unlocked
-                    </div>
-                    <div style={{ padding: '16px', background: myTier.tier >= 3 ? '#f0fdf4' : '#fff', opacity: myTier.tier >= 3 ? 1 : 0.5 }}>
-                      <strong>Tier 3 (5 Referrals)</strong> - Mega Gift Unlocked
-                    </div>
-                  </div>
-                  {myTier.tier >= 2 && (
-                    <button style={{ width: '100%', background: 'linear-gradient(135deg, #7A0042, #ffb347)', color: '#fff', border: 'none', padding: '16px', borderRadius: '12px', marginTop: '24px', fontWeight: 'bold', cursor: 'pointer' }}>
-                      Claim Your Gift Now
+                <div className="shareInputRow">
+                  <input value={referralLink} readOnly />
+
+                  <button
+                    type="button"
+                    onClick={copyReferralLink}
+                    disabled={!stats?.referralCode}
+                  >
+                    {copied ? 'Copied!' : '▣  Copy Link'}
+                  </button>
+                </div>
+              </div>
+
+              <div className="shareBottom">
+                <form onSubmit={sendInvite}>
+                  <label>Invite by Email</label>
+                  <p>Send invites to your friends directly.</p>
+
+                  <div className="shareInputRow">
+                    <input
+                      type="email"
+                      value={inviteEmail}
+                      onChange={(event) =>
+                        setInviteEmail(event.target.value)
+                      }
+                      placeholder="friend@email.com"
+                      required
+                    />
+
+                    <button
+                      type="submit"
+                      disabled={!stats?.referralCode}
+                    >
+                      ➤ Send Invite
                     </button>
-                  )}
+                  </div>
+                </form>
+
+                <div className="socialSharing">
+                  <label>Share on Social</label>
+                  <p>Share your link on social platforms.</p>
+
+                  <div>
+                    <button
+                      type="button"
+                      onClick={() => shareTo('x')}
+                      disabled={!stats?.referralCode}
+                      aria-label="Share on X"
+                    >
+                      X
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => shareTo('linkedin')}
+                      disabled={!stats?.referralCode}
+                      aria-label="Share on LinkedIn"
+                    >
+                      in
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => shareTo('facebook')}
+                      disabled={!stats?.referralCode}
+                      aria-label="Share on Facebook"
+                    >
+                      f
+                    </button>
+                  </div>
                 </div>
-              )}
+              </div>
+            </section>
+
+            <div className="referralNotes">
+              <div>
+                <span>🎁</span>
+                <p>
+                  Gifts can be redeemed as soon as we start operations.
+                </p>
+              </div>
+
+              <div>
+                <span>♟</span>
+                <p>
+                  Your referral count updates as soon as a person registers
+                  on the waitlist.
+                </p>
+              </div>
+
+              <div>
+                <span>🚚</span>
+                <p>
+                  Selected gifts will be delivered after the first order
+                  together.
+                </p>
+              </div>
             </div>
-          </div>
+          </section>
 
-          {/* Right Column - Leaderboard */}
-          <div>
-            <div style={{ background: '#fff', borderRadius: '24px', padding: '32px', boxShadow: '0 10px 40px rgba(122,0,66,0.08)' }}>
-              <h2 style={{ fontSize: '24px', fontWeight: '800', marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                Top Referrers Leaderboard
-              </h2>
+          <aside className="leaderboardCard">
+            <div className="sectionHeading">
+              <span className="headingIcon trophyIcon">🏆</span>
 
+              <div>
+                <h2>Top Referrers</h2>
+                <p>Leaderboard</p>
+              </div>
+            </div>
+
+            <div className="leaderboardList">
               {leaderboard.length === 0 ? (
-                <p style={{ color: '#666' }}>No referrers yet. Be the first!</p>
-              ) : (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                  {leaderboard.map((user, index) => (
-                    <div key={index} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px', background: index === 0 ? 'linear-gradient(90deg, #fffbeb, #fff)' : '#f9fafb', border: index === 0 ? '1px solid #fde68a' : '1px solid transparent', borderRadius: '12px' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                        <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: '#1a1a1a', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold' }}>
-                          {index + 1}
-                        </div>
-                        <div style={{ fontWeight: '600' }}>{user.name || 'Anonymous User'}</div>
-                      </div>
-                      <div style={{ color: '#7A0042', fontWeight: 'bold' }}>
-                        {user.coins} Coins
-                      </div>
-                    </div>
-                  ))}
+                <div className="emptyLeaderboard">
+                  No referrers yet. Be the first!
                 </div>
+              ) : (
+                leaderboard.map((user, index) => (
+                  <article className="leaderboardRow" key={`${user.name}-${index}`}>
+                    <span className={`rankBadge rank${index + 1}`}>
+                      {index + 1}
+                    </span>
+
+                    <span className={`avatar avatar${index + 1}`}>
+                      {(user.name || 'A')
+                        .split(' ')
+                        .map((part) => part[0])
+                        .join('')
+                        .slice(0, 2)
+                        .toUpperCase()}
+                    </span>
+
+                    <div className="leaderboardUser">
+                      <strong>{user.name || 'Anonymous'}</strong>
+                      <small>{user.referralCount || 0} referrals</small>
+                    </div>
+
+                    <div className="leaderboardCoins">
+                      <strong>{user.coins || 0}</strong>
+                      <small>Coins</small>
+                    </div>
+                  </article>
+                ))
               )}
             </div>
-          </div>
+          </aside>
         </div>
       </main>
-
-      <Footer />
     </div>
   );
 }

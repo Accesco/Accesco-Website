@@ -1,19 +1,29 @@
 'use client'
 
+<<<<<<< Updated upstream
 import { useState, useRef, useEffect } from 'react'
 import { db, auth } from '../../lib/firebase'
 import {
   doc,
   getDoc,
+=======
+import { useRef, useState } from 'react'
+import { db, auth } from '../../lib/firebase'
+import {
+  doc,
+>>>>>>> Stashed changes
   setDoc,
   serverTimestamp,
 } from 'firebase/firestore'
 import {
   RecaptchaVerifier,
   signInWithPhoneNumber,
+<<<<<<< Updated upstream
   signInWithPopup,
   GoogleAuthProvider,
   OAuthProvider,
+=======
+>>>>>>> Stashed changes
   signOut,
 } from 'firebase/auth'
 import {
@@ -33,14 +43,26 @@ function GoogleIcon() {
         fill="#4285F4"
         d="M21.6 12.23c0-.72-.06-1.4-.2-2.06H12v3.9h5.38a4.6 4.6 0 0 1-2 3.02v2.53h3.24c1.9-1.75 2.98-4.32 2.98-7.39Z"
       />
+<<<<<<< Updated upstream
+=======
+
+>>>>>>> Stashed changes
       <path
         fill="#34A853"
         d="M12 22c2.7 0 4.97-.9 6.62-2.38l-3.24-2.53c-.9.6-2.05.96-3.38.96-2.6 0-4.81-1.76-5.6-4.13H3.05v2.61A10 10 0 0 0 12 22Z"
       />
+<<<<<<< Updated upstream
+=======
+
+>>>>>>> Stashed changes
       <path
         fill="#FBBC05"
         d="M6.4 13.92A6 6 0 0 1 6.08 12c0-.67.12-1.32.32-1.92V7.47H3.05A10 10 0 0 0 2 12c0 1.61.38 3.14 1.05 4.53l3.35-2.61Z"
       />
+<<<<<<< Updated upstream
+=======
+
+>>>>>>> Stashed changes
       <path
         fill="#EA4335"
         d="M12 5.95c1.47 0 2.8.51 3.84 1.51l2.88-2.88A9.68 9.68 0 0 0 12 2a10 10 0 0 0-8.95 5.47l3.35 2.61C7.19 7.71 9.4 5.95 12 5.95Z"
@@ -63,6 +85,28 @@ function AppleIcon() {
   )
 }
 
+<<<<<<< Updated upstream
+=======
+function CloseIcon() {
+  return (
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      aria-hidden="true"
+    >
+      <path
+        d="M6 6L18 18M18 6L6 18"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+      />
+    </svg>
+  )
+}
+
+>>>>>>> Stashed changes
 export default function AuthModal({
   isOpen,
   onClose,
@@ -78,11 +122,12 @@ export default function AuthModal({
   const [success, setSuccess] = useState(false)
   const [focused, setFocused] = useState('')
 
-  // OTP flow: 'details' collects info, 'verify' does phone (mandatory) + email (optional) OTP
+  // OTP flow
   const [step, setStep] = useState('details')
   const [otpCode, setOtpCode] = useState('')
   const [phoneCodeSent, setPhoneCodeSent] =
     useState(false)
+<<<<<<< Updated upstream
   const [confirmationResult, setConfirmationResult] =
     useState(null)
   // Seconds left before "Resend OTP" is clickable again
@@ -114,6 +159,22 @@ export default function AuthModal({
     useState(false)
   const [emailVerified, setEmailVerified] =
     useState(false)
+=======
+
+  const [confirmationResult, setConfirmationResult] =
+    useState(null)
+
+  const recaptchaVerifierRef = useRef(null)
+
+  // Optional email verification
+  const [emailCode, setEmailCode] = useState('')
+  const [emailCodeSent, setEmailCodeSent] =
+    useState(false)
+
+  const [emailVerified, setEmailVerified] =
+    useState(false)
+
+>>>>>>> Stashed changes
   const [emailLoading, setEmailLoading] =
     useState(false)
 
@@ -132,16 +193,22 @@ export default function AuthModal({
     setOtpCode('')
     setPhoneCodeSent(false)
     setConfirmationResult(null)
+<<<<<<< Updated upstream
     setResendCooldown(0)
+=======
+>>>>>>> Stashed changes
 
     setEmailCode('')
     setEmailCodeSent(false)
     setEmailVerified(false)
 
+<<<<<<< Updated upstream
     setGoogleLoading(false)
     setAppleLoading(false)
     setPendingSocialUser(null)
 
+=======
+>>>>>>> Stashed changes
     if (recaptchaVerifierRef.current) {
       recaptchaVerifierRef.current.clear()
       recaptchaVerifierRef.current = null
@@ -163,7 +230,10 @@ export default function AuthModal({
     setName(`${firstName} ${value}`.trim())
   }
 
+<<<<<<< Updated upstream
   // Converts user-entered phone to E.164 format required by Firebase
+=======
+>>>>>>> Stashed changes
   const normalizePhone = (p) => {
     const stripped = p.replace(/[\s\-().]/g, '')
 
@@ -174,7 +244,6 @@ export default function AuthModal({
     return '+91' + stripped.replace(/\D/g, '')
   }
 
-  // Step 1 → validate details, then send phone OTP and move to verify step
   const handleDetailsSubmit = async (e) => {
     e.preventDefault()
     setError('')
@@ -220,7 +289,6 @@ export default function AuthModal({
   }
 
   const sendPhoneOtp = async () => {
-    // Prevent a second reCAPTCHA widget from being created while one is still loading
     if (loading) return
 
     setLoading(true)
@@ -263,6 +331,7 @@ export default function AuthModal({
     }
   }
 
+<<<<<<< Updated upstream
   // Completes sign-in for a social user whose phone was already verified on
   // a prior visit — no OTP needed again, just restore the app session.
   const completeVerifiedSocialUser = async (existing, firebaseUser) => {
@@ -406,6 +475,8 @@ export default function AuthModal({
   }
 
   // Optional: send an email verification code
+=======
+>>>>>>> Stashed changes
   const sendEmailOtp = async () => {
     if (!email.trim()) {
       setError('Please add an email first')
@@ -431,7 +502,6 @@ export default function AuthModal({
     }
   }
 
-  // Optional: verify the email code
   const verifyEmailOtp = async () => {
     if (!/^\d{6}$/.test(emailCode.trim())) {
       setError(
@@ -461,7 +531,6 @@ export default function AuthModal({
     }
   }
 
-  // Step 2 → verify phone OTP (mandatory), then save the user
   const handleVerifySubmit = async (e) => {
     e.preventDefault()
     setError('')
@@ -485,6 +554,7 @@ export default function AuthModal({
         otpCode.trim(),
       )
 
+<<<<<<< Updated upstream
       const p = phone.trim()
       const n =
         pendingSocialUser
@@ -515,15 +585,39 @@ export default function AuthModal({
           merge: true,
         },
       )
+=======
+      const n = name.trim()
+      const p = phone.trim()
+      const em = email.trim()
+      const docId = p.replace(/[^\d]/g, '')
+>>>>>>> Stashed changes
 
-      // Sign out of Firebase Auth after the write — we only needed phone verification
+      await setDoc(
+        doc(db, 'users', docId),
+        {
+          name: n,
+          phone: p,
+          email: em || null,
+          phoneVerified: true,
+          emailVerified,
+          createdAt: serverTimestamp(),
+          updatedAt: serverTimestamp(),
+        },
+        {
+          merge: true,
+        },
+      )
+
       await signOut(auth)
 
       const user = {
         name: n,
         phone: p,
         email: em || null,
+<<<<<<< Updated upstream
         photoURL: pendingSocialUser?.photoURL || null,
+=======
+>>>>>>> Stashed changes
         uid: docId,
       }
 
@@ -564,6 +658,7 @@ export default function AuthModal({
     }
   }
 
+<<<<<<< Updated upstream
   const formatCooldown = (s) =>
     `${Math.floor(s / 60)
       .toString()
@@ -593,16 +688,43 @@ export default function AuthModal({
 
     color: '#ffffff',
 
+=======
+  const inputStyle = (field) => ({
+    width: '100%',
+    height: 35,
+    boxSizing: 'border-box',
+    padding: '0 11px',
+
+    border:
+      focused === field
+        ? '1px solid #c50062'
+        : '1px solid #d7d7d7',
+
+    borderRadius: 5,
+    outline: 'none',
+
+    background: '#ffffff',
+    color: '#171717',
+
+>>>>>>> Stashed changes
     fontFamily: 'inherit',
     fontSize: 10,
     fontWeight: 400,
 
     boxShadow:
       focused === field
+<<<<<<< Updated upstream
         ? '0 0 0 2px rgba(197,0,98,0.12)'
         : 'none',
 
     transition: '150ms ease',
+=======
+        ? '0 0 0 2px rgba(197,0,98,0.11)'
+        : 'none',
+
+    transition:
+      'border-color 150ms ease, box-shadow 150ms ease',
+>>>>>>> Stashed changes
   })
 
   if (!isOpen) return null
@@ -640,11 +762,16 @@ export default function AuthModal({
                   <br />a smarter way to live and shop
                 </p>
               </>
+<<<<<<< Updated upstream
             ) : step === 'social-phone' ? (
+=======
+            ) : (
+>>>>>>> Stashed changes
               <>
                 <h2 style={styles.heroTitle}>
                   Verify Your
                   <br />
+<<<<<<< Updated upstream
                   Phone Number
                 </h2>
 
@@ -663,6 +790,12 @@ export default function AuthModal({
                 </h2>
 
                 <p style={styles.heroSub}>
+=======
+                  Account
+                </h2>
+
+                <p style={styles.heroSub}>
+>>>>>>> Stashed changes
                   Enter the 6-Digit OTP Sent to your
                   <br />
                   Registered Mobile Number
@@ -676,6 +809,18 @@ export default function AuthModal({
           className="auth-modal-right"
           style={styles.right}
         >
+<<<<<<< Updated upstream
+=======
+          <button
+            type="button"
+            style={styles.closeButton}
+            onClick={handleClose}
+            aria-label="Close login"
+          >
+            <CloseIcon />
+          </button>
+
+>>>>>>> Stashed changes
           {success ? (
             <div style={styles.success}>
               <div style={styles.successCircle}>
@@ -693,7 +838,10 @@ export default function AuthModal({
             </div>
           ) : (
             <>
+<<<<<<< Updated upstream
               {/* Invisible reCAPTCHA container required by Firebase Phone Auth */}
+=======
+>>>>>>> Stashed changes
               <div id="am-recaptcha-container" />
 
               {step === 'details' ? (
@@ -713,6 +861,7 @@ export default function AuthModal({
                     <button
                       type="button"
                       style={styles.socialButton}
+<<<<<<< Updated upstream
                       onClick={handleGoogleSignIn}
                       disabled={
                         googleLoading ||
@@ -726,11 +875,17 @@ export default function AuthModal({
                           ? 'Signing in…'
                           : 'Google'}
                       </span>
+=======
+                    >
+                      <GoogleIcon />
+                      <span>Google</span>
+>>>>>>> Stashed changes
                     </button>
 
                     <button
                       type="button"
                       style={styles.socialButton}
+<<<<<<< Updated upstream
                       onClick={handleAppleSignIn}
                       disabled={
                         googleLoading ||
@@ -744,6 +899,11 @@ export default function AuthModal({
                           ? 'Signing in…'
                           : 'Apple'}
                       </span>
+=======
+                    >
+                      <AppleIcon />
+                      <span>Apple</span>
+>>>>>>> Stashed changes
                     </button>
                   </div>
 
@@ -814,6 +974,7 @@ export default function AuthModal({
                           disabled={loading}
                         />
                       </div>
+<<<<<<< Updated upstream
                     </div>
 
                     <div style={styles.field}>
@@ -939,6 +1100,64 @@ export default function AuthModal({
                         ? 'Sending OTP...'
                         : 'Send OTP'}
 
+=======
+                    </div>
+
+                    <div style={styles.field}>
+                      <label style={styles.label}>
+                        Mobile Number
+                      </label>
+
+                      <input
+                        style={inputStyle('phone')}
+                        type="tel"
+                        placeholder="eg. 98765 43210"
+                        value={phone}
+                        onChange={(e) =>
+                          setPhone(e.target.value)
+                        }
+                        onFocus={() =>
+                          setFocused('phone')
+                        }
+                        onBlur={() => setFocused('')}
+                        disabled={loading}
+                      />
+                    </div>
+
+                    <div style={styles.field}>
+                      <label style={styles.label}>
+                        Email{' '}
+                        <em style={styles.optional}>
+                          (Optional)
+                        </em>
+                      </label>
+
+                      <input
+                        style={inputStyle('email')}
+                        type="email"
+                        placeholder="eg.Johnfranc@gmail.com"
+                        value={email}
+                        onChange={(e) =>
+                          setEmail(e.target.value)
+                        }
+                        onFocus={() =>
+                          setFocused('email')
+                        }
+                        onBlur={() => setFocused('')}
+                        disabled={loading}
+                      />
+                    </div>
+
+                    <button
+                      type="submit"
+                      style={styles.submit}
+                      disabled={loading}
+                    >
+                      {loading
+                        ? 'Sending OTP...'
+                        : 'Send OTP'}
+
+>>>>>>> Stashed changes
                       {!loading && (
                         <span style={styles.arrow}>
                           →
@@ -970,11 +1189,15 @@ export default function AuthModal({
                         <button
                           type="button"
                           onClick={() => {
+<<<<<<< Updated upstream
                             setStep(
                               pendingSocialUser
                                 ? 'social-phone'
                                 : 'details',
                             )
+=======
+                            setStep('details')
+>>>>>>> Stashed changes
                             setError('')
                           }}
                           disabled={loading}
@@ -1038,6 +1261,7 @@ export default function AuthModal({
                       />
                     </div>
 
+<<<<<<< Updated upstream
                     {resendCooldown > 0 && (
                       <div style={styles.resendTimer}>
                         <span style={styles.clockIcon}>
@@ -1055,6 +1279,22 @@ export default function AuthModal({
                     )}
 
                     {/* Optional email verification is retained but hidden to match the supplied design */}
+=======
+                    <div style={styles.resendTimer}>
+                      <span style={styles.clockIcon}>
+                        ◷
+                      </span>
+
+                      <span style={styles.resendText}>
+                        Resend OTP in
+                      </span>
+
+                      <span style={styles.timerValue}>
+                        00:45
+                      </span>
+                    </div>
+
+>>>>>>> Stashed changes
                     <div
                       style={
                         styles.hiddenEmailVerification
@@ -1179,18 +1419,26 @@ export default function AuthModal({
                       <button
                         type="button"
                         onClick={sendPhoneOtp}
+<<<<<<< Updated upstream
                         disabled={
                           loading || resendCooldown > 0
                         }
+=======
+                        disabled={loading}
+>>>>>>> Stashed changes
                         style={
                           styles.bottomResendButton
                         }
                       >
+<<<<<<< Updated upstream
                         {resendCooldown > 0
                           ? `Resend OTP (${formatCooldown(
                               resendCooldown,
                             )})`
                           : 'Resend OTP'}
+=======
+                        Resend OTP
+>>>>>>> Stashed changes
                       </button>
                     </div>
                   </div>
@@ -1202,7 +1450,11 @@ export default function AuthModal({
 
         <style jsx>{`
           input::placeholder {
+<<<<<<< Updated upstream
             color: #656565;
+=======
+            color: #8a8a8a;
+>>>>>>> Stashed changes
             opacity: 1;
           }
 
@@ -1210,6 +1462,14 @@ export default function AuthModal({
             font-family: inherit;
           }
 
+<<<<<<< Updated upstream
+=======
+          button:disabled {
+            cursor: not-allowed;
+            opacity: 0.65;
+          }
+
+>>>>>>> Stashed changes
           @media (max-width: 760px) {
             .auth-modal-shell {
               width: min(
@@ -1221,8 +1481,13 @@ export default function AuthModal({
               min-height: 531px !important;
 
               grid-template-columns: 1fr !important;
+<<<<<<< Updated upstream
 
               padding: 0 !important;
+=======
+              padding: 0 !important;
+              transform: none !important;
+>>>>>>> Stashed changes
             }
 
             .auth-modal-left {
@@ -1231,14 +1496,22 @@ export default function AuthModal({
 
             .auth-modal-right {
               min-height: 531px !important;
+<<<<<<< Updated upstream
 
               padding: 34px 32px 28px !important;
+=======
+              padding: 55px 32px 28px !important;
+>>>>>>> Stashed changes
             }
           }
 
           @media (max-width: 390px) {
             .auth-modal-right {
+<<<<<<< Updated upstream
               padding: 30px 22px 24px !important;
+=======
+              padding: 55px 22px 24px !important;
+>>>>>>> Stashed changes
             }
           }
         `}</style>
@@ -1248,6 +1521,7 @@ export default function AuthModal({
 }
 
 const styles = {
+<<<<<<< Updated upstream
 backdrop: {
   position: 'fixed',
   inset: 0,
@@ -1292,6 +1566,59 @@ shell: {
     'Arial, Helvetica, sans-serif',
 },
 
+=======
+  backdrop: {
+    position: 'fixed',
+    inset: 0,
+    zIndex: 10000,
+
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+
+    padding: 16,
+
+    background: 'rgba(20, 20, 20, 0.92)',
+
+    backdropFilter: 'blur(10px)',
+    WebkitBackdropFilter: 'blur(10px)',
+  },
+
+  shell: {
+    position: 'relative',
+
+    // Shell size remains unchanged.
+    width: 'min(820px, calc(100vw - 32px))',
+    height: 531,
+    maxHeight: 'calc(100vh - 32px)',
+
+    transform: 'scale(1.07)',
+    transformOrigin: 'center',
+
+    display: 'grid',
+
+    // Original width restored. The panel is not wider.
+    gridTemplateColumns:
+      '424px minmax(0, 1fr)',
+
+    columnGap: 32,
+
+    boxSizing: 'border-box',
+    padding: 34,
+
+    overflow: 'hidden',
+
+    background: '#ffffff',
+    border: '1px solid #ffffff',
+
+    boxShadow:
+      '0 30px 85px rgba(0,0,0,0.45)',
+
+    fontFamily:
+      'Arial, Helvetica, sans-serif',
+  },
+
+>>>>>>> Stashed changes
   left: {
     position: 'relative',
 
@@ -1303,6 +1630,13 @@ shell: {
     boxSizing: 'border-box',
     padding: '34px 29px',
 
+<<<<<<< Updated upstream
+=======
+    // Makes only the pink panel slightly taller.
+    marginTop: -8,
+    marginBottom: -8,
+
+>>>>>>> Stashed changes
     background:
       'radial-gradient(circle at 5% 5%, rgba(235,0,107,0.96) 0%, rgba(194,0,87,0.83) 27%, rgba(111,0,53,0.5) 56%, transparent 78%), linear-gradient(135deg, #af0052 0%, #76003a 46%, #3d001f 75%, #17000c 100%)',
 
@@ -1365,16 +1699,28 @@ shell: {
     minWidth: 0,
 
     boxSizing: 'border-box',
+<<<<<<< Updated upstream
     padding: '27px 6px 8px 0',
 
     overflowY: 'auto',
 
     background: '#000000',
     color: '#ffffff',
+=======
+    padding: '52px 31px 27px',
+
+    overflowY: 'auto',
+
+    background: '#ffffff',
+    color: '#171717',
+
+    border: '1px solid #ffffff',
+>>>>>>> Stashed changes
 
     scrollbarWidth: 'none',
   },
 
+<<<<<<< Updated upstream
   detailsScreen: {
     width: '100%',
     minHeight: '100%',
@@ -1460,6 +1806,124 @@ socialButton: {
 
   dividerText: {
     color: 'rgba(255,255,255,0.58)',
+=======
+  closeButton: {
+    position: 'absolute',
+
+    // Cross moved slightly upward.
+    top: 6,
+    right: 12,
+    zIndex: 20,
+
+    width: 29,
+    height: 29,
+
+    display: 'inline-flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+
+    padding: 0,
+
+    border: '1px solid #dedede',
+    borderRadius: '50%',
+
+    background: '#ffffff',
+    color: '#202020',
+
+    boxShadow:
+      '0 3px 12px rgba(0,0,0,0.08)',
+
+    cursor: 'pointer',
+  },
+
+  detailsScreen: {
+    width: '100%',
+    minHeight: '100%',
+  },
+
+  signupHeader: {
+    textAlign: 'center',
+  },
+
+  signupTitle: {
+    margin: 0,
+
+    color: '#111111',
+
+    fontSize: 25,
+    lineHeight: 1.12,
+    fontWeight: 700,
+    letterSpacing: '-0.025em',
+  },
+
+  signupSubtitle: {
+    margin: '8px 0 0',
+
+    color: 'rgba(0,0,0,0.68)',
+
+    fontSize: 10,
+    lineHeight: 1.35,
+    fontWeight: 500,
+  },
+
+  socialRow: {
+    display: 'grid',
+    gridTemplateColumns: '1fr 1fr',
+
+    gap: 18,
+
+    marginTop: 27,
+  },
+
+  socialButton: {
+    height: 37,
+
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+
+    gap: 10,
+    padding: 0,
+
+    boxSizing: 'border-box',
+
+    border: '1px solid #d8d8d8',
+    borderRadius: 5,
+
+    background: '#ffffff',
+    color: '#171717',
+
+    fontFamily:
+      'Arial, Helvetica, sans-serif',
+
+    fontSize: 11,
+    fontWeight: 500,
+    lineHeight: 1,
+    letterSpacing: 0,
+    textTransform: 'none',
+
+    cursor: 'default',
+  },
+
+  divider: {
+    display: 'grid',
+    gridTemplateColumns: '1fr auto 1fr',
+    alignItems: 'center',
+
+    gap: 9,
+
+    margin: '20px 0 17px',
+  },
+
+  dividerLine: {
+    height: 1,
+
+    background: '#dddddd',
+  },
+
+  dividerText: {
+    color: 'rgba(0,0,0,0.65)',
+>>>>>>> Stashed changes
 
     fontSize: 7,
     lineHeight: 1,
@@ -1469,11 +1933,20 @@ socialButton: {
     margin: '0 0 10px',
     padding: '6px 8px',
 
+<<<<<<< Updated upstream
     border: '1px solid rgba(197,0,98,0.3)',
     borderRadius: 4,
 
     background: 'rgba(197,0,98,0.1)',
     color: '#ff65a1',
+=======
+    border:
+      '1px solid rgba(197,0,98,0.28)',
+    borderRadius: 4,
+
+    background: 'rgba(197,0,98,0.07)',
+    color: '#b50058',
+>>>>>>> Stashed changes
 
     fontSize: 9,
     lineHeight: 1.3,
@@ -1506,6 +1979,7 @@ socialButton: {
   },
 
   label: {
+<<<<<<< Updated upstream
     color: 'rgba(255,255,255,0.92)',
 
     fontSize: 9,
@@ -1550,6 +2024,51 @@ socialButton: {
     cursor: 'pointer',
   },
 
+=======
+    color: '#171717',
+
+    fontSize: 9,
+    lineHeight: 1,
+    fontWeight: 600,
+  },
+
+  optional: {
+    color: 'rgba(0,0,0,0.55)',
+
+    fontSize: 8,
+    fontStyle: 'normal',
+    fontWeight: 400,
+  },
+
+submit: {
+  width: '100%',
+  height: 38,
+  marginTop: 2,
+
+  display: 'inline-flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  gap: 10,
+
+  boxSizing: 'border-box',
+  padding: 0,
+
+  border: '1px solid #6B1D3A',
+  borderRadius: 5,
+
+  background: '#6B1D3A',
+  color: '#ffffff',
+
+  fontFamily: 'inherit',
+  fontSize: 11,
+  lineHeight: 1,
+  fontWeight: 700,
+
+  boxShadow: '0 8px 20px rgba(107, 29, 58, 0.22)',
+  cursor: 'pointer',
+},
+
+>>>>>>> Stashed changes
   arrow: {
     fontSize: 18,
     lineHeight: 1,
@@ -1572,7 +2091,11 @@ socialButton: {
   verifyTitle: {
     margin: 0,
 
+<<<<<<< Updated upstream
     color: '#ffffff',
+=======
+    color: '#111111',
+>>>>>>> Stashed changes
 
     fontSize: 26,
     lineHeight: 1.1,
@@ -1583,13 +2106,18 @@ socialButton: {
   verifySubtitle: {
     margin: '13px 0 0',
 
+<<<<<<< Updated upstream
     color: 'rgba(255,255,255,0.58)',
+=======
+    color: 'rgba(0,0,0,0.58)',
+>>>>>>> Stashed changes
 
     fontSize: 9,
     lineHeight: 1.4,
   },
 
   phoneRow: {
+<<<<<<< Updated upstream
     display: 'flex',
     alignItems: 'center',
 
@@ -1606,16 +2134,209 @@ socialButton: {
   },
 
   changeButton: {
+=======
+    display: 'flex',
+    alignItems: 'center',
+
+    gap: 8,
+
+    marginTop: 6,
+  },
+
+  phoneText: {
+    color: '#c50062',
+
+    fontSize: 10,
+    fontWeight: 600,
+  },
+
+  changeButton: {
     padding: 0,
 
     border: 0,
 
     background: 'transparent',
-    color: '#cf0066',
+    color: '#c50062',
 
     fontSize: 9,
 
     cursor: 'pointer',
+  },
+
+  verifyError: {
+    margin: '14px 0 -42px',
+    padding: '6px 8px',
+
+    border:
+      '1px solid rgba(197,0,98,0.28)',
+    borderRadius: 4,
+
+    background: 'rgba(197,0,98,0.07)',
+    color: '#b50058',
+
+    fontSize: 9,
+    lineHeight: 1.3,
+    textAlign: 'center',
+  },
+
+  otpInputArea: {
+    position: 'relative',
+
+    marginTop: 69,
+  },
+
+  otpBoxes: {
+    display: 'grid',
+    gridTemplateColumns:
+      'repeat(6, minmax(0, 1fr))',
+
+    gap: 8,
+  },
+
+  otpBox: {
+    minWidth: 0,
+    height: 50,
+
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+
+    boxSizing: 'border-box',
+
+    border: '1px solid #d4d4d4',
+    borderRadius: 5,
+
+    background: '#f8f8f8',
+    color: '#171717',
+
+    fontSize: 18,
+    fontWeight: 600,
+  },
+
+  otpBoxActive: {
+    borderColor: '#c50062',
+
+    boxShadow: '0 0 0 1px #c50062',
+  },
+
+  otpRealInput: {
+    position: 'absolute',
+    inset: 0,
+
+    width: '100%',
+    height: '100%',
+
+    padding: 0,
+
+    border: 0,
+    outline: 0,
+
+    background: 'transparent',
+    color: 'transparent',
+    caretColor: 'transparent',
+
+    opacity: 0.01,
+
+    cursor: 'text',
+  },
+
+  resendTimer: {
+    display: 'flex',
+    alignItems: 'center',
+
+    gap: 4,
+
+    marginTop: 58,
+    marginLeft: 8,
+
+    fontSize: 9,
+  },
+
+  clockIcon: {
+    color: '#c50062',
+
+    fontSize: 12,
+    lineHeight: 1,
+  },
+
+  resendText: {
+    color: 'rgba(0,0,0,0.55)',
+  },
+
+  timerValue: {
+    color: '#c50062',
+
+    fontWeight: 600,
+  },
+
+  hiddenEmailVerification: {
+    display: 'none',
+  },
+
+  verifyBottom: {
+    marginTop: 30,
+  },
+
+verifySubmit: {
+  width: '100%',
+  height: 38,
+
+  display: 'inline-flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  gap: 20,
+
+  boxSizing: 'border-box',
+  padding: 0,
+
+  border: '1px solid #6B1D3A',
+  borderRadius: 5,
+
+  background: '#6B1D3A',
+  color: '#ffffff',
+
+  fontFamily: 'inherit',
+  fontSize: 11,
+  lineHeight: 1,
+  fontWeight: 700,
+
+  boxShadow: '0 8px 20px rgba(107, 29, 58, 0.22)',
+  cursor: 'pointer',
+},
+
+  bottomResendRow: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+
+    gap: 5,
+
+    marginTop: 12,
+  },
+
+  bottomResendText: {
+    color: 'rgba(0,0,0,0.55)',
+
+    fontSize: 9,
+  },
+
+  bottomResendButton: {
+>>>>>>> Stashed changes
+    padding: 0,
+
+    border: 0,
+
+    background: 'transparent',
+<<<<<<< Updated upstream
+    color: '#cf0066',
+=======
+    color: '#c50062',
+>>>>>>> Stashed changes
+
+    fontSize: 9,
+
+    cursor: 'pointer',
+<<<<<<< Updated upstream
   },
 
   verifyError: {
@@ -1787,6 +2508,10 @@ socialButton: {
     cursor: 'pointer',
   },
 
+=======
+  },
+
+>>>>>>> Stashed changes
   success: {
     minHeight: '100%',
 
@@ -1817,13 +2542,21 @@ socialButton: {
     fontWeight: 800,
 
     boxShadow:
+<<<<<<< Updated upstream
       '0 16px 38px rgba(197,0,98,0.3)',
+=======
+      '0 16px 38px rgba(197,0,98,0.25)',
+>>>>>>> Stashed changes
   },
 
   successTitle: {
     margin: '0 0 7px',
 
+<<<<<<< Updated upstream
     color: '#ffffff',
+=======
+    color: '#111111',
+>>>>>>> Stashed changes
 
     fontSize: 25,
     fontWeight: 700,
@@ -1832,7 +2565,11 @@ socialButton: {
   successText: {
     margin: 0,
 
+<<<<<<< Updated upstream
     color: 'rgba(255,255,255,0.66)',
+=======
+    color: 'rgba(0,0,0,0.65)',
+>>>>>>> Stashed changes
 
     fontSize: 11,
   },
@@ -1840,7 +2577,11 @@ socialButton: {
   successNote: {
     margin: 0,
 
+<<<<<<< Updated upstream
     color: '#4ade80',
+=======
+    color: '#15803d',
+>>>>>>> Stashed changes
 
     fontSize: 11,
     fontWeight: 650,
@@ -1849,7 +2590,11 @@ socialButton: {
   mutedNote: {
     margin: 0,
 
+<<<<<<< Updated upstream
     color: 'rgba(255,255,255,0.5)',
+=======
+    color: 'rgba(0,0,0,0.5)',
+>>>>>>> Stashed changes
 
     fontSize: 11,
   },
@@ -1858,11 +2603,19 @@ socialButton: {
     width: '100%',
     height: 36,
 
+<<<<<<< Updated upstream
     border: '1px solid #333333',
     borderRadius: 5,
 
     background: '#202020',
     color: '#ffffff',
+=======
+    border: '1px solid #d5d5d5',
+    borderRadius: 5,
+
+    background: '#ffffff',
+    color: '#171717',
+>>>>>>> Stashed changes
 
     fontSize: 10,
     fontWeight: 600,
@@ -1897,11 +2650,19 @@ socialButton: {
   miniButtonMuted: {
     height: 35,
 
+<<<<<<< Updated upstream
     border: '1px solid #333333',
     borderRadius: 5,
 
     background: '#202020',
     color: 'rgba(255,255,255,0.7)',
+=======
+    border: '1px solid #d5d5d5',
+    borderRadius: 5,
+
+    background: '#ffffff',
+    color: 'rgba(0,0,0,0.7)',
+>>>>>>> Stashed changes
 
     fontSize: 10,
     fontWeight: 600,
