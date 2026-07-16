@@ -107,6 +107,13 @@
   font-size: 18px;
   flex-shrink: 0;
 }
+.author-avatar-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+  display: block;
+}
 
 .author-name {
   font-weight: 600;

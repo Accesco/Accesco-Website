@@ -1618,7 +1618,7 @@ const [deliveryVisible, setDeliveryVisible] = useState(false);
                   <div className="serviceCardLinkWrap">
                     <div className="service-premium-card grokly-card">
                       <div className="service-card-visual">
-                        <Image src="/images/grokly-new1.png" alt="Grokly Groceries" fill className="serviceCardVisualImage" />
+                        <Image src="/images/grokly-new2.png" alt="Grokly Groceries" fill className="serviceCardVisualImage" />
                       </div>
                       <div className="service-icon-circle">
                         <Image src="/images/grokly-icon.png" alt="Grokly" width={40} height={40} className="serviceIconCircleImage" />
@@ -1652,7 +1652,7 @@ const [deliveryVisible, setDeliveryVisible] = useState(false);
                   <div className="serviceCardLinkWrap">
                     <div className="service-premium-card instastyle-card">
                       <div className="service-card-visual">
-                        <Image src="/images/fashion-new1.png" alt="InstaStyle Fashion" fill className="serviceCardVisualImage" />
+                        <Image src="/images/fashion-new2.png" alt="InstaStyle Fashion" fill className="serviceCardVisualImage" />
                       </div>
                       <div className="service-icon-circle">
                         <Image src="/images/instastyle-logo.png" alt="InstaStyle" width={40} height={40} className="serviceIconCircleImage" />
@@ -1660,7 +1660,12 @@ const [deliveryVisible, setDeliveryVisible] = useState(false);
                       <div className="service-card-body">
                         <h3 className="service-card-name">InstaStyle</h3>
                         <p className="service-card-desc">Outfit ready, before you are!</p>
-                        <Link href="/services/instastyle" className="service-card-cta instastyle-btn">Explore Fashion</Link>
+                        <Link
+  href="/services/instastyle"
+  className="service-card-cta instastyle-btn"
+>
+  Explore Fashion
+</Link>
                       </div>
                     </div>
                   </div>
@@ -1688,30 +1693,19 @@ const [deliveryVisible, setDeliveryVisible] = useState(false);
         <AppShowcase />
 
         {/* ── About Accesco Living (SEO copy) ── */}
-        <section className="about-accesco-section" aria-label="About Accesco Living">
-          <div className="about-accesco-inner">
-            <h2>India&apos;s Intelligent Circular Commerce Ecosystem</h2>
-            <p>
-              Accesco Living is Bengaluru&apos;s intelligent commerce ecosystem, bringing
-              groceries, food, fashion, and financial tools together in one unified app.
-              Through Grokly, our farm-direct grocery service, customers get fresh
-              vegetables and everyday essentials delivered in as little as 11 minutes,
-              sourced straight from Karnataka farms with live QR traceability and
-              transparent pricing. Swadishtt connects you to local restaurants, regional
-              cuisines, curated thalis, and instant catering, while InstaStyle delivers
-              trending fashion, apparel, and lifestyle products right to your door.
-            </p>
-            <p>
-              What makes Accesco Living different is the circular design of the whole
-              platform: every service — from Grokly&apos;s grocery delivery to Swadishtt&apos;s
-              food discovery, InstaStyle&apos;s fashion marketplace, and the Xpense Meter
-              personal finance sandbox — shares one account, one wallet, and one delivery
-              network. Instead of juggling separate apps for groceries, meals, clothing,
-              and budgeting, households across Bengaluru can manage all of it from a
-              single intelligent hub built for everyday Indian life.
-            </p>
-          </div>
-        </section>
+ <section className="about-accesco-section">
+  <picture>
+    <source
+      media="(max-width: 640px)"
+      srcSet="/images/final-design-mobile.png"
+    />
+    <img
+      src="/images/final-design.png"
+      alt="Accesco Living"
+      className="about-accesco-image"
+    />
+  </picture>
+</section>
       </main>
       <Footer />
 
@@ -1951,7 +1945,7 @@ const [deliveryVisible, setDeliveryVisible] = useState(false);
           background: #fff;
           border-radius: 24px;
           border: 1px solid rgba(122,0,66,0.08);
-          overflow: hidden;
+          overflow: hidden !important;
           transition: transform 0.35s ease, box-shadow 0.35s ease;
           height: 100%;
           display: flex;
@@ -1964,6 +1958,16 @@ const [deliveryVisible, setDeliveryVisible] = useState(false);
           height: 200px;
           position: relative;
           overflow: hidden;
+          background: transparent;
+        }
+
+        .serviceCardVisualImage {
+          object-fit: cover !important;
+          object-position: center !important;
+          opacity: 1 !important;
+          filter: none !important;
+          mix-blend-mode: normal !important;
+          background: transparent !important;
         }
 
         .service-card-body {
