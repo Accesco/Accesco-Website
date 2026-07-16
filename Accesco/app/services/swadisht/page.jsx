@@ -376,10 +376,7 @@ export default function App() {
               <h2 className={styles.trendingTitle} id="trending-section-title">Trending now</h2>
               <span className={styles.trendingSubtitle} id="trending-section-subtitle">Highly rated favorites near you</span>
             </div>
-            <a href="#all-trending" className={styles.seeAllLink} id="trending-see-all">
-              <span id="trending-see-all-text">See all</span>
-              <ArrowRight size={14} id="trending-arrow" />
-            </a>
+            
           </div>
           
           <div className={styles.restaurantGrid} id="trending-grid">
@@ -487,14 +484,11 @@ export default function App() {
               <h2 className={styles.quickBitesTitle} id="quick-bites-title">Quick bites & cafes</h2>
               <span className={styles.quickBitesSubtitle} id="quick-bites-subtitle">Grab a fast, satisfying treat or refresh with hot brews</span>
             </div>
-            <a href="#all-quick" className={styles.seeAllLink} id="quick-bites-see-all">
-              <span id="quick-bites-see-all-text">See all</span>
-              <ArrowRight size={14} id="quick-bites-arrow" />
-            </a>
+          
           </div>
           
           <div className={styles.quickBitesGrid} id="quick-bites-grid">
-            {filteredQuickBites.map(rest => (
+            {RESTAURANTS.map(rest => (
               <Link
   key={rest.id}
   href={`/services/swadisht/restaurant/${rest.slug}`}
