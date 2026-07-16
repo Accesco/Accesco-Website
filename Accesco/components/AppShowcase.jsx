@@ -43,31 +43,31 @@ export default function AppShowcase() {
   const [confirmationResult, setConfirmationResult] = useState(null);
   const recaptchaVerifierRef = useRef(null);
   const [feedbackScore, setFeedbackScore] = useState(null);
-  const [feedbackReview, setFeedbackReview] = useState('');
+  const [feedbackReview, setFeedbackReview] = useState("");
   const [feedbackSubmitted, setFeedbackSubmitted] = useState(false);
 
   const handleFeedbackSubmit = async () => {
     if (feedbackScore === null) return;
 
     const feedbackData = {
-      user: form.name?.trim() || 'User',
+      user: form.name?.trim() || "User",
       score: feedbackScore,
       review: feedbackReview.trim(),
     };
 
     try {
-      const res = await fetch('/api/feedback', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const res = await fetch("/api/feedback", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(feedbackData),
       });
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
-        throw new Error(data.error || 'Failed to submit feedback');
+        throw new Error(data.error || "Failed to submit feedback");
       }
       setFeedbackSubmitted(true);
     } catch (err) {
-      console.error('Feedback submit failed:', err);
+      console.error("Feedback submit failed:", err);
       // Still show success to the user — feedback UX shouldn't block on a
       // backend hiccup, but the failure is logged for debugging.
       setFeedbackSubmitted(true);
@@ -494,6 +494,7 @@ export default function AppShowcase() {
                     onClick={handleNext}
                   >
                     <span>Continue</span>
+
                     <ArrowRight size={18} />
                   </button>
                 </div>
@@ -664,21 +665,10 @@ export default function AppShowcase() {
           </div>
         </div>
       </div>
-
       {/* Feedback Section */}
-      <section className={styles.feedbackSection} style={{ padding: '24px 16px' }}>
-        <div 
-          className={styles.feedbackCard} 
-          style={{ 
-            maxWidth: '640px', 
-            width: '100%', 
-            margin: '0 auto', 
-            borderRadius: '16px', 
-            overflow: 'hidden', 
-            boxShadow: '0 8px 30px rgba(0, 0, 0, 0.08)' 
-          }}
-        >
-          <div className={styles.feedbackHeader} style={{ padding: '24px 20px' }}>
+      <section className={styles.feedbackSection}>
+        <div className={styles.feedbackCard}>
+          <div className={styles.feedbackHeader}>
             <div className={styles.feedbackBubbleOne}></div>
             <div className={styles.feedbackBubbleTwo}></div>
 
@@ -687,32 +677,30 @@ export default function AppShowcase() {
                 Your opinion matters
               </span>
 
-              <h2 className={styles.feedbackTitle} style={{ fontSize: '24px', margin: '4px 0' }}>
-                How are we doing?
-              </h2>
+              <h2 className={styles.feedbackTitle}>How are we doing?</h2>
 
-              <p className={styles.feedbackHeaderText} style={{ margin: 0 }}>
+              <p className={styles.feedbackHeaderText}>
                 It’ll be really quick, we promise.
               </p>
             </div>
           </div>
 
-          <div className={styles.feedbackBody} style={{ padding: '24px 20px' }}>
+          <div className={styles.feedbackBody}>
             {!feedbackSubmitted ? (
               <>
-                <p className={styles.feedbackGreeting} style={{ marginBottom: '8px' }}>
-                  Hi {form.name?.trim() || 'User'},
+                <p className={styles.feedbackGreeting}>
+                  Hi {form.name?.trim() || "User"},
                 </p>
 
-                <p className={styles.feedbackDescription} style={{ marginBottom: '16px', fontSize: '13px', lineHeight: '1.5' }}>
-                  Thank you for being part of the Accesco Living community.
-                  Your feedback helps us create a smarter and more convenient
+                <p className={styles.feedbackDescription}>
+                  Thank you for being part of the Accesco Living community. Your
+                  feedback helps us create a smarter and more convenient
                   experience for everyone.
                 </p>
 
-                <h3 className={styles.feedbackQuestion} style={{ fontSize: '15px', marginBottom: '16px', fontWeight: 'bold' }}>
-                  How likely are you to recommend Accesco Living to your
-                  friends and family?
+                <h3 className={styles.feedbackQuestion}>
+                  How likely are you to recommend Accesco Living to your friends
+                  and family?
                 </h3>
 
                 <div
@@ -730,7 +718,7 @@ export default function AppShowcase() {
                       className={`${styles.ratingButton} ${
                         feedbackScore === index
                           ? styles.ratingButtonSelected
-                          : ''
+                          : ""
                       }`}
                       onClick={() => setFeedbackScore(index)}
                     >
@@ -745,19 +733,18 @@ export default function AppShowcase() {
                   ))}
                 </div>
 
-                <div className={styles.ratingLabels} style={{ marginTop: '4px', marginBottom: '20px' }}>
+                <div className={styles.ratingLabels}>
                   <span>Not at all likely</span>
                   <span>Extremely likely</span>
                 </div>
 
-                <div className={styles.reviewBoxWrapper} style={{ marginBottom: '20px' }}>
+                <div className={styles.reviewBoxWrapper}>
                   <label
                     htmlFor="feedback-review"
                     className={styles.reviewBoxLabel}
-                    style={{ marginBottom: '6px' }}
                   >
                     Tell us more
-                    <span className={styles.reviewOptional}>Optional</span>
+                    <span className={styles.reviewOptional}>(optional)</span>
                   </label>
 
                   <div className={styles.reviewBoxContainer}>
@@ -768,7 +755,7 @@ export default function AppShowcase() {
                       value={feedbackReview}
                       onChange={(e) => setFeedbackReview(e.target.value)}
                       maxLength={300}
-                      rows={3}
+                      rows={4}
                     />
 
                     <span className={styles.reviewCharacterCount}>
@@ -786,24 +773,24 @@ export default function AppShowcase() {
                   Submit Feedback
                   <ArrowRight size={18} />
                 </button>
-                
-                <p className={styles.feedbackRegards} style={{ marginTop: '20px', marginBottom: 0 }}>
+
+                <p className={styles.feedbackRegards}>
                   Warm regards,
                   <br />
                   <strong>Team Accesco</strong>
                 </p>
               </>
             ) : (
-              <div className={styles.feedbackSuccess} style={{ padding: '16px 0', textAlign: 'center' }}>
+              <div className={styles.feedbackSuccess}>
                 <div className={styles.feedbackSuccessIcon}>
                   <Check size={30} strokeWidth={3} />
                 </div>
 
-                <h3 style={{ fontSize: '18px', margin: '12px 0 8px' }}>Thank you, {form.name?.trim() || 'User'}!</h3>
+                <h3>Thank you, {form.name?.trim() || "User"}!</h3>
 
-                <p style={{ fontSize: '13px', lineHeight: '1.5' }}>
-                  Your feedback has been recorded. We appreciate you helping
-                  us improve Accesco Living.
+                <p>
+                  Your feedback has been recorded. We appreciate you helping us
+                  improve Accesco Living.
                 </p>
 
                 <button
@@ -811,10 +798,9 @@ export default function AppShowcase() {
                   className={styles.feedbackResetButton}
                   onClick={() => {
                     setFeedbackScore(null);
-                    setFeedbackReview('');
+                    setFeedbackReview("");
                     setFeedbackSubmitted(false);
                   }}
-                  style={{ marginTop: '16px' }}
                 >
                   Change my response
                 </button>
@@ -823,7 +809,6 @@ export default function AppShowcase() {
           </div>
         </div>
       </section>
-
       {/* Unchanged bottom app download segments */}
       <div className={styles.downloadAppSection}>
         <img
