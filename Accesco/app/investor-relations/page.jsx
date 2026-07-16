@@ -20,6 +20,7 @@ const mediaLogos = [
   { name: "Buisnessscope", src: "/logos/BSC.jpeg" },
   { name: "Express_visionary", src: "/logos/Express_visionary.jpeg" },
   { name: "entrepreneurorbit", src: "/logos/orbitent.jpeg" },
+  { name: "new1", src: "/logos/new1.jpeg" },
 ];
 const ecosystemLogos = [
   { name: "AWS Startups", src: "/logos/aws-startups.png" },
