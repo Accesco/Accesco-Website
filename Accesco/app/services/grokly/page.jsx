@@ -20,11 +20,13 @@ import LocationModal from './components/LocationModal';
 import FloatingCartBar from './components/FloatingCartBar';
 import BottomNav from './components/BottomNav';
 import { categories, getProductsByCategory, searchProducts } from './lib/groklyData';
-import {useProducts} from './hooks/useProducts';
+import { useProducts } from './hooks/useProducts';
 import './styles/variables.css';
 import './styles/globals.css';
 import JsonLd from '../../../components/JsonLd';
 import { dishes } from './lib/dishesData';
+import GroceryStories from './components/GroceryStories';
+
 const getIngredientImage = (item) => {
   if (!item.image || item.image.includes("grofers.com")) {
     const categoryImages = {
@@ -42,12 +44,12 @@ const getIngredientImage = (item) => {
     const category = item.id.startsWith("veg-")
       ? "vegetables-fruits"
       : item.id.startsWith("dairy-") ||
-          item.id.includes("paneer") ||
-          item.id.includes("yogurt")
+        item.id.includes("paneer") ||
+        item.id.includes("yogurt")
         ? "dairy-breakfast"
         : item.id.startsWith("masala-") ||
-            item.id.includes("ggpaste") ||
-            item.id.includes("marinade")
+          item.id.includes("ggpaste") ||
+          item.id.includes("marinade")
           ? "masala-oil"
           : item.id.startsWith("atta-") || item.id.includes("rice")
             ? "atta-rice-dal"
@@ -70,7 +72,7 @@ function GroklyPageContent() {
   const [selectedDishKey, setSelectedDishKey] = useState("tikka");
   const [currentSlide, setCurrentSlide] = useState(0);
   const { getProductQuantity, addToCart, incrementQuantity, decrementQuantity, openCart } = useGrokly();
-  const {products,isLoading:productsLoading} = useProducts('grokly');
+  const { products, isLoading: productsLoading } = useProducts('grokly');
 
   useEffect(() => {
     setSearchQuery(searchParams.get("search") || "");
@@ -430,6 +432,36 @@ function GroklyPageContent() {
                 }}
               >
                 <img
+                  src="/images/banners/groklyhero2.png"
+                  alt="Grokly New Hero Banner"
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "cover",
+                    objectPosition: "center",
+                  }}
+                />
+              </div>
+
+              <div
+                onClick={() => {
+                  const mainContent = document.querySelector("main");
+                  if (mainContent) {
+                    mainContent.scrollIntoView({
+                      behavior: "smooth",
+                      block: "start",
+                    });
+                  }
+                }}
+                style={{
+                  position: "absolute",
+                  inset: 0,
+                  opacity: currentSlide === 2 ? 1 : 0,
+                  pointerEvents: currentSlide === 2 ? "auto" : "none",
+                  transition: "opacity 0.8s ease-in-out",
+                }}
+              >
+                <img
                   src="/images/banners/hero-grokly.jpg"
                   alt="Grokly Banner"
                   style={{
@@ -452,7 +484,7 @@ function GroklyPageContent() {
                   zIndex: 10,
                 }}
               >
-                {[0, 1].map((index) => (
+                {[0, 1, 2].map((index) => (
                   <button
                     key={index}
                     onClick={(e) => {
@@ -480,7 +512,7 @@ function GroklyPageContent() {
               <button
                 onClick={(e) => {
                   e.stopPropagation();
-                  setCurrentSlide((prev) => (prev === 0 ? 1 : 0));
+                  setCurrentSlide((prev) => (prev === 0 ? 2 : prev - 1));
                 }}
                 style={{
                   position: "absolute",
@@ -517,7 +549,7 @@ function GroklyPageContent() {
               <button
                 onClick={(e) => {
                   e.stopPropagation();
-                  setCurrentSlide((prev) => (prev === 0 ? 1 : 0));
+                  setCurrentSlide((prev) => (prev === 2 ? 0 : prev + 1));
                 }}
                 style={{
                   position: "absolute",
@@ -1459,6 +1491,17 @@ function GroklyPageContent() {
                     if (rail) rail.scrollBy({ left: -500, behavior: "smooth" });
                   }}
                   style={{
+                    position: "absolute",
+                    left: "-4px",
+                    top: "50%",
+                    transform: "translateY(-50%)",
+                    zIndex: 10,
+
+                    width: "32px",
+                    height: "32px",
+                    borderRadius: "50%",
+                    border: "none",
+
                     background: "#000",
                     color: "#fff",
                     fontSize: "24px",
@@ -1639,7 +1682,9 @@ function GroklyPageContent() {
               />
             </div>
           )}
-
+{activeCategory === "all" && !searchQuery && (
+  <GroceryStories />
+)}
           {/* Curated Product Sections */}
           {activeCategory === "all" && !searchQuery && (
             <div

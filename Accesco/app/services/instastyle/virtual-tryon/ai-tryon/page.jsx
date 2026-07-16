@@ -90,8 +90,8 @@ function AiTryOnContent() {
           ← Back to Style Preview
         </Link>
         <div>
-          <h1>AI Upload Try-On</h1>
-          <p>Upload your photo and a shirt image to generate a realistic try-on.</p>
+          <h1>Virtual Try-On Studio</h1>
+          <p>Upload your photo and a garment image to see how it fits on you.</p>
         </div>
       </div>
 
@@ -133,14 +133,14 @@ function AiTryOnContent() {
         onClick={handleGenerate}
         disabled={isGenerating || !personImage || (!shirtImage && !preloadedShirtUrl)}
       >
-        {isGenerating ? 'Generating Try-On...' : 'Generate Try-On'}
+        {isGenerating ? 'Processing your look...' : 'Try On Now'}
       </button>
 
       {resultImage && (
         <div className={styles.resultSection}>
           <h2>Your Try-On Result</h2>
-          <img src={resultImage} alt="AI try-on result" />
-          <a href={resultImage} download="ai-tryon-result.jpg" className={styles.downloadBtn}>
+          <img src={resultImage} alt="Virtual try-on result" />
+          <a href={resultImage} download="tryon-result.jpg" className={styles.downloadBtn}>
             Download Result
           </a>
         </div>
