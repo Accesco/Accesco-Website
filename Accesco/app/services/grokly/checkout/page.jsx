@@ -30,6 +30,8 @@ export default function GroklyCheckout() {
     address: location || 'Bengaluru',
     phone: '+91 9022217637'
   });
+  const [packagingOptIn, setPackagingOptIn] = useState(true);
+  const [bagsToReturn, setBagsToReturn] = useState(2);
 
   useEffect(() => {
     if (location) {
@@ -199,6 +201,8 @@ export default function GroklyCheckout() {
         phone: activeUser?.phone || customerDetails.phone,
         customerEmail: activeUser?.email || null,
         userId: activeUser?.uid || activeUser?.id || null,
+        packagingOptIn,
+        packagingBagsToReturn: bagsToReturn,
         ...getDeliveryCoords(),
       });
 
@@ -383,6 +387,60 @@ export default function GroklyCheckout() {
             </div>
 
             <p className={styles.speedFooter}>Eco saver batches deliveries along similar routes, reducing fuel burn and delivery cost.</p>
+          </section>
+
+          {/* Reverse Commerce & Reusable Packaging Section */}
+          <section className={styles.section} style={{ background: '#f2faf4', borderColor: '#d0ebd6', borderWidth: '1px', borderStyle: 'solid', padding: '20px', borderRadius: '16px' }}>
+            <div className={styles.sectionHeader} style={{ marginBottom: '12px', display: 'flex', alignItems: 'center' }}>
+              <span style={{ fontSize: '20px', marginRight: '8px' }}>♻️</span>
+              <h2 style={{ color: '#0c831f', fontWeight: 'bold', margin: 0 }}>Reverse Commerce: Eco-Return</h2>
+            </div>
+            <p style={{ fontSize: '13px', color: '#444', lineHeight: '1.5', margin: '0 0 16px 0' }}>
+              Hand over clean packaging bags or insulated delivery boxes from your previous orders to our delivery partner and get <strong>₹10 cashback</strong> in your Grokly Wallet per bag returned.
+            </p>
+            
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 16px', background: '#fff', borderRadius: '12px', border: '1px solid #d8ebdcf0', marginBottom: packagingOptIn ? '12px' : 0 }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                <span style={{ fontSize: '14px', fontWeight: 700, color: '#222' }}>Return packaging bags</span>
+                <span style={{ fontSize: '11px', color: '#666' }}>Handover clean empty bags to rider</span>
+              </div>
+              <input 
+                type="checkbox" 
+                checked={packagingOptIn} 
+                onChange={(e) => setPackagingOptIn(e.target.checked)}
+                style={{ width: '20px', height: '20px', accentColor: '#0c831f', cursor: 'pointer', margin: 0 }}
+              />
+            </div>
+
+            {packagingOptIn && (
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 16px', background: '#fff', borderRadius: '12px', border: '1px solid #d8ebdcf0' }}>
+                <span style={{ fontSize: '13px', fontWeight: 600, color: '#333' }}>Bags to return:</span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+                  <button 
+                    type="button"
+                    onClick={() => setBagsToReturn(b => Math.max(1, b - 1))}
+                    style={{ width: '28px', height: '28px', borderRadius: '50%', border: '1px solid #cce0d2', background: '#f5faf6', color: '#0c831f', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', fontSize: '16px' }}
+                  >
+                    -
+                  </button>
+                  <span style={{ fontSize: '15px', fontWeight: 800, color: '#111', minWidth: '16px', textAlign: 'center' }}>{bagsToReturn}</span>
+                  <button 
+                    type="button"
+                    onClick={() => setBagsToReturn(b => Math.min(10, b + 1))}
+                    style={{ width: '28px', height: '28px', borderRadius: '50%', border: '1px solid #cce0d2', background: '#f5faf6', color: '#0c831f', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', fontSize: '16px' }}
+                  >
+                    +
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {packagingOptIn && (
+              <div style={{ marginTop: '12px', display: 'flex', alignItems: 'center', gap: '8px', color: '#0c831f', fontSize: '12px', fontWeight: 700, background: '#e3f7e7', padding: '10px 14px', borderRadius: '10px' }}>
+                <span>🌱</span>
+                <span>Est. Cashback: ₹{bagsToReturn * 10} Wallet Balance credited instantly upon delivery!</span>
+              </div>
+            )}
           </section>
           
           <section className={styles.section}>

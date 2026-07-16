@@ -54,32 +54,22 @@ export default function InstaStyleLanding() {
   const [introVisible, setIntroVisible] = useState(true);
   const [introRendered, setIntroRendered] = useState(true);
   const [videoProgress, setVideoProgress] = useState(0);
+  const [videoLoading, setVideoLoading] = useState(true);
+  const [videoStarted, setVideoStarted] = useState(false);
 
+  // 1. Autoplay attempt on mount
   useEffect(() => {
-    // Fade out at exactly 9s, unmount after fade completes
-    const t1 = setTimeout(() => setIntroVisible(false), 9000);
-    const t2 = setTimeout(() => setIntroRendered(false), 9800);
-    introTimersRef.current = [t1, t2];
-
-    // Drive progress bar from a timer (fallback for when video hasn't loaded yet)
-    const totalDuration = 9000;
-    const tickInterval = 90;
-    let elapsed = 0;
-    const progressTimer = setInterval(() => {
-      elapsed += tickInterval;
-      setVideoProgress(Math.min((elapsed / totalDuration) * 100, 100));
-    }, tickInterval);
-    introTimersRef.current.push(progressTimer);
-
-    // Attempt to play the video once it has loaded enough data
     const video = introVideoRef.current;
     if (video) {
       const attemptPlay = () => {
         video.muted = true;
         const playPromise = video.play();
         if (playPromise !== undefined) {
-          playPromise.catch(() => {
-            console.warn('[InstaStyle] Intro video autoplay blocked.');
+          playPromise.catch((err) => {
+            console.warn('[InstaStyle] Intro video autoplay blocked.', err);
+            // If blocked, start the intro experience fallback
+            setVideoStarted(true);
+            setVideoLoading(false);
           });
         }
       };
@@ -91,12 +81,46 @@ export default function InstaStyleLanding() {
       }
     }
 
+    // Safety fallback: if video doesn't start in 4 seconds, force start
+    const fallbackTimer = setTimeout(() => {
+      setVideoStarted((started) => {
+        if (!started) {
+          setVideoLoading(false);
+          return true;
+        }
+        return started;
+      });
+    }, 4000);
+
+    return () => {
+      clearTimeout(fallbackTimer);
+    };
+  }, []);
+
+  // 2. Start progress and dismiss timers only after video starts playing
+  useEffect(() => {
+    if (!videoStarted) return;
+
+    // Fade out at exactly 9s, unmount after fade completes
+    const t1 = setTimeout(() => setIntroVisible(false), 9000);
+    const t2 = setTimeout(() => setIntroRendered(false), 9800);
+    introTimersRef.current = [t1, t2];
+
+    const totalDuration = 9000;
+    const tickInterval = 90;
+    let elapsed = 0;
+    const progressTimer = setInterval(() => {
+      elapsed += tickInterval;
+      setVideoProgress(Math.min((elapsed / totalDuration) * 100, 100));
+    }, tickInterval);
+    introTimersRef.current.push(progressTimer);
+
     return () => {
       clearTimeout(t1);
       clearTimeout(t2);
       clearInterval(progressTimer);
     };
-  }, []);
+  }, [videoStarted]);
 
   // Pause video at 9s so it never plays beyond the intro window
   const handleVideoTimeUpdate = () => {
@@ -115,6 +139,7 @@ export default function InstaStyleLanding() {
     setVideoProgress(100);
     setTimeout(() => setIntroRendered(false), 800);
   };
+
 
   const featuredIds = [
     'prod_027', // Premium Hoodie
@@ -188,17 +213,19 @@ export default function InstaStyleLanding() {
     }
   ];
 
+  const categoryImages = {
+    men: 'https://images.pexels.com/photos/842811/pexels-photo-842811.jpeg?w=800&h=1000&fit=crop',
+    women: 'https://images.pexels.com/photos/1536619/pexels-photo-1536619.jpeg?w=800&h=1000&fit=crop',
+    kids: 'https://images.pexels.com/photos/1620760/pexels-photo-1620760.jpeg?w=800&h=1000&fit=crop',
+    accessories: 'https://images.pexels.com/photos/915915/pexels-photo-915915.jpeg?w=800&h=1000&fit=crop'
+  };
+
   const categoryCards = categories.map(cat => {
     const catProducts = products.filter(p => p.category === cat.id);
-    const newProduct = catProducts.find(p => [
-      'prod_031', 'prod_032', 'prod_033', 'prod_034', 'prod_035', 'prod_036', 'prod_037', 'prod_038',
-      'prod_039', 'prod_040', 'prod_041', 'prod_042', 'prod_043', 'prod_044', 'prod_045', 'prod_046',
-      'prod_013', 'prod_014', 'prod_015', 'prod_016', 'prod_017', 'prod_018', 'prod_019'
-    ].includes(p.id)) || catProducts[0];
     return {
       id: cat.id,
       name: cat.name,
-      image: newProduct?.images?.[0]?.url || '',
+      image: categoryImages[cat.id] || (catProducts[0]?.images?.[0]?.url || ''),
       count: catProducts.length,
     };
   });
@@ -407,6 +434,13 @@ export default function InstaStyleLanding() {
         transition: 'opacity 0.8s ease-in-out',
         pointerEvents: introVisible ? 'all' : 'none',
       }}>
+        {/* Sleek loading spinner while video buffers */}
+        {videoLoading && (
+          <div className={styles.videoSpinnerContainer}>
+            <div className={styles.videoSpinner} />
+          </div>
+        )}
+
         {/* Fullscreen video — no black bars, capped at 9s via onTimeUpdate */}
         <video
           ref={introVideoRef}
@@ -414,7 +448,12 @@ export default function InstaStyleLanding() {
           muted={true}
           playsInline
           preload="auto"
+          disablePictureInPicture
           onTimeUpdate={handleVideoTimeUpdate}
+          onPlay={() => {
+            setVideoStarted(true);
+            setVideoLoading(false);
+          }}
           style={{
             position: 'absolute',
             top: 0,
@@ -425,6 +464,9 @@ export default function InstaStyleLanding() {
             objectPosition: 'center',
             display: 'block',
             zIndex: 0,
+            opacity: videoLoading ? 0 : 1,
+            transition: 'opacity 0.4s ease-in-out',
+            willChange: 'opacity',
           }}
         >
           <source src="/images/instastylevideo.mp4" type="video/mp4" />
@@ -530,6 +572,8 @@ export default function InstaStyleLanding() {
         {/* Video background — DO NOT CHANGE */}
         <video
           className={styles.heroVideo}
+          preload="auto"
+          disablePictureInPicture
           autoPlay
           muted
           loop

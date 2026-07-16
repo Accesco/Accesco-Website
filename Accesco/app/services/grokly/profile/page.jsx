@@ -150,6 +150,38 @@ function GroklyProfileInner() {
   const [wishlist, setWishlist] = useState([]);
   const [isMounted, setIsMounted] = useState(false);
 
+  const [walletBalance, setWalletBalance] = useState(0);
+  const [recycledBags, setRecycledBags] = useState(0);
+  const [ecoHistory, setEcoHistory] = useState([]);
+
+  // Load eco details from localStorage
+  useEffect(() => {
+    const bal = parseInt(localStorage.getItem('grokly_wallet_balance') || '0');
+    const bags = parseInt(localStorage.getItem('grokly_recycled_bags_count') || '0');
+    const rawHist = localStorage.getItem('grokly_eco_history');
+    const hist = rawHist ? JSON.parse(rawHist) : [];
+    
+    setWalletBalance(bal);
+    setRecycledBags(bags);
+    setEcoHistory(hist);
+  }, []);
+
+  // Update on storage event
+  useEffect(() => {
+    const handleStorageChange = () => {
+      const bal = parseInt(localStorage.getItem('grokly_wallet_balance') || '0');
+      const bags = parseInt(localStorage.getItem('grokly_recycled_bags_count') || '0');
+      const rawHist = localStorage.getItem('grokly_eco_history');
+      const hist = rawHist ? JSON.parse(rawHist) : [];
+      
+      setWalletBalance(bal);
+      setRecycledBags(bags);
+      setEcoHistory(hist);
+    };
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
+  }, []);
+
   useEffect(() => {
     setIsMounted(true);
   }, []);
@@ -410,6 +442,13 @@ function GroklyProfileInner() {
                   </div>
                   <span className={styles.quickLabel}>Wishlist</span>
                 </button>
+
+                <button className={styles.quickCard} onClick={() => setCurrentView('reverse-commerce')}>
+                  <div className={styles.quickIconBg} style={{ background: '#e8f5e9' }}>
+                    <span style={{ fontSize: '20px' }}>♻️</span>
+                  </div>
+                  <span className={styles.quickLabel}>Eco-Return</span>
+                </button>
               </div>
 
               {/* Grokly Cash */}
@@ -424,7 +463,7 @@ function GroklyProfileInner() {
                 <div className={styles.cashBody}>
                   <div className={styles.balanceInfo}>
                     <span className={styles.balLabel}>Balance</span>
-                    <span className={styles.balAmount}>₹0</span>
+                    <span className={styles.balAmount}>₹{walletBalance}</span>
                   </div>
                   <button className={styles.addBalBtn} onClick={() => showToast('Payment Gateway coming soon!', 'info')}>
                     Add Cash
@@ -454,6 +493,13 @@ function GroklyProfileInner() {
                 >
                   <Heart size={18} />
                   <span>Wishlist</span>
+                </button>
+                <button 
+                  className={`${styles.navTab} ${currentView === 'reverse-commerce' ? styles.activeTab : ''}`}
+                  onClick={() => setCurrentView('reverse-commerce')}
+                >
+                  <span style={{ marginRight: '6px' }}>♻️</span>
+                  <span>Eco-Return (Reuse)</span>
                 </button>
                 <button 
                   className={`${styles.navTab} ${styles.navTabLogout}`}
@@ -806,6 +852,101 @@ function GroklyProfileInner() {
                       )}
                     </div>
                   )}
+                </div>
+              )}
+
+              {/* View 5: Reverse Commerce Eco-Return Dashboard */}
+              {currentView === 'reverse-commerce' && (
+                <div className={styles.paneCard}>
+                  <div className={styles.paneHeader} style={{ display: 'flex', flexDirection: 'column', gap: '8px', alignItems: 'flex-start' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <span style={{ fontSize: '24px' }}>♻️</span>
+                      <h2 className={styles.paneTitle} style={{ margin: 0 }}>Grokly Eco-Return Dashboard</h2>
+                    </div>
+                    <p style={{ margin: 0, fontSize: '13px', color: '#666' }}>Return clean packaging bags & boxes on delivery to earn Green Credits.</p>
+                  </div>
+
+                  {/* Impact Stats Grid */}
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '16px', marginTop: '20px' }}>
+                    <div style={{ background: '#f4faf5', border: '1px solid #d0ebd6', borderRadius: '16px', padding: '16px', display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                      <span style={{ fontSize: '12px', color: '#555', fontWeight: 600 }}>Total Bags Returned</span>
+                      <span style={{ fontSize: '28px', fontWeight: 800, color: '#0c831f' }}>{recycledBags}</span>
+                    </div>
+
+                    <div style={{ background: '#f4faf5', border: '1px solid #d0ebd6', borderRadius: '16px', padding: '16px', display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                      <span style={{ fontSize: '12px', color: '#555', fontWeight: 600 }}>CO2 Emissions Offset</span>
+                      <span style={{ fontSize: '28px', fontWeight: 800, color: '#0c831f' }}>{(recycledBags * 0.25).toFixed(2)} kg</span>
+                    </div>
+
+                    <div style={{ background: '#f4faf5', border: '1px solid #d0ebd6', borderRadius: '16px', padding: '16px', display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                      <span style={{ fontSize: '12px', color: '#555', fontWeight: 600 }}>Green Credits Earned</span>
+                      <span style={{ fontSize: '28px', fontWeight: 800, color: '#0c831f' }}>₹{walletBalance}</span>
+                    </div>
+                  </div>
+
+                  {/* Eco-Tier Badge */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginTop: '20px', padding: '16px', background: 'linear-gradient(to right, #0c831f, #059669)', borderRadius: '16px', color: '#fff' }}>
+                    <span style={{ fontSize: '32px' }}>🌱</span>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                      <span style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '1px', opacity: 0.8, fontWeight: 700 }}>Your Eco Tier</span>
+                      <span style={{ fontSize: '18px', fontWeight: 800 }}>
+                        {recycledBags >= 15 ? 'Planet Savior' : recycledBags >= 5 ? 'Green Guardian' : 'Eco Novice'}
+                      </span>
+                      <span style={{ fontSize: '12px', opacity: 0.9 }}>
+                        {recycledBags >= 15 ? 'Awesome! You are a champion of eco-friendly returns.' : `Return ${15 - recycledBags} more bags to unlock "Planet Savior" tier.`}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Return Guidelines */}
+                  <div style={{ marginTop: '24px' }}>
+                    <h3 style={{ fontSize: '15px', fontWeight: 700, color: '#333', marginBottom: '12px' }}>How it works</h3>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                      <div style={{ display: 'flex', gap: '12px', alignItems: 'flex-start' }}>
+                        <span style={{ background: '#eafaf0', color: '#0c831f', width: '24px', height: '24px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: '12px', flexShrink: 0 }}>1</span>
+                        <p style={{ margin: 0, fontSize: '13px', color: '#555', lineHeight: '1.4' }}>
+                          <strong>Choose Return at Checkout:</strong> Toggle the "Return packaging bags" option on the Secure Checkout page and select how many clean bags or boxes you want to return.
+                        </p>
+                      </div>
+                      <div style={{ display: 'flex', gap: '12px', alignItems: 'flex-start' }}>
+                        <span style={{ background: '#eafaf0', color: '#0c831f', width: '24px', height: '24px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: '12px', flexShrink: 0 }}>2</span>
+                        <p style={{ margin: 0, fontSize: '13px', color: '#555', lineHeight: '1.4' }}>
+                          <strong>Handover to Rider:</strong> When the delivery partner arrives at your door, hand over the empty bags/boxes to them.
+                        </p>
+                      </div>
+                      <div style={{ display: 'flex', gap: '12px', alignItems: 'flex-start' }}>
+                        <span style={{ background: '#eafaf0', color: '#0c831f', width: '24px', height: '24px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: '12px', flexShrink: 0 }}>3</span>
+                        <p style={{ margin: 0, fontSize: '13px', color: '#555', lineHeight: '1.4' }}>
+                          <strong>Get Credited Instantly:</strong> Our rider checks and confirms the return. ₹10 per bag is instantly credited to your Grokly Wallet as Green Credits!
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Return Log History */}
+                  <div style={{ marginTop: '28px' }}>
+                    <h3 style={{ fontSize: '15px', fontWeight: 700, color: '#333', marginBottom: '12px' }}>Eco-Return History</h3>
+                    {ecoHistory.length === 0 ? (
+                      <div style={{ padding: '24px', border: '1px dashed #cce0d2', borderRadius: '12px', textAlign: 'center', color: '#777', fontSize: '13px' }}>
+                        No eco-returns logged yet. Place an order and opt-in to return packaging to see history here!
+                      </div>
+                    ) : (
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                        {ecoHistory.map((item) => (
+                          <div key={item.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 16px', background: '#fff', border: '1px solid #eef2ee', borderRadius: '12px' }}>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                              <span style={{ fontSize: '13px', fontWeight: 700, color: '#333' }}>Returned {item.bags} bags</span>
+                              <span style={{ fontSize: '11px', color: '#777' }}>Order {item.orderId} • {formatDate(item.date)}</span>
+                            </div>
+                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '2px' }}>
+                              <span style={{ fontSize: '14px', fontWeight: 800, color: '#0c831f' }}>+₹{item.credits}</span>
+                              <span style={{ fontSize: '10px', color: '#4caf50', fontWeight: 600 }}>🌱 {item.co2Offset}kg CO2 saved</span>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
                 </div>
               )}
             </div>
