@@ -25,6 +25,8 @@ import './styles/variables.css';
 import './styles/globals.css';
 import JsonLd from '../../../components/JsonLd';
 import { dishes } from './lib/dishesData';
+import GroceryStories from './components/GroceryStories';
+
 const getIngredientImage = (item) => {
   if (!item.image || item.image.includes("grofers.com")) {
     const categoryImages = {
@@ -1639,7 +1641,9 @@ function GroklyPageContent() {
               />
             </div>
           )}
-
+{activeCategory === "all" && !searchQuery && (
+  <GroceryStories />
+)}
           {/* Curated Product Sections */}
           {activeCategory === "all" && !searchQuery && (
             <div
