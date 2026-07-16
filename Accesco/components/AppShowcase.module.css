@@ -1226,3 +1226,49 @@
     height: 64px;
   }
 }
+
+/* Mobile feedback rating: fit all 0–10 scores without scrolling */
+@media (max-width: 768px) {
+  .feedbackBody {
+    overflow-x: hidden !important;
+  }
+
+  .ratingScale {
+    display: grid !important;
+    grid-template-columns: repeat(11, minmax(0, 1fr)) !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    overflow: hidden !important;
+    border-radius: 10px !important;
+  }
+
+  .ratingButton {
+    width: 100% !important;
+    min-width: 0 !important;
+    height: 48px !important;
+    padding: 4px 0 !important;
+    gap: 4px !important;
+    border-radius: 0 !important;
+  }
+
+  .ratingButtonSelected {
+    transform: none !important;
+  }
+
+  .ratingNumber {
+    font-size: 10px !important;
+    line-height: 1 !important;
+  }
+
+  .ratingDot {
+    width: 7px !important;
+    height: 7px !important;
+    border-width: 1px !important;
+  }
+
+  .ratingDotInner {
+    width: 3px !important;
+    height: 3px !important;
+  }
+}
