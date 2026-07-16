@@ -817,19 +817,19 @@ export const products = [
     id: 'dairy-001', name: 'Amul Taaza Toned Fresh Milk', brand: 'Amul', category: 'dairy-breakfast',
     price: 27, mrp: 30, discount: 10, unit: '500 ml', deliveryTime: '11 MINS',
     image: 'https://images.pexels.com/photos/704569/pexels-photo-704569.jpeg?w=300',
-    inStock: true, tags: ['Bestseller'], rating: 4.6, reviews: 3450
+    inStock: true, tags: ['Bestseller'], rating: 4.6, reviews: 3450, returnable: true
   },
   {
     id: 'dairy-002', name: 'Amul Gold Full Cream Fresh Milk', brand: 'Amul', category: 'dairy-breakfast',
     price: 32, mrp: 35, discount: 8, unit: '500 ml', deliveryTime: '11 MINS',
     image: 'https://images.pexels.com/photos/821365/pexels-photo-821365.jpeg?w=300',
-    inStock: true, tags: ['Bestseller'], rating: 4.7, reviews: 2890
+    inStock: true, tags: ['Bestseller'], rating: 4.7, reviews: 2890, returnable: true
   },
   {
     id: 'dairy-003', name: 'Mother Dairy Classic Curd', brand: 'Mother Dairy', category: 'dairy-breakfast',
     price: 30, mrp: 35, discount: 14, unit: '400 g', deliveryTime: '11 MINS',
     image: 'https://images.pexels.com/photos/357573/pexels-photo-357573.jpeg?w=300',
-    inStock: true, tags: ['Bestseller'], rating: 4.5, reviews: 2340
+    inStock: true, tags: ['Bestseller'], rating: 4.5, reviews: 2340, returnable: true
   },
   {
     id: 'dairy-004', name: 'Amul Butter - Salted', brand: 'Amul', category: 'dairy-breakfast',
@@ -847,7 +847,7 @@ export const products = [
     id: 'dairy-006', name: 'Amul Fresh Cream', brand: 'Amul', category: 'dairy-breakfast',
     price: 52, mrp: 55, discount: 5, unit: '250 ml', deliveryTime: '11 MINS',
     image: 'https://images.pexels.com/photos/128402/pexels-photo-128402.jpeg?w=300',
-    inStock: true, rating: 4.5, reviews: 1230
+    inStock: true, rating: 4.5, reviews: 1230, returnable: true
   },
   {
     id: 'dairy-007', name: 'Britannia Bread - Whole Wheat', brand: 'Britannia', category: 'dairy-breakfast',
@@ -865,7 +865,7 @@ export const products = [
     id: 'dairy-009', name: 'Amul Masti Buttermilk', brand: 'Amul', category: 'dairy-breakfast',
     price: 20, mrp: 22, discount: 9, unit: '200 ml', deliveryTime: '11 MINS',
     image: 'https://images.pexels.com/photos/1435735/pexels-photo-1435735.jpeg?w=300',
-    inStock: true, rating: 4.4, reviews: 980
+    inStock: true, rating: 4.4, reviews: 980, returnable: true
   },
   {
     id: 'dairy-010', name: 'Nestle Milkmaid', brand: 'Nestle', category: 'dairy-breakfast',

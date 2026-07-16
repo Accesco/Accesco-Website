@@ -130,6 +130,29 @@ export async function POST(request) {
   }
 }
 
+export async function PATCH(request) {
+  try {
+    const body = await request.json();
+    const { orderId, status } = body;
+
+    if (!orderId || !status) {
+      return NextResponse.json({ error: 'orderId and status are required.' }, { status: 400 });
+    }
+
+    const { db } = await import('@/lib/firebase');
+    const { doc, setDoc } = await import('firebase/firestore');
+
+    const orderRef = doc(db, 'grokly_orders', orderId);
+    await setDoc(orderRef, { status }, { merge: true });
+
+    return NextResponse.json({ success: true, orderId, status }, { status: 200 });
+  } catch (error) {
+    console.error('[grokly/orders] PATCH error:', error);
+    return NextResponse.json({ error: 'Internal server error.' }, { status: 500 });
+  }
+}
+
+
 export async function GET(request) {
   try {
     const { searchParams } = new URL(request.url);
