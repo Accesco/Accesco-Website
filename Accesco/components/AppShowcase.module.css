@@ -1016,3 +1016,81 @@
     margin-top: 20px;
   }
 }
+/* Review text box */
+
+.reviewBoxWrapper {
+  width: 100%;
+  margin-top: 22px;
+}
+
+.reviewBoxLabel {
+  margin-bottom: 8px;
+  color: #1a0a0f;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.reviewOptional {
+  padding: 3px 7px;
+  border-radius: 5px;
+  background: rgba(122, 0, 66, 0.07);
+  color: #7a0042;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.reviewBoxContainer {
+  position: relative;
+  width: 100%;
+}
+
+.reviewBox {
+  width: 100%;
+  min-height: 96px;
+  padding: 13px 15px 28px;
+  border: 1px solid #e4dce1;
+  border-radius: 12px;
+  outline: none;
+  resize: vertical;
+  box-sizing: border-box;
+  background: #faf9fa;
+  color: #1a0a0f;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.86rem;
+  line-height: 1.55;
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.reviewBox::placeholder {
+  color: #a2959c;
+}
+
+.reviewBox:hover {
+  border-color: rgba(122, 0, 66, 0.25);
+}
+
+.reviewBox:focus {
+  border-color: #7a0042;
+  background: #ffffff;
+  box-shadow: 0 0 0 4px rgba(122, 0, 66, 0.06);
+}
+
+.reviewCharacterCount {
+  position: absolute;
+  right: 12px;
+  bottom: 9px;
+  color: #988b92;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.65rem;
+  font-weight: 600;
+  pointer-events: none;
+}

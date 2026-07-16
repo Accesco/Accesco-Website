@@ -30,20 +30,10 @@ export default function AppShowcase() {
     interests: [],
     verificationCode: '',
   });
-const [feedbackScore, setFeedbackScore] = useState(null);
-const [feedbackSubmitted, setFeedbackSubmitted] = useState(false);
 
-const handleFeedbackSubmit = () => {
-  if (feedbackScore === null) return;
 
-  // Add Firebase/API submission here later
-  console.log({
-    user: form.name || 'User',
-    score: feedbackScore,
-  });
 
-  setFeedbackSubmitted(true);
-};
+
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState('');
@@ -51,8 +41,24 @@ const handleFeedbackSubmit = () => {
   const [phoneVerified, setPhoneVerified] = useState(false);
   const [confirmationResult, setConfirmationResult] = useState(null);
   const recaptchaVerifierRef = useRef(null);
+  const [feedbackScore, setFeedbackScore] = useState(null);
+const [feedbackReview, setFeedbackReview] = useState('');
+const [feedbackSubmitted, setFeedbackSubmitted] = useState(false);
 
-  // Optional email verification state
+const handleFeedbackSubmit = () => {
+  if (feedbackScore === null) return;
+
+  const feedbackData = {
+    user: form.name?.trim() || 'User',
+    score: feedbackScore,
+    review: feedbackReview.trim(),
+  };
+
+  console.log('Feedback submitted:', feedbackData);
+
+  setFeedbackSubmitted(true);
+};
+
   const [emailCode, setEmailCode] = useState('');
   const [emailCodeSent, setEmailCodeSent] = useState(false);
   const [emailVerified, setEmailVerified] = useState(false);
@@ -663,20 +669,47 @@ const handleFeedbackSubmit = () => {
             ))}
           </div>
 
-          <div className={styles.ratingLabels}>
-            <span>Not at all likely</span>
-            <span>Extremely likely</span>
-          </div>
+        <div className={styles.ratingLabels}>
+  <span>Not at all likely</span>
+  <span>Extremely likely</span>
+</div>
 
-          <button
-            type="button"
-            className={styles.feedbackSubmitButton}
-            disabled={feedbackScore === null}
-            onClick={handleFeedbackSubmit}
-          >
-            Submit Feedback
-            <ArrowRight size={18} />
-          </button>
+<div className={styles.reviewBoxWrapper}>
+  <label
+    htmlFor="feedback-review"
+    className={styles.reviewBoxLabel}
+  >
+    Tell us more
+    <span className={styles.reviewOptional}>Optional</span>
+  </label>
+
+  <div className={styles.reviewBoxContainer}>
+    <textarea
+      id="feedback-review"
+      className={styles.reviewBox}
+      placeholder="Share what you liked or what we could improve..."
+      value={feedbackReview}
+      onChange={(e) => setFeedbackReview(e.target.value)}
+      maxLength={300}
+      rows={4}
+    />
+
+    <span className={styles.reviewCharacterCount}>
+      {feedbackReview.length}/300
+    </span>
+  </div>
+</div>
+
+<button
+  type="button"
+  className={styles.feedbackSubmitButton}
+  disabled={feedbackScore === null}
+  onClick={handleFeedbackSubmit}
+>
+  Submit Feedback
+  <ArrowRight size={18} />
+</button>
+          
 
           <p className={styles.feedbackRegards}>
             Warm regards,
@@ -700,10 +733,11 @@ const handleFeedbackSubmit = () => {
           <button
             type="button"
             className={styles.feedbackResetButton}
-            onClick={() => {
-              setFeedbackScore(null);
-              setFeedbackSubmitted(false);
-            }}
+           onClick={() => {
+  setFeedbackScore(null);
+  setFeedbackReview('');
+  setFeedbackSubmitted(false);
+}}
           >
             Change my response
           </button>
