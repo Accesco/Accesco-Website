@@ -1,12 +1,45 @@
 import { NextResponse } from 'next/server';
+import { checkRateLimit } from '../_lib/otp-store';
+
+// Extract client IP address for accurate rate limiting
+function getClientIp(request) {
+  const forwardedFor = request.headers.get('x-forwarded-for');
+  if (forwardedFor) {
+    return forwardedFor.split(',')[0].trim();
+  }
+  return request.headers.get('x-real-ip') || '127.0.0.1';
+}
 
 export async function POST(request) {
   try {
+    const clientIp = getClientIp(request);
     const { email, name } = await request.json();
 
     if (!email) {
       return NextResponse.json({ error: 'Email is required' }, { status: 400 });
     }
+
+    // --- RATE LIMITING LOGIC ---
+    // Prevent email bombing: Max 15 waitlist signups per 10 mins per IP
+    const ipCheck = checkRateLimit(`waitlist_ip:${clientIp}`, 15, 10 * 60);
+    if (!ipCheck.allowed) {
+      console.warn(`[waitlist] IP rate limit exceeded for ${clientIp}`);
+      return NextResponse.json(
+        { error: 'Too many requests from this IP. Please try again later.' },
+        { status: 429 }
+      );
+    }
+
+    // Prevent spamming a single email: Max 1 waitlist email per 24 hours per email address
+    const emailCheck = checkRateLimit(`waitlist_email:${email}`, 1, 24 * 60 * 60);
+    if (!emailCheck.allowed) {
+      console.warn(`[waitlist] Email rate limit exceeded for ${email}`);
+      return NextResponse.json(
+        { error: 'This email has already been added to the waitlist recently.' },
+        { status: 429 }
+      );
+    }
+    // ---------------------------
 
     const apiKey = process.env.RESEND_API_KEY;
     if (!apiKey) {

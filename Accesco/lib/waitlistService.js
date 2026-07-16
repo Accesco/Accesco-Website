@@ -48,6 +48,9 @@ export function validateWaitlistEntry(data) {
 
 /**
  * Save a waitlist signup to Firestore.
+ * WARNING: This client-side write cannot be rate-limited. 
+ * Move this to the backend /api/waitlist route for actual security.
+ * 
  * @param {{ name?: string; email: string; phone: string; emailVerified?: boolean }} data
  * @returns {Promise<string>} New document id
  * @throws {Error} if validation fails
@@ -61,6 +64,7 @@ export async function addWaitlistEntry(data) {
   const email = data.email.trim().toLowerCase();
   const name = data.name?.trim() || '';
 
+  // VULNERABILITY: Direct client-side write. Attackers can spam this without hitting API rate limits.
   const docRef = await addDoc(collection(db, COLLECTION), {
     name,
     email,
@@ -75,6 +79,10 @@ export async function addWaitlistEntry(data) {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ email, name }),
+  }).then(async (res) => {
+    if (res.status === 429) {
+      console.warn('Too many requests');
+    }
   }).catch((err) => console.error('Confirmation email failed:', err));
 
   return docRef.id;
@@ -92,7 +100,12 @@ export async function sendOtpEmailVerification(email) {
   });
 
   const payload = await parseJsonResponse(response);
+  
+  // Explicitly catch rate limits (429) and bubble the specific error to the UI
   if (!response.ok) {
+    if (response.status === 429) {
+      throw new Error(payload?.error || 'Too many requests. Please wait before trying again.');
+    }
     throw new Error(payload?.error || 'Failed to send email OTP');
   }
 
@@ -112,10 +125,14 @@ export async function verifyOtpEmailCode(email, otp) {
   });
 
   const payload = await parseJsonResponse(response);
+  
+  // Explicitly catch rate limits (429) and bubble the specific error to the UI
   if (!response.ok) {
+    if (response.status === 429) {
+      throw new Error(payload?.error || 'Too many verification attempts. Please try again later.');
+    }
     throw new Error(payload?.error || 'Email OTP verification failed');
   }
 
   return payload;
 }
-

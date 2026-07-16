@@ -1,11 +1,20 @@
 import { NextResponse } from 'next/server';
-import { deleteOtp, getOtpRecord, normalizeEmail } from '../_lib/otp-store';
+import { checkRateLimit, deleteOtp, getOtpRecord, normalizeEmail } from '../_lib/otp-store';
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const OTP_REGEX = /^\d{6}$/;
 
 function isValidEmail(email) {
   return EMAIL_REGEX.test(email);
+}
+
+// Extract client IP address for accurate rate limiting
+function getClientIp(request) {
+  const forwardedFor = request.headers.get('x-forwarded-for');
+  if (forwardedFor) {
+    return forwardedFor.split(',')[0].trim();
+  }
+  return request.headers.get('x-real-ip') || '127.0.0.1';
 }
 
 export async function POST(request) {
@@ -24,6 +33,8 @@ export async function POST(request) {
 
   // 2. Business Logic Execution with Robust Exception Management
   try {
+    const clientIp = getClientIp(request);
+    const body = await request.json();
     const email = normalizeEmail(body?.email);
     const otp = String(body?.otp || '').trim();
 
@@ -36,7 +47,26 @@ export async function POST(request) {
       );
     }
 
-    // Fetch the active OTP record from store
+    // --- RATE LIMITING LOGIC (Synchronous In-Memory) ---
+    // Prevent OTP brute-forcing: Max 5 attempts per 15 minutes per IP
+    const ipCheck = checkRateLimit(`verify_ip:${clientIp}`, 5, 15 * 60);
+    if (!ipCheck.allowed) {
+      return NextResponse.json(
+        { error: 'Too many verification attempts from this IP. Please try again later.' },
+        { status: 429 }
+      );
+    }
+
+    // Prevent OTP brute-forcing: Max 15 attempts per 10 minutes per Email
+    const emailCheck = checkRateLimit(`verify_email:${email}`, 15, 10 * 60);
+    if (!emailCheck.allowed) {
+      return NextResponse.json(
+        { error: 'Too many verification attempts for this email. Please try again later.' },
+        { status: 429 }
+      );
+    }
+    // ---------------------------------------------------
+
     const record = getOtpRecord(email);
     if (!record) {
       console.info(`[verify-otp] Refused verification: OTP record is expired or missing for ${email}`);
@@ -60,20 +90,8 @@ export async function POST(request) {
       { message: 'Email verified successfully', verified: true },
       { status: 200 },
     );
-
   } catch (error) {
-    // 3. Secure Logging & Exception Sanitization (Resolves F-03 / CWE-755)
-    // Securely record detailed diagnostic stack traces only to the server-side console
-    console.error('[verify-otp] Unhandled server error in verification route:', {
-      message: error?.message,
-      stack: error?.stack,
-      timestamp: new Date().toISOString(),
-    });
-
-    // Return a generic, clean response to the client with no internal implementation leaks
-    return NextResponse.json(
-      { error: 'An internal error occurred during authentication.' },
-      { status: 500 }
-    );
+    console.error('[verify-otp] Server error:', error);
+    return NextResponse.json({ error: 'Invalid request payload' }, { status: 400 });
   }
 }

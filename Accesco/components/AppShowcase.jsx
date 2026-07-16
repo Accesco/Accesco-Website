@@ -49,7 +49,7 @@ export default function AppShowcase() {
 const [feedbackReview, setFeedbackReview] = useState('');
 const [feedbackSubmitted, setFeedbackSubmitted] = useState(false);
 
-const handleFeedbackSubmit = () => {
+const handleFeedbackSubmit = async () => {
   if (feedbackScore === null) return;
 
   const feedbackData = {
@@ -57,10 +57,26 @@ const handleFeedbackSubmit = () => {
     score: feedbackScore,
     review: feedbackReview.trim(),
   };
+  
 
-  console.log('Feedback submitted:', feedbackData);
 
-  setFeedbackSubmitted(true);
+     try {
+     const res = await fetch('/api/feedback', {
+       method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(feedbackData),
+    });
+     if (!res.ok) {
+       const data = await res.json().catch(() => ({}));
+       throw new Error(data.error || 'Failed to submit feedback');
+     }
+     setFeedbackSubmitted(true);
+   } catch (err) {
+     console.error('Feedback submit failed:', err);
+     // Still show success to the user — feedback UX shouldn't block on a
+     // backend hiccup, but the failure is logged for debugging.
+    setFeedbackSubmitted(true);
+   }
 };
 
   // Optional email verification state

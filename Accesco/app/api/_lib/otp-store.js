@@ -7,7 +7,7 @@ const IP_WINDOW_MS = 15 * 60 * 1000; // 15 minutes
 
 const otpStore = new Map();
 const cooldownStore = new Map();
-const ipRateLimitStore = new Map(); // Map<ip, Array<timestamps>>
+const rateLimitStore = new Map(); // Added for rate limiting
 
 function normalizeEmail(email) {
   return String(email || '').trim().toLowerCase();
@@ -82,34 +82,27 @@ function getCooldownRemainingMs(email) {
   return remaining;
 }
 
-/**
- * Checks if the given client IP has exceeded the globally configured sliding window limit.
- * @param {string} ip
- * @returns {{ allowed: boolean, remainingMs: number }}
- */
-function checkIpRateLimit(ip) {
+// Added In-Memory Rate Limiter
+function checkRateLimit(identifier, maxRequests, windowSeconds) {
   const now = Date.now();
-  const requests = ipRateLimitStore.get(ip) || [];
+  const windowMs = windowSeconds * 1000;
+  const record = rateLimitStore.get(identifier);
 
-  // Filter out request timestamps that fall outside our sliding window
-  const activeRequests = requests.filter((timestamp) => now - timestamp < IP_WINDOW_MS);
-
-  if (activeRequests.length >= IP_LIMIT_MAX) {
-    const oldestActiveTimestamp = activeRequests[0];
-    const remainingMs = IP_WINDOW_MS - (now - oldestActiveTimestamp);
-    return {
-      allowed: false,
-      remainingMs: Math.max(0, remainingMs),
-    };
+  // If no record exists or the time window has passed, reset the counter
+  if (!record || now > record.resetAt) {
+    rateLimitStore.set(identifier, { count: 1, resetAt: now + windowMs });
+    return { allowed: true };
   }
 
-  // Record this attempt
-  activeRequests.push(now);
-  ipRateLimitStore.set(ip, activeRequests);
-  return {
-    allowed: true,
-    remainingMs: 0,
-  };
+  // If the request count exceeds the max allowed, deny the request
+  if (record.count >= maxRequests) {
+    return { allowed: false };
+  }
+
+  // Otherwise, increment the count
+  record.count += 1;
+  rateLimitStore.set(identifier, record);
+  return { allowed: true };
 }
 
 export {
@@ -120,5 +113,5 @@ export {
   getOtpRecord,
   normalizeEmail,
   saveOtp,
-  checkIpRateLimit,
+  checkRateLimit, // Exported for use in your API route
 };
