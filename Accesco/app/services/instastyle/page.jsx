@@ -12,6 +12,7 @@ import FashionCollections from '@/components/instastyle/FashionCollections';
 import SwipeStyleShowcase from '@/components/instastyle/SwipeStyleShowcase';
 import DeliveryHero from '@/components/instastyle/DeliveryHero';
 import JsonLd from '../../../components/JsonLd';
+import StyleStories from './components/StyleStories';
 
 // ── Register GSAP Plugins
 if (typeof window !== 'undefined') {
@@ -573,14 +574,15 @@ export default function InstaStyleLanding() {
         </div>
       </section>
 
+<div id="why-instastyle" className="w-full overflow-x-hidden">
+  <FeatureAccordion />
+</div>
 
-      <div id="why-instastyle" className="w-full overflow-x-hidden">
-        <FeatureAccordion />
-      </div>
+{/* ── STYLE STORIES PREVIEW ── */}
+<StyleStories />
 
-      {/* ── 3. FASHION COLLECTIONS (NEW) ── */}
-      <FashionCollections />
-
+{/* ── 3. FASHION COLLECTIONS ── */}
+<FashionCollections />
 
       {/* ── 4. TRENDING PRODUCTS (SHOP THE EDIT) ── */}
       <section id="instastyle-featured" className={`${styles.trending} ${styles.revealItem}`} data-reveal>
@@ -758,6 +760,7 @@ export default function InstaStyleLanding() {
           </div>
         </div>
       </section>
+
 
       {/* ── SWIPE STYLE DISCOVERY ── */}
       <SwipeStyleShowcase />
