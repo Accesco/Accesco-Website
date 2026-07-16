@@ -43,31 +43,31 @@ export default function AppShowcase() {
   const [confirmationResult, setConfirmationResult] = useState(null);
   const recaptchaVerifierRef = useRef(null);
   const [feedbackScore, setFeedbackScore] = useState(null);
-  const [feedbackReview, setFeedbackReview] = useState('');
+  const [feedbackReview, setFeedbackReview] = useState("");
   const [feedbackSubmitted, setFeedbackSubmitted] = useState(false);
 
   const handleFeedbackSubmit = async () => {
     if (feedbackScore === null) return;
 
     const feedbackData = {
-      user: form.name?.trim() || 'User',
+      user: form.name?.trim() || "User",
       score: feedbackScore,
       review: feedbackReview.trim(),
     };
 
     try {
-      const res = await fetch('/api/feedback', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const res = await fetch("/api/feedback", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(feedbackData),
       });
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
-        throw new Error(data.error || 'Failed to submit feedback');
+        throw new Error(data.error || "Failed to submit feedback");
       }
       setFeedbackSubmitted(true);
     } catch (err) {
-      console.error('Feedback submit failed:', err);
+      console.error("Feedback submit failed:", err);
       // Still show success to the user — feedback UX shouldn't block on a
       // backend hiccup, but the failure is logged for debugging.
       setFeedbackSubmitted(true);
@@ -677,12 +677,10 @@ export default function AppShowcase() {
                 Your opinion matters
               </span>
 
-              <h2 className={styles.feedbackTitle}>
-                How are we doing?
-              </h2>
+              <h2 className={styles.feedbackTitle}>How are we doing?</h2>
 
               <p className={styles.feedbackHeaderText}>
-                It'll be really quick, we promise.
+                It’ll be really quick, we promise.
               </p>
             </div>
           </div>
@@ -691,18 +689,18 @@ export default function AppShowcase() {
             {!feedbackSubmitted ? (
               <>
                 <p className={styles.feedbackGreeting}>
-                  Hi {form.name?.trim() || 'User'},
+                  Hi {form.name?.trim() || "User"},
                 </p>
 
                 <p className={styles.feedbackDescription}>
-                  Thank you for being part of the Accesco Living community.
-                  Your feedback helps us create a smarter and more convenient
+                  Thank you for being part of the Accesco Living community. Your
+                  feedback helps us create a smarter and more convenient
                   experience for everyone.
                 </p>
 
                 <h3 className={styles.feedbackQuestion}>
-                  How likely are you to recommend Accesco Living to your
-                  friends and family?
+                  How likely are you to recommend Accesco Living to your friends
+                  and family?
                 </h3>
 
                 <div
@@ -720,7 +718,7 @@ export default function AppShowcase() {
                       className={`${styles.ratingButton} ${
                         feedbackScore === index
                           ? styles.ratingButtonSelected
-                          : ''
+                          : ""
                       }`}
                       onClick={() => setFeedbackScore(index)}
                     >
@@ -746,7 +744,7 @@ export default function AppShowcase() {
                     className={styles.reviewBoxLabel}
                   >
                     Tell us more
-                    <span className={styles.reviewOptional}>Optional</span>
+                    <span className={styles.reviewOptional}>(optional)</span>
                   </label>
 
                   <div className={styles.reviewBoxContainer}>
@@ -788,11 +786,11 @@ export default function AppShowcase() {
                   <Check size={30} strokeWidth={3} />
                 </div>
 
-                <h3>Thank you, {form.name?.trim() || 'User'}!</h3>
+                <h3>Thank you, {form.name?.trim() || "User"}!</h3>
 
                 <p>
-                  Your feedback has been recorded. We appreciate you helping
-                  us improve Accesco Living.
+                  Your feedback has been recorded. We appreciate you helping us
+                  improve Accesco Living.
                 </p>
 
                 <button
@@ -800,7 +798,7 @@ export default function AppShowcase() {
                   className={styles.feedbackResetButton}
                   onClick={() => {
                     setFeedbackScore(null);
-                    setFeedbackReview('');
+                    setFeedbackReview("");
                     setFeedbackSubmitted(false);
                   }}
                 >
