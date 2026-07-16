@@ -251,6 +251,10 @@ export default function ReferralPage() {
         </Link>
 
         <nav className="referralNavigation">
+          <Link href="/" className="loginButton">
+            Home
+          </Link>
+
           {user ? (
             <Link href="/profile" className="loginButton">
               {user.name?.split(' ')[0] || 'Account'}
