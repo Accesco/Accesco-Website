@@ -1102,3 +1102,127 @@
   font-weight: 600;
   pointer-events: none;
 }
+/* =========================================
+   iOS SAFARI MOBILE FIX
+========================================= */
+
+@media (max-width: 768px) {
+  .waitlistSection,
+  .waitlistCard,
+  .leftPanel,
+  .rightPanel,
+  .fullWidthForm,
+  .inputsStack,
+  .inputWrapper,
+  .formInput,
+  .buttonGroup,
+  .feedbackSection,
+  .feedbackCard,
+  .feedbackBody,
+  .reviewBoxWrapper,
+  .reviewBoxContainer,
+  .reviewBox {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+  }
+
+  .waitlistSection {
+    padding: 56px 14px;
+    overflow-x: hidden;
+  }
+
+  .waitlistCard {
+    padding: 14px;
+    gap: 22px;
+    border-radius: 18px;
+  }
+
+  .leftPanel {
+    height: auto;
+    min-height: 0;
+    aspect-ratio: auto;
+  }
+
+  .posterImage {
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: contain;
+  }
+
+  /* Stops iPhone zooming when inputs are focused */
+  .formInput,
+  .reviewBox,
+  .emailOtpInput,
+  .centeredOtpInput {
+    font-size: 16px !important;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  /* Remove default Safari input/button appearance */
+  .formInput,
+  .reviewBox,
+  .submitButton,
+  .prevButton,
+  .navButton,
+  .resendCodeButton,
+  .feedbackSubmitButton,
+  .ratingButton {
+    -webkit-appearance: none;
+    appearance: none;
+    border-radius: 12px;
+  }
+
+  .formInput {
+    height: 52px;
+    line-height: normal;
+  }
+
+  .submitButton,
+  .prevButton,
+  .navButton,
+  .feedbackSubmitButton {
+    min-height: 48px;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .buttonGroup {
+    display: flex;
+    gap: 10px;
+  }
+
+  .buttonGroup > * {
+    min-width: 0;
+  }
+
+  /* Prevent the whole page from horizontally shifting */
+  .ratingScale {
+    width: 100%;
+    max-width: 100%;
+    grid-template-columns: repeat(11, 48px);
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-x: contain;
+  }
+
+  .feedbackBody {
+    padding: 24px 16px;
+  }
+
+  .feedbackHeader {
+    padding: 26px 18px;
+  }
+
+  .feedbackTitle {
+    font-size: clamp(1.9rem, 10vw, 2.15rem);
+  }
+
+  .brandAsterisk {
+    width: 64px;
+    height: 64px;
+  }
+}

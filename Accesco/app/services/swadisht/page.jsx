@@ -231,53 +231,62 @@ export default function App() {
       <main className={styles.pageContent} id="main-content">
         
         {/* 1. HERO SECTION */}
-       <section className={styles.heroSection}>
+       <section className={styles.heroSection} id="hero-section">
 
-  <div className={styles.heroBanner}>
-    <img
-      src="/images/swadisht/hero-banner.jpg"
-      alt="Swadishtt Banner"
-      className={styles.heroBannerImage}
-    />
+  <div className={styles.heroInner} id="hero-inner">
+    <div className={styles.heroTextBlock} id="hero-text-block">
+      <h1 className={styles.heroTitle} id="hero-headline">
+        Ghar jaisa khaana,
+        <span className={styles.heroTitleRed}>
+          delivered in 30 minutes.
+        </span>
+      </h1>
+
+      <p className={styles.heroDescription}>
+        Experience premium, authentic regional recipes cooked with love,
+        fresh ingredients, and home-style perfection.
+      </p>
+    </div>
+    
   </div>
-
-  <section className={styles.featureRow}>
-    {featureItems.map((item) => (
-      <a
-        key={item.id}
-        href={item.link}
-        className={styles.featureCard}
-      >
-        <img
-          src={item.image}
-          alt={item.title}
-          className={styles.featureCardImage}
-        />
-      </a>
-    ))}
-  </section>
-
-  <section className={styles.statsBar}>
-  <div className={styles.statItem}>
-    <span className={styles.statValue}>500+</span>
-    <span className={styles.statLabel}>Restaurants</span>
-  </div>
-
-  <div className={styles.statItem}>
-    <span className={styles.statValue}>30 min</span>
-    <span className={styles.statLabel}>Average Delivery</span>
-  </div>
-
-  <div className={styles.statItem}>
-    <span className={styles.statValue}>100%</span>
-    <span className={styles.statLabel}>Freshly Prepared</span>
-  </div>
-
-  <div className={styles.statItem}>
-    <span className={styles.statValue}>4.8★</span>
-    <span className={styles.statLabel}>Customer Rating</span>
-  </div>
+<section className={styles.featureRow} id="feature-row">
+  {featureItems.map((item) => (
+    <a
+      key={item.id}
+      href={item.link}
+      className={styles.featureCard}
+    >
+      <img
+        src={item.image}
+        alt={item.title}
+        className={styles.featureCardImage}
+      />
+    </a>
+  ))}
 </section>
+ 
+
+  <section className={styles.statsBar} id="stats-bar">
+    <div className={styles.statItem}>
+      <span className={styles.statValue}>11+</span>
+      <span className={styles.statLabel}>Restaurants</span>
+    </div>
+
+    <div className={styles.statItem}>
+      <span className={styles.statValue}>200+</span>
+      <span className={styles.statLabel}>Dishes</span>
+    </div>
+
+    <div className={styles.statItem}>
+      <span className={styles.statValue}>30 min</span>
+      <span className={styles.statLabel}>Avg Delivery</span>
+    </div>
+
+    <div className={styles.statItem}>
+      <span className={styles.statValue}>₹0</span>
+      <span className={styles.statLabel}>Delivery Fee</span>
+    </div>
+  </section>
 
 </section>
         {/* 4. BROWSE BY CRAVINGS */}
@@ -322,13 +331,7 @@ export default function App() {
               <p className={styles.storiesSubtitle} id="stories-panel-subtitle">
                 Get a behind-the-scenes look at how your favorite dishes are curated, cooked, and packed perfectly.
               </p>
-              <Link
-  href="/services/swadisht/food-stories"
-  className={styles.storiesBtn}
-  id="stories-watch-all-btn"
->
-  Watch All
-</Link>
+              <button className={styles.storiesBtn} onClick={scrollStories} id="stories-watch-all-btn">Watch All</button>
             </div>
             
             <div className={styles.storiesRight} id="stories-right-panel">

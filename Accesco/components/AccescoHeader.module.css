@@ -928,17 +928,15 @@
   width: 36px !important;
   height: 36px !important;
   object-fit: contain;
-
-  filter:
-    brightness(0)
-    saturate(100%)
-    invert(14%)
-    sepia(89%)
-    saturate(3200%)
-    hue-rotate(315deg)
-    brightness(85%)
-    contrast(110%);
-}
+filter:
+  brightness(0)
+  saturate(100%)
+  invert(13%)
+  sepia(97%)
+  saturate(6000%)
+  hue-rotate(324deg)
+  brightness(75%)
+  contrast(110%);}
 
 /* MOBILE HEADER LOGIN + DOWNLOAD BUTTONS */
 @media (max-width: 768px) {
