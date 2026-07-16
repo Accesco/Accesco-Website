@@ -1,8 +1,13 @@
 const OTP_TTL_MS = 5 * 60 * 1000; // 5 minutes
 const OTP_COOLDOWN_MS = 60 * 1000; // 60 seconds
 
+// IP rate limit constants (e.g., max 5 requests per 15 minutes per IP)
+const IP_LIMIT_MAX = 5;
+const IP_WINDOW_MS = 15 * 60 * 1000; // 15 minutes
+
 const otpStore = new Map();
 const cooldownStore = new Map();
+const ipRateLimitStore = new Map(); // Map<ip, Array<timestamps>>
 
 function normalizeEmail(email) {
   return String(email || '').trim().toLowerCase();
@@ -77,6 +82,36 @@ function getCooldownRemainingMs(email) {
   return remaining;
 }
 
+/**
+ * Checks if the given client IP has exceeded the globally configured sliding window limit.
+ * @param {string} ip
+ * @returns {{ allowed: boolean, remainingMs: number }}
+ */
+function checkIpRateLimit(ip) {
+  const now = Date.now();
+  const requests = ipRateLimitStore.get(ip) || [];
+
+  // Filter out request timestamps that fall outside our sliding window
+  const activeRequests = requests.filter((timestamp) => now - timestamp < IP_WINDOW_MS);
+
+  if (activeRequests.length >= IP_LIMIT_MAX) {
+    const oldestActiveTimestamp = activeRequests[0];
+    const remainingMs = IP_WINDOW_MS - (now - oldestActiveTimestamp);
+    return {
+      allowed: false,
+      remainingMs: Math.max(0, remainingMs),
+    };
+  }
+
+  // Record this attempt
+  activeRequests.push(now);
+  ipRateLimitStore.set(ip, activeRequests);
+  return {
+    allowed: true,
+    remainingMs: 0,
+  };
+}
+
 export {
   OTP_TTL_MS,
   createOtp,
@@ -85,4 +120,5 @@ export {
   getOtpRecord,
   normalizeEmail,
   saveOtp,
+  checkIpRateLimit,
 };

@@ -6,6 +6,10 @@ import {
   doc,
   setDoc,
   serverTimestamp,
+  collection,
+  query,
+  where,
+  getDocs,
 } from 'firebase/firestore'
 import {
   RecaptchaVerifier,
@@ -327,7 +331,8 @@ export default function AuthModal({
     }
   }
 
-  // Verify phone OTP and save the user.
+  
+// Step 2 → verify phone OTP (mandatory), then save/update the user safely
   const handleVerifySubmit = async (e) => {
     e.preventDefault()
     setError('')
@@ -347,38 +352,86 @@ export default function AuthModal({
     setLoading(true)
 
     try {
-      await confirmationResult.confirm(
+      // 1. Confirm OTP code and resolve the Firebase Auth user object
+      const userCredential = await confirmationResult.confirm(
         otpCode.trim(),
       )
+      const firebaseUser = userCredential.user;
 
-      const n = name.trim()
       const p = phone.trim()
-      const em = email.trim()
-      const docId = p.replace(/[^\d]/g, '')
+      const n =
+        pendingSocialUser
+          ? pendingSocialUser.name || name.trim() || 'Accesco User'
+          : name.trim()
+      const em =
+        pendingSocialUser
+          ? pendingSocialUser.email || email.trim()
+          : email.trim()
 
-      await setDoc(
-        doc(db, 'users', docId),
-        {
-          name: n,
-          phone: p,
-          email: em || null,
-          phoneVerified: true,
-          emailVerified,
-          createdAt: serverTimestamp(),
-          updatedAt: serverTimestamp(),
-        },
-        {
-          merge: true,
-        },
-      )
+      // 2. Perform Lookup on Phone Number to Enforce Identity Uniqueness
+      const usersRef = collection(db, 'users');
+      const phoneQuery = query(usersRef, where('phone', '==', p));
+      const querySnapshot = await getDocs(phoneQuery);
+
+      let docId = firebaseUser.uid; // Fallback to current authenticated UID
+      let existingData = null;
+
+      if (!querySnapshot.empty) {
+        // Phone match exists! Bind profile to the existing record to prevent duplicates
+        const existingDoc = querySnapshot.docs[0];
+        docId = existingDoc.id;
+        existingData = existingDoc.data();
+        console.info(`[Auth] Existing record resolved for phone ${p}. Merging profiles.`);
+      } else if (pendingSocialUser) {
+        // If it's a new social account, use their social provider UID
+        docId = pendingSocialUser.uid;
+      }
+
+      // 3. Look up Document by Resolved ID (Ensures we catch any UID matches)
+      const userDocRef = doc(db, 'users', docId);
+      if (!existingData) {
+        const docSnap = await getDoc(userDocRef);
+        if (docSnap.exists()) {
+          existingData = docSnap.data();
+        }
+      }
+
+      const isNewUser = !existingData;
+
+      // 4. Safely construct the update payload (preserving existing fields)
+      const userDataToSave = {
+        name: isNewUser ? n : (existingData.name || n),
+        phone: p,
+        email: isNewUser ? (em || null) : (existingData.email || em || null),
+        photoURL: isNewUser 
+          ? (pendingSocialUser?.photoURL || null) 
+          : (existingData.photoURL || pendingSocialUser?.photoURL || null),
+        provider: isNewUser 
+          ? (pendingSocialUser?.provider || 'phone') 
+          : (existingData.provider || pendingSocialUser?.provider || 'phone'),
+        phoneVerified: true,
+        emailVerified: isNewUser ? emailVerified : (existingData.emailVerified || emailVerified),
+        updatedAt: serverTimestamp(),
+      };
+
+      // Only write 'createdAt' if this user profile is genuinely brand new
+      if (isNewUser) {
+        userDataToSave.createdAt = serverTimestamp();
+        console.info(`[Auth] Creating a new user record in Firestore under docId: ${docId}`);
+      } else {
+        console.info(`[Auth] Updating existing user record in Firestore under docId: ${docId}`);
+      }
+
+      await setDoc(userDocRef, userDataToSave, { merge: true });
 
       // Firebase Auth was only required for phone verification.
       await signOut(auth)
 
       const user = {
-        name: n,
+        name: userDataToSave.name,
         phone: p,
-        email: em || null,
+        email: userDataToSave.email,
+        photoURL: userDataToSave.photoURL,
         uid: docId,
       }
 
@@ -394,7 +447,7 @@ export default function AuthModal({
         handleClose()
       }, 1300)
     } catch (err) {
-      console.error(err)
+      console.error('Phone OTP verification or profile write failed:', err)
 
       if (
         err.code ===
@@ -411,7 +464,7 @@ export default function AuthModal({
         )
       } else {
         setError(
-          'Something went wrong. Please try again.',
+          'Something went wrong during verification. Please try again.',
         )
       }
     } finally {
