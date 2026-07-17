@@ -5,7 +5,10 @@ node_modules/
 .next/
 
 # Local env files
+.env
 .env.local
+.env.*.local
+**/.env
 
 # External/Parent directory path
 ../Integrated/
