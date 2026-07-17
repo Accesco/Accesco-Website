@@ -48,10 +48,10 @@ export function validateWaitlistEntry(data) {
 
 /**
  * Save a waitlist signup to Firestore.
- * WARNING: This client-side write cannot be rate-limited. 
+ * WARNING: This client-side write cannot be rate-limited.
  * Move this to the backend /api/waitlist route for actual security.
- * 
- * @param {{ name?: string; email: string; phone: string; emailVerified?: boolean }} data
+ *
+ * @param {{ name?: string; email: string; phone: string }} data
  * @returns {Promise<string>} New document id
  * @throws {Error} if validation fails
  */
@@ -69,8 +69,6 @@ export async function addWaitlistEntry(data) {
     name,
     email,
     phone: data.phone.trim(),
-    phoneVerified: true,           // Phone OTP is mandatory before saving
-    emailVerified: !!data.emailVerified, // Email OTP is optional
     createdAt: serverTimestamp(),
   });
 
@@ -86,53 +84,4 @@ export async function addWaitlistEntry(data) {
   }).catch((err) => console.error('Confirmation email failed:', err));
 
   return docRef.id;
-}
-
-/**
- * Send an optional email verification OTP.
- * @param {string} email
- */
-export async function sendOtpEmailVerification(email) {
-  const response = await fetch('/api/send-otp', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email }),
-  });
-
-  const payload = await parseJsonResponse(response);
-  
-  // Explicitly catch rate limits (429) and bubble the specific error to the UI
-  if (!response.ok) {
-    if (response.status === 429) {
-      throw new Error(payload?.error || 'Too many requests. Please wait before trying again.');
-    }
-    throw new Error(payload?.error || 'Failed to send email OTP');
-  }
-
-  return payload;
-}
-
-/**
- * Verify an optional email OTP code.
- * @param {string} email
- * @param {string} otp
- */
-export async function verifyOtpEmailCode(email, otp) {
-  const response = await fetch('/api/verify-otp', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email, otp }),
-  });
-
-  const payload = await parseJsonResponse(response);
-  
-  // Explicitly catch rate limits (429) and bubble the specific error to the UI
-  if (!response.ok) {
-    if (response.status === 429) {
-      throw new Error(payload?.error || 'Too many verification attempts. Please try again later.');
-    }
-    throw new Error(payload?.error || 'Email OTP verification failed');
-  }
-
-  return payload;
 }
