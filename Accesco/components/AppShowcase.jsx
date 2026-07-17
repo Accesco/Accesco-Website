@@ -1,11 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
-import {
-  RecaptchaVerifier,
-  signInWithPhoneNumber,
-  signOut,
-} from "firebase/auth";
+import React, { useEffect, useState } from "react";
 import {
   ShoppingCart,
   Utensils,
@@ -14,16 +9,9 @@ import {
   ArrowRight,
   ArrowLeft,
   Check,
-  ShieldCheck,
 } from "lucide-react";
 import styles from "./AppShowcase.module.css";
-import { auth } from "../lib/firebase";
-import {
-  addWaitlistEntry,
-  validateWaitlistEntry,
-  sendOtpEmailVerification,
-  verifyOtpEmailCode,
-} from "../lib/waitlistService";
+import { addWaitlistEntry, validateWaitlistEntry } from "../lib/waitlistService";
 
 export default function AppShowcase() {
   const [currentStep, setCurrentStep] = useState(1);
@@ -32,16 +20,11 @@ export default function AppShowcase() {
     email: "",
     phone: "",
     interests: [],
-    verificationCode: "",
   });
 
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
-  const [phoneCodeSent, setPhoneCodeSent] = useState(false);
-  const [phoneVerified, setPhoneVerified] = useState(false);
-  const [confirmationResult, setConfirmationResult] = useState(null);
-  const recaptchaVerifierRef = useRef(null);
   const [feedbackScore, setFeedbackScore] = useState(null);
   const [feedbackReview, setFeedbackReview] = useState("");
   const [feedbackSubmitted, setFeedbackSubmitted] = useState(false);
@@ -74,12 +57,6 @@ export default function AppShowcase() {
     }
   };
 
-  // Optional email verification state
-  const [emailCode, setEmailCode] = useState("");
-  const [emailCodeSent, setEmailCodeSent] = useState(false);
-  const [emailVerified, setEmailVerified] = useState(false);
-  const [emailLoading, setEmailLoading] = useState(false);
-
   const interestOptions = [
     {
       id: "grokly",
@@ -100,109 +77,6 @@ export default function AppShowcase() {
     }));
   };
 
-  function normalizePhone(phone) {
-    const stripped = phone.replace(/[\s\-().]/g, "");
-    if (stripped.startsWith("+")) return stripped;
-    return "+91" + stripped.replace(/\D/g, "");
-  }
-
-  // Create + render the invisible reCAPTCHA once and reuse it (Firebase's recommended
-  // pattern). Rendering ahead of time means the widget is already loaded before the
-  // user sends an OTP, so the send itself is much faster.
-  const ensureRecaptcha = () => {
-    if (!recaptchaVerifierRef.current) {
-      recaptchaVerifierRef.current = new RecaptchaVerifier(
-        auth,
-        "recaptcha-container",
-        {
-          size: "invisible",
-        },
-      );
-      recaptchaVerifierRef.current
-        .render()
-        .catch((e) => console.error("reCAPTCHA render failed:", e));
-    }
-    return recaptchaVerifierRef.current;
-  };
-
-  const sendPhoneOtp = async () => {
-    if (!form.phone?.trim()) {
-      setError("Please enter your phone number first");
-      return;
-    }
-
-    // Prevent overlapping sends while one is still in flight
-    if (loading) return;
-
-    setLoading(true);
-    setError("");
-
-    try {
-      const verifier = ensureRecaptcha();
-      const phoneNumber = normalizePhone(form.phone.trim());
-      const result = await signInWithPhoneNumber(auth, phoneNumber, verifier);
-      setConfirmationResult(result);
-      setPhoneCodeSent(true);
-    } catch (err) {
-      console.error("Phone OTP send failed:", err);
-      // Reset the verifier so the next attempt starts from a clean state
-      if (recaptchaVerifierRef.current) {
-        recaptchaVerifierRef.current.clear();
-        recaptchaVerifierRef.current = null;
-      }
-      setError(
-        err.message ||
-          "Failed to send OTP. Check your phone number and try again.",
-      );
-      setPhoneCodeSent(false);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Optional: send an email verification code
-  const sendEmailOtp = async () => {
-    if (!form.email?.trim()) {
-      setError("Please enter your email first");
-      return;
-    }
-
-    setEmailLoading(true);
-    setError("");
-
-    try {
-      await sendOtpEmailVerification(form.email.trim());
-      setEmailCodeSent(true);
-      setEmailVerified(false);
-    } catch (err) {
-      console.error("Email OTP send failed:", err);
-      setError(err.message || "Failed to send email code");
-    } finally {
-      setEmailLoading(false);
-    }
-  };
-
-  // Optional: verify the email code the user entered
-  const verifyEmailOtp = async () => {
-    if (!/^\d{6}$/.test(emailCode.trim())) {
-      setError("Please enter a valid 6-digit email code.");
-      return;
-    }
-
-    setEmailLoading(true);
-    setError("");
-
-    try {
-      await verifyOtpEmailCode(form.email.trim(), emailCode.trim());
-      setEmailVerified(true);
-    } catch (err) {
-      console.error("Email OTP verify failed:", err);
-      setError(err.message || "Email verification failed");
-    } finally {
-      setEmailLoading(false);
-    }
-  };
-
   const handleNext = () => {
     setError("");
 
@@ -212,15 +86,6 @@ export default function AppShowcase() {
         return;
       }
       setCurrentStep(2);
-    } else if (currentStep === 2) {
-      if (form.interests.length === 0) {
-        setError("Please select at least one interest");
-        return;
-      }
-      setCurrentStep(3);
-      if (!phoneCodeSent) {
-        sendPhoneOtp();
-      }
     }
   };
 
@@ -232,44 +97,26 @@ export default function AppShowcase() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if (form.interests.length === 0) {
+      setError("Please select at least one interest");
+      return;
+    }
+
     const validationErrors = validateWaitlistEntry(form);
     if (validationErrors.length > 0) {
       setError(validationErrors.join(" "));
       return;
     }
 
-    if (loading) {
-      setError("Verification code is still being sent. Please wait.");
-      return;
-    }
-
-    if (!confirmationResult) {
-      if (!error) {
-        setError("Verification failed to initiate. Please try again.");
-      }
-      return;
-    }
-
-    if (!/^\d{6}$/.test(form.verificationCode.trim())) {
-      setError("Please enter a valid 6-digit verification code.");
-      return;
-    }
-
     setError("");
     setLoading(true);
     try {
-      await confirmationResult.confirm(form.verificationCode.trim());
-      setPhoneVerified(true);
-
       await addWaitlistEntry({
         name: form.name,
         email: form.email,
         phone: form.phone,
         interests: form.interests.join(", "),
-        emailVerified, // optional — true only if the user chose to verify their email
       });
-
-      await signOut(auth);
 
       setSuccess(true);
       setForm({
@@ -277,45 +124,16 @@ export default function AppShowcase() {
         email: "",
         phone: "",
         interests: [],
-        verificationCode: "",
       });
-      setPhoneCodeSent(false);
-      setPhoneVerified(false);
-      setConfirmationResult(null);
-      setEmailCode("");
-      setEmailCodeSent(false);
-      setEmailVerified(false);
       setCurrentStep(1);
       setTimeout(() => setSuccess(false), 5000);
     } catch (err) {
       console.error("Waitlist submit failed:", err);
-      if (err.code === "auth/invalid-verification-code") {
-        setError("Invalid OTP. Please check the code and try again.");
-      } else if (err.code === "auth/code-expired") {
-        setError("OTP has expired. Please request a new one.");
-      } else {
-        setError(err.message || "Something went wrong. Please try again.");
-      }
+      setError(err.message || "Something went wrong. Please try again.");
     } finally {
       setLoading(false);
     }
   };
-
-  // Pre-warm the invisible reCAPTCHA on mount so the first OTP send is fast
-  useEffect(() => {
-    try {
-      ensureRecaptcha();
-    } catch (e) {
-      console.error("reCAPTCHA warm-up failed:", e);
-    }
-    return () => {
-      if (recaptchaVerifierRef.current) {
-        recaptchaVerifierRef.current.clear();
-        recaptchaVerifierRef.current = null;
-      }
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   useEffect(() => {
     const stack = document.getElementById("stack");
@@ -339,8 +157,6 @@ export default function AppShowcase() {
 
   return (
     <section id="waitlist" className={styles.waitlistSection}>
-      <div id="recaptcha-container"></div>
-
       {/* Centered Heading Block Positioned Symmetrically Above the Card */}
       <div className={styles.waitlistHeadingBlock}>
         <h2 className={styles.waitlistTitle}>
@@ -385,8 +201,6 @@ export default function AppShowcase() {
               "Join the waitlist for early access to Accesco Living's unified commerce platform, built for groceries, food delivery, fashion, dining, home services, and member-only launch benefits."}
             {currentStep === 2 &&
               "Select the experiences you are most interested in so we can personalize your early access updates, offers, and launch notifications."}
-            {currentStep === 3 &&
-              "Verify your phone number to secure your waitlist entry and receive important early access updates safely."}
           </p>
 
           {success && (
@@ -477,147 +291,6 @@ export default function AppShowcase() {
                       </div>
                     );
                   })}
-                </div>
-
-                <div className={styles.buttonGroup}>
-                  <button
-                    type="button"
-                    className={styles.prevButton}
-                    onClick={handlePrev}
-                  >
-                    <ArrowLeft size={16} />
-                    <span>Back</span>
-                  </button>
-                  <button
-                    type="button"
-                    className={`${styles.submitButton} ${styles.flexOneButton}`}
-                    onClick={handleNext}
-                  >
-                    <span>Continue</span>
-                    <ArrowRight size={18} />
-                  </button>
-                </div>
-              </div>
-            )}
-
-            {/* Step 3: Verification */}
-            {currentStep === 3 && (
-              <div className={styles.inputsStack}>
-                <div className={styles.verificationCard}>
-                  <ShieldCheck
-                    size={32}
-                    className={styles.verificationShield}
-                  />
-                  <p className={styles.verificationSubtitle}>
-                    {phoneCodeSent ? (
-                      <>
-                        Sent a passcode to <strong>{form.phone}</strong>
-                      </>
-                    ) : (
-                      "Preparing code transmission..."
-                    )}
-                  </p>
-                </div>
-
-                <div className={styles.inputWrapper}>
-                  <input
-                    type="text"
-                    className={`${styles.formInput} ${styles.centeredOtpInput}`}
-                    placeholder="Enter 6-digit OTP"
-                    value={form.verificationCode}
-                    onChange={(e) =>
-                      setForm({ ...form, verificationCode: e.target.value })
-                    }
-                    maxLength={6}
-                    required
-                  />
-                </div>
-
-                {phoneCodeSent && (
-                  <p className={styles.otpHelperText}>
-                    Didn't receive the SMS?{" "}
-                    <button
-                      type="button"
-                      className={styles.resendCodeButton}
-                      onClick={sendPhoneOtp}
-                      disabled={loading}
-                    >
-                      Resend Code
-                    </button>
-                  </p>
-                )}
-
-                {/* Optional Email Verification */}
-                <div
-                  className={`${styles.verificationSection} ${styles.verifyEmailBlock}`}
-                >
-                  <div className={styles.verificationInfo}>
-                    <p className={styles.verifyEmailTitle}>
-                      Verify your email{" "}
-                      <span className={styles.verifyEmailOptionalTag}>
-                        (optional)
-                      </span>
-                    </p>
-                    {emailVerified ? (
-                      <p className={styles.verifyEmailSuccess}>
-                        Email verified successfully.
-                      </p>
-                    ) : (
-                      <p className={styles.verifyEmailHint}>
-                        Optionally verify <strong>{form.email}</strong> for a
-                        more secure account.
-                      </p>
-                    )}
-                  </div>
-
-                  {!emailVerified && (
-                    <>
-                      {!emailCodeSent ? (
-                        <button
-                          type="button"
-                          className={`${styles.navButton} ${styles.fullWidthButton}`}
-                          onClick={sendEmailOtp}
-                          disabled={emailLoading}
-                        >
-                          {emailLoading ? "Sending..." : "Send email code"}
-                        </button>
-                      ) : (
-                        <>
-                          <div className={styles.formGroup}>
-                            <label className={styles.formLabel}>
-                              Email Code
-                            </label>
-                            <input
-                              type="text"
-                              className={`${styles.formInput} ${styles.emailOtpInput}`}
-                              placeholder="Enter 6-digit code"
-                              value={emailCode}
-                              onChange={(e) => setEmailCode(e.target.value)}
-                              maxLength={6}
-                            />
-                          </div>
-                          <div className={styles.buttonGroup}>
-                            <button
-                              type="button"
-                              className={styles.resendCode}
-                              onClick={sendEmailOtp}
-                              disabled={emailLoading}
-                            >
-                              Resend Code
-                            </button>
-                            <button
-                              type="button"
-                              className={styles.navButton}
-                              onClick={verifyEmailOtp}
-                              disabled={emailLoading}
-                            >
-                              {emailLoading ? "Verifying..." : "Verify Email"}
-                            </button>
-                          </div>
-                        </>
-                      )}
-                    </>
-                  )}
                 </div>
 
                 <div className={styles.buttonGroup}>

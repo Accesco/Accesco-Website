@@ -48,10 +48,10 @@ export function validateWaitlistEntry(data) {
 
 /**
  * Save a waitlist signup to Firestore.
- * WARNING: This client-side write cannot be rate-limited. 
+ * WARNING: This client-side write cannot be rate-limited.
  * Move this to the backend /api/waitlist route for actual security.
- * 
- * @param {{ name?: string; email: string; phone: string; emailVerified?: boolean }} data
+ *
+ * @param {{ name?: string; email: string; phone: string }} data
  * @returns {Promise<string>} New document id
  * @throws {Error} if validation fails
  */
@@ -69,8 +69,6 @@ export async function addWaitlistEntry(data) {
     name,
     email,
     phone: data.phone.trim(),
-    phoneVerified: true,           // Phone OTP is mandatory before saving
-    emailVerified: !!data.emailVerified, // Email OTP is optional
     createdAt: serverTimestamp(),
   });
 
@@ -100,7 +98,7 @@ export async function sendOtpEmailVerification(email) {
   });
 
   const payload = await parseJsonResponse(response);
-  
+
   // Explicitly catch rate limits (429) and bubble the specific error to the UI
   if (!response.ok) {
     if (response.status === 429) {
@@ -125,7 +123,7 @@ export async function verifyOtpEmailCode(email, otp) {
   });
 
   const payload = await parseJsonResponse(response);
-  
+
   // Explicitly catch rate limits (429) and bubble the specific error to the UI
   if (!response.ok) {
     if (response.status === 429) {
