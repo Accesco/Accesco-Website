@@ -331,7 +331,13 @@ export default function App() {
               <p className={styles.storiesSubtitle} id="stories-panel-subtitle">
                 Get a behind-the-scenes look at how your favorite dishes are curated, cooked, and packed perfectly.
               </p>
-              <button className={styles.storiesBtn} onClick={scrollStories} id="stories-watch-all-btn">Watch All</button>
+              <Link
+  href="/services/swadisht/food-stories"
+  className={styles.storiesBtn}
+  id="stories-watch-all-btn"
+>
+  Watch All
+</Link>
             </div>
             
             <div className={styles.storiesRight} id="stories-right-panel">
