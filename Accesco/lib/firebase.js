@@ -38,10 +38,4 @@ if (typeof window !== 'undefined') {
 export const db      = getFirestore(app);
 export const storage = getStorage(app);
 export const auth    = getAuth(app);
-
-// Skip Firebase's reCAPTCHA app-verification challenge for phone OTP. The SDK
-// still requires an ApplicationVerifier to be passed to signInWithPhoneNumber,
-// but with this flag set it resolves immediately without rendering a widget.
-auth.settings.appVerificationDisabledForTesting = true;
-
 export default app;
