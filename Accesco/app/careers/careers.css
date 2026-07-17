@@ -306,22 +306,31 @@
 }
 
 .careers-illustration-canvas {
-  position: relative;
-  width: 620px;
-  max-width: none;
-  height: auto;
-  overflow: visible;
-  border-radius: 0;
-  z-index: 2;
-  transform: translateX(-65px);
+  position: relative !important;
+  width: min(100%, 420px) !important;
+  height: auto !important;
+  padding: 0 !important;
+  margin: 0 auto !important;
+  overflow: visible !important;
+
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  transform: none !important;
 }
 
 .careers-hero-image {
-  width: 620px;
-  max-width: none;
-  height: auto;
-  display: block;
-  object-fit: contain;
+  display: block !important;
+  width: 100% !important;
+  height: auto !important;
+  object-fit: contain !important;
+
+  border: none !important;
+  border-radius: 24px !important;
+  box-shadow:
+    0 24px 55px rgba(75, 5, 40, 0.16),
+    0 7px 18px rgba(75, 5, 40, 0.08) !important;
 }
 
 /* Decorative plant on the far right */
@@ -1510,11 +1519,18 @@
   }
 
   .careers-hero-illustration-wrapper {
-    width: 100%;
-    min-height: 0;
-    height: auto;
-    display: block;
-  }
+  position: relative !important;
+  width: 100% !important;
+  min-height: 560px !important;
+  padding: 0 18px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  box-sizing: border-box !important;
+  isolation: isolate;
+}
+
 
   .careers-hero-cream-bg {
     width: 92%;
@@ -2048,5 +2064,405 @@
   .careers-hiring-title,
   .careers-faq-title {
     font-size: 1.65rem;
+  }
+}
+
+/* ===== CAREERS HERO POSTER IMPROVEMENT ===== */
+
+.careers-hero-illustration-wrapper {
+  position: relative !important;
+  width: 100% !important;
+  min-height: 580px !important;
+  padding: 24px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  box-sizing: border-box !important;
+  isolation: isolate;
+}
+
+/* Soft maroon glow instead of the large cream rectangle */
+.careers-hero-illustration-wrapper::before {
+  content: "";
+  position: absolute;
+  width: 430px;
+  height: 430px;
+  border-radius: 50%;
+  background: rgba(122, 0, 66, 0.09);
+  filter: blur(55px);
+  z-index: -1;
+  pointer-events: none;
+}
+
+.careers-hero-cream-bg {
+  display: none !important;
+}
+
+.careers-illustration-canvas {
+  position: relative !important;
+  width: min(100%, 460px) !important;
+  height: auto !important;
+  padding: 10px !important;
+  overflow: hidden !important;
+  border: 1px solid rgba(122, 0, 66, 0.12) !important;
+  border-radius: 28px !important;
+  background: #ffffff !important;
+  box-shadow:
+    0 28px 65px rgba(51, 0, 27, 0.16),
+    0 8px 22px rgba(51, 0, 27, 0.09) !important;
+  box-sizing: border-box !important;
+  transform: none !important;
+}
+
+.careers-hero-image {
+  display: block !important;
+  width: 100% !important;
+  height: auto !important;
+  object-fit: contain !important;
+  border-radius: 20px !important;
+}
+
+/* Tablet */
+@media (max-width: 900px) {
+  .careers-hero-illustration-wrapper {
+    min-height: auto !important;
+    padding: 24px 0 0 !important;
+  }
+
+  .careers-illustration-canvas {
+    width: min(100%, 390px) !important;
+  }
+}
+
+/* Mobile */
+@media (max-width: 600px) {
+  .careers-hero-illustration-wrapper {
+    padding-top: 18px !important;
+  }
+
+  .careers-hero-illustration-wrapper::before {
+    width: 280px;
+    height: 280px;
+  }
+
+  .careers-illustration-canvas {
+    width: min(100%, 310px) !important;
+    padding: 7px !important;
+    border-radius: 21px !important;
+  }
+
+  .careers-hero-image {
+    border-radius: 15px !important;
+  }
+}
+
+/* ===== FINAL CAREERS HERO POSTER ===== */
+
+.careers-hero-cream-bg {
+  display: none !important;
+}
+
+/* Remove every surrounding box, border and background */
+.careers-hero-illustration-wrapper,
+.careers-illustration-canvas {
+  background: transparent !important;
+  border: 0 !important;
+  outline: 0 !important;
+  padding: 0 !important;
+  box-shadow: none !important;
+}
+
+/* Remove decorative layers that may create the white frame */
+.careers-hero-illustration-wrapper::before,
+.careers-hero-illustration-wrapper::after,
+.careers-illustration-canvas::before,
+.careers-illustration-canvas::after {
+  content: none !important;
+  display: none !important;
+}
+
+.careers-hero-illustration-wrapper {
+  position: relative !important;
+  width: 100% !important;
+  min-height: 520px !important;
+  margin: 0 !important;
+
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  overflow: visible !important;
+  border-radius: 0 !important;
+}
+
+/* Slightly smaller and wider presentation */
+.careers-illustration-canvas {
+  position: relative !important;
+  width: 390px !important;
+  max-width: calc(100vw - 48px) !important;
+  aspect-ratio: 0.84 !important;
+
+  margin: 0 auto !important;
+  overflow: hidden !important;
+  border-radius: 20px !important;
+
+  box-shadow:
+    0 22px 48px rgba(72, 8, 39, 0.15),
+    0 6px 16px rgba(72, 8, 39, 0.08) !important;
+
+  transform: none !important;
+}
+
+.careers-hero-image {
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+
+  margin: 0 !important;
+  padding: 0 !important;
+
+  object-fit: cover !important;
+  object-position: center !important;
+
+  background: transparent !important;
+  border: 0 !important;
+  outline: 0 !important;
+  border-radius: 20px !important;
+  box-shadow: none !important;
+}
+
+/* Tablet */
+@media (max-width: 900px) {
+  .careers-hero-illustration-wrapper {
+    min-height: auto !important;
+    padding-top: 22px !important;
+  }
+
+  .careers-illustration-canvas {
+    width: 340px !important;
+  }
+}
+
+/* Mobile */
+@media (max-width: 600px) {
+  .careers-illustration-canvas {
+    width: 280px !important;
+    max-width: calc(100vw - 36px) !important;
+    border-radius: 16px !important;
+  }
+
+  .careers-hero-image {
+    border-radius: 16px !important;
+  }
+}
+
+/* ===== FINAL CAREERS HERO POSTER ===== */
+
+.careers-hero-cream-bg {
+  display: none !important;
+}
+
+/* Remove every surrounding box, border and background */
+.careers-hero-illustration-wrapper,
+.careers-illustration-canvas {
+  background: transparent !important;
+  border: 0 !important;
+  outline: 0 !important;
+  padding: 0 !important;
+  box-shadow: none !important;
+}
+
+/* Remove decorative layers that may create the white frame */
+.careers-hero-illustration-wrapper::before,
+.careers-hero-illustration-wrapper::after,
+.careers-illustration-canvas::before,
+.careers-illustration-canvas::after {
+  content: none !important;
+  display: none !important;
+}
+
+.careers-hero-illustration-wrapper {
+  position: relative !important;
+  width: 100% !important;
+  min-height: 520px !important;
+  margin: 0 !important;
+
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  overflow: visible !important;
+  border-radius: 0 !important;
+}
+
+/* Slightly smaller and wider presentation */
+.careers-illustration-canvas {
+  position: relative !important;
+  width: 390px !important;
+  max-width: calc(100vw - 48px) !important;
+  aspect-ratio: 0.84 !important;
+
+  margin: 0 auto !important;
+  overflow: hidden !important;
+  border-radius: 20px !important;
+
+  box-shadow:
+    0 22px 48px rgba(72, 8, 39, 0.15),
+    0 6px 16px rgba(72, 8, 39, 0.08) !important;
+
+  transform: none !important;
+}
+
+.careers-hero-image {
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+
+  margin: 0 !important;
+  padding: 0 !important;
+
+  object-fit: cover !important;
+  object-position: center !important;
+
+  background: transparent !important;
+  border: 0 !important;
+  outline: 0 !important;
+  border-radius: 20px !important;
+  box-shadow: none !important;
+}
+
+/* Tablet */
+@media (max-width: 900px) {
+  .careers-hero-illustration-wrapper {
+    min-height: auto !important;
+    padding-top: 22px !important;
+  }
+
+  .careers-illustration-canvas {
+    width: 340px !important;
+  }
+}
+
+/* Mobile */
+@media (max-width: 600px) {
+  .careers-illustration-canvas {
+    width: 280px !important;
+    max-width: calc(100vw - 36px) !important;
+    border-radius: 16px !important;
+  }
+
+  .careers-hero-image {
+    border-radius: 16px !important;
+  }
+}
+
+/* ===== CAREERS FAQ IMAGE ===== */
+
+.careers-faq-image-panel {
+  position: relative !important;
+  width: min(100%, 460px) !important;
+  height: auto !important;
+  min-height: 0 !important;
+  aspect-ratio: 1080 / 1100 !important;
+
+  margin: 0 auto !important;
+  padding: 0 !important;
+
+  overflow: hidden !important;
+  border: none !important;
+  border-radius: 26px !important;
+  background: #8f004b !important;
+
+  box-shadow:
+    0 20px 45px rgba(86, 0, 44, 0.14),
+    0 6px 16px rgba(86, 0, 44, 0.08) !important;
+}
+
+.careers-faq-image-panel::before,
+.careers-faq-image-panel::after {
+  content: none !important;
+  display: none !important;
+}
+
+.careers-faq-image {
+  width: 100% !important;
+  height: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+
+  object-fit: cover !important;
+  object-position: center !important;
+
+  border: none !important;
+  border-radius: 26px !important;
+}
+
+/* Tablet */
+@media (max-width: 900px) {
+  .careers-faq-image-panel {
+    width: min(100%, 420px) !important;
+  }
+}
+
+/* Mobile */
+@media (max-width: 600px) {
+  .careers-faq-image-panel {
+    width: min(100%, 330px) !important;
+    border-radius: 20px !important;
+  }
+
+  .careers-faq-image {
+    border-radius: 20px !important;
+  }
+}
+
+/* Slightly wider and shorter hero poster — desktop only */
+@media (min-width: 901px) {
+  .careers-illustration-canvas {
+    width: 410px !important;
+    height: 456px !important;
+    aspect-ratio: auto !important;
+  }
+
+  .careers-hero-image {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: fill !important;
+    object-position: center !important;
+  }
+}
+
+@media (min-width: 901px) {
+  .careers-illustration-canvas {
+    width: 410px !important;
+    height: 440px !important;
+    aspect-ratio: auto !important;
+  }
+
+  .careers-hero-image {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: fill !important;
+    object-position: center !important;
+  }
+}
+.careers-illustration-canvas {
+  width: 410px !important;
+  height: 425px !important;
+  aspect-ratio: auto !important;
+}
+
+@media (min-width: 901px) {
+  .careers-illustration-canvas {
+    width: 350px !important;
+    height: 425px !important;
+    aspect-ratio: auto !important;
+  }
+
+  .careers-hero-image {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    object-position: center !important;
   }
 }
