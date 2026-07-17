@@ -7,7 +7,13 @@ import { products } from '@/lib/mockData';
 import styles from './virtual-tryon.module.css';
 
 export default function VirtualTryOnPage() {
-  const [isLoading, setIsLoading] = useState(true);
+  // ── Hydration guard ──────────────────────────────────────────────────────
+  // The page uses browser-only APIs (camera, canvas, blob URLs).
+  // Rendering null on the server and switching to client-only after mount
+  // prevents any SSR ↔ client mismatch and the Suspense hydration error.
+  const [mounted, setMounted] = useState(false);
+  const [isReady, setIsReady] = useState(false);
+
   const [isCameraActive, setIsCameraActive] = useState(false);
   const [isStartingCamera, setIsStartingCamera] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
@@ -90,15 +96,13 @@ export default function VirtualTryOnPage() {
   };
 
   useEffect(() => {
-    const loadPreview = async () => {
-      setIsLoading(true);
-      await new Promise(resolve => setTimeout(resolve, 600));
-      setIsLoading(false);
-    };
-
-    loadPreview();
+    setMounted(true);
+    const timer = setTimeout(() => {
+      setIsReady(true);
+    }, 600);
 
     return () => {
+      clearTimeout(timer);
       stopCamera();
     };
   }, []);
@@ -189,6 +193,34 @@ export default function VirtualTryOnPage() {
     stopCamera();
   };
 
+  // ── Helper: convert a data-URL (base64) to a Blob without re-fetching ──
+  const dataUrlToBlob = (dataUrl) => {
+    const [header, base64] = dataUrl.split(',');
+    const mime = header.match(/:(.*?);/)[1];
+    const binary = atob(base64);
+    const bytes = new Uint8Array(binary.length);
+    for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+    return new Blob([bytes], { type: mime });
+  };
+
+  // ── Helper: fetch an image URL to Blob, handling CORS gracefully ──
+  const fetchImageBlob = async (url) => {
+    // First try with CORS
+    try {
+      const res = await fetch(url, { mode: 'cors' });
+      if (res.ok) return await res.blob();
+    } catch { /* CORS blocked — fall through to no-cors */ }
+
+    // Fall back to no-cors (opaque response — read as blob)
+    try {
+      const res = await fetch(url, { mode: 'no-cors' });
+      const blob = await res.blob();
+      if (blob.size > 0) return blob;
+    } catch { /* still failed */ }
+
+    throw new Error(`Could not load image: ${url}. Check network or CORS settings.`);
+  };
+
   const handleGenerateMlTryOn = async () => {
     const personSrc = capturedImage || uploadedPreview;
     if (!personSrc) {
@@ -207,34 +239,62 @@ export default function VirtualTryOnPage() {
     try {
       const formData = new FormData();
 
-      // Convert captured snapshot or uploaded preview URL to blob
-      const resPerson = await fetch(personSrc);
-      const blobPerson = await resPerson.blob();
-      formData.append('person', blobPerson, 'person.jpg');
+      // ── Person image ──
+      // If it's a captured snapshot (data URL), convert directly — no network fetch needed.
+      // If it's an uploaded file, use the original File object from state directly.
+      let personBlob;
+      if (capturedImage) {
+        // canvas.toDataURL → base64 → Blob (no fetch)
+        personBlob = dataUrlToBlob(capturedImage);
+      } else if (uploadedImage) {
+        // The original File object — no fetch at all
+        personBlob = uploadedImage;
+      } else {
+        // Fallback: blob URL — try fetching it (same-origin, should always succeed)
+        const res = await fetch(uploadedPreview);
+        if (!res.ok) throw new Error('Could not read the uploaded photo.');
+        personBlob = await res.blob();
+      }
+      formData.append('person', personBlob, 'person.jpg');
 
-      // Fetch the product image and attach it
-      const resShirt = await fetch(selectedProduct.image);
-      const blobShirt = await resShirt.blob();
-      formData.append('shirt', blobShirt, 'shirt.jpg');
+      // ── Garment image ──
+      // Product images may be on external CDNs → use the CORS-aware helper.
+      let shirtBlob;
+      try {
+        shirtBlob = await fetchImageBlob(selectedProduct.image);
+      } catch (imgErr) {
+        throw new Error(`Could not load the product image: ${imgErr.message}`);
+      }
+      formData.append('shirt', shirtBlob, 'shirt.jpg');
 
+      // ── Call the server-side ML pipeline ──
       const response = await fetch('/services/instastyle/ai-tryon', {
         method: 'POST',
         body: formData,
       });
 
       if (!response.ok) {
-        let errMsg = 'ML pipeline try-on generation failed.';
+        let errMsg = 'Virtual try-on generation failed.';
         try {
           const errData = await response.json();
           errMsg = errData.error || errData.message || errMsg;
-        } catch {}
+        } catch { /* response body not JSON */ }
         throw new Error(errMsg);
       }
 
+      // ── Success — display the result ──
       const blobResult = await response.blob();
+      if (!blobResult || blobResult.size === 0) {
+        throw new Error('The model returned an empty result. Please try again.');
+      }
       setMlResultImage(URL.createObjectURL(blobResult));
+
     } catch (err) {
-      setMlError(err.message || 'Generation failed. Make sure the IDM-VTON model space is responding.');
+      console.error('[vto] generate error:', err);
+      setMlError(
+        err.message ||
+        'Generation failed. Make sure the IDM-VTON model space is responding and try again.'
+      );
     } finally {
       setIsGeneratingMl(false);
     }
@@ -262,7 +322,11 @@ export default function VirtualTryOnPage() {
     setSelectedProduct(product);
   };
 
-  if (isLoading) {
+  if (!mounted) {
+    return null;
+  }
+
+  if (!isReady) {
     return (
       <div className={styles.loadingContainer}>
         <div className={styles.loader}></div>
@@ -275,13 +339,13 @@ export default function VirtualTryOnPage() {
   return (
     <div className={styles.virtualTryOnPage}>
       <div className={styles.vtoContainer}>
-        
-        {/* LEFT PANEL - TITLE & FEATURES */}
+
+        {/* ── LEFT PANEL ─ title + info cards ── */}
         <div className={styles.leftPanel}>
           <span className={styles.subtitle}>Virtual Try-On</span>
           <h1 className={styles.heading}>Try Before You Buy</h1>
           <p className={styles.description}>
-            See how it looks on you with our ML-powered virtual try-on.
+            See how it looks on you with our AI-powered virtual try-on.
           </p>
 
           <div className={styles.statusCards}>
@@ -300,23 +364,23 @@ export default function VirtualTryOnPage() {
                 <Shield size={20} className={styles.goldIcon} />
               </div>
               <div className={styles.statusText}>
-                <strong>Secure & Private</strong>
+                <strong>Secure &amp; Private</strong>
                 <span>Your data is safe with us</span>
               </div>
             </div>
           </div>
         </div>
 
-        {/* CENTER PANEL - VIEWPORT */}
+        {/* ── CENTER PANEL ─ camera viewport ── */}
         <div className={styles.centerPanel}>
           <div className={styles.viewportWrapper}>
-            {/* Viewport Frame corners */}
+            {/* Corner markers */}
             <div className={`${styles.cornerMarker} ${styles.topLeft}`}></div>
             <div className={`${styles.cornerMarker} ${styles.topRight}`}></div>
             <div className={`${styles.cornerMarker} ${styles.bottomLeft}`}></div>
             <div className={`${styles.cornerMarker} ${styles.bottomRight}`}></div>
 
-            {/* ERROR DISPLAY */}
+            {/* Error */}
             {error && !isCameraActive && (
               <div className={styles.errorAlert}>
                 <AlertCircle size={24} />
@@ -325,7 +389,7 @@ export default function VirtualTryOnPage() {
               </div>
             )}
 
-            {/* ML ERROR DISPLAY */}
+            {/* ML Error */}
             {mlError && (
               <div className={styles.errorAlert}>
                 <AlertCircle size={24} />
@@ -334,7 +398,7 @@ export default function VirtualTryOnPage() {
               </div>
             )}
 
-            {/* VIEWPORT LOADER */}
+            {/* Generating loader */}
             {isGeneratingMl && (
               <div className={styles.viewportLoader}>
                 <h3>Running Virtual Try-On</h3>
@@ -342,7 +406,7 @@ export default function VirtualTryOnPage() {
               </div>
             )}
 
-            {/* 1. STATE: INITIAL PLACEHOLDER (NO CAMERA, NO PHOTO) */}
+            {/* STATE 1 — placeholder */}
             {!isCameraActive && !capturedImage && !uploadedPreview && !mlResultImage && !isGeneratingMl && (
               <div className={styles.viewportPlaceholder}>
                 <div className={styles.placeholderIconWrap}>
@@ -350,44 +414,34 @@ export default function VirtualTryOnPage() {
                 </div>
                 <h2>Camera feed will appear here</h2>
                 <p>Allow camera permissions or upload a high-quality selfie</p>
-                
+
                 <div className={styles.placeholderActions}>
                   <button onClick={startCamera} className={styles.startCameraBtn} disabled={isStartingCamera}>
                     <Camera size={18} />
                     {isStartingCamera ? 'Starting...' : 'Start Camera'}
                   </button>
 
-                  <button 
-                    onClick={() => fileInputRef.current?.click()} 
-                    className={styles.uploadPhotoBtn}
-                  >
+                  <button onClick={() => fileInputRef.current?.click()} className={styles.uploadPhotoBtn}>
                     <Upload size={18} />
                     Upload Photo
                   </button>
-                  <input 
-                    type="file" 
-                    ref={fileInputRef} 
-                    onChange={handleImageUpload} 
-                    accept="image/*" 
-                    style={{ display: 'none' }} 
+                  <input
+                    type="file"
+                    ref={fileInputRef}
+                    onChange={handleImageUpload}
+                    accept="image/*"
+                    style={{ display: 'none' }}
                   />
                 </div>
               </div>
             )}
 
-            {/* 2. STATE: LIVE CAMERA FEED ACTIVE */}
+            {/* STATE 2 — live camera */}
             {isCameraActive && !capturedImage && !uploadedPreview && !mlResultImage && !isGeneratingMl && (
               <div className={styles.videoWrapper}>
-                <video
-                  ref={videoRef}
-                  autoPlay
-                  playsInline
-                  muted
-                  className={styles.video}
-                />
+                <video ref={videoRef} autoPlay playsInline muted className={styles.video} />
                 <canvas ref={canvasRef} style={{ display: 'none' }} />
 
-                {/* Live Feed Header Details */}
                 <div className={styles.videoHeaderDetails}>
                   {selectedProduct && (
                     <div className={styles.selectedProductBanner}>
@@ -397,16 +451,13 @@ export default function VirtualTryOnPage() {
                   )}
                 </div>
 
-                {/* Live Camera Bottom Actions */}
                 <div className={styles.cameraActionControls}>
-                  <button onClick={stopCamera} className={styles.controlPillBtn}>
-                    Cancel
-                  </button>
-                  <button 
-                    onClick={capturePhoto} 
+                  <button onClick={stopCamera} className={styles.controlPillBtn}>Cancel</button>
+                  <button
+                    onClick={capturePhoto}
                     className={styles.snapBtn}
                     disabled={!selectedProduct}
-                    title={selectedProduct ? "Take snapshot" : "Select a product first"}
+                    title={selectedProduct ? 'Take snapshot' : 'Select a product first'}
                   >
                     <div className={styles.snapInner}></div>
                   </button>
@@ -417,16 +468,11 @@ export default function VirtualTryOnPage() {
               </div>
             )}
 
-            {/* 3. STATE: PHOTO CAPTURED OR UPLOADED (READY FOR ML GENERATION) */}
+            {/* STATE 3 — captured / uploaded preview */}
             {(capturedImage || uploadedPreview) && !mlResultImage && !isGeneratingMl && (
               <div className={styles.previewImageWrapper}>
-                <img 
-                  src={capturedImage || uploadedPreview} 
-                  alt="User Preview" 
-                  className={styles.previewImage} 
-                />
+                <img src={capturedImage || uploadedPreview} alt="User Preview" className={styles.previewImage} />
 
-                {/* Selected product banner */}
                 {selectedProduct && (
                   <div className={styles.previewProductOverlay}>
                     <Sparkles size={16} className={styles.sparkleIcon} />
@@ -434,18 +480,12 @@ export default function VirtualTryOnPage() {
                   </div>
                 )}
 
-                {/* Preview controls */}
                 <div className={styles.previewControls}>
                   <button onClick={handleRetake} className={styles.actionBtnSecondary}>
                     <RefreshCw size={16} />
                     Retake / Change Photo
                   </button>
-
-                  <button 
-                    onClick={handleGenerateMlTryOn} 
-                    className={styles.actionBtnPrimary}
-                    disabled={!selectedProduct}
-                  >
+                  <button onClick={handleGenerateMlTryOn} className={styles.actionBtnPrimary} disabled={!selectedProduct}>
                     <Sparkles size={16} />
                     Generate Try-On
                   </button>
@@ -453,15 +493,11 @@ export default function VirtualTryOnPage() {
               </div>
             )}
 
-            {/* 4. STATE: ML TRY-ON GENERATED OUTPUT */}
+            {/* STATE 4 — ML result */}
             {mlResultImage && !isGeneratingMl && (
               <div className={styles.aiResultWrapper}>
-                <img 
-                  src={mlResultImage} 
-                  alt="ML Try-On Result" 
-                  className={styles.resultImage} 
-                />
-                
+                <img src={mlResultImage} alt="ML Try-On Result" className={styles.resultImage} />
+
                 <div className={styles.successBadge}>
                   <Check size={14} />
                   <span>Try-On Ready</span>
@@ -472,7 +508,6 @@ export default function VirtualTryOnPage() {
                     <RefreshCw size={16} />
                     Try Another
                   </button>
-                  
                   <button onClick={downloadImage} className={styles.actionBtnDownload}>
                     <Download size={16} />
                     Save Look
@@ -483,10 +518,10 @@ export default function VirtualTryOnPage() {
           </div>
         </div>
 
-        {/* RIGHT PANEL - PRODUCT SELECTION */}
+        {/* ── RIGHT PANEL ─ product selection ── */}
         <div className={styles.rightPanel}>
           <h2 className={styles.sidebarTitle}>Select Product to Try</h2>
-          
+
           <div className={styles.categoryFilters}>
             {productCategories.map((category) => (
               <button
@@ -503,9 +538,7 @@ export default function VirtualTryOnPage() {
             {filteredProducts.map((product) => (
               <div
                 key={product.id}
-                className={`${styles.productCardItem} ${
-                  selectedProduct?.id === product.id ? styles.selectedCard : ''
-                }`}
+                className={`${styles.productCardItem} ${selectedProduct?.id === product.id ? styles.selectedCard : ''}`}
                 onClick={() => selectProduct(product)}
               >
                 <div className={styles.productThumb}>
@@ -532,7 +565,7 @@ export default function VirtualTryOnPage() {
 
       </div>
 
-      {/* HOW TO USE HORIZONTAL STEPS */}
+      {/* HOW TO USE */}
       <div className={styles.howToUseSection}>
         <div className={styles.howToUseContainer}>
           <h2>How to Use</h2>
@@ -544,7 +577,6 @@ export default function VirtualTryOnPage() {
                 <p>Enable camera access when prompted</p>
               </div>
             </div>
-
             <div className={styles.stepItem}>
               <div className={styles.stepNum}>2</div>
               <div className={styles.stepContent}>
@@ -552,7 +584,6 @@ export default function VirtualTryOnPage() {
                 <p>Stand in a well-lit area and face the camera</p>
               </div>
             </div>
-
             <div className={styles.stepItem}>
               <div className={styles.stepNum}>3</div>
               <div className={styles.stepContent}>
@@ -560,7 +591,6 @@ export default function VirtualTryOnPage() {
                 <p>Choose an item from the list</p>
               </div>
             </div>
-
             <div className={styles.stepItem}>
               <div className={styles.stepNum}>4</div>
               <div className={styles.stepContent}>
@@ -568,11 +598,10 @@ export default function VirtualTryOnPage() {
                 <p>See how it looks on you instantly</p>
               </div>
             </div>
-
             <div className={styles.stepItem}>
               <div className={styles.stepNum}>5</div>
               <div className={styles.stepContent}>
-                <h3>Capture & Save</h3>
+                <h3>Capture &amp; Save</h3>
                 <p>Capture your look and save or share</p>
               </div>
             </div>
