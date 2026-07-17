@@ -7,7 +7,13 @@ import { products } from '@/lib/mockData';
 import styles from './virtual-tryon.module.css';
 
 export default function VirtualTryOnPage() {
-  const [isLoading, setIsLoading] = useState(true);
+  // ── Hydration guard ──────────────────────────────────────────────────────
+  // The page uses browser-only APIs (camera, canvas, blob URLs).
+  // Rendering null on the server and switching to client-only after mount
+  // prevents any SSR ↔ client mismatch and the Suspense hydration error.
+  const [mounted, setMounted] = useState(false);
+  const [isReady, setIsReady] = useState(false);
+
   const [isCameraActive, setIsCameraActive] = useState(false);
   const [isStartingCamera, setIsStartingCamera] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
@@ -90,15 +96,13 @@ export default function VirtualTryOnPage() {
   };
 
   useEffect(() => {
-    const loadPreview = async () => {
-      setIsLoading(true);
-      await new Promise(resolve => setTimeout(resolve, 600));
-      setIsLoading(false);
-    };
-
-    loadPreview();
+    setMounted(true);
+    const timer = setTimeout(() => {
+      setIsReady(true);
+    }, 600);
 
     return () => {
+      clearTimeout(timer);
       stopCamera();
     };
   }, []);
@@ -318,7 +322,11 @@ export default function VirtualTryOnPage() {
     setSelectedProduct(product);
   };
 
-  if (isLoading) {
+  if (!mounted) {
+    return null;
+  }
+
+  if (!isReady) {
     return (
       <div className={styles.loadingContainer}>
         <div className={styles.loader}></div>
