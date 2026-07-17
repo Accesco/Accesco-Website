@@ -85,3 +85,52 @@ export async function addWaitlistEntry(data) {
 
   return docRef.id;
 }
+
+/**
+ * Send an optional email verification OTP.
+ * @param {string} email
+ */
+export async function sendOtpEmailVerification(email) {
+  const response = await fetch('/api/send-otp', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email }),
+  });
+
+  const payload = await parseJsonResponse(response);
+
+  // Explicitly catch rate limits (429) and bubble the specific error to the UI
+  if (!response.ok) {
+    if (response.status === 429) {
+      throw new Error(payload?.error || 'Too many requests. Please wait before trying again.');
+    }
+    throw new Error(payload?.error || 'Failed to send email OTP');
+  }
+
+  return payload;
+}
+
+/**
+ * Verify an optional email OTP code.
+ * @param {string} email
+ * @param {string} otp
+ */
+export async function verifyOtpEmailCode(email, otp) {
+  const response = await fetch('/api/verify-otp', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, otp }),
+  });
+
+  const payload = await parseJsonResponse(response);
+
+  // Explicitly catch rate limits (429) and bubble the specific error to the UI
+  if (!response.ok) {
+    if (response.status === 429) {
+      throw new Error(payload?.error || 'Too many verification attempts. Please try again later.');
+    }
+    throw new Error(payload?.error || 'Email OTP verification failed');
+  }
+
+  return payload;
+}
