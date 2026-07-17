@@ -129,10 +129,7 @@ export default function AuthModal({
     setGoogleLoading(false)
     setPendingSocialUser(null)
 
-    if (recaptchaVerifierRef.current) {
-      recaptchaVerifierRef.current.clear()
-      recaptchaVerifierRef.current = null
-    }
+    clearRecaptcha()
   }
 
   const handleClose = () => {
@@ -206,6 +203,25 @@ export default function AuthModal({
     }
   }
 
+  // Firebase's verifier.clear() can leave the widget mounted in the DOM if the
+  // previous verifier never finished rendering (e.g. after a network error or
+  // a fast double-send), which then throws "reCAPTCHA has already been
+  // rendered in this element" on the next attempt. Force the container empty
+  // as well so every send starts from a clean slate.
+  const clearRecaptcha = () => {
+    if (recaptchaVerifierRef.current) {
+      try {
+        recaptchaVerifierRef.current.clear()
+      } catch (err) {
+        console.error('reCAPTCHA clear failed:', err)
+      }
+      recaptchaVerifierRef.current = null
+    }
+
+    const container = document.getElementById('am-recaptcha-container')
+    if (container) container.innerHTML = ''
+  }
+
   const sendPhoneOtp = async () => {
     // Prevent a second reCAPTCHA widget from being created while one is still loading
     if (loading) return
@@ -214,10 +230,7 @@ export default function AuthModal({
     setError('')
 
     try {
-      if (recaptchaVerifierRef.current) {
-        recaptchaVerifierRef.current.clear()
-        recaptchaVerifierRef.current = null
-      }
+      clearRecaptcha()
 
       const verifier = new RecaptchaVerifier(
         auth,
@@ -240,6 +253,8 @@ export default function AuthModal({
       setResendCooldown(45)
     } catch (err) {
       console.error('Phone OTP send failed:', err)
+      // Reset so the next attempt (retry/resend) doesn't inherit a half-rendered widget
+      clearRecaptcha()
 
       setError(
         err.message ||
