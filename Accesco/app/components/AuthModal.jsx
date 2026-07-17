@@ -543,17 +543,17 @@ export default function AuthModal({
     border:
       focused === field
         ? '1px solid #c50062'
-        : '1px solid #2d2d2d',
+        : '1px solid #d8d8d8',
 
     borderRadius: 5,
     outline: 'none',
 
     background:
       focused === field
-        ? '#242424'
-        : '#202020',
+        ? '#ffffff'
+        : '#f7f7f7',
 
-    color: '#ffffff',
+    color: '#1a1a1a',
 
     fontFamily: 'inherit',
     fontSize: 10,
@@ -1346,8 +1346,8 @@ closeButton: {
 
     overflowY: 'auto',
 
-    background: '#000000',
-    color: '#ffffff',
+    background: '#ffffff',
+    color: '#1a1a1a',
 
     scrollbarWidth: 'none',
   },
@@ -1364,7 +1364,7 @@ closeButton: {
   signupTitle: {
     margin: 0,
 
-    color: '#ffffff',
+    color: '#1a1a1a',
 
     fontSize: 25,
     lineHeight: 1.12,
@@ -1375,7 +1375,7 @@ closeButton: {
   signupSubtitle: {
     margin: '8px 0 0',
 
-    color: 'rgba(255,255,255,0.88)',
+    color: 'rgba(26,26,26,0.72)',
 
     fontSize: 10,
     lineHeight: 1.35,
@@ -1404,11 +1404,11 @@ socialButtonFull: {
 
   boxSizing: 'border-box',
 
-  border: '1px solid #2b2b2b',
+  border: '1px solid #d8d8d8',
   borderRadius: 5,
 
-  background: '#202020',
-  color: '#eeeeee',
+  background: '#ffffff',
+  color: '#1a1a1a',
 
   fontFamily: 'Arial, Helvetica, sans-serif',
   fontSize: 11,
@@ -1433,11 +1433,11 @@ socialButtonFull: {
   dividerLine: {
     height: 1,
 
-    background: '#292929',
+    background: '#e2e2e2',
   },
 
   dividerText: {
-    color: 'rgba(255,255,255,0.58)',
+    color: 'rgba(26,26,26,0.5)',
 
     fontSize: 7,
     lineHeight: 1,
@@ -1450,8 +1450,8 @@ socialButtonFull: {
     border: '1px solid rgba(197,0,98,0.3)',
     borderRadius: 4,
 
-    background: 'rgba(197,0,98,0.1)',
-    color: '#ff65a1',
+    background: 'rgba(197,0,98,0.08)',
+    color: '#c50062',
 
     fontSize: 9,
     lineHeight: 1.3,
@@ -1484,7 +1484,7 @@ socialButtonFull: {
   },
 
   label: {
-    color: 'rgba(255,255,255,0.92)',
+    color: 'rgba(26,26,26,0.85)',
 
     fontSize: 9,
     lineHeight: 1,
@@ -1492,7 +1492,7 @@ socialButtonFull: {
   },
 
   optional: {
-    color: 'rgba(255,255,255,0.56)',
+    color: 'rgba(26,26,26,0.45)',
 
     fontSize: 8,
     fontStyle: 'normal',
@@ -1550,7 +1550,7 @@ socialButtonFull: {
   verifyTitle: {
     margin: 0,
 
-    color: '#ffffff',
+    color: '#1a1a1a',
 
     fontSize: 26,
     lineHeight: 1.1,
@@ -1561,7 +1561,7 @@ socialButtonFull: {
   verifySubtitle: {
     margin: '13px 0 0',
 
-    color: 'rgba(255,255,255,0.58)',
+    color: 'rgba(26,26,26,0.6)',
 
     fontSize: 9,
     lineHeight: 1.4,
@@ -1603,8 +1603,8 @@ socialButtonFull: {
     border: '1px solid rgba(197,0,98,0.3)',
     borderRadius: 4,
 
-    background: 'rgba(197,0,98,0.1)',
-    color: '#ff65a1',
+    background: 'rgba(197,0,98,0.08)',
+    color: '#c50062',
 
     fontSize: 9,
     lineHeight: 1.3,
@@ -1635,11 +1635,11 @@ socialButtonFull: {
 
     boxSizing: 'border-box',
 
-    border: '1px solid #2c2c2c',
+    border: '1px solid #d8d8d8',
     borderRadius: 5,
 
-    background: '#202020',
-    color: '#ffffff',
+    background: '#f7f7f7',
+    color: '#1a1a1a',
 
     fontSize: 18,
     fontWeight: 600,
@@ -1692,7 +1692,7 @@ socialButtonFull: {
   },
 
   resendText: {
-    color: 'rgba(255,255,255,0.54)',
+    color: 'rgba(26,26,26,0.55)',
   },
 
   timerValue: {
@@ -1747,7 +1747,7 @@ socialButtonFull: {
   },
 
   bottomResendText: {
-    color: 'rgba(255,255,255,0.54)',
+    color: 'rgba(26,26,26,0.55)',
 
     fontSize: 9,
   },
@@ -1801,7 +1801,7 @@ socialButtonFull: {
   successTitle: {
     margin: '0 0 7px',
 
-    color: '#ffffff',
+    color: '#1a1a1a',
 
     fontSize: 25,
     fontWeight: 700,
@@ -1810,7 +1810,7 @@ socialButtonFull: {
   successText: {
     margin: 0,
 
-    color: 'rgba(255,255,255,0.66)',
+    color: 'rgba(26,26,26,0.68)',
 
     fontSize: 11,
   },
@@ -1818,7 +1818,7 @@ socialButtonFull: {
   successNote: {
     margin: 0,
 
-    color: '#4ade80',
+    color: '#16a34a',
 
     fontSize: 11,
     fontWeight: 650,
@@ -1827,7 +1827,7 @@ socialButtonFull: {
   mutedNote: {
     margin: 0,
 
-    color: 'rgba(255,255,255,0.5)',
+    color: 'rgba(26,26,26,0.5)',
 
     fontSize: 11,
   },
@@ -1836,11 +1836,11 @@ socialButtonFull: {
     width: '100%',
     height: 36,
 
-    border: '1px solid #333333',
+    border: '1px solid #d8d8d8',
     borderRadius: 5,
 
-    background: '#202020',
-    color: '#ffffff',
+    background: '#f7f7f7',
+    color: '#1a1a1a',
 
     fontSize: 10,
     fontWeight: 600,
@@ -1875,11 +1875,11 @@ socialButtonFull: {
   miniButtonMuted: {
     height: 35,
 
-    border: '1px solid #333333',
+    border: '1px solid #d8d8d8',
     borderRadius: 5,
 
-    background: '#202020',
-    color: 'rgba(255,255,255,0.7)',
+    background: '#f7f7f7',
+    color: 'rgba(26,26,26,0.7)',
 
     fontSize: 10,
     fontWeight: 600,
