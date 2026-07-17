@@ -2,7 +2,15 @@
  * Location Service - High-accuracy delivery location management
  * Uses Nominatim (OpenStreetMap) for street-level address details
  * Perfect for delivery apps requiring precise location information
+ *
+ * Delivery helpers (`getNearestVendor`, `getDistance`, `fetchRoute`,
+ * `calculateETA`) delegate to vendorEngine / routeEngine / etaEngine —
+ * no duplicated Haversine or OSRM logic.
  */
+
+import { calculateDistance as etaCalculateDistance, calculateETA as etaCalculateETA } from './etaEngine';
+import { fetchRoute as routeFetchRoute } from './routeEngine';
+import { getNearestVendor as vendorGetNearestVendor } from './vendorEngine';
 
 /**
  * Get the complete user location data from localStorage
@@ -179,33 +187,21 @@ export function validateDeliveryLocation() {
 
 /**
  * Get distance between user location and a point (in km)
- * Uses Haversine formula for approximation
+ * Uses etaEngine Haversine (no duplicated formula).
  * @param {number} lat2 - Target latitude
  * @param {number} lon2 - Target longitude
- * @returns {number} Distance in kilometers
+ * @returns {number|null} Distance in kilometers
  */
 export function getDistanceToPoint(lat2, lon2) {
   const location = getUserLocation();
   if (!location) return null;
-  
+
   const lat1 = location.latitude;
   const lon1 = location.longitude;
-  
-  const R = 6371; // Earth's radius in km
-  const dLat = ((lat2 - lat1) * Math.PI) / 180;
-  const dLon = ((lon2 - lon1) * Math.PI) / 180;
-  
-  const a =
-    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-    Math.cos((lat1 * Math.PI) / 180) *
-      Math.cos((lat2 * Math.PI) / 180) *
-      Math.sin(dLon / 2) *
-      Math.sin(dLon / 2);
-  
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  const distance = R * c;
-  
-  return Math.round(distance * 100) / 100; // Round to 2 decimals
+  if (!Number.isFinite(lat1) || !Number.isFinite(lon1)) return null;
+
+  const distance = etaCalculateDistance(lat1, lon1, lat2, lon2);
+  return Math.round(distance * 100) / 100;
 }
 
 /**
@@ -214,6 +210,57 @@ export function getDistanceToPoint(lat2, lon2) {
  */
 export async function getPersonCity() {
   return getDisplayAddress() || 'Bengaluru, Karnataka';
+}
+
+/**
+ * Great-circle distance between two coordinates (km).
+ * Delegates to `etaEngine.calculateDistance` — no duplicated Haversine.
+ *
+ * @param {number} lat1
+ * @param {number} lng1
+ * @param {number} lat2
+ * @param {number} lng2
+ * @returns {number}
+ */
+export function getDistance(lat1, lng1, lat2, lng2) {
+  return etaCalculateDistance(lat1, lng1, lat2, lng2);
+}
+
+/**
+ * Finds the nearest vendor to the given customer coordinates.
+ * Delegates to `vendorEngine` (swappable nearest-neighbor strategy).
+ *
+ * @param {{lat:number,lng:number}|[number,number]} customerCoordinates
+ * @param {object[]} vendors
+ * @param {object} [options]
+ * @returns {{ vendor: object|null, distance: number, travelTime: number }}
+ */
+export function getNearestVendor(customerCoordinates, vendors, options) {
+  return vendorGetNearestVendor(customerCoordinates, vendors, options);
+}
+
+/**
+ * Fetches a driving route via OSRM (`routeEngine`).
+ *
+ * @param {{lat:number,lng:number}|[number,number]} from
+ * @param {{lat:number,lng:number}|[number,number]} to
+ * @param {object} [options]
+ * @returns {Promise<{ coordinates: Array<[number,number]>, polyline: string, distance: number, duration: number }>}
+ */
+export async function fetchRoute(from, to, options) {
+  return routeFetchRoute(from, to, options);
+}
+
+/**
+ * Estimates travel ETA in minutes (`etaEngine`).
+ *
+ * @param {number} distanceKm
+ * @param {number} [speedKmh]
+ * @param {number} [trafficMultiplier]
+ * @returns {number}
+ */
+export function calculateETA(distanceKm, speedKmh, trafficMultiplier) {
+  return etaCalculateETA(distanceKm, speedKmh, trafficMultiplier);
 }
 
 const locationService = {
@@ -231,6 +278,10 @@ const locationService = {
   validateDeliveryLocation,
   getDistanceToPoint,
   getPersonCity,
+  getNearestVendor,
+  getDistance,
+  fetchRoute,
+  calculateETA,
 };
 
 export default locationService;

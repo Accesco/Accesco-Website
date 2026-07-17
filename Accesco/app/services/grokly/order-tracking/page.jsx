@@ -7,6 +7,7 @@ import styles from './tracking.module.css';
 import Link from 'next/link';
 import { mockRiderData } from '@/lib/mockRiderData';
 import { subscribeToRiderLocation, startRiderSimulation, computeRoutePosition, stepProgressTowards } from '@/lib/riderTrackingService';
+import { formatStatusLabel, updateTimeline } from '@/lib/trackingHelpers';
 
 // Track which orders already have a running simulation this session, so a
 // refresh / strict-mode double-mount doesn't spawn duplicate rider feeds.
@@ -179,6 +180,15 @@ function GroklyTrackingContent() {
   const roadPolylineRef = useRef(null);
   const [mapsLoaded, setMapsLoaded] = useState(false);
   const [mapResetKey, setMapResetKey] = useState(0);
+
+  // Live telemetry state for dynamic ETA, distance, status, and timeline updates
+  const [telemetry, setTelemetry] = useState(null);
+  const telemetryRef = useRef(null);
+  const lastCameraModeRef = useRef('');
+
+  useEffect(() => {
+    telemetryRef.current = telemetry;
+  }, [telemetry]);
 
   // Countdown timer effect
   useEffect(() => {
@@ -378,12 +388,10 @@ function GroklyTrackingContent() {
       opacity: 0.85,
     }).addTo(map);
 
-    // Start on the store; the rider-follow loop keeps the camera centered on the
-    // scooter. Users can zoom in/out freely — their chosen zoom is preserved.
     try {
-      map.setView(hubCoords, 15);
+      map.fitBounds(roadPolylineRef.current.getBounds(), { padding: [50, 50] });
     } catch (e) {
-      console.error('setView failed:', e);
+      console.error('fitBounds failed:', e);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [roadRoute, mapsLoaded]);
@@ -429,29 +437,77 @@ function GroklyTrackingContent() {
 
       const { lat, lng, heading, remaining } = computeRoutePosition(roadRoute, displayProgress);
 
+      const tele = telemetryRef.current;
+      const status = tele?.orderStatus || 'CONFIRMED';
+      const showBike = status !== 'CONFIRMED' && status !== 'PACKING';
+
       if (riderMarkerRef.current) {
-        riderMarkerRef.current.setLatLng([lat, lng]);
-        const el = riderMarkerRef.current.getElement();
-        const img = el && el.querySelector('.rider-scooter-img');
-        if (img) {
-          const facingRight = heading > 0 && heading < 180; // heading east = moving right
-          img.style.transform = facingRight ? 'scaleX(1)' : 'scaleX(-1)';
+        if (showBike) {
+          riderMarkerRef.current.setLatLng([lat, lng]);
+          riderMarkerRef.current.setOpacity(1);
+          
+          const el = riderMarkerRef.current.getElement();
+          const img = el && el.querySelector('.rider-scooter-img');
+          if (img) {
+            img.style.transform = `rotate(${heading}deg)`;
+          }
+        } else {
+          riderMarkerRef.current.setOpacity(0);
         }
       }
+
       // Trail consumption: only draw the route still ahead of the rider.
-      if (roadPolylineRef.current && remaining.length >= 2) {
-        roadPolylineRef.current.setLatLngs(remaining);
+      if (roadPolylineRef.current) {
+        if (showBike && remaining.length >= 2) {
+          roadPolylineRef.current.setLatLngs(remaining);
+        } else {
+          roadPolylineRef.current.setLatLngs(roadRoute);
+        }
       }
-      // Follow the rider like Google Maps driver tracking.
+
+      // Handle camera dynamically based on status
       const map = miniMapInstanceRef.current;
-      if (map) map.setView([lat, lng], map.getZoom(), { animate: false });
+      if (map) {
+        let currentMode = 'FIT_ROUTE';
+        if (status === 'CONFIRMED' || status === 'PACKING') {
+          currentMode = 'FIT_ROUTE';
+        } else if (status === 'PICKED_UP' || status === 'RIDER_ASSIGNED') {
+          currentMode = 'FOCUS_STORE';
+        } else if (status === 'OUT_FOR_DELIVERY') {
+          currentMode = 'FOLLOW_RIDER';
+        } else if (status === 'ARRIVING' || status === 'ARRIVING_SOON') {
+          currentMode = 'ZOOM_RIDER';
+        } else if (status === 'ARRIVED' || status === 'DELIVERED') {
+          currentMode = 'ZOOM_DESTINATION';
+        }
+
+        if (currentMode === 'FOLLOW_RIDER') {
+          map.setView([lat, lng], 16, { animate: false });
+        } else if (currentMode === 'ZOOM_RIDER') {
+          map.setView([lat, lng], 18, { animate: false });
+        } else if (lastCameraModeRef.current !== currentMode) {
+          if (currentMode === 'FIT_ROUTE' && roadPolylineRef.current) {
+            map.fitBounds(roadPolylineRef.current.getBounds(), { padding: [50, 50] });
+          } else if (currentMode === 'FOCUS_STORE') {
+            map.setView(hubCoords, 16, { animate: true });
+          } else if (currentMode === 'ZOOM_DESTINATION') {
+            map.setView(homeCoords, 18, { animate: true });
+          }
+        }
+        lastCameraModeRef.current = currentMode;
+      }
 
       raf = requestAnimationFrame(animate);
     };
     raf = requestAnimationFrame(animate);
 
     const unsubscribe = subscribeToRiderLocation(orderId, (data) => {
-      if (data && typeof data.progress === 'number') targetProgress = data.progress;
+      if (data) {
+        setTelemetry(data);
+        if (typeof data.progress === 'number') {
+          targetProgress = data.progress;
+        }
+      }
     });
 
     return () => {
@@ -477,6 +533,9 @@ function GroklyTrackingContent() {
 
   // Calculate dynamic progress bar percentage
   const getProgressPercentage = () => {
+    if (telemetry && typeof telemetry.overallProgress === 'number') {
+      return Math.round(telemetry.overallProgress * 100);
+    }
     switch (order.status) {
       case 'PLACED': return 20;
       case 'CONFIRMED': return 40;
@@ -499,7 +558,9 @@ function GroklyTrackingContent() {
           </div>
           <div className={styles.deliveredBadge}>
             <span className={styles.greenPulseDot}></span>
-            {order.status === 'DELIVERED' ? 'DELIVERED' : order.status.replace(/_/g, ' ')}
+            {telemetry?.orderStatus
+              ? formatStatusLabel(telemetry.orderStatus)
+              : (order.status === 'DELIVERED' ? 'DELIVERED' : order.status.replace(/_/g, ' '))}
           </div>
         </div>
 
@@ -522,9 +583,33 @@ function GroklyTrackingContent() {
           <div className={styles.riderMainInfo}>
             <span className={styles.arrivalHeading}>ESTIMATED ARRIVAL</span>
             <div className={styles.etaDisplay}>
-              {eta} <span className={styles.etaMinLabel}>min</span>
+              {telemetry?.orderStatus === 'DELIVERED' ? (
+                'Delivered'
+              ) : telemetry?.orderStatus === 'ARRIVED' ? (
+                'Arrived'
+              ) : telemetry?.orderStatus === 'ARRIVING' ? (
+                'Arriving'
+              ) : (
+                <>
+                  {telemetry?.remainingETA ?? eta} <span className={styles.etaMinLabel}>min</span>
+                </>
+              )}
             </div>
-            <p className={styles.arrivalSubtext}>2.3 km away • Live tracking</p>
+            <p className={styles.arrivalSubtext}>
+              {telemetry?.remainingDistance !== undefined ? (
+                telemetry.orderStatus === 'DELIVERED' ? (
+                  'Delivered'
+                ) : telemetry.orderStatus === 'ARRIVED' ? (
+                  'Arrived'
+                ) : telemetry.remainingDistance >= 1.0 ? (
+                  `${telemetry.remainingDistance.toFixed(1)} km away`
+                ) : (
+                  `${Math.round(telemetry.remainingDistance * 1000)} m away`
+                )
+              ) : (
+                '2.3 km away'
+              )} • Live tracking
+            </p>
             <div className={styles.vehiclePill}>
               <BikeIcon className={styles.vehiclePillIcon} />
               <span>{mockRiderData.rider.vehicleNumber}</span>
@@ -591,7 +676,9 @@ function GroklyTrackingContent() {
         <div className={styles.mapLabelRow}>
           <div>
             <span className={styles.smallSectionLabel}>LIVE TRACKING</span>
-            <h2 className={styles.mapStatusHeading}>Packing your order</h2>
+            <h2 className={styles.mapStatusHeading}>
+              {telemetry?.orderStatus ? formatStatusLabel(telemetry.orderStatus) : 'Packing your order'}
+            </h2>
           </div>
           <span className={styles.mapLiveIndicator}>
             <span className={styles.greenPulseDotMini}></span>
@@ -705,72 +792,58 @@ function GroklyTrackingContent() {
         {activeTab === 'delivery' ? (
           /* "Delivery Status" Tab Contents (Matching input_file_9.png exactly) */
           <div className={styles.progressContainer}>
-            
-            <div className={`${styles.progressStep} ${order.status !== 'PLACED' ? styles.progressStepCompleted : styles.progressStepPending}`}>
-              <div className={styles.progressBullet}>
-                <CheckIcon className={styles.timelineCheckSvg} />
-              </div>
-              <div className={styles.progressContent}>
-                <div className={styles.stepTitleRow}>
-                  <p className={styles.progressTitle}>Order Confirmed</p>
-                  <span className={styles.stepTime}>10:30 AM</span>
-                </div>
-                <p className={styles.progressDesc}>Received & confirmed by merchant store.</p>
-              </div>
-            </div>
+            {updateTimeline(telemetry?.overallProgress ?? 0).map((step) => {
+              const isCompleted = step.state === 'completed';
+              const isActive = step.state === 'active';
+              
+              let stepTime = '';
+              if (step.key === 'CONFIRMED') stepTime = '10:30 AM';
+              else if (step.key === 'PACKING') stepTime = '10:32 AM';
+              else if (step.key === 'PICKED_UP') stepTime = '10:45 AM';
+              else if (step.key === 'OUT_FOR_DELIVERY') stepTime = '10:52 AM';
+              else if (step.key === 'ARRIVING') {
+                stepTime = telemetry?.remainingETA > 0 ? `In ~${telemetry.remainingETA} min` : 'Arriving';
+              } else if (step.key === 'ARRIVED') {
+                stepTime = 'Arrived';
+              } else if (step.key === 'DELIVERED') {
+                stepTime = 'Delivered';
+              }
 
-            <div className={`${styles.progressStep} ${order.status !== 'PLACED' && order.status !== 'CONFIRMED' ? styles.progressStepCompleted : styles.progressStepPending}`}>
-              <div className={styles.progressBullet}>
-                <CheckIcon className={styles.timelineCheckSvg} />
-              </div>
-              <div className={styles.progressContent}>
-                <div className={styles.stepTitleRow}>
-                  <p className={styles.progressTitle}>Rider Assigned</p>
-                  <span className={styles.stepTime}>10:32 AM</span>
+              return (
+                <div 
+                  key={step.key} 
+                  className={`${styles.progressStep} ${
+                    isCompleted ? styles.progressStepCompleted : (isActive ? styles.progressStepActive : styles.progressStepPending)
+                  }`}
+                >
+                  {isActive ? (
+                    <div className={styles.progressBulletActive}>
+                      <span className={styles.activePulsingCenterDot}></span>
+                    </div>
+                  ) : (
+                    <div className={styles.progressBullet}>
+                      {isCompleted ? <CheckIcon className={styles.timelineCheckSvg} /> : null}
+                    </div>
+                  )}
+                  <div className={styles.progressContent}>
+                    <div className={styles.stepTitleRow}>
+                      <p 
+                        className={styles.progressTitle} 
+                        style={isActive && step.key === 'ARRIVING' ? { color: '#0c831f' } : undefined}
+                      >
+                        {step.label}
+                      </p>
+                      {stepTime && (
+                        <span className={step.key === 'ARRIVING' && isActive ? styles.arrivingLabelTag : styles.stepTime}>
+                          {stepTime}
+                        </span>
+                      )}
+                    </div>
+                    <p className={styles.progressDesc}>{step.desc}</p>
+                  </div>
                 </div>
-                <p className={styles.progressDesc}>{mockRiderData.rider.name} accepted your delivery request.</p>
-              </div>
-            </div>
-
-            <div className={`${styles.progressStep} ${order.status !== 'PLACED' && order.status !== 'CONFIRMED' && order.status !== 'PACKING' ? styles.progressStepCompleted : styles.progressStepPending}`}>
-              <div className={styles.progressBullet}>
-                <CheckIcon className={styles.timelineCheckSvg} />
-              </div>
-              <div className={styles.progressContent}>
-                <div className={styles.stepTitleRow}>
-                  <p className={styles.progressTitle}>Picked Up</p>
-                  <span className={styles.stepTime}>10:45 AM</span>
-                </div>
-                <p className={styles.progressDesc}>Package inspected & verified at Whitefield hub.</p>
-              </div>
-            </div>
-
-            <div className={`${styles.progressStep} ${order.status === 'OUT_FOR_DELIVERY' ? styles.progressStepActive : order.status === 'DELIVERED' ? styles.progressStepCompleted : styles.progressStepPending}`}>
-              <div className={styles.progressBullet}>
-                <CheckIcon className={styles.timelineCheckSvg} />
-              </div>
-              <div className={styles.progressContent}>
-                <div className={styles.stepTitleRow}>
-                  <p className={styles.progressTitle}>Out for Delivery</p>
-                  <span className={styles.stepTime}>10:52 AM</span>
-                </div>
-                <p className={styles.progressDesc}>Rider checked-out and navigating on-route.</p>
-              </div>
-            </div>
-
-            <div className={`${styles.progressStep} ${order.status === 'DELIVERED' ? styles.progressStepCompleted : styles.progressStepActive}`}>
-              <div className={styles.progressBulletActive}>
-                <span className={styles.activePulsingCenterDot}></span>
-              </div>
-              <div className={styles.progressContent}>
-                <div className={styles.stepTitleRow}>
-                  <p className={styles.progressTitle} style={{ color: '#0c831f' }}>Arriving Soon</p>
-                  <span className={styles.arrivingLabelTag}>In ~{eta} min</span>
-                </div>
-                <p className={styles.progressDesc}>Rider is on the way — will hand over at your door.</p>
-              </div>
-            </div>
-
+              );
+            })}
           </div>
         ) : (
           /* "Order Summary" Tab Contents (Matching input_file_10.png exactly) */

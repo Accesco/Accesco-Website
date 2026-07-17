@@ -1,109 +1,70 @@
-"use client";
+'use client';
 
-import React, { useEffect, useRef, useState } from "react";
-import {
-  RecaptchaVerifier,
-  signInWithPhoneNumber,
-  signOut,
-} from "firebase/auth";
-import {
-  ShoppingCart,
-  Utensils,
-  Shirt,
+import React, { useEffect, useRef, useState } from 'react';
+import { RecaptchaVerifier, signInWithPhoneNumber, signOut } from 'firebase/auth';
+import { 
+  ShoppingCart, 
+  Utensils, 
+  Shirt, 
   GlassWater,
   ArrowRight,
   ArrowLeft,
   Check,
-  ShieldCheck,
-} from "lucide-react";
-import styles from "./AppShowcase.module.css";
-import { auth } from "../lib/firebase";
+  ShieldCheck
+} from 'lucide-react';
+import styles from './AppShowcase.module.css';
+import { auth } from '../lib/firebase';
 import {
   addWaitlistEntry,
   validateWaitlistEntry,
   sendOtpEmailVerification,
   verifyOtpEmailCode,
-} from "../lib/waitlistService";
+} from '../lib/waitlistService';
 
 export default function AppShowcase() {
   const [currentStep, setCurrentStep] = useState(1);
   const [form, setForm] = useState({
-    name: "",
-    email: "",
-    phone: "",
+    name: '',
+    email: '',
+    phone: '',
     interests: [],
-    verificationCode: "",
+    verificationCode: '',
   });
 
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
   const [phoneCodeSent, setPhoneCodeSent] = useState(false);
   const [phoneVerified, setPhoneVerified] = useState(false);
   const [confirmationResult, setConfirmationResult] = useState(null);
   const recaptchaVerifierRef = useRef(null);
-  const [feedbackScore, setFeedbackScore] = useState(null);
-  const [feedbackReview, setFeedbackReview] = useState("");
-  const [feedbackSubmitted, setFeedbackSubmitted] = useState(false);
-
-  const handleFeedbackSubmit = async () => {
-    if (feedbackScore === null) return;
-
-    const feedbackData = {
-      user: form.name?.trim() || "User",
-      score: feedbackScore,
-      review: feedbackReview.trim(),
-    };
-
-    try {
-      const res = await fetch("/api/feedback", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(feedbackData),
-      });
-      if (!res.ok) {
-        const data = await res.json().catch(() => ({}));
-        throw new Error(data.error || "Failed to submit feedback");
-      }
-      setFeedbackSubmitted(true);
-    } catch (err) {
-      console.error("Feedback submit failed:", err);
-      // Still show success to the user — feedback UX shouldn't block on a
-      // backend hiccup, but the failure is logged for debugging.
-      setFeedbackSubmitted(true);
-    }
-  };
 
   // Optional email verification state
-  const [emailCode, setEmailCode] = useState("");
+  const [emailCode, setEmailCode] = useState('');
   const [emailCodeSent, setEmailCodeSent] = useState(false);
   const [emailVerified, setEmailVerified] = useState(false);
   const [emailLoading, setEmailLoading] = useState(false);
 
   const interestOptions = [
-    {
-      id: "grokly",
-      label: "Groceries & Essentials",
-      icon: <ShoppingCart size={22} />,
-    },
-    { id: "swadishtt", label: "Food Delivery", icon: <Utensils size={22} /> },
-    { id: "instastyle", label: "Fashion & Styling", icon: <Shirt size={22} /> },
-    { id: "dinex", label: "Dining Experience", icon: <GlassWater size={22} /> },
+    { id: 'grokly', label: 'Groceries & Essentials', icon: <ShoppingCart size={22} /> },
+    { id: 'swadishtt', label: 'Food Delivery', icon: <Utensils size={22} /> },
+    { id: 'instastyle', label: 'Fashion & Styling', icon: <Shirt size={22} /> },
+    { id: 'dinex', label: 'Dining Experience', icon: <GlassWater size={22} /> },
   ];
 
   const toggleInterest = (id) => {
-    setForm((prev) => ({
+    setForm(prev => ({
       ...prev,
       interests: prev.interests.includes(id)
-        ? prev.interests.filter((i) => i !== id)
-        : [...prev.interests, id],
+        ? prev.interests.filter(i => i !== id)
+        : [...prev.interests, id]
     }));
   };
 
   function normalizePhone(phone) {
-    const stripped = phone.replace(/[\s\-().]/g, "");
-    if (stripped.startsWith("+")) return stripped;
-    return "+91" + stripped.replace(/\D/g, "");
+    const stripped = phone.replace(/[\s\-().]/g, '');
+    if (stripped.startsWith('+')) return stripped;
+    return '+91' + stripped.replace(/\D/g, '');
   }
 
   // Create + render the invisible reCAPTCHA once and reuse it (Firebase's recommended
@@ -111,23 +72,17 @@ export default function AppShowcase() {
   // user sends an OTP, so the send itself is much faster.
   const ensureRecaptcha = () => {
     if (!recaptchaVerifierRef.current) {
-      recaptchaVerifierRef.current = new RecaptchaVerifier(
-        auth,
-        "recaptcha-container",
-        {
-          size: "invisible",
-        },
-      );
-      recaptchaVerifierRef.current
-        .render()
-        .catch((e) => console.error("reCAPTCHA render failed:", e));
+      recaptchaVerifierRef.current = new RecaptchaVerifier(auth, 'recaptcha-container', {
+        size: 'invisible',
+      });
+      recaptchaVerifierRef.current.render().catch((e) => console.error('reCAPTCHA render failed:', e));
     }
     return recaptchaVerifierRef.current;
   };
 
   const sendPhoneOtp = async () => {
     if (!form.phone?.trim()) {
-      setError("Please enter your phone number first");
+      setError('Please enter your phone number first');
       return;
     }
 
@@ -135,7 +90,7 @@ export default function AppShowcase() {
     if (loading) return;
 
     setLoading(true);
-    setError("");
+    setError('');
 
     try {
       const verifier = ensureRecaptcha();
@@ -144,16 +99,13 @@ export default function AppShowcase() {
       setConfirmationResult(result);
       setPhoneCodeSent(true);
     } catch (err) {
-      console.error("Phone OTP send failed:", err);
+      console.error('Phone OTP send failed:', err);
       // Reset the verifier so the next attempt starts from a clean state
       if (recaptchaVerifierRef.current) {
         recaptchaVerifierRef.current.clear();
         recaptchaVerifierRef.current = null;
       }
-      setError(
-        err.message ||
-          "Failed to send OTP. Check your phone number and try again.",
-      );
+      setError(err.message || 'Failed to send OTP. Check your phone number and try again.');
       setPhoneCodeSent(false);
     } finally {
       setLoading(false);
@@ -163,20 +115,20 @@ export default function AppShowcase() {
   // Optional: send an email verification code
   const sendEmailOtp = async () => {
     if (!form.email?.trim()) {
-      setError("Please enter your email first");
+      setError('Please enter your email first');
       return;
     }
 
     setEmailLoading(true);
-    setError("");
+    setError('');
 
     try {
       await sendOtpEmailVerification(form.email.trim());
       setEmailCodeSent(true);
       setEmailVerified(false);
     } catch (err) {
-      console.error("Email OTP send failed:", err);
-      setError(err.message || "Failed to send email code");
+      console.error('Email OTP send failed:', err);
+      setError(err.message || 'Failed to send email code');
     } finally {
       setEmailLoading(false);
     }
@@ -185,36 +137,36 @@ export default function AppShowcase() {
   // Optional: verify the email code the user entered
   const verifyEmailOtp = async () => {
     if (!/^\d{6}$/.test(emailCode.trim())) {
-      setError("Please enter a valid 6-digit email code.");
+      setError('Please enter a valid 6-digit email code.');
       return;
     }
 
     setEmailLoading(true);
-    setError("");
+    setError('');
 
     try {
       await verifyOtpEmailCode(form.email.trim(), emailCode.trim());
       setEmailVerified(true);
     } catch (err) {
-      console.error("Email OTP verify failed:", err);
-      setError(err.message || "Email verification failed");
+      console.error('Email OTP verify failed:', err);
+      setError(err.message || 'Email verification failed');
     } finally {
       setEmailLoading(false);
     }
   };
 
   const handleNext = () => {
-    setError("");
+    setError('');
 
     if (currentStep === 1) {
       if (!form.name?.trim() || !form.email?.trim() || !form.phone?.trim()) {
-        setError("Please fill in all fields");
+        setError('Please fill in all fields');
         return;
       }
       setCurrentStep(2);
     } else if (currentStep === 2) {
       if (form.interests.length === 0) {
-        setError("Please select at least one interest");
+        setError('Please select at least one interest');
         return;
       }
       setCurrentStep(3);
@@ -225,8 +177,8 @@ export default function AppShowcase() {
   };
 
   const handlePrev = () => {
-    setError("");
-    setCurrentStep((prev) => Math.max(1, prev - 1));
+    setError('');
+    setCurrentStep(prev => Math.max(1, prev - 1));
   };
 
   const handleSubmit = async (e) => {
@@ -234,28 +186,28 @@ export default function AppShowcase() {
 
     const validationErrors = validateWaitlistEntry(form);
     if (validationErrors.length > 0) {
-      setError(validationErrors.join(" "));
+      setError(validationErrors.join(' '));
       return;
     }
 
     if (loading) {
-      setError("Verification code is still being sent. Please wait.");
+      setError('Verification code is still being sent. Please wait.');
       return;
     }
 
     if (!confirmationResult) {
       if (!error) {
-        setError("Verification failed to initiate. Please try again.");
+        setError('Verification failed to initiate. Please try again.');
       }
       return;
     }
 
     if (!/^\d{6}$/.test(form.verificationCode.trim())) {
-      setError("Please enter a valid 6-digit verification code.");
+      setError('Please enter a valid 6-digit verification code.');
       return;
     }
 
-    setError("");
+    setError('');
     setLoading(true);
     try {
       await confirmationResult.confirm(form.verificationCode.trim());
@@ -265,36 +217,30 @@ export default function AppShowcase() {
         name: form.name,
         email: form.email,
         phone: form.phone,
-        interests: form.interests.join(", "),
+        interests: form.interests.join(', '),
         emailVerified, // optional — true only if the user chose to verify their email
       });
 
       await signOut(auth);
 
       setSuccess(true);
-      setForm({
-        name: "",
-        email: "",
-        phone: "",
-        interests: [],
-        verificationCode: "",
-      });
+      setForm({ name: '', email: '', phone: '', interests: [], verificationCode: '' });
       setPhoneCodeSent(false);
       setPhoneVerified(false);
       setConfirmationResult(null);
-      setEmailCode("");
+      setEmailCode('');
       setEmailCodeSent(false);
       setEmailVerified(false);
       setCurrentStep(1);
       setTimeout(() => setSuccess(false), 5000);
     } catch (err) {
-      console.error("Waitlist submit failed:", err);
-      if (err.code === "auth/invalid-verification-code") {
-        setError("Invalid OTP. Please check the code and try again.");
-      } else if (err.code === "auth/code-expired") {
-        setError("OTP has expired. Please request a new one.");
+      console.error('Waitlist submit failed:', err);
+      if (err.code === 'auth/invalid-verification-code') {
+        setError('Invalid OTP. Please check the code and try again.');
+      } else if (err.code === 'auth/code-expired') {
+        setError('OTP has expired. Please request a new one.');
       } else {
-        setError(err.message || "Something went wrong. Please try again.");
+        setError(err.message || 'Something went wrong. Please try again.');
       }
     } finally {
       setLoading(false);
@@ -306,7 +252,7 @@ export default function AppShowcase() {
     try {
       ensureRecaptcha();
     } catch (e) {
-      console.error("reCAPTCHA warm-up failed:", e);
+      console.error('reCAPTCHA warm-up failed:', e);
     }
     return () => {
       if (recaptchaVerifierRef.current) {
@@ -318,15 +264,15 @@ export default function AppShowcase() {
   }, []);
 
   useEffect(() => {
-    const stack = document.getElementById("stack");
+    const stack = document.getElementById('stack');
     if (!stack) return;
 
-    const cards = Array.from(stack.querySelectorAll(".stack-card"));
+    const cards = Array.from(stack.querySelectorAll('.stack-card'));
     let currentIndex = 0;
 
     const rotateStack = () => {
       cards.forEach((card, i) => {
-        card.classList.remove("pos-1", "pos-2", "pos-3");
+        card.classList.remove('pos-1', 'pos-2', 'pos-3');
         const newPos = (i - currentIndex + 3) % 3;
         card.classList.add(`pos-${newPos + 1}`);
       });
@@ -338,22 +284,23 @@ export default function AppShowcase() {
   }, []);
 
   return (
-    <section id="waitlist" className={styles.waitlistSection}>
+    <section id="waitlist" style={{ padding: '80px 20px', background: '#FAFAF9', position: 'relative' }}>
+
       <div id="recaptcha-container"></div>
 
       {/* Centered Heading Block Positioned Symmetrically Above the Card */}
-      <div className={styles.waitlistHeadingBlock}>
+      <div style={{ maxWidth: '1200px', margin: '0 auto 48px', padding: '0', textAlign: 'center' }}>
         <h2 className={styles.waitlistTitle}>
           Join the <span className={styles.highlight}>Revolution</span>
         </h2>
         <p className={styles.waitlistSubtitle}>
-          Be the first to experience India's most intelligent commerce platform.
-          Get exclusive early access and special launch benefits.
+          Be the first to experience India's most intelligent commerce platform. Get exclusive early access and special launch benefits.
         </p>
       </div>
 
       {/* Main 1:1 Sorcerer Grid Card Wrapper */}
       <div className={styles.waitlistCard}>
+        
         {/* Left Panel: Flush Poster Image */}
         <div className={styles.leftPanel}>
           <img
@@ -361,33 +308,28 @@ export default function AppShowcase() {
             alt="Accesco Living - Wanna Skip The Line?"
             className={styles.posterImage}
             onError={(e) => {
-              e.currentTarget.src = "/images/accesco_original.png";
-              e.currentTarget.style.padding = "40px";
-              e.currentTarget.style.background =
-                "linear-gradient(135deg, #7A0042, #1A0A0F)";
+              e.currentTarget.src = '/images/accesco_original.png';
+              e.currentTarget.style.padding = '40px';
+              e.currentTarget.style.background = 'linear-gradient(135deg, #7A0042, #1A0A0F)';
             }}
           />
         </div>
 
         {/* Right Panel: Clean Form Wrapper */}
         <div className={styles.rightPanel}>
-          <div className={styles.brandLogoRow}>
-            <img
-              src="/images/asterik.png"
-              alt="Accesco mark"
-              className={styles.brandAsterisk}
-            />
-          </div>
+          
+  
 
-          <h3 className={styles.cardTitle}>Get Early Access</h3>
-          <p className={styles.cardSubtitle}>
-            {currentStep === 1 &&
-              "Join the waitlist for early access to Accesco Living's unified commerce platform, built for groceries, food delivery, fashion, dining, home services, and member-only launch benefits."}
-            {currentStep === 2 &&
-              "Select the experiences you are most interested in so we can personalize your early access updates, offers, and launch notifications."}
-            {currentStep === 3 &&
-              "Verify your phone number to secure your waitlist entry and receive important early access updates safely."}
-          </p>
+<div className={styles.waitlistStar} aria-hidden="true">
+  ✱
+</div>
+
+<h3 className={styles.cardTitle}>Get Early Access</h3>
+<p className={styles.cardSubtitle}>
+  {currentStep === 1 && "Join the waitlist for early access to Accesco Living’s unified commerce platform, built for groceries, food delivery, fashion, dining, home services, and member-only launch benefits."}
+  {currentStep === 2 && "Select the experiences you are most interested in so we can personalize your early access updates, offers, and launch notifications."}
+  {currentStep === 3 && "Verify your phone number to secure your waitlist entry and receive important early access updates safely."}
+</p>
 
           {success && (
             <div className={styles.successMessage}>
@@ -395,54 +337,54 @@ export default function AppShowcase() {
             </div>
           )}
 
-          {error && <div className={styles.errorMessage}>{error}</div>}
+          {error && (
+            <div className={styles.errorMessage}>
+              {error}
+            </div>
+          )}
 
           {/* Form Step Router */}
-          <form onSubmit={handleSubmit} className={styles.fullWidthForm}>
+          <form onSubmit={handleSubmit} style={{ width: '100%' }}>
+            
             {/* Step 1: Base Inputs */}
             {currentStep === 1 && (
               <div className={styles.inputsStack}>
                 <div className={styles.inputWrapper}>
-                  <input
-                    type="text"
-                    className={styles.formInput}
-                    placeholder="Enter your full name"
-                    value={form.name}
-                    onChange={(e) => setForm({ ...form, name: e.target.value })}
-                  />
-                </div>
+
+  <input
+    type="text"
+    className={styles.formInput}
+    placeholder="Enter your full name"
+    value={form.name}
+    onChange={(e) => setForm({ ...form, name: e.target.value })}
+  />
+</div>
 
                 <div className={styles.inputWrapper}>
+  
                   <input
                     type="email"
                     className={styles.formInput}
                     placeholder="your@email.com"
                     value={form.email}
-                    onChange={(e) =>
-                      setForm({ ...form, email: e.target.value })
-                    }
+                    onChange={(e) => setForm({ ...form, email: e.target.value })}
                     required
                   />
                 </div>
 
-                <div className={styles.inputWrapper}>
-                  <input
-                    type="tel"
-                    className={styles.formInput}
-                    placeholder="Enter your phone number"
-                    value={form.phone}
-                    onChange={(e) =>
-                      setForm({ ...form, phone: e.target.value })
-                    }
-                    required
-                  />
-                </div>
+               <div className={styles.inputWrapper}>
+  
+  <input
+    type="tel"
+    className={styles.formInput}
+    placeholder="Enter your phone number"
+    value={form.phone}
+    onChange={(e) => setForm({ ...form, phone: e.target.value })}
+    required
+  />
+</div>
 
-                <button
-                  type="button"
-                  className={styles.submitButton}
-                  onClick={handleNext}
-                >
+                <button type="button" className={styles.submitButton} onClick={handleNext}>
                   <span>Join Waitlist</span>
                   <ArrowRight size={18} />
                 </button>
@@ -458,41 +400,27 @@ export default function AppShowcase() {
                     return (
                       <div
                         key={interest.id}
-                        className={`${styles.interestCard} ${isSelected ? styles.interestCardSelected : ""}`}
+                        className={`${styles.interestCard} ${isSelected ? styles.interestCardSelected : ''}`}
                         onClick={() => toggleInterest(interest.id)}
                       >
                         <div className={styles.interestCardHeader}>
-                          <div className={styles.interestIcon}>
-                            {interest.icon}
-                          </div>
-                          <div
-                            className={`${styles.customCheckbox} ${isSelected ? styles.customCheckboxActive : ""}`}
-                          >
+                          <div className={styles.interestIcon}>{interest.icon}</div>
+                          <div className={`${styles.customCheckbox} ${isSelected ? styles.customCheckboxActive : ''}`}>
                             {isSelected && <Check size={12} strokeWidth={3} />}
                           </div>
                         </div>
-                        <div className={styles.interestLabel}>
-                          {interest.label}
-                        </div>
+                        <div className={styles.interestLabel}>{interest.label}</div>
                       </div>
                     );
                   })}
                 </div>
 
                 <div className={styles.buttonGroup}>
-                  <button
-                    type="button"
-                    className={styles.prevButton}
-                    onClick={handlePrev}
-                  >
+                  <button type="button" className={styles.prevButton} onClick={handlePrev}>
                     <ArrowLeft size={16} />
                     <span>Back</span>
                   </button>
-                  <button
-                    type="button"
-                    className={`${styles.submitButton} ${styles.flexOneButton}`}
-                    onClick={handleNext}
-                  >
+                  <button type="button" className={styles.submitButton} onClick={handleNext} style={{ flex: 1 }}>
                     <span>Continue</span>
                     <ArrowRight size={18} />
                   </button>
@@ -504,17 +432,12 @@ export default function AppShowcase() {
             {currentStep === 3 && (
               <div className={styles.inputsStack}>
                 <div className={styles.verificationCard}>
-                  <ShieldCheck
-                    size={32}
-                    className={styles.verificationShield}
-                  />
+                  <ShieldCheck size={32} className={styles.verificationShield} />
                   <p className={styles.verificationSubtitle}>
                     {phoneCodeSent ? (
-                      <>
-                        Sent a passcode to <strong>{form.phone}</strong>
-                      </>
+                      <>Sent a passcode to <strong>{form.phone}</strong></>
                     ) : (
-                      "Preparing code transmission..."
+                      'Preparing code transmission...'
                     )}
                   </p>
                 </div>
@@ -522,20 +445,19 @@ export default function AppShowcase() {
                 <div className={styles.inputWrapper}>
                   <input
                     type="text"
-                    className={`${styles.formInput} ${styles.centeredOtpInput}`}
+                    className={styles.formInput}
                     placeholder="Enter 6-digit OTP"
                     value={form.verificationCode}
-                    onChange={(e) =>
-                      setForm({ ...form, verificationCode: e.target.value })
-                    }
+                    onChange={(e) => setForm({ ...form, verificationCode: e.target.value })}
                     maxLength={6}
                     required
+                    style={{ textAlign: 'center', fontSize: '1.2rem', letterSpacing: '4px', padding: '0' }}
                   />
                 </div>
 
                 {phoneCodeSent && (
                   <p className={styles.otpHelperText}>
-                    Didn't receive the SMS?{" "}
+                    Didn't receive the SMS?{' '}
                     <button
                       type="button"
                       className={styles.resendCodeButton}
@@ -549,23 +471,18 @@ export default function AppShowcase() {
 
                 {/* Optional Email Verification */}
                 <div
-                  className={`${styles.verificationSection} ${styles.verifyEmailBlock}`}
+                  className={styles.verificationSection}
+                  style={{ marginTop: '20px', paddingTop: '20px', borderTop: '1px dashed #d1a5c4' }}
                 >
                   <div className={styles.verificationInfo}>
-                    <p className={styles.verifyEmailTitle}>
-                      Verify your email{" "}
-                      <span className={styles.verifyEmailOptionalTag}>
-                        (optional)
-                      </span>
+                    <p style={{ fontWeight: 600 }}>
+                      Verify your email <span style={{ color: '#888', fontWeight: 400 }}>(optional)</span>
                     </p>
                     {emailVerified ? (
-                      <p className={styles.verifyEmailSuccess}>
-                        Email verified successfully.
-                      </p>
+                      <p style={{ color: '#22c55e' }}>Email verified successfully.</p>
                     ) : (
-                      <p className={styles.verifyEmailHint}>
-                        Optionally verify <strong>{form.email}</strong> for a
-                        more secure account.
+                      <p style={{ fontSize: '0.9rem', color: '#666' }}>
+                        Optionally verify <strong>{form.email}</strong> for a more secure account.
                       </p>
                     )}
                   </div>
@@ -575,25 +492,25 @@ export default function AppShowcase() {
                       {!emailCodeSent ? (
                         <button
                           type="button"
-                          className={`${styles.navButton} ${styles.fullWidthButton}`}
+                          className={styles.navButton}
                           onClick={sendEmailOtp}
                           disabled={emailLoading}
+                          style={{ width: '100%' }}
                         >
-                          {emailLoading ? "Sending..." : "Send email code"}
+                          {emailLoading ? 'Sending...' : 'Send email code'}
                         </button>
                       ) : (
                         <>
                           <div className={styles.formGroup}>
-                            <label className={styles.formLabel}>
-                              Email Code
-                            </label>
+                            <label className={styles.formLabel}>Email Code</label>
                             <input
                               type="text"
-                              className={`${styles.formInput} ${styles.emailOtpInput}`}
+                              className={styles.formInput}
                               placeholder="Enter 6-digit code"
                               value={emailCode}
                               onChange={(e) => setEmailCode(e.target.value)}
                               maxLength={6}
+                              style={{ textAlign: 'center', fontSize: '24px', letterSpacing: '8px' }}
                             />
                           </div>
                           <div className={styles.buttonGroup}>
@@ -611,7 +528,7 @@ export default function AppShowcase() {
                               onClick={verifyEmailOtp}
                               disabled={emailLoading}
                             >
-                              {emailLoading ? "Verifying..." : "Verify Email"}
+                              {emailLoading ? 'Verifying...' : 'Verify Email'}
                             </button>
                           </div>
                         </>
@@ -621,19 +538,11 @@ export default function AppShowcase() {
                 </div>
 
                 <div className={styles.buttonGroup}>
-                  <button
-                    type="button"
-                    className={styles.prevButton}
-                    onClick={handlePrev}
-                  >
+                  <button type="button" className={styles.prevButton} onClick={handlePrev}>
                     <ArrowLeft size={16} />
                     <span>Back</span>
                   </button>
-                  <button
-                    type="submit"
-                    className={`${styles.submitButton} ${styles.flexOneButton}`}
-                    disabled={loading}
-                  >
+                  <button type="submit" className={styles.submitButton} disabled={loading} style={{ flex: 1 }}>
                     {loading ? (
                       <span>Joining...</span>
                     ) : (
@@ -646,6 +555,7 @@ export default function AppShowcase() {
                 </div>
               </div>
             )}
+
           </form>
 
           {/* Symmetrical Trust Badges */}
@@ -660,155 +570,14 @@ export default function AppShowcase() {
                 <span>Secure &amp; Spam-Free</span>
               </div>
             </div>
-            <div className={styles.launchBadge}>Launching Soon</div>
-          </div>
-        </div>
-      </div>
-
-      {/* Feedback Section */}
-      <section className={styles.feedbackSection}>
-        <div className={styles.feedbackCard}>
-          <div className={styles.feedbackHeader}>
-            <div className={styles.feedbackBubbleOne}></div>
-            <div className={styles.feedbackBubbleTwo}></div>
-
-            <div className={styles.feedbackHeaderContent}>
-              <span className={styles.feedbackEyebrow}>
-                Your opinion matters
-              </span>
-
-              <h2 className={styles.feedbackTitle}>How are we doing?</h2>
-
-              <p className={styles.feedbackHeaderText}>
-                It’ll be really quick, we promise.
-              </p>
+            <div className={styles.launchBadge}>
+              Launching Soon
             </div>
           </div>
 
-          <div className={styles.feedbackBody}>
-            {!feedbackSubmitted ? (
-              <>
-                <p className={styles.feedbackGreeting}>
-                  Hi {form.name?.trim() || "User"},
-                </p>
-
-                <p className={styles.feedbackDescription}>
-                  Thank you for being part of the Accesco Living community. Your
-                  feedback helps us create a smarter and more convenient
-                  experience for everyone.
-                </p>
-
-                <h3 className={styles.feedbackQuestion}>
-                  How likely are you to recommend Accesco Living to your friends
-                  and family?
-                </h3>
-
-                <div
-                  className={styles.ratingScale}
-                  role="radiogroup"
-                  aria-label="Recommendation score"
-                >
-                  {Array.from({ length: 11 }, (_, index) => (
-                    <button
-                      key={index}
-                      type="button"
-                      role="radio"
-                      aria-checked={feedbackScore === index}
-                      aria-label={`${index} out of 10`}
-                      className={`${styles.ratingButton} ${
-                        feedbackScore === index
-                          ? styles.ratingButtonSelected
-                          : ""
-                      }`}
-                      onClick={() => setFeedbackScore(index)}
-                    >
-                      <span className={styles.ratingNumber}>{index}</span>
-
-                      <span className={styles.ratingDot}>
-                        {feedbackScore === index && (
-                          <span className={styles.ratingDotInner}></span>
-                        )}
-                      </span>
-                    </button>
-                  ))}
-                </div>
-
-                <div className={styles.ratingLabels}>
-                  <span>Not at all likely</span>
-                  <span>Extremely likely</span>
-                </div>
-
-                <div className={styles.reviewBoxWrapper}>
-                  <label
-                    htmlFor="feedback-review"
-                    className={styles.reviewBoxLabel}
-                  >
-                    Tell us more
-                    <span className={styles.reviewOptional}>(optional)</span>
-                  </label>
-
-                  <div className={styles.reviewBoxContainer}>
-                    <textarea
-                      id="feedback-review"
-                      className={styles.reviewBox}
-                      placeholder="Share what you liked or what we could improve..."
-                      value={feedbackReview}
-                      onChange={(e) => setFeedbackReview(e.target.value)}
-                      maxLength={300}
-                      rows={4}
-                    />
-
-                    <span className={styles.reviewCharacterCount}>
-                      {feedbackReview.length}/300
-                    </span>
-                  </div>
-                </div>
-
-                <button
-                  type="button"
-                  className={styles.feedbackSubmitButton}
-                  disabled={feedbackScore === null}
-                  onClick={handleFeedbackSubmit}
-                >
-                  Submit Feedback
-                  <ArrowRight size={18} />
-                </button>
-
-                <p className={styles.feedbackRegards}>
-                  Warm regards,
-                  <br />
-                  <strong>Team Accesco</strong>
-                </p>
-              </>
-            ) : (
-              <div className={styles.feedbackSuccess}>
-                <div className={styles.feedbackSuccessIcon}>
-                  <Check size={30} strokeWidth={3} />
-                </div>
-
-                <h3>Thank you, {form.name?.trim() || "User"}!</h3>
-
-                <p>
-                  Your feedback has been recorded. We appreciate you helping us
-                  improve Accesco Living.
-                </p>
-
-                <button
-                  type="button"
-                  className={styles.feedbackResetButton}
-                  onClick={() => {
-                    setFeedbackScore(null);
-                    setFeedbackReview("");
-                    setFeedbackSubmitted(false);
-                  }}
-                >
-                  Change my response
-                </button>
-              </div>
-            )}
-          </div>
         </div>
-      </section>
+
+      </div>
 
       {/* Unchanged bottom app download segments */}
       <div className={styles.downloadAppSection}>
@@ -827,8 +596,13 @@ export default function AppShowcase() {
           className={styles.playStoreHotspot}
           aria-label="Google Play"
         />
-        <a href="#" className={styles.appStoreHotspot} aria-label="App Store" />
+        <a
+          href="#"
+          className={styles.appStoreHotspot}
+          aria-label="App Store"
+        />
       </div>
+
     </section>
   );
 }

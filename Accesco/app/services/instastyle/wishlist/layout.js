@@ -1,7 +1,6 @@
 export const metadata = {
-  title: "My Wishlist | InstaStyle",
+  title: "My Wishlist | InstaStyle by Accesco Living",
   description: "View and manage your saved fashion favorites, apparel and accessories on your InstaStyle Wishlist.",
-  robots: { index: false, follow: true },
 };
 
 export default function Layout({ children }) {

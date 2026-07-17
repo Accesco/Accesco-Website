@@ -1,16 +1,17 @@
 /**
  * useProducts Hook
  * Custom hook for product fetching and filtering
- * @version 2.0.0 — now backed by centralized Firestore via /api/products
+ * @version 1.0.0
  */
 
 import { useState, useEffect, useMemo } from 'react';
+import { products as staticProducts } from '../../../../lib/groklyProducts';
 import { getProductsByCategory, searchProducts as searchProductsHelper } from '../lib/groklyData';
 
 /**
  * useProducts Hook
  * Provides product data with filtering and search
- *
+ * 
  * @param {Object} options - Hook options
  * @param {string} options.category - Category filter
  * @param {string} options.searchQuery - Search query
@@ -18,45 +19,27 @@ import { getProductsByCategory, searchProducts as searchProductsHelper } from '.
  * @returns {Object} Products state and methods
  */
 export function useProducts({ category = 'all', searchQuery = '', sortBy = null } = {}) {
-  const [products, setProducts] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [products, setProducts] = useState(staticProducts);
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const fetchFromApi = async () => {
-    setIsLoading(true);
-    setError(null);
-    try {
-      const res = await fetch('/api/products?ventureId=grokly');
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Failed to load products');
-      setProducts(data.products || []);
-    } catch (err) {
-      console.warn('useProducts: failed to load from API —', err.message);
-      setError(err.message);
-      setProducts([]); // no static fallback anymore — surfaces real failures instead of masking them
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchFromApi();
-  }, []);
-
   /**
-   * Filter and search products (unchanged — still works on whatever `products` currently holds)
+   * Filter and search products
    */
   const filteredProducts = useMemo(() => {
     let filtered = products;
 
+    // Filter by category
     if (category && category !== 'all') {
       filtered = getProductsByCategory(category, filtered);
     }
 
+    // Search
     if (searchQuery && searchQuery.trim()) {
       filtered = searchProductsHelper(searchQuery, filtered);
     }
 
+    // Sort
     if (sortBy) {
       filtered = [...filtered].sort((a, b) => {
         switch (sortBy) {
@@ -67,7 +50,7 @@ export function useProducts({ category = 'all', searchQuery = '', sortBy = null 
           case 'rating':
             return b.rating - a.rating;
           case 'discount':
-            return (b.discount || 0) - (a.discount || 0);
+            return b.disc - a.disc;
           default:
             return 0;
         }
@@ -78,10 +61,24 @@ export function useProducts({ category = 'all', searchQuery = '', sortBy = null 
   }, [products, category, searchQuery, sortBy]);
 
   /**
-   * Refresh products — now actually hits the API instead of just resetting to static data
+   * Refresh products (for future API integration)
    */
   const refreshProducts = async () => {
-    await fetchFromApi();
+    setIsLoading(true);
+    setError(null);
+    
+    try {
+      // In production, this would fetch from API
+      // const data = await fetchProducts();
+      // setProducts(data);
+      
+      // For now, use static data
+      setProducts(staticProducts);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return {

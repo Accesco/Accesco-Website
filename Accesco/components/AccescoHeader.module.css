@@ -283,11 +283,6 @@
 .locationIcon {
   transition: transform 0.25s;
   flex-shrink: 0;
-  transform: rotate(0deg);
-}
-
-.locationIconOpen {
-  transform: rotate(180deg);
 }
 
 .locationDropdown {
@@ -900,14 +895,15 @@
 }
 
 @media (max-width: 1250px) {
-  .actions > button.loginButton {
-    display: inline-flex !important;
+  .actions>button.loginButton {
+    display: none;
   }
 
-  .actions > a.loginButton {
-    display: inline-flex !important;
+  .actions>a.loginButton {
+    display: inline-flex;
   }
 }
+
 @media (max-width: 1250px) {
 
   .nav,
@@ -928,78 +924,14 @@
   width: 36px !important;
   height: 36px !important;
   object-fit: contain;
-filter:
-  brightness(0)
-  saturate(100%)
-  invert(13%)
-  sepia(97%)
-  saturate(6000%)
-  hue-rotate(324deg)
-  brightness(75%)
-  contrast(110%);}
 
-/* MOBILE HEADER LOGIN + DOWNLOAD BUTTONS */
-@media (max-width: 768px) {
-  .actions {
-    gap: 8px !important;
-    margin-left: auto !important;
-  }
-
-  .actions > button.loginButton,
-  .actions > a.loginButton {
-    height: 38px !important;
-    min-width: 86px !important;
-    padding: 0 16px !important;
-    border-radius: 11px !important;
-    background: #8a0048 !important;
-    color: #ffffff !important;
-    font-size: 12px !important;
-    font-weight: 800 !important;
-    letter-spacing: 0.04em !important;
-    text-transform: uppercase !important;
-    box-shadow: 0 8px 18px rgba(138, 0, 72, 0.22) !important;
-    white-space: nowrap !important;
-  }
-
-  .actions > a.loginButton {
-    min-width: 104px !important;
-    gap: 6px !important;
-  }
-
-  .storeIcon {
-    width: 12px !important;
-    height: 12px !important;
-  }
-}
-@media (max-width: 768px) {
-  .actions > button.loginButton,
-  .actions > a.loginButton {
-    font-family: 'Sora', sans-serif !important;
-    font-size: 12px !important;
-    font-weight: 700 !important;
-    letter-spacing: 0.04em !important;
-    line-height: 1 !important;
-    text-transform: uppercase !important;
-  }
-}
-
-/* FIX MOBILE LOGIN BUTTON SIZE */
-@media (max-width: 768px) {
-  .actions > button.loginButton {
-    height: 34px !important;
-    min-width: 72px !important;
-    padding: 0 14px !important;
-    border-radius: 10px !important;
-
-    font-size: 11px !important;
-    font-weight: 700 !important;
-    letter-spacing: 0.02em !important;
-    line-height: 1 !important;
-
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-
-    box-shadow: 0 6px 14px rgba(122, 0, 66, 0.22) !important;
-  }
+  filter:
+    brightness(0)
+    saturate(100%)
+    invert(14%)
+    sepia(89%)
+    saturate(3200%)
+    hue-rotate(315deg)
+    brightness(85%)
+    contrast(110%);
 }

@@ -742,20 +742,14 @@
 @media (max-width: 768px) {
   .press-hero {
     padding: 140px 20px 80px;
-    
-  }
-   .press-hero-content {
-    transform: translateY(-50px);
-    
   }
   
   .press-section-header {
     flex-direction: column;
     align-items: flex-start;
     gap: 16px;
-   
   }
- 
+  
   .press-grid {
     grid-template-columns: 1fr;
     max-width: 480px;
@@ -782,35 +776,5 @@
     grid-template-columns: 1fr;
     max-width: 280px;
     margin: 0 auto;
-  }
-
-}
-@media (max-width: 768px) {
-  .press-hero {
-    padding: 180px 20px 90px !important;
-    position: relative;
-    overflow: hidden;
-
-    background-color: #AA0152 !important;
-    background-image: url("/images/black-pink.png") !important;
-    background-repeat: no-repeat !important;
-    background-size: cover !important;
-    background-position: center bottom !important;
-  }
-
-  .press-hero::before {
-    display: none !important;
-  }
-
-  .press-hero-content {
-    position: relative;
-    z-index: 2;
-  }
-
-  .press-hero-title {
-    margin-top: 45px;
-     font-size: 100px;
-  line-height: 1.45;
-  font-weight: 800;
   }
 }

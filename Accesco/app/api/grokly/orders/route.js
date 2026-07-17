@@ -6,7 +6,7 @@ function buildGroklyOrderEmailHtml({ customerName, orderId, items, subtotal, del
   const itemsHtml = items.map(item => `
     <tr>
       <td style="padding:8px 0;border-bottom:1px solid #f0f0f0;">
-        <a href="https://accescoliving.com/services/grokly/category/${item.category || 'all'}" style="color:#0c831f;text-decoration:none;font-weight:600;">${item.name}</a>
+        <a href="https://www.accescoliving.com/services/grokly/category/${item.category || 'all'}" style="color:#0c831f;text-decoration:none;font-weight:600;">${item.name}</a>
       </td>
       <td style="padding:8px 0;border-bottom:1px solid #f0f0f0;text-align:center;">x${item.quantity}</td>
       <td style="padding:8px 0;border-bottom:1px solid #f0f0f0;text-align:right;">₹${(item.price * item.quantity).toLocaleString('en-IN')}</td>
@@ -68,7 +68,7 @@ function buildGroklyOrderEmailHtml({ customerName, orderId, items, subtotal, del
       </table>
 
       <p style="font-size:13px;color:#999;margin:32px 0 0;">
-        — Grokly by Accesco Living · <a href="https://accescoliving.com/services/grokly/profile?orderId=${orderId}" style="color:#0c831f;font-weight:700;text-decoration:underline;">Track Order #${orderId}</a>
+        — Grokly by Accesco Living · <a href="https://www.accescoliving.com/services/grokly/profile?orderId=${orderId}" style="color:#0c831f;font-weight:700;text-decoration:underline;">Track Order #${orderId}</a>
       </p>
     </div>
   `;
@@ -96,14 +96,6 @@ export async function POST(request) {
     } catch (dbErr) {
       console.error('[grokly/orders] Firestore write failed:', dbErr);
       // Don't fail the request — email still goes out
-    }
-
-    // If this is the user's first order, bundle in any pending referral gifts
-    if (order.phone) {
-      const { markFirstOrderAndFulfillGifts } = await import('@/lib/referralFulfillment');
-      markFirstOrderAndFulfillGifts({ phone: order.phone, orderId: order.id, vertical: 'grokly' }).catch(
-        (err) => console.error('[grokly/orders] Referral fulfillment failed:', err),
-      );
     }
 
     // Send order confirmation email if email is provided
@@ -137,29 +129,6 @@ export async function POST(request) {
     return NextResponse.json({ error: 'Internal server error.' }, { status: 500 });
   }
 }
-
-export async function PATCH(request) {
-  try {
-    const body = await request.json();
-    const { orderId, status } = body;
-
-    if (!orderId || !status) {
-      return NextResponse.json({ error: 'orderId and status are required.' }, { status: 400 });
-    }
-
-    const { db } = await import('@/lib/firebase');
-    const { doc, setDoc } = await import('firebase/firestore');
-
-    const orderRef = doc(db, 'grokly_orders', orderId);
-    await setDoc(orderRef, { status }, { merge: true });
-
-    return NextResponse.json({ success: true, orderId, status }, { status: 200 });
-  } catch (error) {
-    console.error('[grokly/orders] PATCH error:', error);
-    return NextResponse.json({ error: 'Internal server error.' }, { status: 500 });
-  }
-}
-
 
 export async function GET(request) {
   try {

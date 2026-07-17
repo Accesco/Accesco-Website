@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
 import {
-  checkRateLimit,
   createOtp,
   getCooldownRemainingMs,
   normalizeEmail,
@@ -21,15 +20,6 @@ function maskEmail(email) {
   if (localPart.length <= 2) return `${localPart[0] || '*'}*@${domain}`;
 
   return `${localPart.slice(0, 2)}***@${domain}`;
-}
-
-// Added to extract the client IP address for accurate rate limiting
-function getClientIp(request) {
-  const forwardedFor = request.headers.get('x-forwarded-for');
-  if (forwardedFor) {
-    return forwardedFor.split(',')[0].trim();
-  }
-  return request.headers.get('x-real-ip') || '127.0.0.1';
 }
 
 function buildOtpEmailHtml(otp) {
@@ -86,39 +76,15 @@ async function sendOtpEmail(email, otp) {
 
 export async function POST(request) {
   try {
-    const clientIp = getClientIp(request);
     const body = await request.json();
     const email = normalizeEmail(body?.email);
-    console.info(`[send-otp] OTP request received for ${maskEmail(email)} from IP: ${clientIp}`);
+    console.info(`[send-otp] OTP request received for ${maskEmail(email)}`);
 
     if (!email || !isValidEmail(email)) {
       console.warn('[send-otp] Rejected request due to invalid email input');
       return NextResponse.json({ error: 'Valid email is required' }, { status: 400 });
     }
 
-    // --- RATE LIMITING LOGIC (Synchronous In-Memory) ---
-    
-    // 1. IP Rate Limit: Max 10 requests per 15 minutes (900 seconds)
-    const ipCheck = checkRateLimit(`ip:${clientIp}`, 10, 15 * 60);
-    if (!ipCheck.allowed) {
-      console.warn(`[send-otp] IP rate limit exceeded for ${clientIp}`);
-      return NextResponse.json(
-        { error: 'Too many requests from this IP. Please try again later.' },
-        { status: 429 }
-      );
-    }
-
-    // 2. Email Rate Limit: Max 15 requests per 10 minutes (600 seconds)
-    const emailCheck = checkRateLimit(`email:${email}`, 15, 10 * 60);
-    if (!emailCheck.allowed) {
-      console.warn(`[send-otp] Email rate limit exceeded for ${maskEmail(email)}`);
-      return NextResponse.json(
-        { error: 'Too many requests for this email. Please wait 15 minutes.' },
-        { status: 429 }
-      );
-    }
-
-    // 3. Short Cooldown: 60-second wait between consecutive requests
     const cooldownRemainingMs = getCooldownRemainingMs(email);
     if (cooldownRemainingMs > 0) {
       console.warn(`[send-otp] Cooldown prevented OTP resend for ${maskEmail(email)}`);
@@ -130,8 +96,6 @@ export async function POST(request) {
         { status: 429 },
       );
     }
-
-    // ---------------------------------------------------
 
     const otp = createOtp();
     saveOtp(email, otp);

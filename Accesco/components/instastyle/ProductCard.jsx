@@ -31,7 +31,7 @@ export default function ProductCard({ product }) {
       <div className={styles.imageContainer}>
         <div className={`${styles.imageWrapper} ${imageLoaded ? styles.loaded : ''}`}>
           <Image
-            src={product.images?.[0]?.url || product.image || '/images/ac-logo.png'}
+            src={product.images?.[0]?.url || product.image || '/images/placeholder.jpg'}
             alt={product.name}
             fill
             sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"

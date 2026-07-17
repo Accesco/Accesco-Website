@@ -1,239 +1,273 @@
+'use client';
+
+import { useState, useEffect } from 'react';
+import { useParams, useRouter } from 'next/navigation';
 import Image from 'next/image';
-import Link from 'next/link';
-import { notFound } from 'next/navigation';
 import './blog-post.css';
 import { fetchBlogs } from '../../../lib/blogService';
-import { HeaderActions, ShareRow } from './PostActions';
+import { getUserBookmarks, addBookmark, removeBookmark } from '../../../lib/bookmarkService';
+import { useAuth } from '../../components/AuthProvider';
 
-export const revalidate = 60;
+export default function BlogPostPage() {
+  const params = useParams();
+  const router = useRouter();
+  const { user } = useAuth();
+  const [post, setPost] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [bookmarkedPosts, setBookmarkedPosts] = useState([]);
 
-const SITE_URL = 'https://accescoliving.com';
-const HIDDEN_TITLES = ['AccesGo: Moving People, Respecting Lives\n'];
+  useEffect(() => {
+    loadPost();
+    loadBookmarks();
+  }, [params.id, user]);
 
-function isVisible(post) {
-  return post && !HIDDEN_TITLES.includes(post.title);
+  async function loadPost() {
+    setLoading(true);
+    try {
+      const data = await fetchBlogs();
+      const foundPost = data.find(p => p.id === params.id);
+      if (foundPost?.title === 'AccesGo: Moving People, Respecting Lives\n') {
+  setPost(null);
+  return;
 }
-
-async function getPostData(id) {
-  const data = await fetchBlogs();
-  const visible = data.filter(isVisible);
-  const post = visible.find((p) => p.id === id) || null;
-  return { post, visible };
-}
-
-function getRelatedPosts(post, allPosts, limit = 3) {
-  const others = allPosts.filter((p) => p.id !== post.id);
-  const sameCategory = others.filter(
-    (p) => p.category?.toLowerCase() === post.category?.toLowerCase()
-  );
-  const rest = others.filter((p) => !sameCategory.includes(p));
-  return [...sameCategory, ...rest].slice(0, limit);
-}
-
-export async function generateMetadata({ params }) {
-  const { post } = await getPostData(params.id);
-
-  if (!post) {
-    return { title: 'Article Not Found | Accesco Living' };
+      setPost(foundPost);
+    } catch (err) {
+      console.error('Failed to load blog:', err);
+    } finally {
+      setLoading(false);
+    }
   }
 
-  const description = post.excerpt || (post.content || '').slice(0, 160);
+  async function loadBookmarks() {
+    if (user?.email) {
+      try {
+        const bookmarks = await getUserBookmarks(user.email);
+        setBookmarkedPosts(bookmarks);
+      } catch (err) {
+        console.error('Failed to load bookmarks:', err);
+      }
+    } else {
+      const saved = localStorage.getItem('bookmarkedPosts');
+      if (saved) {
+        setBookmarkedPosts(JSON.parse(saved));
+      }
+    }
+  }
 
-  return {
-    title: `${post.title} | Accesco Living Blog`,
-    description,
-    alternates: {
-      canonical: `${SITE_URL}/blogs/${params.id}`,
-    },
-    openGraph: {
-      title: post.title,
-      description,
-      type: 'article',
-      url: `${SITE_URL}/blogs/${params.id}`,
-      publishedTime: post.date || undefined,
-      images: post.image ? [{ url: post.image }] : undefined,
-    },
+  const handleShare = async (platform) => {
+    if (!post) return;
+    
+    const url = typeof window !== 'undefined' ? window.location.href : '';
+    const text = `Check out this article: ${post.title}`;
+    
+    const shareUrls = {
+      twitter: `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`,
+      facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`,
+      linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`,
+      copy: url
+    };
+
+    if (platform === 'copy') {
+      try {
+        await navigator.clipboard.writeText(url);
+        alert('Link copied to clipboard!');
+      } catch (err) {
+        console.error('Failed to copy:', err);
+      }
+    } else if (platform === 'native') {
+      if (navigator.share) {
+        try {
+          await navigator.share({
+            title: post.title,
+            text: post.excerpt,
+            url: url,
+          });
+        } catch (err) {
+          if (err.name !== 'AbortError') {
+            console.error('Share failed:', err);
+          }
+        }
+      } else {
+        handleShare('copy');
+      }
+    } else {
+      window.open(shareUrls[platform], '_blank', 'width=600,height=400');
+    }
   };
-}
 
-function ArticleSchema({ post, id }) {
-  const postUrl = `${SITE_URL}/blogs/${id}`;
-  const description = post.excerpt || (post.content || '').slice(0, 160);
-  const jsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'BlogPosting',
-    mainEntityOfPage: { '@type': 'WebPage', '@id': postUrl },
-    headline: post.title,
-    description,
-    image: post.image ? [post.image] : undefined,
-    author: {
-      '@type': 'Organization',
-      name: post.author || 'ACCESCO Editorial Team',
-      url: SITE_URL,
-    },
-    publisher: {
-      '@type': 'Organization',
-      name: 'Accesco Living',
-      logo: {
-        '@type': 'ImageObject',
-        url: `${SITE_URL}/images/ac-logo.png`,
-      },
-    },
-    datePublished: post.date || undefined,
-    dateModified: post.date || undefined,
+  const toggleBookmark = async (postId) => {
+    if (user?.email) {
+      try {
+        const isCurrentlyBookmarked = bookmarkedPosts.includes(postId);
+        
+        if (isCurrentlyBookmarked) {
+          await removeBookmark(user.email, postId);
+          setBookmarkedPosts(prev => prev.filter(id => id !== postId));
+        } else {
+          await addBookmark(user.email, postId);
+          setBookmarkedPosts(prev => [...prev, postId]);
+        }
+      } catch (error) {
+        console.error('Bookmark error:', error);
+      }
+    } else {
+      setBookmarkedPosts(prev => {
+        const newBookmarks = prev.includes(postId)
+          ? prev.filter(id => id !== postId)
+          : [...prev, postId];
+        
+        localStorage.setItem('bookmarkedPosts', JSON.stringify(newBookmarks));
+        return newBookmarks;
+      });
+    }
   };
 
-  return (
-    <script
-      type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-    />
-  );
-}
+  const isBookmarked = (postId) => bookmarkedPosts.includes(postId);
 
-function RelatedPosts({ posts }) {
-  if (!posts.length) return null;
-
-  return (
-    <section className="related-posts">
-      <h2 className="related-posts-title">Related Stories</h2>
-      <div className="related-posts-grid">
-        {posts.map((post) => (
-          <Link key={post.id} href={`/blogs/${post.id}`} className="related-post-card">
-            <div className="related-post-visual">
-              <Image
-                src={post.image || '/images/download (2).png'}
-                alt={post.title}
-                fill
-                style={{ objectFit: 'cover' }}
-                unoptimized
-              />
-            </div>
-            <div className="related-post-body">
-              <span className="related-post-category">{post.category}</span>
-              <h3>{post.title}</h3>
-            </div>
-          </Link>
-        ))}
+  if (loading) {
+    return (
+      <div className="loading-screen">
+        <div className="loader-video-wrap">
+          <video autoPlay muted loop playsInline>
+            <source src="/images/loading.mp4" type="video/mp4" />
+          </video>
+        </div>
+        <span className="loader-text">Loading Article...</span>
       </div>
-    </section>
-  );
-}
-
-export default async function BlogPostPage({ params }) {
-  const { post, visible } = await getPostData(params.id);
-
-  if (!post) {
-    notFound();
+    );
   }
 
-  const relatedPosts = getRelatedPosts(post, visible);
+  if (!post) {
+    return (
+      <div className="error-container">
+        <h1>Article Not Found</h1>
+        <p>The article you're looking for doesn't exist.</p>
+        <button className="btn-pill" onClick={() => router.push('/blogs')}>
+          Back to Blogs
+        </button>
+      </div>
+    );
+  }
 
   return (
-    <article className="blog-post-page">
-      <ArticleSchema post={post} id={params.id} />
-      <div className="blog-post-container">
-        <header className="post-header">
-          <Link href="/blogs" className="back-button">
-            <i className="ri-arrow-left-line"></i>
-            <span>Back to Stories</span>
-          </Link>
+    <>
+      <article className="blog-post-page">
+        <div className="blog-post-container">
+          {/* Header Section */}
+          <header className="post-header">
+            <button className="back-button" onClick={() => router.push('/blogs')}>
+              <i className="ri-arrow-left-line"></i>
+              <span>Back to Stories</span>
+            </button>
+            
+            <div className="post-meta-row">
+              <span className="post-category">{post.category}</span>
+              <span className="post-date">
+                {new Date(post.date).toLocaleDateString('en-US', { 
+                  month: 'long', 
+                  day: 'numeric', 
+                  year: 'numeric' 
+                })}
+              </span>
+            </div>
 
-          <div className="post-meta-row">
-            <span className="post-category">{post.category}</span>
-            <span className="post-date">
-              {new Date(post.date).toLocaleDateString('en-US', {
-                month: 'long',
-                day: 'numeric',
-                year: 'numeric',
-              })}
-            </span>
-          </div>
+            <h1 className="post-title">{post.title}</h1>
 
-          <h1 className="post-title">{post.title}</h1>
-
-          <div className="post-author-row">
-            <div className="author-info">
-            <div className="author-avatar">
-  {post.title?.includes('Accesco Living Launches Public Beta') ? (
-    <Image
-      src="/images/blogs/founder.png"
-      alt={post.author || 'Author'}
-      width={40}
-      height={40}
-      className="author-avatar-image"
-    />
-  ) : (
-    <i className="ri-user-fill"></i>
-  )}
-</div>
-              <div>
-                <p className="author-name">{post.author || 'ACCESCO Editorial Team'}</p>
-                <p className="author-meta">
-                  5 min read •{' '}
-                  {new Date(post.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-                </p>
+            <div className="post-author-row">
+              <div className="author-info">
+                <div className="author-avatar">
+                  <i className="ri-user-fill"></i>
+                </div>
+                <div>
+                  <p className="author-name">{post.author || 'ACCESCO Editorial Team'}</p>
+                  <p className="author-meta">
+                    5 min read • {new Date(post.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                  </p>
+                </div>
+              </div>
+              
+              <div className="post-actions">
+                <button 
+                  className="action-btn" 
+                  title="Share" 
+                  onClick={() => handleShare('native')}
+                >
+                  <i className="ri-share-line"></i>
+                </button>
+                <button 
+                  className={`action-btn ${isBookmarked(post.id) ? 'bookmarked' : ''}`}
+                  title={isBookmarked(post.id) ? 'Remove bookmark' : 'Bookmark'}
+                  onClick={() => toggleBookmark(post.id)}
+                >
+                  <i className={isBookmarked(post.id) ? 'ri-bookmark-fill' : 'ri-bookmark-line'}></i>
+                </button>
               </div>
             </div>
+          </header>
 
-            <HeaderActions post={post} />
+          {/* Featured Image */}
+          <div className="post-featured-image">
+            <Image
+              src={post.image || '/images/download (2).png'}
+              alt={post.title}
+              width={1200}
+              height={675}
+              unoptimized
+              priority
+            />
           </div>
-        </header>
 
-<div
-  className="post-featured-image"
-  style={{
-    width: '100%',
-    maxWidth: '1200px',
-    height: '500px', // change this to whatever height you want
-    margin: '0 auto',
-    overflow: 'hidden',
-    borderRadius: '16px',
-    position: 'relative',
-  }}
->
-  <Image
-    src={
-      post.title?.includes('What a City Actually Demands of You')
-        ? '/images/blogs/what-a-city-actually-demands.jpg'
-      : post.title?.includes('Dark Stores')
-        ? '/images/blogs/dark-stores.jpg'
-      : post.title?.includes('Sunday Meal Prep')
-        ? '/images/blogs/meal-prep.jpg'
-      : post.title?.includes('All-in-One Smart Lifestyle Ecosystem')
-        ? '/images/blogs/accesco-ecosystem.jpg'
-      : post.title?.includes('Best Grocery Delivery Service')
-        ? '/images/blogs/grocery-delivery.jpg'
-      : post.title?.includes('Accesco Living Launches Public Beta')
-        ? '/images/blogs/launch-date.png'
-      : post.image || '/images/download (2).png'
-    }
-    alt={post.title}
-    fill
-    style={{ objectFit: 'cover' }}
-    unoptimized
-    priority
-  />
-</div>
+          {/* Article Content */}
+          <div className="post-content">
+            {post.content.split('\n\n').map((paragraph, index) => (
+              <p key={index}>{paragraph}</p>
+            ))}
+          </div>
 
-        <div className="post-content">
-          {(post.content || '').split('\n\n').map((paragraph, index) => (
-            <p key={index}>{paragraph}</p>
-          ))}
+          {/* Footer Section */}
+          <footer className="post-footer">
+            <div className="post-tags">
+              <span className="tag-item">{post.category}</span>
+              <span className="tag-item">Featured</span>
+              <span className="tag-item">Editor's Pick</span>
+            </div>
+
+            <div className="post-share-section">
+              <p>Share this story</p>
+              <div className="share-buttons">
+                <button 
+                  className="share-btn" 
+                  title="Share on X (Twitter)"
+                  onClick={() => handleShare('twitter')}
+                >
+                  <i className="ri-twitter-x-line"></i>
+                </button>
+                <button 
+                  className="share-btn" 
+                  title="Share on Facebook"
+                  onClick={() => handleShare('facebook')}
+                >
+                  <i className="ri-facebook-fill"></i>
+                </button>
+                <button 
+                  className="share-btn" 
+                  title="Share on LinkedIn"
+                  onClick={() => handleShare('linkedin')}
+                >
+                  <i className="ri-linkedin-fill"></i>
+                </button>
+                <button 
+                  className="share-btn" 
+                  title="Copy link"
+                  onClick={() => handleShare('copy')}
+                >
+                  <i className="ri-link"></i>
+                </button>
+              </div>
+            </div>
+          </footer>
         </div>
-
-        <footer className="post-footer">
-          <div className="post-tags">
-            <span className="tag-item">{post.category}</span>
-            <span className="tag-item">Featured</span>
-            <span className="tag-item">Editor's Pick</span>
-          </div>
-
-          <ShareRow post={post} />
-        </footer>
-
-        <RelatedPosts posts={relatedPosts} />
-      </div>
-    </article>
+      </article>
+    </>
   );
 }

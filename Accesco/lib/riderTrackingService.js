@@ -264,7 +264,6 @@ export function computeRoutePosition(route, progress) {
 export function startRiderSimulation(orderId, from, to, opts = {}) {
   if (!orderId) return () => {};
 
-  // Prevent duplicate intervals for the same order.
   if (activeSimulations.has(orderId)) {
     return activeSimulations.get(orderId);
   }
@@ -295,7 +294,6 @@ export function startRiderSimulation(orderId, from, to, opts = {}) {
         : 3 * 60 * 1000;
 
   const safeTickMs = Math.max(50, tickMs);
-  /** Inclusive tick count so progress reaches exactly 1.0 */
   const totalTicks = Math.max(1, Math.round(durationMs / safeTickMs));
 
   /** @type {Array<{lat:number,lng:number}>} */
@@ -314,7 +312,8 @@ export function startRiderSimulation(orderId, from, to, opts = {}) {
     path = [storePoint, customerPoint];
   }
 
-  const prepRatio = 0.2;
+  const prepRatio = 0.4; // 40% preparation and packing phase
+  const prepTicks = Math.round(totalTicks * prepRatio);
   let tick = 0;
   let cancelled = false;
   let inFlight = false;
@@ -344,9 +343,25 @@ export function startRiderSimulation(orderId, from, to, opts = {}) {
   };
 
   rebuildDistances();
-  const traffic = calculateTrafficMultiplier(new Date().getHours());
-  let travelEtaMinutes = calculateETA(totalDist, speedKmh, traffic);
-  const prepMinutes = Math.max(0, (durationMs * prepRatio) / 60000);
+
+  // Kinetic state
+  let currentSpeedKmh = 0;
+  let distanceCoveredKm = 0;
+
+  // Signal Stop Simulation Ticks
+  let stoppedAtLight35 = false;
+  let stoppedAtLight75 = false;
+  let lightStopTicksRemaining = 0;
+
+  // Random traffic events anomalies
+  let anomalyTicksRemaining = 0;
+  let anomalyTargetSpeed = 0;
+
+  // Arrival wait state
+  let arrivalWaitStarted = false;
+  let arrivalTicksRemaining = 0;
+  const maxArrivalTicks = Math.ceil(10000 / safeTickMs); // Wait exactly 10 seconds
+  let arrivalTicksElapsed = 0;
 
   const pointAtRideProgress = (rideP) => {
     const n = path.length;
@@ -395,60 +410,184 @@ export function startRiderSimulation(orderId, from, to, opts = {}) {
     inFlight = true;
 
     try {
-      // Inclusive progress: tick 0 → 0, tick totalTicks → 1
-      const progress = Math.min(1, tick / totalTicks);
-      const { status, orderStatus } = statusesForProgress(progress, prepRatio);
-
-      let point = path[0];
-      let heading = computeHeading(path[0], path[1] || path[0]);
+      let overallProgress = 0;
       let rideProgress = 0;
+      let status = RIDER_STATUS.IDLE;
+      let orderStatus = ORDER_STATUS.CONFIRMED;
+      let currentPos = path[0];
+      let heading = computeHeading(path[0], path[1] || path[0]);
 
-      if (progress >= prepRatio) {
-        rideProgress =
-          prepRatio >= 1 ? 1 : (progress - prepRatio) / (1 - prepRatio);
+      if (tick < prepTicks) {
+        // Prep Phase
+        overallProgress = (tick / prepTicks) * 0.4;
+        rideProgress = 0;
+        currentSpeedKmh = 0;
+        
+        if (overallProgress < 0.1) {
+          status = RIDER_STATUS.IDLE;
+          orderStatus = ORDER_STATUS.CONFIRMED;
+        } else if (overallProgress < 0.3) {
+          status = RIDER_STATUS.IDLE;
+          orderStatus = ORDER_STATUS.PACKING;
+        } else {
+          status = RIDER_STATUS.ASSIGNED;
+          orderStatus = ORDER_STATUS.PICKED_UP;
+        }
+      } else if (!arrivalWaitStarted) {
+        // Active Ride Phase
+        status = RIDER_STATUS.ON_THE_WAY;
+        orderStatus = ORDER_STATUS.OUT_FOR_DELIVERY;
+
+        // Base Target Speed: Normal (32 km/h)
+        let targetSpeed = 32;
+
+        // Find current segment index
+        let idx = 0;
+        while (idx < segDist.length - 1 && cumDist[idx + 1] < distanceCoveredKm) {
+          idx++;
+        }
+
+        // 1. Sharp turn deceleration
+        let isApproachingSharpTurn = false;
+        if (idx < path.length - 2) {
+          const currentHeading = computeHeading(path[idx], path[idx + 1]);
+          const nextHeading = computeHeading(path[idx + 1], path[idx + 2]);
+          const headingDiff = Math.abs(((nextHeading - currentHeading + 180) % 360) - 180);
+          if (headingDiff > 45) {
+            const distToTurn = cumDist[idx + 1] - distanceCoveredKm;
+            if (distToTurn < 0.05) { // within 50 meters
+              isApproachingSharpTurn = true;
+            }
+          }
+        }
+
+        // 2. Slow near destination
+        const remainingDistance = Math.max(0, totalDist - distanceCoveredKm);
+        const isNearDestination = remainingDistance < 0.2; // within 200m
+
+        // 3. Traffic lights stops at 35% and 75% progress
+        const currentPct = distanceCoveredKm / (totalDist || 1);
+        if (currentPct >= 0.35 && !stoppedAtLight35 && lightStopTicksRemaining === 0) {
+          stoppedAtLight35 = true;
+          lightStopTicksRemaining = Math.ceil(5000 / safeTickMs); // Stop for 5 seconds
+        } else if (currentPct >= 0.75 && !stoppedAtLight75 && lightStopTicksRemaining === 0) {
+          stoppedAtLight75 = true;
+          lightStopTicksRemaining = Math.ceil(5000 / safeTickMs); // Stop for 5 seconds
+        }
+
+        // 4. Random anomalies (temporary blockages, slow intersections)
+        if (lightStopTicksRemaining === 0 && anomalyTicksRemaining === 0 && Math.random() < 0.05) {
+          anomalyTicksRemaining = Math.ceil(3000 / safeTickMs);
+          anomalyTargetSpeed = Math.random() < 0.5 ? 0 : 18; // Red light (0 km/h) vs Traffic (18 km/h)
+        }
+
+        // Apply Speed constraints
+        if (lightStopTicksRemaining > 0) {
+          targetSpeed = 0; // Signal Stop
+          lightStopTicksRemaining--;
+        } else if (anomalyTicksRemaining > 0) {
+          targetSpeed = anomalyTargetSpeed;
+          anomalyTicksRemaining--;
+        } else if (isNearDestination) {
+          targetSpeed = 15; // Slow near destination
+        } else if (isApproachingSharpTurn) {
+          targetSpeed = 15; // Slow Turn
+        } else {
+          const segLength = segDist[idx] || 0;
+          if (segLength > 0.15) {
+            targetSpeed = 42; // Highway
+          } else {
+            targetSpeed = 32; // Normal
+          }
+        }
+
+        // Smooth acceleration/braking
+        const accelRate = 5; // km/h per second
+        const decelRate = 10;
+        const timeScale = safeTickMs / 1000;
+
+        if (currentSpeedKmh < targetSpeed) {
+          currentSpeedKmh = Math.min(targetSpeed, currentSpeedKmh + accelRate * timeScale);
+        } else if (currentSpeedKmh > targetSpeed) {
+          currentSpeedKmh = Math.max(targetSpeed, currentSpeedKmh - decelRate * timeScale);
+        }
+
+        // Physics step
+        const tickHours = (safeTickMs / 3600000);
+        distanceCoveredKm += currentSpeedKmh * tickHours;
+
+        if (distanceCoveredKm >= totalDist) {
+          distanceCoveredKm = totalDist;
+          arrivalWaitStarted = true;
+          arrivalTicksRemaining = maxArrivalTicks;
+        }
+
+        rideProgress = totalDist === 0 ? 1 : distanceCoveredKm / totalDist;
+        overallProgress = 0.4 + rideProgress * 0.58;
+
+        if (remainingDistance < 0.5) {
+          status = RIDER_STATUS.ARRIVING;
+          orderStatus = ORDER_STATUS.ARRIVING; // ARRIVING_SOON
+        } else {
+          status = currentSpeedKmh === 0 ? RIDER_STATUS.IDLE : RIDER_STATUS.ON_THE_WAY;
+          orderStatus = ORDER_STATUS.OUT_FOR_DELIVERY;
+        }
+
         const pos = pointAtRideProgress(rideProgress);
-        point = pos.point;
+        currentPos = pos.point;
         heading = pos.heading;
+      } else {
+        // Arrival Wait Phase
+        arrivalTicksElapsed++;
+        arrivalTicksRemaining--;
+        currentSpeedKmh = 0;
+        rideProgress = 1.0;
+        overallProgress = 0.98 + (arrivalTicksElapsed / maxArrivalTicks) * 0.02;
+        currentPos = path[path.length - 1];
+        heading = computeHeading(path[path.length - 2] || path[0], path[path.length - 1]);
+
+        if (arrivalTicksRemaining <= 0) {
+          status = RIDER_STATUS.DELIVERED;
+          orderStatus = ORDER_STATUS.DELIVERED;
+          overallProgress = 1.0;
+        } else {
+          status = RIDER_STATUS.ARRIVING;
+          orderStatus = ORDER_STATUS.ARRIVED; // ARRIVED
+        }
       }
 
-      const mapProgress = progress < prepRatio ? 0 : rideProgress;
+      const remainingDistance = Math.max(0, totalDist - distanceCoveredKm);
+      const trafficMultiplier = calculateTrafficMultiplier(new Date().getHours());
 
-      // O(1) remaining metrics from known progress (no closest-segment scan).
-      const remainingDistance =
-        progress < prepRatio
-          ? totalDist
-          : remainingDistanceFromProgress(totalDist, mapProgress);
-
-      const remainingPrepMin =
-        progress < prepRatio
-          ? Math.ceil(((prepRatio - progress) / prepRatio) * prepMinutes)
-          : 0;
-      const remainingETA =
-        progress < prepRatio
-          ? remainingPrepMin + travelEtaMinutes
-          : remainingETAFromProgress(totalDist, mapProgress, speedKmh, traffic);
-
-      const currentSpeed =
-        progress < prepRatio || progress >= 1
-          ? 0
-          : Number.isFinite(speedKmh)
-            ? speedKmh
-            : DEFAULT_SPEED;
+      let remainingETA = 0;
+      if (orderStatus === ORDER_STATUS.DELIVERED) {
+        remainingETA = 0;
+      } else if (orderStatus === ORDER_STATUS.ARRIVED) {
+        remainingETA = 0;
+      } else if (orderStatus === ORDER_STATUS.ARRIVING) {
+        remainingETA = 1;
+      } else if (tick < prepTicks) {
+        const remainingPrepMin = Math.ceil(((prepTicks - tick) * safeTickMs) / 60000);
+        remainingETA = remainingPrepMin + calculateETA(totalDist, 25, trafficMultiplier);
+      } else {
+        const avgSpeed = currentSpeedKmh > 0 ? currentSpeedKmh : 25;
+        remainingETA = calculateETA(remainingDistance, avgSpeed, trafficMultiplier);
+      }
 
       const payload = {
-        lat: point.lat,
-        lng: point.lng,
+        lat: currentPos.lat,
+        lng: currentPos.lng,
         heading,
-        progress: mapProgress,
+        progress: rideProgress,
+        overallProgress,
         status,
         orderStatus,
         remainingDistance: Math.round(remainingDistance * 1000) / 1000,
         remainingETA,
-        currentSpeed,
+        currentSpeed: currentSpeedKmh,
         ...rider,
       };
 
-      // Seed static endpoints once — avoid rewriting store/customer every tick.
       if (!seededStatic) {
         payload.store = storePoint;
         payload.customer = customerPoint;
@@ -461,7 +600,7 @@ export function startRiderSimulation(orderId, from, to, opts = {}) {
         console.error('[riderTracking] simulation write failed:', err);
       }
 
-      if (progress >= 1 || cancelled) {
+      if (orderStatus === ORDER_STATUS.DELIVERED || cancelled) {
         stop();
         return;
       }
@@ -480,7 +619,6 @@ export function startRiderSimulation(orderId, from, to, opts = {}) {
       (Array.isArray(routeOpt) && routeOpt.length > 2) ||
       (Array.isArray(waypoints) && waypoints.length > 0);
 
-    // Skip OSRM when caller already supplied a road polyline (map path).
     if (!hasDetailedRoute) {
       try {
         const fetched = await fetchRoute(storePoint, customerPoint);
@@ -491,7 +629,6 @@ export function startRiderSimulation(orderId, from, to, opts = {}) {
         ) {
           path = fetched.coordinates.map(([lat, lng]) => ({ lat, lng }));
           rebuildDistances();
-          travelEtaMinutes = calculateETA(totalDist, speedKmh, traffic);
         }
       } catch (err) {
         console.warn('[riderTracking] OSRM enrich skipped:', err?.message || err);

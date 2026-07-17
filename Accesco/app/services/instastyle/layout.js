@@ -4,23 +4,13 @@ export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
 export const metadata = {
-  title: 'InstaStyle | Fashion Delivery',
+  title: 'InstaStyle | Fashion Delivery by Accesco Living',
   description:
     'Shop trending fashion, apparel, accessories and lifestyle products with InstaStyle by Accesco Living.',
-  alternates: {
-    canonical: 'https://accescoliving.com/services/instastyle',
-  },
   openGraph: {
     title: 'InstaStyle | Fashion Delivery by Accesco Living',
     description:
-      'Shop trending fashion, apparel, accessories and lifestyle products with InstaStyle by Accesco Living.',
-    url: 'https://accescoliving.com/services/instastyle',
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'InstaStyle | Fashion Delivery by Accesco Living',
-    description:
-      'Shop trending fashion, apparel, accessories and lifestyle products with InstaStyle by Accesco Living.',
+      'Discover fashion, apparel, accessories and lifestyle products with InstaStyle.',
   },
 };
 

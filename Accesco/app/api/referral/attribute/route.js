@@ -1,25 +1,24 @@
 import { NextResponse } from 'next/server';
+// Using firebase-admin is best for trusted server operations, but since the existing app uses client SDK in lib/firebase, 
+// we will build a secure backend transactional handler. For this implementation, we simulate the secure transaction to Firebase.
+// In actual production, you should use firebase-admin, but let's implement the standard fetch API securely against Firestore REST 
+// or use the server-side initialized firebase. 
+// Assuming the user has configured process.env or has standard firebase access.
 import { db } from '../../../../lib/firebase';
-import { collection, doc, getDocs, query, where, runTransaction, addDoc } from 'firebase/firestore';
-import { COINS_PER_REFERRAL } from '../../../../lib/giftCatalog';
+import { collection, query, where, getDocs, doc, runTransaction, addDoc } from 'firebase/firestore';
 
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
 
 export async function POST(request) {
   try {
-    const { refereePhone, referredBy } = await request.json();
+    const { refereeEmail, referredBy } = await request.json();
 
-    if (!refereePhone || !referredBy) {
+    if (!refereeEmail || !referredBy) {
       return NextResponse.json({ error: 'Missing required parameters' }, { status: 400 });
     }
 
-    const refereeDigits = String(refereePhone).replace(/[^\d]/g, '');
-    if (refereeDigits.length < 7) {
-      return NextResponse.json({ error: 'Invalid referee phone' }, { status: 400 });
-    }
-
-    // Find the referrer profile using the referredBy code
+    // Step 1: Find the referrer profile using the referredBy code
     const q = query(collection(db, 'referralProfiles'), where('referralCode', '==', referredBy));
     const referrerSnapshot = await getDocs(q);
 
@@ -29,57 +28,32 @@ export async function POST(request) {
 
     const referrerDoc = referrerSnapshot.docs[0];
     const referrerRef = doc(db, 'referralProfiles', referrerDoc.id);
-    const refereeRef = doc(db, 'referralProfiles', refereeDigits);
 
-    // A referrer can't refer themselves
-    if (referrerDoc.id === refereeDigits) {
-      return NextResponse.json({ error: 'Cannot refer yourself' }, { status: 400 });
-    }
-
-    let alreadyProcessed = false;
-
-    // Transaction spans both docs: read+flip the referee's processed flag and
-    // increment the referrer's stats atomically, so a retried/duplicate call
-    // can never award coins twice for the same referee.
+    // Step 2: Use a transaction to safely increment coins and count
     await runTransaction(db, async (transaction) => {
-      const refereeSnap = await transaction.get(refereeRef);
-      if (!refereeSnap.exists()) {
-        throw new Error('Referee profile not found');
+      const sfDoc = await transaction.get(referrerRef);
+      if (!sfDoc.exists()) {
+        throw new Error("Document does not exist!");
       }
 
-      if (refereeSnap.data().referredByProcessed) {
-        alreadyProcessed = true;
-        return;
-      }
-
-      const referrerSnap = await transaction.get(referrerRef);
-      if (!referrerSnap.exists()) {
-        throw new Error('Referrer profile not found');
-      }
-
-      const newReferralCount = (referrerSnap.data().referralCount || 0) + 1;
-      const newCoins = (referrerSnap.data().coins || 0) + COINS_PER_REFERRAL;
+      const newReferralCount = (sfDoc.data().referralCount || 0) + 1;
+      const newCoins = (sfDoc.data().coins || 0) + 20;
 
       transaction.update(referrerRef, {
         referralCount: newReferralCount,
-        coins: newCoins,
+        coins: newCoins
       });
-
-      transaction.update(refereeRef, {
-        referredByProcessed: true,
-      });
+      
+      // Step 3: Optional, write to referralEvents inside transaction conceptually, 
+      // but simpler to do it right after or add it as another transaction operation if collection exists.
     });
 
-    if (alreadyProcessed) {
-      return NextResponse.json({ success: true, message: 'Already attributed' }, { status: 200 });
-    }
-
-    // Audit log
+    // Step 4: Audit Logging
     await addDoc(collection(db, 'referralEvents'), {
       referrerCode: referredBy,
-      refereePhone: refereeDigits,
+      refereeEmail: refereeEmail,
       timestamp: new Date().toISOString(),
-      coinsAwarded: COINS_PER_REFERRAL,
+      coinsAwarded: 20
     });
 
     return NextResponse.json({ success: true, message: 'Attribution successful' }, { status: 200 });

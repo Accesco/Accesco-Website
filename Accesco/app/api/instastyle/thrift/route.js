@@ -65,7 +65,7 @@ function buildThriftAckEmailHtml({ sellerName, listingName }) {
       </p>
       <p style="font-size:14px;color:#666;line-height:1.7;margin:0 0 32px;">
         In the meantime, explore what's already on the market:
-        <a href="https://accescoliving.com/services/instastyle/thrift" style="color:#1a1a1a;font-weight:600;">Shop The Thrift Edit</a>
+        <a href="https://www.accescoliving.com/services/instastyle/thrift" style="color:#1a1a1a;font-weight:600;">Shop The Thrift Edit</a>
       </p>
 
       <p style="font-size:12px;color:#999;border-top:1px solid #f0ece8;padding-top:20px;margin:0;">

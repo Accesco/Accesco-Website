@@ -10,11 +10,11 @@ const serviceSchema = {
   name: "Swadishtt Cafe by Accesco Living",
   description:
     "Cafe experiences featuring artisan coffee, baked goods, beverages and curated cafe dining.",
-  url: "https://accescoliving.com/services/swadisht-cafe",
+  url: "https://www.accescoliving.com/services/swadisht-cafe",
   provider: {
     "@type": "Organization",
     name: "Accesco Living",
-    url: "https://accescoliving.com",
+    url: "https://www.accescoliving.com",
   },
   areaServed: {
     "@type": "City",

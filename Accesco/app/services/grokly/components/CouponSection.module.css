@@ -3,11 +3,10 @@
  */
 
 .couponSection {
-  padding: 14px 16px;
+  padding: 16px;
   background: var(--grokly-bg);
-  border-radius: 14px;
-  margin: 0 16px 8px;
-  border: 1px solid var(--grokly-border);
+  border-radius: var(--grokly-radius-md);
+  margin-bottom: 16px;
 }
 
 /* Applied Coupon */

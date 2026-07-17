@@ -162,41 +162,6 @@
   letter-spacing: 0.12em;
 }
 
-.categoryOptions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-}
-
-.categoryChip {
-  border: 1px solid rgba(13, 13, 13, 0.12);
-  background: #fdfcfb;
-  color: #0d0d0d;
-  padding: 12px 16px;
-  font-size: 13px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.categoryChip:hover {
-  border-color: #7c4a2d;
-  transform: translateY(-1px);
-}
-
-.categoryChipActive {
-  background: #0d0d0d;
-  color: #ffffff;
-  border-color: #0d0d0d;
-}
-
-.categoryHint {
-  margin: 10px 0 0;
-  font-size: 12px;
-  color: #8c7f76;
-  line-height: 1.5;
-}
-
 .optional {
   font-size: 9px;
   color: #8c7f76;

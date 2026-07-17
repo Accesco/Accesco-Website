@@ -15,6 +15,9 @@ import { DEFAULT_SPEED } from './trackingConstants';
 /** Default OSRM public routing endpoint. @type {string} */
 const DEFAULT_OSRM_BASE_URL = 'https://router.project-osrm.org/route/v1/driving';
 
+/** Cache for fetched routes keyed by coordinate signature */
+const routeCache = new Map();
+
 /** Default request timeout in milliseconds. @type {number} */
 const DEFAULT_TIMEOUT_MS = 10_000;
 
@@ -242,6 +245,11 @@ export async function fetchRoute(from, to, options = {}) {
     return emptyRoute();
   }
 
+  const cacheKey = `${origin.lat.toFixed(5)},${origin.lng.toFixed(5)};${destination.lat.toFixed(5)},${destination.lng.toFixed(5)}`;
+  if (routeCache.has(cacheKey)) {
+    return routeCache.get(cacheKey);
+  }
+
   const {
     timeoutMs = DEFAULT_TIMEOUT_MS,
     geometries = 'geojson',
@@ -292,6 +300,7 @@ export async function fetchRoute(from, to, options = {}) {
       return fallbackOnError ? fallbackRoute(origin, destination) : emptyRoute();
     }
 
+    routeCache.set(cacheKey, parsed);
     return parsed;
   } catch (err) {
     if (err?.name === 'AbortError') {

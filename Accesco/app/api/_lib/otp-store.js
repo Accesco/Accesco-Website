@@ -3,7 +3,6 @@ const OTP_COOLDOWN_MS = 60 * 1000; // 60 seconds
 
 const otpStore = new Map();
 const cooldownStore = new Map();
-const rateLimitStore = new Map(); // Added for rate limiting
 
 function normalizeEmail(email) {
   return String(email || '').trim().toLowerCase();
@@ -78,29 +77,6 @@ function getCooldownRemainingMs(email) {
   return remaining;
 }
 
-// Added In-Memory Rate Limiter
-function checkRateLimit(identifier, maxRequests, windowSeconds) {
-  const now = Date.now();
-  const windowMs = windowSeconds * 1000;
-  const record = rateLimitStore.get(identifier);
-
-  // If no record exists or the time window has passed, reset the counter
-  if (!record || now > record.resetAt) {
-    rateLimitStore.set(identifier, { count: 1, resetAt: now + windowMs });
-    return { allowed: true };
-  }
-
-  // If the request count exceeds the max allowed, deny the request
-  if (record.count >= maxRequests) {
-    return { allowed: false };
-  }
-
-  // Otherwise, increment the count
-  record.count += 1;
-  rateLimitStore.set(identifier, record);
-  return { allowed: true };
-}
-
 export {
   OTP_TTL_MS,
   createOtp,
@@ -109,5 +85,4 @@ export {
   getOtpRecord,
   normalizeEmail,
   saveOtp,
-  checkRateLimit, // Exported for use in your API route
 };

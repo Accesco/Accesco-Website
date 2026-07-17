@@ -1,9 +1,6 @@
 export const metadata = {
-  title: "Investor Relations | Accesco Living",
-  description: "Investor relations, funding updates, and company information for Accesco Living Private Limited — India's intelligent circular commerce ecosystem.",
-  alternates: {
-    canonical: 'https://accescoliving.com/investor-relations',
-  },
+  title: "Company Investor Relations",
+  description: "Investor Relations website for a modern listed company",
 };
 
 import "./globals.css";

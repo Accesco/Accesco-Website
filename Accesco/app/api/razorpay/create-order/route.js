@@ -15,9 +15,21 @@ export async function POST(request) {
 
     const keyId = process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID;
     const keySecret = process.env.RAZORPAY_KEY_SECRET;
+
+    
     if (!keyId || !keySecret) {
-      console.error('[razorpay/create-order] Razorpay keys are not configured');
-      return NextResponse.json({ error: 'Payments are not configured' }, { status: 500 });
+      console.error("❌ Razorpay Keys Missing");
+      console.error("KEY_ID =", keyId);
+      console.error("SECRET EXISTS =", !!keySecret);
+
+      return NextResponse.json(
+        {
+          error: "Payments are not configured",
+          keyIdExists: !!keyId,
+          keySecretExists: !!keySecret,
+        },
+        { status: 500 }
+      );
     }
 
     const auth = Buffer.from(`${keyId}:${keySecret}`).toString('base64');

@@ -1,47 +1,12 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import styles from "./SizeSelector.module.css";
+import { useState } from 'react';
+import styles from './SizeSelector.module.css';
 
-export default function SizeSelector({
-  sizes,
-  inventory,
-  selectedSize,
-  onSizeChange,
-  variants,
-  selectedColor,
-}) {
+export default function SizeSelector({ sizes, inventory, selectedSize, onSizeChange }) {
   const [hoveredSize, setHoveredSize] = useState(null);
 
   const isSizeAvailable = (size) => {
-    if (Array.isArray(variants) && variants.length > 0) {
-      const normalizedSize = String(size).trim();
-      const normalizedColor = String(selectedColor || "")
-        .trim()
-        .toLowerCase();
-
-      return variants.some((variant) => {
-        const variantSize = String(variant.size || "").trim();
-        const variantColor = String(variant.color || "")
-          .trim()
-          .toLowerCase();
-        const variantStock =
-          typeof variant.stock === "number"
-            ? variant.stock
-            : Number(variant.stock || 0);
-
-        if (variantSize !== normalizedSize || variantStock <= 0) {
-          return false;
-        }
-
-        if (!normalizedColor) {
-          return true;
-        }
-
-        return variantColor === normalizedColor;
-      });
-    }
-
     return inventory && inventory[size] > 0;
   };
 
@@ -70,22 +35,26 @@ export default function SizeSelector({
             <button
               key={size}
               className={`${styles.sizeButton} ${
-                isSelected ? styles.selected : ""
-              } ${!available ? styles.disabled : ""}`}
+                isSelected ? styles.selected : ''
+              } ${!available ? styles.disabled : ''}`}
               onClick={() => available && onSizeChange(size)}
               onMouseEnter={() => setHoveredSize(size)}
               onMouseLeave={() => setHoveredSize(null)}
               disabled={!available}
-              aria-label={`Size ${size}${!available ? " - Out of stock" : ""}`}
+              aria-label={`Size ${size}${!available ? ' - Out of stock' : ''}`}
             >
               <span className={styles.sizeLabel}>{size}</span>
-              {!available && <span className={styles.outOfStock}>✕</span>}
+              {!available && (
+                <span className={styles.outOfStock}>✕</span>
+              )}
             </button>
           );
         })}
       </div>
 
-      {!selectedSize && <p className={styles.hint}>Please select a size</p>}
+      {!selectedSize && (
+        <p className={styles.hint}>Please select a size</p>
+      )}
     </div>
   );
 }

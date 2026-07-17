@@ -23,7 +23,7 @@ export default function Footer() {
           {/* Left Brand Column */}
           <div className="footer-brand-col">
             <Link href="/" className="logo-component">
-              <img src="/images/ac-logo.png" alt="AC" className="logo-component-icon" />
+              <img src="/images/ac-logo.png" alt="AC" style={{ width: '32px', height: 'auto' }} />
               <span className="logo-wordmark">Accesco Living</span>
             </Link>
             
@@ -77,7 +77,7 @@ export default function Footer() {
               <Link href="/faq" className="link-item">FAQ</Link>
               <Link href="/referral" className="link-item">Referral Program</Link>
               <Link href="/investor-relations" className="link-item">Investor Relations</Link>
-               <Link href="/careers" className="link-item">Careers</Link>
+               <Link href="#" className="link-item">Careers</Link>
             </div>
 
             <div className="link-group">

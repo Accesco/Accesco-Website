@@ -2,23 +2,22 @@ import Script from 'next/script';
 import './globals.css';
 import { AuthProvider } from './components/AuthProvider';
 import CookieConsent from './components/CookieConsent';
-import ReferralCapture from './components/ReferralCapture';
 import JsonLd from '@/components/JsonLd';
 import BreadcrumbJsonLd from '@/components/BreadcrumbJsonLd';
 export const metadata = {
-  metadataBase: new URL('https://accescoliving.com'),
+  metadataBase: new URL('https://www.accescoliving.com'),
 
   alternates: {
     canonical: '/',
   },
 
   title: {
-    default: 'Accesco Living – Grocery, Food & Fashion Delivery',
+    default: "Accesco Living | India's Intelligent Circular Commerce Ecosystem",
     template: "%s | Accesco Living",
   },
 
   description:
-    "Groceries, food, and fashion delivered fast from one intelligent app. Join Accesco Living's waitlist for early access and launch perks.",
+    "India’s intelligent commerce ecosystem for groceries, food, fashion, and finance — all in one unified platform.",
 
   icons: {
     icon: '/images/ac-logo.png',
@@ -30,7 +29,6 @@ export const metadata = {
     title: "Accesco Living | India's First Intelligence Commerce Ecosystem",
     description:
       "Groceries, fashion, food, finance & more — all in one intelligent ecosystem. Bengaluru, India.",
-    url: 'https://accescoliving.com/',
     images: [
       {
         url: '/images/ac-logo.png',
@@ -59,8 +57,8 @@ export default function RootLayout({ children }) {
     "@type": "Organization",
     "name": "Accesco Living",
     "legalName": "Accesco Living Private Limited",
-    "url": "https://accescoliving.com",
-    "logo": "https://accescoliving.com/images/ac-logo.png",
+    "url": "https://www.accescoliving.com",
+    "logo": "https://www.accescoliving.com/images/ac-logo.png",
     "description":
       "India's first intelligent circular commerce ecosystem delivering groceries, food, fashion, and financial intelligence under one unified platform.",
     "foundingDate": "2025",
@@ -74,7 +72,7 @@ export default function RootLayout({ children }) {
       "@type": "ContactPoint",
       "contactType": "customer support",
       "telephone": "+91-99727-06940",
-      "url": "https://accescoliving.com/contact",
+      "url": "https://www.accescoliving.com/contact",
       "areaServed": "IN",
       "availableLanguage": ["en", "hi"],
     },
@@ -92,7 +90,7 @@ export default function RootLayout({ children }) {
     "@context": "https://schema.org",
     "@type": "WebSite",
     "name": "Accesco Living",
-    "url": "https://accescoliving.com",
+    "url": "https://www.accescoliving.com",
   };
 
   return (
@@ -103,44 +101,29 @@ export default function RootLayout({ children }) {
 
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link rel="preconnect" href="https://cdn.jsdelivr.net" />
 
-        {/* Google Fonts + RemixIcon are loaded async below (Script) so they don't
-            block first paint; noscript keeps them for non-JS clients/crawlers. */}
-        <noscript>
-          <link
-            href="https://fonts.googleapis.com/css2?family=Sora:wght@300..800&family=DM+Sans:wght@400;500;700&family=Inter:wght@400..700&display=swap"
-            rel="stylesheet"
-          />
-          <link
-            rel="stylesheet"
-            href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css"
-          />
-        </noscript>
+        <link
+          href="https://fonts.googleapis.com/css2?family=Sora:wght@300..800&family=DM+Sans:wght@400;500;700&family=Inter:wght@400..700&display=swap"
+          rel="stylesheet"
+        />
+
+        <link
+          rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+        />
+
+        <link
+          rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css"
+        />
       </head>
 
       <body>
         <AuthProvider>
           <BreadcrumbJsonLd />
-          <ReferralCapture />
           {children}
           <CookieConsent />
         </AuthProvider>
-
-        <Script id="load-deferred-css" strategy="afterInteractive">
-          {`
-            (function () {
-              function loadCSS(href) {
-                var link = document.createElement('link');
-                link.rel = 'stylesheet';
-                link.href = href;
-                document.head.appendChild(link);
-              }
-              loadCSS('https://fonts.googleapis.com/css2?family=Sora:wght@300..800&family=DM+Sans:wght@400;500;700&family=Inter:wght@400..700&display=swap');
-              loadCSS('https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css');
-            })();
-          `}
-        </Script>
 
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-SH32KGLK5F"

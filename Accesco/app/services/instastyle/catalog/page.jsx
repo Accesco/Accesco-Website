@@ -1,23 +1,18 @@
-"use client";
+'use client';
 
-import { useState, useMemo, useEffect, Suspense } from "react";
-import { useSearchParams } from "next/navigation";
-import ProductCard from "@/components/instastyle/ProductCard";
-import {
-  products,
-  categories,
-  sortProducts,
-  getProductCategoryIds,
-} from "@/lib/mockData";
-import styles from "./catalog.module.css";
-import Select from "@/components/instastyle/Select";
+import { useState, useMemo, useEffect, Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
+import ProductCard from '@/components/instastyle/ProductCard';
+import { products, categories, sortProducts } from '@/lib/mockData';
+import styles from './catalog.module.css';
+import Select from '@/components/instastyle/Select';
 
 // ✅ Inner component that uses useSearchParams
 function CatalogContent() {
   const searchParams = useSearchParams();
   const [allProducts, setAllProducts] = useState(products);
-  const [selectedCategory, setSelectedCategory] = useState("all");
-  const [sortBy, setSortBy] = useState("newest");
+  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [sortBy, setSortBy] = useState('newest');
   const [filters, setFilters] = useState({
     category: [],
     size: [],
@@ -26,11 +21,9 @@ function CatalogContent() {
   const [showFilters, setShowFilters] = useState(false);
 
   useEffect(() => {
-    const category = searchParams.get("category");
+    const category = searchParams.get('category');
     setSelectedCategory(
-      category && categories.some((item) => item.id === category)
-        ? category
-        : "all",
+      category && categories.some(item => item.id === category) ? category : 'all'
     );
   }, [searchParams]);
 
@@ -38,9 +31,9 @@ function CatalogContent() {
     const loadProducts = async () => {
       // 1. Hydrate from localStorage for instant user experience
       let localProducts = [];
-      if (typeof window !== "undefined") {
+      if (typeof window !== 'undefined') {
         try {
-          const saved = localStorage.getItem("instastyle_custom_products");
+          const saved = localStorage.getItem('instastyle_custom_products');
           if (saved) {
             const parsed = JSON.parse(saved);
             if (Array.isArray(parsed)) {
@@ -48,14 +41,14 @@ function CatalogContent() {
             }
           }
         } catch (error) {
-          console.error("Failed to load local custom products:", error);
+          console.error('Failed to load local custom products:', error);
         }
       }
 
       setAllProducts(() => {
         const merged = [...products];
-        localProducts.forEach((lp) => {
-          if (!merged.some((p) => p.id === lp.id)) {
+        localProducts.forEach(lp => {
+          if (!merged.some(p => p.id === lp.id)) {
             merged.push(lp);
           }
         });
@@ -64,10 +57,9 @@ function CatalogContent() {
 
       // 2. Fetch from Firebase Firestore for persistent storage
       try {
-        const { db } = await import("@/lib/firebase");
-        const { collection, getDocs, query } =
-          await import("firebase/firestore");
-        const q = query(collection(db, "instastyle_products"));
+        const { db } = await import('@/lib/firebase');
+        const { collection, getDocs, query } = await import('firebase/firestore');
+        const q = query(collection(db, 'instastyle_products'));
         const snapshot = await getDocs(q);
         const fbProducts = [];
         snapshot.forEach((doc) => {
@@ -77,13 +69,13 @@ function CatalogContent() {
         if (fbProducts.length > 0) {
           setAllProducts(() => {
             const merged = [...products];
-            localProducts.forEach((lp) => {
-              if (!merged.some((p) => p.id === lp.id)) {
+            localProducts.forEach(lp => {
+              if (!merged.some(p => p.id === lp.id)) {
                 merged.push(lp);
               }
             });
-            fbProducts.forEach((fp) => {
-              if (!merged.some((p) => p.id === fp.id)) {
+            fbProducts.forEach(fp => {
+              if (!merged.some(p => p.id === fp.id)) {
                 merged.push(fp);
               }
             });
@@ -91,7 +83,7 @@ function CatalogContent() {
           });
         }
       } catch (err) {
-        console.error("Failed to load products from Firestore:", err);
+        console.error('Failed to load products from Firestore:', err);
       }
     };
     loadProducts();
@@ -99,20 +91,18 @@ function CatalogContent() {
 
   const displayedProducts = useMemo(() => {
     let filtered =
-      selectedCategory === "all"
+      selectedCategory === 'all'
         ? allProducts
-        : allProducts.filter((p) =>
-            getProductCategoryIds(p).includes(selectedCategory),
-          );
+        : allProducts.filter(p => p.category === selectedCategory);
 
     if (filters.size.length > 0) {
-      filtered = filtered.filter((p) =>
-        filters.size.some((size) => p.sizes.includes(size)),
+      filtered = filtered.filter(p =>
+        filters.size.some(size => p.sizes.includes(size))
       );
     }
 
     const [min, max] = filters.priceRange;
-    filtered = filtered.filter((p) => {
+    filtered = filtered.filter(p => {
       const price = p.discountedPrice || p.price;
       return price >= min && price <= max;
     });
@@ -124,10 +114,10 @@ function CatalogContent() {
     filters.size.length + (filters.priceRange[1] < 10000 ? 1 : 0);
 
   const handleSizeFilter = (size) => {
-    setFilters((prev) => ({
+    setFilters(prev => ({
       ...prev,
       size: prev.size.includes(size)
-        ? prev.size.filter((s) => s !== size)
+        ? prev.size.filter(s => s !== size)
         : [...prev.size, size],
     }));
   };
@@ -148,13 +138,11 @@ function CatalogContent() {
           <p className={styles.kicker}>The Curation</p>
           <h1>Shop the Edit</h1>
           <p className={styles.description}>
-            A meticulously curated selection of premium pieces, balanced by
-            timeless design and superior craftsmanship.
+            A meticulously curated selection of premium pieces, balanced by timeless design 
+            and superior craftsmanship.
           </p>
           <div className={styles.headerInfo}>
-            <span className={styles.countInfo}>
-              {displayedProducts.length} items found
-            </span>
+            <span className={styles.countInfo}>{displayedProducts.length} items found</span>
           </div>
         </div>
       </div>
@@ -164,15 +152,15 @@ function CatalogContent() {
         <div className={styles.container}>
           <div className={styles.tabsWrapper}>
             <button
-              className={`${styles.tab} ${selectedCategory === "all" ? styles.active : ""}`}
-              onClick={() => setSelectedCategory("all")}
+              className={`${styles.tab} ${selectedCategory === 'all' ? styles.active : ''}`}
+              onClick={() => setSelectedCategory('all')}
             >
               Everything
             </button>
-            {categories.map((cat) => (
+            {categories.map(cat => (
               <button
                 key={cat.id}
-                className={`${styles.tab} ${selectedCategory === cat.id ? styles.active : ""}`}
+                className={`${styles.tab} ${selectedCategory === cat.id ? styles.active : ''}`}
                 onClick={() => setSelectedCategory(cat.id)}
               >
                 {cat.name}
@@ -185,9 +173,7 @@ function CatalogContent() {
       <div className={styles.container}>
         <div className={styles.catalogContent}>
           {/* Filters Sidebar */}
-          <aside
-            className={`${styles.filtersSidebar} ${showFilters ? styles.show : ""}`}
-          >
+          <aside className={`${styles.filtersSidebar} ${showFilters ? styles.show : ''}`}>
             <div className={styles.filtersHeader}>
               <h3>Refine</h3>
               <button className={styles.clearBtn} onClick={clearFilters}>
@@ -198,10 +184,10 @@ function CatalogContent() {
             <div className={styles.filterSection}>
               <h4>Size</h4>
               <div className={styles.sizeOptions}>
-                {["XS", "S", "M", "L", "XL", "XXL"].map((size) => (
+                {['XS', 'S', 'M', 'L', 'XL', 'XXL'].map(size => (
                   <button
                     key={size}
-                    className={`${styles.sizeBtn} ${filters.size.includes(size) ? styles.active : ""}`}
+                    className={`${styles.sizeBtn} ${filters.size.includes(size) ? styles.active : ''}`}
                     onClick={() => handleSizeFilter(size)}
                   >
                     {size}
@@ -220,7 +206,7 @@ function CatalogContent() {
                   step="100"
                   value={filters.priceRange[1]}
                   onChange={(e) =>
-                    setFilters((prev) => ({
+                    setFilters(prev => ({
                       ...prev,
                       priceRange: [0, parseInt(e.target.value)],
                     }))
@@ -245,18 +231,16 @@ function CatalogContent() {
               </button>
               <div className={styles.resultsCount}>
                 {displayedProducts.length} Products
-                {activeFilterCount > 0
-                  ? ` • ${activeFilterCount} active filters`
-                  : ""}
+                {activeFilterCount > 0 ? ` • ${activeFilterCount} active filters` : ''}
               </div>
               <div className={styles.sortWrapper}>
                 <Select
                   value={sortBy}
                   options={[
-                    { value: "newest", label: "Newest" },
-                    { value: "price-low-high", label: "Price: Low to High" },
-                    { value: "price-high-low", label: "Price: High to Low" },
-                    { value: "rating", label: "Top Rated" },
+                    { value: 'newest', label: 'Newest' },
+                    { value: 'price-low-high', label: 'Price: Low to High' },
+                    { value: 'price-high-low', label: 'Price: High to Low' },
+                    { value: 'rating', label: 'Top Rated' },
                   ]}
                   onChange={setSortBy}
                   placeholder="Sort by"
@@ -277,19 +261,11 @@ function CatalogContent() {
                   </button>
                 ))}
                 {filters.priceRange[1] < 10000 && (
-                  <button
-                    type="button"
-                    className={styles.filterChip}
-                    onClick={clearPriceCap}
-                  >
+                  <button type="button" className={styles.filterChip} onClick={clearPriceCap}>
                     Up to ₹{filters.priceRange[1].toLocaleString()} ×
                   </button>
                 )}
-                <button
-                  type="button"
-                  className={styles.clearInlineBtn}
-                  onClick={clearFilters}
-                >
+                <button type="button" className={styles.clearInlineBtn} onClick={clearFilters}>
                   Reset all
                 </button>
               </div>
@@ -297,7 +273,7 @@ function CatalogContent() {
 
             {displayedProducts.length > 0 ? (
               <div className={styles.productsGrid}>
-                {displayedProducts.map((product) => (
+                {displayedProducts.map(product => (
                   <ProductCard key={product.id} product={product} />
                 ))}
               </div>

@@ -3,7 +3,7 @@
 import { usePathname } from 'next/navigation';
 
 
-const BASE_URL = 'https://accescoliving.com';
+const BASE_URL = 'https://www.accescoliving.com';
 
 const nameMap = {
   services: 'Services',

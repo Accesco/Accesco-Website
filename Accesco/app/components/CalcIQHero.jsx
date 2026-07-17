@@ -16,9 +16,10 @@ export default function CalcIQHero() {
     return () => clearInterval(timer)
   }, [])
 
- const handleLaunchCalculator = () => {
-  window.location.href = '/xpense-meter'
-}
+  const handleLaunchCalculator = () => {
+    // Navigate to calculator page
+    window.location.href = '/calculator'
+  }
 
   return (
     <section className="calciq-hero">
@@ -48,7 +49,7 @@ export default function CalcIQHero() {
             </p>
 
             <button className="launch-btn" onClick={handleLaunchCalculator}>
-              Explore Xpense Meter
+              Launch Calculator
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M5 12h14M12 5l7 7-7 7"/>
               </svg>

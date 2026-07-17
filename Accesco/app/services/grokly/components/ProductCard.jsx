@@ -21,81 +21,97 @@ const generateStars = (rating) => {
 };
 
 /**
- * Get fallback image URL based on product category and index
- * Uses direct Pexels photo URLs for reliability
+ * Get Unsplash image URL based on product category and index
+ * Uses direct Unsplash photo URLs for reliability
  * @param {string} productId - Product ID
  * @param {string} category - Product category
- * @returns {string} Pexels image URL
+ * @returns {string} Unsplash image URL
  */
 const getProductImage = (productId, category) => {
-  // Map of category to verified Pexels stock photos (royalty-free, hotlink-safe)
+  // Map of category to Grofers CDN product images
   const categoryImages = {
     'vegetables-fruits': [
-      'https://images.pexels.com/photos/2893635/pexels-photo-2893635.jpeg', // green bell peppers
-      'https://images.pexels.com/photos/7572005/pexels-photo-7572005.jpeg', // cauliflower
+      'https://cdn.grofers.com/cdn-cgi/image/f=auto,fit=scale-down,q=70,metadata=none,w=270/app/images/products/sliding_image/10590a.jpg', // tomato
+      'https://cdn.grofers.com/cdn-cgi/image/f=auto,fit=scale-down,q=70,metadata=none,w=270/app/images/products/sliding_image/17553a.jpg', // onion
+      'https://cdn.grofers.com/cdn-cgi/image/f=auto,fit=scale-down,q=70,metadata=none,w=270/app/images/products/sliding_image/10184a.jpg', // banana
+      'https://cdn.grofers.com/cdn-cgi/image/f=auto,fit=scale-down,q=70,metadata=none,w=270/app/images/products/sliding_image/13107a.jpg', // apple
+      'https://cdn.grofers.com/cdn-cgi/image/f=auto,fit=scale-down,q=70,metadata=none,w=270/app/images/products/sliding_image/10185a.jpg', // mango
     ],
     'dairy-breakfast': [
-      'https://images.pexels.com/photos/36040972/pexels-photo-36040972.jpeg', // cheese slices
-      'https://images.pexels.com/photos/5908003/pexels-photo-5908003.jpeg',   // fresh cream
+      'https://cdn.grofers.com/cdn-cgi/image/f=auto,fit=scale-down,q=70,metadata=none,w=270/app/images/products/sliding_image/483840a.jpg', // milk
+      'https://cdn.grofers.com/cdn-cgi/image/f=auto,fit=scale-down,q=70,metadata=none,w=270/app/images/products/sliding_image/1254a.jpg',   // butter
+      'https://cdn.grofers.com/cdn-cgi/image/f=auto,fit=scale-down,q=70,metadata=none,w=270/app/images/products/sliding_image/90349a.jpg',  // curd
+      'https://cdn.grofers.com/cdn-cgi/image/f=auto,fit=scale-down,q=70,metadata=none,w=270/app/images/products/sliding_image/1303a.jpg',   // cheese
     ],
     'munchies': [
-      'https://images.pexels.com/photos/7033900/pexels-photo-7033900.jpeg',  // tortilla chips
-      'https://images.pexels.com/photos/34466116/pexels-photo-34466116.jpeg', // potato chips
+      'https://cdn.grofers.com/cdn-cgi/image/f=auto,fit=scale-down,q=70,metadata=none,w=270/app/images/products/sliding_image/483608a.jpg', // chips
+      'https://cdn.grofers.com/cdn-cgi/image/f=auto,fit=scale-down,q=70,metadata=none,w=270/app/images/products/sliding_image/483610a.jpg', // biscuits
+      'https://cdn.grofers.com/cdn-cgi/image/f=auto,fit=scale-down,q=70,metadata=none,w=270/app/images/products/sliding_image/483612a.jpg', // snacks
     ],
     'cold-drinks': [
-      'https://images.pexels.com/photos/15205136/pexels-photo-15205136.jpeg', // cola in glass
-      'https://images.pexels.com/photos/4045205/pexels-photo-4045205.jpeg',   // lime soda
+      'https://cdn.grofers.com/cdn-cgi/image/f=auto,fit=scale-down,q=70,metadata=none,w=270/app/images/products/sliding_image/483600a.jpg', // cola
+      'https://cdn.grofers.com/cdn-cgi/image/f=auto,fit=scale-down,q=70,metadata=none,w=270/app/images/products/sliding_image/483602a.jpg', // juice
+      'https://cdn.grofers.com/cdn-cgi/image/f=auto,fit=scale-down,q=70,metadata=none,w=270/app/images/products/sliding_image/483604a.jpg', // water
     ],
     'instant-frozen': [
-      'https://images.pexels.com/photos/4518673/pexels-photo-4518673.jpeg', // ramen noodles
-      'https://images.pexels.com/photos/6940988/pexels-photo-6940988.jpeg', // instant noodle blocks
+      'https://cdn.grofers.com/cdn-cgi/image/f=auto,fit=scale-down,q=70,metadata=none,w=270/app/images/products/sliding_image/483560a.jpg', // noodles
+      'https://cdn.grofers.com/cdn-cgi/image/f=auto,fit=scale-down,q=70,metadata=none,w=270/app/images/products/sliding_image/483562a.jpg', // frozen food
     ],
     'tea-coffee': [
-      'https://images.pexels.com/photos/7507583/pexels-photo-7507583.jpeg', // instant coffee jar
+      'https://cdn.grofers.com/cdn-cgi/image/f=auto,fit=scale-down,q=70,metadata=none,w=270/app/images/products/sliding_image/483620a.jpg', // tea
+      'https://cdn.grofers.com/cdn-cgi/image/f=auto,fit=scale-down,q=70,metadata=none,w=270/app/images/products/sliding_image/483622a.jpg', // coffee
     ],
     'bakery-biscuits': [
-      'https://images.pexels.com/photos/7543099/pexels-photo-7543099.jpeg', // fresh bread rolls
+      'https://cdn.grofers.com/cdn-cgi/image/f=auto,fit=scale-down,q=70,metadata=none,w=270/app/images/products/sliding_image/483580a.jpg', // biscuits
+      'https://cdn.grofers.com/cdn-cgi/image/f=auto,fit=scale-down,q=70,metadata=none,w=270/app/images/products/sliding_image/90072a.jpg',  // bread
     ],
     'sweet-tooth': [
-      'https://images.pexels.com/photos/4113363/pexels-photo-4113363.jpeg', // chocolate bars
-      'https://images.pexels.com/photos/32402905/pexels-photo-32402905.jpeg', // assorted chocolate
+      'https://cdn.grofers.com/cdn-cgi/image/f=auto,fit=scale-down,q=70,metadata=none,w=270/app/images/products/sliding_image/483590a.jpg', // chocolate
+      'https://cdn.grofers.com/cdn-cgi/image/f=auto,fit=scale-down,q=70,metadata=none,w=270/app/images/products/sliding_image/483592a.jpg', // candy
     ],
     'masala-oil': [
-      'https://images.pexels.com/photos/31275834/pexels-photo-31275834.jpeg', // cooking oil bottles
-      'https://images.pexels.com/photos/2802527/pexels-photo-2802527.jpeg',   // spices
+      'https://cdn.grofers.com/cdn-cgi/image/f=auto,fit=scale-down,q=70,metadata=none,w=270/app/images/products/sliding_image/483636a.jpg', // oil
+      'https://cdn.grofers.com/cdn-cgi/image/f=auto,fit=scale-down,q=70,metadata=none,w=270/app/images/products/sliding_image/483638a.jpg', // masala
+      'https://cdn.grofers.com/cdn-cgi/image/f=auto,fit=scale-down,q=70,metadata=none,w=270/app/images/products/sliding_image/483640a.jpg', // garam masala
     ],
     'organic-healthy': [
-      'https://images.pexels.com/photos/18142621/pexels-photo-18142621.jpeg', // chocolate milkshake
-      'https://images.pexels.com/photos/13779116/pexels-photo-13779116.jpeg', // protein powder
+      'https://cdn.grofers.com/cdn-cgi/image/f=auto,fit=scale-down,q=70,metadata=none,w=270/app/images/products/sliding_image/483648a.jpg', // green tea
+      'https://cdn.grofers.com/cdn-cgi/image/f=auto,fit=scale-down,q=70,metadata=none,w=270/app/images/products/sliding_image/574396a.jpg', // protein shake
     ],
     'atta-rice-dal': [
-      'https://images.pexels.com/photos/5441094/pexels-photo-5441094.jpeg', // flour bowl
+      'https://cdn.grofers.com/cdn-cgi/image/f=auto,fit=scale-down,q=70,metadata=none,w=270/app/images/products/sliding_image/483630a.jpg', // atta
+      'https://cdn.grofers.com/cdn-cgi/image/f=auto,fit=scale-down,q=70,metadata=none,w=270/app/images/products/sliding_image/483632a.jpg', // rice
     ],
     'sauces-spreads': [
-      'https://images.pexels.com/photos/12932886/pexels-photo-12932886.jpeg', // ketchup bottle
+      'https://cdn.grofers.com/cdn-cgi/image/f=auto,fit=scale-down,q=70,metadata=none,w=270/app/images/products/sliding_image/483642a.jpg', // ketchup
+      'https://cdn.grofers.com/cdn-cgi/image/f=auto,fit=scale-down,q=70,metadata=none,w=270/app/images/products/sliding_image/483646a.jpg', // nutella
     ],
     'cleaning': [
-      'https://images.pexels.com/photos/10573258/pexels-photo-10573258.jpeg', // dish soap bottles
-      'https://images.pexels.com/photos/5217885/pexels-photo-5217885.jpeg',   // cleaner bottle
+      'https://cdn.grofers.com/cdn-cgi/image/f=auto,fit=scale-down,q=70,metadata=none,w=270/app/images/products/sliding_image/483660a.jpg', // dishwash
+      'https://cdn.grofers.com/cdn-cgi/image/f=auto,fit=scale-down,q=70,metadata=none,w=270/app/images/products/sliding_image/483662a.jpg', // toilet cleaner
     ],
     'personal-care': [
-      'https://images.pexels.com/photos/7622555/pexels-photo-7622555.jpeg', // toothpaste
+      'https://cdn.grofers.com/cdn-cgi/image/f=auto,fit=scale-down,q=70,metadata=none,w=270/app/images/products/sliding_image/483666a.jpg', // toothpaste
+      'https://cdn.grofers.com/cdn-cgi/image/f=auto,fit=scale-down,q=70,metadata=none,w=270/app/images/products/sliding_image/483668a.jpg', // soap
     ],
     'pharma-wellness': [
-      'https://images.pexels.com/photos/20140029/pexels-photo-20140029.jpeg', // medicine bottles
+      'https://cdn.grofers.com/cdn-cgi/image/f=auto,fit=scale-down,q=70,metadata=none,w=270/app/images/products/sliding_image/483656a.jpg', // antiseptic
+      'https://cdn.grofers.com/cdn-cgi/image/f=auto,fit=scale-down,q=70,metadata=none,w=270/app/images/products/sliding_image/483658a.jpg', // vicks
     ],
     'baby-care': [
-      'https://images.pexels.com/photos/30344708/pexels-photo-30344708.jpeg', // baby with diapers
+      'https://cdn.grofers.com/cdn-cgi/image/f=auto,fit=scale-down,q=70,metadata=none,w=270/app/images/products/sliding_image/483652a.jpg', // diapers
+      'https://cdn.grofers.com/cdn-cgi/image/f=auto,fit=scale-down,q=70,metadata=none,w=270/app/images/products/sliding_image/483654a.jpg', // cerelac
     ],
     'pet-care': [
-      'https://images.pexels.com/photos/8434633/pexels-photo-8434633.jpeg', // dog food bowl
+      'https://cdn.grofers.com/cdn-cgi/image/f=auto,fit=scale-down,q=70,metadata=none,w=270/app/images/products/sliding_image/483670a.jpg', // dog food
+      'https://cdn.grofers.com/cdn-cgi/image/f=auto,fit=scale-down,q=70,metadata=none,w=270/app/images/products/sliding_image/483672a.jpg', // cat food
     ],
     'home-office': [
-      'https://images.pexels.com/photos/7351636/pexels-photo-7351636.jpeg', // scrub pad
+      'https://cdn.grofers.com/cdn-cgi/image/f=auto,fit=scale-down,q=70,metadata=none,w=270/app/images/products/sliding_image/483664a.jpg', // scrub pad
     ],
     'default': [
-      'https://images.pexels.com/photos/2893635/pexels-photo-2893635.jpeg',
-      'https://images.pexels.com/photos/36040972/pexels-photo-36040972.jpeg',
+      'https://cdn.grofers.com/cdn-cgi/image/f=auto,fit=scale-down,q=70,metadata=none,w=270/app/images/products/sliding_image/10590a.jpg',
+      'https://cdn.grofers.com/cdn-cgi/image/f=auto,fit=scale-down,q=70,metadata=none,w=270/app/images/products/sliding_image/483840a.jpg',
     ]
   };
 

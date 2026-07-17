@@ -8,13 +8,11 @@
 
 import { useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { RefreshCw } from 'lucide-react';
 import styles from './CartDrawer.module.css';
 import { useGrokly } from '../contexts/GroklyContext';
 import { products } from '../lib/groklyData';
 import { dishIngredients } from '../lib/dishesData';
 import CouponSection from './CouponSection';
-import ReverseCommerceModal from './ReverseCommerceModal';
 
 // Combined lookup: regular products + dish ingredients (which have their own IDs)
 const allPurchasable = [...products, ...dishIngredients];
@@ -40,12 +38,9 @@ export default function CartDrawer() {
     incrementQuantity,
     decrementQuantity,
     clearCart,
-    returnItems,
-    setReturnItems,
   } = useGrokly();
 
   const [appliedCoupon, setAppliedCoupon] = useState(null);
-  const [showReturnModal, setShowReturnModal] = useState(false);
 
   // Calculate cart items with product details
   const cartItems = useMemo(() => {
@@ -56,13 +51,6 @@ export default function CartDrawer() {
       })
       .filter(Boolean);
   }, [cart]);
-
-  // Detect returnable items currently in cart
-  const cartReturnableItems = useMemo(() => {
-    return cartItems.filter(({ product }) => product.returnable === true);
-  }, [cartItems]);
-
-  const returnedCount = returnItems.reduce((s, i) => s + i.quantity, 0);
 
   // Calculate totals
   const { subtotal, savings, deliveryFee, handlingFee, total } = useMemo(() => {
@@ -257,67 +245,6 @@ export default function CartDrawer() {
                 ))}
               </div>
 
-              {/* Reverse Commerce Banner */}
-              {cartReturnableItems.length > 0 && (
-                <div
-                  className={styles.reverseCommerceBanner}
-                  onClick={() => setShowReturnModal(true)}
-                  role="button"
-                  tabIndex={0}
-                  onKeyDown={e => e.key === 'Enter' && setShowReturnModal(true)}
-                  aria-label="Return packaging for Green Points"
-                >
-                  <div className={styles.rcBannerLeft}>
-                    <RefreshCw size={16} className={styles.rcBannerIcon} style={{ color: '#16a34a' }} />
-                    <div className={styles.rcBannerText}>
-                      {returnItems.length > 0 ? (
-                        <>
-                          <strong>Return confirmed!</strong>
-                          <span>{returnedCount} item(s) · Earn ₹{returnItems.reduce((s, i) => s + (i.quantity * 10), 0)} Green Points on delivery</span>
-                        </>
-                      ) : (
-                        <>
-                          <strong>You have {cartReturnableItems.length} returnable item{cartReturnableItems.length > 1 ? 's' : ''}!</strong>
-                          <span>Return packaging &amp; earn Green Points</span>
-                        </>
-                      )}
-                    </div>
-                  </div>
-                  <div className={styles.rcBannerArrow}>
-                    {returnItems.length > 0 ? (
-                      <span className={styles.rcBannerEdit}>Edit</span>
-                    ) : (
-                      <span className={styles.rcBannerAdd}>Add</span>
-                    )}
-                  </div>
-                </div>
-              )}
-
-              {/* Return Item Thumbnails (if confirmed) */}
-              {returnItems.length > 0 && (
-                <div className={styles.rcReturnRow}>
-                  <span className={styles.rcReturnLabel}>Return with order:</span>
-                  <div className={styles.rcReturnThumbs}>
-                    {returnItems.map(item => (
-                      <div key={item.id} className={styles.rcReturnThumb}>
-                        <img
-                          src={item.image}
-                          alt={item.name}
-                          className={styles.rcReturnThumbImg}
-                          onError={e => { e.target.src = `https://placehold.co/36x36/e8f5e9/0c831f?text=${item.name[0]}`; }}
-                        />
-                        <span className={styles.rcReturnThumbQty}>×{item.quantity}</span>
-                      </div>
-                    ))}
-                  </div>
-                  <button
-                    className={styles.rcRemoveReturn}
-                    onClick={() => setReturnItems([])}
-                    title="Remove return selection"
-                  >✕</button>
-                </div>
-              )}
-
               {/* Coupon Section */}
               <CouponSection 
                 cartTotal={subtotal}
@@ -419,18 +346,6 @@ export default function CartDrawer() {
           </div>
         )}
       </div>
-
-      {/* Reverse Commerce Modal */}
-      <ReverseCommerceModal
-        isOpen={showReturnModal}
-        onClose={() => setShowReturnModal(false)}
-        cartReturnableItems={cartReturnableItems}
-        onConfirm={(items) => {
-          setReturnItems(items);
-          setShowReturnModal(false);
-        }}
-        confirmedItems={returnItems}
-      />
     </>
   );
 }

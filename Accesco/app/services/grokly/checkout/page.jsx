@@ -12,14 +12,13 @@ const allPurchasable = [...products, ...dishIngredients];
 import { useAuth } from '../../../components/AuthProvider';
 import AuthModal from '../../../components/AuthModal';
 import { payWithRazorpay } from '@/lib/razorpayService';
-import { 
-  ArrowLeft, MapPin, Phone, User, CreditCard, 
-  ShieldCheck, ShoppingBag, Clock, Zap, Sparkles,
-  RefreshCw, Leaf
+import {
+  ArrowLeft, MapPin, Phone, User, CreditCard,
+  ShieldCheck, ShoppingBag, Clock, Zap, Sparkles
 } from 'lucide-react';
 
 export default function GroklyCheckout() {
-  const { cart, placeOrder, location, cartHydrated, returnItems, setReturnItems } = useGrokly();
+  const { cart, placeOrder, location, cartHydrated } = useGrokly();
   const router = useRouter();
   const { user, signIn } = useAuth();
   const [isProcessing, setIsProcessing] = useState(false);
@@ -41,7 +40,7 @@ export default function GroklyCheckout() {
     }
   }, [location]);
 
-  const [eta , setEta] = useState(0);
+  const [eta, setEta] = useState(0);
   const [deliverySpeed, setDeliverySpeed] = useState('instant');
 
   // Pre-populate customer name and phone from authenticated user session
@@ -169,20 +168,27 @@ export default function GroklyCheckout() {
     setPaymentError('');
 
     try {
+      // Demo Mode
       const payment = await payWithRazorpay({
         amount: total,
-        receipt: `grokly_${Date.now()}`,
-        name: 'Grokly',
-        description: `Grokly order · ${cartItems.length} item(s)`,
+        receipt: `GRK-${Date.now()}`,
+        name: "Grokly",
+        description: "Fresh Grocery Order",
         prefill: {
           name: activeUser?.name || customerDetails.name,
-          email: activeUser?.email || '',
+          email: activeUser?.email || "",
           contact: activeUser?.phone || customerDetails.phone,
         },
-        theme: { color: '#0c831f' },
+        theme: {
+          color: "#0c831f",
+        },
       });
 
-      const resolvedEta = deliverySpeed === 'batched' ? (eta ? eta + 15 : 25) : eta;
+      const resolvedEta =
+        deliverySpeed === "batched"
+          ? (eta ? eta + 15 : 25)
+          : eta;
+
       const order = placeOrder({
         total,
         subtotal,
@@ -190,9 +196,15 @@ export default function GroklyCheckout() {
         deliverySpeed,
         discount,
         eta: resolvedEta,
-        items: cartItems.map(i => ({ id: i.product.id, name: i.product.name, price: i.product.price, quantity: i.quantity, sku: i.product.sku || '' })),
+        items: cartItems.map(i => ({
+          id: i.product.id,
+          name: i.product.name,
+          price: i.product.price,
+          quantity: i.quantity,
+          sku: i.product.sku || "",
+        })),
         totals: { subtotal, deliveryFee, discount, total },
-        paymentMethod: 'razorpay',
+        paymentMethod: "razorpay",
         razorpayOrderId: payment.orderId,
         razorpayPaymentId: payment.paymentId,
         address: customerDetails.address,
@@ -200,17 +212,15 @@ export default function GroklyCheckout() {
         phone: activeUser?.phone || customerDetails.phone,
         customerEmail: activeUser?.email || null,
         userId: activeUser?.uid || activeUser?.id || null,
-        packagingOptIn: returnItems.length > 0,
-        packagingBagsToReturn: returnItems.reduce((s, i) => s + i.quantity, 0),
-        returnItems,
-        returnCredits: returnItems.reduce((s, i) => s + (i.creditsEarned || i.quantity * 10), 0),
         ...getDeliveryCoords(),
       });
 
       router.push(`/services/grokly/order-tracking?id=${order.id}&eta=${resolvedEta}`);
+
     } catch (err) {
-      console.error('Payment failed:', err);
-      setPaymentError(err.message || 'Payment failed. Please try again.');
+      console.error("Payment failed:", err);
+      setPaymentError(err.message || "Payment failed. Please try again.");
+    } finally {
       setIsProcessing(false);
     }
   };
@@ -273,7 +283,7 @@ export default function GroklyCheckout() {
     };
 
     fetchEta();
-  }, []); 
+  }, []);
 
   if (cartItems.length === 0 && !isProcessing) {
     // Show loading spinner while cart is still hydrating from Firestore
@@ -310,15 +320,15 @@ export default function GroklyCheckout() {
               <MapPin size={18} className={styles.sectionHeaderIcon} />
               <h2>Delivery Details</h2>
             </div>
-            
+
             <div className={styles.formGroup}>
               <label>Full Name</label>
               <div className={styles.inputWrapper}>
                 <User size={16} className={styles.inputIcon} />
-                <input 
-                  type="text" 
+                <input
+                  type="text"
                   value={customerDetails.name}
-                  onChange={(e) => setCustomerDetails({...customerDetails, name: e.target.value})}
+                  onChange={(e) => setCustomerDetails({ ...customerDetails, name: e.target.value })}
                   placeholder="Enter your full name"
                 />
               </div>
@@ -328,10 +338,10 @@ export default function GroklyCheckout() {
               <label>Phone Number</label>
               <div className={styles.inputWrapper}>
                 <Phone size={16} className={styles.inputIcon} />
-                <input 
-                  type="text" 
+                <input
+                  type="text"
                   value={customerDetails.phone}
-                  onChange={(e) => setCustomerDetails({...customerDetails, phone: e.target.value})}
+                  onChange={(e) => setCustomerDetails({ ...customerDetails, phone: e.target.value })}
                   placeholder="Enter phone number"
                 />
               </div>
@@ -339,9 +349,9 @@ export default function GroklyCheckout() {
 
             <div className={styles.formGroup}>
               <label>Delivery Address {isLoadingLocation && '(Detecting...)'}</label>
-              <textarea 
+              <textarea
                 value={customerDetails.address}
-                onChange={(e) => setCustomerDetails({...customerDetails, address: e.target.value})}
+                onChange={(e) => setCustomerDetails({ ...customerDetails, address: e.target.value })}
                 placeholder={isLoadingLocation ? 'Fetching your location...' : 'Enter your delivery address'}
                 disabled={isLoadingLocation}
                 rows={3}
@@ -358,9 +368,9 @@ export default function GroklyCheckout() {
                 <p className={styles.speedSubheading}>Help reduce traffic emissions by choosing to batch your delivery.</p>
               </div>
             </div>
-            
+
             <div className={styles.speedOptions}>
-              <div 
+              <div
                 className={`${styles.speedOption} ${deliverySpeed === 'instant' ? styles.speedOptionInstantActive : ''}`}
                 onClick={() => setDeliverySpeed('instant')}
               >
@@ -373,7 +383,7 @@ export default function GroklyCheckout() {
                 <span className={styles.speedOffText}>Standard</span>
               </div>
 
-              <div 
+              <div
                 className={`${styles.speedOption} ${deliverySpeed === 'batched' ? styles.speedOptionActive : ''}`}
                 onClick={() => setDeliverySpeed('batched')}
               >
@@ -390,47 +400,6 @@ export default function GroklyCheckout() {
             <p className={styles.speedFooter}>Eco saver batches deliveries along similar routes, reducing fuel burn and delivery cost.</p>
           </section>
 
-          {/* Reverse Commerce: Eco-Return Section */}
-          <section className={styles.section} style={{ background: '#f0fdf4', borderColor: '#86efac', borderWidth: '1.5px', borderStyle: 'solid', padding: '18px', borderRadius: '16px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
-              <RefreshCw size={18} style={{ color: '#15803d' }} />
-              <h2 style={{ color: '#15803d', fontWeight: 800, margin: 0, fontSize: '15px' }}>Reverse Commerce · Eco-Return</h2>
-            </div>
-
-            {returnItems.length === 0 ? (
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 14px', background: '#fff', borderRadius: '12px', border: '1px solid #bbf7d0' }}>
-                <div>
-                  <div style={{ fontSize: '13px', fontWeight: 700, color: '#374151' }}>No return items selected</div>
-                  <div style={{ fontSize: '11px', color: '#6b7280', marginTop: '2px' }}>Go back to cart to select packaging to return</div>
-                </div>
-                <div style={{ fontSize: '13px', fontWeight: 700, color: '#9ca3af' }}>[Empty]</div>
-              </div>
-            ) : (
-              <>
-                <p style={{ fontSize: '12px', color: '#374151', margin: '0 0 10px', lineHeight: '1.5' }}>
-                  Hand over clean packaging to our rider when your order arrives and earn <strong style={{ color: '#15803d' }}>Green Points</strong> instantly!
-                </p>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '10px' }}>
-                  {returnItems.map(item => (
-                    <div key={item.id} style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '10px 12px', background: '#fff', borderRadius: '10px', border: '1px solid #bbf7d0' }}>
-                      <img src={item.image} alt={item.name} style={{ width: '40px', height: '40px', borderRadius: '8px', objectFit: 'cover', border: '1px solid #d1fae5' }} onError={e => { e.target.src = `https://placehold.co/40x40/e8f5e9/0c831f?text=${item.name[0]}`; }} />
-                      <div style={{ flex: 1 }}>
-                        <div style={{ fontSize: '13px', fontWeight: 700, color: '#111827' }}>{item.name}</div>
-                        <div style={{ fontSize: '11px', color: '#6b7280' }}>×{item.quantity} · Reusable</div>
-                      </div>
-                      <span style={{ fontSize: '12px', fontWeight: 700, color: '#16a34a' }}>+₹{item.creditsEarned || item.quantity * 10}</span>
-                    </div>
-                  ))}
-                </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', background: '#dcfce7', padding: '10px 14px', borderRadius: '10px', color: '#15803d', fontSize: '12px', fontWeight: 700 }}>
-                  <Leaf size={14} style={{ color: '#15803d' }} />
-                  <span>Estimated Green Points: ₹{returnItems.reduce((s, i) => s + (i.creditsEarned || i.quantity * 10), 0)} credited on delivery</span>
-                  <button onClick={() => setReturnItems([])} style={{ marginLeft: 'auto', background: 'none', border: 'none', cursor: 'pointer', fontSize: '12px', color: '#6b7280', textDecoration: 'underline' }}>Clear</button>
-                </div>
-              </>
-            )}
-          </section>
-          
           <section className={styles.section}>
             <div className={styles.sectionHeader}>
               <CreditCard size={18} className={styles.sectionHeaderIcon} />
@@ -449,7 +418,7 @@ export default function GroklyCheckout() {
             </div>
           </section>
         </div>
-        
+
         <div className={styles.summary}>
           {/* Save Time Next Time Card */}
           <div className={styles.saveTimeCard}>
@@ -468,7 +437,7 @@ export default function GroklyCheckout() {
           </div>
 
           <h2 className={styles.summaryHeading}>Bill Details</h2>
-          
+
           <div className={styles.summaryItems}>
             {cartItems.map(({ product, quantity }) => (
               <div key={product.id} className={styles.item}>
@@ -477,9 +446,9 @@ export default function GroklyCheckout() {
               </div>
             ))}
           </div>
-          
+
           <div className={styles.divider} />
-          
+
           <div className={styles.row}>
             <span>Item Subtotal</span>
             <span>₹{subtotal}</span>
@@ -500,9 +469,9 @@ export default function GroklyCheckout() {
               <span>-₹20</span>
             </div>
           )}
-          
+
           <div className={styles.divider} />
-          
+
           <div className={`${styles.row} ${styles.total}`}>
             <span>To Pay</span>
             <span>₹{total}</span>
@@ -518,7 +487,7 @@ export default function GroklyCheckout() {
             disabled={isProcessing}
           >
             {isProcessing
-              ? 'Processing Payment...'
+              ? "Processing Payment..."
               : !user
                 ? `Login & Place Order · ₹${total}`
                 : `Pay & Place Order · ₹${total}`}

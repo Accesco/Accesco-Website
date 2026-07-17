@@ -20,7 +20,6 @@ const mediaLogos = [
   { name: "Buisnessscope", src: "/logos/BSC.jpeg" },
   { name: "Express_visionary", src: "/logos/Express_visionary.jpeg" },
   { name: "entrepreneurorbit", src: "/logos/orbitent.jpeg" },
-  { name: "new1", src: "/logos/new1.jpeg" },
 ];
 const ecosystemLogos = [
   { name: "AWS Startups", src: "/logos/aws-startups.png" },
@@ -289,7 +288,9 @@ export default function HomePage() {
             <p>
               <strong>Address:</strong> Accesco living,Jaladarshini Layout, Bengaluru -560094, Karnataka, India
             </p>
-  
+            <p>
+  <strong>GSTIN:</strong> 19ABECA4405B1Z6
+</p>
 <p className="business-card-link">
   <a
     href="/accesco-business-card.pdf"

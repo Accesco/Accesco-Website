@@ -1,6 +1,7 @@
 /**
  * CartDrawer Component Styles
- * @version 2.0.0 — Harvest Ledger redesign
+ * Zepto-inspired sliding cart panel
+ * @version 1.0.0
  */
 
 /* ═══════════════════════════════════════════════
@@ -40,8 +41,14 @@
 }
 
 @keyframes drawerslide {
-  from { transform: translateX(100%); opacity: 0; }
-  to { transform: translateX(0); opacity: 1; }
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
 }
 
 @media (max-width: 768px) {
@@ -54,8 +61,14 @@
   }
 
   @keyframes drawerslide {
-    from { transform: translateY(100%); opacity: 0; }
-    to { transform: translateY(0); opacity: 1; }
+    from {
+      transform: translateY(100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
   }
 }
 
@@ -91,7 +104,6 @@
   color: var(--grokly-text-secondary);
   font-weight: var(--grokly-font-weight-semibold);
   margin-top: 4px;
-  font-family: var(--grokly-font-mono);
 }
 
 .headerActions {
@@ -116,7 +128,7 @@
 }
 
 .clearBtn:hover {
-  background: #F5E6E5;
+  background: #fee;
   color: var(--grokly-error);
 }
 
@@ -142,15 +154,15 @@
 }
 
 .delivBanner.free {
-  background: var(--grokly-primary-light);
+  background: linear-gradient(135deg, #f0fdf4, #dcfce7);
   color: var(--grokly-primary-dark);
-  border-bottom-color: var(--grokly-border);
+  border-bottom-color: #bbf7d0;
 }
 
 .delivBanner.pending {
-  background: #FBF1E0;
-  color: var(--grokly-lime-2);
-  border-bottom-color: #EAD7B0;
+  background: linear-gradient(135deg, #fffbeb, #fef3c7);
+  color: #92400e;
+  border-bottom-color: #fde68a;
 }
 
 /* ═══════════════════════════════════════════════
@@ -162,7 +174,6 @@
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
   overscroll-behavior: contain;
-  padding-bottom: 8px;
 }
 
 /* ═══════════════════════════════════════════════
@@ -210,7 +221,7 @@
 ═══════════════════════════════════════════════ */
 
 .items {
-  padding: 8px 0 4px;
+  padding: 8px 0;
 }
 
 .item {
@@ -218,14 +229,20 @@
   align-items: center;
   gap: 20px;
   padding: 24px 20px;
-  border-bottom: 1px solid var(--grokly-border);
+  border-bottom: 1px solid #f5f5f5;
   transition: all var(--grokly-transition-fast);
   animation: slideInCart 0.3s ease;
 }
 
 @keyframes slideInCart {
-  from { opacity: 0; transform: translateX(-20px); }
-  to { opacity: 1; transform: translateX(0); }
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
 .item:hover {
@@ -242,7 +259,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid var(--grokly-border);
+  border: 1px solid #e8f5eb;
 }
 
 .itemImg {
@@ -274,7 +291,6 @@
   color: var(--grokly-text-muted);
   font-weight: var(--grokly-font-weight-semibold);
   margin: 0 0 6px 0;
-  font-family: var(--grokly-font-mono);
 }
 
 .itemPriceRow {
@@ -293,7 +309,6 @@
   font-size: 15px;
   font-weight: var(--grokly-font-weight-extrabold);
   color: var(--grokly-text-primary);
-  font-family: var(--grokly-font-mono);
 }
 
 .itemPriceMrp {
@@ -301,17 +316,16 @@
   color: var(--grokly-text-muted);
   text-decoration: line-through;
   font-weight: var(--grokly-font-weight-semibold);
-  font-family: var(--grokly-font-mono);
 }
 
 .itemDiscount {
-  background: #FCF3E3;
-  color: var(--grokly-lime-2);
+  background: #fff8e1;
+  color: var(--grokly-warning);
   font-size: var(--grokly-font-size-xs);
   font-weight: var(--grokly-font-weight-extrabold);
   padding: 3px 6px;
   border-radius: 4px;
-  border: 1px solid #EAD7B0;
+  border: 1px solid #fde68a;
 }
 
 .itemQty {
@@ -321,7 +335,7 @@
   border-radius: 10px;
   overflow: hidden;
   flex-shrink: 0;
-  box-shadow: 0 2px 8px rgba(27, 58, 43, 0.25);
+  box-shadow: 0 2px 8px rgba(12, 131, 31, 0.2);
 }
 
 .itemQtyBtn {
@@ -349,20 +363,17 @@
   font-size: 15px;
   font-weight: var(--grokly-font-weight-extrabold);
   color: var(--grokly-text-white);
-  font-family: var(--grokly-font-mono);
 }
 
 /* ═══════════════════════════════════════════════
-   BILL DETAILS — reads like a receipt/ledger
+   BILL DETAILS
 ═══════════════════════════════════════════════ */
 
 .bill {
   background: var(--grokly-bg);
-  padding: 16px;
-  margin: 0 16px 8px;
-  border-radius: 14px;
+  padding: 16px 20px;
   flex-shrink: 0;
-  border: 1px solid var(--grokly-border);
+  border-top: 1px solid var(--grokly-border);
 }
 
 .billTitle {
@@ -397,7 +408,6 @@
 .billValue {
   font-weight: var(--grokly-font-weight-bold);
   color: var(--grokly-text-primary);
-  font-family: var(--grokly-font-mono);
 }
 
 .billValue.free {
@@ -410,8 +420,8 @@
   align-items: center;
   gap: 8px;
   padding: 10px 12px;
-  background: var(--grokly-primary-light);
-  border: 1px solid var(--grokly-border);
+  background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+  border: 1px solid #bbf7d0;
   border-radius: var(--grokly-radius-sm);
   font-size: var(--grokly-font-size-sm);
   font-weight: var(--grokly-font-weight-bold);
@@ -469,13 +479,13 @@
   justify-content: space-between;
   cursor: pointer;
   transition: all var(--grokly-transition-base);
-  box-shadow: 0 4px 16px rgba(27, 58, 43, 0.3);
+  box-shadow: 0 4px 16px rgba(12, 131, 31, 0.3);
   font-family: var(--grokly-font-primary);
 }
 
 .checkoutBtn:hover {
   background: var(--grokly-primary-dark);
-  box-shadow: 0 6px 20px rgba(27, 58, 43, 0.4);
+  box-shadow: 0 6px 20px rgba(12, 131, 31, 0.4);
 }
 
 .checkoutLeft {
@@ -487,7 +497,6 @@
   font-weight: var(--grokly-font-weight-black);
   line-height: 1;
   margin-bottom: 4px;
-  font-family: var(--grokly-font-mono);
 }
 
 .checkoutSub {
@@ -521,6 +530,10 @@
   outline-offset: 2px;
 }
 
+/* ═══════════════════════════════════════════════
+   REDUCED MOTION
+═══════════════════════════════════════════════ */
+
 @media (prefers-reduced-motion: reduce) {
   .overlay,
   .drawer,
@@ -532,167 +545,9 @@
   }
 }
 
+
 /* Discount Value */
 .discount {
   color: var(--grokly-success) !important;
   font-weight: 800;
 }
-
-/* ═══════════════════════════════════════════════
-   REVERSE COMMERCE BANNER
-═══════════════════════════════════════════════ */
-
-.reverseCommerceBanner {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 12px 14px;
-  background: linear-gradient(135deg, #f0fdf4, #dcfce7);
-  border: 1.5px solid #86efac;
-  border-radius: 14px;
-  margin: 8px 16px 4px;
-  cursor: pointer;
-  transition: all 0.18s ease;
-  gap: 10px;
-}
-
-.reverseCommerceBanner:hover {
-  background: linear-gradient(135deg, #dcfce7, #bbf7d0);
-  border-color: #4ade80;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 14px rgba(34, 197, 94, 0.18);
-}
-
-.rcBannerLeft {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex: 1;
-  min-width: 0;
-}
-
-.rcBannerIcon {
-  font-size: 20px;
-  flex-shrink: 0;
-}
-
-.rcBannerText {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  min-width: 0;
-}
-
-.rcBannerText strong {
-  font-size: 13px;
-  font-weight: 700;
-  color: #15803d;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.rcBannerText span {
-  font-size: 11px;
-  color: #16a34a;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.rcBannerArrow {
-  flex-shrink: 0;
-}
-
-.rcBannerAdd {
-  display: inline-block;
-  font-size: 12px;
-  font-weight: 700;
-  color: #fff;
-  background: #16a34a;
-  padding: 5px 10px;
-  border-radius: 20px;
-}
-
-.rcBannerEdit {
-  display: inline-block;
-  font-size: 12px;
-  font-weight: 600;
-  color: #15803d;
-  background: #bbf7d0;
-  padding: 5px 10px;
-  border-radius: 20px;
-}
-
-/* ── Return Row with Thumbnails ── */
-.rcReturnRow {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 14px;
-  background: #f0fdf4;
-  border: 1px solid #bbf7d0;
-  border-radius: 12px;
-  margin: 0 16px 8px;
-}
-
-.rcReturnLabel {
-  font-size: 11px;
-  color: #15803d;
-  font-weight: 600;
-  white-space: nowrap;
-  flex-shrink: 0;
-}
-
-.rcReturnThumbs {
-  display: flex;
-  gap: 6px;
-  flex: 1;
-  overflow-x: auto;
-  scrollbar-width: none;
-}
-.rcReturnThumbs::-webkit-scrollbar { display: none; }
-
-.rcReturnThumb {
-  position: relative;
-  flex-shrink: 0;
-}
-
-.rcReturnThumbImg {
-  width: 36px;
-  height: 36px;
-  border-radius: 8px;
-  object-fit: cover;
-  border: 1.5px solid #86efac;
-}
-
-.rcReturnThumbQty {
-  position: absolute;
-  top: -5px;
-  right: -5px;
-  background: #0c831f;
-  color: #fff;
-  font-size: 9px;
-  font-weight: 700;
-  border-radius: 20px;
-  padding: 1px 4px;
-  line-height: 1.6;
-}
-
-.rcRemoveReturn {
-  background: #fee2e2;
-  border: none;
-  color: #dc2626;
-  width: 22px;
-  height: 22px;
-  border-radius: 50%;
-  font-size: 10px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  transition: background 0.15s;
-}
-.rcRemoveReturn:hover { background: #fca5a5; }
-

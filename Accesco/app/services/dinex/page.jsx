@@ -10,11 +10,11 @@ const serviceSchema = {
   name: "DineX by Accesco Living",
   description:
     "Premium restaurant reservations, curated dining experiences and exclusive table bookings.",
-  url: "https://accescoliving.com/services/dinex",
+  url: "https://www.accescoliving.com/services/dinex",
   provider: {
     "@type": "Organization",
     name: "Accesco Living",
-    url: "https://accescoliving.com",
+    url: "https://www.accescoliving.com",
   },
   areaServed: {
     "@type": "City",

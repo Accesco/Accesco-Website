@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useMemo, memo } from "react";
 import { MapContainer, TileLayer, Marker, Polyline } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
@@ -10,22 +10,20 @@ import {
   computeRoutePosition,
   stepProgressTowards,
 } from "@/lib/riderTrackingService";
+import { fetchRoute } from "@/lib/routeEngine";
+import { formatETA } from "@/lib/etaEngine";
 
 const RIDE_DURATION_MS = 3 * 60 * 1000;
+const TELEMETRY_THROTTLE_MS = 400;
+const SETVIEW_EVERY_N_FRAMES = 8;
 
-// Track which orders already have a running simulation this session, so a
-// refresh / strict-mode double-mount doesn't spawn duplicate rider feeds.
-const startedSimulations = new Set();
-
-// Live delivery-rider marker using the branded scooter illustration.
 const riderIcon = new L.Icon({
   iconUrl: "/images/delivery-rider.png",
-  iconSize: [38, 68],       // keeps the image's portrait aspect ratio
-  iconAnchor: [19, 60],     // anchored on the scooter's wheels (near bottom)
+  iconSize: [38, 68],
+  iconAnchor: [19, 60],
   className: "swadisht-rider-icon",
 });
 
-// Fix Leaflet's default icon paths in Next.js
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl:
@@ -34,7 +32,6 @@ L.Icon.Default.mergeOptions({
   shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
 });
 
-// Custom Icons
 const storeIcon = new L.Icon({
   iconUrl: "https://cdn-icons-png.flaticon.com/512/3081/3081840.png",
   iconSize: [32, 32],
@@ -52,21 +49,123 @@ const userIcon = new L.Icon({
   shadowSize: [41, 41],
 });
 
-export default function LiveTrackingMap({ orderId }) {
+/**
+ * Live telemetry strip — memoized so map animation frames do not re-render this tree.
+ */
+const TrackingTelemetry = memo(function TrackingTelemetry({ telemetry }) {
+  if (!telemetry) return null;
+
+  const {
+    remainingETA,
+    remainingDistance,
+    currentSpeed,
+    heading,
+    status,
+    orderStatus,
+  } = telemetry;
+
+  const statusLabel = (orderStatus || status || "—")
+    .toString()
+    .replace(/_/g, " ")
+    .toLowerCase()
+    .replace(/\b\w/g, (c) => c.toUpperCase());
+
+  return (
+    <div
+      style={{
+        display: "grid",
+        gridTemplateColumns: "repeat(auto-fit, minmax(110px, 1fr))",
+        gap: 8,
+        padding: "10px 12px",
+        background: "rgba(255,255,255,0.96)",
+        borderBottom: "1px solid #EAD9C8",
+        fontSize: 12,
+        color: "#1C1C1C",
+      }}
+    >
+      <div>
+        <div style={{ color: "#9B7E6A", fontWeight: 600 }}>ETA</div>
+        <div style={{ fontWeight: 700 }}>
+          {remainingETA != null ? formatETA(remainingETA) : "—"}
+        </div>
+      </div>
+      <div>
+        <div style={{ color: "#9B7E6A", fontWeight: 600 }}>Distance</div>
+        <div style={{ fontWeight: 700 }}>
+          {remainingDistance != null
+            ? `${Number(remainingDistance).toFixed(2)} km`
+            : "—"}
+        </div>
+      </div>
+      <div>
+        <div style={{ color: "#9B7E6A", fontWeight: 600 }}>Speed</div>
+        <div style={{ fontWeight: 700 }}>
+          {currentSpeed != null ? `${Math.round(currentSpeed)} km/h` : "—"}
+        </div>
+      </div>
+      <div>
+        <div style={{ color: "#9B7E6A", fontWeight: 600 }}>Heading</div>
+        <div style={{ fontWeight: 700 }}>
+          {heading != null ? `${Math.round(heading)}°` : "—"}
+        </div>
+      </div>
+      <div>
+        <div style={{ color: "#9B7E6A", fontWeight: 600 }}>Status</div>
+        <div style={{ fontWeight: 700 }}>{statusLabel}</div>
+      </div>
+    </div>
+  );
+});
+
+/**
+ * Stable geometry fingerprint so we skip remounting animation when OSRM
+ * returns an equivalent path as a new array reference.
+ * @param {Array<[number,number]>} route
+ * @returns {string}
+ */
+function routeFingerprint(route) {
+  if (!route?.length) return "";
+  const first = route[0];
+  const last = route[route.length - 1];
+  return `${route.length}:${first?.[0]?.toFixed?.(4)},${first?.[1]?.toFixed?.(4)}:${last?.[0]?.toFixed?.(4)},${last?.[1]?.toFixed?.(4)}`;
+}
+
+export default function LiveTrackingMap({ orderId, onTrackingUpdate }) {
   const [userLoc, setUserLoc] = useState(null);
   const [routePositions, setRoutePositions] = useState([]);
   const [riderPos, setRiderPos] = useState(null);
+  const [telemetry, setTelemetry] = useState(null);
+
   const riderMarkerRef = useRef(null);
   const routeLineRef = useRef(null);
   const targetProgressRef = useRef(0);
   const mapRef = useRef(null);
+  const onTrackingUpdateRef = useRef(onTrackingUpdate);
+  const lastTelemetryKeyRef = useRef("");
+  const lastTelemetryAtRef = useRef(0);
+  const routeFingerprintRef = useRef("");
+  const routePositionsRef = useRef(routePositions);
 
-  // Option 1 (until /api/darkstore picks the nearest real store): place the store
-  // ~1.5 km from the customer so the rider always starts nearby, in any city.
-  // Falls back to the Chennai darkstore until the user's location is known.
-  const storeLoc = userLoc
-    ? [userLoc[0] + 0.012, userLoc[1] + 0.012]
-    : [13.08268, 80.27072];
+  useEffect(() => {
+    onTrackingUpdateRef.current = onTrackingUpdate;
+  }, [onTrackingUpdate]);
+
+  useEffect(() => {
+    routePositionsRef.current = routePositions;
+  }, [routePositions]);
+
+  const storeLoc = useMemo(
+    () =>
+      userLoc
+        ? [userLoc[0] + 0.012, userLoc[1] + 0.012]
+        : [13.08268, 80.27072],
+    [userLoc],
+  );
+
+  const routeKey = useMemo(
+    () => routeFingerprint(routePositions),
+    [routePositions],
+  );
 
   useEffect(() => {
     const stored = localStorage.getItem("userLocation");
@@ -91,73 +190,136 @@ export default function LiveTrackingMap({ orderId }) {
   }, []);
 
   useEffect(() => {
-    if (!userLoc) return;
+    if (!userLoc) return undefined;
+    let cancelled = false;
+    const controller =
+      typeof AbortController !== "undefined" ? new AbortController() : null;
 
-    const fetchRoute = async () => {
-      try {
-        const start = `${storeLoc[1]},${storeLoc[0]}`;
-        const end = `${userLoc[1]},${userLoc[0]}`;
+    const loadRoute = async () => {
+      const result = await fetchRoute(
+        { lat: storeLoc[0], lng: storeLoc[1] },
+        { lat: userLoc[0], lng: userLoc[1] },
+        { signal: controller?.signal },
+      );
+      if (cancelled) return;
 
-        const response = await fetch(
-          `https://router.project-osrm.org/route/v1/driving/${start};${end}?overview=full&geometries=geojson`,
-        );
-        const data = await response.json();
+      const next =
+        result.coordinates?.length > 0
+          ? result.coordinates
+          : [storeLoc, userLoc];
+      const fp = routeFingerprint(next);
+      if (fp === routeFingerprintRef.current) return;
+      routeFingerprintRef.current = fp;
+      setRoutePositions(next);
+    };
 
-        if (data.routes && data.routes.length > 0) {
-          const coords = data.routes[0].geometry.coordinates.map((coord) => [
-            coord[1],
-            coord[0],
-          ]);
-          setRoutePositions(coords);
-        }
-      } catch (error) {
-        console.error("Error fetching route:", error);
-        setRoutePositions([storeLoc, userLoc]);
+    loadRoute();
+    return () => {
+      cancelled = true;
+      controller?.abort();
+    };
+  }, [userLoc, storeLoc]);
+
+  // Single Firestore subscription + 60fps animation (owned by the map).
+  useEffect(() => {
+    if (!orderId || routePositions.length < 2) return undefined;
+
+    setRiderPos(routePositions[0]);
+    targetProgressRef.current = 0;
+
+    const maxStepPerFrame = 4 / (RIDE_DURATION_MS / 1000) / 60;
+    let displayProgress = 0;
+    let raf = 0;
+    let alive = true;
+    let frame = 0;
+    /** @type {ReturnType<typeof setTimeout>|null} */
+    let telemetryTimer = null;
+    /** @type {object|null} */
+    let pendingTelemetry = null;
+
+    const flushTelemetry = () => {
+      telemetryTimer = null;
+      if (!alive || !pendingTelemetry) return;
+      const next = pendingTelemetry;
+      pendingTelemetry = null;
+      const key = JSON.stringify(next);
+      if (key === lastTelemetryKeyRef.current) return;
+      lastTelemetryKeyRef.current = key;
+      lastTelemetryAtRef.current = Date.now();
+      setTelemetry(next);
+      if (typeof onTrackingUpdateRef.current === "function") {
+        onTrackingUpdateRef.current(next);
       }
     };
 
-    fetchRoute();
-  }, [userLoc]);
+    const publishTelemetry = (next) => {
+      const key = JSON.stringify(next);
+      if (key === lastTelemetryKeyRef.current && pendingTelemetry == null) return;
+      pendingTelemetry = next;
+      if (telemetryTimer != null) return;
+      const elapsed = Date.now() - lastTelemetryAtRef.current;
+      const wait = Math.max(0, TELEMETRY_THROTTLE_MS - elapsed);
+      telemetryTimer = setTimeout(flushTelemetry, wait);
+    };
 
-  // Live rider tracking: subscribe to `progress`, then animate the marker along
-  // the exact road at 60fps (accuracy) and consume the trail behind it.
-  useEffect(() => {
-    if (!orderId || routePositions.length < 2) return;
-
-    setRiderPos(routePositions[0]); // render the marker at the store initially
-
-    // Bounded step per frame so the marker can never visually teleport, even if
-    // the live target is far ahead when the map first subscribes.
-    const maxStepPerFrame = (4 / (RIDE_DURATION_MS / 1000)) / 60;
-    let displayProgress = 0;
-    let raf;
     const animate = () => {
-      displayProgress = stepProgressTowards(displayProgress, targetProgressRef.current, maxStepPerFrame);
-      const { lat, lng, remaining } = computeRoutePosition(routePositions, displayProgress);
-      if (riderMarkerRef.current) riderMarkerRef.current.setLatLng([lat, lng]);
-      if (routeLineRef.current && remaining.length >= 2) routeLineRef.current.setLatLngs(remaining);
-      // Follow the rider like Google Maps driver tracking.
-      if (mapRef.current) mapRef.current.setView([lat, lng], mapRef.current.getZoom(), { animate: false });
+      if (!alive) return;
+      displayProgress = stepProgressTowards(
+        displayProgress,
+        targetProgressRef.current,
+        maxStepPerFrame,
+      );
+      const route = routePositionsRef.current;
+      const { lat, lng, remaining } = computeRoutePosition(
+        route,
+        displayProgress,
+      );
+      if (riderMarkerRef.current) {
+        riderMarkerRef.current.setLatLng([lat, lng]);
+      }
+      if (routeLineRef.current && remaining.length >= 2) {
+        routeLineRef.current.setLatLngs(remaining);
+      }
+      frame += 1;
+      if (mapRef.current && frame % SETVIEW_EVERY_N_FRAMES === 0) {
+        mapRef.current.setView([lat, lng], mapRef.current.getZoom(), {
+          animate: false,
+        });
+      }
       raf = requestAnimationFrame(animate);
     };
     raf = requestAnimationFrame(animate);
 
     const unsubscribe = subscribeToRiderLocation(orderId, (data) => {
-      if (data && typeof data.progress === "number") targetProgressRef.current = data.progress;
+      if (!data) return;
+      if (typeof data.progress === "number") {
+        targetProgressRef.current = data.progress;
+      }
+
+      publishTelemetry({
+        remainingETA: data.remainingETA ?? null,
+        remainingDistance: data.remainingDistance ?? null,
+        currentSpeed: data.currentSpeed ?? null,
+        heading: data.heading ?? null,
+        status: data.status ?? null,
+        orderStatus: data.orderStatus ?? null,
+        riderName: data.riderName ?? null,
+        riderPhone: data.riderPhone ?? null,
+        progress: data.progress ?? null,
+      });
     });
 
     return () => {
+      alive = false;
       cancelAnimationFrame(raf);
+      if (telemetryTimer != null) clearTimeout(telemetryTimer);
       unsubscribe();
     };
-  }, [orderId, routePositions]);
+  }, [orderId, routeKey]);
 
-  // Start the stand-in rider feed once the road route is known, so the rider
-  // follows the actual road geometry from the store to the customer.
+  // Simulation writer — deduped by orderId inside riderTrackingService.
   useEffect(() => {
-    if (!orderId || !userLoc || routePositions.length < 2) return;
-    if (startedSimulations.has(orderId)) return;
-    startedSimulations.add(orderId);
+    if (!orderId || !userLoc || routePositions.length < 2) return undefined;
 
     const path = routePositions.map(([lat, lng]) => ({ lat, lng }));
     const from = path[0];
@@ -165,13 +327,19 @@ export default function LiveTrackingMap({ orderId }) {
     const waypoints = path.slice(1, -1);
 
     const stopSim = startRiderSimulation(orderId, from, to, {
+      route: path,
       waypoints,
+      store: from,
+      customer: to,
       durationMs: RIDE_DURATION_MS,
-      tickMs: 1000, // frequent updates + CSS glide = smooth constant-speed motion
+      tickMs: 1000,
+      eta: RIDE_DURATION_MS / 60000,
     });
 
-    return () => stopSim();
-  }, [orderId, userLoc, routePositions]);
+    return () => {
+      stopSim();
+    };
+  }, [orderId, userLoc, routeKey]);
 
   if (!userLoc) {
     return (
@@ -189,31 +357,48 @@ export default function LiveTrackingMap({ orderId }) {
   }
 
   return (
-    <MapContainer
-      ref={mapRef}
-      key={userLoc.join(",")}
-      center={storeLoc}
-      zoom={15}
-      zoomControl={true}
-      scrollWheelZoom={true}
-      style={{ height: "100%", minHeight: "480px", width: "100%", zIndex: 1 }}
+    <div
+      style={{
+        height: "100%",
+        width: "100%",
+        display: "flex",
+        flexDirection: "column",
+      }}
     >
-      <TileLayer url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png" />
+      <TrackingTelemetry telemetry={telemetry} />
+      <div style={{ flex: 1, minHeight: 480, position: "relative" }}>
+        <MapContainer
+          ref={mapRef}
+          key={userLoc.join(",")}
+          center={storeLoc}
+          zoom={15}
+          zoomControl={true}
+          scrollWheelZoom={true}
+          style={{
+            height: "100%",
+            minHeight: "480px",
+            width: "100%",
+            zIndex: 1,
+          }}
+        >
+          <TileLayer url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png" />
 
-      <Marker position={storeLoc} icon={storeIcon} />
-      <Marker position={userLoc} icon={userIcon} />
-      {riderPos && <Marker position={riderPos} icon={riderIcon} ref={riderMarkerRef} />}
-      {routePositions.length > 0 && (
-        <Polyline
-          ref={routeLineRef}
-          positions={routePositions}
-          color="#2d0018"
-          weight={5}
-          opacity={0.8}
-        />
-      )}
-    </MapContainer>
+          <Marker position={storeLoc} icon={storeIcon} />
+          <Marker position={userLoc} icon={userIcon} />
+          {riderPos && (
+            <Marker position={riderPos} icon={riderIcon} ref={riderMarkerRef} />
+          )}
+          {routePositions.length > 0 && (
+            <Polyline
+              ref={routeLineRef}
+              positions={routePositions}
+              color="#2d0018"
+              weight={5}
+              opacity={0.8}
+            />
+          )}
+        </MapContainer>
+      </div>
+    </div>
   );
 }
-
-

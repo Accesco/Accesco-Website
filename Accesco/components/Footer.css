@@ -38,8 +38,8 @@
   color: var(--footer-text-primary);
   font-family: 'Montserrat', sans-serif;
 
-  background: url("/images/waves.png") center/cover no-repeat;
-  opacity:0.95;
+  background: url("/images/wave-desktop3.png") center/cover no-repeat;
+
 background-size: cover;
 background-position: center;
 background-repeat: no-repeat;
@@ -51,7 +51,7 @@ background-repeat: no-repeat;
 
     background:url("/images/wave-desktop3.png") center bottom / cover no-repeat;
 
-    opacity:0.000;      /* was 0.18 */
+    opacity:0.001;      /* was 0.18 */
     z-index:1;
     pointer-events:none;
 }
@@ -156,11 +156,6 @@ background-repeat: no-repeat;
   display: flex;
   align-items: center;
   justify-content: center;
-}
-
-.logo-component-icon {
-  width: 32px;
-  height: auto;
 }
 
 .logo-wordmark {
@@ -386,13 +381,8 @@ color: rgba(255, 255, 255, 0.35);
 
 @media (max-width: 767px) {
   .accesco-footer-root {
-    margin-top: 0 !important;
-    padding-top: 0 !important;
     overflow: hidden;
-    background-color: #c00062 !important;
-    background-position: center -80px !important;
-    background-size: cover !important;
-    background-repeat: no-repeat !important;
+    background-position: center top;
   }
 
   .ventures-ticker {
@@ -680,7 +670,7 @@ color: rgba(255, 255, 255, 0.35);
 }
 .footer-watermark{
     text-align:center;
-    font-size:250px;
+    font-size:100px;
     font-weight:900;
     line-height:.9;
  /* Quite prominent */
@@ -689,77 +679,4 @@ color: rgba(255, 255, 255, 0.35);
     user-select:none;
     margin-top:30px;
     margin-bottom:10px;
-}
-/* Footer watermark — mobile optimized */
-@media (max-width: 767px) {
-  .footer-watermark {
-    width: 100%;
-    margin: 24px auto 14px;
-    padding: 0;
-
-    font-size: clamp(58px, 21vw, 120px);
-    font-weight: 900;
-    line-height: 0.85;
-    letter-spacing: -4px;
-    text-align: center;
-    white-space: nowrap;
-
-    color: rgba(255, 255, 255, 0.25);
-
-    overflow: hidden;
-    box-sizing: border-box;
-  }
-}
-
-@media (max-width: 430px) {
-  .footer-watermark {
-    font-size: clamp(54px, 20vw, 88px);
-    letter-spacing: -3px;
-    margin-top: 20px;
-  }
-}
-
-@media (max-width: 360px) {
-  .footer-watermark {
-    font-size: 19vw;
-    letter-spacing: -2px;
-  }
-}
-@media (max-width: 767px) {
-  .social-row {
-    gap: 10px;
-    margin-bottom: 18px;
-    flex-wrap: wrap;
-  }
-
-  .accesco-footer-root .social-icon {
-    width: 40px !important;
-    height: 40px !important;
-
-    background: #ffffff !important;
-    color: #aa0152 !important;
-
-    border: 1px solid rgba(255, 255, 255, 0.65);
-    box-shadow: 0 5px 14px rgba(40, 0, 20, 0.25);
-
-    font-size: 20px;
-    opacity: 1;
-  }
-
-  .accesco-footer-root .social-icon i {
-    font-size: 20px;
-    line-height: 1;
-    opacity: 1;
-  }
-
-  .accesco-footer-root .social-icon:active {
-    background: #f7e8ef !important;
-    transform: scale(0.95);
-  }
-}
-
-/* Remove the space above the footer */
-footer.accesco-footer-root {
-  margin-top: 0 !important;
-  padding-top: 0 !important;
 }

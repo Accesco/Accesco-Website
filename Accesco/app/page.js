@@ -8,6 +8,7 @@ import AccescoHeader from '../components/AccescoHeader';
 import Hero from '../components/Hero';
 import AppShowcase from '../components/AppShowcase';
 import Footer from '../components/Footer';
+import JsonLd from '../components/JsonLd';
 import XpenseIntro from '@/components/XpenseIntro';
 
 const CHATBOT_LOGO = '/logo.png';
@@ -1471,14 +1472,24 @@ const [typing, setTyping] = useState(false)
   );
 }
 
-
-
-
 export default function HomePage() {
   const [isClient, setIsClient] = useState(false);
   const scrollRef = useRef(null);
   const deliveryRef = useRef(null);
 const [deliveryVisible, setDeliveryVisible] = useState(false);
+const softwareApplicationSchema = {
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Accesco Living",
+  "operatingSystem": "Android, iOS",
+  "applicationCategory": "ShoppingApplication",
+  "url": "https://www.accescoliving.com",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "INR"
+  }
+};
   useEffect(() => {
     setIsClient(true);
   }, []);
@@ -1508,6 +1519,7 @@ const [deliveryVisible, setDeliveryVisible] = useState(false);
 
  return (
   <>
+    <JsonLd data={softwareApplicationSchema} />
     <AccescoHeader />
       <main>
         {/* ── Hero Section ── */}
@@ -1522,7 +1534,12 @@ const [deliveryVisible, setDeliveryVisible] = useState(false);
         {/* ── Services Section ── */}
        <section
   id="services"
->
+  style={{
+    padding: 'clamp(60px, 8vw, 100px) 0',
+    background: '#FFFDF8',
+    position: 'relative'
+  }}
+>       
 
           <div className="intelligencePosterRow">
 
@@ -1572,11 +1589,21 @@ const [deliveryVisible, setDeliveryVisible] = useState(false);
   </div>
 
 </div>
-          <div className="servicesRadialOverlay" />
+          <div style={{
+            position: 'absolute', inset: 0,
+            backgroundImage: 'radial-gradient(circle at 20% 50%, rgba(122,0,66,0.03) 0%, transparent 60%), radial-gradient(circle at 80% 20%, rgba(200,150,62,0.03) 0%, transparent 60%)',
+            pointerEvents: 'none',
+          }} />
 
   <div
     ref={deliveryRef}
     className={`deliveryHeadingFrame ${deliveryVisible ? "is-visible" : ""}`}
+    style={{
+      maxWidth: '1280px',
+      margin: '0 auto',
+      padding: '0 clamp(20px, 4vw, 40px)',
+      position: 'relative'
+    }}
   >
 <div className="floatingHeroItems">
   <img src="/images/burger.png" className="popItem popBurger" alt="Burger" />
@@ -1586,14 +1613,33 @@ const [deliveryVisible, setDeliveryVisible] = useState(false);
   <img src="/images/salad.png" className="popItem popSalad" alt="Salad" />
   <img src="/images/Jeans.png" className="popItem popJeans" alt="Jeans" />
 </div>
-              <h2 className="deliveryHeadingTitle">
+              <h2 style={{
+                fontFamily: "'Inter', sans-serif",
+                fontWeight: 800,
+fontSize: 'clamp(2.45rem, 4.9vw, 4.4rem)',
+                color: '#1A0A0F', letterSpacing: '-0.04em',
+                margin: '0 0 8px', lineHeight: 1.1,
+              }}>
                 India solved delivery in 10 minutes.<br />
-                <span className="deliveryHeadingSubtitle">
+                <span style={{
+  fontFamily: "'Inter', sans-serif",
+  color: '#2B1A24',
+  fontWeight: 550,
+  fontSize: 'clamp(1rem, 3.8vw, 2rem)',
+  lineHeight: 1.2,
+}}>
   Nobody solved the household in 10 years.
 </span>
 
               </h2>
-              <p className="deliveryHeadingDesc">
+              <p style={{
+ fontFamily: "'Plus Jakarta Sans', sans-serif",
+  fontSize: 'clamp(1.15rem, 1.5vw, 1.4rem)',
+  color: '#6B5B65',
+  maxWidth: '900px',
+  lineHeight: 1.5,
+  
+}}>
                 Groceries, food and fashion at your doorstep in minutes — sourced straight from producers, built to circulate, and engineered so the value of everything you buy keeps working for your household—Intelligent Hyperlocal delivery app that fits your life. </p>
             </div>   {/* deliveryHeadingFrame */}
           
@@ -1615,13 +1661,13 @@ const [deliveryVisible, setDeliveryVisible] = useState(false);
 
                 <div ref={scrollRef} id="services-scroll-container" className="services-grid">
                   {/* Card 1: Grokly */}
-                  <div className="serviceCardLinkWrap">
+                  <div style={{ textDecoration: 'none', display: 'block' }}>
                     <div className="service-premium-card grokly-card">
                       <div className="service-card-visual">
-                        <Image src="/images/grokly-new2.png" alt="Grokly Groceries" fill className="serviceCardVisualImage" />
+                        <Image src="/images/grokly-new1.png" alt="Grokly Groceries" fill style={{ objectFit: 'cover' }} />
                       </div>
                       <div className="service-icon-circle">
-                        <Image src="/images/grokly-icon.png" alt="Grokly" width={40} height={40} className="serviceIconCircleImage" />
+                        <Image src="/images/grokly-icon.png" alt="Grokly" width={40} height={40} style={{ objectFit: 'contain', width: '100%', height: '100%' }} />
                       </div>
                       <div className="service-card-body">
                         <h3 className="service-card-name">Grokly</h3>
@@ -1632,13 +1678,13 @@ const [deliveryVisible, setDeliveryVisible] = useState(false);
                   </div>
 
                   {/* Card 2: Swadishtt */}
-                  <div className="serviceCardLinkWrap">
+                  <div style={{ textDecoration: 'none', display: 'block' }}>
                     <div className="service-premium-card swadisht-card">
                       <div className="service-card-visual">
-                        <Image src="/images/swadisht/swadisht_logo1.JPG" alt="Swadishtt Meals" fill className="serviceCardVisualImage" />
+                        <Image src="/images/swadisht/swadisht_logo1.JPG" alt="Swadishtt Meals" fill style={{ objectFit: 'cover' }} />
                       </div>
                       <div className="service-icon-circle">
-                        <Image src="/images/swadisht/swadisht_logo.JPG" alt="Swadishtt" width={40} height={40} className="serviceIconCircleImage" />
+                        <Image src="/images/swadisht/swadisht_logo.JPG" alt="Swadishtt" width={40} height={40} style={{ objectFit: 'contain', width: '100%', height: '100%' }} />
                       </div>
                       <div className="service-card-body">
                         <h3 className="service-card-name">Swadishtt</h3>
@@ -1649,23 +1695,18 @@ const [deliveryVisible, setDeliveryVisible] = useState(false);
                   </div>
 
                   {/* Card 3: InstaStyle */}
-                  <div className="serviceCardLinkWrap">
+                  <div style={{ textDecoration: 'none', display: 'block' }}>
                     <div className="service-premium-card instastyle-card">
                       <div className="service-card-visual">
-                        <Image src="/images/fashion-new2.png" alt="InstaStyle Fashion" fill className="serviceCardVisualImage" />
+                        <Image src="/images/fashion-new1.png" alt="InstaStyle Fashion" fill style={{ objectFit: 'cover' }} />
                       </div>
                       <div className="service-icon-circle">
-                        <Image src="/images/instastyle-logo.png" alt="InstaStyle" width={40} height={40} className="serviceIconCircleImage" />
+                        <Image src="/images/instastyle-logo.png" alt="InstaStyle" width={40} height={40} style={{ objectFit: 'contain', width: '100%', height: '100%' }} />
                       </div>
                       <div className="service-card-body">
                         <h3 className="service-card-name">InstaStyle</h3>
                         <p className="service-card-desc">Outfit ready, before you are!</p>
-                        <Link
-  href="/services/instastyle"
-  className="service-card-cta instastyle-btn"
->
-  Explore Fashion
-</Link>
+                        <Link href="/services/instastyle" className="service-card-cta instastyle-btn">Explore Fashion</Link>
                       </div>
                     </div>
                   </div>
@@ -1691,21 +1732,6 @@ const [deliveryVisible, setDeliveryVisible] = useState(false);
         <XpenseIntro />
         {/* ── Waitlist / App Showcase ── */}
         <AppShowcase />
-
-        {/* ── About Accesco Living (SEO copy) ── */}
- <section className="about-accesco-section">
-  <picture>
-    <source
-      media="(max-width: 640px)"
-      srcSet="/images/final-design-mobile.png"
-    />
-    <img
-      src="/images/final-design.png"
-      alt="Accesco Living"
-      className="about-accesco-image"
-    />
-  </picture>
-</section>
       </main>
       <Footer />
 
@@ -1714,41 +1740,7 @@ const [deliveryVisible, setDeliveryVisible] = useState(false);
       {/* ── Combined & Optimized Styles ── */}
             <style dangerouslySetInnerHTML={{ __html: `
  
-    /* Scale down CTA cards for 125% display scaling */
-  @media (min-width: 769px) and (resolution: 1.25dppx) {
-
-   .servicesTrack{
-    width: fit-content !important;
-    margin-inline: auto !important;
-  }
-
-  .service-premium-card{
-    transform: scale(0.85);
-    transform-origin: center;
-  }
-
-    .service-card-visual{
-      height: 190px !important;
-    }
-
-    .service-icon-circle{
-      width: 72px !important;
-      height: 72px !important;
-    }
-
-    .service-card-name{
-      font-size: 1.5rem !important;
-    }
-
-    .service-card-desc{
-      font-size: 0.95rem !important;
-    }
-
-    .service-card-cta{
-      padding: 12px 22px !important;
-      font-size: 0.92rem !important;
-    }
-  }
+  
   
             
        r .services-container-wrapper {
@@ -1945,7 +1937,7 @@ const [deliveryVisible, setDeliveryVisible] = useState(false);
           background: #fff;
           border-radius: 24px;
           border: 1px solid rgba(122,0,66,0.08);
-          overflow: hidden !important;
+          overflow: hidden;
           transition: transform 0.35s ease, box-shadow 0.35s ease;
           height: 100%;
           display: flex;
@@ -1958,16 +1950,6 @@ const [deliveryVisible, setDeliveryVisible] = useState(false);
           height: 200px;
           position: relative;
           overflow: hidden;
-          background: transparent;
-        }
-
-        .serviceCardVisualImage {
-          object-fit: cover !important;
-          object-position: center !important;
-          opacity: 1 !important;
-          filter: none !important;
-          mix-blend-mode: normal !important;
-          background: transparent !important;
         }
 
         .service-card-body {
