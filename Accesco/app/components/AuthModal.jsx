@@ -472,7 +472,7 @@ export default function AuthModal({
         doc(db, 'users', docId),
         {
           name: n,
-          phone: normalizedPhone,
+          phone: p,
           email: em || null,
           photoURL: pendingSocialUser?.photoURL || null,
           provider: pendingSocialUser?.provider || 'phone',
@@ -496,8 +496,8 @@ export default function AuthModal({
       )
 
       const user = {
-        name: userSnap.exists() ? userSnap.data().name : n,
-        phone: normalizedPhone,
+        name: n,
+        phone: p,
         email: em || null,
         photoURL: pendingSocialUser?.photoURL || null,
         uid: docId,
