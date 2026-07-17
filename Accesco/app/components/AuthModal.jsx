@@ -1342,7 +1342,7 @@ closeButton: {
     minWidth: 0,
 
     boxSizing: 'border-box',
-    padding: '27px 6px 8px 0',
+    padding: '27px 24px 8px 24px',
 
     overflowY: 'auto',
 
