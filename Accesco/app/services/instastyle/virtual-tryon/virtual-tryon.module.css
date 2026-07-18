@@ -1,8 +1,11 @@
 /*
  * Virtual Try-On Page Stylesheet
- * Premium, high-aesthetic layout matching visual specification
+ * Layout: LEFT info panel | CENTER big camera | RIGHT product list
  */
 
+/* ============================================================
+   PAGE SHELL
+   ============================================================ */
 .virtualTryOnPage {
   min-height: 100vh;
   background: radial-gradient(circle at 10% 20%, rgba(253, 251, 247, 1) 0%, rgba(246, 241, 233, 0.7) 90%);
@@ -13,28 +16,68 @@
   box-sizing: border-box;
 }
 
+/* Loading state */
+.loadingContainer {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  background: radial-gradient(circle at 10% 20%, #FDFBF7 0%, rgba(246, 241, 233, 0.7) 90%);
+}
+
+.loadingContainer h2 {
+  font-size: 22px;
+  font-weight: 700;
+  color: #1A1816;
+  margin: 0;
+}
+
+.loadingContainer p {
+  font-size: 14px;
+  color: #8C8680;
+  margin: 0;
+}
+
+.loader {
+  width: 44px;
+  height: 44px;
+  border: 3px solid rgba(201, 138, 44, 0.15);
+  border-top-color: #C98A2C;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ============================================================
+   3-COLUMN GRID
+   ============================================================ */
 .vtoContainer {
   display: grid;
-  grid-template-columns: 320px 1fr 380px;
-  gap: 40px;
+  grid-template-columns: 220px 1fr 380px;
+  gap: 32px;
   max-width: 1540px;
   margin: 0 auto;
   padding: 0 24px;
   align-items: start;
 }
 
-/* ==========================================================================
-   LEFT PANEL
-   ========================================================================== */
+/* ============================================================
+   LEFT PANEL — title + info cards
+   ============================================================ */
 .leftPanel {
   display: flex;
   flex-direction: column;
   gap: 16px;
-  animation: fadeInLeft 0.6s ease-out;
+  animation: fadeInLeft 0.5s ease-out;
 }
 
 .subtitle {
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 700;
   color: #C98A2C;
   text-transform: uppercase;
@@ -43,7 +86,7 @@
 
 .heading {
   font-family: 'Playfair Display', 'Georgia', serif;
-  font-size: 44px;
+  font-size: 40px;
   line-height: 1.15;
   font-weight: 800;
   color: #1A1816;
@@ -51,7 +94,7 @@
 }
 
 .description {
-  font-size: 16px;
+  font-size: 15px;
   line-height: 1.5;
   color: #6B6661;
   margin: 0;
@@ -60,41 +103,39 @@
 .statusCards {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  margin-top: 24px;
+  gap: 10px;
+  margin-top: 20px;
 }
 
 .statusCard {
   display: flex;
   align-items: center;
-  gap: 16px;
-  background: rgba(255, 255, 255, 0.85);
-  border: 1px solid rgba(201, 138, 44, 0.15);
+  gap: 14px;
+  background: rgba(255, 255, 255, 0.88);
+  border: 1px solid rgba(201, 138, 44, 0.14);
   border-radius: 16px;
-  padding: 16px 20px;
-  box-shadow: 0 4px 20px rgba(42, 33, 26, 0.03);
-  transition: all 0.3s ease;
+  padding: 14px 18px;
+  box-shadow: 0 2px 12px rgba(42, 33, 26, 0.03);
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
 }
 
 .statusCard:hover {
-  transform: translateY(-2px);
-  border-color: rgba(201, 138, 44, 0.35);
-  box-shadow: 0 10px 30px rgba(201, 138, 44, 0.08);
+  border-color: rgba(201, 138, 44, 0.3);
+  box-shadow: 0 6px 20px rgba(201, 138, 44, 0.07);
 }
 
 .statusIcon {
-  width: 44px;
-  height: 44px;
+  width: 40px;
+  height: 40px;
   border-radius: 12px;
   background: rgba(201, 138, 44, 0.08);
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
 }
 
-.goldIcon {
-  color: #C98A2C;
-}
+.goldIcon { color: #C98A2C; }
 
 .statusText {
   display: flex;
@@ -103,93 +144,72 @@
 }
 
 .statusText strong {
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 700;
   color: #1A1816;
 }
 
 .statusText span {
-  font-size: 13px;
+  font-size: 12px;
   color: #8C8680;
 }
 
-/* ==========================================================================
-   CENTER PANEL (VIEWPORT)
-   ========================================================================== */
+/* ============================================================
+   CENTER PANEL — camera viewport (takes all remaining space)
+   ============================================================ */
 .centerPanel {
   display: flex;
   flex-direction: column;
-  gap: 24px;
-  animation: fadeInUp 0.6s ease-out;
+  animation: fadeInUp 0.5s ease-out;
 }
 
 .viewportWrapper {
+  width: 100%;
+  /* Taller aspect to show a person properly */
+  aspect-ratio: 4 / 5;
+  min-height: 480px;
+  max-height: calc(100vh - 180px);
   background: #FFFFFF;
   border: 1px solid rgba(0, 0, 0, 0.08);
-  border-radius: 28px;
-  aspect-ratio: 16 / 10;
+  border-radius: 24px;
   position: relative;
   overflow: hidden;
-  box-shadow: 0 20px 50px rgba(42, 33, 26, 0.06);
+  box-shadow: 0 16px 48px rgba(42, 33, 26, 0.07);
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
 }
 
-/* Viewport corners */
+/* Corner frame markers */
 .cornerMarker {
   position: absolute;
-  width: 16px;
-  height: 16px;
-  border: 2px solid rgba(0, 0, 0, 0.15);
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(0, 0, 0, 0.12);
   z-index: 10;
   pointer-events: none;
 }
+.topLeft    { top: 20px;    left: 20px;  border-right: none; border-bottom: none; }
+.topRight   { top: 20px;    right: 20px; border-left: none;  border-bottom: none; }
+.bottomLeft { bottom: 20px; left: 20px;  border-right: none; border-top: none;    }
+.bottomRight{ bottom: 20px; right: 20px; border-left: none;  border-top: none;    }
 
-.topLeft {
-  top: 24px;
-  left: 24px;
-  border-right: none;
-  border-bottom: none;
-}
-
-.topRight {
-  top: 24px;
-  right: 24px;
-  border-left: none;
-  border-bottom: none;
-}
-
-.bottomLeft {
-  bottom: 24px;
-  left: 24px;
-  border-right: none;
-  border-top: none;
-}
-
-.bottomRight {
-  bottom: 24px;
-  right: 24px;
-  border-left: none;
-  border-top: none;
-}
-
-/* Error alert inside viewport */
+/* Error alert */
 .errorAlert {
   position: absolute;
-  top: 24px;
-  left: 24px;
-  right: 24px;
-  background: rgba(254, 242, 242, 0.95);
+  top: 20px;
+  left: 20px;
+  right: 20px;
+  background: rgba(254, 242, 242, 0.96);
   border: 1px solid rgba(239, 68, 68, 0.2);
-  border-radius: 16px;
-  padding: 16px;
+  border-radius: 14px;
+  padding: 14px 16px;
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   z-index: 20;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
   backdrop-filter: blur(8px);
 }
 
@@ -212,7 +232,7 @@
   justify-content: center;
 }
 
-/* ML Model processing state */
+/* Processing overlay */
 .viewportLoader {
   position: absolute;
   inset: 0;
@@ -223,31 +243,9 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 16px;
+  gap: 14px;
   text-align: center;
   padding: 40px;
-}
-
-.aiPulse {
-  width: 72px;
-  height: 72px;
-  border-radius: 50%;
-  background: rgba(201, 138, 44, 0.08);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  margin-bottom: 8px;
-}
-
-.pulsingSparkle {
-  color: #C98A2C;
-  animation: pulseScale 1.8s infinite ease-in-out;
-}
-
-@keyframes pulseScale {
-  0%, 100% { transform: scale(1); opacity: 0.8; }
-  50% { transform: scale(1.25); opacity: 1; }
 }
 
 .viewportLoader h3 {
@@ -261,26 +259,26 @@
   font-size: 14px;
   color: #6B6661;
   margin: 0;
-  max-width: 320px;
+  max-width: 300px;
   line-height: 1.5;
 }
 
-/* Viewport Placeholder state */
+/* ── STATE 1: Placeholder ── */
 .viewportPlaceholder {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 14px;
+  gap: 12px;
   text-align: center;
-  padding: 40px;
+  padding: 40px 28px;
   height: 100%;
   box-sizing: border-box;
 }
 
 .placeholderIconWrap {
-  width: 80px;
-  height: 80px;
+  width: 72px;
+  height: 72px;
   border-radius: 50%;
   background: #FDFBF7;
   border: 1.5px dashed rgba(201, 138, 44, 0.35);
@@ -288,11 +286,11 @@
   align-items: center;
   justify-content: center;
   color: rgba(201, 138, 44, 0.6);
-  margin-bottom: 8px;
+  margin-bottom: 4px;
 }
 
 .viewportPlaceholder h2 {
-  font-size: 24px;
+  font-size: 22px;
   font-weight: 700;
   margin: 0;
   color: #2D2A26;
@@ -301,20 +299,22 @@
 .viewportPlaceholder p {
   font-size: 14px;
   color: #8C8680;
-  margin: 0 0 12px 0;
-  max-width: 320px;
+  margin: 0 0 8px 0;
+  max-width: 280px;
 }
 
 .placeholderActions {
   display: flex;
-  gap: 16px;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 
 .startCameraBtn {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 14px 28px;
+  gap: 8px;
+  padding: 13px 26px;
   background: #1A1816;
   color: #FFFFFF;
   border: none;
@@ -322,21 +322,26 @@
   font-weight: 700;
   font-size: 14px;
   cursor: pointer;
-  transition: all 0.25s ease;
-  box-shadow: 0 8px 24px rgba(26, 24, 22, 0.15);
+  transition: background 0.25s ease, transform 0.2s ease, box-shadow 0.25s ease;
+  box-shadow: 0 6px 20px rgba(26, 24, 22, 0.14);
 }
 
-.startCameraBtn:hover {
+.startCameraBtn:hover:not(:disabled) {
   background: #C98A2C;
   transform: translateY(-2px);
-  box-shadow: 0 12px 30px rgba(201, 138, 44, 0.25);
+  box-shadow: 0 10px 28px rgba(201, 138, 44, 0.22);
+}
+
+.startCameraBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 .uploadPhotoBtn {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 14px 28px;
+  gap: 8px;
+  padding: 13px 26px;
   background: #FFFFFF;
   color: #1A1816;
   border: 1.5px solid #1A1816;
@@ -344,7 +349,7 @@
   font-weight: 700;
   font-size: 14px;
   cursor: pointer;
-  transition: all 0.25s ease;
+  transition: background 0.25s ease, color 0.25s ease, border-color 0.25s ease, transform 0.2s ease;
 }
 
 .uploadPhotoBtn:hover {
@@ -354,7 +359,7 @@
   transform: translateY(-2px);
 }
 
-/* Camera Live View state */
+/* ── STATE 2: Live camera ── */
 .videoWrapper {
   width: 100%;
   height: 100%;
@@ -367,95 +372,24 @@
   object-fit: cover;
 }
 
-/* Video controls inside overlay */
-.cameraActionControls {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  padding: 24px;
-  background: linear-gradient(to top, rgba(0, 0, 0, 0.7) 0%, transparent 100%);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 32px;
-}
-
-.controlPillBtn {
-  padding: 10px 20px;
-  background: rgba(255, 255, 255, 0.2);
-  border: 1px solid rgba(255, 255, 255, 0.35);
-  color: #FFFFFF;
-  font-weight: 600;
-  font-size: 13px;
-  border-radius: 100px;
-  cursor: pointer;
-  backdrop-filter: blur(8px);
-  transition: all 0.2s ease;
-}
-
-.controlPillBtn:hover:not(:disabled) {
-  background: rgba(255, 255, 255, 0.35);
-  transform: translateY(-1px);
-}
-
-.controlPillBtn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.snapBtn {
-  width: 68px;
-  height: 68px;
-  border-radius: 50%;
-  background: transparent;
-  border: 4px solid #FFFFFF;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.25s ease;
-}
-
-.snapBtn:hover {
-  transform: scale(1.08);
-}
-
-.snapInner {
-  width: 52px;
-  height: 52px;
-  border-radius: 50%;
-  background: #FFFFFF;
-  transition: all 0.2s ease;
-}
-
-.snapBtn:hover .snapInner {
-  background: #C98A2C;
-}
-
-.snapBtn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
 .videoHeaderDetails {
   position: absolute;
-  top: 24px;
-  left: 24px;
+  top: 20px;
+  left: 20px;
 }
 
 .selectedProductBanner {
   background: rgba(255, 255, 255, 0.95);
   border: 1px solid rgba(201, 138, 44, 0.2);
-  padding: 8px 16px;
+  padding: 7px 14px;
   border-radius: 100px;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 7px;
   font-size: 13px;
   font-weight: 700;
   color: #2D2A26;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
 }
 
 .colorDot {
@@ -464,7 +398,76 @@
   border-radius: 50%;
 }
 
-/* User preview photo state */
+.cameraActionControls {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 24px;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.65) 0%, transparent 100%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 28px;
+}
+
+.controlPillBtn {
+  padding: 9px 20px;
+  background: rgba(255, 255, 255, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.32);
+  color: #FFFFFF;
+  font-weight: 600;
+  font-size: 13px;
+  border-radius: 100px;
+  cursor: pointer;
+  backdrop-filter: blur(8px);
+  transition: background 0.2s ease;
+}
+
+.controlPillBtn:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.32);
+}
+
+.controlPillBtn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.snapBtn {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: transparent;
+  border: 4px solid #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.snapBtn:hover:not(:disabled) {
+  transform: scale(1.07);
+}
+
+.snapBtn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.snapInner {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: #FFFFFF;
+  transition: background 0.2s ease;
+}
+
+.snapBtn:hover:not(:disabled) .snapInner {
+  background: #C98A2C;
+}
+
+/* ── STATE 3: Preview ── */
 .previewImageWrapper {
   width: 100%;
   height: 100%;
@@ -479,23 +482,21 @@
 
 .previewProductOverlay {
   position: absolute;
-  top: 24px;
-  left: 24px;
+  top: 20px;
+  left: 20px;
   background: rgba(201, 138, 44, 0.95);
-  padding: 8px 16px;
+  padding: 7px 14px;
   border-radius: 100px;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 7px;
   color: #FFFFFF;
   font-size: 13px;
   font-weight: 700;
-  box-shadow: 0 8px 20px rgba(201, 138, 44, 0.2);
+  box-shadow: 0 6px 18px rgba(201, 138, 44, 0.2);
 }
 
-.sparkleIcon {
-  color: #FFFFFF;
-}
+.sparkleIcon { color: #FFFFFF; }
 
 .previewControls {
   position: absolute;
@@ -503,17 +504,17 @@
   left: 0;
   right: 0;
   padding: 24px;
-  background: linear-gradient(to top, rgba(0, 0, 0, 0.7) 0%, transparent 100%);
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.65) 0%, transparent 100%);
   display: flex;
   justify-content: center;
-  gap: 16px;
+  gap: 14px;
 }
 
 .actionBtnPrimary {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 14px 28px;
+  padding: 13px 26px;
   background: #C98A2C;
   color: #FFFFFF;
   border: none;
@@ -521,37 +522,42 @@
   font-weight: 700;
   font-size: 14px;
   cursor: pointer;
-  transition: all 0.25s ease;
-  box-shadow: 0 8px 24px rgba(201, 138, 44, 0.25);
+  transition: background 0.25s ease, transform 0.2s ease, box-shadow 0.25s ease;
+  box-shadow: 0 6px 20px rgba(201, 138, 44, 0.22);
 }
 
-.actionBtnPrimary:hover {
+.actionBtnPrimary:hover:not(:disabled) {
   background: #B07420;
   transform: translateY(-2px);
-  box-shadow: 0 12px 30px rgba(201, 138, 44, 0.35);
+  box-shadow: 0 10px 28px rgba(201, 138, 44, 0.32);
+}
+
+.actionBtnPrimary:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
 }
 
 .actionBtnSecondary {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 14px 28px;
-  background: #FFFFFF;
+  padding: 13px 26px;
+  background: rgba(255, 255, 255, 0.95);
   color: #1A1816;
-  border: 1.5px solid #1A1816;
+  border: 1.5px solid rgba(255, 255, 255, 0.9);
   border-radius: 100px;
   font-weight: 700;
   font-size: 14px;
   cursor: pointer;
-  transition: all 0.25s ease;
+  transition: background 0.25s ease, transform 0.2s ease;
 }
 
 .actionBtnSecondary:hover {
-  background: #FDFBF7;
+  background: #FFFFFF;
   transform: translateY(-2px);
 }
 
-/* ML Output generated state */
+/* ── STATE 4: ML Result ── */
 .aiResultWrapper {
   width: 100%;
   height: 100%;
@@ -566,10 +572,10 @@
 
 .successBadge {
   position: absolute;
-  top: 24px;
-  left: 24px;
+  top: 20px;
+  left: 20px;
   background: #22c55e;
-  padding: 8px 16px;
+  padding: 7px 14px;
   border-radius: 100px;
   display: flex;
   align-items: center;
@@ -577,7 +583,7 @@
   color: #FFFFFF;
   font-size: 13px;
   font-weight: 700;
-  box-shadow: 0 8px 20px rgba(34, 197, 94, 0.2);
+  box-shadow: 0 6px 18px rgba(34, 197, 94, 0.18);
 }
 
 .resultControls {
@@ -586,17 +592,17 @@
   left: 0;
   right: 0;
   padding: 24px;
-  background: linear-gradient(to top, rgba(0, 0, 0, 0.7) 0%, transparent 100%);
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.65) 0%, transparent 100%);
   display: flex;
   justify-content: center;
-  gap: 16px;
+  gap: 14px;
 }
 
 .actionBtnDownload {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 14px 28px;
+  padding: 13px 26px;
   background: #22c55e;
   color: #FFFFFF;
   border: none;
@@ -604,65 +610,63 @@
   font-weight: 700;
   font-size: 14px;
   cursor: pointer;
-  transition: all 0.25s ease;
-  box-shadow: 0 8px 24px rgba(34, 197, 94, 0.25);
+  transition: background 0.25s ease, transform 0.2s ease, box-shadow 0.25s ease;
+  box-shadow: 0 6px 20px rgba(34, 197, 94, 0.22);
 }
 
 .actionBtnDownload:hover {
   background: #16a34a;
   transform: translateY(-2px);
-  box-shadow: 0 12px 30px rgba(34, 197, 94, 0.35);
+  box-shadow: 0 10px 28px rgba(34, 197, 94, 0.32);
 }
 
-/* ==========================================================================
-   RIGHT PANEL (PRODUCT SELECTION)
-   ========================================================================== */
+/* ============================================================
+   RIGHT PANEL — product selection (unchanged from original)
+   ============================================================ */
 .rightPanel {
   background: rgba(255, 255, 255, 0.45);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border: 1px solid rgba(0, 0, 0, 0.06);
-  border-radius: 28px;
+  border-radius: 24px;
   padding: 24px;
   display: flex;
   flex-direction: column;
   max-height: calc(100vh - 160px);
   position: sticky;
   top: 100px;
-  box-shadow: 0 10px 40px rgba(42, 33, 26, 0.02);
-  animation: fadeInRight 0.6s ease-out;
+  box-shadow: 0 8px 32px rgba(42, 33, 26, 0.02);
+  animation: fadeInRight 0.5s ease-out;
 }
 
 .sidebarTitle {
   font-family: 'Playfair Display', 'Georgia', serif;
-  font-size: 22px;
+  font-size: 20px;
   font-weight: 800;
   color: #2D2A26;
-  margin: 0 0 20px 0;
+  margin: 0 0 18px 0;
 }
 
 .categoryFilters {
   display: flex;
   gap: 6px;
-  margin-bottom: 20px;
+  margin-bottom: 16px;
   overflow-x: auto;
   scrollbar-width: none;
 }
 
-.categoryFilters::-webkit-scrollbar {
-  display: none;
-}
+.categoryFilters::-webkit-scrollbar { display: none; }
 
 .filterTab {
-  padding: 8px 16px;
+  padding: 7px 14px;
   background: rgba(255, 255, 255, 0.9);
   border: 1px solid rgba(0, 0, 0, 0.05);
   border-radius: 100px;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 600;
   color: #6B6661;
   cursor: pointer;
-  transition: all 0.25s ease;
+  transition: background 0.2s ease, color 0.2s ease;
   white-space: nowrap;
 }
 
@@ -682,14 +686,12 @@
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  margin-bottom: 20px;
-  padding-right: 4px;
+  gap: 8px;
+  margin-bottom: 16px;
+  padding-right: 2px;
 }
 
-.productList::-webkit-scrollbar {
-  width: 4px;
-}
+.productList::-webkit-scrollbar { width: 4px; }
 
 .productList::-webkit-scrollbar-thumb {
   background: rgba(0, 0, 0, 0.1);
@@ -703,26 +705,26 @@
   padding: 10px;
   background: rgba(255, 255, 255, 0.85);
   border: 1px solid rgba(0, 0, 0, 0.04);
-  border-radius: 16px;
+  border-radius: 14px;
   cursor: pointer;
-  transition: all 0.25s ease;
+  transition: border-color 0.2s ease, background 0.2s ease, transform 0.2s ease;
 }
 
 .productCardItem:hover {
   transform: translateX(2px);
-  border-color: rgba(201, 138, 44, 0.25);
+  border-color: rgba(201, 138, 44, 0.22);
   background: #FFFFFF;
 }
 
 .selectedCard {
   border-color: #C98A2C !important;
   background: #FFFFFF !important;
-  box-shadow: 0 8px 24px rgba(201, 138, 44, 0.06);
+  box-shadow: 0 6px 20px rgba(201, 138, 44, 0.06);
 }
 
 .productThumb {
-  width: 52px;
-  height: 52px;
+  width: 50px;
+  height: 50px;
   border-radius: 10px;
   overflow: hidden;
   background: #F3F1ED;
@@ -747,7 +749,7 @@
 }
 
 .productDetails h4 {
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 700;
   color: #2D2A26;
   margin: 0 0 2px 0;
@@ -763,8 +765,8 @@
 }
 
 .itemChevron {
-  color: rgba(0, 0, 0, 0.15);
-  transition: transform 0.2s ease;
+  color: rgba(0, 0, 0, 0.14);
+  transition: color 0.2s ease, transform 0.2s ease;
 }
 
 .productCardItem:hover .itemChevron {
@@ -777,27 +779,27 @@
   align-items: center;
   justify-content: center;
   gap: 8px;
-  padding: 14px;
+  padding: 13px;
   background: #1A1816;
   color: #FFFFFF;
   text-decoration: none;
   font-weight: 700;
   font-size: 13px;
-  border-radius: 16px;
+  border-radius: 14px;
   text-align: center;
-  transition: all 0.25s ease;
+  transition: background 0.25s ease, box-shadow 0.25s ease;
 }
 
 .browseCatalogBtn:hover {
   background: #C98A2C;
-  box-shadow: 0 8px 20px rgba(201, 138, 44, 0.2);
+  box-shadow: 0 6px 18px rgba(201, 138, 44, 0.18);
 }
 
-/* ==========================================================================
+/* ============================================================
    HOW TO USE
-   ========================================================================== */
+   ============================================================ */
 .howToUseSection {
-  margin-top: 60px;
+  margin-top: 56px;
   background: rgba(255, 255, 255, 0.45);
   border-top: 1px solid rgba(0, 0, 0, 0.05);
   padding: 48px 0;
@@ -811,10 +813,10 @@
 
 .howToUseContainer h2 {
   font-family: 'Playfair Display', 'Georgia', serif;
-  font-size: 26px;
+  font-size: 24px;
   font-weight: 800;
   color: #2D2A26;
-  margin: 0 0 32px 0;
+  margin: 0 0 28px 0;
 }
 
 .stepsGrid {
@@ -825,17 +827,17 @@
 
 .stepItem {
   display: flex;
-  gap: 16px;
+  gap: 14px;
 }
 
 .stepNum {
-  width: 32px;
-  height: 32px;
+  width: 30px;
+  height: 30px;
   border-radius: 50%;
   background: rgba(201, 138, 44, 0.08);
-  border: 1px solid rgba(201, 138, 44, 0.25);
+  border: 1px solid rgba(201, 138, 44, 0.24);
   color: #C98A2C;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 800;
   display: flex;
   align-items: center;
@@ -850,64 +852,215 @@
 }
 
 .stepContent h3 {
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 700;
   color: #2D2A26;
   margin: 0;
 }
 
 .stepContent p {
-  font-size: 13px;
+  font-size: 12px;
   color: #6B6661;
   line-height: 1.4;
   margin: 0;
 }
 
-/* ==========================================================================
-   ANIMATIONS & RESPONSIVE
-   ========================================================================== */
+/* ============================================================
+   ANIMATIONS
+   ============================================================ */
 @keyframes fadeInLeft {
-  from { opacity: 0; transform: translateX(-20px); }
-  to { opacity: 1; transform: translateX(0); }
+  from { opacity: 0; transform: translateX(-16px); }
+  to   { opacity: 1; transform: translateX(0); }
 }
 
 @keyframes fadeInRight {
-  from { opacity: 0; transform: translateX(20px); }
-  to { opacity: 1; transform: translateX(0); }
+  from { opacity: 0; transform: translateX(16px); }
+  to   { opacity: 1; transform: translateX(0); }
 }
 
 @keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
-@media (max-width: 1280px) {
+/* ============================================================
+   RESPONSIVE — TABLET (≤1100px)
+   Two columns: camera takes full width, right panel below on its own row
+   ============================================================ */
+@media (max-width: 1100px) {
+  .vtoContainer {
+    grid-template-columns: 200px 1fr 340px;
+    gap: 24px;
+    padding: 0 20px;
+  }
+
+  .heading { font-size: 34px; }
+}
+
+/* ============================================================
+   RESPONSIVE — TABLET SMALL (≤880px)
+   Drop to 2 cols: left panel + right panel hidden, camera takes full width
+   ============================================================ */
+@media (max-width: 880px) {
+  .vtoContainer {
+    grid-template-columns: 1fr 320px;
+    gap: 20px;
+    padding: 0 16px;
+  }
+
+  /* Left panel spans both rows above the camera on col 1 */
+  .leftPanel {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  /* Camera takes full width */
+  .centerPanel {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  /* Right panel spans full rows on col 2 */
+  .rightPanel {
+    grid-column: 2;
+    grid-row: 1 / 3;
+    max-height: calc(100vh - 140px);
+  }
+
+  .heading { font-size: 30px; }
+}
+
+/* ============================================================
+   RESPONSIVE — MOBILE (≤640px)
+   Single column stack: left info → camera → product list
+   ============================================================ */
+@media (max-width: 640px) {
+  .virtualTryOnPage {
+    padding-top: 72px;
+    padding-bottom: 36px;
+  }
+
   .vtoContainer {
     grid-template-columns: 1fr;
-    gap: 32px;
+    gap: 16px;
+    padding: 0 14px;
   }
-  
+
+  .leftPanel {
+    grid-column: 1;
+    grid-row: 1;
+    gap: 10px;
+  }
+
+  .centerPanel {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
   .rightPanel {
+    grid-column: 1;
+    grid-row: 3;
     position: static;
     max-height: none;
   }
 
-  .stepsGrid {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
+  .heading { font-size: 26px; }
+  .description { font-size: 13px; }
 
-@media (max-width: 768px) {
-  .virtualTryOnPage {
-    padding-top: 80px;
-  }
-
-  .heading {
-    font-size: 32px;
+  .statusCards {
+    flex-direction: row;
+    flex-wrap: wrap;
+    margin-top: 6px;
+    gap: 8px;
   }
 
+  .statusCard {
+    flex: 1;
+    min-width: 130px;
+    padding: 10px 12px;
+    gap: 10px;
+  }
+
+  .statusIcon { width: 34px; height: 34px; border-radius: 10px; }
+  .statusText strong { font-size: 12px; }
+  .statusText span { font-size: 11px; }
+
+  /* Camera viewport — portrait on mobile */
+  .viewportWrapper {
+    aspect-ratio: 3 / 4;
+    min-height: 360px;
+    max-height: 72vh;
+    border-radius: 18px;
+  }
+
+  /* Placeholder */
+  .viewportPlaceholder { padding: 28px 16px; gap: 10px; }
+  .viewportPlaceholder h2 { font-size: 18px; }
+  .placeholderIconWrap { width: 60px; height: 60px; }
+
+  .placeholderActions {
+    flex-direction: column;
+    width: 100%;
+    gap: 10px;
+  }
+
+  .startCameraBtn,
+  .uploadPhotoBtn {
+    width: 100%;
+    justify-content: center;
+    padding: 13px 18px;
+  }
+
+  /* Camera controls */
+  .cameraActionControls { gap: 18px; padding: 16px; }
+  .snapBtn { width: 58px; height: 58px; }
+  .snapInner { width: 44px; height: 44px; }
+
+  /* Preview / result controls */
+  .previewControls,
+  .resultControls {
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding: 16px;
+  }
+
+  .actionBtnPrimary,
+  .actionBtnSecondary,
+  .actionBtnDownload {
+    width: 100%;
+    justify-content: center;
+    padding: 13px 18px;
+  }
+
+  /* How to use */
   .stepsGrid {
     grid-template-columns: 1fr;
-    gap: 20px;
+    gap: 14px;
   }
+
+  .howToUseSection {
+    margin-top: 28px;
+    padding: 28px 0;
+  }
+
+  .howToUseContainer h2 { font-size: 20px; }
+}
+
+/* ============================================================
+   RESPONSIVE — SMALL PHONES (≤400px)
+   ============================================================ */
+@media (max-width: 400px) {
+  .vtoContainer { padding: 0 10px; }
+  .heading { font-size: 22px; }
+
+  .statusCards { flex-direction: column; }
+  .statusCard { min-width: unset; }
+
+  .viewportWrapper {
+    min-height: 300px;
+    border-radius: 14px;
+  }
+
+  .sidebarTitle { font-size: 17px; }
 }
