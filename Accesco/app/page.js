@@ -139,7 +139,7 @@ const [deliveryVisible, setDeliveryVisible] = useState(false);
 
               </h2>
               <p className="deliveryHeadingDesc">
-                Groceries, food and fashion at your doorstep in minutes Ã¢â‚¬â€ sourced straight from producers, built to circulate, and engineered so the value of everything you buy keeps working for your householdÃ¢â‚¬â€Intelligent Hyperlocal delivery app that fits your life. </p>
+                Groceries, food and fashion at your doorstep in minutes — sourced straight from producers, built to circulate, and engineered so the value of everything you buy keeps working for your household — Intelligent Hyperlocal delivery app that fits your life. </p>
             </div>   {/* deliveryHeadingFrame */}
           
 
