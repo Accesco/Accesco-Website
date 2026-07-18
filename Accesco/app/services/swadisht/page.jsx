@@ -32,32 +32,40 @@ import styles from './styles/swadisht-main.module.css';
 
 const featureItems = [
   {
-    id: "swipe-eat",
-    title: "SwipeEats",
-    description: "Swipe to discover your next meal",
-    image: "/images/features/swipe-eats.png",
+    id: 'swipe-eat',
+    title: 'SwipeEats',
+    description: 'Swipe to discover your next meal',
+    image: '/images/features/swipeEats.png',
     link: '/services/swadisht/swipe-eat',
+    tags: ['Food', 'Meals'],
+    rating: '4.8',
   },
   {
-    id: "thali-engine",
-    title: "Thali Engine",
-    description: "Build a festive, family-style thali",
-    image: "/images/features/thali-engine.png",
+    id: 'thali-engine',
+    title: 'Thali Engine',
+    description: 'Build a festive, family-style thali',
+    image: '/images/features/thaliEngine.png',
     link: '/services/swadisht/thali-engine',
+    tags: ['Thali', 'Indian'],
+    rating: '4.8',
   },
   {
-    id: "instant-catering",
-    title: "Instant Catering",
-    description: "Pre-book packs for events & offices",
-    image: "/images/features/instant-catering.png",
+    id: 'instant-catering',
+    title: 'Instant Catering',
+    description: 'Pre-book packs for events & offices',
+    image: '/images/features/instantCatering.png',
     link: '/services/swadisht/instant-catering',
+    tags: ['Catering', 'Events'],
+    rating: '4.8',
   },
   {
-    id: "regional-soul",
-    title: "Regional Soul",
-    description: "Authentic cuisines from across India",
-    image: "/images/features/regional-soul.png",
+    id: 'regional-soul',
+    title: 'Regional Soul',
+    description: 'Authentic cuisines from across India',
+    image: '/images/features/regionalSoul.png',
     link: '/services/swadisht/regional-soul',
+    tags: ['Cuisine', 'India'],
+    rating: '4.8',
   },
 ];
 
@@ -244,17 +252,43 @@ export default function App() {
   </div>
 <section className={styles.featureRow} id="feature-row">
   {featureItems.map((item) => (
-    <a
+    <Link
       key={item.id}
       href={item.link}
       className={styles.featureCard}
     >
-      <img
-        src={item.image}
-        alt={item.title}
-        className={styles.featureCardImage}
-      />
-    </a>
+      <div className={styles.featureMedia}>
+        <img
+          src={item.image}
+          alt={item.title}
+          className={styles.featureCardImage}
+        />
+
+        <div className={styles.featureImageTop}>
+          <div className={styles.featureTags}>
+            {item.tags.map((tag) => (
+              <div className={styles.featureTag} key={tag}>
+                {tag}
+              </div>
+            ))}
+          </div>
+
+          <div className={styles.featureRating}>
+            ★ {item.rating}
+          </div>
+        </div>
+      </div>
+
+      <div className={styles.featureCardContent}>
+        <h3>{item.title}</h3>
+
+        <p>{item.description}</p>
+
+        <div className={styles.featureExplore}>
+          Explore
+        </div>
+      </div>
+    </Link>
   ))}
 </section>
  

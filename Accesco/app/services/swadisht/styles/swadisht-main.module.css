@@ -2570,3 +2570,488 @@
     margin-top: 12px;       /* adjust 12–24px to taste */
   }
 }
+
+/* ===== NEW SWADISHTT DISCOVERY CARDS ===== */
+
+.featureRow {
+  width: 100%;
+  max-width: 1440px;
+  margin: 26px auto 14px;
+  padding: 0 10px;
+
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.featureRow .featureCard {
+  min-width: 0;
+  min-height: 430px;
+  padding: 0;
+  overflow: hidden;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+
+  border: 1px solid rgba(31, 20, 20, 0.06);
+  border-radius: 16px;
+  background: #ffffff;
+
+  color: #252525;
+  text-decoration: none;
+
+  box-shadow:
+    0 3px 10px rgba(32, 20, 20, 0.06),
+    0 12px 28px rgba(32, 20, 20, 0.05);
+
+  transition:
+    transform 180ms ease,
+    box-shadow 180ms ease;
+}
+
+.featureRow .featureCard::before,
+.featureRow .featureCard::after {
+  display: none;
+  content: none;
+}
+
+.featureRow .featureCard:hover {
+  transform: translateY(-4px);
+
+  box-shadow:
+    0 8px 18px rgba(32, 20, 20, 0.09),
+    0 18px 34px rgba(32, 20, 20, 0.08);
+}
+
+.featureMedia {
+  position: relative;
+  width: 100%;
+  height: 245px;
+  flex-shrink: 0;
+  overflow: hidden;
+  background: #17130f;
+}
+
+.featureMedia .featureCardImage {
+  position: static;
+  width: 100%;
+  height: 100%;
+  display: block;
+
+  object-fit: cover;
+  object-position: center;
+
+  transition: transform 350ms ease;
+}
+
+.featureCard:hover .featureCardImage {
+  transform: scale(1.035);
+}
+
+.featureImageTop {
+  position: absolute;
+  z-index: 2;
+  top: 12px;
+  right: 12px;
+  left: 12px;
+
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.featureTags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.featureTag {
+  min-height: 24px;
+  padding: 5px 11px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 999px;
+  background: rgba(132, 10, 51, 0.9);
+  backdrop-filter: blur(8px);
+
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.featureRating {
+  flex-shrink: 0;
+
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1;
+
+  text-shadow: 0 2px 5px rgba(0, 0, 0, 0.75);
+}
+
+.featureCardContent {
+  min-height: 185px;
+  padding: 15px 13px 16px;
+
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+
+  background: linear-gradient(135deg, #fffdfd, #fff1f3);
+}
+
+.featureCardContent h3 {
+  max-width: none;
+  margin: 0 0 9px;
+
+  color: #9d153e;
+  font-size: 18px;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.featureCardContent p {
+  max-width: 165px;
+  margin: 0 0 13px;
+
+  color: #303030;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.45;
+}
+
+.featureBrand {
+  margin-bottom: 16px;
+
+  color: #9d153e;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.featureExplore {
+  width: 100%;
+  min-height: 39px;
+  margin-top: auto;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 8px;
+  background: linear-gradient(90deg, #aa0037, #97002f);
+
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 700;
+
+  box-shadow: 0 6px 14px rgba(139, 0, 43, 0.16);
+}
+
+/* Orange Thali card */
+
+.featureCard:nth-child(2) .featureCardContent {
+  background: linear-gradient(135deg, #fffdfa, #fff3e7);
+}
+
+.featureCard:nth-child(2) .featureTag {
+  background: rgba(204, 78, 2, 0.9);
+}
+
+.featureCard:nth-child(2) .featureCardContent h3,
+.featureCard:nth-child(2) .featureBrand {
+  color: #c84c07;
+}
+
+.featureCard:nth-child(2) .featureExplore {
+  background: linear-gradient(90deg, #d96500, #d24e00);
+}
+
+/* Green Catering card */
+
+.featureCard:nth-child(3) .featureCardContent {
+  background: linear-gradient(135deg, #fdfffb, #f0f8e9);
+}
+
+.featureCard:nth-child(3) .featureTag {
+  background: rgba(31, 93, 42, 0.9);
+}
+
+.featureCard:nth-child(3) .featureCardContent h3,
+.featureCard:nth-child(3) .featureBrand {
+  color: #276b32;
+}
+
+.featureCard:nth-child(3) .featureExplore {
+  background: linear-gradient(90deg, #246b2e, #1d5927);
+}
+
+/* Purple Regional card */
+
+.featureCard:nth-child(4) .featureCardContent {
+  background: linear-gradient(135deg, #fdfcff, #f3effd);
+}
+
+.featureCard:nth-child(4) .featureTag {
+  background: rgba(62, 41, 136, 0.9);
+}
+
+.featureCard:nth-child(4) .featureCardContent h3,
+.featureCard:nth-child(4) .featureBrand {
+  color: #432991;
+}
+
+.featureCard:nth-child(4) .featureExplore {
+  background: linear-gradient(90deg, #492a99, #3c2186);
+}
+
+/* Tablet */
+
+@media (max-width: 900px) {
+  .featureRow {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .featureMedia {
+    height: 260px;
+  }
+}
+
+/* Mobile */
+
+@media (max-width: 560px) {
+  .featureRow {
+    max-width: none;
+    margin-top: 20px;
+    padding: 0 12px 12px;
+
+    display: flex;
+    gap: 12px;
+
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+  }
+
+  .featureRow::-webkit-scrollbar {
+    display: none;
+  }
+
+  .featureRow .featureCard {
+    flex: 0 0 82vw;
+    max-width: 315px;
+    min-height: 440px;
+    scroll-snap-align: start;
+  }
+
+  .featureMedia {
+    height: 260px;
+  }
+
+  .featureCardContent h3 {
+    font-size: 19px;
+  }
+}
+
+/* ===== SMALLER DISCOVERY CARDS ===== */
+
+.featureRow {
+  max-width: 1180px;
+  margin: 20px auto 12px;
+  gap: 12px;
+}
+
+.featureRow .featureCard {
+  min-height: 365px;
+  border-radius: 14px;
+}
+
+.featureMedia {
+  height: 205px;
+}
+
+.featureImageTop {
+  top: 10px;
+  right: 10px;
+  left: 10px;
+}
+
+.featureTag {
+  min-height: 22px;
+  padding: 4px 9px;
+  font-size: 11px;
+}
+
+.featureRating {
+  font-size: 14px;
+}
+
+.featureCardContent {
+  min-height: 160px;
+  padding: 13px 12px 14px;
+}
+
+.featureCardContent h3 {
+  margin-bottom: 7px;
+  font-size: 16px;
+}
+
+.featureCardContent p {
+  max-width: 155px;
+  margin-bottom: 10px;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.featureBrand {
+  margin-bottom: 12px;
+  font-size: 11px;
+}
+
+.featureExplore {
+  min-height: 36px;
+  border-radius: 7px;
+  font-size: 14px;
+}
+
+/* Tablet */
+
+@media (max-width: 900px) {
+  .featureRow {
+    max-width: 680px;
+  }
+
+  .featureMedia {
+    height: 215px;
+  }
+}
+
+/* Mobile */
+
+@media (max-width: 560px) {
+  .featureRow {
+    max-width: none;
+    margin-top: 16px;
+    gap: 10px;
+  }
+
+  .featureRow .featureCard {
+    flex-basis: 76vw;
+    max-width: 285px;
+    min-height: 380px;
+  }
+
+  .featureMedia {
+    height: 220px;
+  }
+
+  .featureCardContent h3 {
+    font-size: 17px;
+  }
+}
+
+.featureMedia .featureCardImage {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  object-position: center;
+}
+
+.featureCardContent p {
+  margin-bottom: 12px;
+}
+
+.featureExplore {
+  margin-top: auto;
+}
+
+/* Slightly smaller discovery cards */
+
+.featureRow {
+  max-width: 1080px;
+  gap: 10px;
+  margin: 18px auto 10px;
+}
+
+.featureRow .featureCard {
+  min-height: 340px;
+  border-radius: 13px;
+}
+
+.featureMedia {
+  height: 190px;
+}
+
+.featureCardContent {
+  min-height: 150px;
+  padding: 11px 11px 12px;
+}
+
+.featureCardContent h3 {
+  margin-bottom: 6px;
+  font-size: 15px;
+}
+
+.featureCardContent p {
+  max-width: 145px;
+  margin-bottom: 9px;
+  font-size: 11.5px;
+}
+
+.featureExplore {
+  min-height: 34px;
+  font-size: 13px;
+}
+
+.featureTag {
+  min-height: 21px;
+  padding: 4px 8px;
+  font-size: 10px;
+}
+
+.featureRating {
+  font-size: 13px;
+}
+
+/* Mobile */
+
+@media (max-width: 560px) {
+  .featureRow .featureCard {
+    flex-basis: 72vw;
+    max-width: 265px;
+    min-height: 350px;
+  }
+
+  .featureMedia {
+    height: 200px;
+  }
+}
+
+/* Show the complete discovery-card images */
+
+.featureMedia {
+  height: auto !important;
+  aspect-ratio: 274 / 192;
+  background: #17130f;
+}
+
+.featureMedia .featureCardImage {
+  width: 100%;
+  height: 100%;
+  object-fit: contain !important;
+  object-position: center;
+  transform: none !important;
+}
+
+.featureCard:hover .featureCardImage {
+  transform: none !important;
+}
+
