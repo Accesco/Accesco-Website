@@ -26,13 +26,6 @@ import {
   Sparkles
 } from 'lucide-react';
 
-import {
-  FaInstagram,
-  FaFacebookF,
-  FaXTwitter,
-  FaYoutube
-} from 'react-icons/fa6';
-
 import './swadisht.css';
 import styles from './styles/swadisht-main.module.css';
 // --- DATA ARRAYS ---
@@ -656,7 +649,7 @@ export default function App() {
             aria-label="Instagram"
             id="social-inst"
           >
-            <FaInstagram size={16} />
+            <i className="ri-instagram-line" style={{ fontSize: 16 }}></i>
           </a>
 
           <a
@@ -667,7 +660,7 @@ export default function App() {
             aria-label="Facebook"
             id="social-face"
           >
-            <FaFacebookF size={16} />
+            <i className="ri-facebook-fill" style={{ fontSize: 16 }}></i>
           </a>
 
           <a
@@ -678,7 +671,7 @@ export default function App() {
             aria-label="X"
             id="social-twit"
           >
-            <FaXTwitter size={16} />
+            <i className="ri-twitter-x-line" style={{ fontSize: 16 }}></i>
           </a>
 
           <a
@@ -689,7 +682,7 @@ export default function App() {
             aria-label="YouTube"
             id="social-yt"
           >
-            <FaYoutube size={16} />
+            <i className="ri-youtube-fill" style={{ fontSize: 16 }}></i>
           </a>
         </div>
       </div>

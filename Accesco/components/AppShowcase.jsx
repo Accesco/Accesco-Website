@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import Image from "next/image";
 import {
   ShoppingCart,
   Utensils,
@@ -172,26 +173,25 @@ export default function AppShowcase() {
       <div className={styles.waitlistCard}>
         {/* Left Panel: Flush Poster Image */}
         <div className={styles.leftPanel}>
-          <img
+          <Image
             src="/images/xpense-banner.jpg"
             alt="Accesco Living - Wanna Skip The Line?"
             className={styles.posterImage}
-            onError={(e) => {
-              e.currentTarget.src = "/images/accesco_original.png";
-              e.currentTarget.style.padding = "40px";
-              e.currentTarget.style.background =
-                "linear-gradient(135deg, #7A0042, #1A0A0F)";
-            }}
+            width={800}
+            height={1000}
+            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
           />
         </div>
 
         {/* Right Panel: Clean Form Wrapper */}
         <div className={styles.rightPanel}>
           <div className={styles.brandLogoRow}>
-            <img
+            <Image
               src="/images/asterik.png"
               alt="Accesco mark"
               className={styles.brandAsterisk}
+              width={40}
+              height={40}
             />
           </div>
 
@@ -485,15 +485,21 @@ export default function AppShowcase() {
 
       {/* Unchanged bottom app download segments */}
       <div className={styles.downloadAppSection}>
-        <img
+        <Image
           src="/images/download-app-banner-desktop.png"
           alt="Download App"
           className={styles.downloadAppImageDesktop}
+          width={1200}
+          height={300}
+          style={{ width: '100%', height: 'auto' }}
         />
-        <img
+        <Image
           src="/images/download-app-banner-mobile.png"
           alt="Download App"
           className={styles.downloadAppImageMobile}
+          width={600}
+          height={200}
+          style={{ width: '100%', height: 'auto' }}
         />
         <a
           href="#"

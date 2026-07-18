@@ -5,7 +5,8 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '../app/components/AuthProvider';
-import AuthModal from '../app/components/AuthModal';
+import dynamic from 'next/dynamic';
+const AuthModal = dynamic(() => import('../app/components/AuthModal'), { ssr: false });
 import styles from './AccescoHeader.module.css';
 import { getPersonCity } from '../lib/locationService';
 
@@ -364,7 +365,7 @@ export default function AccescoHeader() {
         </div>
       </header>
 
-      <AuthModal isOpen={isAuthOpen} onClose={() => setIsAuthOpen(false)} onSuccess={handleAuthSuccess} />
+      {isAuthOpen && <AuthModal isOpen={true} onClose={() => setIsAuthOpen(false)} onSuccess={handleAuthSuccess} />}
       
       <LocationModal 
         isOpen={isLocationModalOpen} 
