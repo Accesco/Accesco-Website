@@ -12,7 +12,11 @@ import {
   Check,
 } from "lucide-react";
 import styles from "./AppShowcase.module.css";
-import { addWaitlistEntry, validateWaitlistEntry } from "../lib/waitlistService";
+import {
+  addWaitlistEntry,
+  validateWaitlistEntry,
+  isWaitlistRegistered,
+} from "../lib/waitlistService";
 
 export default function AppShowcase() {
   const [currentStep, setCurrentStep] = useState(1);
@@ -29,6 +33,19 @@ export default function AppShowcase() {
   const [feedbackScore, setFeedbackScore] = useState(null);
   const [feedbackReview, setFeedbackReview] = useState("");
   const [feedbackSubmitted, setFeedbackSubmitted] = useState(false);
+  const [alreadyRegistered, setAlreadyRegistered] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    isWaitlistRegistered().then((registered) => {
+      if (!cancelled) setAlreadyRegistered(registered);
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const handleFeedbackSubmit = async () => {
     if (feedbackScore === null) return;
@@ -120,6 +137,7 @@ export default function AppShowcase() {
       });
 
       setSuccess(true);
+      setAlreadyRegistered(true);
       setForm({
         name: "",
         email: "",
@@ -203,12 +221,17 @@ export default function AppShowcase() {
               "Select the experiences you are most interested in so we can personalize your early access updates, offers, and launch notifications."}
           </p>
 
-          {success && (
+          {success ? (
             <div className={styles.successMessage}>
               Welcome to the waitlist! We'll be in touch soon.
             </div>
-          )}
-
+          ) : alreadyRegistered ? (
+            <div className={styles.successMessage}>
+              You have already registered on the waitlist — hang tight, we'll
+              notify you the moment we launch!
+            </div>
+          ) : (
+          <>
           {error && <div className={styles.errorMessage}>{error}</div>}
 
           {/* Form Step Router */}
@@ -320,6 +343,8 @@ export default function AppShowcase() {
               </div>
             )}
           </form>
+          </>
+          )}
 
           {/* Symmetrical Trust Badges */}
           <div className={styles.trustRow}>

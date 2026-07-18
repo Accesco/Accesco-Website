@@ -1,4 +1,5 @@
 import SwadishttLayoutClient from './layout-client';
+import WaitlistGate from '../../components/WaitlistGate';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
@@ -25,5 +26,9 @@ export const metadata = {
 };
 
 export default function SwadishttLayout({ children }) {
-  return <SwadishttLayoutClient>{children}</SwadishttLayoutClient>;
+  return (
+    <WaitlistGate>
+      <SwadishttLayoutClient>{children}</SwadishttLayoutClient>
+    </WaitlistGate>
+  );
 }
