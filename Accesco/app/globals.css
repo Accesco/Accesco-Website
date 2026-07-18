@@ -1,4 +1,4 @@
-@import './homepage.css';
+/* homepage.css is imported only in app/page.js, not globally */
 
 /* ── Global Cursor Override ── (REMOVED) */
 
