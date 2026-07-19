@@ -17,7 +17,7 @@ export default function HomePage() {
   const [isClient, setIsClient] = useState(false);
   const scrollRef = useRef(null);
   const deliveryRef = useRef(null);
-const [deliveryVisible, setDeliveryVisible] = useState(false);
+  const [deliveryVisible, setDeliveryVisible] = useState(false);
   useEffect(() => {
     setIsClient(true);
   }, []);
