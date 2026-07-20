@@ -924,20 +924,6 @@
     display: none !important;
   }
 }
-.logo img {
-  width: 36px !important;
-  height: 36px !important;
-  object-fit: contain;
-filter:
-  brightness(0)
-  saturate(100%)
-  invert(13%)
-  sepia(97%)
-  saturate(6000%)
-  hue-rotate(324deg)
-  brightness(75%)
-  contrast(110%);}
-
 /* MOBILE HEADER LOGIN + DOWNLOAD BUTTONS */
 @media (max-width: 768px) {
   .actions {

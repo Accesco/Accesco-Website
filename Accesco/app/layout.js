@@ -2,6 +2,7 @@ import Script from 'next/script';
 import { Sora, DM_Sans, Inter } from 'next/font/google';
 import './globals.css';
 import { AuthProvider } from './components/AuthProvider';
+import AuthGate from './components/AuthGate';
 import CookieConsent from './components/CookieConsent';
 import ReferralCapture from './components/ReferralCapture';
 import JsonLd from '@/components/JsonLd';
@@ -129,8 +130,10 @@ export default function RootLayout({ children }) {
         <AuthProvider>
           <BreadcrumbJsonLd />
           <ReferralCapture />
-          {children}
-          <CookieConsent />
+          <AuthGate>
+            {children}
+            <CookieConsent />
+          </AuthGate>
         </AuthProvider>
 
         {/* RemixIcon loaded lazily — only needed for a few social icons */}
