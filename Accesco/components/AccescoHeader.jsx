@@ -15,6 +15,10 @@ import LocationModal from './LocationModal';
 export default function AccescoHeader() {
   const pathname = usePathname();
   const { user, signOut, signIn } = useAuth();
+  
+  // Hydration state to fix the Server vs Client mismatch - Jabez
+  const [isMounted, setIsMounted] = useState(false);
+  
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isAuthOpen, setIsAuthOpen] = useState(false);
@@ -31,14 +35,34 @@ export default function AccescoHeader() {
   const partnersTimeoutRef = useRef(null);
   const [isLocationModalOpen, setIsLocationModalOpen] = useState(false);
 
-  const locations = [
-    'Bengaluru, Karnataka',
-    'Mumbai, Maharashtra',
-    'Delhi NCR',
-    'Hyderabad, Telangana',
-    'Chennai, Tamil Nadu',
-    'Pune, Maharashtra',
-  ];
+  const locations = [];
+
+  // Handle Mount state to show the Location Modal
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (pathname !== '/') return;
+
+    // Abort and close if Firebase context already has the user
+    if (user) {
+      setIsAuthOpen(false);
+      return;
+    }
+
+    const timer = setTimeout(() => {
+      const localUser = localStorage.getItem('accesco_user');
+      const isLoggedOut = !localUser || localUser === 'null' || localUser === 'undefined' || localUser === '{}';
+
+      // Only open if BOTH local storage and Firebase report no user
+      if (isLoggedOut && !user) {
+        setIsAuthOpen(true);
+      }
+    }, 800); // Slightly longer delay to let Firebase initialize
+
+    return () => clearTimeout(timer);
+  }, [pathname, user]);
 
   useEffect(() => {
     const savedLocation = localStorage.getItem('userLocation');
@@ -243,108 +267,116 @@ export default function AccescoHeader() {
           </Link>
           <div className={styles.logoDivider}></div>
 
-<Link href="/#waitlist" className={styles.waitlistLink}>
-  JOIN WAITLIST
-</Link>
+          <Link href="/#waitlist" className={styles.waitlistLink}>
+            JOIN WAITLIST
+          </Link>
 
-<Link href="/referral" className={styles.waitlistLink}>
-  REFER & EARN
-</Link>
+          <Link href="/referral" className={styles.waitlistLink}>
+            REFER & EARN
+          </Link>
 
           <div className={styles.actions}>
             {/* Location Selector */}
-              <div 
-                className={styles.locationSelector}
-                ref={locationDropdownRef}
+            <div 
+              className={styles.locationSelector}
+              ref={locationDropdownRef}
+            >
+              <button 
+                className={styles.locationButton}
+                onClick={() => setIsLocationOpen(!isLocationOpen)}
+                aria-expanded={isLocationOpen}
               >
-                <button 
-                  className={styles.locationButton}
-                  onClick={() => setIsLocationOpen(!isLocationOpen)}
-                  aria-expanded={isLocationOpen}
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                  <path d="M8 1C5.24 1 3 3.24 3 6C3 9.5 8 15 8 15C8 15 13 9.5 13 6C13 3.24 10.76 1 8 1ZM8 7.5C7.17 7.5 6.5 6.83 6.5 6C6.5 5.17 7.17 4.5 8 4.5C8.83 4.5 9.5 5.17 9.5 6C9.5 6.83 8.83 7.5 8 7.5Z" fill="currentColor"/>
+                </svg>
+
+                <span className={styles.locationText}>
+                  {getDisplayLocation(selectedLocation)}
+                </span>
+
+                <svg 
+                  width="12" 
+                  height="12" 
+                  viewBox="0 0 12 12" 
+                  fill="none"
+                  className={`${styles.locationIcon} ${isLocationOpen ? styles.locationIconOpen : ''}`}
                 >
-                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                    <path d="M8 1C5.24 1 3 3.24 3 6C3 9.5 8 15 8 15C8 15 13 9.5 13 6C13 3.24 10.76 1 8 1ZM8 7.5C7.17 7.5 6.5 6.83 6.5 6C6.5 5.17 7.17 4.5 8 4.5C8.83 4.5 9.5 5.17 9.5 6C9.5 6.83 8.83 7.5 8 7.5Z" fill="currentColor"/>
-                  </svg>
+                  <path 
+                    d="M3 4.5L6 7.5L9 4.5" 
+                    stroke="currentColor" 
+                    strokeWidth="1.5" 
+                    strokeLinecap="round" 
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </button>
 
-                 <span className={styles.locationText}>
-                    {getDisplayLocation(selectedLocation)}
-                  </span>
-
-                  <svg 
-                    width="12" 
-                    height="12" 
-                    viewBox="0 0 12 12" 
-                    fill="none"
-                    className={`${styles.locationIcon} ${isLocationOpen ? styles.locationIconOpen : ''}`}
-                  >
-                    <path 
-                      d="M3 4.5L6 7.5L9 4.5" 
-                      stroke="currentColor" 
-                      strokeWidth="1.5" 
-                      strokeLinecap="round" 
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                </button>
-
-                {isLocationOpen && (
-                  <div className={styles.locationDropdown}>
-                    <div className={styles.locationDropdownHeader}>
-                      <h4>Select Your Location</h4>
-                    </div>
-                    
-                    <button 
-                      type="button"
-                      className={styles.detectLocationBtn}
-                      onClick={() => {
-                        setIsLocationOpen(false);
-                        setIsLocationModalOpen(true);
-                      }}
-                    >
-                      Detect my location
-                    </button>
-
-                    <div className={styles.locationList}>
-                      {locations.map((location) => (
-                        <button
-                          key={location}
-                          className={`${styles.locationItem} ${
-                            getDisplayLocation(selectedLocation) === location ? styles.selectedLocation : ''
-                          }`}
-                          onClick={() => {
-                            // Standardize predefined selection into JSON schema
-                            const parts = location.split(', ');
-                            const locationObject = {
-                              city: parts[1] || location,
-                              area: parts[0] || location,
-                              displayAddress: location,
-                              fullAddress: location
-                            };
-                            
-                            const locationStr = JSON.stringify(locationObject);
-                            setSelectedLocation(locationStr);
-                            localStorage.setItem('userLocation', locationStr);
-                            setIsLocationOpen(false);
-                          }}
-                        >
-                          {location}
-                        </button>
-                      ))}
-                    </div>
+              {isLocationOpen && (
+                <div className={styles.locationDropdown}>
+                  <div className={styles.locationDropdownHeader}>
+                    <h4>Select Your Location</h4>
                   </div>
-                )}
-              </div>
-            {user ? (
+                  
+                  <button 
+                    type="button"
+                    className={styles.detectLocationBtn}
+                    onClick={() => {
+                      setIsLocationOpen(false);
+                      setIsLocationModalOpen(true);
+                    }}
+                  >
+                    Detect my location
+                  </button>
+
+                  <div className={styles.locationList}>
+                    {locations.map((location) => (
+                      <button
+                        key={location}
+                        className={`${styles.locationItem} ${
+                          getDisplayLocation(selectedLocation) === location ? styles.selectedLocation : ''
+                        }`}
+                        onClick={() => {
+                          const parts = location.split(', ');
+                          const locationObject = {
+                            city: parts[1] || location,
+                            area: parts[0] || location,
+                            displayAddress: location,
+                            fullAddress: location
+                          };
+                          
+                          const locationStr = JSON.stringify(locationObject);
+                          setSelectedLocation(locationStr);
+                          localStorage.setItem('userLocation', locationStr);
+                          setIsLocationOpen(false);
+                        }}
+                      >
+                        {location}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* NEW: Hydration-safe logic for the User/Login button */}
+            {!isMounted ? (
+              // 1. Initial Render (Server + First Client Paint): Always show logged-out state
+              <button className={styles.loginButton}>
+                Login
+              </button>
+            ) : user ? (
+              // 2. Mounted & Logged In
               <Link href="/profile" className={styles.userButton}>
                 <div className={styles.avatar}>{initials}</div>
                 <span>{user.name.split(' ')[0]}</span>
               </Link>
             ) : (
+              // 3. Mounted & Logged Out
               <button className={styles.loginButton} onClick={() => setIsAuthOpen(true)}>
                 Login
               </button>
-              
             )}
+
             <a href="#" className={`${styles.loginButton} ${styles.getAppButton}`}>
               <span className={styles.desktopText}>Get App</span>
               <span className={styles.mobileText}>Download</span>
@@ -365,20 +397,23 @@ export default function AccescoHeader() {
         </div>
       </header>
 
-      {isAuthOpen && <AuthModal isOpen={true} onClose={() => setIsAuthOpen(false)} onSuccess={handleAuthSuccess} />}
-      
+      {/* Maintained dynamic conditional render without && */}
+      <AuthModal 
+        isOpen={isAuthOpen} 
+        onClose={() => setIsAuthOpen(false)} 
+        onSuccess={handleAuthSuccess} 
+      />
+
       <LocationModal 
         isOpen={isLocationModalOpen} 
         onClose={() => setIsLocationModalOpen(false)}
         onLocationSelect={(locationData) => {
-          // Destructure data correctly from the modal payload
           const { fullAddress, lat, lng } = locationData; 
           
           const parts = fullAddress.split(',');
           const resolvedArea = parts[0]?.trim() || fullAddress;
           const resolvedCity = parts[1]?.trim() || '';
 
-          // Construct the exact schema expected by the rest of the application
           const locationObject = {
             area: resolvedArea,
             city: resolvedCity,
