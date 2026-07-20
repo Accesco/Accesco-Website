@@ -358,7 +358,7 @@ export default function StyleStories() {
                     muted={muted}
                     loop
                     playsInline
-                    preload="auto"
+                    preload="metadata"
                     onClick={togglePlay}
                     onLoadedMetadata={(e) => setDuration(e.currentTarget.duration || 10)}
                     onTimeUpdate={(e) => setCurrent(e.currentTarget.currentTime)}

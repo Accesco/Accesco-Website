@@ -16,7 +16,7 @@
 }
 
 .creator-page {
-  font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: var(--font-dm-sans), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   background: #FFFDF8;
   min-height: 100vh;
   overflow-x: hidden;
@@ -102,7 +102,7 @@
   border: 1px solid rgba(200, 150, 62, 0.25);
   backdrop-filter: blur(12px);
   border-radius: 50px;
-  font-family: 'Sora', sans-serif;
+  font-family: var(--font-sora), sans-serif;
   font-size: 13px;
   font-weight: 700;
   color: var(--ac-gold);
@@ -117,7 +117,7 @@
 }
 
 .hero-title {
-  font-family: 'Sora', sans-serif;
+  font-family: var(--font-sora), sans-serif;
   font-size: clamp(2.5rem, 6vw, 4.8rem);
   font-weight: 800;
   line-height: 1.08;
@@ -135,7 +135,7 @@
 }
 
 .hero-subtitle {
-  font-family: 'DM Sans', sans-serif;
+  font-family: var(--font-dm-sans), sans-serif;
   font-size: clamp(1.1rem, 2vw, 1.25rem);
   line-height: 1.7;
   color: rgba(255, 253, 248, 0.72);
@@ -159,7 +159,7 @@
 }
 
 .stat-value {
-  font-family: 'Sora', sans-serif;
+  font-family: var(--font-sora), sans-serif;
   font-size: 2.8rem;
   font-weight: 800;
   margin-bottom: 6px;
@@ -168,7 +168,7 @@
 }
 
 .stat-label {
-  font-family: 'DM Sans', sans-serif;
+  font-family: var(--font-dm-sans), sans-serif;
   font-size: 0.9rem;
   color: rgba(255, 253, 248, 0.45);
   text-transform: uppercase;
@@ -201,7 +201,7 @@
   border: none;
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-  font-family: 'Sora', sans-serif;
+  font-family: var(--font-sora), sans-serif;
 }
 
 .cta-primary {
@@ -257,7 +257,7 @@
   color: var(--brand-primary);
   border: 1px solid rgba(122, 0, 66, 0.12);
   border-radius: 50px;
-  font-family: 'Sora', sans-serif;
+  font-family: var(--font-sora), sans-serif;
   font-size: 0.8rem;
   font-weight: 700;
   text-transform: uppercase;
@@ -266,7 +266,7 @@
 }
 
 .section-title {
-  font-family: 'Sora', sans-serif;
+  font-family: var(--font-sora), sans-serif;
   font-size: clamp(2rem, 4vw, 3rem);
   font-weight: 800;
   color: var(--text-dark);
@@ -275,7 +275,7 @@
 }
 
 .section-subtitle {
-  font-family: 'DM Sans', sans-serif;
+  font-family: var(--font-dm-sans), sans-serif;
   font-size: 1.15rem;
   color: var(--text-muted);
   line-height: 1.7;
@@ -357,7 +357,7 @@
 }
 
 .benefit-card h3 {
-  font-family: 'Sora', sans-serif;
+  font-family: var(--font-sora), sans-serif;
   font-size: 1.35rem;
   font-weight: 700;
   color: var(--text-dark);
@@ -366,7 +366,7 @@
 }
 
 .benefit-card p {
-  font-family: 'DM Sans', sans-serif;
+  font-family: var(--font-dm-sans), sans-serif;
   color: var(--text-muted);
   line-height: 1.65;
   margin-bottom: 20px;
@@ -380,7 +380,7 @@
   border: 1px solid rgba(200, 150, 62, 0.15);
   color: #ab7a22;
   border-radius: 8px;
-  font-family: 'Sora', sans-serif;
+  font-family: var(--font-sora), sans-serif;
   font-size: 0.8rem;
   font-weight: 700;
 }
@@ -415,7 +415,7 @@
 }
 
 .step-number {
-  font-family: 'Sora', sans-serif;
+  font-family: var(--font-sora), sans-serif;
   font-size: 3.2rem;
   font-weight: 800;
   background: linear-gradient(135deg, var(--brand-primary), var(--ac-gold));
@@ -427,7 +427,7 @@
 }
 
 .step-content h3 {
-  font-family: 'Sora', sans-serif;
+  font-family: var(--font-sora), sans-serif;
   font-size: 1.4rem;
   font-weight: 700;
   color: var(--text-dark);
@@ -436,7 +436,7 @@
 }
 
 .step-content p {
-  font-family: 'DM Sans', sans-serif;
+  font-family: var(--font-dm-sans), sans-serif;
   color: var(--text-muted);
   line-height: 1.65;
   font-size: 0.98rem;
@@ -485,7 +485,7 @@
   color: #ab7a22;
   border: 1px solid rgba(200, 150, 62, 0.15);
   border-radius: 50px;
-  font-family: 'Sora', sans-serif;
+  font-family: var(--font-sora), sans-serif;
   font-size: 0.8rem;
   font-weight: 700;
   text-transform: uppercase;
@@ -494,7 +494,7 @@
 }
 
 .form-title {
-  font-family: 'Sora', sans-serif;
+  font-family: var(--font-sora), sans-serif;
   font-size: 2.4rem;
   font-weight: 800;
   color: var(--text-dark);
@@ -503,7 +503,7 @@
 }
 
 .form-subtitle {
-  font-family: 'DM Sans', sans-serif;
+  font-family: var(--font-dm-sans), sans-serif;
   font-size: 1.1rem;
   color: var(--text-muted);
   line-height: 1.6;
@@ -532,7 +532,7 @@
 }
 
 .form-field label {
-  font-family: 'DM Sans', sans-serif;
+  font-family: var(--font-dm-sans), sans-serif;
   font-size: 0.95rem;
   font-weight: 700;
   color: var(--text-dark);
@@ -545,7 +545,7 @@
   border: 2px solid #F0ECE9;
   border-radius: 14px;
   font-size: 1rem;
-  font-family: 'DM Sans', sans-serif;
+  font-family: var(--font-dm-sans), sans-serif;
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   background: #FFFDF8;
   color: var(--text-dark);
@@ -601,7 +601,7 @@
 }
 
 .checkbox-label {
-  font-family: 'DM Sans', sans-serif;
+  font-family: var(--font-dm-sans), sans-serif;
   font-size: 0.95rem;
   font-weight: 600;
   color: var(--text-dark);
@@ -613,7 +613,7 @@
   gap: 12px;
   padding: 16px 20px;
   border-radius: 12px;
-  font-family: 'DM Sans', sans-serif;
+  font-family: var(--font-dm-sans), sans-serif;
   font-weight: 600;
   font-size: 0.95rem;
 }
@@ -640,7 +640,7 @@
   color: white;
   border: none;
   border-radius: 14px;
-  font-family: 'Sora', sans-serif;
+  font-family: var(--font-sora), sans-serif;
   font-size: 1.1rem;
   font-weight: 700;
   cursor: pointer;

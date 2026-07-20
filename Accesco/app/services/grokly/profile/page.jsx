@@ -19,7 +19,7 @@ import MobileHeader from '../components/MobileHeader';
 import BottomNav from '../components/BottomNav';
 import CartDrawer from '../components/CartDrawer';
 import '../styles/variables.css';
-import '../styles/globals.css';
+
 
 // ─── Reverse Commerce Sub-Component ────────────────────────────────────────
 function ReverseCommerceView({ orders, walletBalance, ecoHistory, formatDate, showToast }) {

@@ -25,10 +25,14 @@ export const metadata = {
   },
 };
 
+import { caveat, nunito, nunitoSans, playfairDisplay, plusJakartaSans, dmSerifDisplay, baloo2 } from '@/app/fonts';
+
 export default function SwadishttLayout({ children }) {
   return (
     <WaitlistGate>
-      <SwadishttLayoutClient>{children}</SwadishttLayoutClient>
+      <div className={`${caveat.variable} ${nunito.variable} ${nunitoSans.variable} ${playfairDisplay.variable} ${plusJakartaSans.variable} ${dmSerifDisplay.variable} ${baloo2.variable}`}>
+        <SwadishttLayoutClient>{children}</SwadishttLayoutClient>
+      </div>
     </WaitlistGate>
   );
 }

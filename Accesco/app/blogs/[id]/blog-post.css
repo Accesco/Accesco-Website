@@ -246,7 +246,7 @@
   font-weight: 700;
   margin: 0 0 1rem;
   color: #1a1a1a;
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-inter), sans-serif;
 }
 
 .share-buttons {
@@ -292,7 +292,7 @@
   font-weight: 700;
   color: #1a1a1a;
   margin: 0 0 1.25rem;
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-inter), sans-serif;
 }
 
 .related-posts-grid {
