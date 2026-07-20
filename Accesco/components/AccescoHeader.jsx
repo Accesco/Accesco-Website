@@ -250,6 +250,45 @@ export default function AccescoHeader() {
   REFER & EARN
 </Link>
 
+          {pathname.startsWith('/partner') && (
+            <div 
+              className={styles.servicesDropdown}
+              ref={partnersDropdownRef}
+              onMouseEnter={handlePartnersMouseEnter}
+              onMouseLeave={handlePartnersMouseLeave}
+            >
+              <button 
+                className={styles.waitlistLink}
+                onClick={() => setIsPartnersOpen(!isPartnersOpen)}
+                style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '4px', textTransform: 'uppercase', padding: 0 }}
+              >
+                PARTNER PROGRAMS <span className={styles.dropdownIcon} style={{ transform: isPartnersOpen ? 'rotate(180deg)' : 'rotate(0deg)', fontSize: '0.65rem' }}>▼</span>
+              </button>
+              {isPartnersOpen && (
+                <div className={styles.dropdownMenu}>
+                  <div className={styles.dropdownContent}>
+                    <Link href="/partner/creator" className={styles.dropdownItem}>
+                      <div className={styles.dropdownItemName}>Partner as Creator</div>
+                      <div className={styles.dropdownItemDesc}>Join as content creator</div>
+                    </Link>
+                    <Link href="/partner/vendor" className={styles.dropdownItem}>
+                      <div className={styles.dropdownItemName}>Partner as Vendor</div>
+                      <div className={styles.dropdownItemDesc}>Grow your business</div>
+                    </Link>
+                    <Link href="/partner/delivery" className={styles.dropdownItem}>
+                      <div className={styles.dropdownItemName}>Partner as Delivery</div>
+                      <div className={styles.dropdownItemDesc}>Earn flexible income</div>
+                    </Link>
+                    <Link href="/partner" className={styles.dropdownItem}>
+                      <div className={styles.dropdownItemName}>Brand Partnership</div>
+                      <div className={styles.dropdownItemDesc}>Collaborate with us</div>
+                    </Link>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
           <div className={styles.actions}>
             {/* Location Selector */}
               <div 
