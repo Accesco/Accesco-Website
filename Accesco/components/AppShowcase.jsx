@@ -10,6 +10,10 @@ import {
   ArrowRight,
   ArrowLeft,
   Check,
+  UserRound,
+Star,
+MessageCircle,
+LockKeyhole,
 } from "lucide-react";
 import styles from "./AppShowcase.module.css";
 import {
@@ -26,7 +30,11 @@ export default function AppShowcase() {
     phone: "",
     interests: [],
   });
-
+const [feedbackStep, setFeedbackStep] = useState(1);
+const [usageLikelihood, setUsageLikelihood] = useState("");
+const [earlyAccess, setEarlyAccess] = useState("");
+const [feedbackLoading, setFeedbackLoading] = useState(false);
+const [feedbackError, setFeedbackError] = useState("");
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
@@ -47,34 +55,56 @@ export default function AppShowcase() {
     };
   }, []);
 
-  const handleFeedbackSubmit = async () => {
-    if (feedbackScore === null) return;
+const handleFeedbackNext = () => {
+  if (feedbackScore === null) {
+    setFeedbackError("Please select a rating.");
+    return;
+  }
 
-    const feedbackData = {
-      user: form.name?.trim() || "User",
-      score: feedbackScore,
-      review: feedbackReview.trim(),
-    };
+  setFeedbackError("");
+  setFeedbackStep(2);
+};
 
-    try {
-      const res = await fetch("/api/feedback", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(feedbackData),
-      });
-      if (!res.ok) {
-        const data = await res.json().catch(() => ({}));
-        throw new Error(data.error || "Failed to submit feedback");
-      }
-      setFeedbackSubmitted(true);
-    } catch (err) {
-      console.error("Feedback submit failed:", err);
-      // Still show success to the user — feedback UX shouldn't block on a
-      // backend hiccup, but the failure is logged for debugging.
-      setFeedbackSubmitted(true);
-    }
+const handleFeedbackSubmit = async () => {
+  if (!usageLikelihood || !earlyAccess) {
+    setFeedbackError("Please answer both questions.");
+    return;
+  }
+
+  const feedbackData = {
+    user: form.name?.trim() || "User",
+    score: feedbackScore,
+    review: feedbackReview.trim(),
+    usageLikelihood,
+    earlyAccess,
   };
 
+  setFeedbackLoading(true);
+  setFeedbackError("");
+
+  try {
+    const res = await fetch("/api/feedback", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(feedbackData),
+    });
+
+    const data = await res.json().catch(() => ({}));
+
+    if (!res.ok) {
+      throw new Error(data.error || "Failed to submit feedback");
+    }
+
+    setFeedbackSubmitted(true);
+  } catch (err) {
+    console.error("Feedback submit failed:", err);
+    setFeedbackError(
+      err.message || "Could not submit your feedback. Please try again."
+    );
+  } finally {
+    setFeedbackLoading(false);
+  }
+};
   const interestOptions = [
     {
       id: "grokly",
@@ -366,118 +396,244 @@ export default function AppShowcase() {
       {/* Feedback Section */}
       <section className={styles.feedbackSection}>
         <div className={styles.feedbackCard}>
-          <div className={styles.feedbackHeader}>
-            <div className={styles.feedbackBubbleOne}></div>
-            <div className={styles.feedbackBubbleTwo}></div>
+<div className={styles.feedbackHeader}>
+  <div className={styles.feedbackHeaderContent}>
+    <span className={styles.feedbackEyebrow}>
+      Your opinion matters
+    </span>
 
-            <div className={styles.feedbackHeaderContent}>
-              <span className={styles.feedbackEyebrow}>
-                Your opinion matters
-              </span>
+    <h2 className={styles.feedbackTitle}>How are we doing?</h2>
 
-              <h2 className={styles.feedbackTitle}>How are we doing?</h2>
+    <p className={styles.feedbackHeaderText}>
+      It’ll be really quick, we promise.
+      <br />
+      It takes less than <strong>30 seconds.</strong>
+    </p>
+  </div>
 
-              <p className={styles.feedbackHeaderText}>
-                It’ll be really quick, we promise.
-              </p>
-            </div>
-          </div>
+  <img
+    src="/images/asterik.png"
+    alt=""
+    aria-hidden="true"
+    className={styles.feedbackHeaderMark}
+  />
+</div>
 
           <div className={styles.feedbackBody}>
             {!feedbackSubmitted ? (
               <>
-                <p className={styles.feedbackGreeting}>
-                  Hi {form.name?.trim() || "User"},
-                </p>
+  {feedbackError && (
+    <p className={styles.feedbackError}>{feedbackError}</p>
+  )}
 
-                <p className={styles.feedbackDescription}>
-                  Thank you for being part of the Accesco Living community. Your
-                  feedback helps us create a smarter and more convenient
-                  experience for everyone.
-                </p>
+  {feedbackStep === 1 && (
+    <div className={styles.feedbackStage}>
+      <div className={styles.feedbackInfoRow}>
+        <div className={styles.feedbackIconBox}>
+          <UserRound size={18} />
+        </div>
 
-                <h3 className={styles.feedbackQuestion}>
-                  How likely are you to recommend Accesco Living to your friends
-                  and family?
-                </h3>
+        <div>
+          <p className={styles.feedbackGreeting}>
+            Hi {form.name?.trim() || "User"},
+          </p>
 
-                <div
-                  className={styles.ratingScale}
-                  role="radiogroup"
-                  aria-label="Recommendation score"
-                >
-                  {Array.from({ length: 11 }, (_, index) => (
-                    <button
-                      key={index}
-                      type="button"
-                      role="radio"
-                      aria-checked={feedbackScore === index}
-                      aria-label={`${index} out of 10`}
-                      className={`${styles.ratingButton} ${
-                        feedbackScore === index
-                          ? styles.ratingButtonSelected
-                          : ""
-                      }`}
-                      onClick={() => setFeedbackScore(index)}
-                    >
-                      <span className={styles.ratingNumber}>{index}</span>
+          <p className={styles.feedbackDescription}>
+            Thank you for being part of the Accesco Living community.
+            Your feedback helps us create a smarter and more convenient
+            experience for everyone.
+          </p>
+        </div>
+      </div>
 
-                      <span className={styles.ratingDot}>
-                        {feedbackScore === index && (
-                          <span className={styles.ratingDotInner}></span>
-                        )}
-                      </span>
-                    </button>
-                  ))}
-                </div>
+      <div className={styles.feedbackQuestionRow}>
+        <div className={styles.feedbackIconBox}>
+          <Star size={18} />
+        </div>
 
-                <div className={styles.ratingLabels}>
-                  <span>Not at all likely</span>
-                  <span>Extremely likely</span>
-                </div>
+        <div className={styles.feedbackQuestionContent}>
+          <h3 className={styles.feedbackQuestion}>
+            On a scale of 0–10, how likely are you to recommend
+            Accesco Living to a friend, family member, or colleague?
+          </h3>
 
-                <div className={styles.reviewBoxWrapper}>
-                  <label
-                    htmlFor="feedback-review"
-                    className={styles.reviewBoxLabel}
-                  >
-                    Tell us more
-                    <span className={styles.reviewOptional}>(optional)</span>
-                  </label>
+          <span className={styles.feedbackHint}>Select a rating</span>
 
-                  <div className={styles.reviewBoxContainer}>
-                    <textarea
-                      id="feedback-review"
-                      className={styles.reviewBox}
-                      placeholder="Share what you liked or what we could improve..."
-                      value={feedbackReview}
-                      onChange={(e) => setFeedbackReview(e.target.value)}
-                      maxLength={300}
-                      rows={4}
-                    />
+          <div
+            className={styles.ratingScale}
+            role="radiogroup"
+            aria-label="Recommendation score"
+          >
+            {Array.from({ length: 11 }, (_, index) => (
+              <button
+                key={index}
+                type="button"
+                role="radio"
+                aria-checked={feedbackScore === index}
+                className={`${styles.ratingButton} ${
+                  feedbackScore === index
+                    ? styles.ratingButtonSelected
+                    : ""
+                }`}
+                onClick={() => {
+                  setFeedbackScore(index);
+                  setFeedbackError("");
+                }}
+              >
+                {index}
+              </button>
+            ))}
+          </div>
 
-                    <span className={styles.reviewCharacterCount}>
-                      {feedbackReview.length}/300
-                    </span>
-                  </div>
-                </div>
+          <div className={styles.ratingLabels}>
+            <span>Not at all likely</span>
+            <span>Extremely likely</span>
+          </div>
+        </div>
+      </div>
 
-                <button
-                  type="button"
-                  className={styles.feedbackSubmitButton}
-                  disabled={feedbackScore === null}
-                  onClick={handleFeedbackSubmit}
-                >
-                  Submit Feedback
-                  <ArrowRight size={18} />
-                </button>
+      <div className={styles.feedbackQuestionRow}>
+        <div className={styles.feedbackIconBox}>
+          <MessageCircle size={18} />
+        </div>
 
-                <p className={styles.feedbackRegards}>
-                  Warm regards,
-                  <br />
-                  <strong>Team Accesco</strong>
-                </p>
-              </>
+        <div className={styles.feedbackQuestionContent}>
+          <label
+            htmlFor="feedback-review"
+            className={styles.reviewBoxLabel}
+          >
+            Tell us more
+            <span className={styles.reviewOptional}>(optional)</span>
+          </label>
+
+          <span className={styles.feedbackHint}>
+            Share what you liked or what we could improve.
+          </span>
+
+          <div className={styles.reviewBoxContainer}>
+            <textarea
+              id="feedback-review"
+              className={styles.reviewBox}
+              placeholder="Share your thoughts..."
+              value={feedbackReview}
+              onChange={(e) => setFeedbackReview(e.target.value)}
+              maxLength={300}
+            />
+
+            <span className={styles.reviewCharacterCount}>
+              {feedbackReview.length}/300
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <button
+        type="button"
+        className={styles.feedbackSubmitButton}
+        onClick={handleFeedbackNext}
+      >
+        Next
+        <ArrowRight size={16} />
+      </button>
+    </div>
+  )}
+
+  {feedbackStep === 2 && (
+    <div className={styles.feedbackStage}>
+      <div className={styles.feedbackQuestionRow}>
+        <div className={styles.feedbackIconBox}>
+          <Star size={18} />
+        </div>
+
+        <div className={styles.feedbackQuestionContent}>
+          <h3 className={styles.feedbackQuestion}>
+            If Accesco Living launched in your city tomorrow, how
+            likely would you be to use it?
+          </h3>
+
+          <div className={styles.feedbackOptions}>
+            {[
+              "Definitely",
+              "Probably",
+              "Not Sure",
+              "Probably Not",
+              "Definitely Not",
+            ].map((option) => (
+              <label
+                key={option}
+                className={`${styles.feedbackOption} ${
+                  usageLikelihood === option
+                    ? styles.feedbackOptionSelected
+                    : ""
+                }`}
+              >
+                <input
+                  type="radio"
+                  name="usage-likelihood"
+                  value={option}
+                  checked={usageLikelihood === option}
+                  onChange={(e) => {
+                    setUsageLikelihood(e.target.value);
+                    setFeedbackError("");
+                  }}
+                />
+
+                <span>{option}</span>
+              </label>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <div className={styles.feedbackQuestionRow}>
+        <div className={styles.feedbackIconBox}>
+          <MessageCircle size={18} />
+        </div>
+
+        <div className={styles.feedbackQuestionContent}>
+          <h3 className={styles.feedbackQuestion}>
+            Would you like early access to our public beta?
+          </h3>
+
+          <div className={styles.earlyAccessOptions}>
+            {["Yes", "Maybe Later", "No"].map((option) => (
+              <label
+                key={option}
+                className={`${styles.feedbackOption} ${
+                  earlyAccess === option
+                    ? styles.feedbackOptionSelected
+                    : ""
+                }`}
+              >
+                <input
+                  type="radio"
+                  name="early-access"
+                  value={option}
+                  checked={earlyAccess === option}
+                  onChange={(e) => {
+                    setEarlyAccess(e.target.value);
+                    setFeedbackError("");
+                  }}
+                />
+
+                <span>{option}</span>
+              </label>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <button
+        type="button"
+        className={styles.feedbackSubmitButton}
+        disabled={feedbackLoading}
+        onClick={handleFeedbackSubmit}
+      >
+        {feedbackLoading ? "Submitting..." : "Submit Feedback"}
+      </button>
+    </div>
+  )}
+</>
             ) : (
               <div className={styles.feedbackSuccess}>
                 <div className={styles.feedbackSuccessIcon}>
@@ -497,6 +653,10 @@ export default function AppShowcase() {
                   onClick={() => {
                     setFeedbackScore(null);
                     setFeedbackReview("");
+                    setUsageLikelihood("");
+  setEarlyAccess("");
+  setFeedbackStep(1);
+  setFeedbackError("");
                     setFeedbackSubmitted(false);
                   }}
                 >
@@ -506,6 +666,10 @@ export default function AppShowcase() {
             )}
           </div>
         </div>
+        <p className={styles.feedbackPrivacy}>
+  <LockKeyhole size={13} />
+  Your feedback is private and helps us improve Accesco Living.
+</p>
       </section>
 
       {/* Unchanged bottom app download segments */}
