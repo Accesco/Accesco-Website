@@ -4462,3 +4462,332 @@ opacity:0.5;
 
 
 
+ 
+    /* Scale down CTA cards for 125% display scaling */
+  @media (min-width: 769px) and (resolution: 1.25dppx) {
+
+   .servicesTrack{
+    width: fit-content !important;
+    margin-inline: auto !important;
+  }
+
+  .service-premium-card{
+    transform: scale(0.85);
+    transform-origin: center;
+  }
+
+    .service-card-visual{
+      height: 190px !important;
+    }
+
+    .service-icon-circle{
+      width: 72px !important;
+      height: 72px !important;
+    }
+
+    .service-card-name{
+      font-size: 1.5rem !important;
+    }
+
+    .service-card-desc{
+      font-size: 0.95rem !important;
+    }
+
+    .service-card-cta{
+      padding: 12px 22px !important;
+      font-size: 0.92rem !important;
+    }
+  }
+  
+            
+       r .services-container-wrapper {
+          position: relative;
+          width: 100%;
+          display: flex;
+          align-items: center;
+        }
+
+        .servicesWrap {
+          position: relative;
+          width: 100%;
+        }
+
+        .services-grid {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 24px;
+          width: 100%;
+        }
+
+        .servicesArrow {
+          display: none;
+        }
+
+        /* Ã¢â€â‚¬Ã¢â€â‚¬ Mobile: show all 3 cards simultaneously, no scroll Ã¢â€â‚¬Ã¢â€â‚¬ */
+        @media (max-width: 960px) {
+          .services-container-wrapper {
+            overflow: visible !important;
+          }
+
+          .services-grid {
+            display: grid !important;
+            grid-template-columns: repeat(3, 1f) !important;
+            gap: 8px !important;
+            width: 100% !important;
+            overflow: visible !important;
+            scroll-snap-type: none !important;
+            padding-bottom: 0 !important;
+            margin: 0 !important;
+          }
+
+          .services-grid::-webkit-scrollbar {
+            display: none;
+          }
+
+          .services-grid > div {
+            flex: 0 0 100%;
+            min-width: 100%;
+            max-width: 100%;
+            scroll-snap-align: center;
+            scroll-snap-stop: always;
+            padding: 0;
+            box-sizing: border-box;
+          }
+
+          .services-grid > div {
+            width: 100% !important;
+            min-width: 0 !important;
+            max-width: none !important;
+            flex-shrink: 0 !important;
+          }
+
+          .servicesArrow {
+            display: none !important;
+          }
+
+          .service-card-visual {
+            height: 120px !important;
+          }
+
+          .service-card-body {
+            padding: 10px 10px 14px !important;
+          }
+
+          .service-card-name {
+          font-family: 'Inter', sans-serif;
+  font-weight: 700;
+            font-size: 0.9rem !important;
+            margin-bottom: 4px !important;
+          }
+
+          .service-card-desc {
+            font-size: 0.7rem !important;
+            line-height: 1.3 !important;
+          }
+
+          .service-card-cta {
+            padding: 9px 6px !important;
+            font-size: 0.65rem !important;
+            border-radius: 8px !important;
+          }
+
+          .service-icon-circle {
+            width: 40px !important;
+            height: 40px !important;
+            top: 100px !important;
+            right: 8px !important;
+            padding: 6px !important;
+          }
+
+          .xpense-box-container {
+            grid-template-columns: 1fr !important;
+            padding: 48px 20px !important;
+            text-align: center !important;
+            margin: 0 10px !important;
+            width: calc(100% - 20px) !important;
+          }
+
+          .xpense-visual-wrap {
+            height: auto !important;
+            margin-top: 16px !important;
+          }
+
+          .xpense-visual-wrap > div:not(:nth-child(2)) {
+            display: none !important;
+          }
+
+          .xpense-visual-wrap > div:nth-child(2) {
+            position: relative !important;
+            transform: none !important;
+            margin: 0 auto !important;
+            width: 100% !important;
+            max-width: 280px !important;
+          }
+        }
+
+        @media (max-width: 480px) {
+          .services-grid {
+            gap: 6px !important;
+  display: grid !important;
+  grid-template-columns: repeat(2, 1fr) !important;
+            overflow: visible !important;
+            scroll-snap-type: none !important;
+            padding-bottom: 0 !important;
+            margin: 0 !important;
+          }
+          .services-grid > div {
+            width: 100% !important;
+            min-width: 0 !important;
+            max-width: none !important;
+            flex-shrink: 0 !important;
+          }
+/* Grokly */
+.services-grid > div:nth-child(1) {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+/* Swadisht - full width */
+.services-grid > div:nth-child(2) {
+  grid-column: 1 / -1;
+  grid-row: 2;
+}
+
+/* InstaStyle */
+.services-grid > div:nth-child(3) {
+  grid-column: 2;
+  grid-row: 1;
+}
+  
+       .service-card-visual {
+  height: 120px !important;   /* was 85px */
+}
+
+.service-card-body {
+  padding: 10px 10px 12px !important;   /* was 6px 6px 8px */
+}
+          .service-card-name {
+          font-family: 'Inter', sans-serif;
+  font-weight: 700;
+            font-size: 0.72rem !important;
+            margin-bottom: 2px !important;
+          }
+          .service-card-desc {
+            display: none !important;
+          }
+          .service-card-cta {
+            padding: 6px 2px !important;
+            font-size: 0.55rem !important;
+            border-radius: 6px !important;
+          }
+          .service-icon-circle {
+            width: 26px !important;
+            height: 26px !important;
+            top: 72px !important;
+            right: 4px !important;
+            padding: 3px !important;
+          }
+        }
+
+        .service-premium-card {
+          position: relative;
+          background: #fff;
+          border-radius: 24px;
+          border: 1px solid rgba(122,0,66,0.08);
+          overflow: hidden !important;
+          transition: transform 0.35s ease, box-shadow 0.35s ease;
+          height: 100%;
+          display: flex;
+          flex-direction: column;
+        }
+
+        /* hover interaction removed for premium cards per request */
+
+        .service-card-visual {
+          height: 200px;
+          position: relative;
+          overflow: hidden;
+          background: transparent;
+        }
+
+        .serviceCardVisualImage {
+          object-fit: cover !important;
+          object-position: center !important;
+          opacity: 1 !important;
+          filter: none !important;
+          mix-blend-mode: normal !important;
+          background: transparent !important;
+        }
+
+        .service-card-body {
+          padding: 20px 20px 24px;
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+        }
+
+        .service-card-name {
+          font-family: 'Inter', sans-serif;
+  font-weight: 700;
+          font-size: 1.35rem;
+          color: #1A0A0F;
+          margin: 0 0 8px;
+        }
+
+        .service-icon-circle {
+          position: absolute;
+          top: 170px;
+          right: 20px;
+          width: 60px;
+          height: 60px;
+          background: #fff;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          box-shadow: 0 10px 25px rgba(0,0,0,0.12);
+          z-index: 2;
+          padding: 10px;
+        }
+
+       .service-card-cta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px;
+  border-radius: 8px;
+
+  font-family: 'Inter', sans-serif;
+  font-size: 0.98rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+        .grokly-btn {
+          background: #2E7D32;
+          color: #fff;
+        }
+
+        .swadishtt-btn {
+          background: #E53935;                                                        ;
+          color: #fff;
+        }
+
+        .instastyle-btn {
+          background:  #8B5E3C;
+          color: #fff;
+        }
+
+        .xpense-details {
+          max-height: 0;
+          opacity: 0;
+          overflow: hidden;
+          transition: all 0.4s ease;
+        }
+
+        .xpense-card-float {
+          transition: all 0.4s ease;
+        }
+
+        /* xpense-card hover interactions removed */

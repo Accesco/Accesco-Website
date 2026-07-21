@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import Image from "next/image";
 import {
   ShoppingCart,
   Utensils,
@@ -15,7 +16,11 @@ MessageCircle,
 LockKeyhole,
 } from "lucide-react";
 import styles from "./AppShowcase.module.css";
-import { addWaitlistEntry, validateWaitlistEntry } from "../lib/waitlistService";
+import {
+  addWaitlistEntry,
+  validateWaitlistEntry,
+  isWaitlistRegistered,
+} from "../lib/waitlistService";
 
 export default function AppShowcase() {
   const [currentStep, setCurrentStep] = useState(1);
@@ -36,6 +41,19 @@ const [feedbackError, setFeedbackError] = useState("");
   const [feedbackScore, setFeedbackScore] = useState(null);
   const [feedbackReview, setFeedbackReview] = useState("");
   const [feedbackSubmitted, setFeedbackSubmitted] = useState(false);
+  const [alreadyRegistered, setAlreadyRegistered] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    isWaitlistRegistered().then((registered) => {
+      if (!cancelled) setAlreadyRegistered(registered);
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
 const handleFeedbackNext = () => {
   if (feedbackScore === null) {
@@ -149,6 +167,7 @@ const handleFeedbackSubmit = async () => {
       });
 
       setSuccess(true);
+      setAlreadyRegistered(true);
       setForm({
         name: "",
         email: "",
@@ -202,26 +221,25 @@ const handleFeedbackSubmit = async () => {
       <div className={styles.waitlistCard}>
         {/* Left Panel: Flush Poster Image */}
         <div className={styles.leftPanel}>
-          <img
+          <Image
             src="/images/xpense-banner.jpg"
             alt="Accesco Living - Wanna Skip The Line?"
             className={styles.posterImage}
-            onError={(e) => {
-              e.currentTarget.src = "/images/accesco_original.png";
-              e.currentTarget.style.padding = "40px";
-              e.currentTarget.style.background =
-                "linear-gradient(135deg, #7A0042, #1A0A0F)";
-            }}
+            width={800}
+            height={1000}
+            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
           />
         </div>
 
         {/* Right Panel: Clean Form Wrapper */}
         <div className={styles.rightPanel}>
           <div className={styles.brandLogoRow}>
-            <img
+            <Image
               src="/images/asterik.png"
               alt="Accesco mark"
               className={styles.brandAsterisk}
+              width={40}
+              height={40}
             />
           </div>
 
@@ -233,12 +251,17 @@ const handleFeedbackSubmit = async () => {
               "Select the experiences you are most interested in so we can personalize your early access updates, offers, and launch notifications."}
           </p>
 
-          {success && (
+          {success ? (
             <div className={styles.successMessage}>
               Welcome to the waitlist! We'll be in touch soon.
             </div>
-          )}
-
+          ) : alreadyRegistered ? (
+            <div className={styles.successMessage}>
+              You have already registered on the waitlist — hang tight, we'll
+              notify you the moment we launch!
+            </div>
+          ) : (
+          <>
           {error && <div className={styles.errorMessage}>{error}</div>}
 
           {/* Form Step Router */}
@@ -350,6 +373,8 @@ const handleFeedbackSubmit = async () => {
               </div>
             )}
           </form>
+          </>
+          )}
 
           {/* Symmetrical Trust Badges */}
           <div className={styles.trustRow}>
@@ -649,15 +674,21 @@ const handleFeedbackSubmit = async () => {
 
       {/* Unchanged bottom app download segments */}
       <div className={styles.downloadAppSection}>
-        <img
+        <Image
           src="/images/download-app-banner-desktop.png"
           alt="Download App"
           className={styles.downloadAppImageDesktop}
+          width={1200}
+          height={300}
+          style={{ width: '100%', height: 'auto' }}
         />
-        <img
+        <Image
           src="/images/download-app-banner-mobile.png"
           alt="Download App"
           className={styles.downloadAppImageMobile}
+          width={600}
+          height={200}
+          style={{ width: '100%', height: 'auto' }}
         />
         <a
           href="#"

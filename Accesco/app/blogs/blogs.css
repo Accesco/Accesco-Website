@@ -548,6 +548,11 @@ object-position: center center !important;
   color: var(--primary);
 }
 
+.story-headline a {
+  color: inherit;
+  text-decoration: none;
+}
+
 .story-summary {
   color: var(--secondary);
   font-size: 14px;

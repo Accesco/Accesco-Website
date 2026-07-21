@@ -1,10 +1,34 @@
 import Script from 'next/script';
+import { Sora, DM_Sans, Inter } from 'next/font/google';
 import './globals.css';
 import { AuthProvider } from './components/AuthProvider';
+import AuthGate from './components/AuthGate';
 import CookieConsent from './components/CookieConsent';
 import ReferralCapture from './components/ReferralCapture';
 import JsonLd from '@/components/JsonLd';
 import BreadcrumbJsonLd from '@/components/BreadcrumbJsonLd';
+
+const sora = Sora({
+  subsets: ['latin'],
+  weight: ['300', '400', '500', '600', '700', '800'],
+  display: 'swap',
+  variable: '--font-sora',
+});
+
+const dmSans = DM_Sans({
+  subsets: ['latin'],
+  weight: ['400', '500', '700'],
+  display: 'swap',
+  variable: '--font-dm-sans',
+});
+
+const inter = Inter({
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700'],
+  display: 'swap',
+  variable: '--font-inter',
+});
+
 export const metadata = {
   metadataBase: new URL('https://accescoliving.com'),
 
@@ -96,48 +120,30 @@ export default function RootLayout({ children }) {
   };
 
   return (
-    <html lang="en">
+    <html lang="en" className={`${sora.variable} ${dmSans.variable} ${inter.variable}`}>
       <head>
         {/* Structured Data for SEO */}
         <JsonLd data={[organizationSchema, websiteSchema]} />
-
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link rel="preconnect" href="https://cdn.jsdelivr.net" />
-
-        {/* Google Fonts + RemixIcon are loaded async below (Script) so they don't
-            block first paint; noscript keeps them for non-JS clients/crawlers. */}
-        <noscript>
-          <link
-            href="https://fonts.googleapis.com/css2?family=Sora:wght@300..800&family=DM+Sans:wght@400;500;700&family=Inter:wght@400..700&display=swap"
-            rel="stylesheet"
-          />
-          <link
-            rel="stylesheet"
-            href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css"
-          />
-        </noscript>
       </head>
 
       <body>
         <AuthProvider>
           <BreadcrumbJsonLd />
           <ReferralCapture />
-          {children}
-          <CookieConsent />
+          <AuthGate>
+            {children}
+            <CookieConsent />
+          </AuthGate>
         </AuthProvider>
 
-        <Script id="load-deferred-css" strategy="afterInteractive">
+        {/* RemixIcon loaded lazily — only needed for a few social icons */}
+        <Script id="load-remixicon" strategy="lazyOnload">
           {`
             (function () {
-              function loadCSS(href) {
-                var link = document.createElement('link');
-                link.rel = 'stylesheet';
-                link.href = href;
-                document.head.appendChild(link);
-              }
-              loadCSS('https://fonts.googleapis.com/css2?family=Sora:wght@300..800&family=DM+Sans:wght@400;500;700&family=Inter:wght@400..700&display=swap');
-              loadCSS('https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css');
+              var link = document.createElement('link');
+              link.rel = 'stylesheet';
+              link.href = 'https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css';
+              document.head.appendChild(link);
             })();
           `}
         </Script>
@@ -164,3 +170,4 @@ export default function RootLayout({ children }) {
     </html>
   );
 }
+
