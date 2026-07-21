@@ -1,4 +1,5 @@
-import InstaStyleClient from './InstaStyleClient';
+import dynamic from 'next/dynamic';
+const InstaStyleClient = dynamic(() => import('./InstaStyleClient'));
 import { categories, products } from '@/lib/mockData';
 
 export default function InstaStylePage() {

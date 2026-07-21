@@ -10,7 +10,7 @@
   padding-top: 80px;
   position: relative;
   color: #f6efeb;
-  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  font-family: var(--font-plus-jakarta-sans), system-ui, -apple-system, sans-serif;
   background-color: #140d0e;
   background-image:
     radial-gradient(circle at top left, rgba(255, 164, 96, 0.18), transparent 34%),

@@ -1,7 +1,7 @@
 /* ==========================================================================
    Variables
    ========================================================================== */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap');
+
 
 :root {
   --primary: #91004b;
@@ -19,11 +19,11 @@
 
 /* Base Styles */
 .careers-font-inter {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-family: var(--font-inter), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
 .careers-page {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-family: var(--font-inter), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   color: var(--text);
   background-color: var(--white);
   margin: 0;
@@ -361,7 +361,7 @@
 }
 
 .careers-stat-num {
-  font-family: 'Lora', Georgia, serif;
+  font-family: var(--font-lora), Georgia, serif;
   font-size: 3.5rem;
   font-weight: 500;
   color: var(--text);
@@ -787,7 +787,7 @@
   align-items: center;
   justify-content: center;
   font-size: 4rem;
-  font-family: 'Lora', Georgia, serif;
+  font-family: var(--font-lora), Georgia, serif;
   font-weight: 700;
   color: var(--primary-dark);
   z-index: 2;

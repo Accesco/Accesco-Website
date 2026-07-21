@@ -11,7 +11,7 @@
   background: radial-gradient(circle at 10% 20%, rgba(253, 251, 247, 1) 0%, rgba(246, 241, 233, 0.7) 90%);
   padding-top: 100px;
   padding-bottom: 60px;
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-inter), sans-serif;
   color: #2D2A26;
   box-sizing: border-box;
 }
@@ -85,7 +85,7 @@
 }
 
 .heading {
-  font-family: 'Playfair Display', 'Georgia', serif;
+  font-family: var(--font-playfair-display), 'Georgia', serif;
   font-size: 40px;
   line-height: 1.15;
   font-weight: 800;
@@ -640,7 +640,7 @@
 }
 
 .sidebarTitle {
-  font-family: 'Playfair Display', 'Georgia', serif;
+  font-family: var(--font-playfair-display), 'Georgia', serif;
   font-size: 20px;
   font-weight: 800;
   color: #2D2A26;
@@ -812,7 +812,7 @@
 }
 
 .howToUseContainer h2 {
-  font-family: 'Playfair Display', 'Georgia', serif;
+  font-family: var(--font-playfair-display), 'Georgia', serif;
   font-size: 24px;
   font-weight: 800;
   color: #2D2A26;

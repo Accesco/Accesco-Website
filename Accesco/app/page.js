@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { useEffect, useState, useRef, Suspense } from 'react';
 import Image from 'next/image';
@@ -51,16 +51,7 @@ export default function HomePage() {
       <main>
         {/* Ã¢â€â‚¬Ã¢â€â‚¬ Hero Section Ã¢â€â‚¬Ã¢â€â‚¬ */}
         <Hero />
-{/* Mobile Launch Poster */}
-<section className="mobileLaunchPoster">
-  <Image
-    src="/images/poster-newspaper.jpeg"
-    alt="Launching Soon"
-    width={800}
-    height={1200}
-    style={{ width: '100%', height: 'auto' }}
-  />
-</section>
+
         {/* Ã¢â€â‚¬Ã¢â€â‚¬ Services Section Ã¢â€â‚¬Ã¢â€â‚¬ */}
        <section
   id="services"
@@ -109,8 +100,9 @@ export default function HomePage() {
         src="/images/poster-newspaper.jpeg"
         alt="Accesco Living - Something exciting is coming"
         className="postersTiltImg"
-        width={600}
-        height={800}
+        width={800}
+        height={1200}
+        sizes="(max-width: 768px) 100vw, 340px"
         style={{ width: '100%', height: 'auto' }}
       />
     </div>

@@ -20,6 +20,11 @@ const nextConfig = {
 
   reactStrictMode: true,
   compress: true,
+  output: 'standalone',
+
+  experimental: {
+    optimizePackageImports: ['lucide-react', 'framer-motion'],
+  },
 
   async redirects() {
     return [

@@ -28,8 +28,8 @@
   --is-border-hover: rgba(26,17,8,0.18);
 
   /* ── Typography ── */
-  --font-display: 'Syne', 'Playfair Display', Georgia, serif;
-  --font-body:    'DM Sans', 'Segoe UI', sans-serif;
+  --font-display: 'Syne', var(--font-playfair-display), Georgia, serif;
+  --font-body:    var(--font-dm-sans), 'Segoe UI', sans-serif;
 
   /* ── Spacing ── */
   --section-y:  clamp(72px, 9vw, 112px);
@@ -171,7 +171,7 @@ html.lenis, html.lenis-scrolling {
 .instaHeaderNavLink {
   text-decoration: none;
   color: rgba(26,17,8,0.52);
-  font-family: 'DM Sans','Segoe UI',sans-serif;
+  font-family: var(--font-dm-sans),'Segoe UI',sans-serif;
   font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.07em;
@@ -193,7 +193,7 @@ html.lenis, html.lenis-scrolling {
   border: 1.5px solid rgba(26,17,8,0.08);
   border-radius: 9999px;
   padding: 0 44px 0 18px;
-  font-family: 'DM Sans','Segoe UI',sans-serif;
+  font-family: var(--font-dm-sans),'Segoe UI',sans-serif;
   font-size: 13px;
   color: #1A1108;
   background: rgba(26,17,8,0.03);
@@ -301,7 +301,7 @@ html.lenis, html.lenis-scrolling {
     display: block;
     text-decoration: none;
     color: #1A1108;
-    font-family: 'DM Sans','Segoe UI',sans-serif;
+    font-family: var(--font-dm-sans),'Segoe UI',sans-serif;
     font-size: 15px;
     font-weight: 600;
     padding: 13px 16px;
@@ -323,7 +323,7 @@ html.lenis, html.lenis-scrolling {
     border: 1.5px solid rgba(26,17,8,0.1);
     border-radius: 12px;
     padding: 0 14px;
-    font-family: 'DM Sans','Segoe UI',sans-serif;
+    font-family: var(--font-dm-sans),'Segoe UI',sans-serif;
     font-size: 14px;
     background: #fff;
     color: #1A1108;
@@ -337,7 +337,7 @@ html.lenis, html.lenis-scrolling {
     padding: 0 18px;
     background: #1A1108;
     color: #fff;
-    font-family: 'DM Sans','Segoe UI',sans-serif;
+    font-family: var(--font-dm-sans),'Segoe UI',sans-serif;
     font-size: 13px;
     font-weight: 700;
     cursor: pointer;
@@ -353,7 +353,7 @@ html.lenis, html.lenis-scrolling {
   .instaHeaderMobileQuickLink {
     text-decoration: none;
     color: rgba(26,17,8,0.6);
-    font-family: 'DM Sans','Segoe UI',sans-serif;
+    font-family: var(--font-dm-sans),'Segoe UI',sans-serif;
     font-size: 12px;
     font-weight: 700;
     letter-spacing: 0.05em;
