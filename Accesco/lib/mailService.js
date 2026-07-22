@@ -56,6 +56,7 @@ const API_KEY       = process.env.RESEND_API_KEY;
  * @param {{ to: string, subject: string, html: string }} options
  */
 export async function sendMail({ to, subject, html }) {
+ 
   if (!API_KEY) {
     console.warn('[mailService] RESEND_API_KEY not set. Email not sent.');
     return { success: false, error: 'API key missing' };
@@ -534,3 +535,150 @@ export async function sendGroklyConfirmation({ order, customerName, email }) {
   return sendMail({ to: email, subject, html });
 }
 
+export function buildWaitlistWelcomeEmail({ name }) {
+  const subject = "🎉 You're officially on the Accesco Living Waitlist";
+
+  const html = `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Welcome to Accesco Living</title>
+</head>
+
+<body style="margin:0;padding:0;background-color:#7B1123;font-family:Arial,Helvetica,sans-serif;">
+
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#7B1123;padding:32px 0;">
+<tr>
+<td align="center">
+
+<table role="presentation" width="600" cellpadding="0" cellspacing="0" style="background-color:#ffffff;border-radius:12px;overflow:hidden;">
+
+<!-- Header -->
+<tr>
+<td style="background:linear-gradient(135deg,#7a1237,#a3184a);padding:32px;text-align:center;">
+
+<img
+src="https://accescoliving.com/images/accesco_white.png"
+alt="Accesco Living"
+width="60"
+style="margin-bottom:12px;"
+/>
+
+<h1 style="color:#ffffff;font-size:22px;margin:0;letter-spacing:1px;">
+ACCESCO LIVING
+</h1>
+
+</td>
+</tr>
+
+<!-- Body -->
+<tr>
+<td style="padding:36px 40px;">
+
+<h2 style="color:#2b2b2b;font-size:20px;margin-top:0;">
+You're on the list, ${name || "there"}! 🎉
+</h2>
+
+<p style="color:#555555;font-size:15px;line-height:1.6;">
+Thank you for joining the Accesco Living waitlist.
+You're now one of the first to get access to India's unified commerce platform —
+groceries, food delivery, fashion, dining, and home services,
+all in one intelligent app.
+</p>
+
+<p style="color:#555555;font-size:15px;line-height:1.6;">
+As an early member, here's what you can expect:
+</p>
+
+<ul style="color:#555555;font-size:15px;line-height:1.8;padding-left:20px;">
+<li>Priority access before public launch</li>
+<li>Exclusive early-member benefits</li>
+<li>Updates on launch dates, straight to your inbox</li>
+<li>Beta invitations</li>
+</ul>
+
+<p style="color:#555555;font-size:15px;line-height:1.6;">
+You're not just on a waitlist —
+you're getting in before everyone else.
+</p>
+
+<div style="text-align:center;margin:32px 0;">
+
+<a
+href="https://accescoliving.com"
+style="
+background-color:#7B1123;
+color:#ffffff;
+text-decoration:none;
+padding:14px 32px;
+border-radius:6px;
+font-size:14px;
+font-weight:bold;
+display:inline-block;
+">
+Visit Accesco Living
+</a>
+
+</div>
+
+<p style="color:#888888;font-size:13px;line-height:1.6;">
+We'll be in touch soon with more updates.
+In the meantime, follow us on
+<a
+href="https://www.instagram.com/accescostore"
+style="color:#7a1237;text-decoration:none;font-weight:bold;"
+>
+Instagram
+</a>
+for a sneak peek of what's coming.
+</p>
+
+</td>
+</tr>
+
+<!-- Footer -->
+<tr>
+<td style="background-color:#f9f9f9;padding:24px 40px;text-align:center;">
+
+<p style="color:#999999;font-size:12px;margin:0;">
+© 2026 Accesco Living, Bengaluru, Karnataka, India
+</p>
+
+<p style="color:#999999;font-size:12px;margin:6px 0 0;">
+Need help?
+<a
+href="mailto:support@accescoliving.com"
+style="color:#7a1237;text-decoration:none;"
+>
+support@accescoliving.com
+</a>
+</p>
+
+</td>
+</tr>
+
+</table>
+
+</td>
+</tr>
+</table>
+
+</body>
+</html>
+`;
+
+  return {
+    subject,
+    html,
+  };
+}
+export async function sendWaitlistWelcomeEmail({ email, name }) {
+  const { subject, html } = buildWaitlistWelcomeEmail({ name });
+
+  return sendMail({
+    to: email,
+    subject,
+    html,
+  });
+}
