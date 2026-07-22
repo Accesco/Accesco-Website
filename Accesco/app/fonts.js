@@ -27,3 +27,4 @@ export const baloo2 = Baloo_2({ subsets: ['latin'], variable: '--font-baloo-2', 
 export const dmSans = DM_Sans({ subsets: ['latin'], variable: '--font-dm-sans', display: 'swap' });
 export const sora = Sora({ subsets: ['latin'], variable: '--font-sora', display: 'swap' });
 export const lora = Lora({ subsets: ['latin'], variable: '--font-lora', display: 'swap' });
+
