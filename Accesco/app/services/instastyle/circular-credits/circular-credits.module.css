@@ -1,0 +1,702 @@
+/* ── InstaStyle Circular Credits — Premium Designed Box Aesthetics ── */
+
+.page {
+  background: #ffffff;
+  min-height: 100vh;
+  color: #111111;
+  font-family: var(--font-body, 'Inter', sans-serif);
+  padding-bottom: 80px;
+}
+
+/* Header */
+.header {
+  padding: 20px 32px;
+  display: flex;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  background: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(12px);
+  z-index: 10;
+  border-bottom: 1px solid #f5f5f5;
+}
+
+.backBtn {
+  background: #fdfdfd;
+  border: 1px solid #eee;
+  color: #111;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+.backBtn:hover {
+  background: #111;
+  color: #fff;
+  border-color: #111;
+}
+
+.headerTitle {
+  font-size: 20px;
+  font-weight: 600;
+  font-family: var(--font-display, Georgia, serif);
+  color: #111;
+  margin: 0 auto;
+  letter-spacing: -0.01em;
+}
+
+.headerSpacer { width: 36px; }
+
+/* Container */
+.container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 40px 24px 80px;
+}
+
+/* Credits Dashboard Box (Profile-matching dark luxury card) */
+.creditsCard {
+  background: linear-gradient(135deg, #111111 0%, #2A1F17 100%);
+  border-radius: 20px;
+  padding: 32px;
+  color: #ffffff;
+  margin-bottom: 32px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+  position: relative;
+  overflow: hidden;
+}
+
+.creditsCardInner {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.creditsBadge {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 16px;
+  width: 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.creditsMetaLabel {
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.6);
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+.creditsVal {
+  font-size: 56px;
+  font-weight: 700;
+  font-family: var(--font-display, Georgia, serif);
+  margin: 8px 0;
+  line-height: 1;
+  color: #ffffff;
+}
+
+.creditsDesc {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.7);
+  line-height: 1.5;
+  margin: 0;
+  max-width: 480px;
+}
+
+.creditsActions {
+  display: flex;
+  gap: 12px;
+  margin-top: 24px;
+  flex-wrap: wrap;
+}
+
+.howToEarnBtn {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 10px 18px;
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.howToEarnBtn:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.redeemCardBtn {
+  background: #ffffff;
+  color: #111111;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.redeemCardBtn:hover {
+  background: #f5f5f5;
+}
+
+/* Success Toast */
+.successToast {
+  background: #F1F8E9;
+  border: 1px solid #C8E6C9;
+  color: #2E7D32;
+  padding: 14px 20px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Active Vouchers Section */
+.activeVouchersSection {
+  margin-bottom: 32px;
+}
+
+.activeVouchersList {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.activeVoucherCard {
+  padding: 14px 18px;
+  border-radius: 14px;
+  border: 1px solid #eaeaea;
+  background: #ffffff;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+}
+
+.activeVoucherLabel {
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.activeVoucherDate {
+  font-size: 11px;
+  color: #999;
+}
+
+/* Section Title */
+.sectionTitle {
+  font-size: 11px;
+  font-weight: 700;
+  color: #888;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 14px;
+}
+
+/* Activity Header */
+.activityHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #f5f5f5;
+}
+
+.activityTitle {
+  font-size: 11px;
+  font-weight: 700;
+  color: #888;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.viewAllLink {
+  font-size: 12px;
+  font-weight: 700;
+  color: #5C2E00;
+  cursor: pointer;
+  background: none;
+  border: none;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Filter Tabs */
+.filterTabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.filterTab {
+  padding: 8px 18px;
+  border-radius: 20px;
+  border: 1px solid #eee;
+  background: #ffffff;
+  font-size: 12px;
+  font-weight: 600;
+  color: #777;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.filterTabActive {
+  background: #111111;
+  border-color: #111111;
+  color: #ffffff;
+}
+
+/* Designed Box for Activities (Matching InstaStyle Profile) */
+.activityCardGroup {
+  background: #ffffff;
+  border: 1px solid #eaeaea;
+  border-radius: 16px;
+  padding: 8px 24px;
+  margin-bottom: 32px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+}
+
+.allActivityList {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.activityRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 0;
+  border-bottom: 1px solid #f5f5f5;
+}
+
+.activityRow:last-child { border-bottom: none; }
+
+.actLeft {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.actDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.actTitle {
+  font-size: 14px;
+  font-weight: 600;
+  color: #111;
+}
+
+.actSub {
+  font-size: 12px;
+  color: #777;
+  margin-top: 2px;
+}
+
+.actRight {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+}
+
+.actAmt {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.actDate {
+  font-size: 11px;
+  color: #aaa;
+}
+
+.emptyActivity {
+  padding: 32px 0;
+  text-align: center;
+  color: #999;
+  font-size: 14px;
+}
+
+/* Bottom Redeem CTA */
+.redeemBtn {
+  width: 100%;
+  background: #FAF9F5;
+  border: 1px solid #EADECF;
+  color: #5C2E00;
+  padding: 18px;
+  border-radius: 16px;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.redeemBtn:hover {
+  background: #5C2E00;
+  color: #ffffff;
+  border-color: #5C2E00;
+}
+.redeemBtn:hover svg {
+  stroke: #ffffff;
+}
+
+/* ──────────────── MODALS ──────────────── */
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(4px);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.modal {
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 32px;
+  width: 100%;
+  max-width: 640px;
+  max-height: 85vh;
+  overflow-y: auto;
+  border: 1px solid #eaeaea;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+}
+
+.modalHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.modalTitle {
+  font-size: 20px;
+  font-weight: 600;
+  color: #111;
+  font-family: var(--font-display, Georgia, serif);
+}
+
+.modalClose {
+  background: #f5f5f5;
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  font-size: 14px;
+  cursor: pointer;
+  color: #555;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+.modalClose:hover {
+  background: #111;
+  color: #fff;
+}
+
+.modalSubtitle {
+  font-size: 13px;
+  color: #777;
+  margin-bottom: 24px;
+}
+
+/* Earn Steps Designed Box */
+.earnSteps {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.earnStep {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: #ffffff;
+  border: 1px solid #eaeaea;
+  border-radius: 14px;
+  padding: 16px 20px;
+  transition: all 0.2s ease;
+}
+.earnStep:hover {
+  border-color: #5C2E00;
+  background: #FAF9F5;
+}
+
+.earnStepIconWrap {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: #FDF9F5;
+  border: 1px solid #F4EFEA;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.earnStepContent { flex: 1; }
+
+.earnStepTitle { font-size: 14px; font-weight: 600; color: #111; }
+
+.earnStepDesc { font-size: 12px; color: #777; margin-top: 2px; }
+
+.earnStepPts {
+  font-size: 12px;
+  font-weight: 700;
+  color: #2E7D32;
+  letter-spacing: 0.05em;
+}
+
+/* Modal Buttons */
+.modalActions { display: flex; gap: 12px; }
+
+.modalPrimaryBtn {
+  flex: 1;
+  background: #111111;
+  color: #ffffff;
+  border: none;
+  padding: 14px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.modalPrimaryBtn:hover { background: #333; }
+
+.modalSecondaryBtn {
+  width: 100%;
+  background: #f5f5f5;
+  color: #111;
+  border: none;
+  padding: 14px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  margin-top: 12px;
+  transition: all 0.2s ease;
+}
+.modalSecondaryBtn:hover { background: #eee; }
+
+/* Redeem Balance */
+.redeemBalance {
+  background: #FAF9F5;
+  border: 1px solid #EADECF;
+  border-radius: 14px;
+  padding: 16px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.redeemBalanceLabel {
+  font-size: 11px;
+  color: #777;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.redeemBalanceVal {
+  font-size: 22px;
+  font-weight: 700;
+  color: #5C2E00;
+  font-family: var(--font-display, Georgia, serif);
+}
+
+/* Voucher Grid */
+.voucherGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-bottom: 16px;
+}
+
+.voucherCard {
+  background: #ffffff;
+  border-radius: 14px;
+  border: 1px solid #eaeaea;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition: all 0.25s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+}
+.voucherCard:hover:not(.voucherCardDisabled) {
+  border-color: #5C2E00;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+}
+
+.voucherCardDisabled { opacity: 0.5; }
+
+.voucherBadge {
+  font-size: 10px;
+  font-weight: 700;
+  color: #fff;
+  padding: 4px 10px;
+  border-radius: 20px;
+  display: inline-block;
+  align-self: flex-start;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.voucherLabel {
+  font-size: 20px;
+  font-weight: 700;
+  font-family: var(--font-display, Georgia, serif);
+}
+
+.voucherDesc { font-size: 12px; color: #777; line-height: 1.4; }
+
+.voucherCost { font-size: 12px; font-weight: 700; color: #111; }
+
+/* Revealed secret code card */
+.revealedCodeCard {
+  background: #F1F8E9;
+  border: 1px solid #C8E6C9;
+  border-radius: 12px;
+  padding: 16px 20px;
+  margin-bottom: 20px;
+}
+
+.revealedCodeHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #2E7D32;
+  margin-bottom: 6px;
+}
+
+.revealedCodeTitle {
+  font-size: 12px;
+  color: #555;
+  margin-bottom: 8px;
+}
+
+.secretCodeDisplayRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 6px;
+}
+
+.secretCodeTextBig {
+  font-family: monospace;
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  background: #ffffff;
+  padding: 6px 14px;
+  border-radius: 6px;
+  border: 1px dashed #2E7D32;
+  color: #111111;
+}
+
+.copyCodeBtnBig {
+  background: #111111;
+  color: #ffffff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.revealedCodeNote {
+  font-size: 11px;
+  color: #777;
+  margin: 0;
+}
+
+/* Secret Code Box inside Active Vouchers List */
+.voucherCardTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.secretCodeBox {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #f7f7f7;
+  border: 1px dashed #cccccc;
+  border-radius: 6px;
+  padding: 6px 12px;
+  margin-top: 4px;
+}
+
+.secretCodeText {
+  font-family: monospace;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #111111;
+}
+
+.copyCodeBtn {
+  background: #111111;
+  color: #ffffff;
+  border: none;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 700;
+  cursor: pointer;
+  text-transform: uppercase;
+}
+

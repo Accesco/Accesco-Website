@@ -60,6 +60,7 @@
   display: flex;
   gap: 12px;
   margin-bottom: 60px;
+  flex-wrap: wrap;
 }
 
 .primaryAction {
@@ -198,26 +199,128 @@
 .cardMeta {
   display: flex;
   justify-content: space-between;
-  font-size: 10px;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: #bbb;
+  padding-top: 20px;
+  border-top: 1px solid #f5f5f5;
+  font-size: 12px;
+  color: #888;
 }
 
-/* ── GRID ── */
+.cardMeta strong {
+  color: #111;
+}
+
+/* ── REVERSE COMMERCE & ACCOUNT HUB ── */
+.hubSection {
+  max-width: 1200px;
+  margin: 40px auto 60px;
+  padding: 0 24px;
+}
+
+.hubHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 24px;
+  border-bottom: 1px solid #f5f5f5;
+  padding-bottom: 16px;
+}
+
+.hubHeader h2 {
+  font-family: var(--font-display);
+  font-size: 26px;
+  font-weight: 600;
+  color: #111;
+  margin: 0;
+}
+
+.hubHeader p {
+  font-size: 14px;
+  color: #777;
+  margin: 4px 0 0;
+}
+
+.hubGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 16px;
+}
+
+.hubCard {
+  background: #ffffff;
+  border: 1px solid #e5e5e5;
+  border-radius: 8px;
+  padding: 20px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  text-decoration: none;
+  color: #111;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+}
+
+.hubCard:hover {
+  border-color: #bbbbbb;
+  background: #fafafa;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+}
+
+.hubCardLeft {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.hubIconWrap {
+  width: 44px;
+  height: 44px;
+  border-radius: 6px;
+  background: #f7f7f7;
+  border: 1px solid #eeeeee;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.hubTitle {
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 600;
+  color: #111;
+  margin-bottom: 2px;
+  display: block;
+}
+
+.hubDesc {
+  font-size: 12px;
+  color: #666;
+  margin: 0;
+}
+
+.hubBadge {
+  background: #f5f5f5;
+  color: #111111;
+  border: 1px solid #e0e0e0;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 6px;
+}
+
+/* ── GRID SECTION ── */
 .grid {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 60px 24px;
+  padding: 80px 24px 0;
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 40px;
+  gap: 60px;
 }
 
 .panel {
-  background: #ffffff;
-  border: 1px solid #f5f5f5;
-  padding: 40px;
+  display: flex;
+  flex-direction: column;
 }
 
 .panelHeader {
@@ -231,92 +334,114 @@
 
 .panelHeader h3 {
   font-family: var(--font-display);
-  font-size: 18px;
+  font-size: 20px;
   font-weight: 600;
+  color: #111;
   margin: 0;
 }
 
 .panelHeader span {
-  font-size: 10px;
-  font-weight: 700;
+  font-size: 11px;
+  font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: #bbb;
+  letter-spacing: 0.05em;
+  color: #888;
 }
 
-/* ── FORMS ── */
 .formGrid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 20px;
+  gap: 24px;
+  margin-bottom: 24px;
 }
 
-.formGrid label, .notesField {
+.formGrid label {
   display: flex;
   flex-direction: column;
   gap: 8px;
 }
 
-.formGrid span, .notesField span {
-  font-size: 10px;
+.formGrid span {
+  font-size: 11px;
   font-weight: 700;
-  color: #111;
   text-transform: uppercase;
   letter-spacing: 0.1em;
+  color: #888;
 }
 
-.formGrid input, .formGrid select, .notesField textarea {
+.formGrid input {
   padding: 14px 16px;
+  background: #fcfcfc;
   border: 1px solid #eee;
+  border-radius: 0;
   font-family: var(--font-body);
   font-size: 14px;
-  background: #fafafa;
-  outline: none;
-  transition: all 0.3s ease;
-  border-radius: 8px;
   color: #111;
-  width: 100%;
+  outline: none;
+  transition: all 0.2s ease;
 }
 
-.formGrid select {
-  appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23111' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 16px center;
-  padding-right: 40px;
-  cursor: pointer;
-}
-
-.formGrid input:focus, .formGrid select:focus, .notesField textarea:focus {
+.formGrid input:focus {
+  background: #ffffff;
   border-color: #111;
-  background: #fff;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
 }
 
 .notesField {
-  margin-top: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 32px;
+}
+
+.notesField span {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #888;
+}
+
+.notesField textarea {
+  padding: 16px;
+  background: #fcfcfc;
+  border: 1px solid #eee;
+  border-radius: 0;
+  font-family: var(--font-body);
+  font-size: 14px;
+  color: #111;
+  outline: none;
+  resize: none;
+  transition: all 0.2s ease;
+}
+
+.notesField textarea:focus {
+  background: #ffffff;
+  border-color: #111;
 }
 
 .panelActions {
-  margin-top: 40px;
+  margin-top: auto;
 }
 
-/* ── ADDRESSES ── */
+/* ── ADDRESS CARDS ── */
 .addressList {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 16px;
 }
 
 .addressCard {
-  padding: 0;
+  padding: 24px;
+  background: #fcfcfc;
+  border: 1px solid #f5f5f5;
+  border-radius: 4px;
 }
 
 .addressCard strong {
-  display: block;
   font-family: var(--font-display);
-  font-size: 15px;
+  font-size: 16px;
   font-weight: 600;
+  display: block;
   margin-bottom: 8px;
 }
 
@@ -324,24 +449,29 @@
   font-size: 13px;
   color: #666;
   margin: 0 0 4px 0;
+  line-height: 1.5;
 }
 
 .addressCard span {
-  font-size: 12px;
-  color: #999;
+  font-size: 11px;
+  font-weight: 700;
+  color: #888;
+  letter-spacing: 0.05em;
+  display: block;
+  margin-top: 12px;
 }
 
-/* ── ORDERS ── */
+/* ── ORDERS & TIMELINE ── */
 .ordersSection, .timelineSection {
   max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 24px 80px;
+  margin: 80px auto 0;
+  padding: 0 24px;
 }
 
 .timelineList {
   display: flex;
   flex-direction: column;
-  gap: 32px;
+  gap: 24px;
 }
 
 .timelineItem {
@@ -400,6 +530,10 @@
   .grid {
     grid-template-columns: 1fr;
     padding-top: 40px;
+  }
+
+  .hubGrid {
+    grid-template-columns: 1fr;
   }
   
   .quickStats {
