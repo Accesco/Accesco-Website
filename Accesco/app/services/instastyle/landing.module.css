@@ -902,7 +902,7 @@
 
 .reviewCard {
   flex-shrink: 0;
-  width: 340px;
+  width: min(340px, 85vw);
   background: var(--is-white);
   padding: 28px;
   border-radius: var(--r-lg);
