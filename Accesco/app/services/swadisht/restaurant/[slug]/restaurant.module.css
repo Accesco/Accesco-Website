@@ -1,938 +1,1485 @@
-/* ==============================================
-   Restaurant Detail Page – Swadisht Design System
-   Sharp-rectangle, premium food UI
-   ============================================== */
+.page,
+.page * {
+  box-sizing: border-box;
+}
 
-/* ── Reset / Base ── */
 .page {
   min-height: 100vh;
-  background: #F5F0EB;
   padding-top: 72px;
-  font-family: 'Inter', 'Segoe UI', sans-serif;
+  overflow-x: hidden;
+  background: #fbf7ef;
+  color: #2d1d17;
 }
 
-/* ── Loading ── */
-.loading {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: 60vh;
-  gap: 16px;
-  color: #7A6050;
-  font-size: 15px;
+.loadingPage {
+  min-height: 100vh;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 14px;
+  background: #fbf7ef;
+  color: #6e5146;
 }
 
-.spinner {
-  width: 44px;
-  height: 44px;
-  border: 3px solid #EDE5DC;
-  border-top-color: #C8552A;
+.loader {
+  width: 42px;
+  height: 42px;
+  border: 3px solid #eaded3;
+  border-top-color: #db5a3f;
   border-radius: 50%;
-  animation: spin 0.75s linear infinite;
+  animation: spin 0.8s linear infinite;
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
-}
-
-/* ── Hero ── */
-.hero {
-  background: #fff;
-  border-bottom: 1px solid #E5DDD5;
-}
-
-.heroImage {
-  position: relative;
-  width: 100%;
-  height: 340px;
-  overflow: hidden;
-  background: #2A1A10;
-}
-
-.heroImage img,
-.heroVideo {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center 45%;
-  display: block;
-}
-
-.heroOverlay {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    to bottom,
-    rgba(20,10,5,0) 40%,
-    rgba(20,10,5,0.65) 100%
-  );
-}
-
-.heroContent {
-  padding: 24px 40px 28px;
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
-.restaurantName {
-  font-size: 34px;
-  font-weight: 700;
-  color: #1A0E08;
-  letter-spacing: -0.02em;
-  margin-bottom: 6px;
-  line-height: 1.15;
-}
-
-.cuisines {
-  font-size: 14px;
-  color: #7A6050;
-  margin-bottom: 18px;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  font-weight: 500;
-}
-
-.metaRow {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-  flex-wrap: wrap;
-}
-
-.ratingBadge {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  background: #0F8A65;
-  color: #fff;
-  font-size: 13px;
-  font-weight: 700;
-  padding: 5px 12px;
-  border-radius: 4px;
-  letter-spacing: 0.03em;
-}
-
-.ratingBadge svg {
-  color: #FFE066;
-}
-
-.metaItem {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 14px;
-  color: #3D2B1F;
-  font-weight: 500;
-}
-
-.metaItem svg {
-  color: #9A7B6A;
-}
-
-/* ── Sticky Info Bar ── */
-.infoBar {
-  position: sticky;
-  top: 72px;
-  z-index: 100;
-  background: #fff;
-  border-bottom: 1px solid #E5DDD5;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-}
-
-.infoBarInner {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 12px 40px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-}
-
-.infoBarName {
-  font-size: 15px;
-  font-weight: 700;
-  color: #1A0E08;
-  letter-spacing: -0.01em;
-}
-
-.infoBarMeta {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 13px;
-  color: #7A6050;
-}
-
-.infoBarRating {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  background: #0F8A65;
-  color: #fff;
-  font-size: 12px;
-  font-weight: 700;
-  padding: 3px 8px;
-  border-radius: 3px;
-}
-
-.infoBarRating svg {
-  color: #FFE066;
-}
-
-/* ── Offers Banner ── */
-.offersBanner {
-  background: #FFF8F0;
-  border-bottom: 1px solid #F0E8DC;
-}
-
-.offersInner {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 14px 40px;
-  display: flex;
-  gap: 12px;
-  overflow-x: auto;
-  scrollbar-width: none;
-}
-
-.offersInner::-webkit-scrollbar {
-  display: none;
-}
-
-.offerChip {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  background: #fff;
-  border: 1px solid #E8D8C4;
-  padding: 9px 16px;
-  border-radius: 4px;
-  font-size: 13px;
-  font-weight: 500;
-  color: #C8552A;
-  white-space: nowrap;
-  flex-shrink: 0;
-}
-
-.offerIcon {
-  width: 16px;
-  height: 16px;
-  flex-shrink: 0;
-  color: #C8552A;
-}
-
-/* ── Body Layout ── */
-.body {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 28px 40px 120px;
-  display: grid;
-  grid-template-columns: 220px 1fr;
-  gap: 28px;
-  align-items: start;
-}
-
-/* ── Category Sidebar ── */
-.categorySidebar {
-  position: sticky;
-  top: 130px;
-  background: #fff;
-  border: 1px solid #E5DDD5;
-  border-radius: 4px;
-  overflow: hidden;
-}
-
-.sidebarTitle {
-  font-size: 11px;
-  font-weight: 700;
-  color: #9A7B6A;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  padding: 16px 16px 10px;
-  border-bottom: 1px solid #F0E8DC;
-}
-
-.categoryBtn {
-  display: block;
-  width: 100%;
-  background: none;
-  border: none;
-  border-bottom: 1px solid #F0E8DC;
-  padding: 13px 16px;
-  text-align: left;
-  font-size: 14px;
-  color: #5A4030;
-  cursor: pointer;
-  transition: background 0.15s ease, color 0.15s ease;
-  text-transform: capitalize;
-  font-weight: 500;
-  line-height: 1.3;
-}
-
-.categoryBtn:last-child {
-  border-bottom: none;
-}
-
-.categoryBtn:hover {
-  background: #FFF5EE;
-  color: #C8552A;
-}
-
-.categoryBtn.active {
-  background: #C8552A;
-  color: #fff;
-  font-weight: 600;
-}
-
-/* ── Menu Area ── */
-.menuArea {
-  min-width: 0;
-}
-
-.sectionTitle {
-  font-size: 22px;
-  font-weight: 700;
-  color: #1A0E08;
-  margin-bottom: 20px;
-  letter-spacing: -0.01em;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding-bottom: 14px;
-  border-bottom: 2px solid #E5DDD5;
-  text-transform: capitalize;
-}
-
-.sectionCount {
-  font-size: 13px;
-  font-weight: 500;
-  color: #9A7B6A;
-  background: #F0E8DC;
-  padding: 2px 10px;
-  border-radius: 3px;
-}
-
-.menuGrid {
-  display: flex;
-  flex-direction: column;
-  gap: 1px;
-  background: #E5DDD5;
-  border: 1px solid #E5DDD5;
-  border-radius: 4px;
-  overflow: hidden;
-}
-
-/* ── Dish Card ── */
-.dishCard {
-  background: #fff;
-  display: flex;
-  gap: 0;
-  transition: background 0.15s ease;
-  cursor: default;
-  position: relative;
-}
-
-.dishCard:hover {
-  background: #FDFAF7;
-}
-
-.dishImageWrapper {
-  position: relative;
-  width: 140px;
-  height: 140px;
-  flex-shrink: 0;
-  cursor: pointer;
-  overflow: hidden;
-}
-
-.dishImageWrapper img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center;
-  transition: transform 0.3s ease;
-}
-
-.dishCard:hover .dishImageWrapper img {
-  transform: scale(1.04);
-}
-
-.dishVegBadge {
-  position: absolute;
-  top: 8px;
-  left: 8px;
-  background: rgba(255,255,255,0.92);
-  padding: 3px;
-  border-radius: 2px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.vegDot {
-  display: block;
-  width: 10px;
-  height: 10px;
-  border: 2px solid #0F8A65;
-  border-radius: 2px;
-}
-
-.nonVegDot {
-  display: block;
-  width: 10px;
-  height: 10px;
-  border: 2px solid #C8552A;
-  border-radius: 2px;
-  background: transparent;
-}
-
-.dishBestsellerTag {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: rgba(200,85,42,0.88);
-  color: #fff;
-  font-size: 10px;
-  font-weight: 700;
-  text-align: center;
-  padding: 4px 0;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-}
-
-.dishInfo {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  padding: 18px 20px;
-  min-width: 0;
-}
-
-.dishName {
-  font-size: 15px;
-  font-weight: 700;
-  color: #1A0E08;
-  margin-bottom: 5px;
-  letter-spacing: -0.01em;
-  line-height: 1.3;
-}
-
-.dishDesc {
-  font-size: 13px;
-  color: #7A6050;
-  line-height: 1.55;
-  margin-bottom: 10px;
-  flex: 1;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-.dishFooter {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-top: auto;
-  gap: 12px;
-}
-
-.dishPrice {
-  font-size: 16px;
-  font-weight: 700;
-  color: #1A0E08;
-}
-
-.dishNutrition {
-  font-size: 11px;
-  color: #9A7B6A;
-  font-weight: 500;
-  margin-top: 2px;
-}
-
-/* ── Add Button ── */
-.addBtn {
-  background: #fff;
-  color: #C8552A;
-  border: 1.5px solid #C8552A;
-  padding: 8px 26px;
-  border-radius: 3px;
-  font-size: 13px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.15s ease;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  white-space: nowrap;
-}
-
-.addBtn:hover {
-  background: #C8552A;
-  color: #fff;
-}
-
-/* ── Qty Control ── */
-.qtyControl {
-  display: flex;
-  align-items: center;
-  border: 1.5px solid #C8552A;
-  border-radius: 3px;
-  overflow: hidden;
-  background: #fff;
-}
-
-.qtyBtn {
-  width: 34px;
-  height: 34px;
-  border: none;
-  background: #FFF5EE;
-  color: #C8552A;
-  font-size: 18px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: background 0.15s;
-  line-height: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.qtyBtn:hover {
-  background: #FFE8DC;
-}
-
-.qtyValue {
-  min-width: 30px;
-  text-align: center;
-  font-size: 14px;
-  font-weight: 700;
-  color: #C8552A;
-  padding: 0 4px;
-}
-
-/* ── Floating Cart Bar ── */
-.floatingCart {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  z-index: 999;
-  background: #1A0E08;
-  color: #fff;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 16px 40px;
-  text-decoration: none;
-  transition: background 0.2s ease;
-  box-shadow: 0 -4px 20px rgba(0,0,0,0.18);
-}
-
-.floatingCart:hover {
-  background: #2D1A0E;
-}
-
-.floatingCartLeft {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  font-size: 14px;
-  font-weight: 500;
-  color: #BFA898;
-}
-
-.floatingCartBadge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 28px;
-  height: 28px;
-  background: #C8552A;
-  color: #fff;
-  font-size: 13px;
-  font-weight: 700;
-  border-radius: 3px;
-  padding: 0 6px;
-}
-
-.floatingCartText {
-  font-size: 15px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-}
-
-.floatingCartPrice {
-  font-size: 16px;
-  font-weight: 700;
-  color: #F5C99A;
-}
-
-/* ── Dish Modal ── */
-.modalOverlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.55);
-  z-index: 9999;
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  animation: fadeIn 0.2s ease;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-.modalContent {
-  width: 100%;
-  max-width: 600px;
-  background: #fff;
-  border-radius: 0;
-  overflow: hidden;
-  max-height: 92vh;
-  overflow-y: auto;
-  animation: slideUp 0.25s ease;
-  position: relative;
-}
-
-@media (min-width: 640px) {
-  .modalContent {
-    border-radius: 4px 4px 0 0;
+  to {
+    transform: rotate(360deg);
   }
 }
 
-@keyframes slideUp {
-  from { transform: translateY(100%); }
-  to { transform: translateY(0); }
+/* HERO BACKGROUND */
+
+.hero {
+  position: relative;
+  z-index: 2;
+  isolation: isolate;
+  height: 350px;
+  min-height: 350px;
+  margin-bottom: 55px;
+  overflow: visible;
+}
+
+.heroMedia {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 350px;
+  overflow: hidden;
+  background: #7a503c;
+}
+
+.heroVideo {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  object-position: center 45%;
+}
+
+.heroShade {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background:
+    linear-gradient(
+      180deg,
+      rgba(35, 20, 15, 0.2) 0%,
+      rgba(83, 51, 35, 0.1) 46%,
+      rgba(251, 247, 239, 0.98) 100%
+    ),
+    linear-gradient(
+      90deg,
+      rgba(38, 24, 18, 0.16),
+      transparent 55%
+    );
+}
+
+.heroInner {
+  position: relative;
+  z-index: 10;
+  width: min(1000px, calc(100% - 40px));
+  height: 350px;
+  min-height: 350px;
+  margin: 0 auto;
+  overflow: visible;
+  pointer-events: none;
+}
+
+/* RESTAURANT INFORMATION CARD */
+
+.restaurantCard {
+  position: absolute;
+  right: auto;
+  bottom: -55px;
+  left: 50%;
+  z-index: 50;
+  display: block;
+  width: min(480px, calc(100% - 24px));
+  padding: 19px 21px 18px;
+  border: 1px solid rgba(121, 83, 62, 0.13);
+  border-radius: 12px;
+  background: #fffdf8;
+  box-shadow:
+    0 14px 34px rgba(66, 39, 26, 0.16),
+    0 2px 7px rgba(66, 39, 26, 0.08);
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%);
+  pointer-events: auto;
+}
+
+.eyebrowRow {
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  color: #ca6d4e;
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.hotBadge {
+  flex: 0 0 auto;
+  padding: 5px 8px;
+  border-radius: 999px;
+  background: #fff0e7;
+  color: #d45c3e;
+  font-size: 8px;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.restaurantCard h1 {
+  max-width: 370px;
+  margin: 0 0 5px;
+  color: #291b16;
+  font-size: 34px;
+  font-weight: 900;
+  line-height: 0.96;
+  letter-spacing: -0.045em;
+}
+
+.restaurantDescription {
+  max-width: 410px;
+  margin: 0 0 10px;
+  color: #6f5d54;
+  font-size: 10px;
+  line-height: 1.45;
+}
+
+.restaurantMeta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px 11px;
+  color: #6c5146;
+  font-size: 9px;
+  font-weight: 650;
+}
+
+.rating {
+  color: #d65338;
+}
+
+.cardDivider {
+  height: 1px;
+  margin: 12px 0 10px;
+  background: #ebdfd4;
+}
+
+.cuisineBlock {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+}
+
+.cuisineLabel {
+  color: #977c6f;
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.cuisineChips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.cuisineChips span,
+.dishTags span {
+  padding: 3px 7px;
+  border: 1px solid #e8d8ca;
+  border-radius: 999px;
+  background: #fffaf4;
+  color: #765c50;
+  font-size: 8px;
+  font-weight: 650;
+}
+
+/* MENU SECTION */
+
+.menuSection {
+  position: relative;
+  z-index: 1;
+  padding: 78px 0 100px;
+  background: #fbf7ef;
+}
+
+.menuShell {
+  width: min(760px, calc(100% - 40px));
+  margin: 0 auto;
+}
+
+.filterTabs {
+  height: 42px;
+  border-bottom: 1px solid #eadfd5;
+  display: flex;
+  align-items: flex-end;
+  gap: 24px;
+}
+
+.filterTabs button {
+  position: relative;
+  height: 42px;
+  padding: 0 1px;
+  border: 0;
+  background: transparent;
+  color: #806b61;
+  font-family: inherit;
+  font-size: 10px;
+  font-weight: 650;
+  cursor: pointer;
+}
+
+.filterTabs button::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  bottom: -1px;
+  left: 0;
+  height: 2px;
+  background: transparent;
+}
+
+.filterTabs .activeTab {
+  color: #d85a40;
+}
+
+.filterTabs .activeTab::after {
+  background: #dc5d42;
+}
+
+.menuHeading {
+  padding: 21px 0 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.menuHeading h2 {
+  position: relative;
+  margin: 0;
+  padding-left: 18px;
+  color: #39251e;
+  font-size: 17px;
+  font-weight: 800;
+}
+
+.menuHeading h2::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 10px;
+  height: 2px;
+  background: #df6448;
+  transform: translateY(-50%);
+}
+
+.menuHeading span {
+  color: #9b8478;
+  font-size: 9px;
+}
+
+.menuList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* DISH CARDS */
+
+.dishCard {
+  min-height: 116px;
+  padding: 8px;
+  border: 1px solid #eadfd4;
+  border-radius: 11px;
+  background: #fff;
+  box-shadow: 0 5px 16px rgba(71, 42, 28, 0.045);
+  display: grid;
+  grid-template-columns: 125px minmax(0, 1fr) auto;
+  gap: 13px;
+  align-items: center;
+  cursor: pointer;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.dishCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(71, 42, 28, 0.09);
+}
+
+.dishImageWrap {
+  position: relative;
+  height: 100px;
+  overflow: hidden;
+  border-radius: 8px;
+  background: #efe5dc;
+}
+
+.dishImageWrap img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+}
+
+.bestseller {
+  position: absolute;
+  top: 7px;
+  left: 7px;
+  padding: 4px 7px;
+  border-radius: 4px;
+  background: #df5d42;
+  color: #fff;
+  font-size: 8px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.dishDetails {
+  min-width: 0;
+}
+
+.dishTitleRow {
+  margin-bottom: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.dishTitleRow h3 {
+  margin: 0;
+  color: #34221b;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.vegMark,
+.nonVegMark {
+  position: relative;
+  width: 11px;
+  height: 11px;
+  border: 1.5px solid currentColor;
+  flex: 0 0 auto;
+}
+
+.vegMark {
+  color: #3a9a57;
+}
+
+.nonVegMark {
+  color: #d64c3d;
+}
+
+.vegMark::after,
+.nonVegMark::after {
+  content: '';
+  position: absolute;
+  inset: 2px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.dishDetails > p {
+  max-width: 540px;
+  margin: 0 0 6px;
+  overflow: hidden;
+  color: #806e65;
+  font-size: 9px;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.dishTags {
+  margin-bottom: 6px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.dishTags span {
+  padding: 3px 6px;
+  font-size: 7px;
+}
+
+.dishPrice {
+  color: #3d281f;
+  font-size: 13px;
+}
+
+.dishAction {
+  align-self: end;
+}
+
+.addButton,
+.modalFooter button {
+  min-width: 66px;
+  height: 29px;
+  padding: 0 13px;
+  border: 0;
+  border-radius: 999px;
+  background: #df6045;
+  color: #fff;
+  font-family: inherit;
+  font-size: 10px;
+  font-weight: 750;
+  cursor: pointer;
+}
+
+.addButton:hover,
+.modalFooter button:hover {
+  background: #c95039;
+}
+
+.quantityControl {
+  height: 29px;
+  overflow: hidden;
+  border: 1px solid #df6045;
+  border-radius: 999px;
+  background: #fff;
+  display: flex;
+  align-items: center;
+}
+
+.quantityControl button {
+  width: 29px;
+  height: 100%;
+  border: 0;
+  background: transparent;
+  color: #d9573e;
+  font-size: 17px;
+  cursor: pointer;
+}
+
+.quantityControl span {
+  min-width: 22px;
+  color: #bd4935;
+  font-size: 12px;
+  font-weight: 800;
+  text-align: center;
+}
+
+/* CART BAR */
+
+.cartBar {
+  position: fixed;
+  right: 24px;
+  bottom: 20px;
+  left: 24px;
+  z-index: 1100;
+  max-width: 620px;
+  margin: 0 auto;
+  padding: 13px 18px;
+  border-radius: 12px;
+  background: #d9583e;
+  color: #fff;
+  text-decoration: none;
+  box-shadow: 0 10px 28px rgba(130, 54, 37, 0.28);
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+}
+
+/* DISH MODAL */
+
+.modalBackdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  padding: 20px;
+  background: rgba(36, 24, 19, 0.58);
+  display: grid;
+  place-items: center;
+}
+
+.modal {
+  position: relative;
+  width: min(520px, 100%);
+  overflow: hidden;
+  border-radius: 18px;
+  background: #fffdf8;
+  box-shadow: 0 24px 70px rgba(24, 13, 9, 0.28);
 }
 
 .modalClose {
   position: absolute;
-  top: 14px;
-  left: 14px;
-  width: 36px;
-  height: 36px;
-  border: none;
-  border-radius: 50%;
-  background: rgba(255,255,255,0.9);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  top: 12px;
+  right: 12px;
   z-index: 2;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-  transition: background 0.15s;
-}
-
-.modalClose:hover {
-  background: #fff;
+  width: 34px;
+  height: 34px;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.92);
+  color: #3b251d;
+  font-size: 24px;
+  cursor: pointer;
 }
 
 .modalImage {
   width: 100%;
-  height: 260px;
-  object-fit: cover;
-  object-position: center;
+  height: 280px;
   display: block;
+  object-fit: cover;
 }
 
-.modalBody {
-  padding: 24px 24px 32px;
+.modalContent {
+  padding: 22px;
 }
 
-.modalTop h2 {
-  font-size: 24px;
-  font-weight: 700;
-  color: #1A0E08;
-  margin-bottom: 4px;
-  letter-spacing: -0.02em;
+.modalContent h2 {
+  margin: 8px 0;
+  color: #34221b;
 }
 
-.modalPriceRow {
+.modalContent p {
+  color: #7c685e;
+  line-height: 1.55;
+}
+
+.modalFooter {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin: 16px 0;
-  gap: 16px;
 }
 
-.modalPrice {
-  font-size: 22px;
-  font-weight: 700;
-  color: #1A0E08;
-}
+/* TABLET */
 
-.modalAddBtn {
-  background: #C8552A;
-  color: #fff;
-  border: none;
-  padding: 12px 32px;
-  border-radius: 3px;
-  font-size: 14px;
-  font-weight: 700;
-  cursor: pointer;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  transition: background 0.15s;
-}
-
-.modalAddBtn:hover {
-  background: #A8401C;
-}
-
-.modalDesc {
-  font-size: 14px;
-  line-height: 1.65;
-  color: #7A6050;
-}
-
-/* ── Responsive: Tablet ── */
-@media (max-width: 1024px) {
-  .heroContent {
-    padding: 20px 24px 24px;
-  }
-
-  .infoBarInner {
-    padding: 12px 24px;
-  }
-
-  .offersInner {
-    padding: 14px 24px;
-  }
-
-  .body {
-    padding: 24px 24px 120px;
-    grid-template-columns: 190px 1fr;
-    gap: 20px;
-  }
-}
-
-@media (max-width: 768px) {
+@media (max-width: 720px) {
   .page {
-    padding-top: 116px;
+    padding-top: 112px;
   }
 
-  .heroImage {
-    height: 220px;
+  .hero {
+    height: auto;
+    min-height: 0;
+    margin-bottom: 0;
   }
 
-  .heroContent {
-    padding: 16px 16px 20px;
+  .heroMedia {
+    position: relative;
+    height: 280px;
   }
 
-  .restaurantName {
-    font-size: 24px;
+  .heroInner {
+    width: calc(100% - 24px);
+    height: auto;
+    min-height: 0;
   }
 
-  .cuisines {
-    font-size: 12px;
-    margin-bottom: 12px;
+  .restaurantCard {
+    position: relative;
+    right: auto;
+    bottom: auto;
+    left: auto;
+    width: min(440px, 100%);
+    margin: -58px auto 0;
+    padding: 18px;
+    transform: none;
   }
 
-  .metaRow {
-    gap: 12px;
+  .restaurantCard h1 {
+    font-size: 30px;
   }
 
-  .infoBar {
-    top: 116px;
+  .menuSection {
+    padding-top: 30px;
   }
 
-  .infoBarInner {
-    padding: 10px 16px;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 6px;
-  }
-
-  .offersInner {
-    padding: 10px 16px;
-  }
-
-  /* ── Sidebar becomes horizontal scroll on mobile ── */
-  .body {
-    padding: 16px 16px 110px;
-    grid-template-columns: 1fr;
-    gap: 0;
-  }
-
-  .categorySidebar {
-    position: static;
-    background: #fff;
-    border: none;
-    border-bottom: 2px solid #E5DDD5;
-    border-radius: 0;
-    margin-bottom: 16px;
-  }
-
-  .sidebarTitle {
-    display: none;
-  }
-
-  /* Turn vertical list into horizontal scroll pills */
-  .categorySidebar {
-    display: flex;
-    flex-direction: row;
-    overflow-x: auto;
-    scrollbar-width: none;
-    gap: 0;
-    padding: 0 16px;
-    background: #fff;
-    border-bottom: 2px solid #E5DDD5;
-  }
-
-  .categorySidebar::-webkit-scrollbar {
-    display: none;
-  }
-
-  .categoryBtn {
-    border: none;
-    border-bottom: 3px solid transparent;
-    border-radius: 0;
-    padding: 12px 14px;
-    font-size: 13px;
-    white-space: nowrap;
-    flex-shrink: 0;
-    color: #7A6050;
-  }
-
-  .categoryBtn:hover {
-    background: none;
-    color: #C8552A;
-    border-bottom-color: #C8552A;
-  }
-
-  .categoryBtn.active {
-    background: none;
-    color: #C8552A;
-    border-bottom: 3px solid #C8552A;
-  }
-
-  .sectionTitle {
-    font-size: 18px;
-    margin-bottom: 14px;
-    padding-bottom: 12px;
+  .menuShell {
+    width: calc(100% - 24px);
   }
 
   .dishCard {
-    flex-direction: row;
+    grid-template-columns: 96px minmax(0, 1fr);
+    gap: 11px;
   }
 
-  .dishImageWrapper {
-    width: 110px;
-    height: 110px;
+  .dishImageWrap {
+    height: 100px;
   }
 
-  .dishInfo {
-    padding: 14px 16px;
+  .dishAction {
+    grid-column: 2;
+    justify-self: end;
+    margin-top: -36px;
   }
 
-  .dishName {
-    font-size: 14px;
-  }
-
-  .dishDesc {
-    font-size: 12px;
-  }
-
-  .dishPrice {
-    font-size: 15px;
-  }
-
-  .addBtn {
-    padding: 7px 18px;
-    font-size: 12px;
-  }
-
-  .floatingCart {
-    padding: 14px 16px;
-  }
-
-  .floatingCartText {
-    font-size: 13px;
-  }
-
-  .floatingCartPrice {
-    font-size: 14px;
+  .dishTags {
+    padding-right: 76px;
   }
 }
 
-@media (max-width: 480px) {
-  .page {
-    padding-top: 106px;
+/* MOBILE */
+
+@media (max-width: 440px) {
+  .heroMedia {
+    height: 240px;
   }
 
-  .infoBar {
-    top: 106px;
+  .heroInner {
+    width: calc(100% - 20px);
   }
 
-  .heroImage {
-    height: 180px;
+  .restaurantCard {
+    width: 100%;
+    margin-top: -48px;
+    padding: 16px;
   }
 
-  .restaurantName {
-    font-size: 20px;
+  .restaurantCard h1 {
+    font-size: 28px;
   }
 
-  .dishImageWrapper {
-    width: 90px;
-    height: 90px;
+  .restaurantDescription {
+    font-size: 9px;
   }
 
-  .dishInfo {
-    padding: 12px 12px;
+  .eyebrowRow {
+    align-items: flex-start;
   }
 
-  .dishName {
-    font-size: 13px;
+  .restaurantMeta {
+    gap: 6px 10px;
   }
 
-  .dishDesc {
-    font-size: 11px;
-    -webkit-line-clamp: 1;
+  .cuisineBlock {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 7px;
   }
 
-  .dishFooter {
-    flex-wrap: wrap;
-    gap: 8px;
+  .filterTabs {
+    gap: 20px;
   }
 
-  .addBtn {
-    padding: 6px 14px;
-    font-size: 11px;
+  .dishCard {
+    padding: 8px;
   }
 
-  .qtyBtn {
-    width: 28px;
-    height: 28px;
-    font-size: 15px;
+  .dishTitleRow h3 {
+    font-size: 14px;
   }
 
-  .qtyValue {
-    font-size: 13px;
-    min-width: 24px;
+  .dishDetails > p {
+    font-size: 10px;
+  }
+
+  .modalImage {
+    height: 220px;
+  }
+
+  .menuShell {
+    width: calc(100% - 20px);
   }
 }
 
-/* ── Desktop hero (large screen polish) ── */
-@media (min-width: 1024px) {
-  .hero {
-    border-bottom: none;
+/* FINAL FIX: CARD BELOW HERO IN NORMAL DOCUMENT FLOW */
+
+.hero {
+  margin-bottom: 0 !important;
+  overflow: hidden !important;
+}
+
+.menuSection {
+  padding-top: 32px !important;
+}
+
+.menuShell {
+  position: relative !important;
+}
+
+.restaurantCard {
+  position: relative !important;
+  inset: auto !important;
+  top: auto !important;
+  right: auto !important;
+  bottom: auto !important;
+  left: auto !important;
+
+  z-index: 10 !important;
+
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+
+  width: min(480px, 100%) !important;
+  margin: 0 auto 38px !important;
+
+  transform: none !important;
+  pointer-events: auto !important;
+
+  background: #fffdf8 !important;
+  border: 1px solid #eaded3 !important;
+  border-radius: 12px !important;
+
+  box-shadow:
+    0 16px 38px rgba(66, 39, 26, 0.16),
+    0 3px 8px rgba(66, 39, 26, 0.07) !important;
+}
+
+@media (max-width: 720px) {
+  .menuSection {
+    padding-top: 24px !important;
   }
 
-  .heroImage {
-    height: 400px;
+  .restaurantCard {
+    width: 100% !important;
+    margin: 0 auto 28px !important;
+  }
+}
+
+/* Make restaurant card exactly as wide as featured item cards */
+.menuShell > .restaurantCard {
+  width: 100% !important;
+  min-width: 100% !important;
+  max-width: 100% !important;
+  margin-right: 0 !important;
+  margin-left: 0 !important;
+}
+
+/* FINAL HERO VIDEO + OVERLAPPING CARD */
+
+.hero {
+  position: relative !important;
+  width: 100% !important;
+  height: 330px !important;
+  min-height: 330px !important;
+  margin: 0 !important;
+  overflow: hidden !important;
+  isolation: isolate;
+}
+
+.heroMedia {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 330px !important;
+  overflow: hidden !important;
+  background: #5d372a;
+}
+
+.heroVideo {
+  width: 100% !important;
+  height: 330px !important;
+  display: block !important;
+  object-fit: cover !important;
+  object-position: center 45% !important;
+}
+
+.heroShade {
+  position: absolute !important;
+  inset: 0 !important;
+  z-index: 1 !important;
+  pointer-events: none !important;
+  background: linear-gradient(
+    180deg,
+    rgba(30, 15, 10, 0.08) 0%,
+    rgba(30, 15, 10, 0.05) 55%,
+    rgba(251, 247, 239, 0.72) 100%
+  ) !important;
+}
+
+.menuSection {
+  position: relative !important;
+  z-index: 10 !important;
+  padding-top: 0 !important;
+  overflow: visible !important;
+  background: #fbf7ef !important;
+}
+
+.menuShell {
+  position: relative !important;
+  z-index: 10 !important;
+}
+
+/* Same width as menu items and overlapping the video */
+
+.menuShell > .restaurantCard {
+  position: relative !important;
+  inset: auto !important;
+
+  z-index: 20 !important;
+
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+
+  width: 100% !important;
+  min-width: 100% !important;
+  max-width: 100% !important;
+
+  margin: -75px 0 38px !important;
+
+  transform: none !important;
+  pointer-events: auto !important;
+
+  background: #fffdf8 !important;
+  border: 1px solid #eaded3 !important;
+  border-radius: 12px !important;
+
+  box-shadow:
+    0 18px 42px rgba(66, 39, 26, 0.18),
+    0 4px 10px rgba(66, 39, 26, 0.07) !important;
+}
+
+/* Mobile */
+
+@media (max-width: 720px) {
+  .hero,
+  .heroMedia,
+  .heroVideo {
+    height: 240px !important;
+    min-height: 240px !important;
   }
 
-  .heroContent {
-    padding: 26px 40px 32px;
+  .menuShell > .restaurantCard {
+    margin-top: -45px !important;
+    margin-bottom: 28px !important;
+  }
+}
+
+/* Increase only the desktop hero-video height */
+
+@media (min-width: 721px) {
+  .hero,
+  .heroMedia,
+  .heroVideo {
+    height: 380px !important;
+    min-height: 380px !important;
+  }
+}
+
+/* Larger hero video with stronger card overlap */
+
+@media (min-width: 721px) {
+  .hero,
+  .heroMedia,
+  .heroVideo {
+    height: 430px !important;
+    min-height: 430px !important;
   }
 
-  .restaurantName {
-    font-size: 40px;
+  .menuShell > .restaurantCard {
+    margin-top: -105px !important;
+  }
+}
+
+/* Force the card to overlap the video */
+
+.menuShell > .restaurantCard {
+  transform: translateY(-65px) !important;
+  margin-bottom: -27px !important;
+}
+
+/* Larger restaurant card matching the reference */
+
+.menuShell > .restaurantCard {
+  min-height: 370px !important;
+  padding: 30px 34px 28px !important;
+  border-radius: 20px !important;
+
+  /* Preserve the existing overlap */
+  transform: translateY(-65px) !important;
+  margin-bottom: -27px !important;
+}
+
+.restaurantCard .eyebrowRow {
+  margin-bottom: 10px !important;
+  font-size: 10px !important;
+  letter-spacing: 0.28em !important;
+}
+
+.restaurantCard .hotBadge {
+  padding: 7px 12px !important;
+  font-size: 10px !important;
+}
+
+.restaurantCard h1 {
+  max-width: 570px !important;
+  margin: 0 0 12px !important;
+  font-size: clamp(44px, 4vw, 58px) !important;
+  font-weight: 900 !important;
+  line-height: 0.92 !important;
+  letter-spacing: -0.055em !important;
+}
+
+.restaurantCard .restaurantDescription {
+  max-width: 630px !important;
+  margin-bottom: 22px !important;
+  font-size: 15px !important;
+  line-height: 1.5 !important;
+}
+
+.restaurantCard .restaurantMeta {
+  gap: 10px 20px !important;
+  font-size: 13px !important;
+}
+
+.restaurantCard .cardDivider {
+  margin: 24px 0 20px !important;
+}
+
+.restaurantCard .cuisineBlock {
+  display: flex !important;
+  align-items: center !important;
+  gap: 14px !important;
+}
+
+.restaurantCard .cuisineLabel {
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  letter-spacing: 0.16em !important;
+}
+
+.cuisineText {
+  margin: 0 !important;
+  color: #39271f !important;
+  font-size: 13px !important;
+  line-height: 1.5 !important;
+}
+
+.restaurantTags {
+  margin-top: 15px !important;
+  display: flex !important;
+  align-items: center !important;
+  flex-wrap: wrap !important;
+  gap: 8px !important;
+}
+
+.restaurantTags span {
+  padding: 7px 12px !important;
+  border: 1px solid #e8d8ca !important;
+  border-radius: 999px !important;
+  background: #fffaf4 !important;
+  color: #765c50 !important;
+  font-size: 11px !important;
+  font-weight: 600 !important;
+}
+
+@media (max-width: 720px) {
+  .menuShell > .restaurantCard {
+    min-height: auto !important;
+    padding: 22px 20px !important;
+    border-radius: 16px !important;
+  }
+
+  .restaurantCard h1 {
+    font-size: 38px !important;
+  }
+
+  .restaurantCard .restaurantDescription {
+    font-size: 13px !important;
+  }
+}
+/* Compact restaurant-card layout */
+
+.restaurantTags {
+  display: none !important;
+}
+
+.menuShell > .restaurantCard {
+  min-height: auto !important;
+  padding: 26px 30px 24px !important;
+}
+
+.restaurantCard .eyebrowRow {
+  margin-bottom: 10px !important;
+  font-size: 9px !important;
+}
+
+.restaurantCard .hotBadge {
+  padding: 6px 11px !important;
+  font-size: 9px !important;
+}
+
+.restaurantCard h1 {
+  width: auto !important;
+  max-width: 430px !important;
+  margin: 0 0 10px !important;
+  font-size: clamp(38px, 3.3vw, 48px) !important;
+  font-weight: 900 !important;
+  line-height: 0.94 !important;
+  letter-spacing: -0.045em !important;
+}
+
+.restaurantCard .restaurantDescription {
+  max-width: 620px !important;
+  margin: 0 0 20px !important;
+  color: #725f56 !important;
+  font-size: 13px !important;
+  line-height: 1.5 !important;
+}
+
+.restaurantCard .restaurantMeta {
+  margin-top: 0 !important;
+  gap: 9px 18px !important;
+  font-size: 11px !important;
+}
+
+.restaurantCard .cardDivider {
+  margin: 22px 0 18px !important;
+}
+
+.restaurantCard .cuisineBlock {
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+}
+
+.restaurantCard .cuisineLabel {
+  font-size: 11px !important;
+  font-weight: 500 !important;
+  letter-spacing: 0.17em !important;
+}
+
+.restaurantCard .cuisineText {
+  margin: 0 !important;
+  font-size: 11px !important;
+}
+
+@media (max-width: 720px) {
+  .menuShell > .restaurantCard {
+    padding: 21px 18px !important;
+  }
+
+  .restaurantCard h1 {
+    max-width: 310px !important;
+    font-size: 36px !important;
+  }
+
+  .restaurantCard .restaurantDescription {
+    font-size: 12px !important;
+  }
+}
+
+.restaurantCard .cuisineLabel {
+  font-size: 12px !important;
+  font-weight: 600 !important;
+}
+
+.restaurantCard .cuisineChips span,
+.restaurantCard .cuisineText {
+  font-size: 11px !important;
+  font-weight: 600 !important;
+}
+
+/* Dish title and description font */
+
+.dishTitleRow h3 {
+  font-family: Arial, Helvetica, sans-serif !important;
+  font-size: 20px !important;
+  font-weight: 700 !important;
+  line-height: 1.15 !important;
+  letter-spacing: -0.02em !important;
+  color: #211816 !important;
+}
+
+.dishDetails > p {
+  font-family: Arial, Helvetica, sans-serif !important;
+  font-size: 15px !important;
+  font-weight: 400 !important;
+  line-height: 1.45 !important;
+  letter-spacing: 0 !important;
+  color: #6e625e !important;
+}
+
+/* Smaller dish fonts */
+
+.dishTitleRow h3 {
+  font-size: 16px !important;
+  line-height: 1.2 !important;
+}
+
+.dishDetails > p {
+  font-size: 12px !important;
+  line-height: 1.4 !important;
+}
+/* Larger and better-balanced food item cards */
+
+.dishCard {
+  min-height: 215px !important;
+  padding: 14px !important;
+  grid-template-columns: 190px minmax(0, 1fr) auto !important;
+  gap: 18px !important;
+  border-radius: 14px !important;
+  align-items: stretch !important;
+}
+
+.dishImageWrap {
+  width: 190px !important;
+  height: 185px !important;
+  border-radius: 12px !important;
+}
+
+.dishDetails {
+  min-width: 0 !important;
+  padding: 5px 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.dishTitleRow {
+  margin-bottom: 7px !important;
+}
+
+.dishTitleRow h3 {
+  font-size: 18px !important;
+  line-height: 1.2 !important;
+}
+
+.dishDetails > p {
+  max-width: 720px !important;
+  margin-bottom: 10px !important;
+  font-size: 13px !important;
+  line-height: 1.45 !important;
+}
+
+.dishTags {
+  margin-bottom: 10px !important;
+}
+
+.dishPrice {
+  margin-top: auto !important;
+  font-size: 16px !important;
+}
+
+.dishAction {
+  align-self: end !important;
+  padding: 0 0 2px !important;
+}
+
+.addButton {
+  min-width: 92px !important;
+  height: 42px !important;
+  font-size: 13px !important;
+}
+
+@media (max-width: 720px) {
+  .dishCard {
+    min-height: 145px !important;
+    padding: 10px !important;
+    grid-template-columns: 110px minmax(0, 1fr) !important;
+    gap: 12px !important;
+  }
+
+  .dishImageWrap {
+    width: 110px !important;
+    height: 125px !important;
+  }
+
+  .dishTitleRow h3 {
+    font-size: 16px !important;
+  }
+
+  .dishDetails > p {
+    font-size: 11px !important;
+  }
+}
+
+/* Medium-sized food item cards */
+
+.dishCard {
+  min-height: 170px !important;
+  padding: 10px !important;
+  grid-template-columns: 150px minmax(0, 1fr) auto !important;
+  gap: 14px !important;
+  border-radius: 12px !important;
+}
+
+.dishImageWrap {
+  width: 150px !important;
+  height: 148px !important;
+  border-radius: 10px !important;
+}
+
+.dishDetails {
+  padding: 3px 0 !important;
+}
+
+.dishTitleRow {
+  margin-bottom: 5px !important;
+}
+
+.dishTitleRow h3 {
+  font-size: 17px !important;
+}
+
+.dishDetails > p {
+  margin-bottom: 8px !important;
+  font-size: 12px !important;
+  line-height: 1.4 !important;
+}
+
+.dishTags {
+  margin-bottom: 8px !important;
+}
+
+.dishPrice {
+  font-size: 15px !important;
+}
+
+.addButton {
+  min-width: 80px !important;
+  height: 35px !important;
+  font-size: 12px !important;
+}
+
+@media (max-width: 720px) {
+  .dishCard {
+    min-height: 125px !important;
+    grid-template-columns: 95px minmax(0, 1fr) !important;
+  }
+
+  .dishImageWrap {
+    width: 95px !important;
+    height: 105px !important;
+  }
+}
+
+/* Medium-sized food item cards */
+
+.dishCard {
+  min-height: 170px !important;
+  padding: 10px !important;
+  grid-template-columns: 150px minmax(0, 1fr) auto !important;
+  gap: 14px !important;
+  border-radius: 12px !important;
+}
+
+.dishImageWrap {
+  width: 150px !important;
+  height: 148px !important;
+  border-radius: 10px !important;
+}
+
+.dishDetails {
+  padding: 3px 0 !important;
+}
+
+.dishTitleRow {
+  margin-bottom: 5px !important;
+}
+
+.dishTitleRow h3 {
+  font-size: 17px !important;
+}
+
+.dishDetails > p {
+  margin-bottom: 8px !important;
+  font-size: 12px !important;
+  line-height: 1.4 !important;
+}
+
+.dishTags {
+  margin-bottom: 8px !important;
+}
+
+.dishPrice {
+  font-size: 15px !important;
+}
+
+.addButton {
+  min-width: 80px !important;
+  height: 35px !important;
+  font-size: 12px !important;
+}
+
+@media (max-width: 720px) {
+  .dishCard {
+    min-height: 125px !important;
+    grid-template-columns: 95px minmax(0, 1fr) !important;
+  }
+
+  .dishImageWrap {
+    width: 95px !important;
+    height: 105px !important;
+  }
+}
+/* Restaurant-name font matching the reference */
+
+.restaurantCard h1 {
+  font-family: Arial, Helvetica, sans-serif !important;
+  font-weight: 900 !important;
+  line-height: 0.92 !important;
+  letter-spacing: -0.055em !important;
+}
+
+
+/* Soft faded hero video */
+
+.heroMedia {
+  background: #fbf7ef !important;
+}
+
+.heroVideo {
+  opacity: 0.78 !important;
+  filter:
+    brightness(1.08)
+    contrast(0.9)
+    saturate(0.82) !important;
+
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    #000 0%,
+    #000 48%,
+    rgba(0, 0, 0, 0.78) 65%,
+    rgba(0, 0, 0, 0.3) 82%,
+    transparent 100%
+  ) !important;
+
+  mask-image: linear-gradient(
+    to bottom,
+    #000 0%,
+    #000 48%,
+    rgba(0, 0, 0, 0.78) 65%,
+    rgba(0, 0, 0, 0.3) 82%,
+    transparent 100%
+  ) !important;
+}
+
+.heroShade {
+  background: linear-gradient(
+    to bottom,
+    rgba(251, 247, 239, 0.05) 0%,
+    rgba(251, 247, 239, 0.12) 48%,
+    rgba(251, 247, 239, 0.5) 70%,
+    rgba(251, 247, 239, 0.88) 88%,
+    #fbf7ef 100%
+  ) !important;
+}
+
+/* Slightly taller video with a very light fade */
+
+@media (min-width: 721px) {
+  .hero,
+  .heroMedia,
+  .heroVideo {
+    height: 530px !important;
+    min-height: 530px !important;
+  }
+}
+
+.heroMedia {
+  background: #fbf7ef !important;
+}
+
+.heroVideo {
+  opacity: 0.96 !important;
+  filter:
+    brightness(1.02)
+    contrast(0.98)
+    saturate(0.96) !important;
+
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    #000 0%,
+    #000 72%,
+    rgba(0, 0, 0, 0.92) 84%,
+    rgba(0, 0, 0, 0.65) 94%,
+    transparent 100%
+  ) !important;
+
+  mask-image: linear-gradient(
+    to bottom,
+    #000 0%,
+    #000 72%,
+    rgba(0, 0, 0, 0.92) 84%,
+    rgba(0, 0, 0, 0.65) 94%,
+    transparent 100%
+  ) !important;
+}
+
+.heroShade {
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    transparent 74%,
+    rgba(251, 247, 239, 0.08) 84%,
+    rgba(251, 247, 239, 0.28) 94%,
+    #fbf7ef 100%
+  ) !important;
+}
+/* Increase restaurant-card overlap */
+
+@media (min-width: 721px) {
+  .menuShell > .restaurantCard {
+    transform: translateY(-240px) !important;
+    margin: 0 auto -180px !important;
+  }
+}
+
+/* Make only the desktop video slightly shorter */
+
+@media (min-width: 721px) {
+  .hero,
+  .heroMedia,
+  .heroVideo {
+    height: 500px !important;
+    min-height: 500px !important;
+  }
+}
+
+@media (min-width: 721px) {
+  .hero,
+  .heroMedia,
+  .heroVideo {
+    height: 480px !important;
+    min-height: 480px !important;
+  }
+}
+
+@media (min-width: 721px) {
+  .menuShell > .restaurantCard {
+    transform: translateY(-220px) !important;
+    margin-bottom: -160px !important;
+  }
+}
+
+@media (min-width: 721px) {
+  .menuShell > .restaurantCard {
+    transform: translateY(-150px) !important;
+    margin-bottom: -100px !important;
+  }
+}
+
+@media (min-width: 721px) {
+  .hero,
+  .heroMedia,
+  .heroVideo {
+    height: 460px !important;
+    min-height: 460px !important;
+  }
+}
+
+@media (min-width: 721px) {
+  .hero,
+  .heroMedia,
+  .heroVideo {
+    height: 420px !important;
+    min-height: 420px !important;
   }
 }

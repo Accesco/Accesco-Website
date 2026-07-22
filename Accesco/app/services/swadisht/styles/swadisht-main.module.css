@@ -3055,3 +3055,208 @@
   transform: none !important;
 }
 
+
+/* Compact restaurant card inspired by the supplied reference */
+
+.referenceRestaurantCard {
+  width: 100%;
+  min-width: 0;
+  padding: 14px;
+  border: 1px solid #ededed;
+  border-radius: 0;
+  box-sizing: border-box;
+  background: #ffffff;
+  color: #171717;
+  text-decoration: none;
+  box-shadow: 0 2px 7px rgba(0, 0, 0, 0.06);
+  display: block;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.referenceRestaurantCard:hover {
+  color: #171717;
+  text-decoration: none;
+  box-shadow: 0 5px 14px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+.referenceRestaurantMedia {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  border-radius: 15px;
+  background: #f4f4f4;
+}
+
+.referenceRestaurantImage {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.referenceRestaurantCard:hover .referenceRestaurantImage {
+  transform: scale(1.02);
+}
+
+.referenceOfferTag {
+  position: absolute;
+  bottom: 10px;
+  left: 0;
+  min-width: 47%;
+  width: fit-content;
+  padding: 6px 10px;
+  border-radius: 0 4px 4px 0;
+  background: linear-gradient(
+    90deg,
+    #176fe5 0%,
+    #287ee9 70%,
+    rgba(40, 126, 233, 0.72) 100%
+  );
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.referenceRestaurantContent {
+  padding: 9px 0 0;
+}
+
+.referenceRestaurantTop {
+  margin-bottom: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.referenceRestaurantName {
+  min-width: 0;
+  margin: 0;
+  overflow: hidden;
+  color: #171717;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.25;
+  text-decoration: none;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.referenceRestaurantCard:hover .referenceRestaurantName {
+  color: #171717;
+  text-decoration: none;
+}
+
+.referenceRating {
+  flex: 0 0 auto;
+  padding: 3px 5px;
+  border-radius: 4px;
+  background: #126b37;
+  color: #ffffff;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.referenceRestaurantMeta,
+.referenceStatusRow {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.referenceRestaurantMeta {
+  margin-bottom: 4px;
+}
+
+.referenceCuisines,
+.referencePrice,
+.referenceLocation {
+  color: #949494;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.4;
+}
+
+.referenceCuisines {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.referencePrice {
+  flex: 0 0 auto;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.referenceLocation {
+  margin: 0 0 2px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.referenceClosing {
+  min-width: 0;
+  overflow: hidden;
+  color: #ef704f;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.4;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.referenceDistance {
+  flex: 0 0 auto;
+  color: #4e4e4e;
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 1.4;
+  text-align: right;
+  white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+  .referenceRestaurantCard {
+    padding: 10px;
+  }
+
+  .referenceRestaurantMedia {
+    border-radius: 13px;
+  }
+
+  .referenceOfferTag {
+    bottom: 8px;
+    padding: 6px 9px;
+    font-size: 11px;
+  }
+
+  .referenceRestaurantName {
+    font-size: 14px;
+  }
+
+  .referenceCuisines,
+  .referencePrice,
+  .referenceLocation,
+  .referenceClosing {
+    font-size: 11px;
+  }
+}
