@@ -7,6 +7,7 @@
 'use client';
 
 import { useState, useMemo, useEffect, Suspense } from 'react';
+import Image from 'next/image';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useGrokly } from './contexts/GroklyContext';
 import GroklyHeader from './components/GroklyHeader';
@@ -15,14 +16,15 @@ import CategoryNav from './components/CategoryNav';
 import ProductCard from './components/ProductCard';
 import ProductSkeleton from './components/ProductSkeleton';
 import FilterPanel from './components/FilterPanel';
-import CartDrawer from './components/CartDrawer';
-import LocationModal from './components/LocationModal';
+import dynamic from 'next/dynamic';
+const CartDrawer = dynamic(() => import('./components/CartDrawer'));
+const LocationModal = dynamic(() => import('./components/LocationModal'));
 import FloatingCartBar from './components/FloatingCartBar';
 import BottomNav from './components/BottomNav';
 import { categories, getProductsByCategory, searchProducts } from './lib/groklyData';
 import { useProducts } from './hooks/useProducts';
 import './styles/variables.css';
-import './styles/globals.css';
+
 import JsonLd from '../../../components/JsonLd';
 import { dishes } from './lib/dishesData';
 import GroceryStories from './components/GroceryStories';
@@ -310,15 +312,16 @@ function GroklyPageContent() {
                   transition: "opacity 0.8s ease-in-out",
                 }}
               >
-                <img
+                <Image
                   src="/images/IMG_4614.PNG"
                   alt="Grokly - 11 Minute Grocery Delivery"
+                  fill
+                  sizes="100vw"
                   style={{
-                    width: "100%",
-                    height: "100%",
                     objectFit: "cover",
                     objectPosition: "center top",
                   }}
+                  priority
                 />
                 <div
                   style={{

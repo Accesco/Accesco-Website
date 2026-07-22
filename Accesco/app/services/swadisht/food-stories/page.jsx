@@ -491,7 +491,7 @@ function formatTime(value) {
 }
 
 export default function FoodStoriesPage() {
-  const [activeIndex, setActiveIndex] = useState(1);
+  const [activeIndex, setActiveIndex] = useState(0);
   const [liked, setLiked] = useState(() => new Set());
   const [saved, setSaved] = useState(() => new Set());
   const [commentsByReel, setCommentsByReel] = useState({});

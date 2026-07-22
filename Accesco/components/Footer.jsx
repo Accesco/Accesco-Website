@@ -1,19 +1,11 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import './Footer.css';
-import { useEffect, useState } from 'react';
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
-  const [pulse, setPulse] = useState(false);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setPulse(prev => !prev);
-    }, 3000);
-    return () => clearInterval(interval);
-  }, []);
 
   return (
     <footer className="accesco-footer-root">
@@ -23,7 +15,7 @@ export default function Footer() {
           {/* Left Brand Column */}
           <div className="footer-brand-col">
             <Link href="/" className="logo-component">
-              <img src="/images/ac-logo.png" alt="AC" className="logo-component-icon" />
+              <Image src="/images/ac-logo.png" alt="AC" className="logo-component-icon" width={60} height={60} />
               <span className="logo-wordmark">Accesco Living</span>
             </Link>
             
@@ -42,11 +34,11 @@ export default function Footer() {
             </div>
             
             <div className="app-badges">
-              <a href="#" className="app-badge">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg" alt="Google Play" className="badge-img" />
+              <a href="#" className="download-badge">
+                <Image src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg" alt="Google Play" className="badge-img" width={135} height={40} />
               </a>
-              <a href="#" className="app-badge">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/3/3c/Download_on_the_App_Store_Badge.svg" alt="App Store" className="badge-img" />
+              <a href="#" className="download-badge">
+                <Image src="https://upload.wikimedia.org/wikipedia/commons/3/3c/Download_on_the_App_Store_Badge.svg" alt="App Store" className="badge-img" width={135} height={40} />
               </a>
             </div>
           </div>

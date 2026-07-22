@@ -107,7 +107,7 @@
 }
 
 .press-section-title {
-  font-family: 'Sora', sans-serif;
+  font-family: var(--font-sora), sans-serif;
   font-size: 2.2rem;
   font-weight: 800;
   color: #1a0a0f;
@@ -238,7 +238,7 @@
 }
 
 .press-card-title {
-  font-family: 'Sora', sans-serif;
+  font-family: var(--font-sora), sans-serif;
   font-size: 1.25rem;
   font-weight: 700;
   color: #1a0a0f;
@@ -262,7 +262,7 @@
 }
 
 .press-card-link {
-  font-family: 'Sora', sans-serif;
+  font-family: var(--font-sora), sans-serif;
   font-size: 0.85rem;
   font-weight: 700;
   color: #7a0042;
@@ -300,7 +300,7 @@
 }
 
 .press-kit-heading {
-  font-family: 'Sora', sans-serif;
+  font-family: var(--font-sora), sans-serif;
   font-size: clamp(1.8rem, 3vw, 2.4rem);
   font-weight: 800;
   color: #1a0a0f;
@@ -357,7 +357,7 @@
 }
 
 .press-kit-item-title {
-  font-family: 'Sora', sans-serif;
+  font-family: var(--font-sora), sans-serif;
   font-size: 1rem;
   font-weight: 700;
   color: #1a0a0f;
@@ -440,7 +440,7 @@
 }
 
 .press-modal-title {
-  font-family: 'Sora', sans-serif;
+  font-family: var(--font-sora), sans-serif;
   font-size: 1.05rem;
   font-weight: 700;
   color: #1a0a0f;
@@ -557,7 +557,7 @@
 }
 
 .press-kit-content h2 {
-  font-family: 'Sora', sans-serif;
+  font-family: var(--font-sora), sans-serif;
   font-size: 2.5rem;
   font-weight: 800;
   color: #1a0a0f;
@@ -607,7 +607,7 @@
 }
 
 .press-kit-card h3 {
-  font-family: 'Sora', sans-serif;
+  font-family: var(--font-sora), sans-serif;
   font-size: 1.05rem;
   font-weight: 700;
   margin: 0 0 8px;
@@ -671,7 +671,7 @@
 }
 
 .press-contact-card h2 {
-  font-family: 'Sora', sans-serif;
+  font-family: var(--font-sora), sans-serif;
   font-size: 2.2rem;
   font-weight: 800;
   margin: 0 0 16px;
@@ -708,7 +708,7 @@
 }
 
 .press-contact-item a {
-  font-family: 'Sora', sans-serif;
+  font-family: var(--font-sora), sans-serif;
   font-size: 1.2rem;
   font-weight: 700;
   color: #ffffff;

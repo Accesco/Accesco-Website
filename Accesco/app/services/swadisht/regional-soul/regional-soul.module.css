@@ -1,10 +1,10 @@
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap');
+
 
 .pageContent {
   min-height: 100vh;
   background-color: #fcfbf7;
   color: #292524;
-  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-family: var(--font-plus-jakarta-sans), sans-serif;
 }
 
 /* Cinematic Hero Home Section */
@@ -38,7 +38,7 @@
 }
 
 .heroTitle {
-  font-family: 'Playfair Display', serif;
+  font-family: var(--font-playfair-display), serif;
   font-size: clamp(40px, 6vw, 64px);
   line-height: 1.1;
   margin-bottom: 24px;
@@ -118,7 +118,7 @@
 }
 
 .sectionTitle {
-  font-family: 'Playfair Display', serif;
+  font-family: var(--font-playfair-display), serif;
   font-size: 36px;
   color: #1c1917;
   font-weight: 700;
@@ -218,7 +218,7 @@
 }
 
 .stateCardNative {
-  font-family: 'Playfair Display', serif;
+  font-family: var(--font-playfair-display), serif;
   font-size: 12px;
   font-style: italic;
   color: #fcd34d;
@@ -226,7 +226,7 @@
 }
 
 .stateCardTitle {
-  font-family: 'Playfair Display', serif;
+  font-family: var(--font-playfair-display), serif;
   font-size: 22px;
   font-weight: 700;
   margin: 0 !important;
@@ -291,7 +291,7 @@
 }
 
 .collectiveTitle {
-  font-family: 'Playfair Display', serif;
+  font-family: var(--font-playfair-display), serif;
   font-size: 32px;
   color: #1c1917;
   font-weight: 700;
@@ -427,7 +427,7 @@
 }
 
 .detailHeroTitle {
-  font-family: 'Playfair Display', serif;
+  font-family: var(--font-playfair-display), serif;
   font-size: clamp(34px, 5vw, 52px);
   font-weight: 700;
   line-height: 1.15;
@@ -500,7 +500,7 @@
 }
 
 .tapestryTitle {
-  font-family: 'Playfair Display', serif;
+  font-family: var(--font-playfair-display), serif;
   font-size: 28px;
   color: #1c1917;
   font-weight: 700;
@@ -565,7 +565,7 @@
 }
 
 .alchemistTitle {
-  font-family: 'Playfair Display', serif;
+  font-family: var(--font-playfair-display), serif;
   font-size: 22px;
   color: #1c1917;
   font-weight: 700;
@@ -636,7 +636,7 @@
 }
 
 .alchemistHeroTitle {
-  font-family: 'Playfair Display', serif;
+  font-family: var(--font-playfair-display), serif;
   font-size: 18px;
   color: white;
   font-weight: 700;
@@ -666,7 +666,7 @@
 }
 
 .menuTitle {
-  font-family: 'Playfair Display', serif;
+  font-family: var(--font-playfair-display), serif;
   font-size: 32px;
   font-weight: 700;
   color: #171717;
@@ -778,7 +778,7 @@
 }
 
 .dishNameText {
-  font-family: 'Playfair Display', serif;
+  font-family: var(--font-playfair-display), serif;
   font-size: 18px;
   font-weight: 700;
   margin-bottom: 8px !important;
@@ -881,7 +881,7 @@
 
 .storyImageTag strong {
   display: block;
-  font-family: 'Playfair Display', serif;
+  font-family: var(--font-playfair-display), serif;
   font-size: 13px;
   margin-bottom: 4px;
 }
@@ -900,7 +900,7 @@
 }
 
 .storyCard h3 {
-  font-family: 'Playfair Display', serif;
+  font-family: var(--font-playfair-display), serif;
   color: #78350f;
   font-size: 20px;
   margin-bottom: 14px;

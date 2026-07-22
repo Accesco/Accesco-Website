@@ -1,11 +1,107 @@
 import { db } from './firebase';
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import {
+  collection,
+  addDoc,
+  serverTimestamp,
+  query,
+  where,
+  limit,
+  getDocs,
+} from 'firebase/firestore';
 
 const COLLECTION = 'waitlistUsers';
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 // Accepts digits, spaces, dashes, dots, parentheses, and an optional leading +
 const PHONE_RE = /^\+?[\d\s\-().]{7,20}$/;
+
+// Fallback only for anonymous visitors who join the waitlist without ever
+// logging in (the waitlist form doesn't require an account) -- there's no
+// phone/email to query Firestore with yet, so this is the one case that still
+// has to rely on a local flag rather than a server-side lookup.
+const REGISTERED_STORAGE_KEY = 'accesco_waitlist_registered';
+
+function getLoggedInUser() {
+  if (typeof window === 'undefined') return null;
+
+  try {
+    const stored = window.localStorage.getItem('accesco_user');
+    return stored ? JSON.parse(stored) : null;
+  } catch {
+    return null;
+  }
+}
+
+// waitlistUsers.phone is stored exactly as the visitor typed it (see
+// addWaitlistEntry below), so an exact-match query can miss entries typed
+// with different spacing/country-code formatting. Querying a handful of
+// normalized variants with a single `in` clause covers the common cases.
+function phoneVariants(phone) {
+  const trimmed = phone.trim();
+  const digits = trimmed.replace(/\D/g, '');
+  const last10 = digits.slice(-10);
+
+  return Array.from(
+    new Set([trimmed, digits, last10, `+91${last10}`, `91${last10}`]),
+  )
+    .filter(Boolean)
+    .slice(0, 10); // Firestore 'in' queries cap out at 10 values
+}
+
+/**
+ * Queries Firestore directly for a waitlist entry matching the given phone
+ * and/or email -- this is the source of truth, not a locally cached flag.
+ * @param {{ phone?: string|null; email?: string|null }} identity
+ * @returns {Promise<boolean>}
+ */
+export async function checkWaitlistRegistration({ phone, email } = {}) {
+  const lookups = [];
+
+  if (phone) {
+    lookups.push(
+      getDocs(
+        query(collection(db, COLLECTION), where('phone', 'in', phoneVariants(phone)), limit(1)),
+      ),
+    );
+  }
+
+  if (email) {
+    lookups.push(
+      getDocs(
+        query(collection(db, COLLECTION), where('email', '==', email.trim().toLowerCase()), limit(1)),
+      ),
+    );
+  }
+
+  if (lookups.length === 0) return false;
+
+  const results = await Promise.all(lookups);
+  return results.some((snap) => !snap.empty);
+}
+
+/**
+ * Whether the current visitor is on the waitlist. Checks Firestore directly
+ * using the logged-in account's phone/email when available (so it's correct
+ * across devices/browsers and per-account); falls back to a local flag only
+ * for anonymous visitors who joined without logging in.
+ * @returns {Promise<boolean>}
+ */
+export async function isWaitlistRegistered() {
+  if (typeof window === 'undefined') return false;
+
+  const user = getLoggedInUser();
+
+  if (user?.phone || user?.email) {
+    try {
+      return await checkWaitlistRegistration({ phone: user.phone, email: user.email });
+    } catch (err) {
+      console.error('Waitlist registration check failed:', err);
+      return false;
+    }
+  }
+
+  return window.localStorage.getItem(REGISTERED_STORAGE_KEY) === '1';
+}
 
 async function parseJsonResponse(response) {
   try {
@@ -71,6 +167,10 @@ export async function addWaitlistEntry(data) {
     phone: data.phone.trim(),
     createdAt: serverTimestamp(),
   });
+
+  if (typeof window !== 'undefined') {
+    window.localStorage.setItem(REGISTERED_STORAGE_KEY, '1');
+  }
 
   // Send confirmation email (non-blocking — don't let a mail failure break signup)
   fetch('/api/waitlist', {

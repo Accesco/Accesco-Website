@@ -56,6 +56,11 @@ export default function AuthModal({
   isOpen,
   onClose,
   onSuccess,
+  // When true, this is a site-wide login gate rather than an optional
+  // sign-in prompt: no close button, no dismiss-by-backdrop-click. The only
+  // way out is a completed sign-in (handleClose still runs post-success to
+  // reset internal state).
+  mandatory = false,
 }) {
   const [name, setName] = useState('')
   const [firstName, setFirstName] = useState('')
@@ -78,6 +83,11 @@ export default function AuthModal({
   const [resendCooldown, setResendCooldown] = useState(0)
 
   const recaptchaVerifierRef = useRef(null)
+  // grecaptcha tracks "already rendered" per DOM node, not per innerHTML, so
+  // reusing one fixed container across sends throws "reCAPTCHA has already
+  // been rendered in this element" even after clear()+innerHTML wipe. Give
+  // every attempt a brand-new container element instead.
+  const recaptchaContainerIdRef = useRef(null)
 
   useEffect(() => {
     if (resendCooldown <= 0) return undefined
@@ -203,11 +213,12 @@ export default function AuthModal({
     }
   }
 
-  // Firebase's verifier.clear() can leave the widget mounted in the DOM if the
-  // previous verifier never finished rendering (e.g. after a network error or
-  // a fast double-send), which then throws "reCAPTCHA has already been
-  // rendered in this element" on the next attempt. Force the container empty
-  // as well so every send starts from a clean slate.
+  // Firebase's verifier.clear() removes the widget's contents, but Google's
+  // reCAPTCHA script also remembers *which DOM element* it has already
+  // rendered into — reusing that same element for a new RecaptchaVerifier
+  // throws "reCAPTCHA has already been rendered in this element" even after
+  // clear() and an innerHTML wipe. Swap in a brand-new element every time so
+  // grecaptcha has never seen the node before.
   const clearRecaptcha = () => {
     if (recaptchaVerifierRef.current) {
       try {
@@ -218,8 +229,15 @@ export default function AuthModal({
       recaptchaVerifierRef.current = null
     }
 
-    const container = document.getElementById('am-recaptcha-container')
-    if (container) container.innerHTML = ''
+    const host = document.getElementById('am-recaptcha-host')
+    if (host) {
+      host.innerHTML = ''
+      const containerId = `am-recaptcha-container-${Date.now()}`
+      const fresh = document.createElement('div')
+      fresh.id = containerId
+      host.appendChild(fresh)
+      recaptchaContainerIdRef.current = containerId
+    }
   }
 
   const sendPhoneOtp = async () => {
@@ -234,7 +252,7 @@ export default function AuthModal({
 
       const verifier = new RecaptchaVerifier(
         auth,
-        'am-recaptcha-container',
+        recaptchaContainerIdRef.current,
         {
           size: 'invisible',
         },
@@ -572,21 +590,23 @@ export default function AuthModal({
   return (
     <div
       style={styles.backdrop}
-      onClick={handleClose}
+      onClick={mandatory ? undefined : handleClose}
     >
       <div
         className="auth-modal-shell"
         style={styles.shell}
         onClick={(e) => e.stopPropagation()}
       >
-        <button
-          type="button"
-          onClick={handleClose}
-          aria-label="Close"
-          style={styles.closeButton}
-        >
-          ✕
-        </button>
+        {!mandatory && (
+          <button
+            type="button"
+            onClick={handleClose}
+            aria-label="Close"
+            style={styles.closeButton}
+          >
+            ✕
+          </button>
+        )}
 
         <section
           className="auth-modal-left"
@@ -664,8 +684,10 @@ export default function AuthModal({
             </div>
           ) : (
             <>
-              {/* Invisible reCAPTCHA container required by Firebase Phone Auth */}
-              <div id="am-recaptcha-container" />
+              {/* Host for the invisible reCAPTCHA widget required by Firebase Phone
+                  Auth. clearRecaptcha() injects a fresh child element into this
+                  host on every send/resend — see the comment there for why. */}
+              <div id="am-recaptcha-host" />
 
               {step === 'details' ? (
                 <div style={styles.detailsScreen}>

@@ -3,11 +3,28 @@ const path = require('path')
 
 const nextConfig = {
   images: {
-    unoptimized: true,
-    domains: ['images.unsplash.com'],
+    formats: ['image/avif', 'image/webp'],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'images.unsplash.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'upload.wikimedia.org',
+      },
+    ],
+    deviceSizes: [640, 750, 828, 1080, 1200, 1920],
+    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
   },
 
-  reactStrictMode: false,
+  reactStrictMode: true,
+  compress: true,
+  output: 'standalone',
+
+  experimental: {
+    optimizePackageImports: ['lucide-react', 'framer-motion'],
+  },
 
   async redirects() {
     return [
@@ -46,6 +63,24 @@ const nextConfig = {
           {
             key: 'X-Frame-Options',
             value: 'SAMEORIGIN',
+          },
+        ],
+      },
+      {
+        source: '/_next/static/(.*)',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable',
+          },
+        ],
+      },
+      {
+        source: '/images/(.*)',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=86400, stale-while-revalidate=604800',
           },
         ],
       },

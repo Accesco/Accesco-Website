@@ -22,12 +22,16 @@ export const metadata = {
   },
 };
 
+import './styles/globals.css';
 import GroklyLayoutClient from './layout-client';
+import WaitlistGate from '../../components/WaitlistGate';
 
 export default function Layout({ children }) {
   return (
-    <GroklyLayoutClient>
-      {children}
-    </GroklyLayoutClient>
+    <WaitlistGate>
+      <GroklyLayoutClient>
+        {children}
+      </GroklyLayoutClient>
+    </WaitlistGate>
   );
 }

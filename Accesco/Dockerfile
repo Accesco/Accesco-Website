@@ -56,10 +56,11 @@ COPY --from=builder /app/public ./public
 RUN mkdir .next
 RUN chown nextjs:nodejs .next
 
-# Copy the built application and its dependencies
-COPY --from=builder --chown=nextjs:nodejs /app/.next ./.next
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/package.json ./package.json
+# Copy the built application
+# Automatically leverage output traces to reduce image size
+# https://nextjs.org/docs/advanced-features/output-file-tracing
+COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
 # Switch to the non-root user
 USER nextjs
@@ -71,4 +72,4 @@ ENV PORT 3000
 ENV HOSTNAME "0.0.0.0"
 
 # Start the application
-CMD ["npm", "start"]
+CMD ["node", "server.js"]

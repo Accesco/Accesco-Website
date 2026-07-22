@@ -279,8 +279,9 @@ export default function Hero() {
         muted
         loop
         playsInline
-        preload="metadata"
+        preload="none"
         fetchPriority="low"
+        poster="/images/accesco_white.png"
       >
         <source src="/images/herovideo.MP4" type="video/mp4" />
         Your browser does not support the video tag.

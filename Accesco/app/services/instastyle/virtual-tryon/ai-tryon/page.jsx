@@ -152,7 +152,7 @@ function AiTryOnContent() {
 // useSearchParams requires Suspense in Next.js App Router
 export default function AiTryOnPage() {
   return (
-    <Suspense fallback={<div style={{ padding: '2rem' }}>Loading...</div>}>
+    <Suspense fallback={<div>Loading...</div>}>
       <AiTryOnContent />
     </Suspense>
   );
