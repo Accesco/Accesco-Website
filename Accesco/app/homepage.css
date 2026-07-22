@@ -12,7 +12,7 @@ html { scroll-behavior: smooth; }
 --card: #fff; --shadow: 0 18px 40px rgba(112, 4, 87, 0.08); --container: 1200px;
 }
 * { box-sizing: border-box; }
-body { margin: 0; font-family: "Inter", sans-serif; color: #222; background: var(--bg); line-height: 1.5; overflow-x: hidden; width: 100%; }
+body { margin: 0; font-family: var(--font-inter), sans-serif; color: #222; background: var(--bg); line-height: 1.5; overflow-x: hidden; width: 100%; }
 a { color: inherit; text-decoration: none; }
 img { width: 100%; height: auto; display: block; border-radius: 14px; } 
 /* ===== LOGO FIX ===== */
@@ -2414,7 +2414,17 @@ opacity:0.5;
 /* MOBILE */
 @media (max-width: 768px) {
   .postersSectionWrapper {
-    display: none;
+    display: block;
+    margin-bottom: 24px;
+    padding: 0 16px;
+    order: -1;
+  }
+
+  .postersTiltImg {
+    max-width: 420px;
+    margin: 0 auto;
+    border-radius: 18px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.12);
   }
 
   .intelligencePosterRow {
@@ -2423,7 +2433,8 @@ opacity:0.5;
     margin: 0 0 40px;
     margin-left: calc(50% - 50vw);
     margin-right: calc(50% - 50vw);
-    display: block;
+    display: flex;
+    flex-direction: column;
   }
 
   .intelligenceSection {
@@ -2613,28 +2624,7 @@ opacity:0.5;
     display: none;
   }
 }
-/* Mobile-only Launch Poster */
 
-.mobileLaunchPoster {
-  display: none;
-}
-
-@media (max-width: 768px) {
-  .mobileLaunchPoster {
-  display: block;
-  padding: 12px 16px 0; /* was 18px 16px 10px */
-  margin-bottom: 0;
-}
-
-  .mobileLaunchPoster img {
-    width: 100%;
-    max-width: 420px;
-    margin: 0 auto;
-    display: block;
-    border-radius: 18px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.12);
-  }
-}
 /* ==========================================================================
    MOBILE SERVICES BENTO GRID OVERRIDE (Swiggy / Instamart Style)
    ========================================================================== */
@@ -2784,11 +2774,11 @@ opacity:0.5;
 }*/
 /* Custom styling for Xpense Meter Landing Page */
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
 
 /* --- Page & Base Variables --- */
 .xpense-page-wrapper {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: var(--font-inter), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   background-color: #eaeaea;
   min-height: 100vh;
   display: flex;
@@ -2858,7 +2848,7 @@ opacity:0.5;
 }
 
 .hero-heading {
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-inter), sans-serif;
   font-weight: 800;
   font-size: 3.8rem;
   line-height: 1.1;
@@ -3188,7 +3178,7 @@ opacity:0.5;
 .spend-amount {
   font-size: 0.875rem;
   font-weight: 700;
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-jetbrains-mono), monospace;
   color: #ffffff;
 }
 
@@ -3235,7 +3225,7 @@ opacity:0.5;
 }
 
 .chart-labels-text {
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-inter), sans-serif;
   font-size: 0.6rem;
   font-weight: 500;
   color: #9ca3af;
@@ -3334,7 +3324,7 @@ opacity:0.5;
   font-size: 1.25rem;
   font-weight: 800;
   color: #ffffff;
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-jetbrains-mono), monospace;
 }
 
 /* --- Glossy Silver Button --- */
@@ -3431,7 +3421,7 @@ opacity:0.5;
 }
 
 .budget-val-total {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-jetbrains-mono), monospace;
   font-weight: 700;
 }
 
@@ -3698,7 +3688,7 @@ opacity:0.5;
 }
 
 .deliveryHeadingTitle {
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-inter), sans-serif;
   font-weight: 800;
   font-size: clamp(2.45rem, 4.9vw, 4.4rem);
   color: #1A0A0F;
@@ -3708,7 +3698,7 @@ opacity:0.5;
 }
 
 .deliveryHeadingSubtitle {
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-inter), sans-serif;
   color: #2B1A24;
   font-weight: 550;
   font-size: clamp(1rem, 3.8vw, 2rem);
@@ -3716,7 +3706,7 @@ opacity:0.5;
 }
 
 .deliveryHeadingDesc {
-  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-family: var(--font-plus-jakarta-sans), sans-serif;
   font-size: clamp(1.15rem, 1.5vw, 1.4rem);
   color: #6B5B65;
   max-width: 900px;
@@ -4574,7 +4564,7 @@ opacity:0.5;
           }
 
           .service-card-name {
-          font-family: 'Inter', sans-serif;
+          font-family: var(--font-inter), sans-serif;
   font-weight: 700;
             font-size: 0.9rem !important;
             margin-bottom: 4px !important;
@@ -4667,7 +4657,7 @@ opacity:0.5;
   padding: 10px 10px 12px !important;   /* was 6px 6px 8px */
 }
           .service-card-name {
-          font-family: 'Inter', sans-serif;
+          font-family: var(--font-inter), sans-serif;
   font-weight: 700;
             font-size: 0.72rem !important;
             margin-bottom: 2px !important;
@@ -4728,7 +4718,7 @@ opacity:0.5;
         }
 
         .service-card-name {
-          font-family: 'Inter', sans-serif;
+          font-family: var(--font-inter), sans-serif;
   font-weight: 700;
           font-size: 1.35rem;
           color: #1A0A0F;
@@ -4758,7 +4748,7 @@ opacity:0.5;
   padding: 14px;
   border-radius: 8px;
 
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-inter), sans-serif;
   font-size: 0.98rem;
   font-weight: 700;
   letter-spacing: -0.02em;

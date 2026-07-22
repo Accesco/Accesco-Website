@@ -15,7 +15,7 @@ import FloatingCartBar from '../../components/FloatingCartBar';
 import BottomNav from '../../components/BottomNav';
 import { categories, products, getProductsByCategory, searchProducts } from '../../lib/groklyData';
 import '../../styles/variables.css';
-import '../../styles/globals.css';
+
 import JsonLd from '../../../../../components/JsonLd';
 
 export default function GroklyCategoryPage() {

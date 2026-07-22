@@ -45,8 +45,8 @@ body {
   color: var(--legal-ink) !important;
 
   font-family:
-    'DM Sans',
-    'Inter',
+    var(--font-dm-sans),
+    var(--font-inter),
     -apple-system,
     BlinkMacSystemFont,
     'Segoe UI',
@@ -86,8 +86,8 @@ body {
   color: var(--legal-ink) !important;
 
   font-family:
-    'Sora',
-    'DM Sans',
+    var(--font-sora),
+    var(--font-dm-sans),
     -apple-system,
     BlinkMacSystemFont,
     'Segoe UI',
@@ -160,8 +160,8 @@ body {
   color: var(--legal-ink) !important;
 
   font-family:
-    'Sora',
-    'DM Sans',
+    var(--font-sora),
+    var(--font-dm-sans),
     -apple-system,
     BlinkMacSystemFont,
     'Segoe UI',
@@ -184,8 +184,8 @@ body {
   color: var(--legal-maroon) !important;
 
   font-family:
-    'Sora',
-    'DM Sans',
+    var(--font-sora),
+    var(--font-dm-sans),
     -apple-system,
     BlinkMacSystemFont,
     'Segoe UI',
@@ -226,8 +226,8 @@ body {
   color: var(--legal-maroon) !important;
 
   font-family:
-    'Sora',
-    'DM Sans',
+    var(--font-sora),
+    var(--font-dm-sans),
     -apple-system,
     BlinkMacSystemFont,
     'Segoe UI',
@@ -278,8 +278,8 @@ body {
   color: var(--legal-maroon) !important;
 
   font-family:
-    'DM Sans',
-    'Inter',
+    var(--font-dm-sans),
+    var(--font-inter),
     -apple-system,
     BlinkMacSystemFont,
     'Segoe UI',

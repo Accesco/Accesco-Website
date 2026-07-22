@@ -22,7 +22,7 @@
 }
 
 .kicker {
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-inter), sans-serif;
   font-size: 11px;
   font-weight: 800;
   color: #c99639; /* High-contrast gold */

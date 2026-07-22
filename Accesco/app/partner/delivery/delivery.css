@@ -18,7 +18,7 @@
 }
 
 .delivery-page {
-  font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: var(--font-dm-sans), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   background: #FFFDF8;
   min-height: 100vh;
   overflow-x: hidden;
@@ -104,7 +104,7 @@
   border: 1px solid rgba(200, 150, 62, 0.25);
   backdrop-filter: blur(12px);
   border-radius: 50px;
-  font-family: 'Sora', sans-serif;
+  font-family: var(--font-sora), sans-serif;
   font-size: 13px;
   font-weight: 700;
   color: var(--ac-gold);
@@ -119,7 +119,7 @@
 }
 
 .delivery-hero-title {
-  font-family: 'Sora', sans-serif;
+  font-family: var(--font-sora), sans-serif;
   font-size: clamp(2.5rem, 6vw, 4.8rem);
   font-weight: 800;
   line-height: 1.08;
@@ -137,7 +137,7 @@
 }
 
 .delivery-hero-subtitle {
-  font-family: 'DM Sans', sans-serif;
+  font-family: var(--font-dm-sans), sans-serif;
   font-size: clamp(1.1rem, 2vw, 1.25rem);
   line-height: 1.7;
   color: rgba(255, 253, 248, 0.72);
@@ -161,7 +161,7 @@
 }
 
 .delivery-stat-value {
-  font-family: 'Sora', sans-serif;
+  font-family: var(--font-sora), sans-serif;
   font-size: 2.8rem;
   font-weight: 800;
   margin-bottom: 6px;
@@ -170,7 +170,7 @@
 }
 
 .delivery-stat-label {
-  font-family: 'DM Sans', sans-serif;
+  font-family: var(--font-dm-sans), sans-serif;
   font-size: 0.9rem;
   color: rgba(255, 253, 248, 0.45);
   text-transform: uppercase;
@@ -202,7 +202,7 @@
   border: none;
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-  font-family: 'Sora', sans-serif;
+  font-family: var(--font-sora), sans-serif;
   background: linear-gradient(135deg, #c8963e 0%, #e8b96a 100%);
   color: #1A0A0F;
   box-shadow: 0 10px 30px rgba(200, 150, 62, 0.25);
@@ -243,7 +243,7 @@
   color: var(--delivery-primary);
   border: 1px solid rgba(10, 138, 92, 0.12);
   border-radius: 50px;
-  font-family: 'Sora', sans-serif;
+  font-family: var(--font-sora), sans-serif;
   font-size: 0.8rem;
   font-weight: 700;
   text-transform: uppercase;
@@ -252,7 +252,7 @@
 }
 
 .delivery-section-title {
-  font-family: 'Sora', sans-serif;
+  font-family: var(--font-sora), sans-serif;
   font-size: clamp(2rem, 4vw, 3rem);
   font-weight: 800;
   color: var(--text-dark);
@@ -261,7 +261,7 @@
 }
 
 .delivery-section-subtitle {
-  font-family: 'DM Sans', sans-serif;
+  font-family: var(--font-dm-sans), sans-serif;
   font-size: 1.15rem;
   color: var(--text-muted);
   line-height: 1.7;
@@ -343,7 +343,7 @@
 }
 
 .delivery-benefit-card h3 {
-  font-family: 'Sora', sans-serif;
+  font-family: var(--font-sora), sans-serif;
   font-size: 1.35rem;
   font-weight: 700;
   color: var(--text-dark);
@@ -352,7 +352,7 @@
 }
 
 .delivery-benefit-card p {
-  font-family: 'DM Sans', sans-serif;
+  font-family: var(--font-dm-sans), sans-serif;
   color: var(--text-muted);
   line-height: 1.65;
   margin-bottom: 20px;
@@ -366,7 +366,7 @@
   border: 1px solid rgba(10, 138, 92, 0.15);
   color: var(--delivery-primary);
   border-radius: 8px;
-  font-family: 'Sora', sans-serif;
+  font-family: var(--font-sora), sans-serif;
   font-size: 0.8rem;
   font-weight: 700;
 }
@@ -401,7 +401,7 @@
 }
 
 .delivery-step-number {
-  font-family: 'Sora', sans-serif;
+  font-family: var(--font-sora), sans-serif;
   font-size: 3.2rem;
   font-weight: 800;
   background: linear-gradient(135deg, var(--delivery-primary), var(--delivery-secondary));
@@ -413,7 +413,7 @@
 }
 
 .delivery-step-content h3 {
-  font-family: 'Sora', sans-serif;
+  font-family: var(--font-sora), sans-serif;
   font-size: 1.4rem;
   font-weight: 700;
   color: var(--text-dark);
@@ -422,7 +422,7 @@
 }
 
 .delivery-step-content p {
-  font-family: 'DM Sans', sans-serif;
+  font-family: var(--font-dm-sans), sans-serif;
   color: var(--text-muted);
   line-height: 1.65;
   font-size: 0.98rem;
@@ -480,7 +480,7 @@
 }
 
 .delivery-extra-benefit-card h3 {
-  font-family: 'Sora', sans-serif;
+  font-family: var(--font-sora), sans-serif;
   font-size: 1.25rem;
   font-weight: 700;
   color: var(--text-dark);
@@ -488,7 +488,7 @@
 }
 
 .delivery-extra-benefit-card p {
-  font-family: 'DM Sans', sans-serif;
+  font-family: var(--font-dm-sans), sans-serif;
   color: var(--text-muted);
   line-height: 1.6;
   font-size: 0.95rem;
@@ -531,7 +531,7 @@
 }
 
 .delivery-requirement-card h3 {
-  font-family: 'Sora', sans-serif;
+  font-family: var(--font-sora), sans-serif;
   font-size: 1.45rem;
   color: var(--text-dark);
   margin-bottom: 20px;
@@ -547,7 +547,7 @@
   padding: 14px 0;
   color: var(--text-muted);
   border-bottom: 1px solid #F0ECE9;
-  font-family: 'DM Sans', sans-serif;
+  font-family: var(--font-dm-sans), sans-serif;
   font-size: 0.98rem;
   display: flex;
   align-items: center;
@@ -594,7 +594,7 @@
   color: #ab7a22;
   border: 1px solid rgba(200, 150, 62, 0.15);
   border-radius: 50px;
-  font-family: 'Sora', sans-serif;
+  font-family: var(--font-sora), sans-serif;
   font-size: 0.8rem;
   font-weight: 700;
   text-transform: uppercase;
@@ -603,7 +603,7 @@
 }
 
 .delivery-form-title {
-  font-family: 'Sora', sans-serif;
+  font-family: var(--font-sora), sans-serif;
   font-size: 2.4rem;
   font-weight: 800;
   color: var(--text-dark);
@@ -612,7 +612,7 @@
 }
 
 .delivery-form-subtitle {
-  font-family: 'DM Sans', sans-serif;
+  font-family: var(--font-dm-sans), sans-serif;
   font-size: 1.1rem;
   color: var(--text-muted);
   line-height: 1.6;
@@ -641,7 +641,7 @@
 }
 
 .delivery-form-field label {
-  font-family: 'DM Sans', sans-serif;
+  font-family: var(--font-dm-sans), sans-serif;
   font-size: 0.95rem;
   font-weight: 700;
   color: var(--text-dark);
@@ -654,7 +654,7 @@
   border: 2px solid #F0ECE9;
   border-radius: 14px;
   font-size: 1rem;
-  font-family: 'DM Sans', sans-serif;
+  font-family: var(--font-dm-sans), sans-serif;
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   background: #FFFDF8;
   color: var(--text-dark);
@@ -705,7 +705,7 @@
 }
 
 .delivery-checkbox-label {
-  font-family: 'DM Sans', sans-serif;
+  font-family: var(--font-dm-sans), sans-serif;
   font-size: 0.95rem;
   font-weight: 600;
   color: var(--text-dark);
@@ -717,7 +717,7 @@
   gap: 12px;
   padding: 16px 20px;
   border-radius: 12px;
-  font-family: 'DM Sans', sans-serif;
+  font-family: var(--font-dm-sans), sans-serif;
   font-weight: 600;
   font-size: 0.95rem;
 }
@@ -744,7 +744,7 @@
   color: white;
   border: none;
   border-radius: 14px;
-  font-family: 'Sora', sans-serif;
+  font-family: var(--font-sora), sans-serif;
   font-size: 1.1rem;
   font-weight: 700;
   cursor: pointer;

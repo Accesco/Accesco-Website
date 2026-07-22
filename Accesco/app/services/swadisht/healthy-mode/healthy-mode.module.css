@@ -4,7 +4,7 @@
   min-height: 100vh;
   background: #FAF9F8;
   padding-top: 80px;
-  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  font-family: var(--font-plus-jakarta-sans), system-ui, -apple-system, sans-serif;
 }
 
 /* ── Hero Section ── */

@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700;800&display=swap');
+
 :root {
   --bg: #ffffff;
   --soft-bg: #f7f3ee;
@@ -258,7 +258,7 @@ a {
 
 .ir-hero h1{
   color:white;
-   font-family: "Baloo 2", cursive;
+   font-family: var(--font-baloo-2), cursive;
     font-weight: 800;
   margin:24px 0 48px;
   font-size:clamp(92px,11vw,160px);

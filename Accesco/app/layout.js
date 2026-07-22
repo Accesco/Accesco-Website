@@ -1,5 +1,6 @@
 import Script from 'next/script';
 import { Sora, DM_Sans, Inter } from 'next/font/google';
+import { spaceGrotesk, jetbrainsMono } from '@/app/fonts';
 import './globals.css';
 import { AuthProvider } from './components/AuthProvider';
 import AuthGate from './components/AuthGate';
@@ -119,8 +120,10 @@ export default function RootLayout({ children }) {
     "url": "https://accescoliving.com",
   };
 
+
+
   return (
-    <html lang="en" className={`${sora.variable} ${dmSans.variable} ${inter.variable}`}>
+    <html lang="en" className={`${sora.variable} ${dmSans.variable} ${inter.variable} ${spaceGrotesk.variable} ${jetbrainsMono.variable}`}>
       <head>
         {/* Structured Data for SEO */}
         <JsonLd data={[organizationSchema, websiteSchema]} />
@@ -128,13 +131,13 @@ export default function RootLayout({ children }) {
 
       <body>
         <AuthProvider>
-          <BreadcrumbJsonLd />
-          <ReferralCapture />
-          <AuthGate>
-            {children}
-            <CookieConsent />
-          </AuthGate>
-        </AuthProvider>
+  <BreadcrumbJsonLd />
+  <ReferralCapture />
+
+  {children}
+  <CookieConsent />
+
+</AuthProvider>
 
         {/* RemixIcon loaded lazily — only needed for a few social icons */}
         <Script id="load-remixicon" strategy="lazyOnload">
@@ -170,4 +173,4 @@ export default function RootLayout({ children }) {
     </html>
   );
 }
-
+

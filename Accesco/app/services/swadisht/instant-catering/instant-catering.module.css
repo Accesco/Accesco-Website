@@ -1,12 +1,12 @@
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=DM+Serif+Display:ital@0;1&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=DM+Serif+Display:ital@0;1&display=swap');
+
+
 /* ── CSS Variable Configuration ── */
 
 
 .pageContent {
   background-color: var(--cream);
   color: var(--text-dark);
-  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-family: var(--font-plus-jakarta-sans), sans-serif;
   min-height: 100vh;
   padding-top: 60px; /* offset for sticky header */
   overflow-x: hidden;
@@ -65,7 +65,7 @@
   margin-bottom: 16px;
 }
 .heroTitle {
-  font-family: "Baloo 2", cursive;
+  font-family: var(--font-baloo-2), cursive;
   font-size: clamp(2.2rem, 4vw, 3.6rem);
   font-weight: 600;
   font-style: italic;
@@ -76,7 +76,7 @@
 }
 
 .heroTitle span {
-   font-family: "Baloo 2", cursive;
+   font-family: var(--font-baloo-2), cursive;
   font-size: clamp(2.2rem, 4vw, 3.6rem);
   font-weight: 600;
   font-style: italic;
@@ -273,7 +273,7 @@
 }
 
 .sectionHeader h2 {
-  font-family: 'DM Serif Display', Georgia, serif;
+  font-family: var(--font-dm-serif-display), Georgia, serif;
   font-size: 36px;
   font-weight: 400;
   color: var(--primary-red);
@@ -835,7 +835,7 @@
 }
 
 .ctaTitle {
-  font-family: 'DM Serif Display', Georgia, serif;
+  font-family: var(--font-dm-serif-display), Georgia, serif;
   font-size: 38px;
   font-weight: 400;
   margin: 0 0 16px;

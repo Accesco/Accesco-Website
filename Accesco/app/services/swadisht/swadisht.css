@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@700&family=Nunito:wght@400;600;700;800;900&family=Nunito+Sans:wght@300;400;600;700;800;900&family=Playfair+Display:ital,wght@0,600;1,700&display=swap');
+
 
 :root {
   --sw-red: #b62025;
@@ -15,9 +15,9 @@
   --sw-gold: #dda42b;
   --sw-white: #ffffff;
   
-  --font-sans: 'Nunito Sans', 'Nunito', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  --font-handwritten: 'Caveat', 'Kalam', cursive;
-  --font-serif: 'Playfair Display', Georgia, serif;
+  --font-sans: var(--font-nunito-sans), var(--font-nunito), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-handwritten: var(--font-caveat), 'Kalam', cursive;
+  --font-serif: var(--font-playfair-display), Georgia, serif;
 }
 
 * {
