@@ -1,9 +1,11 @@
 import { NextResponse } from 'next/server';
+import { saveOrderToFirestore, fetchOrdersFromFirestore, updateOrderStatusInFirestore } from '@/lib/orderService';
+import { sendOrderLifecycleEmail } from '@/lib/orderLifecycle';
 
 export const dynamic = 'force-dynamic';
 
-function buildGroklyOrderEmailHtml({ customerName, orderId, items, subtotal, deliveryFee, discount, total, deliverySpeed, address, eta }) {
-  const itemsHtml = items.map(item => `
+function buildGroklyOrderEmailHtml({ customerName, orderId, items = [], subtotal = 0, deliveryFee = 0, discount = 0, total = 0, deliverySpeed, address, eta }) {
+  const itemsHtml = (items || []).map(item => `
     <tr>
       <td style="padding:8px 0;border-bottom:1px solid #f0f0f0;">
         <a href="https://www.accescoliving.com/services/grokly/category/${item.category || 'all'}" style="color:#0c831f;text-decoration:none;font-weight:600;">${item.name}</a>
@@ -30,7 +32,7 @@ function buildGroklyOrderEmailHtml({ customerName, orderId, items, subtotal, del
       </p>
 
       <p style="font-size:13px;color:#888;margin:0 0 6px;">Order ID: <code style="background:#f0f0f0;padding:2px 6px;border-radius:4px;">${orderId}</code></p>
-      <p style="font-size:13px;color:#888;margin:0 0 24px;">Delivery to: ${address}</p>
+      <p style="font-size:13px;color:#888;margin:0 0 24px;">Delivery to: ${address || 'Selected Address'}</p>
 
       <table style="width:100%;border-collapse:collapse;font-size:14px;margin-bottom:20px;">
         <thead>
@@ -79,28 +81,18 @@ export async function POST(request) {
     const body = await request.json();
     const { order, customerEmail } = body;
 
-    if (!order || !order.id) {
+    if (!order || (!order.id && !order.orderId)) {
       return NextResponse.json({ error: 'Order data is required.' }, { status: 400 });
     }
 
-    // Persist to Firestore
-    try {
-      const { db } = await import('@/lib/firebase');
-      const { collection, doc, setDoc, serverTimestamp } = await import('firebase/firestore');
-      await setDoc(doc(collection(db, 'grokly_orders'), order.id), {
-        ...order,
-        customerEmail: customerEmail || order.customerEmail || null,
-        userId: order.userId || null,
-        createdAt: serverTimestamp(),
-      });
-    } catch (dbErr) {
-      console.error('[grokly/orders] Firestore write failed:', dbErr);
-      // Don't fail the request — email still goes out
-    }
+    const emailToUse = customerEmail || order.customerEmail;
+    const saveResult = await saveOrderToFirestore('grokly', {
+      ...order,
+      customerEmail: emailToUse,
+    });
 
     // Send order confirmation email if email is provided
-    const emailTo = customerEmail || order.customerEmail;
-    if (emailTo) {
+    if (emailToUse) {
       const apiKey = process.env.RESEND_API_KEY;
       if (apiKey) {
         const fromEmail = process.env.RESEND_FROM_EMAIL || 'Accesco <noreply@accescoliving.com>';
@@ -112,7 +104,7 @@ export async function POST(request) {
           },
           body: JSON.stringify({
             from: fromEmail,
-            to: [emailTo],
+            to: [emailToUse],
             subject: `Order confirmed — ${order.id} | Grokly`,
             html: buildGroklyOrderEmailHtml({
               ...order,
@@ -138,71 +130,46 @@ export async function GET(request) {
     const email = searchParams.get('email');
     const deviceId = searchParams.get('deviceId');
 
-    const { db } = await import('@/lib/firebase');
-    const { collection, doc, getDoc, getDocs, query, orderBy, limit, where } = await import('firebase/firestore');
+    const result = await fetchOrdersFromFirestore('grokly', {
+      id: orderId,
+      userId,
+      email,
+      deviceId,
+    });
 
-    // Fetch single order by ID
     if (orderId) {
-      const docSnap = await getDoc(doc(db, 'grokly_orders', orderId));
-      if (!docSnap.exists()) {
+      if (!result.order) {
         return NextResponse.json({ error: 'Order not found.' }, { status: 404 });
       }
-      return NextResponse.json({ order: { id: docSnap.id, ...docSnap.data() } });
+      return NextResponse.json({ order: result.order });
     }
 
-    // Fetch orders by deviceId
-    if (deviceId) {
-      const q = query(
-        collection(db, 'grokly_orders'),
-        where('deviceId', '==', deviceId),
-        limit(100)
-      );
-      const snapshot = await getDocs(q);
-      const orders = [];
-      snapshot.forEach(d => orders.push({ id: d.id, ...d.data() }));
-      orders.sort((a, b) => new Date(b.timestamp || b.createdAt) - new Date(a.timestamp || a.createdAt));
-      return NextResponse.json({ orders });
-    }
-
-    // Fetch orders by userId
-    if (userId) {
-      const q = query(
-        collection(db, 'grokly_orders'),
-        where('userId', '==', userId),
-        limit(100)
-      );
-      const snapshot = await getDocs(q);
-      const orders = [];
-      snapshot.forEach(d => orders.push({ id: d.id, ...d.data() }));
-      // Sort in JS to avoid composite index requirement
-      orders.sort((a, b) => new Date(b.timestamp || b.createdAt) - new Date(a.timestamp || a.createdAt));
-      return NextResponse.json({ orders });
-    }
-
-    // Fetch orders by email
-    if (email) {
-      const q = query(
-        collection(db, 'grokly_orders'),
-        where('customerEmail', '==', email),
-        limit(100)
-      );
-      const snapshot = await getDocs(q);
-      const orders = [];
-      snapshot.forEach(d => orders.push({ id: d.id, ...d.data() }));
-      // Sort in JS to avoid composite index requirement
-      orders.sort((a, b) => new Date(b.timestamp || b.createdAt) - new Date(a.timestamp || a.createdAt));
-      return NextResponse.json({ orders });
-    }
-
-    // Fetch all orders (admin — most recent 50)
-    const q = query(collection(db, 'grokly_orders'), orderBy('createdAt', 'desc'), limit(50));
-    const snapshot = await getDocs(q);
-    const orders = [];
-    snapshot.forEach(d => orders.push({ id: d.id, ...d.data() }));
-
-    return NextResponse.json({ orders });
+    return NextResponse.json({ orders: result.orders || [] });
   } catch (error) {
     console.error('[grokly/orders] GET error:', error);
+    return NextResponse.json({ error: 'Internal server error.' }, { status: 500 });
+  }
+}
+
+export async function PATCH(request) {
+  try {
+    const body = await request.json();
+    const { orderId, newStatus, customerEmail, customerName, orderData } = body;
+
+    if (!orderId || !newStatus) {
+      return NextResponse.json({ error: 'orderId and newStatus are required.' }, { status: 400 });
+    }
+
+    const updateResult = await updateOrderStatusInFirestore('grokly', orderId, newStatus);
+
+    if (customerEmail) {
+      sendOrderLifecycleEmail('grokly', orderData || { id: orderId }, customerName || 'Customer', customerEmail, newStatus)
+        .catch((err) => console.error('[grokly/orders] Status email error:', err));
+    }
+
+    return NextResponse.json({ success: true, status: newStatus, updateResult }, { status: 200 });
+  } catch (error) {
+    console.error('[grokly/orders] PATCH error:', error);
     return NextResponse.json({ error: 'Internal server error.' }, { status: 500 });
   }
 }

@@ -3,9 +3,8 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import SwadishttHeader from '../components/SwadishttHeader';
+import { useSwadishtt } from '../contexts/SwadishttContext';
 import styles from './profile.module.css';
-
-const ORDERS_STORAGE_KEY = 'swadishtt-orders';
 
 function formatMoney(value) {
   const amount = Number(value || 0);
@@ -26,6 +25,8 @@ function formatDate(value) {
 }
 
 export default function SwadishttProfilePage() {
+  const { orders, user: contextUser } = useSwadishtt();
+
   const [profile, setProfile] = useState({
     name: '',
     phone: '',
@@ -34,7 +35,6 @@ export default function SwadishttProfilePage() {
     city: '',
     pincode: '',
   });
-  const [orders, setOrders] = useState([]);
   const [healthMode, setHealthMode] = useState(false);
 
   // Address editing state
@@ -80,9 +80,9 @@ export default function SwadishttProfilePage() {
       console.error('Error reading userLocation from localStorage:', error);
     }
 
-    const resolvedName = typeof storedUser?.name === 'string' ? storedUser.name : '';
-    const resolvedPhone = typeof storedUser?.phone === 'string' ? storedUser.phone : '';
-    const resolvedEmail = typeof storedUser?.email === 'string' ? storedUser.email : '';
+    const resolvedName = contextUser?.name || (typeof storedUser?.name === 'string' ? storedUser.name : '');
+    const resolvedPhone = contextUser?.phone || (typeof storedUser?.phone === 'string' ? storedUser.phone : '');
+    const resolvedEmail = contextUser?.email || (typeof storedUser?.email === 'string' ? storedUser.email : '');
 
     const resolvedCity =
       (typeof storedLocation?.city === 'string' && storedLocation.city) ||
@@ -116,21 +116,10 @@ export default function SwadishttProfilePage() {
       pincode: resolvedPincode,
     });
 
-    // Initialize edit fields
     setEditAddress(resolvedAddress);
     setEditCity(resolvedCity);
     setEditPincode(resolvedPincode);
-
-    try {
-      const rawOrders = localStorage.getItem(ORDERS_STORAGE_KEY);
-      if (rawOrders) {
-        const parsed = JSON.parse(rawOrders);
-        setOrders(Array.isArray(parsed) ? parsed : []);
-      }
-    } catch (error) {
-      console.error('Error reading Swadishtt orders:', error);
-    }
-  }, []);
+  }, [contextUser]);
 
   const handleSaveAddress = () => {
     const updatedProfile = {
@@ -141,7 +130,6 @@ export default function SwadishttProfilePage() {
     };
     setProfile(updatedProfile);
 
-    // Save back to userLocation in localStorage (shared with main Accesco page)
     try {
       const rawLocation = localStorage.getItem('userLocation');
       const storedLocation = rawLocation ? JSON.parse(rawLocation) : {};
@@ -172,9 +160,8 @@ export default function SwadishttProfilePage() {
     setEditingAddress(false);
   };
 
-  const totalSpent = orders.reduce((sum, order) => sum + (Number(order?.totals?.total) || 0), 0);
-  const avgSpend = orders.length ? Math.round(totalSpent / orders.length) : 0;
-  const recentOrders = orders.slice(0, 3);
+  const totalSpent = (orders || []).reduce((sum, order) => sum + (Number(order?.totals?.total || order?.total) || 0), 0);
+  const recentOrders = (orders || []).slice(0, 5);
 
   return (
     <div className={styles.page}>
@@ -411,12 +398,12 @@ export default function SwadishttProfilePage() {
                   recentOrders.map((order, idx) => (
                     <Link
                       key={order.id || idx}
-                      href={`/services/swadisht/order-tracking?id=${order.id}`}
+                      href={`/services/swadisht/order-tracking?id=${order.id || order.orderId}`}
                       className={styles.orderRow}
                     >
                       <div className={styles.orderMeta}>
-                        <span className={styles.orderId}>#{order.id}</span>
-                        <span className={styles.orderDate}>{formatDate(order.placedAt)}</span>
+                        <span className={styles.orderId}>#{order.id || order.orderId}</span>
+                        <span className={styles.orderDate}>{formatDate(order.placedAt || order.timestamp)}</span>
                       </div>
                       <div className={styles.orderCostRow}>
                         <span className={styles.orderItemsCount}>

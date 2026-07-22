@@ -1,3 +1,6 @@
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 export const metadata = {
   title: "Checkout | Swadisht by Accesco Living",
   description: "Complete your delicious hot food order securely with lightning fast delivery on Swadisht.",

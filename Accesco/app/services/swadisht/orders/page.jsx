@@ -1,13 +1,11 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import SwadishttHeader from '../components/SwadishttHeader';
 import { useSwadishtt } from '../contexts/SwadishttContext';
 import styles from './orders.module.css';
-
-const ORDERS_STORAGE_KEY = 'swadishtt-orders';
 
 const FILTERS = [
   { key: 'all', label: 'All Orders' },
@@ -58,7 +56,7 @@ function OrderCard({ order, index, onReorder }) {
   const items = Array.isArray(order.items) ? order.items : [];
   const totalItems = items.reduce((sum, item) => sum + (item?.quantity || 1), 0);
   const totalValue = order?.totals?.total ?? order?.total ?? 0;
-  const orderId = order.id || `SW-${index + 1}`;
+  const orderId = order.id || order.orderId || `SW-${index + 1}`;
 
   return (
     <article className={`${styles.orderCard} ${expanded ? styles.orderCardExpanded : ''}`}>
@@ -76,7 +74,7 @@ function OrderCard({ order, index, onReorder }) {
               {items[0]?.restaurant || 'Swadishtt Order'}
               {items.length > 1 ? ` +${items.length - 1} more` : ''}
             </span>
-            <span className={styles.orderDate}>{formatDate(order?.placedAt)}</span>
+            <span className={styles.orderDate}>{formatDate(order?.placedAt || order?.timestamp)}</span>
           </div>
         </div>
 
@@ -111,7 +109,7 @@ function OrderCard({ order, index, onReorder }) {
             <div className={styles.detailMetaDivider} />
             <div className={styles.detailMetaItem}>
               <span className={styles.detailMetaLabel}>Placed</span>
-              <span className={styles.detailMetaValue}>{formatDate(order?.placedAt)}</span>
+              <span className={styles.detailMetaValue}>{formatDate(order?.placedAt || order?.timestamp)}</span>
             </div>
           </div>
 
@@ -171,7 +169,7 @@ function OrderCard({ order, index, onReorder }) {
           </div>
 
           {/* Delivery Address */}
-          {(order.delivery?.address || order.delivery?.name) && (
+          {(order.delivery?.address || order.deliveryAddress?.address || order.delivery?.name) && (
             <div className={styles.deliveryAddressBlock}>
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" /><circle cx="12" cy="10" r="3" />
@@ -179,10 +177,10 @@ function OrderCard({ order, index, onReorder }) {
               <div>
                 <span className={styles.deliveryAddrLabel}>Delivered to</span>
                 <p className={styles.deliveryAddrText}>
-                  {order.delivery?.name && <strong>{order.delivery.name}</strong>}
-                  {order.delivery?.name && ' · '}
-                  {order.delivery?.address}{order.delivery?.city ? `, ${order.delivery.city}` : ''}
-                  {order.delivery?.pincode ? ` — ${order.delivery.pincode}` : ''}
+                  {(order.delivery?.name || order.customerName) && <strong>{order.delivery?.name || order.customerName}</strong>}
+                  {(order.delivery?.name || order.customerName) && ' · '}
+                  {order.delivery?.address || order.deliveryAddress?.address}{order.delivery?.city || order.deliveryAddress?.city ? `, ${order.delivery?.city || order.deliveryAddress?.city}` : ''}
+                  {order.delivery?.pincode || order.deliveryAddress?.pincode ? ` — ${order.delivery?.pincode || order.deliveryAddress?.pincode}` : ''}
                 </p>
               </div>
             </div>
@@ -212,27 +210,11 @@ function OrderCard({ order, index, onReorder }) {
 }
 
 export default function SwadishttOrdersPage() {
-  const { addToCart, user } = useSwadishtt();
+  const { addToCart, user, orders } = useSwadishtt();
   const router = useRouter();
-  const [orders, setOrders] = useState([]);
   const [activeFilter, setActiveFilter] = useState('all');
-  const [hydrated, setHydrated] = useState(false);
 
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-    try {
-      const raw = localStorage.getItem(ORDERS_STORAGE_KEY);
-      if (raw) {
-        const parsed = JSON.parse(raw);
-        setOrders(Array.isArray(parsed) ? parsed : []);
-      }
-    } catch (error) {
-      console.error('Error reading Swadishtt orders:', error);
-    }
-    setHydrated(true);
-  }, []);
-
-  const filteredOrders = orders.filter((o) => matchesFilter(o, activeFilter));
+  const filteredOrders = (orders || []).filter((o) => matchesFilter(o, activeFilter));
 
   const handleReorder = (order) => {
     if (!Array.isArray(order?.items)) return;
@@ -291,7 +273,7 @@ export default function SwadishttOrdersPage() {
           <p className={styles.expandHint}>Tap any order to see full details</p>
         )}
 
-        {!hydrated ? null : filteredOrders.length === 0 ? (
+        {filteredOrders.length === 0 ? (
           <div className={styles.emptyState}>
             <div className={styles.emptyIcon}>🍽️</div>
             <h2 className={styles.emptyTitle}>No orders found</h2>

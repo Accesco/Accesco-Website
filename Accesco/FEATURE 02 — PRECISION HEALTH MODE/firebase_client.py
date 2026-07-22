@@ -30,7 +30,7 @@ from typing import Optional
 
 import firebase_admin
 from firebase_admin import credentials, firestore
-
+from firebase_admin import firestore
 
 # ---------------------------------------------------------------------------
 # Initialisation (runs once per process)
@@ -158,3 +158,18 @@ def remove_from_cart(uid: str, product_id: str) -> list:
 def clear_cart(uid: str) -> None:
     """Empty the user's cart."""
     set_cart(uid, [])
+def save_feedback(user: str, score: int, review: str):
+    """
+    Save website feedback to Firestore.
+    """
+
+    doc = feedback_col().document()
+
+    doc.set({
+        "user": user,
+        "score": score,
+        "review": review,
+        "createdAt": firestore.SERVER_TIMESTAMP,
+    })
+
+    return doc.id

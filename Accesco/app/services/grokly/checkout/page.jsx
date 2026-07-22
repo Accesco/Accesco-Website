@@ -42,7 +42,7 @@ export default function GroklyCheckout() {
 
   const [eta, setEta] = useState(0);
   const [deliverySpeed, setDeliverySpeed] = useState('instant');
-
+  const [paymentMethod, setPaymentMethod] = useState("upi");
   // Pre-populate customer name and phone from authenticated user session
   useEffect(() => {
     if (user) {
@@ -230,9 +230,52 @@ export default function GroklyCheckout() {
       setShowAuth(true);
       return;
     }
-    submitOrder(user);
-  };
+    if(paymentMethod==="upi"){
+      submitOrder(user);
+    }else{
 
+        submitCODOrder(user);
+
+    }
+  };
+  const submitCODOrder = (activeUser)=>{
+
+    const resolvedEta =
+        deliverySpeed==="batched"
+            ? (eta ? eta+15 : 25)
+            : eta;
+
+    const order = placeOrder({
+
+        total,
+        subtotal,
+        deliveryFee,
+        deliverySpeed,
+        discount,
+
+        eta:resolvedEta,
+
+        paymentMethod:"cod",
+
+        paymentStatus:"pending",
+
+        address:customerDetails.address,
+
+        customerName:activeUser?.name,
+
+        phone:activeUser?.phone,
+
+        customerEmail:activeUser?.email,
+
+        ...getDeliveryCoords()
+
+    });
+
+    router.push(
+        `/services/grokly/order-tracking?id=${order.id}&eta=${resolvedEta}`
+    );
+
+}
   const handleAuthSuccess = (userData) => {
     signIn(userData);
     setShowAuth(false);
@@ -401,22 +444,49 @@ export default function GroklyCheckout() {
           </section>
 
           <section className={styles.section}>
-            <div className={styles.sectionHeader}>
-              <CreditCard size={18} className={styles.sectionHeaderIcon} />
-              <h2>Payment Method</h2>
-            </div>
-            <div className={styles.paymentOption}>
-              <input type="radio" checked readOnly id="upi-radio" />
-              <label htmlFor="upi-radio" className={styles.paymentInfo}>
-                <strong>UPI (PhonePe / Google Pay / BHIM)</strong>
-                <p>Instant digital transfer through secure verification</p>
-              </label>
-              <div className={styles.shieldBadge}>
-                <ShieldCheck size={14} />
-                <span>Secure</span>
-              </div>
-            </div>
-          </section>
+  <div className={styles.sectionHeader}>
+    <CreditCard size={18} className={styles.sectionHeaderIcon} />
+    <h2>Payment Method</h2>
+  </div>
+
+  {/* UPI */}
+  <div
+    className={`${styles.paymentOption} ${
+      paymentMethod === "upi" ? styles.paymentSelected : ""
+    }`}
+    onClick={() => setPaymentMethod("upi")}
+  >
+    <div className={styles.radioCircle}>
+      {paymentMethod === "upi" && (
+        <div className={styles.radioDot}></div>
+      )}
+    </div>
+
+    <div className={styles.paymentInfo}>
+      <strong>UPI / Google Pay / PhonePe / BHIM</strong>
+      <p>Pay securely using Razorpay</p>
+    </div>
+  </div>
+
+  {/* COD */}
+  <div
+    className={`${styles.paymentOption} ${
+      paymentMethod === "cod" ? styles.paymentSelected : ""
+    }`}
+    onClick={() => setPaymentMethod("cod")}
+  >
+    <div className={styles.radioCircle}>
+      {paymentMethod === "cod" && (
+        <div className={styles.radioDot}></div>
+      )}
+    </div>
+
+    <div className={styles.paymentInfo}>
+      <strong>Cash On Delivery</strong>
+      <p>Pay when your order arrives</p>
+    </div>
+  </div>
+</section>
         </div>
 
         <div className={styles.summary}>
@@ -490,7 +560,9 @@ export default function GroklyCheckout() {
               ? "Processing Payment..."
               : !user
                 ? `Login & Place Order · ₹${total}`
-                : `Pay & Place Order · ₹${total}`}
+                : paymentMethod==="upi"
+                ? `Pay Online ₹${total}`
+                : `Confirm Order ₹${total}`}
           </button>
         </div>
       </div>

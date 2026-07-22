@@ -1,7 +1,7 @@
 /**
  * Swadishtt Context
  * @module contexts/SwadishttContext
- * @description Global state management for Swadishtt platform
+ * @description Global state management for Swadishtt platform with Firestore order persistence and tracking architecture matching Grokly.
  */
 
 'use client';
@@ -11,6 +11,8 @@ import { createContext, useContext, useState, useEffect, useCallback, useRef } f
 const SwadishttContext = createContext(undefined);
 
 const CART_STORAGE_KEY = 'swadishtt-cart';
+const ORDERS_STORAGE_KEY = 'swadishtt-orders';
+const DEVICE_ID_KEY = 'swadishtt_device_id';
 
 const TARGET_ACCURACY_METERS = 50;
 const ACCEPTABLE_ACCURACY_METERS = 100;
@@ -18,6 +20,16 @@ const CLIENT_CACHE_DURATION_MS = 10 * 60 * 1000; // 10 minutes
 
 // Client-side cache for detected locations
 const locationCache = new Map();
+
+function getDeviceId() {
+  if (typeof window === 'undefined') return null;
+  let deviceId = localStorage.getItem(DEVICE_ID_KEY);
+  if (!deviceId) {
+    deviceId = `device_${Math.random().toString(36).slice(2, 10)}_${Date.now()}`;
+    localStorage.setItem(DEVICE_ID_KEY, deviceId);
+  }
+  return deviceId;
+}
 
 function getCachedLocation(latitude, longitude) {
   const key = `${latitude.toFixed(4)},${longitude.toFixed(4)}`;
@@ -99,14 +111,12 @@ function getDeliveryGradePosition({
         }
 
         if (Number.isFinite(accuracy) && accuracy <= acceptableAccuracy) {
-          // If acceptable but not target, give the hardware 3 more seconds to find a better lock.
-          // If it can't, resolve early so the user isn't stuck waiting.
           acceptableTimeoutId = setTimeout(() => {
             finishSuccess(bestPosition);
           }, 3000);
         }
       },
-      () => {}, // Ignore fast-fail, rely on watchPosition
+      () => {},
       {
         enableHighAccuracy: true,
         timeout: 5000,
@@ -214,13 +224,11 @@ function parseStoredUserLocationToSwadishttLocation(storedValue) {
   let area = storedArea;
   let city = storedCity || storedRegion;
 
-  // If we don't have a locality/area but we do have city+state, show city, state.
   if (!area && storedCity && storedRegion) {
     area = storedCity;
     city = storedRegion;
   }
 
-  // Otherwise, fall back to address label splitting.
   if (!area) area = labelParts[0] || storedCity || getNonEmptyString(parsed?.name) || 'Your Location';
   if (!city) city = labelParts[1] || storedRegion || '';
 
@@ -260,7 +268,6 @@ function buildUserLocationStoragePayload({
     city: getNonEmptyString(safeRaw?.city) || city,
     latitude: resolvedLatitude,
     longitude: resolvedLongitude,
-    // backward compatibility with existing usages
     lat: resolvedLatitude,
     lon: resolvedLongitude,
     fullAddress: resolvedFullAddress,
@@ -279,6 +286,9 @@ export function SwadishttProvider({ children }) {
   const [cartOpen, setCartOpen] = useState(false);
   const [cartHydrated, setCartHydrated] = useState(false);
 
+  // Orders State
+  const [orders, setOrders] = useState([]);
+
   // User State
   const [user, setUser] = useState(null);
   const [location, setLocation] = useState({
@@ -289,6 +299,56 @@ export function SwadishttProvider({ children }) {
   const [locationLoading, setLocationLoading] = useState(true);
 
   const abortControllerRef = useRef(null);
+
+  // Hydrate orders from localStorage & Cloud
+  const fetchOrdersFromCloud = useCallback(async () => {
+    try {
+      const devId = getDeviceId();
+      let queryParam = '';
+      if (user) {
+        queryParam = user.uid ? `userId=${encodeURIComponent(user.uid)}` : `email=${encodeURIComponent(user.email)}`;
+      } else if (devId) {
+        queryParam = `deviceId=${encodeURIComponent(devId)}`;
+      } else {
+        return;
+      }
+
+      const res = await fetch(`/api/swadishtt/orders?${queryParam}`);
+      if (res.ok) {
+        const data = await res.json();
+        if (data.orders && Array.isArray(data.orders)) {
+          setOrders(data.orders);
+          return;
+        }
+      }
+    } catch (err) {
+      console.warn('[SwadishttContext] Orders cloud fetch fallback to local:', err);
+    }
+
+    // Fallback to local storage
+    if (typeof window !== 'undefined') {
+      try {
+        const stored = localStorage.getItem(ORDERS_STORAGE_KEY);
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          if (Array.isArray(parsed)) setOrders(parsed);
+        }
+      } catch (e) {}
+    }
+  }, [user]);
+
+  useEffect(() => {
+    fetchOrdersFromCloud();
+  }, [fetchOrdersFromCloud]);
+
+  // Persist orders to localStorage
+  useEffect(() => {
+    if (typeof window !== 'undefined' && orders.length > 0) {
+      try {
+        localStorage.setItem(ORDERS_STORAGE_KEY, JSON.stringify(orders));
+      } catch (e) {}
+    }
+  }, [orders]);
 
   const fetchLocationDetails = useCallback(async (latitude, longitude, accuracy) => {
     try {
@@ -302,9 +362,7 @@ export function SwadishttProvider({ children }) {
       let payload = null;
       try {
         payload = await response.json();
-      } catch (e) {
-        // Non-JSON response
-      }
+      } catch (e) {}
 
       if (!response.ok) {
         const serverMessage = payload?.message || payload?.error || 'Location service returned an error.';
@@ -372,14 +430,11 @@ export function SwadishttProvider({ children }) {
       });
 
       localStorage.setItem('userLocation', JSON.stringify(payloadToStore));
-    } catch (e) {
-      // ignore storage errors
-    }
+    } catch (e) {}
   }, []);
 
   const detectLocation = useCallback(
     async ({ silent = false } = {}) => {
-      // Geolocation requires a secure context (HTTPS) or localhost
       if (typeof window !== 'undefined' && !window.isSecureContext) {
         const err = new Error('Geolocation requires a secure context (HTTPS or localhost).');
         if (!silent) throw err;
@@ -400,15 +455,12 @@ export function SwadishttProvider({ children }) {
       abortControllerRef.current = new AbortController();
 
       try {
-        // If permissions are explicitly denied, provide a helpful message early
         if (navigator.permissions && navigator.permissions.query) {
           let permState = null;
           try {
             const perm = await navigator.permissions.query({ name: 'geolocation' });
             permState = perm?.state;
-          } catch (e) {
-            // ignore permission query errors and proceed
-          }
+          } catch (e) {}
 
           if (permState === 'denied') {
             throw new Error(
@@ -496,7 +548,7 @@ export function SwadishttProvider({ children }) {
     [fetchLocationDetails, updateLocation]
   );
 
-  // Hydrate from shared localStorage + auto-detect once if missing
+  // Hydrate from shared localStorage
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
@@ -505,9 +557,7 @@ export function SwadishttProvider({ children }) {
       if (storedUser) {
         setUser(JSON.parse(storedUser));
       }
-    } catch (e) {
-      console.error('Error reading accesco_user:', e);
-    }
+    } catch (e) {}
 
     try {
       const stored = localStorage.getItem('userLocation');
@@ -517,9 +567,7 @@ export function SwadishttProvider({ children }) {
         setLocationLoading(false);
         return;
       }
-    } catch (e) {
-      // ignore malformed storage
-    }
+    } catch (e) {}
 
     detectLocation({ silent: true });
   }, [detectLocation]);
@@ -540,7 +588,6 @@ export function SwadishttProvider({ children }) {
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
-    // Edited Jabez: hydrate cart before any save writes to prevent overwriting storage.
     try {
       const savedCart = localStorage.getItem(CART_STORAGE_KEY);
       if (savedCart) {
@@ -562,7 +609,6 @@ export function SwadishttProvider({ children }) {
   useEffect(() => {
     if (!cartHydrated || typeof window === 'undefined') return;
 
-    // Edited Jabez: skip initial save until hydration completes to keep cart intact.
     try {
       localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cart));
     } catch (error) {
@@ -590,12 +636,9 @@ export function SwadishttProvider({ children }) {
   };
 
   const removeFromCart = (indexOrId, customizations = {}) => {
-    // Support both index-based and id-based removal
     if (typeof indexOrId === 'number' && indexOrId >= 0 && indexOrId < cart.length) {
-      // Remove by index
       setCart(prevCart => prevCart.filter((_, idx) => idx !== indexOrId));
     } else {
-      // Remove by id
       setCart(prevCart => 
         prevCart.filter(item => 
           !(item.id === indexOrId && 
@@ -637,7 +680,6 @@ export function SwadishttProvider({ children }) {
     setCart([]);
   };
 
-  // Re-add every item from a past order back into the cart ("Order Again").
   const reorder = (items) => {
     if (!Array.isArray(items) || items.length === 0) return;
     setCart(prevCart => {
@@ -661,7 +703,6 @@ export function SwadishttProvider({ children }) {
     return cart.reduce((total, item) => {
       let itemPrice = item.price;
       
-      // Add customization costs
       if (item.customizations) {
         Object.values(item.customizations).forEach(option => {
           if (typeof option === 'string') {
@@ -681,6 +722,67 @@ export function SwadishttProvider({ children }) {
     return cart.reduce((count, item) => count + item.quantity, 0);
   };
 
+  // Order Functions matching Grokly Architecture
+  const placeOrder = (orderDetails) => {
+    const orderId = orderDetails.id || `SW${Date.now().toString(36).toUpperCase()}`;
+    const newOrder = {
+      id: orderId,
+      orderId: orderId,
+      status: orderDetails.status || 'CONFIRMED',
+      timestamp: new Date().toISOString(),
+      placedAt: new Date().toISOString(),
+      venture: 'Swadishtt',
+      service: 'swadishtt',
+      userId: orderDetails.userId || user?.uid || null,
+      customerEmail: orderDetails.customerEmail || user?.email || null,
+      customerName: orderDetails.customerName || user?.name || 'Valued Customer',
+      deviceId: getDeviceId(),
+      items: Array.isArray(orderDetails.items) ? orderDetails.items : cart,
+      ...orderDetails,
+    };
+
+    setOrders((prev) => [newOrder, ...prev]);
+    clearCart();
+
+    const emailToUse = newOrder.customerEmail;
+    fetch('/api/swadishtt/orders', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ order: newOrder, customerEmail: emailToUse }),
+    }).catch((err) => console.error('[SwadishttContext] Backend order sync failed:', err));
+
+    return newOrder;
+  };
+
+  const updateOrder = (orderId, patch) => {
+    setOrders((prev) =>
+      prev.map((o) => (o.id === orderId || o.orderId === orderId ? { ...o, ...patch } : o))
+    );
+  };
+
+  const updateOrderStatus = (orderId, status) => {
+    setOrders((prev) =>
+      prev.map((o) => (o.id === orderId || o.orderId === orderId ? { ...o, status } : o))
+    );
+    fetch('/api/swadishtt/orders', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ orderId, newStatus: status }),
+    }).catch((err) => console.error('[SwadishttContext] Status update failed:', err));
+  };
+
+  const cancelOrder = (orderId) => {
+    updateOrderStatus(orderId, 'CANCELLED');
+  };
+
+  const trackOrder = (orderId) => {
+    return orders.find((o) => o.id === orderId || o.orderId === orderId) || null;
+  };
+
+  const syncCloudOrders = () => {
+    fetchOrdersFromCloud();
+  };
+
   // Filter Functions
   const updateFilters = (newFilters) => {
     setFilters(prev => ({ ...prev, ...newFilters }));
@@ -695,9 +797,6 @@ export function SwadishttProvider({ children }) {
       sortBy: 'relevance'
     });
   };
-
-  // Location Functions
-  // updateLocation is defined above (memoized) and persists to shared storage by default
 
   const value = {
     // Cart
@@ -714,6 +813,16 @@ export function SwadishttProvider({ children }) {
     getCartTotal,
     getCartCount,
     
+    // Orders
+    orders,
+    placeOrder,
+    updateOrder,
+    updateOrderStatus,
+    cancelOrder,
+    trackOrder,
+    syncCloudOrders,
+    fetchOrders: fetchOrdersFromCloud,
+
     // User
     user,
     setUser,

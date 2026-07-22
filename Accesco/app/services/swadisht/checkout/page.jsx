@@ -1,9 +1,5 @@
 'use client';
 
-// Force dynamic rendering to prevent prerendering
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
-
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSwadishtt } from '../contexts/SwadishttContext';
@@ -11,11 +7,9 @@ import SwadishttHeader from '../components/SwadishttHeader';
 import styles from './checkout.module.css';
 import { payWithRazorpay } from '@/lib/razorpayService';
 
-const ORDERS_STORAGE_KEY = 'swadishtt-orders';
-
 function CheckoutContent() {
   const router = useRouter();
-  const { cart, cartHydrated, clearCart } = useSwadishtt();
+  const { cart, cartHydrated, clearCart, placeOrder } = useSwadishtt();
   const [step, setStep] = useState(1);
   const [deliveryAddress, setDeliveryAddress] = useState({
     name: '',
@@ -114,19 +108,6 @@ function CheckoutContent() {
   const discount = deliverySpeed === 'batched' ? 20 : 0;
   const total = Math.max(0, subtotal + deliveryFee + platformFee + gst - discount);
 
-  const persistOrder = (nextOrder) => {
-    if (typeof window === 'undefined') return;
-
-    try {
-      const raw = localStorage.getItem(ORDERS_STORAGE_KEY);
-      const parsed = raw ? JSON.parse(raw) : [];
-      const existing = Array.isArray(parsed) ? parsed : [];
-      localStorage.setItem(ORDERS_STORAGE_KEY, JSON.stringify([nextOrder, ...existing]));
-    } catch (error) {
-      console.error('Error saving Swadishtt orders:', error);
-    }
-  };
-
   const validateAddress = () => {
     const errors = {};
     if (!deliveryAddress.name.trim()) errors.name = 'Full Name is required';
@@ -150,21 +131,34 @@ function CheckoutContent() {
     }
   };
 
+  const generateOrderCode = () => {
+    const dateStr = new Date().toISOString().slice(0, 10).replace(/-/g, '');
+    const randomStr = Math.random().toString(36).substring(2, 8).toUpperCase();
+    return `SWD-${dateStr}-${randomStr}`;
+  };
+
   const finalizeOrder = async (paymentInfo = {}) => {
     const customerEmail = deliveryAddress.email || 'customer@accescoliving.com';
     const customerName = deliveryAddress.name || 'Valued Customer';
-    const orderId = `SW${Date.now().toString(36).toUpperCase()}`;
-    const nextOrder = {
+    const orderId = generateOrderCode();
+
+    const orderPayload = {
       id: orderId,
+      orderId: orderId,
       status: 'CONFIRMED',
       placedAt: new Date().toISOString(),
+      timestamp: new Date().toISOString(),
       paymentMethod,
+      paymentStatus: paymentMethod === 'cod' ? 'PENDING' : 'SUCCESS',
       customerEmail,
       customerName,
+      phone: deliveryAddress.phone,
       ...paymentInfo,
       delivery: { ...deliveryAddress },
+      deliveryAddress: { ...deliveryAddress },
       deliveryPartner: {
         name: 'Ravi Kumar',
+        phone: '+91 9876543210',
         distanceKm: deliverySpeed === 'batched' ? 3.4 : 1.8,
         etaMinutes: deliverySpeed === 'batched' ? 25 : 10,
         statusText:
@@ -172,11 +166,18 @@ function CheckoutContent() {
             ? 'Delivery partner is completing a nearby order'
             : 'Delivery partner is heading to the restaurant',
       },
+      subtotal,
+      deliveryFee,
+      platformFee,
+      gst,
+      discount,
+      total,
       totals: {
         subtotal,
         deliveryFee,
         platformFee,
         gst,
+        discount,
         total,
       },
       items: cart.map((item) => ({
@@ -186,45 +187,19 @@ function CheckoutContent() {
         quantity: item.quantity || 1,
         image: item.image,
         restaurant: item.restaurant || '',
-        sku: item.sku || `SWD-GEN-${item.id.replace(/[^0-9]/g, '') || '00'}`,
+        sku: item.sku || `SWD-GEN-${String(item.id).replace(/[^0-9]/g, '') || '00'}`,
       })),
     };
-    
-    setPlacedOrder(nextOrder);
-    persistOrder(nextOrder);
+
+    const nextOrder = await placeOrder(orderPayload);
+    setPlacedOrder(nextOrder || orderPayload);
     setLastOrderId(orderId);
-
-    // Send confirmation email
-    try {
-      const res = await fetch('/api/swadishtt/orders/update-status', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          orderId,
-          newStatus: 'CONFIRMED',
-          customerEmail,
-          customerName,
-          orderData: nextOrder,
-        }),
-      });
-      const data = await res.json();
-      if (data.success) {
-        const orders = JSON.parse(localStorage.getItem(ORDERS_STORAGE_KEY) || '[]');
-        const updated = orders.map((o) =>
-          o.id === orderId ? { ...o, status: 'CONFIRMED', updatedAt: new Date().toISOString() } : o
-        );
-        localStorage.setItem(ORDERS_STORAGE_KEY, JSON.stringify(updated));
-      }
-    } catch (err) {
-      console.error('Failed to trigger confirmation email:', err);
-    }
-
     setOrderPlaced(true);
 
     setTimeout(() => {
       clearCart();
       router.push(`/services/swadisht/order-tracking?id=${orderId}`);
-    }, 3000);
+    }, 2000);
   };
 
   const handlePlaceOrder = async () => {
@@ -253,6 +228,7 @@ function CheckoutContent() {
         description: `Swadishtt order · ${cart.length} item(s)`,
         prefill: {
           name: deliveryAddress.name,
+          email: deliveryAddress.email,
           contact: deliveryAddress.phone,
         },
         theme: { color: '#E23744' },
@@ -280,7 +256,7 @@ function CheckoutContent() {
     const etaMinutes = deliveryPartner.etaMinutes || (deliverySpeed === 'batched' ? 25 : 10);
     const driverDistance = deliveryPartner.distanceKm || (deliverySpeed === 'batched' ? 3.4 : 1.8);
     const driverName = deliveryPartner.name || 'Ravi Kumar';
-    const orderLabel = displayOrder.id || lastOrderId || `SW${Math.floor(Math.random() * 100000)}`;
+    const orderLabel = displayOrder.id || lastOrderId || `SWD-${Math.floor(Math.random() * 100000)}`;
 
     const displayItems = displayOrder.items || [];
     const itemCount = displayItems.reduce((sum, item) => sum + (item.quantity || 1), 0);
@@ -306,7 +282,7 @@ function CheckoutContent() {
     const totalLabel =
       typeof displayOrder.totals?.total === 'number'
         ? `₹${Math.round(displayOrder.totals.total)}`
-        : '₹--';
+        : `₹${total}`;
 
     return (
       <div className={styles.page}>
@@ -764,7 +740,7 @@ function CheckoutContent() {
                       <div className={styles.orderItemName}>{item.name}</div>
                       <div className={styles.metaRow}>
                         <span className={styles.orderItemQty}>Qty: {item.quantity || 1}</span>
-                        <span className={styles.orderItemSku}>{item.sku || `SWD-GEN-${item.id.replace(/[^0-9]/g, '') || '00'}`}</span>
+                        <span className={styles.orderItemSku}>{item.sku || `SWD-GEN-${String(item.id).replace(/[^0-9]/g, '') || '00'}`}</span>
                       </div>
                     </div>
                     <div className={styles.orderItemPrice}>₹{item.price * (item.quantity || 1)}</div>
@@ -801,8 +777,8 @@ function CheckoutContent() {
 
               <div className={styles.summaryDivider}></div>
 
-              <div className={`${styles.summaryRow} ${styles.total}`}>
-                <span>Total</span>
+              <div className={styles.summaryTotalRow}>
+                <span>Total Amount</span>
                 <span>₹{total}</span>
               </div>
             </div>
@@ -813,9 +789,6 @@ function CheckoutContent() {
   );
 }
 
-export default function CheckoutPage() {
-  if (typeof window === 'undefined') {
-    return null;
-  }
+export default function SwadishttCheckout() {
   return <CheckoutContent />;
 }

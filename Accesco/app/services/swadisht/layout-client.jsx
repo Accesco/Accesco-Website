@@ -1,17 +1,12 @@
 'use client';
 
-// Force dynamic rendering for all Swadishtt pages  
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
-
 /**
- * Swadishtt Layout
- * @description Layout wrapper for all Swadishtt pages
+ * Swadishtt Layout Client
+ * @description Client wrapper for Swadishtt provider
  */
 
 import { SwadishttProvider } from './contexts/SwadishttContext';
 
-export default function SwadishttLayout({ children }) {
-  // Edited Jabez: keep cart state across navigation so checkout sees selected items.
+export default function SwadishttLayoutClient({ children }) {
   return <SwadishttProvider>{children}</SwadishttProvider>;
 }

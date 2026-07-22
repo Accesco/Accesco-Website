@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 import { saveOrderToFirestore, fetchOrdersFromFirestore, updateOrderStatusInFirestore } from '@/lib/orderService';
 import { sendOrderLifecycleEmail } from '@/lib/orderLifecycle';
-import { sendInstaStyleConfirmation } from '@/lib/mailService';
 
 export const dynamic = 'force-dynamic';
 
@@ -14,38 +13,24 @@ export async function POST(request) {
       return NextResponse.json({ error: 'Order data is required.' }, { status: 400 });
     }
 
-    const emailToUse = customerEmail || order.customerEmail || order.address?.email;
-    const saveResult = await saveOrderToFirestore('instastyle', {
+    const emailToUse = customerEmail || order.customerEmail || order.delivery?.email || order.address?.email;
+    const customerName = order.customerName || order.delivery?.name || 'Valued Customer';
+
+    // Persist to Firestore
+    const saveResult = await saveOrderToFirestore('swadishtt', {
       ...order,
       customerEmail: emailToUse,
     });
 
+    // Send order confirmation email
     if (emailToUse) {
-      const customerName = order.customerName || order.address?.fullName || 'Customer';
-      const totals = order.totals || {
-        subtotal: order.subtotal || 0,
-        shippingFee: order.deliveryFee || 0,
-        deliveryFee: order.deliveryFee || 0,
-        gst: order.tax || 0,
-        total: order.total || 0,
-        discount: order.speedDiscount || 0,
-      };
-      const shippingAddress = order.shippingAddress || (order.address ? {
-        line1: order.address.addressLine1 || order.address.line1 || '',
-        city: order.address.city || '',
-        pincode: order.address.pincode || '',
-      } : {});
-
-      sendInstaStyleConfirmation({
-        order: { ...order, totals, shippingAddress },
-        customerName,
-        email: emailToUse,
-      }).catch((err) => console.error('[instastyle/orders] Email failed:', err));
+      sendOrderLifecycleEmail('swadishtt', saveResult.order || order, customerName, emailToUse, 'CONFIRMED')
+        .catch((err) => console.error('[swadishtt/orders] Email trigger failed:', err));
     }
 
     return NextResponse.json({ success: true, orderId: order.id || order.orderId }, { status: 200 });
   } catch (error) {
-    console.error('[instastyle/orders] Unexpected error:', error);
+    console.error('[swadishtt/orders] POST error:', error);
     return NextResponse.json({ error: 'Internal server error.' }, { status: 500 });
   }
 }
@@ -58,7 +43,7 @@ export async function GET(request) {
     const email = searchParams.get('email');
     const deviceId = searchParams.get('deviceId');
 
-    const result = await fetchOrdersFromFirestore('instastyle', {
+    const result = await fetchOrdersFromFirestore('swadishtt', {
       id: orderId,
       userId,
       email,
@@ -74,7 +59,7 @@ export async function GET(request) {
 
     return NextResponse.json({ orders: result.orders || [] });
   } catch (error) {
-    console.error('[instastyle/orders] GET error:', error);
+    console.error('[swadishtt/orders] GET error:', error);
     return NextResponse.json({ error: 'Internal server error.' }, { status: 500 });
   }
 }
@@ -88,16 +73,16 @@ export async function PATCH(request) {
       return NextResponse.json({ error: 'orderId and newStatus are required.' }, { status: 400 });
     }
 
-    const updateResult = await updateOrderStatusInFirestore('instastyle', orderId, newStatus);
+    const updateResult = await updateOrderStatusInFirestore('swadishtt', orderId, newStatus);
 
     if (customerEmail) {
-      sendOrderLifecycleEmail('instastyle', orderData || { id: orderId }, customerName || 'Customer', customerEmail, newStatus)
-        .catch((err) => console.error('[instastyle/orders] Status email failed:', err));
+      sendOrderLifecycleEmail('swadishtt', orderData || { id: orderId }, customerName || 'Valued Customer', customerEmail, newStatus)
+        .catch((err) => console.error('[swadishtt/orders] Status email trigger failed:', err));
     }
 
     return NextResponse.json({ success: true, status: newStatus, updateResult }, { status: 200 });
   } catch (error) {
-    console.error('[instastyle/orders] PATCH error:', error);
+    console.error('[swadishtt/orders] PATCH error:', error);
     return NextResponse.json({ error: 'Internal server error.' }, { status: 500 });
   }
 }

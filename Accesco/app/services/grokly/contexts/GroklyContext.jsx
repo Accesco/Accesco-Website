@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, useState, useEffect, useMemo, useRef } from 'react';
+import { createContext, useContext, useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import { useAuth } from '../../../components/AuthProvider';
 import { db } from '@/lib/firebase';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
@@ -24,7 +24,7 @@ function getDeviceId() {
 
 export function GroklyProvider({ children }) {
   const { user } = useAuth();
-  // Hydrate synchronously from localStorage to avoid empty flashes during navigation
+
   const readInitialCart = () => {
     if (typeof window === 'undefined') return {};
     try {
@@ -45,9 +45,7 @@ export function GroklyProvider({ children }) {
       } else if (parsed && typeof parsed === 'object') {
         return parsed;
       }
-    } catch (e) {
-      // ignore and fallthrough to empty
-    }
+    } catch (e) {}
     return {};
   };
 
@@ -88,17 +86,15 @@ export function GroklyProvider({ children }) {
     }
   };
 
-  const [cart, setCart] = useState({}); // starts empty for SSR safety
+  const [cart, setCart] = useState({});
   const [orders, setOrders] = useState([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [location, setLocation] = useState('Koramangala');
   const [isLocationModalOpen, setIsLocationModalOpen] = useState(false);
   const [cartHydrated, setCartHydrated] = useState(false);
 
-  // Track hydration — skip the first localStorage write so we never overwrite the real cart with an empty SSR value
   const isHydrated = useRef(false);
 
-  // Load localStorage data once client side has mounted to avoid hydration errors
   useEffect(() => {
     const initialLocation = readInitialLocation();
     const initialOrders = readInitialOrders();
@@ -106,35 +102,34 @@ export function GroklyProvider({ children }) {
     setOrders(initialOrders);
   }, []);
 
-  // Fetch orders from backend Firestore on mount/user change (for both registered users and guests)
-  useEffect(() => {
-    const fetchOrders = async () => {
-      try {
-        const devId = getDeviceId();
-        let queryParam = '';
-        if (user) {
-          queryParam = user.uid ? `userId=${encodeURIComponent(user.uid)}` : `email=${encodeURIComponent(user.email)}`;
-        } else if (devId) {
-          queryParam = `deviceId=${encodeURIComponent(devId)}`;
-        } else {
-          return;
-        }
-
-        const res = await fetch(`/api/grokly/orders?${queryParam}`);
-        if (res.ok) {
-          const data = await res.json();
-          if (data.orders) {
-            setOrders(data.orders);
-          }
-        }
-      } catch (err) {
-        console.error('[GroklyContext] Failed to sync orders from backend:', err);
+  const fetchOrdersFromCloud = useCallback(async () => {
+    try {
+      const devId = getDeviceId();
+      let queryParam = '';
+      if (user) {
+        queryParam = user.uid ? `userId=${encodeURIComponent(user.uid)}` : `email=${encodeURIComponent(user.email)}`;
+      } else if (devId) {
+        queryParam = `deviceId=${encodeURIComponent(devId)}`;
+      } else {
+        return;
       }
-    };
-    fetchOrders();
+
+      const res = await fetch(`/api/grokly/orders?${queryParam}`);
+      if (res.ok) {
+        const data = await res.json();
+        if (data.orders && Array.isArray(data.orders)) {
+          setOrders(data.orders);
+        }
+      }
+    } catch (err) {
+      console.error('[GroklyContext] Failed to sync orders from backend:', err);
+    }
   }, [user]);
 
-  // Show location modal if no location is saved (cart & orders already loaded via useState lazy initializer above)
+  useEffect(() => {
+    fetchOrdersFromCloud();
+  }, [fetchOrdersFromCloud]);
+
   useEffect(() => {
     try {
       const savedLocation = localStorage.getItem(LOCATION_STORAGE_KEY);
@@ -146,7 +141,6 @@ export function GroklyProvider({ children }) {
       try {
         parsedLocation = JSON.parse(savedLocation);
       } catch (e) {
-        // Plain string stored — already resolved in readInitialLocation, no modal needed
         return;
       }
       const resolvedName =
@@ -163,30 +157,25 @@ export function GroklyProvider({ children }) {
     }
   }, []);
 
-  // Fetch cart from Firestore on mount/user change
   useEffect(() => {
     const loadCartFromFirestore = async () => {
-      // 1. Always load from localStorage first so the user has immediate access to local items
       const initialLocal = readInitialCart();
       if (initialLocal && Object.keys(initialLocal).length > 0) {
         setCart(initialLocal);
       }
 
-      // If user is not logged in, we only use localStorage. Do not fetch/overwrite guest carts in Firestore.
       if (!user) {
         isHydrated.current = true;
         setCartHydrated(true);
         return;
       }
 
-      // If user is logged in, sync with their user-specific Firestore cart
       const identifier = user.uid || user.email;
       try {
         const docSnap = await getDoc(doc(db, 'grokly_carts', identifier));
         if (docSnap.exists()) {
           const remoteCart = docSnap.data()?.cart;
           if (remoteCart && typeof remoteCart === 'object') {
-            // Overwrite cart state with remote Firestore cart if it exists (even if empty, since logged-in user state is source of truth)
             setCart(remoteCart);
             isHydrated.current = true;
             setCartHydrated(true);
@@ -196,7 +185,7 @@ export function GroklyProvider({ children }) {
       } catch (err) {
         console.error('[GroklyContext] Failed to load cart from Firestore:', err);
       }
-      
+
       isHydrated.current = true;
       setCartHydrated(true);
     };
@@ -204,14 +193,11 @@ export function GroklyProvider({ children }) {
     loadCartFromFirestore();
   }, [user]);
 
-  // Save cart to Firestore and localStorage whenever it changes
   useEffect(() => {
     if (!isHydrated.current) return;
-    
-    // Save to localStorage as backup
+
     localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cart));
 
-    // Save to Firestore
     const saveCartToFirestore = async () => {
       const identifier = user?.uid || user?.email || getDeviceId();
       if (!identifier) return;
@@ -230,7 +216,9 @@ export function GroklyProvider({ children }) {
   }, [cart, user]);
 
   useEffect(() => {
-    localStorage.setItem(ORDERS_STORAGE_KEY, JSON.stringify(orders));
+    if (typeof window !== 'undefined' && orders.length > 0) {
+      localStorage.setItem(ORDERS_STORAGE_KEY, JSON.stringify(orders));
+    }
   }, [orders]);
 
   const cartCount = useMemo(() => {
@@ -307,11 +295,15 @@ export function GroklyProvider({ children }) {
   }, [isCartOpen, isLocationModalOpen]);
 
   const placeOrder = (orderDetails) => {
+    const orderId = orderDetails.id || orderDetails.orderId || `GRK-${Date.now()}`;
     const newOrder = {
-      id: `GRK-${Date.now()}`,
-      status: 'PLACED',
+      id: orderId,
+      orderId: orderId,
+      status: orderDetails.status || 'PLACED',
       timestamp: new Date().toISOString(),
+      placedAt: new Date().toISOString(),
       venture: 'Grokly',
+      service: 'grokly',
       userId: orderDetails.userId || user?.uid || null,
       customerEmail: orderDetails.customerEmail || user?.email || null,
       customerName: orderDetails.customerName || user?.name || user?.displayName || 'Accesco Customer',
@@ -321,7 +313,6 @@ export function GroklyProvider({ children }) {
     setOrders(prev => [newOrder, ...prev]);
     setCart({});
 
-    // Persist to backend (non-blocking — local state already updated)
     const emailToUse = newOrder.customerEmail;
     fetch('/api/grokly/orders', {
       method: 'POST',
@@ -332,24 +323,53 @@ export function GroklyProvider({ children }) {
     return newOrder;
   };
 
+  const updateOrder = (orderId, patch) => {
+    setOrders((prev) =>
+      prev.map((o) => (o.id === orderId || o.orderId === orderId ? { ...o, ...patch } : o))
+    );
+  };
+
+  const updateOrderStatus = (orderId, status) => {
+    setOrders(prev => prev.map(order =>
+      (order.id === orderId || order.orderId === orderId) ? { ...order, status } : order
+    ));
+    fetch('/api/grokly/orders', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ orderId, newStatus: status }),
+    }).catch(err => console.error('[GroklyContext] Status update failed:', err));
+  };
+
+  const cancelOrder = (orderId) => {
+    updateOrderStatus(orderId, 'CANCELLED');
+  };
+
+  const trackOrder = (orderId) => {
+    return orders.find((o) => o.id === orderId || o.orderId === orderId) || null;
+  };
+
+  const syncCloudOrders = () => {
+    fetchOrdersFromCloud();
+  };
+
   // Simulate order progress
   useEffect(() => {
     if (orders.length === 0) return;
-    
+
     const interval = setInterval(() => {
       setOrders(prev => {
         let hasChanged = false;
         const updated = prev.map(order => {
           if (order.status === 'DELIVERED') return order;
-          
-          const age = (Date.now() - new Date(order.timestamp).getTime()) / 1000;
+
+          const age = (Date.now() - new Date(order.timestamp || order.placedAt || Date.now()).getTime()) / 1000;
           let nextStatus = order.status;
-          
+
           if (age > 60) nextStatus = 'DELIVERED';
           else if (age > 40) nextStatus = 'OUT_FOR_DELIVERY';
           else if (age > 20) nextStatus = 'PACKING';
           else if (age > 5) nextStatus = 'CONFIRMED';
-          
+
           if (nextStatus !== order.status) {
             hasChanged = true;
             return { ...order, status: nextStatus };
@@ -359,7 +379,7 @@ export function GroklyProvider({ children }) {
         return hasChanged ? updated : prev;
       });
     }, 5000);
-    
+
     return () => clearInterval(interval);
   }, [orders]);
 
@@ -384,7 +404,13 @@ export function GroklyProvider({ children }) {
       updateLocation,
       openLocationModal,
       closeLocationModal,
-      placeOrder
+      placeOrder,
+      updateOrder,
+      updateOrderStatus,
+      cancelOrder,
+      trackOrder,
+      syncCloudOrders,
+      fetchOrders: fetchOrdersFromCloud,
     }}>
       {children}
     </GroklyContext.Provider>

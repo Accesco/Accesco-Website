@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, useState, useEffect, useRef } from 'react';
+import { createContext, useContext, useState, useEffect, useRef, useCallback } from 'react';
 import { db } from '@/lib/firebase';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { useAuth } from '@/app/components/AuthProvider';
@@ -33,6 +33,40 @@ export function CartProvider({ children }) {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const isHydrated = useRef(false);
 
+  const fetchOrdersFromCloud = useCallback(async () => {
+    try {
+      const devId = getDeviceId();
+      let queryParam = '';
+      if (user) {
+        queryParam = user.uid ? `userId=${encodeURIComponent(user.uid)}` : `email=${encodeURIComponent(user.email)}`;
+      } else if (devId) {
+        queryParam = `deviceId=${encodeURIComponent(devId)}`;
+      } else {
+        return;
+      }
+
+      const res = await fetch(`/api/instastyle/orders?${queryParam}`);
+      if (res.ok) {
+        const data = await res.json();
+        if (data.orders && Array.isArray(data.orders)) {
+          setOrders(data.orders);
+          return;
+        }
+      }
+    } catch (error) {
+      console.warn('Orders cloud read fallback to local only:', error);
+    }
+
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem(ORDERS_STORAGE_KEY);
+      if (saved) {
+        try {
+          setOrders(JSON.parse(saved));
+        } catch (e) {}
+      }
+    }
+  }, [user]);
+
   // Load data from localStorage/Firestore on mount/user change
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -51,35 +85,6 @@ export function CartProvider({ children }) {
     loadData(WISHLIST_STORAGE_KEY, setWishlist);
     loadData(INVENTORY_STORAGE_KEY, setInventory);
 
-    // Hydrate orders from cloud
-    const fetchOrdersFromCloud = async () => {
-      try {
-        const devId = getDeviceId();
-        let queryParam = '';
-        if (user) {
-          queryParam = user.uid ? `userId=${encodeURIComponent(user.uid)}` : `email=${encodeURIComponent(user.email)}`;
-        } else if (devId) {
-          queryParam = `deviceId=${encodeURIComponent(devId)}`;
-        } else {
-          return;
-        }
-
-        const res = await fetch(`/api/instastyle/orders?${queryParam}`);
-        if (res.ok) {
-          const data = await res.json();
-          if (data.orders) {
-            setOrders(data.orders);
-            return;
-          }
-        }
-      } catch (error) {
-        console.warn('Orders cloud read fallback to local only:', error);
-      }
-
-      // Fallback
-      loadData(ORDERS_STORAGE_KEY, setOrders);
-    };
-
     // Hydrate cart from Firestore
     const hydrateCartFromCloud = async () => {
       const identifier = user?.uid || user?.email || getDeviceId();
@@ -97,7 +102,7 @@ export function CartProvider({ children }) {
       } catch (error) {
         console.warn('Cart cloud read fallback to local only:', error);
       }
-      
+
       // Fallback
       loadData(CART_STORAGE_KEY, setCart);
       isHydrated.current = true;
@@ -123,7 +128,7 @@ export function CartProvider({ children }) {
     hydrateCartFromCloud();
     hydrateWishlistFromCloud();
     fetchOrdersFromCloud();
-  }, [user]);
+  }, [user, fetchOrdersFromCloud]);
 
   // Save cart to localStorage and Firestore whenever it changes
   useEffect(() => {
@@ -148,13 +153,11 @@ export function CartProvider({ children }) {
   }, [cart, user]);
 
   useEffect(() => {
-    localStorage.setItem(ORDERS_STORAGE_KEY, JSON.stringify(orders));
+    if (typeof window !== 'undefined' && orders.length > 0) {
+      localStorage.setItem(ORDERS_STORAGE_KEY, JSON.stringify(orders));
+    }
   }, [orders]);
 
-  // ═══════════════════════════════════════════════
-  // ETA & ORDER ACCEPTANCE SIMULATION
-  // ═══════════════════════════════════════════════
-  
   useEffect(() => {
     if (orders.length === 0) return;
 
@@ -162,15 +165,15 @@ export function CartProvider({ children }) {
       setOrders(prevOrders => {
         let changed = false;
         const now = Date.now();
-        
+
         const newOrders = prevOrders.map(order => {
           if (order.status === 'DELIVERED') return order;
-          
-          const orderTime = new Date(order.timestamp).getTime();
+
+          const orderTime = new Date(order.timestamp || order.placedAt || Date.now()).getTime();
           const elapsedSeconds = (now - orderTime) / 1000;
-          
+
           let newStatus = order.status;
-          
+
           if (order.status === 'PLACED' && elapsedSeconds > 5) {
             newStatus = 'CONFIRMED';
           } else if (order.status === 'CONFIRMED' && elapsedSeconds > 15) {
@@ -192,7 +195,7 @@ export function CartProvider({ children }) {
       });
     };
 
-    const interval = setInterval(simulateProgress, 2000);
+    const interval = setInterval(simulateProgress, 5000);
     return () => clearInterval(interval);
   }, [orders]);
 
@@ -218,34 +221,12 @@ export function CartProvider({ children }) {
           { merge: true }
         );
       } catch (error) {
-        // Keep local wishlist as source of truth if cloud sync fails.
         console.warn('Wishlist sync fallback to local only:', error?.message || error);
       }
     };
 
     syncWishlist();
   }, [wishlist]);
-
-  useEffect(() => {
-    const hydrateWishlistFromCloud = async () => {
-      const deviceId = getDeviceId();
-      if (!deviceId) return;
-
-      try {
-        const snapshot = await getDoc(doc(db, 'instastyle_wishlists', deviceId));
-        if (!snapshot.exists()) return;
-
-        const remoteItems = snapshot.data()?.items;
-        if (Array.isArray(remoteItems) && remoteItems.length > 0) {
-          setWishlist((current) => (current.length > 0 ? current : remoteItems));
-        }
-      } catch (error) {
-        console.warn('Wishlist cloud read fallback to local only:', error?.message || error);
-      }
-    };
-
-    hydrateWishlistFromCloud();
-  }, []);
 
   // Calculate totals
   const subtotal = cart.reduce((sum, item) => {
@@ -263,19 +244,17 @@ export function CartProvider({ children }) {
   const addToCart = (product, size, color, quantity = 1) => {
     setCart(prev => {
       const existingIndex = prev.findIndex(
-        item => item.id === product.id && 
-                item.selectedSize === size && 
+        item => item.id === product.id &&
+                item.selectedSize === size &&
                 item.selectedColor === color
       );
 
       if (existingIndex > -1) {
-        // Update quantity if item exists
         const updated = [...prev];
         updated[existingIndex].quantity += quantity;
         return updated;
       }
 
-      // Add new item
       return [...prev, {
         id: product.id,
         name: product.name,
@@ -290,15 +269,14 @@ export function CartProvider({ children }) {
       }];
     });
 
-    // Show success feedback
     return true;
   };
 
   // Remove item from cart
   const removeFromCart = (productId, size, color) => {
     setCart(prev => prev.filter(
-      item => !(item.id === productId && 
-                item.selectedSize === size && 
+      item => !(item.id === productId &&
+                item.selectedSize === size &&
                 item.selectedColor === color)
     ));
   };
@@ -311,20 +289,18 @@ export function CartProvider({ children }) {
     }
 
     setCart(prev => prev.map(item =>
-      item.id === productId && 
-      item.selectedSize === size && 
+      item.id === productId &&
+      item.selectedSize === size &&
       item.selectedColor === color
         ? { ...item, quantity: newQuantity }
         : item
     ));
   };
 
-  // Clear entire cart
   const clearCart = () => {
     setCart([]);
   };
 
-  // Re-add every item from a past order back into the cart ("Order Again").
   const reorder = (items) => {
     if (!Array.isArray(items) || items.length === 0) return;
     setCart(prev => {
@@ -345,21 +321,28 @@ export function CartProvider({ children }) {
   };
 
   const placeOrder = (orderData) => {
+    const orderId = orderData.id || `INS-${Date.now()}`;
     const newOrder = {
-      id: `INS-${Date.now()}`,
-      items: [...cart],
-      status: 'PLACED',
+      id: orderId,
+      orderId: orderId,
+      items: orderData.items || [...cart],
+      status: orderData.status || 'CONFIRMED',
       timestamp: new Date().toISOString(),
+      placedAt: new Date().toISOString(),
       venture: 'InstaStyle',
+      service: 'instastyle',
+      userId: orderData.userId || user?.uid || null,
+      customerEmail: orderData.customerEmail || user?.email || null,
+      customerName: orderData.customerName || orderData.address?.fullName || user?.name || 'Valued Customer',
+      deviceId: getDeviceId(),
       ...orderData
     };
-    
-    // Reduce stock
+
     setInventory(prev => {
       const next = { ...prev };
       cart.forEach(item => {
         if (!next[item.id]) next[item.id] = {};
-        const currentSizeStock = next[item.id][item.selectedSize] !== undefined ? 
+        const currentSizeStock = next[item.id][item.selectedSize] !== undefined ?
                                 next[item.id][item.selectedSize] : 10;
         next[item.id][item.selectedSize] = Math.max(0, currentSizeStock - item.quantity);
       });
@@ -369,8 +352,7 @@ export function CartProvider({ children }) {
     setOrders(prev => [newOrder, ...prev]);
     clearCart();
 
-    // Persist to backend (non-blocking — local state already updated)
-    const customerEmail = orderData.customerEmail || null;
+    const customerEmail = newOrder.customerEmail;
     fetch('/api/instastyle/orders', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -380,10 +362,33 @@ export function CartProvider({ children }) {
     return newOrder;
   };
 
+  const updateOrder = (orderId, patch) => {
+    setOrders((prev) =>
+      prev.map((o) => (o.id === orderId || o.orderId === orderId ? { ...o, ...patch } : o))
+    );
+  };
+
   const updateOrderStatus = (orderId, status) => {
-    setOrders(prev => prev.map(order => 
-      order.id === orderId ? { ...order, status } : order
+    setOrders(prev => prev.map(order =>
+      (order.id === orderId || order.orderId === orderId) ? { ...order, status } : order
     ));
+    fetch('/api/instastyle/orders', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ orderId, newStatus: status }),
+    }).catch(err => console.error('[CartContext] Status update failed:', err));
+  };
+
+  const cancelOrder = (orderId) => {
+    updateOrderStatus(orderId, 'CANCELLED');
+  };
+
+  const trackOrder = (orderId) => {
+    return orders.find((o) => o.id === orderId || o.orderId === orderId) || null;
+  };
+
+  const syncCloudOrders = () => {
+    fetchOrdersFromCloud();
   };
 
   const addToWishlist = (product) => {
@@ -424,7 +429,6 @@ export function CartProvider({ children }) {
     return true;
   };
 
-  // Toggle cart drawer
   const toggleCart = () => {
     setIsCartOpen(prev => !prev);
   };
@@ -452,7 +456,12 @@ export function CartProvider({ children }) {
     clearCart,
     reorder,
     placeOrder,
+    updateOrder,
     updateOrderStatus,
+    cancelOrder,
+    trackOrder,
+    syncCloudOrders,
+    fetchOrders: fetchOrdersFromCloud,
     addToWishlist,
     removeFromWishlist,
     toggleWishlist,

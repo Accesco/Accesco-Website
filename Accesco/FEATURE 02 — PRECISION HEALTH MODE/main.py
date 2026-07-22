@@ -37,11 +37,9 @@ from adaptive_learning_engine import (
     get_personalised_weights,
 )
 import firebase_client as db
-
 # ---------------------------------------------------------------------------
 # App setup
 # ---------------------------------------------------------------------------
-
 app = FastAPI(
     title="Precision Health API",
     description="Real-time cart scoring with Firebase Firestore",
@@ -54,7 +52,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
 
 # ---------------------------------------------------------------------------
 # Pydantic schemas
@@ -94,7 +91,10 @@ class FeedbackRequest(BaseModel):
     suggestion_index: int   = Field(..., ge=0, description="0-based index of the suggestion")
     feedback:         str   = Field(..., description="'accepted' | 'rejected' | 'ignored'")
 
-
+class WebsiteFeedbackRequest(BaseModel):
+    user: str
+    score: int
+    review: str
 # ---------------------------------------------------------------------------
 # Helper
 # ---------------------------------------------------------------------------
@@ -129,7 +129,20 @@ def get_products():
     catalogue = db.get_all_products()
     products  = [{"id": pid, **p} for pid, p in catalogue.items()]
     return {"success": True, "products": products}
+@app.post("/api/feedback")
+def submit_website_feedback(body: WebsiteFeedbackRequest):
 
+    feedback_id = db.save_feedback(
+        body.user,
+        body.score,
+        body.review,
+    )
+
+    return {
+        "success": True,
+        "feedback_id": feedback_id,
+        "message": "Feedback submitted successfully",
+    }
 
 @app.get("/api/products/{product_id}", summary="Get a single product")
 def get_product(product_id: str):

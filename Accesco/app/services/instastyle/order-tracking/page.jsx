@@ -12,8 +12,6 @@ import { subscribeToRiderLocation, startRiderSimulation, computeRoutePosition, s
 // refresh / strict-mode double-mount doesn't spawn duplicate rider feeds.
 const startedSimulations = new Set();
 
-// Production-ready SVG Icons to replace emojis
-
 const CheckIcon = ({ className }) => (
   <svg className={className} width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round">
     <polyline points="20 6 9 17 4 12" />
@@ -82,10 +80,21 @@ function OrderTrackingContent() {
   const orderId = searchParams.get('id');
   const eta = searchParams.get('eta') || '12';
   
-  const order = useMemo(() => orders.find(o => o.id === orderId), [orders, orderId]);
+  const orderFromContext = useMemo(() => orders.find(o => o.id === orderId || o.orderId === orderId), [orders, orderId]);
+  const [fetchedOrder, setFetchedOrder] = useState(null);
 
-  // Resolve the real delivery ("Your door") coordinates: prefer the order's saved
-  // coordinates, fall back to the currently detected location, then a default.
+  useEffect(() => {
+    if (!orderId || orderFromContext) return;
+    fetch(`/api/instastyle/orders?id=${encodeURIComponent(orderId)}`)
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (data?.order) setFetchedOrder(data.order);
+      })
+      .catch((err) => console.error('Cloud order fetch failed:', err));
+  }, [orderId, orderFromContext]);
+
+  const order = orderFromContext || fetchedOrder;
+
   const getHomeLatLng = () => {
     if (order?.deliveryLat && order?.deliveryLng) {
       return [order.deliveryLat, order.deliveryLng];
@@ -104,35 +113,26 @@ function OrderTrackingContent() {
     return [12.9592, 77.7610]; // fallback
   };
 
-  // Option 1 (until real dark-store locations exist): place the store ~1.5 km from
-  // the customer so the rider always starts nearby, in any city.
   const getHubLatLng = ([homeLat, homeLng]) => {
     const OFFSET = 0.012; // ~1.3 km in latitude
     return [homeLat + OFFSET, homeLng + OFFSET];
   };
 
-  // Stable store/home coordinates for this order.
   const homeCoords = useMemo(() => getHomeLatLng(), [order?.deliveryLat, order?.deliveryLng]);
   const hubCoords = useMemo(() => getHubLatLng(homeCoords), [homeCoords]);
-  // Actual driving route (roads) from store → home, fetched from OSRM.
   const [roadRoute, setRoadRoute] = useState([]);
 
   const [deliveryProgress, setDeliveryProgress] = useState(0);
 
-  // States for interactive custom features
   const [chatOpen, setChatOpen] = useState(false);
   const [chatText, setChatText] = useState('');
   const [chatSent, setChatSent] = useState(false);
   const [isPaid, setIsPaid] = useState(false);
   const [isPaying, setIsPaying] = useState(false);
   
-  // Interactive Tab selection: 'delivery' vs 'summary' (Recreating input_file_9.png and input_file_10.png)
   const [activeTab, setActiveTab] = useState('delivery');
-
-  // Dynamic countdown timer for "Forgot to add?" block
   const [timer, setTimer] = useState(48); 
 
-  // Maps loading states
   const miniMapRef = useRef(null);
   const miniMapInstanceRef = useRef(null);
   const riderMarkerRef = useRef(null);
@@ -140,7 +140,6 @@ function OrderTrackingContent() {
   const [mapsLoaded, setMapsLoaded] = useState(false);
   const [mapResetKey, setMapResetKey] = useState(0);
 
-  // Slower, more deliberate status updates (Fashion service delay logic)
   useEffect(() => {
     if (!order || order?.status === 'DELIVERED') return;
 
@@ -156,7 +155,6 @@ function OrderTrackingContent() {
     return () => clearInterval(statusClock);
   }, [order, orderId, updateOrderStatus]);
 
-  // Handle active courier animation progress mapping
   useEffect(() => {
     if (order?.status === 'OUT_FOR_DELIVERY') {
       const animationTimer = setInterval(() => {
@@ -172,7 +170,6 @@ function OrderTrackingContent() {
     }
   }, [order?.status]);
 
-  // Countdown clock effect
   useEffect(() => {
     const clock = setInterval(() => {
       setTimer((prev) => (prev > 0 ? prev - 1 : 0));
@@ -186,7 +183,6 @@ function OrderTrackingContent() {
     return `${m}:${s < 10 ? '0' : ''}${s}`;
   };
 
-  // Mock Pay Online trigger
   const handlePayOnline = () => {
     setIsPaying(true);
     setTimeout(() => {
@@ -195,11 +191,9 @@ function OrderTrackingContent() {
     }, 1500);
   };
 
-  // 100% Bulletproof Leaflet Initialization for Premium Espresso Brown theme
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
-    // Load Leaflet map CSS
     if (!document.getElementById('leaflet-css')) {
       const link = document.createElement('link');
       link.id = 'leaflet-css';
@@ -211,7 +205,6 @@ function OrderTrackingContent() {
     const initMap = () => {
       if (!miniMapRef.current) return;
 
-      // Clean up previous map instance safely to prevent "Map container is already initialized" error
       if (miniMapInstanceRef.current) {
         miniMapInstanceRef.current.remove();
         miniMapInstanceRef.current = null;
@@ -220,11 +213,10 @@ function OrderTrackingContent() {
       const L = window.L;
       if (!L) return;
 
-      // hubCoords / homeCoords come from the memoized values above.
       const center = [
         (hubCoords[0] + homeCoords[0]) / 2,
         (hubCoords[1] + homeCoords[1]) / 2,
-      ]; // Midpoint between store and home
+      ];
 
       const miniMap = L.map(miniMapRef.current, {
         zoomControl: true,
@@ -237,12 +229,10 @@ function OrderTrackingContent() {
 
       miniMapInstanceRef.current = miniMap;
 
-      // CartoDB Voyager — detailed street map with roads/labels visible (Swiggy/Zomato-style)
       L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
         maxZoom: 20
       }).addTo(miniMap);
 
-      // Define styled marker icons matching input_file_12.png perfectly (Using more radiant modern Espresso Brown)
       const greenDotIcon = L.divIcon({
         html: `<div style="
           background: #3e211b;
@@ -277,8 +267,6 @@ function OrderTrackingContent() {
         iconAnchor: [10, 10]
       });
 
-      // Delivery rider marker using the branded scooter illustration.
-      // Wrapped in a div so the inner <img> can be flipped to face the travel direction.
       const riderIcon = L.divIcon({
         html: `<img class="rider-scooter-img" src="/images/delivery-rider.png"
                  style="width:38px;height:68px;transition:transform 0.3s ease;" />`,
@@ -287,17 +275,13 @@ function OrderTrackingContent() {
         iconAnchor: [19, 60],
       });
 
-      // The road route polyline is drawn by a separate effect once OSRM returns it.
       L.marker(hubCoords, { icon: greenDotIcon }).addTo(miniMap);
       L.marker(homeCoords, { icon: orangeDotIcon }).addTo(miniMap);
 
-      // Place the rider marker; its position is driven live by the Firestore feed below.
-      // Movement is animated at 60fps client-side, so no CSS transition is needed here.
       riderMarkerRef.current = L.marker(hubCoords, { icon: riderIcon }).addTo(miniMap);
 
       setMapsLoaded(true);
 
-      // Force Leaflet to recalculate container dimensions once layout render finishes
       setTimeout(() => {
         if (miniMapInstanceRef.current) {
           miniMapInstanceRef.current.invalidateSize();
@@ -323,12 +307,8 @@ function OrderTrackingContent() {
         miniMapInstanceRef.current = null;
       }
     };
-    // Re-init the map when the resolved delivery coordinates change.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mapResetKey, order?.deliveryLat, order?.deliveryLng]);
 
-  // Fetch the actual driving route (roads) from store → home via OSRM, so the
-  // path follows streets like Swiggy/Zomato instead of a straight line.
   useEffect(() => {
     let cancelled = false;
     const fetchRoute = async () => {
@@ -343,17 +323,16 @@ function OrderTrackingContent() {
         if (data.routes?.length) {
           setRoadRoute(data.routes[0].geometry.coordinates.map((c) => [c[1], c[0]]));
         } else {
-          setRoadRoute([hubCoords, homeCoords]); // straight fallback
+          setRoadRoute([hubCoords, homeCoords]);
         }
       } catch (e) {
-        if (!cancelled) setRoadRoute([hubCoords, homeCoords]); // straight fallback
+        if (!cancelled) setRoadRoute([hubCoords, homeCoords]);
       }
     };
     fetchRoute();
     return () => { cancelled = true; };
   }, [hubCoords, homeCoords]);
 
-  // Draw / update the route polyline along the roads and fit the map to it.
   useEffect(() => {
     const map = miniMapInstanceRef.current;
     if (!map || !window.L || !mapsLoaded) return;
@@ -370,19 +349,13 @@ function OrderTrackingContent() {
       opacity: 0.85,
     }).addTo(map);
 
-    // Start on the store; the rider-follow loop keeps the camera centered on the
-    // scooter. Users can zoom in/out freely — their chosen zoom is preserved.
     try {
       map.setView(hubCoords, 15);
     } catch (e) {
       console.error('setView failed:', e);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [roadRoute, mapsLoaded]);
 
-  // Live rider tracking. The simulator (or a real rider app later) writes a
-  // `progress` value to Firestore; the client animates the marker smoothly along
-  // the exact road geometry at 60fps (accuracy) and consumes the trail behind it.
   useEffect(() => {
     if (!orderId || !mapsLoaded || roadRoute.length < 2) return;
 
@@ -407,8 +380,6 @@ function OrderTrackingContent() {
       });
     }
 
-    // Target progress comes from Firestore; display progress moves toward it at a
-    // bounded speed each frame so the marker can never visually teleport.
     const maxStepPerFrame = (4 / (RIDE_DURATION_MS / 1000)) / 60;
     let targetProgress = 0;
     let displayProgress = 0;
@@ -424,15 +395,13 @@ function OrderTrackingContent() {
         const el = riderMarkerRef.current.getElement();
         const img = el && el.querySelector('.rider-scooter-img');
         if (img) {
-          const facingRight = heading > 0 && heading < 180; // heading east = moving right
+          const facingRight = heading > 0 && heading < 180;
           img.style.transform = facingRight ? 'scaleX(1)' : 'scaleX(-1)';
         }
       }
-      // Trail consumption: only draw the route still ahead of the rider.
       if (roadPolylineRef.current && remaining.length >= 2) {
         roadPolylineRef.current.setLatLngs(remaining);
       }
-      // Follow the rider like Google Maps driver tracking.
       const map = miniMapInstanceRef.current;
       if (map) map.setView([lat, lng], map.getZoom(), { animate: false });
 
@@ -451,7 +420,6 @@ function OrderTrackingContent() {
     };
   }, [orderId, mapsLoaded, roadRoute]);
 
-  // Safe fallback loading state
   if (!order) {
     return (
       <div className={styles.container}>
@@ -462,15 +430,11 @@ function OrderTrackingContent() {
     );
   }
 
-  // Inserted definitions to fix unhandled runtime ReferenceErrors:
-
-  // Current tracking step
   const currentStepIndex = Math.max(
     STEPS.findIndex(step => step.id === order?.status),
     0
   );
 
-  // Progress bar percentage
   const progressPercentage =
     currentStepIndex === 0 ? 10 :
     currentStepIndex === 1 ? 30 :
@@ -478,34 +442,21 @@ function OrderTrackingContent() {
     currentStepIndex === 3 ? 85 :
     100;
 
-  // Fallback values
   const riderName = mockRiderData?.rider?.name || 'John S.';
   const riderPhone = mockRiderData?.rider?.phone || '+919876543210';
 
-  // Safe order totals
   const orderTotal = order?.total || 0;
   const deliveryFee = order?.deliveryFee || 19;
 
-  // Safe transaction id
   const transactionId =
     order?.id?.split('-')?.[1] ||
     order?.id ||
     '1781081083395';
 
-  if (!order) {
-    return (
-      <div className={styles.container}>
-        <div style={{ padding: '40px', textAlign: 'center' }}>
-          Loading order...
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className={styles.container}>
       
-      {/* 1. Header Area (Recreating the exact layout from input_file_6.png with Espresso Brown) */}
+      {/* 1. Header Area */}
       <div className={styles.pageHeader}>
         <div className={styles.headerInfoWrapper}>
           <div>
@@ -531,7 +482,7 @@ function OrderTrackingContent() {
         </div>
       </div>
 
-      {/* 2. Hero Estimated Arrival Card (Matching the Luxury Espresso Brown look from input_file_6.png) */}
+      {/* 2. Hero Estimated Arrival Card */}
       <div className={styles.heroRiderCard}>
         <div className={styles.heroRiderHeader}>
           <div className={styles.riderMainInfo}>
@@ -601,7 +552,7 @@ function OrderTrackingContent() {
         </div>
       )}
 
-      {/* 3. Live Tracking Map Card - Realistic Leaflet Map (Matching input_file_12.png perfectly in Espresso theme) */}
+      {/* 3. Live Tracking Map Card */}
       <div className={styles.liveMapTrackingCard}>
         <div className={styles.mapLabelRow}>
           <div>
@@ -614,7 +565,6 @@ function OrderTrackingContent() {
           </span>
         </div>
 
-        {/* 100% Reliable Leaflet OpenStreetMap Container */}
         <div className={styles.mapVisualContainer}>
           {!mapsLoaded && (
             <div className={styles.miniMapSkeleton}>
@@ -622,7 +572,6 @@ function OrderTrackingContent() {
               <p style={{ marginTop: '8px', fontSize: '12px', color: '#64748b' }}>Loading Map Tiles...</p>
             </div>
           )}
-          {/* Key-based remounting forces DOM node freshness to eliminate container-init crashes */}
           <div 
             key={mapResetKey}
             ref={miniMapRef} 
@@ -630,7 +579,6 @@ function OrderTrackingContent() {
           />
         </div>
         
-        {/* Footnote timeline tracker from screenshot - fully emoji free with CSS bullets */}
         <div className={styles.dotRoadTracker}>
           <span className={styles.dotLabel}>
             <span className={styles.bulletNodeStore}></span>
@@ -644,10 +592,8 @@ function OrderTrackingContent() {
         </div>
       </div>
 
-      {/* 4. Side-by-side Action Cards (Forgot to add? & Pay ₹21) */}
+      {/* 4. Side-by-side Action Cards */}
       <div className={styles.parallelGrid}>
-        
-        {/* Left Card: Forgot to add? */}
         <div className={styles.forgotCard}>
           <div className={styles.forgotBody}>
             <div className={styles.forgotHeader}>
@@ -666,7 +612,6 @@ function OrderTrackingContent() {
           </Link>
         </div>
 
-        {/* Right Card: Pay ₹21 */}
         <div className={styles.paymentCard}>
           <div className={styles.paymentBody}>
             <div className={styles.forgotHeader}>
@@ -696,10 +641,9 @@ function OrderTrackingContent() {
             )}
           </div>
         </div>
-
       </div>
 
-      {/* 5. Clickable Tabbed Layout: Delivery Status & Order Summary Card (Side-by-side clickable buttons in Espresso) */}
+      {/* 5. Clickable Tabbed Layout: Delivery Status & Order Summary Card */}
       <div className={styles.unifiedTabbedCard}>
         <div className={styles.tabButtonsContainer}>
           <button 
@@ -716,11 +660,8 @@ function OrderTrackingContent() {
           </button>
         </div>
 
-        {/* Render active Tab Content */}
         {activeTab === 'delivery' ? (
-          /* "Delivery Status" Tab Contents (Matching input_file_9.png exactly) */
           <div className={styles.progressContainer}>
-            
             {STEPS.map((step, index) => {
               const isCompleted = index < currentStepIndex;
               const isActive = index === currentStepIndex;
@@ -747,20 +688,17 @@ function OrderTrackingContent() {
                 </div>
               );
             })}
-
           </div>
         ) : (
-          /* "Order Summary" Tab Contents (Matching input_file_10.png exactly) */
           <div className={styles.orderSummaryTabContent}>
-            
             {order?.items && order?.items?.length > 0 ? (
               order?.items?.map(item => (
                 <div key={item.id} className={styles.summaryItemRow}>
                   <span className={styles.summaryLabelWithIcon}>
                     <CartIcon className={styles.summaryRowIcon} />
-                    {item.name} x {item.quantity}
+                    {item.name} x {item.quantity || 1}
                   </span>
-                  <strong>₹{(item.price * item.quantity).toLocaleString()}</strong>
+                  <strong>₹{((item.price || item.discountedPrice || 0) * (item.quantity || 1)).toLocaleString()}</strong>
                 </div>
               ))
             ) : (
@@ -803,33 +741,33 @@ function OrderTrackingContent() {
         )}
       </div>
 
-      {/* 6. Delivery Address Card (Matching input_file_8.png) */}
+      {/* 6. Delivery Address Card */}
       <div className={styles.metaLabelHeader}>DELIVERY ADDRESS</div>
       <div className={styles.metaCardWrapper}>
         <div className={styles.metaIconPink}>
           <MapPinIcon className={styles.pinkPinIcon} />
         </div>
         <div className={styles.metaCardContent}>
-          <strong>{order?.customerName || 'Premium Patron'}</strong>
+          <strong>{order?.customerName || order?.address?.fullName || 'Premium Patron'}</strong>
           <p>{order?.address?.city || 'Bengaluru'}</p>
-          <p className={styles.metaSubtext}>{order?.address?.street || 'Standard Selection Location'}</p>
+          <p className={styles.metaSubtext}>{order?.address?.addressLine1 || order?.address?.street || 'Standard Selection Location'}</p>
         </div>
       </div>
 
-      {/* 7. Payment Details Card (Matching input_file_8.png) */}
+      {/* 7. Payment Details Card */}
       <div className={styles.metaLabelHeader}>PAYMENT DETAILS</div>
       <div className={styles.metaCardWrapper}>
         <div className={styles.metaIconBlue}>
           <CardIcon className={styles.blueCardIcon} />
         </div>
         <div className={styles.metaCardContent}>
-          <strong>{order?.paymentMethod || 'UPI / Secured Link'}</strong>
+          <strong>{order?.paymentMethod?.toUpperCase() || 'UPI / SECURED LINK'}</strong>
           <p className={styles.metaSubtext}>TXN{transactionId}</p>
         </div>
         <span className={styles.successBadge}>SUCCESS</span>
       </div>
 
-      {/* 8. Bottom Action Buttons (Matching input_file_8.png) */}
+      {/* 8. Bottom Action Buttons */}
       <div className={styles.footerActionsRow}>
         <Link href="/services/instastyle" className={styles.footerProfileBtn}>My selection</Link>
         <Link href="/services/instastyle" className={styles.footerShopBtn}>Explore More Styles</Link>

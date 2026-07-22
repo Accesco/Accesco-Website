@@ -1,20 +1,23 @@
 'use client';
 
 import { useSearchParams } from 'next/navigation';
-import { useEffect, useState, useCallback, useMemo } from 'react';
+import { useEffect, useState, useCallback, useMemo, useRef } from 'react';
 import SwadishttHeader from '../components/SwadishttHeader';
 import styles from './tracking.module.css';
 import dynamic from 'next/dynamic';
-import { advanceOrderStatus, updateOrderStatusLocal } from '@/lib/mailService';
 import { formatETA } from '@/lib/etaEngine';
 import { ORDER_STATUS } from '@/lib/trackingConstants';
+import { db } from '@/lib/firebase';
+import { doc, onSnapshot } from 'firebase/firestore';
+import { updateOrderStatusInFirestore } from '@/lib/orderService';
+import { useSwadishtt } from '../contexts/SwadishttContext';
 
 const LiveTrackingMap = dynamic(() => import('../components/Map/LiveTrackingMap'), {
   ssr: false,
   loading: () => <div style={{ height: '480px', background: '#F5F3F4' }} />,
 });
 
-/** Expanded delivery timeline (new architecture). */
+/** Expanded delivery timeline matching InstaStyle architecture */
 const TIMELINE = [
   ORDER_STATUS.PLACED,
   ORDER_STATUS.PREPARING,
@@ -37,19 +40,12 @@ const STATUS_META = {
   [ORDER_STATUS.ARRIVING]: { label: 'Arriving', desc: 'Rider is nearby.' },
   [ORDER_STATUS.DELIVERED]: { label: 'Delivered', desc: 'Order delivered successfully.' },
   [ORDER_STATUS.CANCELLED]: { label: 'Cancelled', desc: 'Order was cancelled.' },
-  // Legacy mailService / localStorage statuses (backwards compatibility)
   PENDING: { label: 'Placed', desc: 'Order received, awaiting confirmation.' },
   CONFIRMED: { label: 'Confirmed', desc: 'Kitchen has accepted your order.' },
   PROCESSING: { label: 'Preparing', desc: 'Your meal is being freshly prepared.' },
   DISPATCHED: { label: 'Out For Delivery', desc: 'Delivery partner is heading to you.' },
 };
 
-/**
- * Maps legacy + live statuses onto the expanded timeline index.
- * @param {string} raw
- * @param {string|null} liveOrderStatus
- * @returns {string}
- */
 function resolveTimelineStatus(raw, liveOrderStatus) {
   if (liveOrderStatus && TIMELINE.includes(liveOrderStatus)) {
     return liveOrderStatus;
@@ -74,34 +70,81 @@ function resolveTimelineStatus(raw, liveOrderStatus) {
 export default function SwadishttTrackingPage() {
   const searchParams = useSearchParams();
   const orderId = searchParams.get('id');
+  const { updateOrderStatus } = useSwadishtt();
 
   const [order, setOrder] = useState(null);
   const [currentUser, setCurrentUser] = useState(null);
   const [liveTracking, setLiveTracking] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const lastSyncedStatusRef = useRef('');
 
   useEffect(() => {
-    if (typeof window === 'undefined') return;
+    if (typeof window === 'undefined' || !orderId) return;
+
     const storedUser = localStorage.getItem('accesco_user');
     if (storedUser) {
       try { setCurrentUser(JSON.parse(storedUser)); } catch {}
     }
-    const storedOrders = JSON.parse(localStorage.getItem('swadishtt-orders') || '[]');
-    const found = storedOrders.find((o) => o.id === orderId);
-    if (found) setOrder(found);
-  }, [orderId]);
 
-  // Live rider updates come from LiveTrackingMap (single Firestore subscription).
-  const handleAdvanceStatus = useCallback(() => {
-    if (!order) return;
-    const next = advanceOrderStatus(order.status || 'PENDING');
-    const updated = updateOrderStatusLocal(orderId, next);
-    if (updated) setOrder(updated);
-  }, [order, orderId]);
+    // 1. Initial local storage load
+    const storedOrders = JSON.parse(localStorage.getItem('swadishtt-orders') || '[]');
+    const found = storedOrders.find((o) => o.id === orderId || o.orderId === orderId);
+    if (found) {
+      setOrder(found);
+      setIsLoading(false);
+    }
+
+    // 2. Realtime Firestore Subscription (source of truth)
+    const docRef = doc(db, 'swadishtt_orders', orderId);
+    const unsubscribeDoc = onSnapshot(
+      docRef,
+      (docSnap) => {
+        if (docSnap.exists()) {
+          const cloudOrder = { id: docSnap.id, ...docSnap.data() };
+          setOrder(cloudOrder);
+
+          // Update local cache
+          try {
+            const raw = localStorage.getItem('swadishtt-orders');
+            let list = raw ? JSON.parse(raw) : [];
+            const idx = list.findIndex((o) => o.id === orderId || o.orderId === orderId);
+            if (idx >= 0) {
+              list[idx] = { ...list[idx], ...cloudOrder };
+            } else {
+              list.unshift(cloudOrder);
+            }
+            localStorage.setItem('swadishtt-orders', JSON.stringify(list));
+          } catch (e) {
+            console.error('Error caching order locally:', e);
+          }
+        }
+        setIsLoading(false);
+      },
+      (err) => {
+        console.error('Firestore tracking snapshot error:', err);
+        setIsLoading(false);
+      }
+    );
+
+    // Fallback cloud fetch if Firestore snapshot delay
+    fetch(`/api/swadishtt/orders?id=${encodeURIComponent(orderId)}`)
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (data?.order) {
+          setOrder(data.order);
+        }
+      })
+      .catch((err) => console.error('Cloud order recovery failed:', err))
+      .finally(() => setIsLoading(false));
+
+    return () => {
+      unsubscribeDoc();
+    };
+  }, [orderId]);
 
   const handleMapTrackingUpdate = useCallback((payload) => {
     setLiveTracking((prev) => {
       const next = { ...prev, ...payload };
-      // Avoid redundant state updates when map + page share the same snapshot.
       if (
         prev &&
         prev.remainingETA === next.remainingETA &&
@@ -116,12 +159,34 @@ export default function SwadishttTrackingPage() {
       }
       return next;
     });
-  }, []);
+
+    // Auto-sync status transitions to Firestore & SwadishttContext
+    if (payload?.orderStatus && orderId && payload.orderStatus !== lastSyncedStatusRef.current) {
+      lastSyncedStatusRef.current = payload.orderStatus;
+      updateOrderStatusInFirestore('swadishtt', orderId, payload.orderStatus);
+      if (typeof updateOrderStatus === 'function') {
+        updateOrderStatus(orderId, payload.orderStatus);
+      }
+    }
+  }, [orderId, updateOrderStatus]);
 
   const timelineStatus = useMemo(
     () => resolveTimelineStatus(order?.status, liveTracking?.orderStatus),
     [order?.status, liveTracking?.orderStatus],
   );
+
+  if (isLoading && !order) {
+    return (
+      <div className={styles.pageBackground}>
+        <SwadishttHeader />
+        <div className={styles.adminContainer}>
+          <div className={styles.card} style={{ textAlign: 'center', padding: '40px' }}>
+            <p style={{ color: '#666' }}>Loading order details...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (!order) {
     return (
@@ -141,13 +206,13 @@ export default function SwadishttTrackingPage() {
   const stepIndex = TIMELINE.indexOf(timelineStatus);
   const isDelivered =
     timelineStatus === ORDER_STATUS.DELIVERED || legacyKey === 'DELIVERED';
-  const totalItems = order.items?.reduce((acc, item) => acc + item.quantity, 0) ?? 0;
-  const userName = currentUser?.name || order.delivery?.name || 'Customer';
+  const totalItems = order.items?.reduce((acc, item) => acc + (item.quantity || 1), 0) ?? 0;
+  const userName = currentUser?.name || order.delivery?.name || order.customerName || 'Customer';
   const initials = userName.substring(0, 2).toUpperCase();
   const driverName =
     liveTracking?.riderName ||
     order.deliveryPartner?.name ||
-    'Delivery partner';
+    'Ravi Kumar';
   const driverDist =
     liveTracking?.remainingDistance ??
     order.deliveryPartner?.distanceKm ??
@@ -193,7 +258,7 @@ export default function SwadishttTrackingPage() {
           </div>
         </div>
 
-        {/* ── Expanded timeline ── */}
+        {/* Expanded timeline */}
         <div className={styles.card} style={{ marginBottom: '24px' }}>
           <h2 className={styles.cardTitle}>Order Progress</h2>
           <div className={styles.stepper} style={{ flexWrap: 'wrap', rowGap: 16 }}>
@@ -221,15 +286,6 @@ export default function SwadishttTrackingPage() {
               );
             })}
           </div>
-          {!isDelivered && (
-            <button
-              type="button"
-              className={styles.btnAdvance}
-              onClick={handleAdvanceStatus}
-            >
-              Simulate Next Status
-            </button>
-          )}
         </div>
 
         {showLiveNotice && (
@@ -248,181 +304,55 @@ export default function SwadishttTrackingPage() {
               <p>
                 {driverEta != null
                   ? `Arriving in about ${formatETA(driverEta)}.`
-                  : 'Live ETA updating…'}
-                {liveTracking?.currentSpeed != null
-                  ? ` · ${Math.round(liveTracking.currentSpeed)} km/h`
-                  : ''}
+                  : 'Rider is en route with your fresh order.'}
               </p>
             </div>
           </div>
         )}
 
-        {/* Live metrics row */}
-        {liveTracking && (
-          <div className={styles.card} style={{ marginBottom: 24, padding: '16px 20px' }}>
-            <h2 className={styles.cardTitle} style={{ marginBottom: 12 }}>Live Status</h2>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(120px,1fr))', gap: 12, fontSize: 13 }}>
+        {/* Live Rider Map section */}
+        <div className={styles.card} style={{ padding: 0, overflow: 'hidden', marginBottom: '24px' }}>
+          <LiveTrackingMap orderId={orderId} onTrackingUpdate={handleMapTrackingUpdate} />
+        </div>
+
+        {/* Order Details & Summary section */}
+        <div className={styles.grid2}>
+          <div className={styles.card}>
+            <h2 className={styles.cardTitle}>Customer & Delivery</h2>
+            <div className={styles.userRow}>
+              <div className={styles.avatar}>{initials}</div>
               <div>
-                <div style={{ color: '#9B7E6A', fontWeight: 600 }}>Status</div>
-                <div style={{ fontWeight: 700 }}>
-                  {STATUS_META[timelineStatus]?.label || timelineStatus}
-                </div>
-              </div>
-              <div>
-                <div style={{ color: '#9B7E6A', fontWeight: 600 }}>ETA</div>
-                <div style={{ fontWeight: 700 }}>
-                  {liveTracking.remainingETA != null ? formatETA(liveTracking.remainingETA) : '—'}
-                </div>
-              </div>
-              <div>
-                <div style={{ color: '#9B7E6A', fontWeight: 600 }}>Distance</div>
-                <div style={{ fontWeight: 700 }}>
-                  {liveTracking.remainingDistance != null
-                    ? `${Number(liveTracking.remainingDistance).toFixed(2)} km`
-                    : '—'}
-                </div>
-              </div>
-              <div>
-                <div style={{ color: '#9B7E6A', fontWeight: 600 }}>Rider</div>
-                <div style={{ fontWeight: 700 }}>{driverName}</div>
-              </div>
-              <div>
-                <div style={{ color: '#9B7E6A', fontWeight: 600 }}>Remaining</div>
-                <div style={{ fontWeight: 700 }}>
-                  {liveTracking.remainingETA != null
-                    ? formatETA(liveTracking.remainingETA)
-                    : '—'}
-                </div>
+                <strong>{userName}</strong>
+                <p className={styles.subtext}>{order.delivery?.phone || order.phone || 'Phone not specified'}</p>
               </div>
             </div>
-          </div>
-        )}
-
-        <div className={styles.trackingLayout}>
-
-          <div className={styles.detailsColumn}>
-
-            <div className={styles.card}>
-              <div className={styles.customerRow}>
-                <div className={styles.customerProfile}>
-                  <div className={styles.avatar}>
-                    {initials}
-                    <div className={styles.verifiedBadge}>
-                      <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
-                        <path d="M2 5l2 2 4-4" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                      </svg>
-                    </div>
-                  </div>
-                  <div className={styles.customerDetails}>
-                    <h3>{userName}</h3>
-                    <p>Customer</p>
-                  </div>
-                </div>
-                <div className={styles.customerContactActions}>
-                  <a href={`mailto:${currentUser?.email}`} className={styles.btnOutlineSmall}>
-                    Email
-                  </a>
-                  <a href={`tel:${currentUser?.phone || order.delivery?.phone}`} className={styles.btnOutlineSmall}>
-                    +91 {currentUser?.phone || order.delivery?.phone}
-                  </a>
-                </div>
-              </div>
-            </div>
-
-            <div className={`${styles.card} ${styles.staggeredAnim}`}>
-              <h2 className={styles.cardTitle}>Order Items ({totalItems})</h2>
-              <div className={styles.tableWrapper}>
-                <table className={styles.productTable}>
-                  <thead>
-                    <tr>
-                      <th style={{ width: '50%' }}>Item</th>
-                      <th style={{ width: '15%' }}>Qty</th>
-                      <th style={{ width: '15%' }}>Price</th>
-                      <th style={{ width: '20%', textAlign: 'right' }}>Total</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {order.items?.map((item, idx) => (
-                      <tr key={idx} className={styles.tableRowHover}>
-                        <td>
-                          <div className={styles.itemCell}>
-                            <div className={styles.itemImagePlaceholder} />
-                            <div>
-                              <p className={styles.itemName}>{item.name}</p>
-                              <p className={styles.itemSku}>{item.restaurant}</p>
-                            </div>
-                          </div>
-                        </td>
-                        <td className={styles.fw600}>{item.quantity}&times;</td>
-                        <td>&#8377;{item.price}</td>
-                        <td style={{ textAlign: 'right', fontWeight: 800, color: 'var(--primary)' }}>
-                          &#8377;{item.price * item.quantity}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-              <div className={styles.totalsWrapper}>
-                <div className={styles.totalsBlock}>
-                  <div className={styles.totalRow}><span>Subtotal</span><span>&#8377;{order.totals?.subtotal}</span></div>
-                  <div className={styles.totalRow}>
-                    <span>Delivery</span>
-                    <span>{order.totals?.deliveryFee === 0 ? 'Free' : `&#8377;${order.totals?.deliveryFee}`}</span>
-                  </div>
-                  <div className={styles.totalRow}><span>Platform fee</span><span>&#8377;{order.totals?.platformFee}</span></div>
-                  <div className={styles.totalRow}><span>GST</span><span>&#8377;{order.totals?.gst}</span></div>
-                  <div className={styles.divider} />
-                  <div className={styles.grandTotalRow}>
-                    <span>Total</span>
-                    <span style={{ color: 'var(--primary)' }}>&#8377;{order.totals?.total}</span>
-                  </div>
-                </div>
-              </div>
+            <div className={styles.divider} />
+            <div className={styles.infoGroup}>
+              <span className={styles.infoLabel}>Delivery Address</span>
+              <p className={styles.infoValue}>
+                {order.delivery?.address || order.delivery?.fullAddress || order.address || 'Standard Address'}
+              </p>
             </div>
           </div>
 
-          <div className={styles.mapColumn}>
-            <div className={styles.card} style={{ padding: 0, overflow: 'hidden' }}>
-              <div className={styles.mapHeader}>
-                <p className={styles.sectionLabel}>Live tracking</p>
-                <span className={styles.livePulse} />
-              </div>
-              <div className={styles.mapWrapper}>
-                <LiveTrackingMap
-                  orderId={order.id}
-                  onTrackingUpdate={handleMapTrackingUpdate}
-                />
-              </div>
-              <div className={styles.addressBox}>
-                <div className={styles.iconCircle}>
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M12 21C12 21 5 13.5 5 8.5a7 7 0 1114 0C19 13.5 12 21 12 21z"/><circle cx="12" cy="8.5" r="2.5"/>
-                  </svg>
+          <div className={styles.card}>
+            <h2 className={styles.cardTitle}>Order Summary</h2>
+            <div className={styles.itemsList}>
+              {order.items?.map((item, idx) => (
+                <div key={idx} className={styles.itemRow}>
+                  <span>{item.quantity}x {item.name}</span>
+                  <strong>₹{item.price * item.quantity}</strong>
                 </div>
-                <div>
-                  <p className={styles.addressLabel}>Delivery location</p>
-                  <p className={styles.addressText}>{order.delivery?.address}</p>
-                  <p className={styles.addressCity}>{order.delivery?.city}, {order.delivery?.pincode}</p>
-                </div>
-              </div>
-              <div className={styles.paymentMiniCard}>
-                <div className={styles.paymentMiniHeader}>
-                  <span className={styles.paymentCheck}>
-                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                      <path d="M2.5 7L5.5 10L11.5 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    </svg>
-                  </span>
-                  <span className={styles.paymentAmount}>&#8377;{order.totals?.total}</span>
-                </div>
-                <div className={styles.paymentMiniDetails}>
-                  <div className={styles.payRow}><span>Method</span><strong>{order.paymentMethod?.toUpperCase()}</strong></div>
-                  <div className={styles.payRow}><span>Status</span><strong>{isDelivered ? 'Paid' : 'Pending'}</strong></div>
-                </div>
-              </div>
+              ))}
+            </div>
+            <div className={styles.divider} />
+            <div className={styles.totalRow}>
+              <span>Total Paid</span>
+              <strong>₹{order.totals?.total || order.total}</strong>
             </div>
           </div>
         </div>
+
       </main>
     </div>
   );
