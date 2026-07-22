@@ -5,7 +5,8 @@ import './blog-post.css';
 import { fetchBlogs } from '../../../lib/blogService';
 import { HeaderActions, ShareRow } from './PostActions';
 
-export const revalidate = 60;
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 const SITE_URL = 'https://accescoliving.com';
 const HIDDEN_TITLES = ['AccesGo: Moving People, Respecting Lives\n'];
@@ -15,10 +16,14 @@ function isVisible(post) {
 }
 
 async function getPostData(id) {
-  const data = await fetchBlogs();
-  const visible = data.filter(isVisible);
-  const post = visible.find((p) => p.id === id) || null;
-  return { post, visible };
+  try {
+    const data = await fetchBlogs();
+    const visible = (Array.isArray(data) ? data : []).filter(isVisible);
+    const post = visible.find((p) => p.id === id) || null;
+    return { post, visible };
+  } catch (e) {
+    return { post: null, visible: [] };
+  }
 }
 
 function getRelatedPosts(post, allPosts, limit = 3) {

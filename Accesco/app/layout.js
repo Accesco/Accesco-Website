@@ -14,6 +14,7 @@ const sora = Sora({
   weight: ['300', '400', '500', '600', '700', '800'],
   display: 'swap',
   variable: '--font-sora',
+  adjustFontFallback: false,
 });
 
 const dmSans = DM_Sans({
@@ -21,6 +22,7 @@ const dmSans = DM_Sans({
   weight: ['400', '500', '700'],
   display: 'swap',
   variable: '--font-dm-sans',
+  adjustFontFallback: false,
 });
 
 const inter = Inter({
@@ -28,6 +30,7 @@ const inter = Inter({
   weight: ['400', '500', '600', '700'],
   display: 'swap',
   variable: '--font-inter',
+  adjustFontFallback: false,
 });
 
 export const metadata = {
