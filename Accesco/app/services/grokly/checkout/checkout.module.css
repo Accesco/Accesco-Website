@@ -4,7 +4,7 @@
   max-width: var(--grokly-max-width, 1150px);
   margin: 32px auto;
   padding: 0 24px;
-  font-family: var(--grokly-font-primary, 'Inter', sans-serif);
+  font-family: var(--grokly-font-primary, var(--font-inter), sans-serif);
   color: var(--grokly-text-primary, #111111);
 }
 

@@ -1274,3 +1274,349 @@
     height: 3px !important;
   }
 }
+/* Figma feedback redesign */
+
+.feedbackHeader {
+  min-height: 190px;
+  padding: 30px 42px;
+  justify-content: space-between;
+  background:
+    radial-gradient(circle at 85% 30%, rgba(198, 0, 85, 0.08), transparent 32%),
+    #f7e6ec;
+}
+
+.feedbackHeaderContent {
+  width: auto;
+  max-width: 560px;
+  color: #151015;
+}
+
+.feedbackEyebrow {
+  color: #b00050;
+  opacity: 1;
+}
+
+.feedbackTitle {
+  color: #171217;
+  font-size: clamp(2rem, 4vw, 3rem);
+  line-height: 1.05;
+  text-transform: none;
+}
+
+.feedbackHeaderText {
+  color: #5f5259;
+  line-height: 1.5;
+  opacity: 1;
+}
+
+.feedbackHeaderText strong {
+  color: #c60055;
+}
+
+.feedbackHeaderMark {
+  width: 110px;
+  height: 110px;
+  object-fit: contain;
+  flex: 0 0 auto;
+
+  /* Converts the black PNG into dark pink */
+  filter: brightness(0) saturate(100%)
+    invert(14%) sepia(92%) saturate(4916%)
+    hue-rotate(325deg) brightness(78%) contrast(108%);
+}
+
+.feedbackBubbleOne,
+.feedbackBubbleTwo {
+  display: none;
+}
+
+.feedbackStage {
+  min-height: 500px;
+  display: flex;
+  flex-direction: column;
+}
+
+.feedbackInfoRow,
+.feedbackQuestionRow {
+  display: grid;
+  grid-template-columns: 38px minmax(0, 1fr);
+  gap: 12px;
+  padding: 15px 0;
+  border-bottom: 1px solid #eee8eb;
+}
+
+.feedbackIconBox {
+  width: 32px;
+  height: 32px;
+  border-radius: 9px;
+  background: #fff0f5;
+  color: #c60055;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.feedbackQuestionContent {
+  min-width: 0;
+}
+
+.feedbackQuestion {
+  margin: 0 0 4px;
+  font-size: 0.92rem;
+  line-height: 1.45;
+  text-align: left;
+}
+
+.feedbackHint {
+  display: block;
+  margin-bottom: 10px;
+  color: #8a7d83;
+  font-family: "DM Sans", sans-serif;
+  font-size: 0.68rem;
+}
+
+.ratingScale {
+  display: grid;
+  grid-template-columns: repeat(11, minmax(0, 1fr));
+  overflow: hidden;
+  border: 1px solid #d9d1d5;
+  border-radius: 8px;
+  background: #ffffff;
+  box-shadow: none;
+}
+
+.ratingButton {
+  height: 50px;
+  padding: 0;
+  border: 0;
+  border-right: 1px solid #e3dde0;
+  border-radius: 0;
+  background: #ffffff;
+  color: #251b20;
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.ratingButton:hover {
+  background: #fff0f5;
+  color: #a9004b;
+  transform: none;
+}
+
+.ratingButtonSelected {
+  background: #c60055;
+  color: #ffffff;
+  box-shadow: none;
+  transform: none;
+}
+
+.ratingButtonSelected:hover {
+  background: #a90049;
+  color: #ffffff;
+}
+
+.ratingLabels {
+  margin-top: 5px;
+  font-size: 0.62rem;
+}
+
+.reviewBoxLabel {
+  margin-bottom: 3px;
+}
+
+.reviewBox {
+  min-height: 92px;
+  resize: none;
+  border-radius: 7px;
+  background: #ffffff;
+}
+
+.feedbackOptions {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.earlyAccessOptions {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.feedbackOption {
+  min-height: 34px;
+  padding: 7px 11px;
+  border: 1px solid #d8d0d4;
+  border-radius: 7px;
+  background: #ffffff;
+  color: #382e33;
+  font-family: "DM Sans", sans-serif;
+  font-size: 0.76rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.feedbackOption input {
+  accent-color: #c60055;
+}
+
+.feedbackOptionSelected {
+  border-color: #c60055;
+  background: #fff1f6;
+  color: #9c0045;
+}
+
+.feedbackSubmitButton {
+  min-width: 176px;
+  min-height: 42px;
+  margin-top: auto;
+  border-radius: 999px;
+  background: #c60055;
+  text-transform: uppercase;
+  font-size: 0.72rem;
+}
+
+.feedbackError {
+  margin: 0 0 10px;
+  padding: 8px 10px;
+  border-radius: 7px;
+  background: #fff0f3;
+  color: #a4003f;
+  font-family: "DM Sans", sans-serif;
+  font-size: 0.76rem;
+}
+
+.feedbackPrivacy {
+  margin: 11px 0 0;
+  color: #b00050;
+  font-family: "DM Sans", sans-serif;
+  font-size: 0.68rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}
+
+@media (max-width: 640px) {
+  .feedbackHeader {
+    min-height: 165px;
+    padding: 24px 18px;
+    align-items: center;
+  }
+
+  .feedbackHeaderMark {
+    width: 76px;
+    height: 76px;
+  }
+
+
+  .feedbackStage {
+    min-height: 520px;
+  }
+
+  .earlyAccessOptions {
+    grid-template-columns: 1fr;
+    gap: 7px;
+  }
+
+  .feedbackSubmitButton {
+    width: 100%;
+  }
+}
+/* Slightly larger feedback typography */
+
+.feedbackEyebrow {
+  font-size: 0.78rem;
+}
+
+.feedbackHeaderText {
+  font-size: 0.96rem;
+}
+
+.feedbackGreeting {
+  font-size: 1rem;
+}
+
+.feedbackDescription {
+  font-size: 0.96rem;
+}
+
+.feedbackQuestion {
+  font-size: 1.05rem;
+}
+
+.feedbackHint {
+  font-size: 0.76rem;
+}
+
+.reviewBoxLabel {
+  font-size: 0.96rem;
+}
+
+.reviewOptional {
+  font-size: 0.88rem;
+}
+
+.reviewBox {
+  font-size: 0.92rem;
+}
+
+.ratingButton {
+  font-size: 0.9rem;
+}
+
+.ratingLabels {
+  font-size: 0.7rem;
+}
+
+.feedbackOption {
+  font-size: 0.84rem;
+}
+
+.feedbackSubmitButton {
+  font-size: 0.78rem;
+}
+
+.feedbackPrivacy {
+  font-size: 0.75rem;
+}
+
+.feedbackError {
+  font-size: 0.84rem;
+}
+
+.reviewBox {
+  background: #f8f7f9;
+  border-color: #d8d2d6;
+}
+
+.reviewBox:hover {
+  background: #f8f7f9;
+  border-color: #b9afb5;
+}
+
+.reviewBox:focus {
+  background: #f8f7f9;
+  border-color: #7a0042;
+}
+.ratingScale {
+  background: #f8f7f9;
+  border-color: #aaa3a7;
+}
+
+.ratingButton {
+  background: #f8f7f9;
+  border-right-color: #aaa3a7;
+}
+
+.ratingButton:hover {
+  background: #f1edf0;
+}
+
+.ratingButtonSelected,
+.ratingButtonSelected:hover {
+  background: #c60055;
+  color: #ffffff;
+}

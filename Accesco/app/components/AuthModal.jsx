@@ -56,6 +56,11 @@ export default function AuthModal({
   isOpen,
   onClose,
   onSuccess,
+  // When true, this is a site-wide login gate rather than an optional
+  // sign-in prompt: no close button, no dismiss-by-backdrop-click. The only
+  // way out is a completed sign-in (handleClose still runs post-success to
+  // reset internal state).
+  mandatory = false,
 }) {
   const [name, setName] = useState('')
   const [firstName, setFirstName] = useState('')
@@ -78,6 +83,11 @@ export default function AuthModal({
   const [resendCooldown, setResendCooldown] = useState(0)
 
   const recaptchaVerifierRef = useRef(null)
+  // grecaptcha tracks "already rendered" per DOM node, not per innerHTML, so
+  // reusing one fixed container across sends throws "reCAPTCHA has already
+  // been rendered in this element" even after clear()+innerHTML wipe. Give
+  // every attempt a brand-new container element instead.
+  const recaptchaContainerIdRef = useRef(null)
 
   useEffect(() => {
     if (resendCooldown <= 0) return undefined
@@ -129,10 +139,7 @@ export default function AuthModal({
     setGoogleLoading(false)
     setPendingSocialUser(null)
 
-    if (recaptchaVerifierRef.current) {
-      recaptchaVerifierRef.current.clear()
-      recaptchaVerifierRef.current = null
-    }
+    clearRecaptcha()
   }
 
   const handleClose = () => {
@@ -206,6 +213,33 @@ export default function AuthModal({
     }
   }
 
+  // Firebase's verifier.clear() removes the widget's contents, but Google's
+  // reCAPTCHA script also remembers *which DOM element* it has already
+  // rendered into — reusing that same element for a new RecaptchaVerifier
+  // throws "reCAPTCHA has already been rendered in this element" even after
+  // clear() and an innerHTML wipe. Swap in a brand-new element every time so
+  // grecaptcha has never seen the node before.
+  const clearRecaptcha = () => {
+    if (recaptchaVerifierRef.current) {
+      try {
+        recaptchaVerifierRef.current.clear()
+      } catch (err) {
+        console.error('reCAPTCHA clear failed:', err)
+      }
+      recaptchaVerifierRef.current = null
+    }
+
+    const host = document.getElementById('am-recaptcha-host')
+    if (host) {
+      host.innerHTML = ''
+      const containerId = `am-recaptcha-container-${Date.now()}`
+      const fresh = document.createElement('div')
+      fresh.id = containerId
+      host.appendChild(fresh)
+      recaptchaContainerIdRef.current = containerId
+    }
+  }
+
   const sendPhoneOtp = async () => {
     // Prevent a second reCAPTCHA widget from being created while one is still loading
     if (loading) return
@@ -214,14 +248,11 @@ export default function AuthModal({
     setError('')
 
     try {
-      if (recaptchaVerifierRef.current) {
-        recaptchaVerifierRef.current.clear()
-        recaptchaVerifierRef.current = null
-      }
+      clearRecaptcha()
 
       const verifier = new RecaptchaVerifier(
         auth,
-        'am-recaptcha-container',
+        recaptchaContainerIdRef.current,
         {
           size: 'invisible',
         },
@@ -240,6 +271,8 @@ export default function AuthModal({
       setResendCooldown(45)
     } catch (err) {
       console.error('Phone OTP send failed:', err)
+      // Reset so the next attempt (retry/resend) doesn't inherit a half-rendered widget
+      clearRecaptcha()
 
       setError(
         err.message ||
@@ -457,7 +490,7 @@ export default function AuthModal({
         doc(db, 'users', docId),
         {
           name: n,
-          phone: normalizedPhone,
+          phone: p,
           email: em || null,
           photoURL: pendingSocialUser?.photoURL || null,
           provider: pendingSocialUser?.provider || 'phone',
@@ -481,8 +514,8 @@ export default function AuthModal({
       )
 
       const user = {
-        name: userSnap.exists() ? userSnap.data().name : n,
-        phone: normalizedPhone,
+        name: n,
+        phone: p,
         email: em || null,
         photoURL: pendingSocialUser?.photoURL || null,
         uid: docId,
@@ -528,17 +561,17 @@ export default function AuthModal({
     border:
       focused === field
         ? '1px solid #c50062'
-        : '1px solid #2d2d2d',
+        : '1px solid #d8d8d8',
 
     borderRadius: 5,
     outline: 'none',
 
     background:
       focused === field
-        ? '#242424'
-        : '#202020',
+        ? '#ffffff'
+        : '#f7f7f7',
 
-    color: '#ffffff',
+    color: '#1a1a1a',
 
     fontFamily: 'inherit',
     fontSize: 10,
@@ -557,21 +590,23 @@ export default function AuthModal({
   return (
     <div
       style={styles.backdrop}
-      onClick={handleClose}
+      onClick={mandatory ? undefined : handleClose}
     >
       <div
         className="auth-modal-shell"
         style={styles.shell}
         onClick={(e) => e.stopPropagation()}
       >
-        <button
-          type="button"
-          onClick={handleClose}
-          aria-label="Close"
-          style={styles.closeButton}
-        >
-          ✕
-        </button>
+        {!mandatory && (
+          <button
+            type="button"
+            onClick={handleClose}
+            aria-label="Close"
+            style={styles.closeButton}
+          >
+            ✕
+          </button>
+        )}
 
         <section
           className="auth-modal-left"
@@ -649,8 +684,10 @@ export default function AuthModal({
             </div>
           ) : (
             <>
-              {/* Invisible reCAPTCHA container required by Firebase Phone Auth */}
-              <div id="am-recaptcha-container" />
+              {/* Host for the invisible reCAPTCHA widget required by Firebase Phone
+                  Auth. clearRecaptcha() injects a fresh child element into this
+                  host on every send/resend — see the comment there for why. */}
+              <div id="am-recaptcha-host" />
 
               {step === 'details' ? (
                 <div style={styles.detailsScreen}>
@@ -1327,12 +1364,12 @@ closeButton: {
     minWidth: 0,
 
     boxSizing: 'border-box',
-    padding: '27px 6px 8px 0',
+    padding: '27px 24px 8px 24px',
 
     overflowY: 'auto',
 
-    background: '#000000',
-    color: '#ffffff',
+    background: '#ffffff',
+    color: '#1a1a1a',
 
     scrollbarWidth: 'none',
   },
@@ -1349,7 +1386,7 @@ closeButton: {
   signupTitle: {
     margin: 0,
 
-    color: '#ffffff',
+    color: '#1a1a1a',
 
     fontSize: 25,
     lineHeight: 1.12,
@@ -1360,7 +1397,7 @@ closeButton: {
   signupSubtitle: {
     margin: '8px 0 0',
 
-    color: 'rgba(255,255,255,0.88)',
+    color: 'rgba(26,26,26,0.72)',
 
     fontSize: 10,
     lineHeight: 1.35,
@@ -1389,11 +1426,11 @@ socialButtonFull: {
 
   boxSizing: 'border-box',
 
-  border: '1px solid #2b2b2b',
+  border: '1px solid #d8d8d8',
   borderRadius: 5,
 
-  background: '#202020',
-  color: '#eeeeee',
+  background: '#ffffff',
+  color: '#1a1a1a',
 
   fontFamily: 'Arial, Helvetica, sans-serif',
   fontSize: 11,
@@ -1418,11 +1455,11 @@ socialButtonFull: {
   dividerLine: {
     height: 1,
 
-    background: '#292929',
+    background: '#e2e2e2',
   },
 
   dividerText: {
-    color: 'rgba(255,255,255,0.58)',
+    color: 'rgba(26,26,26,0.5)',
 
     fontSize: 7,
     lineHeight: 1,
@@ -1435,8 +1472,8 @@ socialButtonFull: {
     border: '1px solid rgba(197,0,98,0.3)',
     borderRadius: 4,
 
-    background: 'rgba(197,0,98,0.1)',
-    color: '#ff65a1',
+    background: 'rgba(197,0,98,0.08)',
+    color: '#c50062',
 
     fontSize: 9,
     lineHeight: 1.3,
@@ -1469,7 +1506,7 @@ socialButtonFull: {
   },
 
   label: {
-    color: 'rgba(255,255,255,0.92)',
+    color: 'rgba(26,26,26,0.85)',
 
     fontSize: 9,
     lineHeight: 1,
@@ -1477,7 +1514,7 @@ socialButtonFull: {
   },
 
   optional: {
-    color: 'rgba(255,255,255,0.56)',
+    color: 'rgba(26,26,26,0.45)',
 
     fontSize: 8,
     fontStyle: 'normal',
@@ -1535,7 +1572,7 @@ socialButtonFull: {
   verifyTitle: {
     margin: 0,
 
-    color: '#ffffff',
+    color: '#1a1a1a',
 
     fontSize: 26,
     lineHeight: 1.1,
@@ -1546,7 +1583,7 @@ socialButtonFull: {
   verifySubtitle: {
     margin: '13px 0 0',
 
-    color: 'rgba(255,255,255,0.58)',
+    color: 'rgba(26,26,26,0.6)',
 
     fontSize: 9,
     lineHeight: 1.4,
@@ -1588,8 +1625,8 @@ socialButtonFull: {
     border: '1px solid rgba(197,0,98,0.3)',
     borderRadius: 4,
 
-    background: 'rgba(197,0,98,0.1)',
-    color: '#ff65a1',
+    background: 'rgba(197,0,98,0.08)',
+    color: '#c50062',
 
     fontSize: 9,
     lineHeight: 1.3,
@@ -1620,11 +1657,11 @@ socialButtonFull: {
 
     boxSizing: 'border-box',
 
-    border: '1px solid #2c2c2c',
+    border: '1px solid #d8d8d8',
     borderRadius: 5,
 
-    background: '#202020',
-    color: '#ffffff',
+    background: '#f7f7f7',
+    color: '#1a1a1a',
 
     fontSize: 18,
     fontWeight: 600,
@@ -1677,7 +1714,7 @@ socialButtonFull: {
   },
 
   resendText: {
-    color: 'rgba(255,255,255,0.54)',
+    color: 'rgba(26,26,26,0.55)',
   },
 
   timerValue: {
@@ -1732,7 +1769,7 @@ socialButtonFull: {
   },
 
   bottomResendText: {
-    color: 'rgba(255,255,255,0.54)',
+    color: 'rgba(26,26,26,0.55)',
 
     fontSize: 9,
   },
@@ -1786,7 +1823,7 @@ socialButtonFull: {
   successTitle: {
     margin: '0 0 7px',
 
-    color: '#ffffff',
+    color: '#1a1a1a',
 
     fontSize: 25,
     fontWeight: 700,
@@ -1795,7 +1832,7 @@ socialButtonFull: {
   successText: {
     margin: 0,
 
-    color: 'rgba(255,255,255,0.66)',
+    color: 'rgba(26,26,26,0.68)',
 
     fontSize: 11,
   },
@@ -1803,7 +1840,7 @@ socialButtonFull: {
   successNote: {
     margin: 0,
 
-    color: '#4ade80',
+    color: '#16a34a',
 
     fontSize: 11,
     fontWeight: 650,
@@ -1812,7 +1849,7 @@ socialButtonFull: {
   mutedNote: {
     margin: 0,
 
-    color: 'rgba(255,255,255,0.5)',
+    color: 'rgba(26,26,26,0.5)',
 
     fontSize: 11,
   },
@@ -1821,11 +1858,11 @@ socialButtonFull: {
     width: '100%',
     height: 36,
 
-    border: '1px solid #333333',
+    border: '1px solid #d8d8d8',
     borderRadius: 5,
 
-    background: '#202020',
-    color: '#ffffff',
+    background: '#f7f7f7',
+    color: '#1a1a1a',
 
     fontSize: 10,
     fontWeight: 600,
@@ -1860,11 +1897,11 @@ socialButtonFull: {
   miniButtonMuted: {
     height: 35,
 
-    border: '1px solid #333333',
+    border: '1px solid #d8d8d8',
     borderRadius: 5,
 
-    background: '#202020',
-    color: 'rgba(255,255,255,0.7)',
+    background: '#f7f7f7',
+    color: 'rgba(26,26,26,0.7)',
 
     fontSize: 10,
     fontWeight: 600,
