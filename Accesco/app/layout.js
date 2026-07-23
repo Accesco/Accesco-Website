@@ -1,6 +1,6 @@
 import Script from 'next/script';
 import { Sora, DM_Sans, Inter } from 'next/font/google';
-import { spaceGrotesk, jetbrainsMono } from '@/app/fonts';
+import { spaceGrotesk } from '@/app/fonts';
 import './globals.css';
 import { AuthProvider } from './components/AuthProvider';
 import AuthGate from './components/AuthGate';
@@ -123,7 +123,7 @@ export default function RootLayout({ children }) {
 
 
   return (
-    <html lang="en" className={`${sora.variable} ${dmSans.variable} ${inter.variable} ${spaceGrotesk.variable} ${jetbrainsMono.variable}`}>
+    <html lang="en" className={`${sora.variable} ${dmSans.variable} ${inter.variable} ${spaceGrotesk.variable}`}>
       <head>
         {/* Structured Data for SEO */}
         <JsonLd data={[organizationSchema, websiteSchema]} />
