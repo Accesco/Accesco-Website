@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
@@ -809,9 +810,11 @@ const handleTouchEnd = (event) => {
             className="sw-header-logo-link"
             aria-label="Swadishtt home"
           >
-            <img
+            <Image
               src="/images/swadisht/swadisht_logo.JPG"
               alt="Swadishtt"
+              width={46}
+              height={46}
               className="sw-header-logo"
             />
           </Link>
@@ -1104,7 +1107,7 @@ const handleTouchEnd = (event) => {
 
                   return (
                     <div className="sw-order-item" key={item.name}>
-                      <img src={item.image} alt="" />
+                      <Image src={item.image} alt="" width={180} height={180} />
 
                       <div>
                         <strong>{item.name}</strong>

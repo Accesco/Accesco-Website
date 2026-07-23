@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { useSwadishtt } from '../contexts/SwadishttContext';
 import styles from './SwadishttHeader.module.css';
@@ -39,9 +40,11 @@ export default function SwadishttHeader() {
             
             {/* Logo */}
             <Link href="/services/swadisht" className={styles.logo}>
-              <img 
-                src="/images/swadisht/swadisht_logo.JPG" 
-                alt="Swadishtt" 
+              <Image
+                src="/images/swadisht/swadisht_logo.JPG"
+                alt="Swadishtt"
+                width={36}
+                height={36}
                 className={styles.logoImage}
                 onError={(e) => e.target.style.display = 'none'}
               />

@@ -532,9 +532,11 @@ export default function BlogsClient({ initialPosts }) {
                         borderRadius: '8px',
                         border: '2px solid rgba(16, 185, 129, 0.3)'
                       }}>
-                        <img
+                        <Image
                           src={postImgUrl}
                           alt="Cover preview"
+                          width={800}
+                          height={200}
                           className="img-preview"
                           style={{
                             width: '100%',

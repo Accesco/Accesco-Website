@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import Image from 'next/image';
 import styles from './ProductGallery.module.css';
 
 export default function ProductGallery({ images, productName }) {
@@ -25,12 +24,10 @@ export default function ProductGallery({ images, productName }) {
       {/* Main Image */}
       <div className={styles.mainImageContainer}>
         <div className={`${styles.mainImage} ${isZoomed ? styles.zoomed : ''}`}>
-          <Image
+          {/* eslint-disable-next-line @next/next/no-img-element -- product image comes from mock data's heterogeneous external hosts, not compatible with next/image's static remotePatterns allowlist */}
+          <img
             src={images[selectedImage].url}
             alt={images[selectedImage].alt || productName}
-            fill
-            sizes="(max-width: 768px) 100vw, 50vw"
-            priority
             className={styles.image}
           />
         </div>
@@ -73,11 +70,10 @@ export default function ProductGallery({ images, productName }) {
               onClick={() => handleThumbnailClick(index)}
               aria-label={`View image ${index + 1}`}
             >
-              <Image
+              {/* eslint-disable-next-line @next/next/no-img-element -- product image comes from mock data's heterogeneous external hosts, not compatible with next/image's static remotePatterns allowlist */}
+              <img
                 src={image.url}
                 alt={image.alt || `${productName} - Image ${index + 1}`}
-                fill
-                sizes="100px"
                 className={styles.thumbnailImage}
               />
             </button>

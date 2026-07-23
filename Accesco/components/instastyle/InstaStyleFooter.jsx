@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import InstaStyleLogo from './InstaStyleLogo';
 import '../Footer.css';
@@ -38,10 +39,10 @@ export default function InstaStyleFooter() {
             
             <div className="app-badges">
               <a href="#" className="app-badge">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg" alt="Google Play" className="badge-img" />
+                <Image src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg" alt="Google Play" width={135} height={40} className="badge-img" />
               </a>
               <a href="#" className="app-badge">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/3/3c/Download_on_the_App_Store_Badge.svg" alt="App Store" className="badge-img" />
+                <Image src="https://upload.wikimedia.org/wikipedia/commons/3/3c/Download_on_the_App_Store_Badge.svg" alt="App Store" width={135} height={40} className="badge-img" />
               </a>
             </div>
           </div>

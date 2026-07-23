@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useSwadishtt } from '../contexts/SwadishttContext';
 import SwadishttHeader from '../components/SwadishttHeader';
@@ -748,9 +749,11 @@ function CheckoutContent() {
               <div className={styles.orderItems}>
                 {cart.map((item, index) => (
                   <div key={index} className={styles.orderItem}>
-                    <img 
-                      src={item.image} 
+                    <Image
+                      src={item.image}
                       alt={item.name}
+                      width={52}
+                      height={52}
                       className={styles.orderItemImage}
                       onError={(e) => {
                         e.target.src = `https://placehold.co/60x50/262626/FAF9F6/png?text=${encodeURIComponent(item.name)}`;

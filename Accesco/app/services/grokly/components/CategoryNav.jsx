@@ -6,6 +6,7 @@
 'use client';
 
 import { useRef, useEffect } from 'react';
+import Image from 'next/image';
 import styles from './CategoryNav.module.css';
 
 export default function CategoryNav({ 
@@ -38,11 +39,12 @@ export default function CategoryNav({
             aria-pressed={activeCategory === category.id}
           >
             <div className={styles.catImageWrapper}>
-              <img 
-                src={category.image} 
-                alt="" 
+              <Image
+                src={category.image}
+                alt=""
+                fill
+                sizes="80px"
                 className={styles.catImage}
-                loading="lazy"
               />
             </div>
             <span className={styles.catName}>{category.name}</span>

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useMemo } from 'react';
+import Image from 'next/image';
 import { useParams, useRouter } from 'next/navigation';
 import { useGrokly } from '../../contexts/GroklyContext';
 import GroklyHeader from '../../components/GroklyHeader';
@@ -144,7 +145,7 @@ export default function GroklyCategoryPage() {
                     onClick={() => handleCategorySelect(cat.id)}
                     className={`grokly-sidebar-item ${isActive ? 'active' : ''}`}
                   >
-                    <img src={cat.image} alt={cat.name} />
+                    <Image src={cat.image} alt={cat.name} width={30} height={30} />
                     <span>{cat.name}</span>
                   </button>
                 );

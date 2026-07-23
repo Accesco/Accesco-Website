@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useRef, useState } from 'react';
+import Image from 'next/image';
 import styles from './StyleStories.module.css';
 
 const STORIES = [
@@ -301,7 +302,7 @@ export default function StyleStories() {
             <div ref={trackRef} className={styles.track}>
               {STORIES.map((item, i) => (
                 <button key={item.id} className={styles.card} onClick={() => openStory(i)}>
-                  <img src={item.image} alt={item.title} className={styles.cardImage} />
+                  <Image src={item.image} alt={item.title} fill sizes="(max-width: 768px) 154px, 188px" className={styles.cardImage} />
                   <span className={styles.cardShade} />
                   <span className={styles.views}><Icon name="play" filled size={10} />{count(item.views)}</span>
                   <span className={styles.cardCopy}><strong>{item.title}</strong><small>{item.subtitle}</small></span>
@@ -320,7 +321,7 @@ export default function StyleStories() {
           <header className={styles.reelsHeader}>
             <div className={styles.headerLeft}>
               <button className={styles.headerCircle} onClick={() => setOpen(false)}><Icon name="back" size={24} /></button>
-              <span className={styles.headerLogo}><img src="/images/instastyle-logo.png" alt="InstaStyle" /></span>
+              <span className={styles.headerLogo}><Image src="/images/instastyle-logo.png" alt="InstaStyle" width={54} height={54} /></span>
               <div className={styles.headerTitle}>
                 <h1>Discover Your Next <span>Signature Look</span></h1>
                 <i />
@@ -367,7 +368,7 @@ export default function StyleStories() {
                     onError={() => setFailed(true)}
                   />
                 )}
-                {failed && <img src={story.image} alt={story.title} className={styles.videoFallbackImage} />}
+                {failed && <Image src={story.image} alt={story.title} fill sizes="400px" className={styles.videoFallbackImage} />}
                 <div className={styles.videoShade} />
 
                 <div className={styles.videoTopbar}>
@@ -447,7 +448,7 @@ export default function StyleStories() {
                         const active = added.has(key);
                         return (
                           <div className={styles.orderItem} key={name}>
-                            <img src={image} alt="" />
+                            <Image src={image} alt="" width={40} height={40} />
                             <div><strong>{name}</strong><span>{detail} • ₹{price.toLocaleString()}</span></div>
                             <button className={`${styles.addButton} ${active ? styles.added : ''}`} onClick={() => { toggle(setAdded, key); setToast(active ? 'Removed from bag' : 'Added to bag'); }}>
                               <Icon name={active ? 'quality' : 'plus'} size={18} />

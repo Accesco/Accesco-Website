@@ -6,6 +6,7 @@ import React, {
   useMemo
 } from 'react';
 
+import Image from 'next/image';
 import Link from 'next/link';
 
 import {
@@ -347,9 +348,11 @@ export default function App() {
       className={styles.featureCard}
     >
       <div className={styles.featureMedia}>
-        <img
+        <Image
           src={item.image}
           alt={item.title}
+          fill
+          sizes="(max-width: 768px) 100vw, 400px"
           className={styles.featureCardImage}
         />
 
@@ -420,9 +423,11 @@ export default function App() {
     className={styles.cravingItem}
   >
     <div className={styles.cravingImageWrapper}>
-      <img
+      <Image
         src={cat.image}
         alt={cat.label}
+        width={110}
+        height={110}
         className={styles.cravingImg}
       />
     </div>
@@ -460,9 +465,11 @@ export default function App() {
               <div className={styles.storyCardsTrack} ref={storiesTrackRef} id="story-cards-track">
                 {storyItems.map(story => (
                   <div key={story.id} className={styles.storyCard} id={`story-card-${story.id}`}>
-                    <img 
-                      src={story.image} 
-                      alt={story.title} 
+                    <Image
+                      src={story.image}
+                      alt={story.title}
+                      fill
+                      sizes="165px"
                       className={styles.storyImg}
                       id={`story-img-${story.id}`}
                       onError={(e) => {
@@ -594,9 +601,11 @@ export default function App() {
                 <h3 className={styles.deliveryCardTitle} id="delivery-card-title-instant">Instant Delivery</h3>
                 <p className={styles.deliveryCardDesc} id="delivery-card-desc-instant">Hot, premium chef bowls prepared fresh and delivered in under 30 minutes straight to your desk or doorstep.</p>
               </div>
-              <img 
+              <Image
                 src="/images/bikerider.png"
-                alt="Delivery Bike" 
+                alt="Delivery Bike"
+                width={90}
+                height={90}
                 className={styles.deliveryCardImg}
                 id="delivery-img-instant"
               />
@@ -607,9 +616,11 @@ export default function App() {
                 <h3 className={styles.deliveryCardTitle} id="delivery-card-title-scheduled">Scheduled Catering</h3>
                 <p className={styles.deliveryCardDesc} id="delivery-card-desc-scheduled">Planning an office team event or a family gathering? Pre-book customized catering setups with hot-case packaging.</p>
               </div>
-              <img 
+              <Image
                 src="/images/calendar.png"
-                alt="Calendar Planner" 
+                alt="Calendar Planner"
+                width={90}
+                height={90}
                 className={styles.deliveryCardImg}
                 id="delivery-img-scheduled"
               />

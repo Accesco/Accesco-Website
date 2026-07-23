@@ -2,7 +2,6 @@
 
 import { useEffect } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 import { useCart } from '@/contexts/CartContext';
 import styles from './CartDrawer.module.css';
 
@@ -92,11 +91,10 @@ export default function CartDrawer() {
                     className={styles.itemImage}
                     onClick={closeCart}
                   >
-                    <Image
+                    {/* eslint-disable-next-line @next/next/no-img-element -- item.image comes from the product catalog's heterogeneous external hosts, not compatible with next/image's static remotePatterns allowlist */}
+                    <img
                       src={item.image}
                       alt={item.name}
-                      fill
-                      sizes="100px"
                       className={styles.image}
                     />
                   </Link>
