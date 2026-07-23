@@ -9,12 +9,12 @@ import { initializeAppCheck, CustomProvider } from 'firebase/app-check';
 // supplied, so these are hardcoded rather than read from process.env -- this
 // removes the CI/deploy dependency on repo secrets being configured.
 const firebaseConfig = {
-  apiKey:            "AIzaSyBon3Q156u3xNWW2nZw8Z6RxWbfNQezIFM",
-  authDomain:        "accesco-db.firebaseapp.com",
-  projectId:         "accesco-db",
-  storageBucket:     "accesco-db.firebasestorage.app",
-  messagingSenderId: "113387637108",
-  appId:             "1:113387637108:web:1c4b181334431c00190421",
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
 
 const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
