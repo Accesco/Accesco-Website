@@ -114,8 +114,11 @@ export default function RestaurantDetailPage() {
   if (!restaurant) {
     return (
       <main className={styles.loadingPage}>
-        <div className={styles.loader} />
-        <p>Loading restaurant…</p>
+        <p className={styles.notFoundTitle}>Restaurant not found</p>
+        <p>We couldn&apos;t find a restaurant at this address.</p>
+        <Link href="/services/swadisht" className={styles.notFoundLink}>
+          Back to Swadishtt
+        </Link>
       </main>
     );
   }
