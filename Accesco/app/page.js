@@ -1618,7 +1618,13 @@ const [deliveryVisible, setDeliveryVisible] = useState(false);
                   <div className="serviceCardLinkWrap">
                     <div className="service-premium-card grokly-card">
                       <div className="service-card-visual">
-                        <Image src="/images/grokly-new2.png" alt="Grokly Groceries" fill className="serviceCardVisualImage" />
+                        <Image
+  src="/images/grokly-new2.png"
+  alt="Grokly Groceries"
+  fill
+  className="serviceCardVisualImage"
+  sizes="(max-width: 768px) 100vw, 340px"
+/>
                       </div>
                       <div className="service-icon-circle">
                         <Image src="/images/grokly-icon.png" alt="Grokly" width={40} height={40} className="serviceIconCircleImage" />
@@ -1635,7 +1641,13 @@ const [deliveryVisible, setDeliveryVisible] = useState(false);
                   <div className="serviceCardLinkWrap">
                     <div className="service-premium-card swadisht-card">
                       <div className="service-card-visual">
-                        <Image src="/images/swadisht/swadisht_logo1.JPG" alt="Swadishtt Meals" fill className="serviceCardVisualImage" />
+                        <Image
+  src="/images/swadisht/swadisht_logo1.JPG"
+  alt="Swadishtt Meals"
+  fill
+  className="serviceCardVisualImage"
+  sizes="(max-width: 768px) 100vw, 340px"
+/>
                       </div>
                       <div className="service-icon-circle">
                         <Image src="/images/swadisht/swadisht_logo.JPG" alt="Swadishtt" width={40} height={40} className="serviceIconCircleImage" />
@@ -1652,7 +1664,13 @@ const [deliveryVisible, setDeliveryVisible] = useState(false);
                   <div className="serviceCardLinkWrap">
                     <div className="service-premium-card instastyle-card">
                       <div className="service-card-visual">
-                        <Image src="/images/fashion-new2.png" alt="InstaStyle Fashion" fill className="serviceCardVisualImage" />
+                        <Image
+  src="/images/fashion-new2.png"
+  alt="InstaStyle Fashion"
+  fill
+  className="serviceCardVisualImage"
+  sizes="(max-width: 768px) 100vw, 340px"
+/>
                       </div>
                       <div className="service-icon-circle">
                         <Image src="/images/instastyle-logo.png" alt="InstaStyle" width={40} height={40} className="serviceIconCircleImage" />
