@@ -1,9 +1,5 @@
 'use client';
 
-// Force dynamic rendering to prevent prerendering
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
-
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';

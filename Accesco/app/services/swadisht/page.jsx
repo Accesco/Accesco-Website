@@ -27,6 +27,7 @@ import {
   Sparkles
 } from 'lucide-react';
 
+import { FaInstagram, FaFacebookF, FaXTwitter, FaYoutube } from 'react-icons/fa6';
 import './swadisht.css';
 import styles from './styles/swadisht-main.module.css';
 // --- DATA ARRAYS ---

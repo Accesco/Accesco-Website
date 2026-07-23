@@ -173,8 +173,13 @@ export default function SwadishttProfilePage() {
   };
 
   const totalSpent = orders.reduce((sum, order) => sum + (Number(order?.totals?.total) || 0), 0);
-  const avgSpend = orders.length ? Math.round(totalSpent / orders.length) : 0;
   const recentOrders = orders.slice(0, 3);
+
+  // Only show Report Issue for delivered orders
+  const lastDeliveredOrder = orders.find(
+    (o) => o.status?.toLowerCase() === 'delivered'
+  ) || null;
+  const lastOrderId = lastDeliveredOrder?.id || orders[0]?.id || '0';
 
   return (
     <div className={styles.page}>
@@ -242,6 +247,118 @@ export default function SwadishttProfilePage() {
 
           {/* Right Column: Details Pane */}
           <main className={styles.detailsPane}>
+            {/* Eco Services & Support Hub */}
+            <section className={styles.panelCard}>
+              <div className={styles.panelHeaderRow}>
+                <h3 className={styles.panelTitle}>Eco Services & Support</h3>
+                <span className={styles.panelLink}>Accesco Green Hub</span>
+              </div>
+              <p className={styles.panelSubtitle}>
+                Schedule container returns, track Green Points, and report order issues directly.
+              </p>
+
+              <div className={styles.servicesGrid}>
+                {/* Return Container Card */}
+                <Link href={`/services/swadisht/orders/${lastOrderId}/return-container`} className={styles.serviceCard}>
+                  <div className={styles.serviceCardLeft}>
+                    <div className={styles.serviceIconWrap}>
+                      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <polyline points="23 4 23 10 17 10" />
+                        <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" />
+                      </svg>
+                    </div>
+                    <div>
+                      <span className={styles.serviceTitle}>Return Container</span>
+                      <p className={styles.serviceDesc}>Schedule pickup &amp; earn ₹10 Green Points</p>
+                    </div>
+                  </div>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#7A6050" strokeWidth="2.5">
+                    <polyline points="9 18 15 12 9 6" />
+                  </svg>
+                </Link>
+
+                {/* Report an Issue Card — only for delivered orders */}
+                {lastDeliveredOrder ? (
+                  <Link href={`/services/swadisht/orders/${lastDeliveredOrder.id}/report-issue`} className={styles.serviceCard}>
+                    <div className={styles.serviceCardLeft}>
+                      <div className={styles.serviceIconWrap}>
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <circle cx="12" cy="12" r="10" />
+                          <line x1="12" y1="8" x2="12" y2="12" />
+                          <line x1="12" y1="16" x2="12.01" y2="16" />
+                        </svg>
+                      </div>
+                      <div>
+                        <span className={styles.serviceTitle}>Report an Issue</span>
+                        <p className={styles.serviceDesc}>Missing item, wrong item, or food quality</p>
+                      </div>
+                    </div>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#7A6050" strokeWidth="2.5">
+                      <polyline points="9 18 15 12 9 6" />
+                    </svg>
+                  </Link>
+                ) : (
+                  <div className={`${styles.serviceCard} ${styles.serviceCardDisabled}`}>
+                    <div className={styles.serviceCardLeft}>
+                      <div className={styles.serviceIconWrap}>
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <circle cx="12" cy="12" r="10" />
+                          <line x1="12" y1="8" x2="12" y2="12" />
+                          <line x1="12" y1="16" x2="12.01" y2="16" />
+                        </svg>
+                      </div>
+                      <div>
+                        <span className={styles.serviceTitle}>Report an Issue</span>
+                        <p className={styles.serviceDesc}>Available after order delivery</p>
+                      </div>
+                    </div>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#C8B0A0" strokeWidth="2.5">
+                      <line x1="18" y1="6" x2="6" y2="18" />
+                      <line x1="6" y1="6" x2="18" y2="18" />
+                    </svg>
+                  </div>
+                )}
+
+                {/* Order History Card */}
+                <Link href="/services/swadisht/orders" className={styles.serviceCard}>
+                  <div className={styles.serviceCardLeft}>
+                    <div className={styles.serviceIconWrap}>
+                      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
+                        <line x1="3" y1="6" x2="21" y2="6" />
+                      </svg>
+                    </div>
+                    <div>
+                      <span className={styles.serviceTitle}>Order History</span>
+                      <p className={styles.serviceDesc}>Track orders &amp; reorder your favorites</p>
+                    </div>
+                  </div>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#7A6050" strokeWidth="2.5">
+                    <polyline points="9 18 15 12 9 6" />
+                  </svg>
+                </Link>
+
+                {/* Build Thali Card */}
+                <Link href="/services/swadisht/thali-engine" className={styles.serviceCard}>
+                  <div className={styles.serviceCardLeft}>
+                    <div className={styles.serviceIconWrap}>
+                      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <circle cx="12" cy="12" r="10" />
+                        <polygon points="12 8 8 12 12 16 16 12 12 8" />
+                      </svg>
+                    </div>
+                    <div>
+                      <span className={styles.serviceTitle}>Build Artisanal Thali</span>
+                      <p className={styles.serviceDesc}>Customize your regional meal platter</p>
+                    </div>
+                  </div>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#7A6050" strokeWidth="2.5">
+                    <polyline points="9 18 15 12 9 6" />
+                  </svg>
+                </Link>
+              </div>
+            </section>
+
             {/* Browse Premium Offerings */}
             <section className={styles.panelCard}>
               <div className={styles.panelHeaderRow}>

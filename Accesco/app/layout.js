@@ -15,6 +15,7 @@ const sora = localFont({
   weight: '300 800',
   display: 'swap',
   variable: '--font-sora',
+  adjustFontFallback: false,
 });
 
 const dmSans = localFont({
@@ -22,6 +23,7 @@ const dmSans = localFont({
   weight: '400 700',
   display: 'swap',
   variable: '--font-dm-sans',
+  adjustFontFallback: false,
 });
 
 const inter = localFont({
@@ -29,6 +31,7 @@ const inter = localFont({
   weight: '400 700',
   display: 'swap',
   variable: '--font-inter',
+  adjustFontFallback: false,
 });
 
 export const metadata = {
