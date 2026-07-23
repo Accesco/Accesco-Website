@@ -1,869 +1,1484 @@
-/* Restaurant Detail Page - Zomato Style */
+.page,
+.page * {
+  box-sizing: border-box;
+}
 
 .page {
   min-height: 100vh;
-  background: #ffffff;
   padding-top: 72px;
+  overflow-x: hidden;
+  background: #fbf7ef;
+  color: #2d1d17;
 }
 
-.loading {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: 60vh;
-  gap: 16px;
+.loadingPage {
+  min-height: 100vh;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 14px;
+  background: #fbf7ef;
+  color: #6e5146;
 }
 
-.spinner {
-  width: 48px;
-  height: 48px;
-  border: 3px solid #F8F8F8;
-  border-top-color: #E23744;
+.loader {
+  width: 42px;
+  height: 42px;
+  border: 3px solid #eaded3;
+  border-top-color: #db5a3f;
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
-/* Hero Section - Zomato Style */
+/* HERO BACKGROUND */
+
 .hero {
   position: relative;
-  background: #ffffff;
-  border-bottom: 1px solid #E8E8E8;
-  padding-bottom: 24px;
+  z-index: 2;
+  isolation: isolate;
+  height: 350px;
+  min-height: 350px;
+  margin-bottom: 55px;
+  overflow: visible;
 }
 
-.heroImage {
-  position: relative;
+.heroMedia {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
   width: 100%;
-  height: 300px;
-  min-height: 300px;
-  max-height: 300px;
+  height: 350px;
   overflow: hidden;
+  background: #7a503c;
 }
 
-.heroImage img {
+.heroVideo {
   width: 100%;
   height: 100%;
+  display: block;
   object-fit: cover;
-  object-position: center center;
-  transform: none;
-  animation: none;
-  transition: none;
+  object-position: center 45%;
 }
 
-.heroOverlay {
-  display: none;
+.heroShade {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background:
+    linear-gradient(
+      180deg,
+      rgba(35, 20, 15, 0.2) 0%,
+      rgba(83, 51, 35, 0.1) 46%,
+      rgba(251, 247, 239, 0.98) 100%
+    ),
+    linear-gradient(
+      90deg,
+      rgba(38, 24, 18, 0.16),
+      transparent 55%
+    );
 }
 
-.heroContent {
-  background: #ffffff;
-  padding: 24px 0;
-}
-
-.container {
-  max-width: 1200px;
+.heroInner {
+  position: relative;
+  z-index: 10;
+  width: min(1000px, calc(100% - 40px));
+  height: 350px;
+  min-height: 350px;
   margin: 0 auto;
-  padding: 0 24px;
-  width: 100%;
+  overflow: visible;
+  pointer-events: none;
 }
 
-.restaurantName {
-  font-size: 36px;
-  font-weight: 500;
-  color: #1C1C1C;
-  margin-bottom: 8px;
-  letter-spacing: -0.02em;
+/* RESTAURANT INFORMATION CARD */
+
+.restaurantCard {
+  position: absolute;
+  right: auto;
+  bottom: -55px;
+  left: 50%;
+  z-index: 50;
+  display: block;
+  width: min(480px, calc(100% - 24px));
+  padding: 19px 21px 18px;
+  border: 1px solid rgba(121, 83, 62, 0.13);
+  border-radius: 12px;
+  background: #fffdf8;
+  box-shadow:
+    0 14px 34px rgba(66, 39, 26, 0.16),
+    0 2px 7px rgba(66, 39, 26, 0.08);
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%);
+  pointer-events: auto;
 }
 
-.cuisines {
-  font-size: 15px;
-  color: #696969;
-  margin-bottom: 16px;
-}
-
-.metaRow {
+.eyebrowRow {
+  margin-bottom: 6px;
   display: flex;
   align-items: center;
-  gap: 20px;
-  margin-bottom: 16px;
-  padding-bottom: 16px;
-  border-bottom: 1px solid #E8E8E8;
+  justify-content: space-between;
+  gap: 14px;
+  color: #ca6d4e;
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
 }
 
-.metaItem {
+.hotBadge {
+  flex: 0 0 auto;
+  padding: 5px 8px;
+  border-radius: 999px;
+  background: #fff0e7;
+  color: #d45c3e;
+  font-size: 8px;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.restaurantCard h1 {
+  max-width: 370px;
+  margin: 0 0 5px;
+  color: #291b16;
+  font-size: 34px;
+  font-weight: 900;
+  line-height: 0.96;
+  letter-spacing: -0.045em;
+}
+
+.restaurantDescription {
+  max-width: 410px;
+  margin: 0 0 10px;
+  color: #6f5d54;
+  font-size: 10px;
+  line-height: 1.45;
+}
+
+.restaurantMeta {
   display: flex;
   align-items: center;
-  gap: 6px;
-  font-size: 15px;
-  color: #1C1C1C;
-}
-
-.starIcon {
-  width: 18px;
-  height: 18px;
-  color: #0F8A65;
+  flex-wrap: wrap;
+  gap: 6px 11px;
+  color: #6c5146;
+  font-size: 9px;
+  font-weight: 650;
 }
 
 .rating {
-  font-weight: 600;
-  color: #0F8A65;
+  color: #d65338;
 }
 
-.ratingCount {
-  color: #696969;
-  font-size: 14px;
+.cardDivider {
+  height: 1px;
+  margin: 12px 0 10px;
+  background: #ebdfd4;
 }
 
-.metaDivider {
-  color: #CFCFCF;
-  font-size: 12px;
-}
-
-.metaIcon {
-  width: 16px;
-  height: 16px;
-  color: #696969;
-}
-
-.location {
+.cuisineBlock {
   display: flex;
   align-items: center;
-  gap: 8px;
-  color: #696969;
-  font-size: 14px;
-  margin-bottom: 16px;
+  gap: 11px;
 }
 
-.locationIcon {
-  width: 16px;
-  height: 16px;
+.cuisineLabel {
+  color: #977c6f;
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
 }
 
-.offers {
+.cuisineChips {
   display: flex;
-  gap: 12px;
   flex-wrap: wrap;
+  gap: 4px;
 }
 
-.offerCard {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  background: #FFF3E0;
-  border: 1px solid #FFB800;
-  padding: 12px 16px;
-  border-radius: 8px;
+.cuisineChips span,
+.dishTags span {
+  padding: 3px 7px;
+  border: 1px solid #e8d8ca;
+  border-radius: 999px;
+  background: #fffaf4;
+  color: #765c50;
+  font-size: 8px;
+  font-weight: 650;
 }
 
-.offerIcon {
-  width: 20px;
-  height: 20px;
-  color: #E65100;
-  flex-shrink: 0;
-}
+/* MENU SECTION */
 
-.offerTitle {
-  font-weight: 600;
-  color: #E65100;
-  font-size: 14px;
-}
-
-.offerDesc {
-  font-size: 13px;
-  color: #E65100;
-}
-
-/* Menu Section - Zomato Style */
 .menuSection {
-  background: #F8F9FA;
-  padding: 32px 0 100px;
+  position: relative;
+  z-index: 1;
+  padding: 78px 0 100px;
+  background: #fbf7ef;
 }
 
-.menuLayout {
+.menuShell {
+  width: min(760px, calc(100% - 40px));
+  margin: 0 auto;
+}
+
+.filterTabs {
+  height: 42px;
+  border-bottom: 1px solid #eadfd5;
   display: flex;
+  align-items: flex-end;
   gap: 24px;
 }
 
-.categorySidebar {
-  position: sticky;
-  top: 96px;
-  width: 220px;
-  height: fit-content;
-  flex-shrink: 0;
-}
-
-.sidebarTitle {
-  font-size: 16px;
-  font-weight: 600;
-  margin-bottom: 16px;
-  color: #1C1C1C;
-  padding: 0 8px;
-}
-
-.categoryList {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.categoryBtn {
-  background: none;
-  border: none;
-  padding: 12px 16px;
-  text-align: left;
-  font-size: 15px;
-  color: #696969;
-  border-radius: 8px;
+.filterTabs button {
+  position: relative;
+  height: 42px;
+  padding: 0 1px;
+  border: 0;
+  background: transparent;
+  color: #806b61;
+  font-family: inherit;
+  font-size: 10px;
+  font-weight: 650;
   cursor: pointer;
-  transition: all 0.2s ease;
-  text-transform: capitalize;
 }
 
-.categoryBtn:hover {
-  background: #F8F8F8;
-  color: #1C1C1C;
+.filterTabs button::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  bottom: -1px;
+  left: 0;
+  height: 2px;
+  background: transparent;
 }
 
-.categoryBtn.active {
-  background: #E23744;
-  color: #ffffff;
-  font-weight: 500;
+.filterTabs .activeTab {
+  color: #d85a40;
 }
 
-.menuContent {
-  flex: 1;
-  min-width: 0;
+.filterTabs .activeTab::after {
+  background: #dc5d42;
 }
 
-.menuTitle {
-  font-size: 24px;
-  font-weight: 600;
-  margin-bottom: 24px;
-  color: #1C1C1C;
-  text-transform: capitalize;
-  letter-spacing: -0.01em;
+.menuHeading {
+  padding: 21px 0 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
-.menuGrid {
+.menuHeading h2 {
+  position: relative;
+  margin: 0;
+  padding-left: 18px;
+  color: #39251e;
+  font-size: 17px;
+  font-weight: 800;
+}
+
+.menuHeading h2::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 10px;
+  height: 2px;
+  background: #df6448;
+  transform: translateY(-50%);
+}
+
+.menuHeading span {
+  color: #9b8478;
+  font-size: 9px;
+}
+
+.menuList {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 10px;
 }
 
-/* Dish Card - Horizontal Zomato Style */
+/* DISH CARDS */
+
 .dishCard {
-  background: #ffffff;
-  border: 1px solid #E8E8E8;
-  border-radius: 8px;
-  padding: 16px;
-  display: flex;
-  gap: 16px;
-  transition: all 0.2s ease;
+  min-height: 116px;
+  padding: 8px;
+  border: 1px solid #eadfd4;
+  border-radius: 11px;
+  background: #fff;
+  box-shadow: 0 5px 16px rgba(71, 42, 28, 0.045);
+  display: grid;
+  grid-template-columns: 125px minmax(0, 1fr) auto;
+  gap: 13px;
+  align-items: center;
+  cursor: pointer;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .dishCard:hover {
-  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
-  border-color: #CFCFCF;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(71, 42, 28, 0.09);
 }
 
-.dishImage {
+.dishImageWrap {
   position: relative;
-  width: 120px;
-  height: 120px;
-  border-radius: 8px;
+  height: 100px;
   overflow: hidden;
-  flex-shrink: 0;
-  background: #F8F8F8;
+  border-radius: 8px;
+  background: #efe5dc;
 }
 
-.dishImage img {
+.dishImageWrap img {
   width: 100%;
   height: 100%;
+  display: block;
   object-fit: cover;
 }
 
-.bestsellerBadge {
+.bestseller {
   position: absolute;
-  top: 8px;
-  left: 8px;
-  background: rgba(255,184,0,0.95);
-  color: #1C1C1C;
-  padding: 4px 10px;
+  top: 7px;
+  left: 7px;
+  padding: 4px 7px;
   border-radius: 4px;
-  font-size: 11px;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  gap: 4px;
+  background: #df5d42;
+  color: #fff;
+  font-size: 8px;
+  font-weight: 800;
+  text-transform: uppercase;
 }
 
-.vegIndicator {
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  background: #ffffff;
-  padding: 3px;
-  border-radius: 3px;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
-}
-
-.vegDot {
-  display: block;
-  width: 10px;
-  height: 10px;
-  border: 1.5px solid #0F8A65;
-  border-radius: 2px;
-}
-
-.nonVegDot {
-  display: block;
-  width: 10px;
-  height: 10px;
-  border: 1.5px solid #E23744;
-  border-radius: 2px;
-}
-
-.dishInfo {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
+.dishDetails {
   min-width: 0;
 }
 
-.dishName {
-  font-size: 17px;
-  font-weight: 500;
-  color: #1C1C1C;
-  margin-bottom: 6px;
-  letter-spacing: -0.01em;
-}
-
-.dishDesc {
-  font-size: 13px;
-  color: #696969;
-  margin-bottom: 12px;
-  line-height: 1.5;
-}
-
-.dishFooter {
+.dishTitleRow {
+  margin-bottom: 3px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-top: auto;
+  gap: 12px;
+}
+
+.dishTitleRow h3 {
+  margin: 0;
+  color: #34221b;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.vegMark,
+.nonVegMark {
+  position: relative;
+  width: 11px;
+  height: 11px;
+  border: 1.5px solid currentColor;
+  flex: 0 0 auto;
+}
+
+.vegMark {
+  color: #3a9a57;
+}
+
+.nonVegMark {
+  color: #d64c3d;
+}
+
+.vegMark::after,
+.nonVegMark::after {
+  content: '';
+  position: absolute;
+  inset: 2px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.dishDetails > p {
+  max-width: 540px;
+  margin: 0 0 6px;
+  overflow: hidden;
+  color: #806e65;
+  font-size: 9px;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.dishTags {
+  margin-bottom: 6px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.dishTags span {
+  padding: 3px 6px;
+  font-size: 7px;
 }
 
 .dishPrice {
-  font-size: 16px;
-  font-weight: 500;
-  color: #1C1C1C;
+  color: #3d281f;
+  font-size: 13px;
 }
 
-.addBtn {
-  background: #ffffff;
-  color: #E23744;
-  border: 1px solid #E23744;
-  padding: 8px 28px;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 600;
+.dishAction {
+  align-self: end;
+}
+
+.addButton,
+.modalFooter button {
+  min-width: 66px;
+  height: 29px;
+  padding: 0 13px;
+  border: 0;
+  border-radius: 999px;
+  background: #df6045;
+  color: #fff;
+  font-family: inherit;
+  font-size: 10px;
+  font-weight: 750;
   cursor: pointer;
-  transition: all 0.2s ease;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
 }
 
-.addBtn:hover {
-  background: #E23744;
-  color: #ffffff;
-  transform: translateY(-1px);
-  box-shadow: 0 2px 8px rgba(226,55,68,0.3);
+.addButton:hover,
+.modalFooter button:hover {
+  background: #c95039;
 }
+
 .quantityControl {
+  height: 29px;
+  overflow: hidden;
+  border: 1px solid #df6045;
+  border-radius: 999px;
+  background: #fff;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  width: 96px;
-  height: 34px;
-  border: 1px solid #E23744;
-  border-radius: 8px;
-  background: #ffffff;
-  overflow: hidden;
 }
 
-.quantityBtn {
-  width: 32px;
+.quantityControl button {
+  width: 29px;
   height: 100%;
-  border: none;
-  background: #ffffff;
-  color: #E23744;
-  font-size: 18px;
-  font-weight: 700;
+  border: 0;
+  background: transparent;
+  color: #d9573e;
+  font-size: 17px;
   cursor: pointer;
 }
 
-.quantityBtn:hover {
-  background: #FFF0F1;
+.quantityControl span {
+  min-width: 22px;
+  color: #bd4935;
+  font-size: 12px;
+  font-weight: 800;
+  text-align: center;
 }
 
-.quantityValue {
-  color: #E23744;
-  font-size: 14px;
-  font-weight: 700;
-}
+/* CART BAR */
 
-/* Cart Float - Zomato Style */
-.cartFloat {
+.cartBar {
   position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: #0F8A65;
-  color: #ffffff;
-  padding: 16px 24px;
-  box-shadow: 0 -2px 16px rgba(0,0,0,0.1);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+  right: 24px;
+  bottom: 20px;
+  left: 24px;
+  z-index: 1100;
+  max-width: 620px;
+  margin: 0 auto;
+  padding: 13px 18px;
+  border-radius: 12px;
+  background: #d9583e;
+  color: #fff;
   text-decoration: none;
-  transition: all 0.2s ease;
-  z-index: 1000;
-}
-
-.cartFloat:hover {
-  background: #0D7556;
-}
-
-.cartFloatContent {
+  box-shadow: 0 10px 28px rgba(130, 54, 37, 0.28);
   display: flex;
-  align-items: center;
-  gap: 16px;
+  justify-content: space-between;
+  font-size: 13px;
 }
 
-.cartCount {
-  font-size: 15px;
-  font-weight: 500;
-}
+/* DISH MODAL */
 
-.cartTotal {
-  font-size: 18px;
-  font-weight: 600;
-}
-
-.cartFloatText {
-  font-weight: 600;
-  font-size: 15px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-/* Responsive Design */
-@media (max-width: 968px) {
-  .menuLayout {
-    flex-direction: column;
-  }
-  
-  .categorySidebar {
-    position: static;
-    width: 100%;
-  }
-  
-  .categoryList {
-    flex-direction: row;
-    overflow-x: auto;
-    gap: 8px;
-    padding-bottom: 8px;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-  }
-  
-  .categoryList::-webkit-scrollbar {
-    display: none;
-  }
-  
-  .categoryBtn {
-    white-space: nowrap;
-  }
-  
-  .heroImage {
-    height: 240px;
-  }
-  
-  .restaurantName {
-    font-size: 28px;
-  }
-}
-
-@media (max-width: 768px) {
-  .page {
-    padding-top: 116px; /* Header + Search bar */
-  }
-  
-  .container {
-    padding: 0 12px;
-  }
-  
-  .heroImage {
-    height: 200px;
-  }
-  
-  .heroContent {
-    padding: 20px 0;
-  }
-  
-  .restaurantName {
-    font-size: 24px;
-    margin-bottom: 6px;
-  }
-  
-  .cuisines {
-    font-size: 14px;
-    margin-bottom: 12px;
-  }
-  
-  .metaRow {
-    flex-wrap: wrap;
-    gap: 12px;
-    margin-bottom: 12px;
-    padding-bottom: 12px;
-  }
-  
-  .metaItem {
-    font-size: 14px;
-  }
-  
-  .location {
-    font-size: 13px;
-    margin-bottom: 12px;
-  }
-  
-  .offers {
-    gap: 8px;
-  }
-  
-  .offerCard {
-    padding: 10px 12px;
-    gap: 10px;
-  }
-  
-  .offerIcon {
-    width: 18px;
-    height: 18px;
-  }
-  
-  .offerTitle {
-    font-size: 13px;
-  }
-  
-  .offerDesc {
-    font-size: 12px;
-  }
-  
-  .menuSection {
-    padding: 24px 0 100px;
-  }
-  
-  .menuTitle {
-    font-size: 20px;
-    margin-bottom: 20px;
-  }
-  
-  .menuGrid {
-    gap: 12px;
-  }
-  
-  .dishCard {
-    padding: 12px;
-    gap: 12px;
-  }
-  
-  .dishImage {
-    width: 100px;
-    height: 100px;
-  }
-  
-  .dishName {
-    font-size: 16px;
-    margin-bottom: 4px;
-  }
-  
-  .dishDesc {
-    font-size: 12px;
-    margin-bottom: 10px;
-  }
-  
-  .dishPrice {
-    font-size: 15px;
-  }
-  
-  .addBtn {
-    padding: 7px 24px;
-    font-size: 13px;
-  }
-}
-
-@media (max-width: 640px) {
-  .page {
-    padding-top: 106px;
-  }
-  
-  .heroImage {
-    height: 180px;
-  }
-  
-  .heroContent {
-    padding: 16px 0;
-  }
-  
-  .restaurantName {
-    font-size: 20px;
-  }
-  
-  .cuisines {
-    font-size: 13px;
-  }
-  
-  .metaRow {
-    gap: 10px;
-  }
-  
-  .metaItem {
-    font-size: 13px;
-  }
-  
-  .starIcon {
-    width: 16px;
-    height: 16px;
-  }
-  
-  .metaIcon {
-    width: 14px;
-    height: 14px;
-  }
-  
-  .location {
-    font-size: 12px;
-  }
-  
-  .locationIcon {
-    width: 14px;
-    height: 14px;
-  }
-  
-  .offerCard {
-    padding: 8px 10px;
-    gap: 8px;
-  }
-  
-  .offerIcon {
-    width: 16px;
-    height: 16px;
-  }
-  
-  .offerTitle {
-    font-size: 12px;
-  }
-  
-  .offerDesc {
-    font-size: 11px;
-  }
-  
-  .menuSection {
-    padding: 20px 0 100px;
-  }
-  
-  .menuTitle {
-    font-size: 18px;
-    margin-bottom: 16px;
-  }
-  
-  .sidebarTitle {
-    font-size: 15px;
-    margin-bottom: 12px;
-  }
-  
-  .categoryBtn {
-    padding: 10px 14px;
-    font-size: 14px;
-  }
-  
-  .dishCard {
-    flex-direction: column;
-    padding: 10px;
-  }
-  
-  .dishImage {
-    width: 100%;
-    height: 160px;
-  }
-  
-  .dishName {
-    font-size: 15px;
-  }
-  
-  .dishDesc {
-    font-size: 11px;
-  }
-  
-  .dishPrice {
-    font-size: 14px;
-  }
-  
-  .addBtn {
-    padding: 6px 20px;
-    font-size: 12px;
-  }
-  
-  .cartFloat {
-    padding: 12px 12px;
-  }
-  
-  .cartFloatContent {
-    gap: 10px;
-  }
-  
-  .cartCount {
-    font-size: 13px;
-  }
-  
-  .cartTotal {
-    font-size: 16px;
-  }
-  
-  .cartFloatText {
-    font-size: 13px;
-  }
-}
-.modalOverlay {
+.modalBackdrop {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.5);
-  z-index: 9999;
-  display: flex;
-  align-items: flex-end;
-  animation: fadeIn 0.2s ease;
+  z-index: 1200;
+  padding: 20px;
+  background: rgba(36, 24, 19, 0.58);
+  display: grid;
+  place-items: center;
 }
 
-.modalContent {
-  width: 100%;
-  background: white;
-  border-radius: 28px 28px 0 0;
-  overflow: hidden;
-  max-height: 92vh;
-  overflow-y: auto;
-  animation: slideUp 0.25s ease;
+.modal {
   position: relative;
-}
-
-.modalImage {
-  width: 100%;
-  height: 300px;
-  object-fit: cover;
-}
-
-.modalBody {
-  padding: 22px;
-}
-
-.modalTop h2 {
-  font-size: 28px;
-  font-weight: 700;
-  margin-bottom: 14px;
-  color: #1C1C1C;
-}
-
-.modalPriceRow {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 18px;
-}
-
-.modalPrice {
-  font-size: 24px;
-  font-weight: 700;
-  color: #E23744;
-}
-
-.modalDesc {
-  font-size: 15px;
-  line-height: 1.7;
-  color: #696969;
-}
-
-.modalAddBtn {
-  border: none;
-  background: #E23744;
-  color: white;
-  padding: 14px 30px;
-  border-radius: 14px;
-  font-size: 15px;
-  font-weight: 700;
+  width: min(520px, 100%);
+  overflow: hidden;
+  border-radius: 18px;
+  background: #fffdf8;
+  box-shadow: 0 24px 70px rgba(24, 13, 9, 0.28);
 }
 
 .modalClose {
   position: absolute;
-  top: 16px;
-  left: 16px;
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
-  border: none;
-  background: white;
-  font-size: 22px;
+  top: 12px;
+  right: 12px;
   z-index: 2;
+  width: 34px;
+  height: 34px;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.92);
+  color: #3b251d;
+  font-size: 24px;
+  cursor: pointer;
 }
 
-@keyframes slideUp {
-  from {
-    transform: translateY(100%);
-  }
-  to {
-    transform: translateY(0);
-  }
-}
-.heroVideo {
+.modalImage {
   width: 100%;
-  height: 100%;
+  height: 280px;
+  display: block;
   object-fit: cover;
-  object-position: center center;
-  transform: none;
-  animation: none;
-  transition: none;
 }
 
-/* Desktop hero fix: no black bars, clean cropped banner */
-@media (min-width: 769px) {
+.modalContent {
+  padding: 22px;
+}
+
+.modalContent h2 {
+  margin: 8px 0;
+  color: #34221b;
+}
+
+.modalContent p {
+  color: #7c685e;
+  line-height: 1.55;
+}
+
+.modalFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* TABLET */
+
+@media (max-width: 720px) {
+  .page {
+    padding-top: 112px;
+  }
+
   .hero {
-    padding: 20px 24px 0;
-    background: #ffffff;
+    height: auto;
+    min-height: 0;
+    margin-bottom: 0;
   }
 
-  .heroImage {
+  .heroMedia {
     position: relative;
-    width: 100%;
-    max-width: 1200px;
-    height: 360px !important;
-    min-height: 360px !important;
-    max-height: 360px !important;
-    margin: 0 auto;
-    overflow: hidden !important;
-    border-radius: 22px;
-    background: #f8f8f8;
+    height: 280px;
   }
 
-  .heroVideo,
-  .heroImage img {
+  .heroInner {
+    width: calc(100% - 24px);
+    height: auto;
+    min-height: 0;
+  }
+
+  .restaurantCard {
+    position: relative;
+    right: auto;
+    bottom: auto;
+    left: auto;
+    width: min(440px, 100%);
+    margin: -58px auto 0;
+    padding: 18px;
+    transform: none;
+  }
+
+  .restaurantCard h1 {
+    font-size: 30px;
+  }
+
+  .menuSection {
+    padding-top: 30px;
+  }
+
+  .menuShell {
+    width: calc(100% - 24px);
+  }
+
+  .dishCard {
+    grid-template-columns: 96px minmax(0, 1fr);
+    gap: 11px;
+  }
+
+  .dishImageWrap {
+    height: 100px;
+  }
+
+  .dishAction {
+    grid-column: 2;
+    justify-self: end;
+    margin-top: -36px;
+  }
+
+  .dishTags {
+    padding-right: 76px;
+  }
+}
+
+/* MOBILE */
+
+@media (max-width: 440px) {
+  .heroMedia {
+    height: 240px;
+  }
+
+  .heroInner {
+    width: calc(100% - 20px);
+  }
+
+  .restaurantCard {
+    width: 100%;
+    margin-top: -48px;
+    padding: 16px;
+  }
+
+  .restaurantCard h1 {
+    font-size: 28px;
+  }
+
+  .restaurantDescription {
+    font-size: 9px;
+  }
+
+  .eyebrowRow {
+    align-items: flex-start;
+  }
+
+  .restaurantMeta {
+    gap: 6px 10px;
+  }
+
+  .cuisineBlock {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 7px;
+  }
+
+  .filterTabs {
+    gap: 20px;
+  }
+
+  .dishCard {
+    padding: 8px;
+  }
+
+  .dishTitleRow h3 {
+    font-size: 14px;
+  }
+
+  .dishDetails > p {
+    font-size: 10px;
+  }
+
+  .modalImage {
+    height: 220px;
+  }
+
+  .menuShell {
+    width: calc(100% - 20px);
+  }
+}
+
+/* FINAL FIX: CARD BELOW HERO IN NORMAL DOCUMENT FLOW */
+
+.hero {
+  margin-bottom: 0 !important;
+  overflow: hidden !important;
+}
+
+.menuSection {
+  padding-top: 32px !important;
+}
+
+.menuShell {
+  position: relative !important;
+}
+
+.restaurantCard {
+  position: relative !important;
+  inset: auto !important;
+  top: auto !important;
+  right: auto !important;
+  bottom: auto !important;
+  left: auto !important;
+
+  z-index: 10 !important;
+
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+
+  width: min(480px, 100%) !important;
+  margin: 0 auto 38px !important;
+
+  transform: none !important;
+  pointer-events: auto !important;
+
+  background: #fffdf8 !important;
+  border: 1px solid #eaded3 !important;
+  border-radius: 12px !important;
+
+  box-shadow:
+    0 16px 38px rgba(66, 39, 26, 0.16),
+    0 3px 8px rgba(66, 39, 26, 0.07) !important;
+}
+
+@media (max-width: 720px) {
+  .menuSection {
+    padding-top: 24px !important;
+  }
+
+  .restaurantCard {
     width: 100% !important;
-    height: 100% !important;
-    object-fit: cover !important;
-    object-position: center 45% !important;
-    display: block;
-    transform: none !important;
-    animation: none !important;
-    transition: none !important;
+    margin: 0 auto 28px !important;
+  }
+}
+
+/* Make restaurant card exactly as wide as featured item cards */
+.menuShell > .restaurantCard {
+  width: 100% !important;
+  min-width: 100% !important;
+  max-width: 100% !important;
+  margin-right: 0 !important;
+  margin-left: 0 !important;
+}
+
+/* FINAL HERO VIDEO + OVERLAPPING CARD */
+
+.hero {
+  position: relative !important;
+  width: 100% !important;
+  height: 330px !important;
+  min-height: 330px !important;
+  margin: 0 !important;
+  overflow: hidden !important;
+  isolation: isolate;
+}
+
+.heroMedia {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 330px !important;
+  overflow: hidden !important;
+  background: #5d372a;
+}
+
+.heroVideo {
+  width: 100% !important;
+  height: 330px !important;
+  display: block !important;
+  object-fit: cover !important;
+  object-position: center 45% !important;
+}
+
+.heroShade {
+  position: absolute !important;
+  inset: 0 !important;
+  z-index: 1 !important;
+  pointer-events: none !important;
+  background: linear-gradient(
+    180deg,
+    rgba(30, 15, 10, 0.08) 0%,
+    rgba(30, 15, 10, 0.05) 55%,
+    rgba(251, 247, 239, 0.72) 100%
+  ) !important;
+}
+
+.menuSection {
+  position: relative !important;
+  z-index: 10 !important;
+  padding-top: 0 !important;
+  overflow: visible !important;
+  background: #fbf7ef !important;
+}
+
+.menuShell {
+  position: relative !important;
+  z-index: 10 !important;
+}
+
+/* Same width as menu items and overlapping the video */
+
+.menuShell > .restaurantCard {
+  position: relative !important;
+  inset: auto !important;
+
+  z-index: 20 !important;
+
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+
+  width: 100% !important;
+  min-width: 100% !important;
+  max-width: 100% !important;
+
+  margin: -75px 0 38px !important;
+
+  transform: none !important;
+  pointer-events: auto !important;
+
+  background: #fffdf8 !important;
+  border: 1px solid #eaded3 !important;
+  border-radius: 12px !important;
+
+  box-shadow:
+    0 18px 42px rgba(66, 39, 26, 0.18),
+    0 4px 10px rgba(66, 39, 26, 0.07) !important;
+}
+
+/* Mobile */
+
+@media (max-width: 720px) {
+  .hero,
+  .heroMedia,
+  .heroVideo {
+    height: 240px !important;
+    min-height: 240px !important;
+  }
+
+  .menuShell > .restaurantCard {
+    margin-top: -45px !important;
+    margin-bottom: 28px !important;
+  }
+}
+
+/* Increase only the desktop hero-video height */
+
+@media (min-width: 721px) {
+  .hero,
+  .heroMedia,
+  .heroVideo {
+    height: 380px !important;
+    min-height: 380px !important;
+  }
+}
+
+/* Larger hero video with stronger card overlap */
+
+@media (min-width: 721px) {
+  .hero,
+  .heroMedia,
+  .heroVideo {
+    height: 430px !important;
+    min-height: 430px !important;
+  }
+
+  .menuShell > .restaurantCard {
+    margin-top: -105px !important;
+  }
+}
+
+/* Force the card to overlap the video */
+
+.menuShell > .restaurantCard {
+  transform: translateY(-65px) !important;
+  margin-bottom: -27px !important;
+}
+
+/* Larger restaurant card matching the reference */
+
+.menuShell > .restaurantCard {
+  min-height: 370px !important;
+  padding: 30px 34px 28px !important;
+  border-radius: 20px !important;
+
+  /* Preserve the existing overlap */
+  transform: translateY(-65px) !important;
+  margin-bottom: -27px !important;
+}
+
+.restaurantCard .eyebrowRow {
+  margin-bottom: 10px !important;
+  font-size: 10px !important;
+  letter-spacing: 0.28em !important;
+}
+
+.restaurantCard .hotBadge {
+  padding: 7px 12px !important;
+  font-size: 10px !important;
+}
+
+.restaurantCard h1 {
+  max-width: 570px !important;
+  margin: 0 0 12px !important;
+  font-size: clamp(44px, 4vw, 58px) !important;
+  font-weight: 900 !important;
+  line-height: 0.92 !important;
+  letter-spacing: -0.055em !important;
+}
+
+.restaurantCard .restaurantDescription {
+  max-width: 630px !important;
+  margin-bottom: 22px !important;
+  font-size: 15px !important;
+  line-height: 1.5 !important;
+}
+
+.restaurantCard .restaurantMeta {
+  gap: 10px 20px !important;
+  font-size: 13px !important;
+}
+
+.restaurantCard .cardDivider {
+  margin: 24px 0 20px !important;
+}
+
+.restaurantCard .cuisineBlock {
+  display: flex !important;
+  align-items: center !important;
+  gap: 14px !important;
+}
+
+.restaurantCard .cuisineLabel {
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  letter-spacing: 0.16em !important;
+}
+
+.cuisineText {
+  margin: 0 !important;
+  color: #39271f !important;
+  font-size: 13px !important;
+  line-height: 1.5 !important;
+}
+
+.restaurantTags {
+  margin-top: 15px !important;
+  display: flex !important;
+  align-items: center !important;
+  flex-wrap: wrap !important;
+  gap: 8px !important;
+}
+
+.restaurantTags span {
+  padding: 7px 12px !important;
+  border: 1px solid #e8d8ca !important;
+  border-radius: 999px !important;
+  background: #fffaf4 !important;
+  color: #765c50 !important;
+  font-size: 11px !important;
+  font-weight: 600 !important;
+}
+
+@media (max-width: 720px) {
+  .menuShell > .restaurantCard {
+    min-height: auto !important;
+    padding: 22px 20px !important;
+    border-radius: 16px !important;
+  }
+
+  .restaurantCard h1 {
+    font-size: 38px !important;
+  }
+
+  .restaurantCard .restaurantDescription {
+    font-size: 13px !important;
+  }
+}
+/* Compact restaurant-card layout */
+
+.restaurantTags {
+  display: none !important;
+}
+
+.menuShell > .restaurantCard {
+  min-height: auto !important;
+  padding: 26px 30px 24px !important;
+}
+
+.restaurantCard .eyebrowRow {
+  margin-bottom: 10px !important;
+  font-size: 9px !important;
+}
+
+.restaurantCard .hotBadge {
+  padding: 6px 11px !important;
+  font-size: 9px !important;
+}
+
+.restaurantCard h1 {
+  width: auto !important;
+  max-width: 430px !important;
+  margin: 0 0 10px !important;
+  font-size: clamp(38px, 3.3vw, 48px) !important;
+  font-weight: 900 !important;
+  line-height: 0.94 !important;
+  letter-spacing: -0.045em !important;
+}
+
+.restaurantCard .restaurantDescription {
+  max-width: 620px !important;
+  margin: 0 0 20px !important;
+  color: #725f56 !important;
+  font-size: 13px !important;
+  line-height: 1.5 !important;
+}
+
+.restaurantCard .restaurantMeta {
+  margin-top: 0 !important;
+  gap: 9px 18px !important;
+  font-size: 11px !important;
+}
+
+.restaurantCard .cardDivider {
+  margin: 22px 0 18px !important;
+}
+
+.restaurantCard .cuisineBlock {
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+}
+
+.restaurantCard .cuisineLabel {
+  font-size: 11px !important;
+  font-weight: 500 !important;
+  letter-spacing: 0.17em !important;
+}
+
+.restaurantCard .cuisineText {
+  margin: 0 !important;
+  font-size: 11px !important;
+}
+
+@media (max-width: 720px) {
+  .menuShell > .restaurantCard {
+    padding: 21px 18px !important;
+  }
+
+  .restaurantCard h1 {
+    max-width: 310px !important;
+    font-size: 36px !important;
+  }
+
+  .restaurantCard .restaurantDescription {
+    font-size: 12px !important;
+  }
+}
+
+.restaurantCard .cuisineLabel {
+  font-size: 12px !important;
+  font-weight: 600 !important;
+}
+
+.restaurantCard .cuisineChips span,
+.restaurantCard .cuisineText {
+  font-size: 11px !important;
+  font-weight: 600 !important;
+}
+
+/* Dish title and description font */
+
+.dishTitleRow h3 {
+  font-family: Arial, Helvetica, sans-serif !important;
+  font-size: 20px !important;
+  font-weight: 700 !important;
+  line-height: 1.15 !important;
+  letter-spacing: -0.02em !important;
+  color: #211816 !important;
+}
+
+.dishDetails > p {
+  font-family: Arial, Helvetica, sans-serif !important;
+  font-size: 15px !important;
+  font-weight: 400 !important;
+  line-height: 1.45 !important;
+  letter-spacing: 0 !important;
+  color: #6e625e !important;
+}
+
+/* Smaller dish fonts */
+
+.dishTitleRow h3 {
+  font-size: 16px !important;
+  line-height: 1.2 !important;
+}
+
+.dishDetails > p {
+  font-size: 12px !important;
+  line-height: 1.4 !important;
+}
+/* Larger and better-balanced food item cards */
+
+.dishCard {
+  min-height: 215px !important;
+  padding: 14px !important;
+  grid-template-columns: 190px minmax(0, 1fr) auto !important;
+  gap: 18px !important;
+  border-radius: 14px !important;
+  align-items: stretch !important;
+}
+
+.dishImageWrap {
+  width: 190px !important;
+  height: 185px !important;
+  border-radius: 12px !important;
+}
+
+.dishDetails {
+  min-width: 0 !important;
+  padding: 5px 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.dishTitleRow {
+  margin-bottom: 7px !important;
+}
+
+.dishTitleRow h3 {
+  font-size: 18px !important;
+  line-height: 1.2 !important;
+}
+
+.dishDetails > p {
+  max-width: 720px !important;
+  margin-bottom: 10px !important;
+  font-size: 13px !important;
+  line-height: 1.45 !important;
+}
+
+.dishTags {
+  margin-bottom: 10px !important;
+}
+
+.dishPrice {
+  margin-top: auto !important;
+  font-size: 16px !important;
+}
+
+.dishAction {
+  align-self: end !important;
+  padding: 0 0 2px !important;
+}
+
+.addButton {
+  min-width: 92px !important;
+  height: 42px !important;
+  font-size: 13px !important;
+}
+
+@media (max-width: 720px) {
+  .dishCard {
+    min-height: 145px !important;
+    padding: 10px !important;
+    grid-template-columns: 110px minmax(0, 1fr) !important;
+    gap: 12px !important;
+  }
+
+  .dishImageWrap {
+    width: 110px !important;
+    height: 125px !important;
+  }
+
+  .dishTitleRow h3 {
+    font-size: 16px !important;
+  }
+
+  .dishDetails > p {
+    font-size: 11px !important;
+  }
+}
+
+/* Medium-sized food item cards */
+
+.dishCard {
+  min-height: 170px !important;
+  padding: 10px !important;
+  grid-template-columns: 150px minmax(0, 1fr) auto !important;
+  gap: 14px !important;
+  border-radius: 12px !important;
+}
+
+.dishImageWrap {
+  width: 150px !important;
+  height: 148px !important;
+  border-radius: 10px !important;
+}
+
+.dishDetails {
+  padding: 3px 0 !important;
+}
+
+.dishTitleRow {
+  margin-bottom: 5px !important;
+}
+
+.dishTitleRow h3 {
+  font-size: 17px !important;
+}
+
+.dishDetails > p {
+  margin-bottom: 8px !important;
+  font-size: 12px !important;
+  line-height: 1.4 !important;
+}
+
+.dishTags {
+  margin-bottom: 8px !important;
+}
+
+.dishPrice {
+  font-size: 15px !important;
+}
+
+.addButton {
+  min-width: 80px !important;
+  height: 35px !important;
+  font-size: 12px !important;
+}
+
+@media (max-width: 720px) {
+  .dishCard {
+    min-height: 125px !important;
+    grid-template-columns: 95px minmax(0, 1fr) !important;
+  }
+
+  .dishImageWrap {
+    width: 95px !important;
+    height: 105px !important;
+  }
+}
+
+/* Medium-sized food item cards */
+
+.dishCard {
+  min-height: 170px !important;
+  padding: 10px !important;
+  grid-template-columns: 150px minmax(0, 1fr) auto !important;
+  gap: 14px !important;
+  border-radius: 12px !important;
+}
+
+.dishImageWrap {
+  width: 150px !important;
+  height: 148px !important;
+  border-radius: 10px !important;
+}
+
+.dishDetails {
+  padding: 3px 0 !important;
+}
+
+.dishTitleRow {
+  margin-bottom: 5px !important;
+}
+
+.dishTitleRow h3 {
+  font-size: 17px !important;
+}
+
+.dishDetails > p {
+  margin-bottom: 8px !important;
+  font-size: 12px !important;
+  line-height: 1.4 !important;
+}
+
+.dishTags {
+  margin-bottom: 8px !important;
+}
+
+.dishPrice {
+  font-size: 15px !important;
+}
+
+.addButton {
+  min-width: 80px !important;
+  height: 35px !important;
+  font-size: 12px !important;
+}
+
+@media (max-width: 720px) {
+  .dishCard {
+    min-height: 125px !important;
+    grid-template-columns: 95px minmax(0, 1fr) !important;
+  }
+
+  .dishImageWrap {
+    width: 95px !important;
+    height: 105px !important;
+  }
+}
+/* Restaurant-name font matching the reference */
+
+.restaurantCard h1 {
+  font-family: Arial, Helvetica, sans-serif !important;
+  font-weight: 900 !important;
+  line-height: 0.92 !important;
+  letter-spacing: -0.055em !important;
+}
+
+
+/* Soft faded hero video */
+
+.heroMedia {
+  background: #fbf7ef !important;
+}
+
+.heroVideo {
+  opacity: 0.78 !important;
+  filter:
+    brightness(1.08)
+    contrast(0.9)
+    saturate(0.82) !important;
+
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    #000 0%,
+    #000 48%,
+    rgba(0, 0, 0, 0.78) 65%,
+    rgba(0, 0, 0, 0.3) 82%,
+    transparent 100%
+  ) !important;
+
+  mask-image: linear-gradient(
+    to bottom,
+    #000 0%,
+    #000 48%,
+    rgba(0, 0, 0, 0.78) 65%,
+    rgba(0, 0, 0, 0.3) 82%,
+    transparent 100%
+  ) !important;
+}
+
+.heroShade {
+  background: linear-gradient(
+    to bottom,
+    rgba(251, 247, 239, 0.05) 0%,
+    rgba(251, 247, 239, 0.12) 48%,
+    rgba(251, 247, 239, 0.5) 70%,
+    rgba(251, 247, 239, 0.88) 88%,
+    #fbf7ef 100%
+  ) !important;
+}
+
+/* Slightly taller video with a very light fade */
+
+@media (min-width: 721px) {
+  .hero,
+  .heroMedia,
+  .heroVideo {
+    height: 530px !important;
+    min-height: 530px !important;
+  }
+}
+
+.heroMedia {
+  background: #fbf7ef !important;
+}
+
+.heroVideo {
+  opacity: 0.96 !important;
+  filter:
+    brightness(1.02)
+    contrast(0.98)
+    saturate(0.96) !important;
+
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    #000 0%,
+    #000 72%,
+    rgba(0, 0, 0, 0.92) 84%,
+    rgba(0, 0, 0, 0.65) 94%,
+    transparent 100%
+  ) !important;
+
+  mask-image: linear-gradient(
+    to bottom,
+    #000 0%,
+    #000 72%,
+    rgba(0, 0, 0, 0.92) 84%,
+    rgba(0, 0, 0, 0.65) 94%,
+    transparent 100%
+  ) !important;
+}
+
+.heroShade {
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    transparent 74%,
+    rgba(251, 247, 239, 0.08) 84%,
+    rgba(251, 247, 239, 0.28) 94%,
+    #fbf7ef 100%
+  ) !important;
+}
+/* Increase restaurant-card overlap */
+
+@media (min-width: 721px) {
+  .menuShell > .restaurantCard {
+    transform: translateY(-240px) !important;
+    margin: 0 auto -180px !important;
+  }
+}
+
+/* Make only the desktop video slightly shorter */
+
+@media (min-width: 721px) {
+  .hero,
+  .heroMedia,
+  .heroVideo {
+    height: 500px !important;
+    min-height: 500px !important;
+  }
+}
+
+@media (min-width: 721px) {
+  .hero,
+  .heroMedia,
+  .heroVideo {
+    height: 480px !important;
+    min-height: 480px !important;
+  }
+}
+
+@media (min-width: 721px) {
+  .menuShell > .restaurantCard {
+    transform: translateY(-220px) !important;
+    margin-bottom: -160px !important;
+  }
+}
+
+@media (min-width: 721px) {
+  .menuShell > .restaurantCard {
+    transform: translateY(-150px) !important;
+    margin-bottom: -100px !important;
+  }
+}
+
+@media (min-width: 721px) {
+  .hero,
+  .heroMedia,
+  .heroVideo {
+    height: 460px !important;
+    min-height: 460px !important;
+  }
+}
+
+@media (min-width: 721px) {
+  .hero,
+  .heroMedia,
+  .heroVideo {
+    height: 420px !important;
+    min-height: 420px !important;
   }
 }

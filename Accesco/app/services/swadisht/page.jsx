@@ -182,19 +182,107 @@ const testimonials = [
   }
 ];
 
+function RestaurantCard({ rest, idPrefix }) {
+  const primaryOffer = rest.offers?.[0];
+
+  const offerText =
+    primaryOffer?.discount > 0
+      ? `Flat ${primaryOffer.discount}% OFF`
+      : primaryOffer?.title;
+
+  const locationText = [
+    rest.location?.area,
+    rest.location?.city,
+  ]
+    .filter(Boolean)
+    .join(", ");
+
+  const closingText =
+    rest.closingStatus ||
+    (rest.timings?.close
+      ? `Closes at ${rest.timings.close}`
+      : "Closing time unavailable");
+
+  return (
+    <Link
+      href={`/services/swadisht/restaurant/${rest.slug}`}
+      className={styles.referenceRestaurantCard}
+      id={`${idPrefix}-card-${rest.id}`}
+    >
+      <div className={styles.referenceRestaurantMedia}>
+        <img
+          src={rest.coverImage}
+          alt={rest.name}
+          className={styles.referenceRestaurantImage}
+          onError={(event) => {
+            event.currentTarget.src =
+              "https://placehold.co/500x380/f7e8e8/861719?text=Restaurant";
+          }}
+        />
+
+        {primaryOffer && (
+          <div className={styles.referenceOfferTag}>
+            <Percent size={15} />
+            <span>{offerText}</span>
+          </div>
+        )}
+      </div>
+
+      <div className={styles.referenceRestaurantContent}>
+        <div className={styles.referenceRestaurantTop}>
+          <h3 className={styles.referenceRestaurantName}>
+            {rest.name}
+          </h3>
+
+          <div className={styles.referenceRating}>
+            <span>{rest.rating}</span>
+            <Star size={9} fill="currentColor" />
+          </div>
+        </div>
+
+        <div className={styles.referenceRestaurantMeta}>
+          <span className={styles.referenceCuisines}>
+            {rest.cuisines[0]}
+          </span>
+
+          <span className={styles.referencePrice}>
+            ₹{Number(rest.priceForTwo).toLocaleString("en-IN")} for two
+          </span>
+        </div>
+
+        <p className={styles.referenceLocation}>
+          {locationText}
+        </p>
+
+        <div className={styles.referenceStatusRow}>
+          <span className={styles.referenceClosing}>
+            {closingText}
+          </span>
+
+          <span className={styles.referenceDistance}>
+            {rest.distance || "—"}
+          </span>
+        </div>
+      </div>
+    </Link>
+  );
+}
+
 export default function App() {
-  const [activeCraving, setActiveCraving] = useState('all');
+  const [activeCraving, setActiveCraving] = useState("all");
   const [cartCount, setCartCount] = useState(0);
-  const [searchTerm, setSearchTerm] = useState('');
-  
+  const [searchTerm, setSearchTerm] = useState("");
+
   const storiesTrackRef = useRef(null);
 
   const scrollStories = () => {
     if (storiesTrackRef.current) {
-      storiesTrackRef.current.scrollBy({ left: 200, behavior: 'smooth' });
+      storiesTrackRef.current.scrollBy({
+        left: 200,
+        behavior: "smooth",
+      });
     }
   };
-
 
   // Filter restaurants based on active craving and search term
   const filteredTrending = useMemo(() => {
@@ -414,54 +502,12 @@ export default function App() {
           
           <div className={styles.restaurantGrid} id="trending-grid">
   {filteredTrending.map((rest) => (
-    <Link
-      key={rest.id}
-      href={`/services/swadisht/restaurant/${rest.slug}`}
-      className={styles.restaurantCard}
-      id={`trending-card-${rest.id}`}
-    >
-      <div
-        className={styles.cardImageWrapper}
-        id={`trending-img-wrap-${rest.id}`}
-      >
-        <img
-          src={rest.coverImage}
-          alt={rest.name}
-          className={styles.restaurantImage}
-          id={`trending-img-${rest.id}`}
-          onError={(e) => {
-            e.currentTarget.src =
-              'https://placehold.co/400x250/f7e8e8/861719?text=Restaurant';
-          }}
-        />
-
-        <div
-          className={styles.ratingBadge}
-          id={`trending-rating-badge-${rest.id}`}
-        >
-          <Star size={12} fill="currentColor" />
-          <span>{rest.rating}</span>
-        </div>
-
-     
-      </div>
-
-      <div className={styles.cardContent}>
-        <h3 className={styles.restaurantName}>{rest.name}</h3>
-
-        <p className={styles.restaurantSubtitle}>
-          {rest.cuisines.join(' • ')}
-        </p>
-
-        <div className={styles.restaurantDivider}></div>
-
-        <div className={styles.restaurantStatusRow}>
-          <span>{rest.deliveryTime}</span>
-          <span>₹{rest.priceForTwo} for two</span>
-        </div>
-      </div>
-    </Link>
-  ))}
+  <RestaurantCard
+    key={rest.id}
+    rest={rest}
+    idPrefix="trending"
+  />
+))}
 </div>
           </section>
 
@@ -514,62 +560,20 @@ export default function App() {
         <section className={styles.quickBitesSection} id="quick-bites-section">
           <div className={styles.quickBitesHeader} id="quick-bites-header">
             <div>
-              <h2 className={styles.quickBitesTitle} id="quick-bites-title">Quick bites & cafes</h2>
+              <h2 className={styles.quickBitesTitle} id="quick-bites-title">Quick bites & cafes </h2>
               <span className={styles.quickBitesSubtitle} id="quick-bites-subtitle">Grab a fast, satisfying treat or refresh with hot brews</span>
             </div>
           
           </div>
           
           <div className={styles.quickBitesGrid} id="quick-bites-grid">
-            {RESTAURANTS.map(rest => (
-              <Link
-  key={rest.id}
-  href={`/services/swadisht/restaurant/${rest.slug}`}
-  className={styles.restaurantCard}
->
-                <div className={styles.cardImageWrapper} id={`quick-img-wrap-${rest.id}`}>
-                  <img 
-                   src={rest.coverImage}  
-                    alt={rest.name} 
-                    className={styles.restaurantImage}
-                    id={`quick-img-${rest.id}`}
-                    onError={(e) => {
-                      e.currentTarget.src = "https://placehold.co/400x250/f7e8e8/861719?text=Cafe";
-                    }}
-                  />
-                  <div className={styles.ratingBadge} id={`quick-rating-badge-${rest.id}`}>
-                    <Star size={12} fill="currentColor" id={`quick-star-${rest.id}`} />
-                    <span id={`quick-rating-val-${rest.id}`}>{rest.rating}</span>
-                  </div>
-                
-                </div>
-                <div className={styles.cardContent} id={`quick-content-${rest.id}`}>
-  <h3 className={styles.restaurantName} id={`quick-name-${rest.id}`}>
-    {rest.name}
-  </h3>
-
-  <p className={styles.restaurantSubtitle} id={`quick-sub-${rest.id}`}>
-    {rest.cuisines.join(' • ')}
-  </p>
-
-  <div
-    className={styles.restaurantDivider}
-    id={`quick-div-${rest.id}`}
-  ></div>
-
-  <div
-    className={styles.restaurantStatusRow}
-    id={`quick-status-${rest.id}`}
-  >
-    <span id={`quick-time-${rest.id}`}>{rest.deliveryTime}</span>
-    <span id={`quick-price-${rest.id}`}>
-      ₹{rest.priceForTwo} for two
-    </span>
-  </div>
-</div>
-
-</Link>
-            ))}
+        {RESTAURANTS.map((rest) => (
+  <RestaurantCard
+    key={rest.id}
+    rest={rest}
+    idPrefix="quick"
+  />
+))}
             {filteredQuickBites.length === 0 && (
               <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '40px 0', color: 'var(--sw-muted)' }} id="no-quick-msg">
                 No cafes match the craving or search filter.

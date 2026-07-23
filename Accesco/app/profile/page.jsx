@@ -1,568 +1,410 @@
-"use client";
+'use client';
 
-import { useState, useEffect, useRef } from "react";
-import Link from "next/link";
-import AccescoHeader from "../../components/AccescoHeader";
-import AuthModal from "../components/AuthModal";
-import { useAuth } from "../components/AuthProvider";
-import ActiveOrdersWidget from "../../components/ActiveOrdersWidget";
-import "./profile.css";
+import { useEffect, useState } from 'react';
+import Link from 'next/link';
+import Image from 'next/image';
+import AccescoHeader from '../../components/AccescoHeader';
+import AuthModal from '../components/AuthModal';
+import { useAuth } from '../components/AuthProvider';
+import './profile.css';
 
-const exploreLinks = [
+const services = [
   {
-    label: "Invite & Earn",
-    href: "/referral",
-    icon: "ri-gift-line",
-    text: "Refer friends and unlock milestone gifts",
+    name: 'Grokly',
+    type: 'Essentials',
+    logo: '/images/grokly-icon.png',
+    description: 'Fresh groceries and farm-direct essentials, delivered fast.',
+    href: '/services/grokly',
+    action: 'Order Grocery',
+    className: 'grokly',
   },
   {
-    label: "Accesco Library",
-    href: "/accesco-library",
-    icon: "ri-play-circle-line",
-    text: "Watch curated stories and brand updates",
+    name: 'Swadishtt',
+    type: 'Food delivery',
+    logo: '/images/swadisht/swadisht_logo.JPG',
+    description: 'Ghar jaisa khana from verified cloud kitchens near you.',
+    href: '/services/swadisht',
+    action: 'Order History',
+    className: 'swadishtt',
   },
   {
-    label: "Xpense Meter",
-    href: "/calculator",
-    icon: "ri-calculator-line",
-    text: "Plan and manage monthly spending",
+    name: 'InstaStyle',
+    type: 'Fashion',
+    logo: '/images/instastyle-logo.png',
+    description: 'Outfit ready, before you are — curated fashion delivered fast.',
+    href: '/services/instastyle',
+    action: 'Order History',
+    className: 'instastyle',
   },
-  {
-    label: "Partner with Us",
-    href: "/partner",
-    icon: "ri-team-line",
-    text: "Collaborate and grow with Accesco",
-  },
+];
+
+const accountItems = [
+  { label: 'Account details', icon: 'ri-user-line', active: true },
+  { label: 'Addresses', icon: 'ri-map-pin-line' },
+  { label: 'Payment methods', icon: 'ri-bank-card-line' },
+  { label: 'Redeem a code', icon: 'ri-coupon-3-line' },
+  { label: 'Bookmarks', icon: 'ri-bookmark-line' },
+  { label: 'Subscriptions', icon: 'ri-file-list-3-line' },
+  { label: 'Notifications', icon: 'ri-notification-3-line' },
+  { label: 'Language & region', icon: 'ri-global-line' },
+  { label: 'Security & login', icon: 'ri-shield-keyhole-line' },
+  { label: 'Help & support', icon: 'ri-question-line' },
+];
+
+const exploreItems = [
+  { label: 'Invite & earn', icon: 'ri-gift-line', href: '/referral' },
+  { label: 'Accesco Library', icon: 'ri-play-circle-line', href: '/accesco-library' },
+  { label: 'Xpense Meter', icon: 'ri-calculator-line', href: '/calculator' },
+  { label: 'Partner with us', icon: 'ri-shake-hands-line', href: '/partner' },
 ];
 
 export default function ProfilePage() {
   const { user, loading, signOut, signIn } = useAuth();
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [totalOrders, setTotalOrders] = useState(0);
-  const [isEditingDetails, setIsEditingDetails] = useState(false);
-  const [accountForm, setAccountForm] = useState({
-    name: "",
-    phone: "",
-    email: "",
-  });
+ const [city, setCity] = useState('Bengaluru, Karnataka');
 
-  const openLoginModal = () => setIsLoginModalOpen(true);
-  const closeLoginModal = () => setIsLoginModalOpen(false);
+const [isEditing, setIsEditing] = useState(false);
+const [editName, setEditName] = useState('');
+const [editPhone, setEditPhone] = useState('');
+const [editEmail, setEditEmail] = useState('');
+const [editError, setEditError] = useState('');
 
-  const handleLoginSuccess = (userData) => {
-    signIn(userData);
-    closeLoginModal();
-  };
-
-  const displayName = user?.name || "Accesco User";
-
-  const initials =
-    displayName
-      .split(" ")
-      .filter(Boolean)
-      .map((name) => name[0])
-      .slice(0, 2)
-      .join("")
-      .toUpperCase() || "AU";
-
-  const fileInputRef = useRef(null);
-  const profileImage = user?.profileImage || "";
-
-  const handleOpenPhotoPicker = () => {
-    fileInputRef.current?.click();
-  };
-
-  const handleProfileImageChange = (event) => {
-    const file = event.target.files?.[0];
-
-    if (!file || !user) return;
-
-    const allowedTypes = ["image/jpeg", "image/png", "image/webp"];
-
-    if (!allowedTypes.includes(file.type)) {
-      alert("Please upload a JPG, PNG, or WEBP image.");
-      event.target.value = "";
-      return;
-    }
-
-    if (file.size > 1.5 * 1024 * 1024) {
-      alert("Please choose an image smaller than 1.5 MB.");
-      event.target.value = "";
-      return;
-    }
-
-    const reader = new FileReader();
-
-    reader.onload = () => {
-      const updatedUser = {
-        ...user,
-        profileImage: reader.result,
-      };
-
-      signIn(updatedUser);
-    };
-
-    reader.readAsDataURL(file);
-    event.target.value = "";
-  };
-
-  const handleRemoveProfileImage = () => {
-    if (!user) return;
-
-    const updatedUser = { ...user };
-    delete updatedUser.profileImage;
-
-    signIn(updatedUser);
-  };
   useEffect(() => {
-    if (user) {
-      setAccountForm({
-        name: user.name || "",
-        phone: user.phone || "",
-        email: user.email || "",
-      });
-    }
-  }, [user]);
-
-  const handleAccountFormChange = (event) => {
-    const { name, value } = event.target;
-
-    setAccountForm((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  const handleEditAccountDetails = () => {
-    setIsEditingDetails(true);
-  };
-
-  const handleCancelAccountEdit = () => {
-    setAccountForm({
-      name: user?.name || "",
-      phone: user?.phone || "",
-      email: user?.email || "",
-    });
-
-    setIsEditingDetails(false);
-  };
-
-  const handleSaveAccountDetails = (event) => {
-    event.preventDefault();
-
-    const name = accountForm.name.trim();
-    const phone = accountForm.phone.trim();
-    const email = accountForm.email.trim();
-
-    if (!name) {
-      alert("Please enter your name.");
-      return;
-    }
-
-    if (phone && !/^[0-9]{10}$/.test(phone)) {
-      alert("Please enter a valid 10-digit phone number.");
-      return;
-    }
-
-    if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      alert("Please enter a valid email address.");
-      return;
-    }
-
-    const updatedUser = {
-      ...user,
-      name,
-      phone,
-      email,
-    };
-
-    signIn(updatedUser);
-    setIsEditingDetails(false);
-  };
-  useEffect(() => {
-    const grokly = JSON.parse(localStorage.getItem("grokly_orders") || "[]");
-    const swadishtt = JSON.parse(
-      localStorage.getItem("swadishtt-orders") || "[]",
-    );
-    const instastyle = JSON.parse(
-      localStorage.getItem("instastyle_orders") || "[]",
-    );
-
+    const grokly = JSON.parse(localStorage.getItem('grokly_orders') || '[]');
+    const swadishtt = JSON.parse(localStorage.getItem('swadishtt-orders') || '[]');
+    const instastyle = JSON.parse(localStorage.getItem('instastyle_orders') || '[]');
     setTotalOrders(grokly.length + swadishtt.length + instastyle.length);
+
+    const savedLocation = localStorage.getItem('userLocation');
+    if (!savedLocation) return;
+
+    try {
+      const parsedLocation = JSON.parse(savedLocation);
+      setCity(parsedLocation?.city || parsedLocation?.displayAddress || 'Bengaluru, Karnataka');
+    } catch {
+      setCity(savedLocation);
+    }
   }, []);
 
+  const displayName = user?.name || 'Accesco User';
+  const phone = user?.phone || 'Not added';
+  const email = user?.email || 'Not added';
+  const initials = displayName
+    .split(' ')
+    .filter(Boolean)
+    .map((part) => part[0])
+    .slice(0, 2)
+    .join('')
+    .toUpperCase();
+
+  const closeLoginModal = () => setIsLoginModalOpen(false);
+const startEditing = () => {
+  setEditName(user?.name || '');
+  setEditPhone(user?.phone || '');
+  setEditEmail(user?.email || '');
+  setEditError('');
+  setIsEditing(true);
+};
+
+const cancelEditing = () => {
+  setEditError('');
+  setIsEditing(false);
+};
+
+const saveProfileChanges = (event) => {
+  event.preventDefault();
+
+  const updatedName = editName.trim();
+  const updatedPhone = editPhone.trim();
+  const updatedEmail = editEmail.trim();
+
+  if (!updatedName || !updatedPhone) {
+    setEditError('Name and phone number are required.');
+    return;
+  }
+
+  if (
+    updatedEmail &&
+    !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(updatedEmail)
+  ) {
+    setEditError('Please enter a valid email address.');
+    return;
+  }
+
+  signIn({
+    ...user,
+    name: updatedName,
+    phone: updatedPhone,
+    email: updatedEmail || null,
+  });
+
+  setEditError('');
+  setIsEditing(false);
+};
+
   return (
-    <>
+    <div className="profile-shell">
       <AccescoHeader />
 
       <main className="profile-page">
-        <section className="profile-hero">
-          <div className="profile-hero-main">
-            <div className="profile-hero-badge">
-              <i className="ri-user-3-line"></i>
-              <span>Your Account</span>
-            </div>
-
+        <div className="profile-container">
+          <header className="profile-heading">
+            <p className="profile-eyebrow">Your Account</p>
             <h1>My Profile</h1>
-
-            <p>
-              Manage your profile details, order activity, and Accesco services
-              from one clean dashboard.
+            <p className="profile-intro">
+              Your Accesco membership — one card across Grokly, Swadishtt and InstaStyle.
             </p>
-          </div>
+          </header>
 
-          <div className="profile-hero-side">
-            <div
-              className={`profile-hero-avatar ${profileImage ? "has-image" : ""}`}
-            >
-              {profileImage ? (
-                <img src={profileImage} alt={`${displayName} profile`} />
-              ) : (
-                initials
-              )}
-            </div>
+          {loading && <div className="profile-loading">Loading your profile…</div>}
 
-            <div className="profile-hero-user">
-              <span>Welcome back</span>
-              <strong>{displayName}</strong>
-            </div>
-          </div>
-        </section>
-
-        {loading && (
-          <section className="profile-loading">
-            <span>Loading profile...</span>
-          </section>
-        )}
-
-        {!loading && !user && (
-          <section className="profile-login-card">
-            <div className="profile-login-icon">
-              <i className="ri-user-line"></i>
-            </div>
-
-            <p className="profile-kicker">Login Required</p>
-            <h2>You are not logged in</h2>
-            <p>
-              Continue to view your orders, profile details, and saved account
-              information.
-            </p>
-
-            <button className="profile-primary-btn" onClick={openLoginModal}>
-              <i className="ri-login-box-line"></i>
-              Continue
-            </button>
-          </section>
-        )}
-
-        {!loading && user && (
-          <>
-            <input
-              ref={fileInputRef}
-              className="profile-photo-input"
-              type="file"
-              accept="image/png,image/jpeg,image/webp"
-              onChange={handleProfileImageChange}
-            />
-            <section className="profile-main-card">
-              <div className="profile-avatar-box clean-avatar-box">
-                <button
-                  type="button"
-                  className={`profile-avatar profile-avatar-button ${profileImage ? "has-image" : ""}`}
-                  onClick={handleOpenPhotoPicker}
-                  aria-label="Update profile picture"
-                >
-                  {profileImage ? (
-                    <img src={profileImage} alt={`${displayName} profile`} />
-                  ) : (
-                    initials
-                  )}
-                </button>
-
-                <button
-                  type="button"
-                  className="profile-avatar-edit-clean"
-                  onClick={handleOpenPhotoPicker}
-                  aria-label="Edit profile picture"
-                >
-                  <i className="ri-pencil-line"></i>
-                </button>
-              </div>
-
-              <div className="profile-user-info">
-                <p className="profile-kicker">Verified Member</p>
-                <h2>{displayName}</h2>
-
-                <div className="profile-contact-list">
-                  {user.phone && (
-                    <span>
-                      <i className="ri-phone-line"></i>
-                      {user.phone}
-                    </span>
-                  )}
-
-                  {user.email && (
-                    <span>
-                      <i className="ri-mail-line"></i>
-                      {user.email}
-                    </span>
-                  )}
-                </div>
-                {profileImage && (
-                  <div className="profile-photo-actions">
-                    <button
-                      type="button"
-                      className="profile-photo-action secondary"
-                      onClick={handleRemoveProfileImage}
-                    >
-                      <i className="ri-close-circle-line"></i>
-                      Remove Picture
-                    </button>
-                  </div>
-                )}
-              </div>
-
-              <button className="profile-outline-btn" onClick={signOut}>
-                <i className="ri-logout-box-r-line"></i>
-                Sign Out
+          {!loading && !user && (
+            <section className="profile-guest">
+              <span className="profile-guest-icon"><i className="ri-user-line" /></span>
+              <h2>You’re not logged in</h2>
+              <p>Log in to see your membership, orders, rewards and saved account details.</p>
+              <button type="button" className="profile-login-btn" onClick={() => setIsLoginModalOpen(true)}>
+                Continue to login <i className="ri-arrow-right-line" />
               </button>
             </section>
+          )}
 
-            <section className="profile-stats">
-              <div className="profile-stats-header">
-                <p>Account Overview</p>
-                <h3>Your activity at a glance</h3>
-              </div>
+          {!loading && user && (
+            <>
+              <section className="membership-card" aria-label="Accesco membership card">
+                <span className="membership-spark spark-one">✦</span>
+                <span className="membership-spark spark-two">✦</span>
 
-              <div className="profile-stats-list">
-                <div className="profile-stat-card">
-                  <div className="profile-stat-icon">
-                    <i className="ri-shopping-bag-3-line"></i>
+                <div className="membership-topline">
+                  <span>Accesco Member</span>
+                  <span>Est. 2024</span>
+                </div>
+
+                <div className="membership-main">
+                  <div className="membership-identity">
+                    <h2>{displayName}</h2>
+                    <div className="membership-contact">
+                      <span>{phone}</span>
+                      <span>{email}</span>
+                      <span>{city}</span>
+                    </div>
                   </div>
 
-                  <div>
-                    <span>Total Orders</span>
+                  <div className="membership-avatar-wrap">
+                    <div className="membership-avatar">{initials}</div>
+                    <span className="membership-connected">Connected</span>
+                  </div>
+                </div>
+
+                <div className="membership-stats">
+                  <div className="membership-stat">
                     <strong>{totalOrders}</strong>
+                    <span>Total orders</span>
                   </div>
-                </div>
-
-                <div className="profile-stat-card">
-                  <div className="profile-stat-icon">
-                    <i className="ri-gift-line"></i>
-                  </div>
-
-                  <div>
-                    <span>Rewards</span>
+                  <div className="membership-stat">
                     <strong>0</strong>
+                    <span>Saved addresses</span>
+                  </div>
+                  <div className="membership-stat">
+                    <strong>₹0</strong>
+                    <span>Reward balance</span>
+                  </div>
+                  <div className="membership-stat account-status">
+                    <strong><i /> Active</strong>
+                    <span>Account status</span>
                   </div>
                 </div>
+              </section>
 
-                <div className="profile-stat-card">
-                  <div className="profile-stat-icon">
-                    <i className="ri-shield-check-line"></i>
-                  </div>
-
-                  <div>
-                    <span>Status</span>
-                    <strong>Active</strong>
-                  </div>
+              <section className="profile-section world-section">
+                <div className="section-heading">
+                  <p className="profile-eyebrow">Everyday Services</p>
+                  <h2>Your Accesco world</h2>
+                  <p>Every order you place keeps working across your household — one profile, three services.</p>
                 </div>
-              </div>
-            </section>
 
-            <ActiveOrdersWidget />
-
-            <section className="profile-grid">
-              <div className="profile-settings-group">
-                <p className="profile-group-label">Account</p>
-                <article className="profile-card profile-settings-card">
-                  <div className="profile-card-heading profile-card-heading-between">
-                    <div className="profile-card-title">
-                      <i className="ri-user-settings-line"></i>
-                      <h3>Account Details</h3>
-                    </div>
-
-                    {!isEditingDetails && (
-                      <button
-                        type="button"
-                        className="profile-edit-details-btn"
-                        onClick={handleEditAccountDetails}
-                      >
-                        <i className="ri-pencil-line"></i>
-                        Edit
-                      </button>
-                    )}
-                  </div>
-
-                  {!isEditingDetails ? (
-                    <div className="profile-settings-list">
-                      <div className="profile-setting-row">
-                        <div className="profile-setting-row-left">
-                          <i className="ri-user-line profile-setting-row-icon"></i>
-                          <span>Name</span>
-                        </div>
-                        <strong>{displayName}</strong>
+                <div className="service-scroller">
+                  {services.map((service) => (
+                    <article className={`service-card ${service.className}`} key={service.name}>
+                      <div className="service-card-top">
+                        <span className="service-icon">
+  <Image
+    src={service.logo}
+    alt={`${service.name} logo`}
+    width={30}
+    height={30}
+  />
+</span>
+                        <span className="service-type">{service.type}</span>
                       </div>
-
-                      <div className="profile-setting-row">
-                        <div className="profile-setting-row-left">
-                          <i className="ri-phone-line profile-setting-row-icon"></i>
-                          <span>Phone</span>
-                        </div>
-                        <strong>{user.phone || "Not added"}</strong>
+                      <h3>{service.name}</h3>
+                      <p>{service.description}</p>
+                      <div className="service-card-bottom">
+                        <span><strong>0</strong> Orders placed</span>
+                        <Link href={service.href}>{service.action}</Link>
                       </div>
+                    </article>
+                  ))}
+                </div>
+              </section>
 
-                      <div className="profile-setting-row">
-                        <div className="profile-setting-row-left">
-                          <i className="ri-mail-line profile-setting-row-icon"></i>
-                          <span>Email</span>
-                        </div>
-                        <strong>{user.email || "Not added"}</strong>
-                      </div>
-                    </div>
-                  ) : (
-                    <form
-                      className="profile-edit-form profile-settings-form"
-                      onSubmit={handleSaveAccountDetails}
-                    >
-                      <label className="profile-setting-row profile-setting-row-edit">
-                        <div className="profile-setting-row-left">
-                          <i className="ri-user-line profile-setting-row-icon"></i>
-                          <span>Name</span>
-                        </div>
-                        <input
-                          type="text"
-                          name="name"
-                          value={accountForm.name}
-                          onChange={handleAccountFormChange}
-                          placeholder="Enter your name"
-                        />
-                      </label>
+              <section className="profile-section manage-section">
+                <div className="section-heading compact">
+                  <p className="profile-eyebrow">Account</p>
+                  <h2>Manage your account</h2>
+                </div>
 
-                      <label className="profile-setting-row profile-setting-row-edit">
-                        <div className="profile-setting-row-left">
-                          <i className="ri-phone-line profile-setting-row-icon"></i>
-                          <span>Phone</span>
-                        </div>
-                        <input
-                          type="tel"
-                          name="phone"
-                          value={accountForm.phone}
-                          onChange={handleAccountFormChange}
-                          placeholder="Enter your phone number"
-                          maxLength="10"
-                        />
-                      </label>
-
-                      <label className="profile-setting-row profile-setting-row-edit">
-                        <div className="profile-setting-row-left">
-                          <i className="ri-mail-line profile-setting-row-icon"></i>
-                          <span>Email</span>
-                        </div>
-                        <input
-                          type="email"
-                          name="email"
-                          value={accountForm.email}
-                          onChange={handleAccountFormChange}
-                          placeholder="Enter your email"
-                        />
-                      </label>
-
-                      <div className="profile-edit-actions">
-                        <button
-                          type="submit"
-                          className="profile-save-details-btn"
-                        >
-                          <i className="ri-check-line"></i>
-                          Save Changes
-                        </button>
-
+                <div className="account-layout">
+                  <aside className="account-sidebar">
+                    <p className="sidebar-label">Account</p>
+                    <nav aria-label="Account settings">
+                      {accountItems.map((item) => (
                         <button
                           type="button"
-                          className="profile-cancel-details-btn"
-                          onClick={handleCancelAccountEdit}
+                          className={item.active ? 'active' : ''}
+                          key={item.label}
                         >
-                          Cancel
+                          <i className={item.icon} />
+                          <span>{item.label}</span>
                         </button>
+                      ))}
+                    </nav>
+
+                    <p className="sidebar-label explore-label">Explore</p>
+                    <nav aria-label="Explore Accesco">
+                      {exploreItems.map((item) => (
+                        <Link href={item.href} key={item.label}>
+                          <i className={item.icon} />
+                          <span>{item.label}</span>
+                        </Link>
+                      ))}
+                    </nav>
+
+                    <button type="button" className="sidebar-signout" onClick={signOut}>
+                      <i className="ri-logout-box-r-line" />
+                      <span>Sign out</span>
+                    </button>
+                  </aside>
+
+                  <div className="account-content">
+                    <form
+  className="settings-card details-card"
+  onSubmit={saveProfileChanges}
+>
+  <div className="settings-card-header">
+    <span>Account details</span>
+
+    <button
+      type="button"
+      onClick={isEditing ? cancelEditing : startEditing}
+    >
+      {isEditing ? 'Cancel' : 'Edit'}
+    </button>
+  </div>
+
+  <div className="settings-row">
+    <span>Name</span>
+
+    {isEditing ? (
+      <input
+        className="settings-edit-input"
+        type="text"
+        value={editName}
+        onChange={(event) => setEditName(event.target.value)}
+        aria-label="Name"
+        autoFocus
+      />
+    ) : (
+      <strong>{displayName}</strong>
+    )}
+  </div>
+
+  <div className="settings-row">
+    <span>Phone</span>
+
+    {isEditing ? (
+      <input
+        className="settings-edit-input"
+        type="tel"
+        value={editPhone}
+        onChange={(event) => setEditPhone(event.target.value)}
+        aria-label="Phone number"
+      />
+    ) : (
+      <strong>{phone}</strong>
+    )}
+  </div>
+
+  <div className="settings-row">
+    <span>Email</span>
+
+    {isEditing ? (
+      <input
+        className="settings-edit-input"
+        type="email"
+        value={editEmail}
+        onChange={(event) => setEditEmail(event.target.value)}
+        aria-label="Email address"
+        placeholder="Add email address"
+      />
+    ) : (
+      <strong>{email}</strong>
+    )}
+  </div>
+
+  {editError && (
+    <p className="settings-edit-error">{editError}</p>
+  )}
+
+  {isEditing && (
+    <div className="settings-actions">
+      <button type="submit">Save changes</button>
+    </div>
+  )}
+</form>
+
+                    <article className="settings-card security-card">
+                      <div className="settings-card-header">
+                        <span>Security snapshot</span>
                       </div>
-                    </form>
-                  )}
-                </article>
-              </div>
-
-              <div className="profile-settings-group">
-                <p className="profile-group-label">Security</p>
-                <article className="profile-card profile-settings-card">
-                  <div className="profile-card-heading">
-                    <i className="ri-shield-check-line"></i>
-                    <h3>Account Security</h3>
-                  </div>
-
-                  <div className="profile-settings-list">
-                    <div className="profile-setting-row">
-                      <div className="profile-setting-row-left">
-                        <i className="ri-shield-check-line profile-setting-row-icon"></i>
-                        <span>Protected Account</span>
+                      <div className="security-row">
+                        <span>Login</span>
+                        <div>
+                          <strong>Protected account</strong>
+                          <small>Verified by phone and email</small>
+                        </div>
+                        <em><i /> Protected</em>
                       </div>
-                      <span className="profile-pill">Protected Account</span>
-                    </div>
-
-                    <div className="profile-setting-row">
-                      <div className="profile-setting-row-left">
-                        <i className="ri-notification-3-line profile-setting-row-icon"></i>
-                        <span>Recovery details</span>
+                      <div className="security-row">
+                        <span>Recovery</span>
+                        <div>
+                          <strong>Recovery details</strong>
+                          <small>Keep your phone number and email updated for safer access</small>
+                        </div>
                       </div>
-                      <strong>
-                        Keep your phone number and email updated for order
-                        alerts and support.
-                      </strong>
-                    </div>
+                    </article>
                   </div>
-                </article>
-              </div>
-
-              <div className="profile-settings-group">
-                <p className="profile-group-label">Explore</p>
-                <article className="profile-card profile-settings-card">
-                  <div className="profile-card-heading">
-                    <i className="ri-apps-line"></i>
-                    <h3>Explore Accesco</h3>
-                  </div>
-
-                  <div className="profile-settings-list">
-                    {exploreLinks.map((item) => (
-                      <Link
-                        key={item.href}
-                        href={item.href}
-                        className="profile-setting-link-row"
-                      >
-                        <span className="profile-setting-row-left">
-                          <span className="profile-setting-row-icon profile-setting-row-icon-image">
-                            <i className={item.icon}></i>
-                          </span>
-
-                          <span className="profile-setting-row-copy">
-                            <strong>{item.label}</strong>
-                            <small>{item.text}</small>
-                          </span>
-                        </span>
-
-                        <i className="ri-arrow-right-up-line profile-service-arrow"></i>
-                      </Link>
-                    ))}
-                  </div>
-                </article>
-              </div>
-            </section>
-          </>
-        )}
+                </div>
+              </section>
+            </>
+          )}
+        </div>
       </main>
 
-      <AuthModal
-        isOpen={isLoginModalOpen}
-        onClose={closeLoginModal}
-        onSuccess={handleLoginSuccess}
-      />
-    </>
+      <footer className="profile-footer">
+        <span>© 2026 Accesco Living. All rights reserved.</span>
+        <span>Bengaluru, Karnataka · India</span>
+      </footer>
+
+<AuthModal
+  isOpen={isLoginModalOpen}
+  onClose={closeLoginModal}
+  onSuccess={(userData) => {
+    signIn(userData);
+    setIsLoginModalOpen(false);
+  }}
+/>
+    </div>
   );
 }
