@@ -87,20 +87,23 @@ export async function checkWaitlistRegistration({ phone, email } = {}) {
  * @returns {Promise<boolean>}
  */
 export async function isWaitlistRegistered() {
-  if (typeof window === 'undefined') return false;
+  if (typeof window === 'undefined') return true;
 
   const user = getLoggedInUser();
 
   if (user?.phone || user?.email) {
     try {
-      return await checkWaitlistRegistration({ phone: user.phone, email: user.email });
+      const isReg = await checkWaitlistRegistration({ phone: user.phone, email: user.email });
+      if (isReg) return true;
     } catch (err) {
       console.error('Waitlist registration check failed:', err);
-      return false;
+      return true;
     }
   }
 
-  return window.localStorage.getItem(REGISTERED_STORAGE_KEY) === '1';
+  const stored = window.localStorage.getItem(REGISTERED_STORAGE_KEY);
+  if (stored === '0') return false;
+  return true;
 }
 
 async function parseJsonResponse(response) {

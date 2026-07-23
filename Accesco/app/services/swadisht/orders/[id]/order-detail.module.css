@@ -1,0 +1,312 @@
+.page {
+  background: #FAFAFA;
+  min-height: 100vh;
+  color: #1C1C1C;
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  padding-top: 80px;
+  padding-bottom: 60px;
+}
+
+.container {
+  max-width: 540px;
+  margin: 0 auto;
+  padding: 20px 16px;
+}
+
+.loadingWrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 0;
+  color: #666;
+}
+
+.spinner {
+  width: 36px;
+  height: 36px;
+  border: 3px solid #f0f0f0;
+  border-top-color: #ff5722;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin-bottom: 16px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.backBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: none;
+  border: none;
+  font-size: 18px;
+  font-weight: 800;
+  color: #1C1C1C;
+  cursor: pointer;
+  padding: 0;
+  margin-bottom: 20px;
+}
+
+.statusBanner {
+  background: #fff;
+  border: 1px solid #EAEAEA;
+  border-radius: 16px;
+  padding: 18px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.statusBannerLeft {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.statusBannerDate {
+  font-size: 13px;
+  font-weight: 700;
+  color: #1C1C1C;
+}
+
+.statusBannerSub {
+  font-size: 12px;
+  color: #757575;
+  margin-top: 2px;
+}
+
+.statusBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.statusDelivered {
+  background: #E8F5E9;
+  color: #2E7D32;
+}
+
+.statusPending {
+  background: #FFF3E0;
+  color: #E65100;
+}
+
+.statusCancelled {
+  background: #FFEBEE;
+  color: #C62828;
+}
+
+.card {
+  background: #fff;
+  border: 1px solid #EAEAEA;
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 16px;
+}
+
+.sectionLabel {
+  font-size: 13px;
+  font-weight: 700;
+  color: #616161;
+  margin-bottom: 16px;
+}
+
+.itemRow {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 0;
+  border-bottom: 1px dashed #F0F0F0;
+}
+
+.itemRow:last-of-type {
+  border-bottom: none;
+}
+
+.itemImg {
+  width: 48px;
+  height: 48px;
+  border-radius: 10px;
+  object-fit: cover;
+  background: #F5F5F5;
+}
+
+.itemInfo {
+  flex: 1;
+}
+
+.itemName {
+  font-size: 14px;
+  font-weight: 700;
+  color: #1C1C1C;
+  display: block;
+}
+
+.itemRest {
+  font-size: 12px;
+  color: #757575;
+}
+
+.itemPrice {
+  font-size: 14px;
+  font-weight: 700;
+  color: #1C1C1C;
+}
+
+/* Reusable Container Banner */
+.containerBanner {
+  background: #FFF5F2;
+  border: 1px solid #FFE0D6;
+  border-radius: 14px;
+  padding: 16px;
+  margin-top: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.containerBannerScheduled {
+  background: #F1F8E9;
+  border-color: #DCEDC8;
+}
+
+.containerBannerLeft {
+  display: flex;
+  gap: 12px;
+}
+
+.containerIcon {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #FFEBE4;
+  color: #FF5722;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.containerBannerTitle {
+  font-size: 14px;
+  font-weight: 800;
+  color: #1C1C1C;
+}
+
+.containerBannerSub {
+  font-size: 12px;
+  color: #616161;
+  margin-top: 3px;
+  line-height: 1.4;
+}
+
+.containerLink {
+  color: #FF5722;
+  font-weight: 700;
+}
+
+.returnContainerBtn {
+  width: 100%;
+  background: #fff;
+  border: 1.5px solid #FF5722;
+  color: #FF5722;
+  padding: 12px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 700;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.returnContainerBtn:hover {
+  background: #FF5722;
+  color: #fff;
+}
+
+.scheduledBadge {
+  background: #E8F5E9;
+  color: #2E7D32;
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.billRow {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  color: #616161;
+  padding: 6px 0;
+}
+
+.billTotal {
+  border-top: 1px solid #EAEAEA;
+  margin-top: 8px;
+  padding-top: 12px;
+  font-size: 15px;
+  font-weight: 800;
+  color: #1C1C1C;
+}
+
+.actionRow {
+  margin-bottom: 16px;
+}
+
+.reorderBtn {
+  width: 100%;
+  background: #fff;
+  border: 1px solid #EAEAEA;
+  color: #1C1C1C;
+  padding: 14px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.helpRow {
+  background: #fff;
+  border: 1px solid #EAEAEA;
+  border-radius: 14px;
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  text-decoration: none;
+  color: inherit;
+}
+
+.helpLeft {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.helpTitle {
+  font-size: 14px;
+  font-weight: 800;
+  color: #1C1C1C;
+}
+
+.helpSub {
+  font-size: 12px;
+  color: #757575;
+}

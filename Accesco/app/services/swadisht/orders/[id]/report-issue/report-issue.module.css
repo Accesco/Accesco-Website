@@ -1,0 +1,141 @@
+.page {
+  background: #FAFAFA;
+  min-height: 100vh;
+  color: #1C1C1C;
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  padding-top: 80px;
+  padding-bottom: 60px;
+}
+
+.container {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 20px 16px;
+}
+
+.backIconBtn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #F5F5F5;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  margin-bottom: 16px;
+}
+
+.title {
+  font-size: 20px;
+  font-weight: 800;
+  color: #1C1C1C;
+  margin-bottom: 24px;
+}
+
+.promptSection {
+  margin-bottom: 24px;
+}
+
+.promptTitle {
+  font-size: 18px;
+  font-weight: 800;
+  color: #1C1C1C;
+  margin-bottom: 4px;
+}
+
+.promptSub {
+  font-size: 13px;
+  color: #757575;
+}
+
+.optionsList {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-bottom: 32px;
+}
+
+.optionCard {
+  background: #fff;
+  border: 1.5px solid #EAEAEA;
+  border-radius: 16px;
+  padding: 18px 16px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.optionCardSelected {
+  border-color: #FF5722;
+  box-shadow: 0 4px 12px rgba(255, 87, 34, 0.08);
+}
+
+.optionIconWrap {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: #FAF9F6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.optionContent {
+  flex: 1;
+}
+
+.optionTitle {
+  font-size: 15px;
+  font-weight: 800;
+  color: #1C1C1C;
+  margin-bottom: 2px;
+}
+
+.optionDesc {
+  font-size: 12px;
+  color: #757575;
+  line-height: 1.35;
+}
+
+.radioCircle {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 2px solid #D0D0D0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.radioSelected {
+  border-color: #FF5722;
+}
+
+.radioInnerDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #FF5722;
+}
+
+.continueBtn {
+  width: 100%;
+  background: #FF5722;
+  color: #fff;
+  border: none;
+  padding: 16px;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.continueBtn:hover {
+  background: #E64A19;
+}

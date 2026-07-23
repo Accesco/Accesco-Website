@@ -38,7 +38,7 @@
 .profileCard {
   background: #fff;
   border: 1px solid #EAD9C8;
-  border-radius: 18px;
+  border-radius: 4px;
   padding: 32px 28px;
   display: flex;
   flex-direction: column;
@@ -240,7 +240,7 @@
 .panelCard {
   background: #fff;
   border: 1px solid #EAD9C8;
-  border-radius: 16px;
+  border-radius: 4px;
   padding: 24px 28px;
   box-shadow: 0 2px 10px rgba(107,29,58,0.05);
 }
@@ -618,6 +618,71 @@
   .cuisinePromoGrid {
     grid-template-columns: 1fr;
   }
+}
+
+/* Eco Services & Support Hub Grid */
+.servicesGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.serviceCard {
+  background: #fff;
+  border: 1.5px solid #EAD9C8;
+  border-radius: 4px;
+  padding: 18px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  text-decoration: none;
+  color: #1C1C1C;
+  transition: border-color 0.2s, background-color 0.2s;
+}
+
+.serviceCard:hover {
+  border-color: #C8552A;
+  background: #FFF8F5;
+}
+
+.serviceCardDisabled {
+  opacity: 0.55;
+  pointer-events: none;
+  cursor: not-allowed;
+  background: #F9F5F2;
+}
+
+.serviceCardLeft {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.serviceIconWrap {
+  width: 42px;
+  height: 42px;
+  border-radius: 4px;
+  background: #FFF0E8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #C8552A;
+  flex-shrink: 0;
+}
+
+.serviceTitle {
+  font-size: 14px;
+  font-weight: 700;
+  color: #1C1C1C;
+  margin-bottom: 2px;
+  display: block;
+}
+
+.serviceDesc {
+  font-size: 12px;
+  color: #7A6050;
+  margin: 0;
 }
 
 .cuisinePromoCard {

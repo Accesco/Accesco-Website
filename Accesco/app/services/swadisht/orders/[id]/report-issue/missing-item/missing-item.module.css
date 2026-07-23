@@ -1,0 +1,241 @@
+.page {
+  background: #FAFAFA;
+  min-height: 100vh;
+  color: #1C1C1C;
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  padding-top: 80px;
+  padding-bottom: 60px;
+}
+
+.container {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 20px 16px;
+}
+
+.backIconBtn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #F5F5F5;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  margin-bottom: 16px;
+}
+
+.title {
+  font-size: 20px;
+  font-weight: 800;
+  color: #1C1C1C;
+  margin-bottom: 24px;
+}
+
+.promptSection {
+  margin-bottom: 20px;
+}
+
+.promptTitle {
+  font-size: 18px;
+  font-weight: 800;
+  color: #1C1C1C;
+  margin-bottom: 4px;
+}
+
+.promptSub {
+  font-size: 13px;
+  color: #757575;
+}
+
+.sectionLabel {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.6px;
+  color: #616161;
+  margin-bottom: 12px;
+}
+
+.itemsList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.itemCard {
+  background: #fff;
+  border: 1.5px solid #EAEAEA;
+  border-radius: 14px;
+  padding: 14px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.itemCardChecked {
+  border-color: #FF5722;
+  box-shadow: 0 2px 8px rgba(255, 87, 34, 0.06);
+}
+
+.checkbox {
+  width: 20px;
+  height: 20px;
+  border-radius: 6px;
+  border: 2px solid #D0D0D0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.checkboxChecked {
+  background: #FF5722;
+  border-color: #FF5722;
+}
+
+.itemImg {
+  width: 48px;
+  height: 48px;
+  border-radius: 10px;
+  object-fit: cover;
+  background: #F5F5F5;
+}
+
+.itemInfo {
+  flex: 1;
+}
+
+.itemName {
+  font-size: 14px;
+  font-weight: 800;
+  color: #1C1C1C;
+}
+
+.itemQty {
+  font-size: 12px;
+  color: #757575;
+  margin-top: 2px;
+}
+
+.itemPrice {
+  font-size: 13px;
+  font-weight: 700;
+  color: #1C1C1C;
+  margin-top: 2px;
+}
+
+.formGroup {
+  margin-bottom: 24px;
+}
+
+.inputLabel {
+  font-size: 13px;
+  font-weight: 700;
+  color: #1C1C1C;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.textareaWrap {
+  position: relative;
+}
+
+.textarea {
+  width: 100%;
+  border: 1.5px solid #EAEAEA;
+  border-radius: 12px;
+  padding: 14px;
+  font-size: 13px;
+  color: #1C1C1C;
+  font-family: inherit;
+  outline: none;
+  resize: none;
+  background: #fff;
+}
+
+.textarea:focus {
+  border-color: #FF5722;
+}
+
+.charCounter {
+  position: absolute;
+  bottom: 10px;
+  right: 12px;
+  font-size: 11px;
+  color: #9E9E9E;
+}
+
+.uploadArea {
+  border: 1.5px dashed #E0E0E0;
+  border-radius: 14px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: #fff;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+
+.uploadArea:hover {
+  border-color: #FF5722;
+}
+
+.uploadIconWrap {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #FFF5F2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.uploadText {
+  font-size: 13px;
+  font-weight: 700;
+  color: #616161;
+}
+
+.photoPreviewGrid {
+  display: flex;
+  gap: 10px;
+  margin-top: 12px;
+  overflow-x: auto;
+}
+
+.photoThumb {
+  width: 60px;
+  height: 60px;
+  border-radius: 8px;
+  object-fit: cover;
+  border: 1px solid #E0E0E0;
+}
+
+.confirmBtn {
+  width: 100%;
+  background: #FF5722;
+  color: #fff;
+  border: none;
+  padding: 16px;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.confirmBtn:disabled {
+  background: #BDBDBD;
+  cursor: not-allowed;
+}
+
+.confirmBtn:not(:disabled):hover {
+  background: #E64A19;
+}

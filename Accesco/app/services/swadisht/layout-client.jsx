@@ -1,9 +1,5 @@
 'use client';
 
-// Force dynamic rendering for all Swadishtt pages  
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
-
 /**
  * Swadishtt Layout
  * @description Layout wrapper for all Swadishtt pages

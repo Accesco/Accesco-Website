@@ -53,6 +53,7 @@ export default function ProfilePage() {
   const { cart, wishlist } = useCart();
   const [profile, setProfile] = useState(initialProfile);
   const [saveStatus, setSaveStatus] = useState('idle');
+  const [circularCredits, setCircularCredits] = useState(120);
 
   const recommendedCount = useMemo(() => products.filter((product) => product.isFeatured).length, []);
   const orderCount = recentOrders.length;
@@ -84,6 +85,10 @@ export default function ProfilePage() {
         if (email) next.email = email;
       }
       setProfile(next);
+
+      // Read circular credits
+      const credits = localStorage.getItem('instastyle_circular_credits');
+      if (credits) setCircularCredits(Number(credits));
     } catch (error) {
       console.warn('Profile storage read failed:', error);
     }
@@ -112,13 +117,8 @@ export default function ProfilePage() {
           <p className={styles.kicker}>Account center</p>
           <h1>Your InstaStyle profile</h1>
           <p className={styles.subtitle}>
-            Keep your sizes, addresses, orders, and style preferences in one place.
+            Keep your sizes, addresses, orders, reverse commerce returns, and style preferences in one place.
           </p>
-          <div className={styles.actions}>
-            <Link href="/services/instastyle/catalog" className={styles.primaryAction}>Shop the catalog</Link>
-            <Link href="/services/instastyle/wishlist" className={styles.secondaryAction}>Open wishlist</Link>
-            <Link href="/services/instastyle/add-sku" className={styles.secondaryAction} style={{ border: '1px dashed #E0356A', color: '#E0356A' }}>Add SKU / Sell Clothes</Link>
-          </div>
 
           <div className={styles.quickStats}>
             <div className={styles.statCard}>
@@ -134,17 +134,19 @@ export default function ProfilePage() {
               <strong>{orderCount}</strong>
             </div>
             <div className={styles.statCard}>
-              <span>Recommended</span>
-              <strong>{recommendedCount}</strong>
+              <span>Circular Credits</span>
+              <strong>{circularCredits}</strong>
             </div>
           </div>
         </div>
 
         <div className={styles.profileCard}>
-          <div className={styles.avatar}>AC</div>
+          <div className={styles.avatar}>
+            {profile.fullName ? profile.fullName.charAt(0).toUpperCase() : 'A'}
+          </div>
           <div>
             <h2>{profile.fullName}</h2>
-            <p>Preferred fit: {profile.sizeTop} / {profile.sizeBottom} • Saved addresses: {savedAddresses.length} • Rewards: Active</p>
+            <p>Preferred fit: {profile.sizeTop} / {profile.sizeBottom} • Saved addresses: {savedAddresses.length} • Rewards: Active ({circularCredits} pts)</p>
           </div>
           <div className={styles.completionWrap}>
             <div className={styles.completionHeader}>
@@ -159,6 +161,126 @@ export default function ProfilePage() {
             <span>Member since</span>
             <strong>2026</strong>
           </div>
+        </div>
+      </section>
+
+      {/* ── REVERSE COMMERCE & ACCOUNT HUB ── */}
+      <section className={styles.hubSection}>
+        <div className={styles.hubHeader}>
+          <div>
+            <h2>Reverse Commerce & Quick Services</h2>
+            <p>Access Try & Return, Circular Credits, AI Condition Guide, and Account Settings.</p>
+          </div>
+        </div>
+
+        <div className={styles.hubGrid}>
+          {/* Try & Return Card */}
+          <Link href="/services/instastyle/try-return" className={styles.hubCard}>
+            <div className={styles.hubCardLeft}>
+              <div className={styles.hubIconWrap}>
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#5C2E00" strokeWidth="2">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                </svg>
+              </div>
+              <div>
+                <span className={styles.hubTitle}>Try & Return</span>
+                <p className={styles.hubDesc}>Return items with next delivery for Circular Credits</p>
+              </div>
+            </div>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#999" strokeWidth="2">
+              <polyline points="9 18 15 12 9 6" />
+            </svg>
+          </Link>
+
+          {/* Circular Credits Card */}
+          <Link href="/services/instastyle/circular-credits" className={styles.hubCard}>
+            <div className={styles.hubCardLeft}>
+              <div className={styles.hubIconWrap}>
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#5C2E00" strokeWidth="2">
+                  <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67" />
+                </svg>
+              </div>
+              <div>
+                <span className={styles.hubTitle}>Circular Credits</span>
+                <p className={styles.hubDesc}>Earn & redeem credits on circular fashion</p>
+              </div>
+            </div>
+            <div className={styles.hubBadge}>{circularCredits} pts</div>
+          </Link>
+
+          {/* AI Condition Guide & Sell Card */}
+          <Link href="/services/instastyle/add-sku/condition-guide" className={styles.hubCard}>
+            <div className={styles.hubCardLeft}>
+              <div className={styles.hubIconWrap}>
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#5C2E00" strokeWidth="2">
+                  <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
+                </svg>
+              </div>
+              <div>
+                <span className={styles.hubTitle}>AI Condition Guide</span>
+                <p className={styles.hubDesc}>Grade B (87% confidence) & Sell apparel</p>
+              </div>
+            </div>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#999" strokeWidth="2">
+              <polyline points="9 18 15 12 9 6" />
+            </svg>
+          </Link>
+
+          {/* My Orders Card */}
+          <Link href="/services/instastyle/orders" className={styles.hubCard}>
+            <div className={styles.hubCardLeft}>
+              <div className={styles.hubIconWrap}>
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#5C2E00" strokeWidth="2">
+                  <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
+                </svg>
+              </div>
+              <div>
+                <span className={styles.hubTitle}>My Orders</span>
+                <p className={styles.hubDesc}>Track, view receipt & return history</p>
+              </div>
+            </div>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#999" strokeWidth="2">
+              <polyline points="9 18 15 12 9 6" />
+            </svg>
+          </Link>
+
+          {/* Saved Items Card */}
+          <Link href="/services/instastyle/wishlist" className={styles.hubCard}>
+            <div className={styles.hubCardLeft}>
+              <div className={styles.hubIconWrap}>
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#5C2E00" strokeWidth="2">
+                  <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
+                </svg>
+              </div>
+              <div>
+                <span className={styles.hubTitle}>Saved Items</span>
+                <p className={styles.hubDesc}>{wishlist.length} items in your wishlist</p>
+              </div>
+            </div>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#999" strokeWidth="2">
+              <polyline points="9 18 15 12 9 6" />
+            </svg>
+          </Link>
+
+          {/* Report an Issue Card */}
+          <Link href="/services/instastyle/report-issue" className={styles.hubCard}>
+            <div className={styles.hubCardLeft}>
+              <div className={styles.hubIconWrap}>
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#5C2E00" strokeWidth="2">
+                  <circle cx="12" cy="12" r="10" />
+                  <line x1="12" y1="8" x2="12" y2="12" />
+                  <line x1="12" y1="16" x2="12.01" y2="16" />
+                </svg>
+              </div>
+              <div>
+                <span className={styles.hubTitle}>Report an Issue</span>
+                <p className={styles.hubDesc}>Size fit, damaged or wrong product assistance</p>
+              </div>
+            </div>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#999" strokeWidth="2">
+              <polyline points="9 18 15 12 9 6" />
+            </svg>
+          </Link>
         </div>
       </section>
 
@@ -233,28 +355,6 @@ export default function ProfilePage() {
             ))}
           </div>
         </article>
-      </section>
-
-      <section className={styles.ordersSection}>
-        <ActiveOrdersWidget venture="InstaStyle" />
-        <div style={{ marginTop: '20px', textAlign: 'center' }}>
-          <Link 
-            href="/services/instastyle/orders" 
-            className={styles.secondaryAction}
-            style={{ 
-              display: 'inline-block', 
-              padding: '12px 24px', 
-              textDecoration: 'none',
-              background: '#f8f9fa',
-              borderRadius: '8px',
-              fontWeight: 600,
-              color: '#111',
-              border: '1px solid #eee'
-            }}
-          >
-            View Order History →
-          </Link>
-        </div>
       </section>
 
       <section className={styles.timelineSection}>
