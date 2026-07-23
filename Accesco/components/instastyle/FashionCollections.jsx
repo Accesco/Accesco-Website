@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
+import Image from 'next/image';
 import styles from './FashionCollections.module.css';
 
 const COLLECTIONS = [
@@ -97,7 +98,7 @@ const FashionCollections = () => {
                 <div className={styles.photoOverlay}>
                   <span>{item.title}</span>
                 </div>
-                <img src={item.image} alt={item.title} className={styles.image} />
+                <Image src={item.image} alt={item.title} fill sizes="(max-width: 768px) 100vw, 33vw" className={styles.image} />
               </motion.div>
             ))}
           </div>

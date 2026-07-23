@@ -1,7 +1,7 @@
 'use client';
 
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useRef, useEffect } from 'react';
 import './style.css';
 import AccescoHeader from '@/components/AccescoHeader';
 import VideoCard from '@/components/VideoCard';
@@ -114,6 +114,13 @@ export default function QTCPage() {
   const [currentFilter, setCurrentFilter] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedVideo, setSelectedVideo] = useState(null);
+  const heroVideoRef = useRef(null);
+
+  useEffect(() => {
+    if (heroVideoRef.current) {
+      heroVideoRef.current.play().catch(() => {});
+    }
+  }, []);
 
   const filteredVideos = useMemo(() => {
     let result = videos;
@@ -139,11 +146,14 @@ export default function QTCPage() {
         {/* HERO SECTION */}
         <section className="qtc-hero">
           <video
+            ref={heroVideoRef}
             className="qtc-hero-video"
             autoPlay
             muted
             loop
             playsInline
+            preload="none"
+            fetchPriority="low"
             poster="/images/qtc-mobile-hero.jpg"
           >
             <source src="/images/qtcbackground.mp4" type="video/mp4" />

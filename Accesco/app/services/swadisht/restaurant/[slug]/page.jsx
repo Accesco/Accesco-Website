@@ -1,6 +1,7 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import Image from 'next/image';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import SwadishttHeader from '../../components/SwadishttHeader';
@@ -26,10 +27,12 @@ function DishModal({ dish, onClose, onAdd }) {
           ×
         </button>
 
-        <img
+        <Image
           className={styles.modalImage}
           src={dish.image}
           alt={dish.name}
+          width={520}
+          height={280}
         />
 
         <div className={styles.modalContent}>
@@ -69,6 +72,14 @@ export default function RestaurantDetailPage() {
 
   const [selectedDish, setSelectedDish] =
     useState(null);
+
+  const heroVideoRef = useRef(null);
+
+  useEffect(() => {
+    if (heroVideoRef.current) {
+      heroVideoRef.current.play().catch(() => {});
+    }
+  }, []);
 
   const slug = Array.isArray(params?.slug)
     ? params.slug[0]
@@ -161,11 +172,14 @@ export default function RestaurantDetailPage() {
         <div className={styles.heroMedia}>
           {restaurant.video ? (
             <video
+              ref={heroVideoRef}
               className={styles.heroVideo}
               autoPlay
               muted
               loop
               playsInline
+              preload="none"
+              fetchPriority="low"
               poster={restaurant.coverImage}
             >
               <source
@@ -174,10 +188,13 @@ export default function RestaurantDetailPage() {
               />
             </video>
           ) : (
-            <img
+            <Image
               className={styles.heroVideo}
               src={restaurant.coverImage}
               alt={restaurant.name}
+              fill
+              sizes="100vw"
+              priority
             />
           )}
 
@@ -330,9 +347,11 @@ export default function RestaurantDetailPage() {
                       styles.dishImageWrap
                     }
                   >
-                    <img
+                    <Image
                       src={dish.image}
                       alt={dish.name}
+                      fill
+                      sizes="(max-width: 768px) 50vw, 200px"
                       onError={(event) => {
                         event.currentTarget.onerror =
                           null;

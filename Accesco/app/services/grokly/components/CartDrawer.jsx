@@ -7,6 +7,7 @@
 'use client';
 
 import { useMemo, useState } from 'react';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { RefreshCw } from 'lucide-react';
 import styles from './CartDrawer.module.css';
@@ -204,7 +205,8 @@ export default function CartDrawer() {
                   <div key={product.id} className={styles.item}>
                     {/* Product Image */}
                     <div className={styles.itemImgWrap}>
-                      <img 
+                      {/* eslint-disable-next-line @next/next/no-img-element -- product.image comes from the product catalog's heterogeneous external hosts, not compatible with next/image's static remotePatterns allowlist */}
+                      <img
                         className={styles.itemImg}
                         src={product.image}
                         alt={product.name}
@@ -300,6 +302,7 @@ export default function CartDrawer() {
                   <div className={styles.rcReturnThumbs}>
                     {returnItems.map(item => (
                       <div key={item.id} className={styles.rcReturnThumb}>
+                        {/* eslint-disable-next-line @next/next/no-img-element -- item.image comes from the product catalog's heterogeneous external hosts, not compatible with next/image's static remotePatterns allowlist */}
                         <img
                           src={item.image}
                           alt={item.name}

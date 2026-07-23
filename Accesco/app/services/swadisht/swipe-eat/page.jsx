@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useSwadishtt } from "../contexts/SwadishttContext";
@@ -276,7 +277,7 @@ function SwipeCard({ dish, onSwipe, isTop, isInCart }) {
   if (!isTop) {
     return (
       <div className={styles.cardBehind}>
-        <img src={dish.image} alt={dish.name} className={styles.cardImage} />
+        <Image src={dish.image} alt={dish.name} fill sizes="(max-width: 768px) 90vw, 400px" className={styles.cardImage} />
         <div className={styles.cardImageOverlay} />
       </div>
     );
@@ -332,9 +333,11 @@ function SwipeCard({ dish, onSwipe, isTop, isInCart }) {
       </motion.div>
 
       <div className={styles.cardImageWrap}>
-        <img
+        <Image
           src={dish.image}
           alt={dish.name}
+          fill
+          sizes="(max-width: 768px) 90vw, 400px"
           className={styles.cardImage}
           draggable={false}
         />
@@ -559,9 +562,11 @@ export default function SwipeEatPage() {
           onClick={() => setShowMobileCart(true)}
           aria-label="View cart"
         >
-          <img
+          <Image
             src="/images/swadisht/categories/cart-icon.png"
             alt=""
+            width={22}
+            height={22}
             className={styles.cartIconImage}
           />
           <span className={styles.cartBadge}>
@@ -585,14 +590,18 @@ export default function SwipeEatPage() {
           </div>
 
           <div className={styles.deckArrows} aria-hidden="true">
-            <img
+            <Image
               src="/images/swadisht/categories/swipe-arrow.png"
               alt=""
+              width={168}
+              height={168}
               className={styles.arrowLeft}
             />
-            <img
+            <Image
               src="/images/swadisht/categories/swipe-arrow.png"
               alt=""
+              width={168}
+              height={168}
               className={styles.arrowRight}
             />
           </div>
@@ -690,9 +699,11 @@ export default function SwipeEatPage() {
                         <line x1="6" y1="6" x2="18" y2="18" />
                       </svg>
                     </div>
-                    <img
+                    <Image
                       src="/images/swadisht/categories/Squiggle_Arrow_left.png"
                       alt=""
+                      width={301}
+                      height={267}
                       className={styles.swipeIndicatorArrow}
                     />
                   </div>
@@ -718,14 +729,18 @@ export default function SwipeEatPage() {
                     className={styles.swipeIndicatorRight}
                     aria-hidden="true"
                   >
-                    <img
+                    <Image
                       src="/images/swadisht/categories/cart-green.png"
                       alt=""
+                      width={104}
+                      height={92}
                       className={styles.swipeIndicatorIcon}
                     />
-                    <img
+                    <Image
                       src="/images/swadisht/categories/Squiggle_Arrow_right.png"
                       alt=""
+                      width={267}
+                      height={221}
                       className={styles.swipeIndicatorArrow}
                     />
                   </div>
@@ -850,9 +865,11 @@ export default function SwipeEatPage() {
             <div className={styles.cartHeaderTop}>
               <h3>
                 <span className={styles.cartHeaderIcon}>
-                  <img
+                  <Image
                     src="/images/swadisht/categories/cart-icon-wrap.png"
                     alt=""
+                    width={40}
+                    height={40}
                     className={styles.cartHeaderIconImage}
                   />
                 </span>
@@ -870,9 +887,11 @@ export default function SwipeEatPage() {
           <div className={styles.cartItems}>
             {cart.length === 0 ? (
               <div className={styles.emptyCart}>
-                <img
+                <Image
                   src="/images/swadisht/categories/cart-icon-wrap.png"
                   alt=""
+                  width={110}
+                  height={110}
                   className={styles.emptyCartWrap}
                 />
                 <p className={styles.emptyCartTitle}>Your cart is empty</p>
@@ -898,9 +917,11 @@ export default function SwipeEatPage() {
                     transition={{ duration: 0.22 }}
                     layout="position"
                   >
-                    <img
+                    <Image
                       src={dish.image}
                       alt={dish.name}
+                      width={58}
+                      height={58}
                       className={styles.cartThumb}
                     />
                     <div className={styles.cartItemInfo}>

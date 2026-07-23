@@ -131,6 +131,7 @@
   overflow: hidden;
   background: #F5EAE0;
   flex-shrink: 0;
+  position: relative;
 }
 
 .itemImage img {

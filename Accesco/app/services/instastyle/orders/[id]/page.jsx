@@ -113,7 +113,8 @@ export default function InstaStyleOrderDetailPage() {
                 <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: '16px', padding: '12px', border: '1px solid #eee', borderRadius: '12px' }}>
                   <div style={{ width: '64px', height: '64px', position: 'relative', borderRadius: '8px', overflow: 'hidden', background: '#f5f5f5' }}>
                     {item.image && (
-                      <Image src={item.image} alt={item.name} fill style={{ objectFit: 'cover' }} />
+                      // eslint-disable-next-line @next/next/no-img-element -- item.image comes from the product catalog's heterogeneous external hosts, not compatible with next/image's static remotePatterns allowlist
+                      <img src={item.image} alt={item.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                     )}
                   </div>
                   <div style={{ flex: 1 }}>

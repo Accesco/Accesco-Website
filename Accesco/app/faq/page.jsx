@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import {
   ChevronDown,
   Mail,
@@ -540,9 +541,12 @@ export default function FAQPage() {
     </span>
   </div>
 
-  <img
+  <Image
     src="/images/faq/faq-hero.png"
     alt="Accesco Living frequently asked questions"
+    fill
+    style={{ objectFit: 'cover', objectPosition: 'center' }}
+    sizes="(max-width: 768px) 100vw, 800px"
   />
 </div>
           </div>
@@ -586,9 +590,11 @@ export default function FAQPage() {
                 </div>
 
                <div className="faqHeadphones">
-  <img
+  <Image
     src="/images/faq/headphones.png"
     alt="Accesco customer support"
+    width={175}
+    height={135}
   />
 </div>
 

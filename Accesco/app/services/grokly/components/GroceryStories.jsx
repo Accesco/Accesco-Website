@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useRef, useState } from 'react';
+import Image from 'next/image';
 import styles from './GroceryStories.module.css';
 
 const STORIES = [
@@ -312,7 +313,7 @@ export default function GroceryStories() {
           <div ref={trackRef} className={styles.track}>
             {STORIES.map((item, index) => (
               <button key={item.id} type="button" className={styles.card} onClick={() => openStories(index)}>
-                <img src={item.image} alt={item.title} className={styles.cardImage} />
+                <Image src={item.image} alt={item.title} fill sizes="250px" className={styles.cardImage} />
                 <span className={styles.cardOverlay} />
                 <span className={styles.views}><Icon name="eye" size={11} />{formatCount(item.views)}</span>
                 <strong>{item.title}</strong>
@@ -330,7 +331,7 @@ export default function GroceryStories() {
           <header className={styles.reelsHeader}>
             <div className={styles.headerLeft}>
               <button type="button" className={styles.headerCircle} onClick={() => setOpen(false)} aria-label="Back to Grokly"><Icon name="back" size={24} /></button>
-              <span className={styles.headerLogo}><img src="/images/grokly-icon.png" alt="Grokly" /></span>
+              <span className={styles.headerLogo}><Image src="/images/grokly-icon.png" alt="Grokly" width={54} height={54} /></span>
               <div className={styles.headerTitle}>
                 <h1>Discover Your Next <span>Smart Pick</span></h1>
                 <i />
@@ -346,7 +347,7 @@ export default function GroceryStories() {
                 {!videoFailed && (
                   <video key={story.videoUrl} ref={videoRef} className={styles.video} src={story.videoUrl} poster={story.image} muted={muted} loop playsInline preload="auto" onClick={togglePlayback} onLoadedMetadata={(event) => setDuration(event.currentTarget.duration || 10)} onTimeUpdate={(event) => setCurrentTime(event.currentTarget.currentTime)} onPlay={() => setPlaying(true)} onPause={() => setPlaying(false)} onError={() => setVideoFailed(true)} />
                 )}
-                {videoFailed && <img src={story.image} alt={story.title} className={styles.videoFallbackImage} />}
+                {videoFailed && <Image src={story.image} alt={story.title} fill sizes="400px" className={styles.videoFallbackImage} />}
                 <div className={styles.videoShade} />
 
                 <div className={styles.videoTopbar}>
@@ -408,7 +409,7 @@ export default function GroceryStories() {
                         const selected = added.has(key);
                         return (
                           <div className={styles.orderItem} key={name}>
-                            <img src={image} alt="" />
+                            <Image src={image} alt="" width={40} height={40} />
                             <div><strong>{name}</strong><span>{detail} &nbsp;•&nbsp; ₹{price}</span></div>
                             <button type="button" className={`${styles.addButton} ${selected ? styles.added : ''}`} onClick={() => { toggleSet(setAdded, key); setToast(selected ? 'Removed from basket' : 'Added to basket'); }}><Icon name={selected ? 'quality' : 'plus'} size={18} /></button>
                           </div>

@@ -411,11 +411,13 @@ const handleFeedbackSubmit = async () => {
     </p>
   </div>
 
-  <img
+  <Image
     src="/images/asterik.png"
     alt=""
     aria-hidden="true"
     className={styles.feedbackHeaderMark}
+    width={63}
+    height={71}
   />
 </div>
 

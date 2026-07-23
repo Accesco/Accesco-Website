@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
+import Image from 'next/image';
 import styles from './thrift.module.css';
 
 const THRIFT_PRODUCTS = [
@@ -251,6 +252,7 @@ export default function ThriftMarketplace() {
             >
               <Link href={`/services/instastyle/products/${product.id}`} className={styles.productCard}>
                 <div className={styles.imageWrapper}>
+                  {/* eslint-disable-next-line @next/next/no-img-element -- product.image may be a user-submitted or Firestore-seeded URL from an arbitrary external host, not compatible with next/image's static remotePatterns allowlist */}
                   <img src={product.image} alt={product.name} className={styles.image} />
                 </div>
                 <div className={styles.info}>

@@ -1,6 +1,5 @@
 'use client';
 
-import Image from 'next/image';
 import Link from 'next/link';
 import { useState } from 'react';
 import { useCart } from '@/contexts/CartContext';
@@ -30,11 +29,10 @@ export default function ProductCard({ product }) {
     <Link href={`/services/instastyle/products/${product.id}`} className={styles.productCard}>
       <div className={styles.imageContainer}>
         <div className={`${styles.imageWrapper} ${imageLoaded ? styles.loaded : ''}`}>
-          <Image
+          {/* eslint-disable-next-line @next/next/no-img-element -- product image resolves to mock data's heterogeneous external hosts, not compatible with next/image's static remotePatterns allowlist */}
+          <img
             src={product.images?.[0]?.url || product.image || '/images/ac-logo.png'}
             alt={product.name}
-            fill
-            sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
             className={styles.productImage}
             onLoad={() => setImageLoaded(true)}
           />

@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState, useRef } from 'react';
+import Image from 'next/image';
 
 const CHATBOT_LOGO = '/logo.png';
 
@@ -167,7 +168,7 @@ const [typing, setTyping] = useState(false)
             <header className="ac-ai-header">
               <div className="ac-ai-brand">
                 <div className="ac-ai-header-logo">
-                  <img src={CHATBOT_LOGO} alt="Accesco AI" />
+                  <Image src={CHATBOT_LOGO} alt="Accesco AI" width={78} height={78} />
                 </div>
 
                 <div>
@@ -191,7 +192,7 @@ const [typing, setTyping] = useState(false)
                 >
                   {msg.role === 'bot' && (
                     <div className="ac-ai-avatar">
-                      <img src={CHATBOT_LOGO} alt="Accesco" />
+                      <Image src={CHATBOT_LOGO} alt="Accesco" width={48} height={48} />
                     </div>
                   )}
 
@@ -216,7 +217,7 @@ const [typing, setTyping] = useState(false)
               {typing && (
                 <div className="ac-ai-row bot">
                   <div className="ac-ai-avatar">
-                    <img src={CHATBOT_LOGO} alt="Accesco" />
+                    <Image src={CHATBOT_LOGO} alt="Accesco" width={48} height={48} />
                   </div>
 
                   <div className="ac-ai-message-stack">

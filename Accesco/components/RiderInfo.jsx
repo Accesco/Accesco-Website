@@ -32,6 +32,7 @@ export default function RiderInfo({
           marginBottom: '20px',
         }}
       >
+        {/* eslint-disable-next-line @next/next/no-img-element -- rider.profileImage source (i.pravatar.cc mock data) is not in next.config.js remotePatterns */}
         <img
           src={rider.profileImage}
           alt={rider.name}
