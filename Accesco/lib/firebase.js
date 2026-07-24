@@ -19,21 +19,4 @@ export const db      = getFirestore(app);
 export const storage = getStorage(app);
 export const auth    = getAuth(app);
 
-// Disable reCAPTCHA app verification for phone/email auth testing on localhost only.
-// This must never be true in production: it skips real reCAPTCHA widget setup and
-// routes phone auth through Firebase's test-mode path, which only works for phone
-// numbers whitelisted in the Firebase console. For real users it causes
-// auth/captcha-check-failed (MALFORMED) on signInWithPhoneNumber.
-if (typeof window !== 'undefined') {
-  const isLocalhost = ['localhost', '127.0.0.1'].includes(window.location.hostname);
-
-  if (isLocalhost) {
-    try {
-      auth.settings.appVerificationDisabledForTesting = true;
-    } catch (e) {
-      // Ignore setting errors in SSR
-    }
-  }
-}
-
 export default app;
