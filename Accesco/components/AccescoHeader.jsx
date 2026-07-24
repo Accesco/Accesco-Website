@@ -429,16 +429,20 @@ export default function AccescoHeader() {
               <span className={styles.desktopText}>Get App</span>
               <span className={styles.mobileText}>Download</span>
 
-              <img
+              <Image
                 src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/googleplay.svg"
                 alt="Google Play"
                 className={styles.storeIcon}
+                width={14}
+                height={14}
               />
 
-              <img
+              <Image
                 src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/apple.svg"
                 alt="App Store"
                 className={styles.storeIcon}
+                width={14}
+                height={14}
               />
             </a>
           </div>

@@ -1,3 +1,5 @@
+import Image from 'next/image';
+
 export default function Navbar() {
   return (
     <header className="navbar">
@@ -9,7 +11,7 @@ export default function Navbar() {
              3. Supported formats: PNG, JPG, SVG.
              4. If the file name changes, update the src path below accordingly.
           */}
-          <img src="/logo.png" alt="Company Logo" className="logo" />
+          <Image src="/logo.png" alt="Company Logo" className="logo" width={42} height={42} />
           <span>Accesco Living</span>
         </a>
 

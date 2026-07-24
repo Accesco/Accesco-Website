@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import SwadishttHeader from '../../components/SwadishttHeader';
@@ -147,9 +148,11 @@ export default function CategoryPage() {
                 className={styles.card}
               >
                 <div className={styles.imageBox}>
-                  <img
+                  <Image
                     src={restaurant.coverImage}
                     alt={restaurant.name}
+                    fill
+                    sizes="(max-width: 768px) 100vw, 400px"
                     className={styles.image}
                   />
                   {restaurant.offers && restaurant.offers.length > 0 && (

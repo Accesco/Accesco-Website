@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Navbar from "./components/Navbar";
 import Hero from "./components/Hero";
 import SectionHeader from "./components/SectionHeader";
@@ -137,7 +138,7 @@ export default function HomePage() {
   <div className="media-track">
     {[...mediaLogos, ...mediaLogos].map((logo, index) => (
       <div className="media-logo" key={`${logo.name}-${index}`}>
-        <img src={logo.src} alt={logo.name} />
+        <Image src={logo.src} alt={logo.name} width={200} height={86} />
       </div>
     ))}
   </div>
@@ -149,7 +150,7 @@ export default function HomePage() {
       <div className="logo-track">
         {[...ecosystemLogos, ...ecosystemLogos].map((logo, index) => (
           <div className="floating-logo" key={`${logo.name}-${index}`}>
-            <img src={logo.src} alt={logo.name} />
+            <Image src={logo.src} alt={logo.name} width={200} height={86} />
           </div>
         ))}
       </div>
@@ -161,7 +162,7 @@ export default function HomePage() {
       <div className="certification-grid">
         {certificationLogos.map((cert) => (
           <div className="certification-card" key={cert.name}>
-            <img src={cert.src} alt={cert.name} />
+            <Image src={cert.src} alt={cert.name} width={200} height={86} />
             <strong>{cert.name}</strong>
           </div>
         ))}
@@ -246,7 +247,7 @@ export default function HomePage() {
           
           <div className="dpiit-section">
   <div className="dpiit-card unified">
-    <img src="/logos/startup-india.png" alt="Startup India DPIIT" />
+    <Image src="/logos/startup-india.png" alt="Startup India DPIIT" width={120} height={40} />
 
     <div className="dpiit-content">
       <h3>DPIIT-Recognised Startup</h3>

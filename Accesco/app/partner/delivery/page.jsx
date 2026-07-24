@@ -39,27 +39,12 @@ export default function PartnerAsDelivery() {
     setSubmitStatus(null);
 
     try {
-      const response = await fetch('https://formspree.io/f/mdaojdag', {
+      const response = await fetch('/api/partner/delivery', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          'Form Type': 'Delivery Partner',
-          'Full Name': formData.fullName,
-          '_replyto': formData.email,
-          'Phone': formData.phone,
-          'City': formData.city,
-          'Vehicle Type': formData.vehicleType,
-          'Vehicle Number': formData.vehicleNumber,
-          'Driving License': formData.drivingLicense,
-          'Age': formData.age,
-          'Experience': formData.experience,
-          'Availability': formData.availability.join(', '),
-          'Own Vehicle': formData.ownVehicle,
-          'Address': formData.address,
-          '_subject': 'New Delivery Partner Application!'
-        }),
+        body: JSON.stringify(formData),
       });
 
       if (response.ok) {

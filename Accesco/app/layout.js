@@ -1,6 +1,6 @@
 import Script from 'next/script';
-import { Sora, DM_Sans, Inter } from 'next/font/google';
-import { spaceGrotesk, jetbrainsMono } from '@/app/fonts';
+import localFont from 'next/font/local';
+import { spaceGrotesk } from '@/app/fonts';
 import './globals.css';
 import { AuthProvider } from './components/AuthProvider';
 import AuthGate from './components/AuthGate';
@@ -9,25 +9,29 @@ import ReferralCapture from './components/ReferralCapture';
 import JsonLd from '@/components/JsonLd';
 import BreadcrumbJsonLd from '@/components/BreadcrumbJsonLd';
 
-const sora = Sora({
-  subsets: ['latin'],
-  weight: ['300', '400', '500', '600', '700', '800'],
+// Self-hosted from Google Fonts (public/fonts/) — see app/fonts.js for why.
+const sora = localFont({
+  src: '../public/fonts/sora-variable.woff2',
+  weight: '300 800',
   display: 'swap',
   variable: '--font-sora',
+  adjustFontFallback: false,
 });
 
-const dmSans = DM_Sans({
-  subsets: ['latin'],
-  weight: ['400', '500', '700'],
+const dmSans = localFont({
+  src: '../public/fonts/dm-sans-variable.woff2',
+  weight: '400 700',
   display: 'swap',
   variable: '--font-dm-sans',
+  adjustFontFallback: false,
 });
 
-const inter = Inter({
-  subsets: ['latin'],
-  weight: ['400', '500', '600', '700'],
+const inter = localFont({
+  src: '../public/fonts/inter-variable.woff2',
+  weight: '400 700',
   display: 'swap',
   variable: '--font-inter',
+  adjustFontFallback: false,
 });
 
 export const metadata = {
@@ -123,7 +127,7 @@ export default function RootLayout({ children }) {
 
 
   return (
-    <html lang="en" className={`${sora.variable} ${dmSans.variable} ${inter.variable} ${spaceGrotesk.variable} ${jetbrainsMono.variable}`}>
+    <html lang="en" className={`${sora.variable} ${dmSans.variable} ${inter.variable} ${spaceGrotesk.variable}`}>
       <head>
         {/* Structured Data for SEO */}
         <JsonLd data={[organizationSchema, websiteSchema]} />

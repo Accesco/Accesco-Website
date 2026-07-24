@@ -40,27 +40,12 @@ export default function PartnerAsVendor() {
     setSubmitStatus(null);
 
     try {
-      const response = await fetch('https://formspree.io/f/mdaojdag', {
+      const response = await fetch('/api/partner/vendor', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          'Form Type': 'Vendor Partnership',
-          'Business Name': formData.businessName,
-          'Owner Name': formData.ownerName,
-          '_replyto': formData.email,
-          'Phone': formData.phone,
-          'Business Type': formData.businessType,
-          'Address': formData.address,
-          'City': formData.city,
-          'Pincode': formData.pincode,
-          'GST Number': formData.gst,
-          'FSSAI License': formData.fssai,
-          'Experience': formData.experience,
-          'Description': formData.description,
-          '_subject': 'New Vendor Partnership Application!'
-        }),
+        body: JSON.stringify(formData),
       });
 
       if (response.ok) {

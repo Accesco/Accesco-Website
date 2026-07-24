@@ -8,6 +8,7 @@
  */
 
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 import styles from './ReverseCommerceModal.module.css';
 
 const CREDIT_PER_ITEM = 10; // ₹10 per returnable item
@@ -95,6 +96,7 @@ export default function ReverseCommerceModal({ isOpen, onClose, cartReturnableIt
                       aria-pressed={!!selected[product.id]}
                     >
                       <div className={styles.itemImgWrap}>
+                        {/* eslint-disable-next-line @next/next/no-img-element -- product.image comes from the product catalog's heterogeneous external hosts, not compatible with next/image's static remotePatterns allowlist */}
                         <img
                           src={product.image}
                           alt={product.name}
@@ -187,6 +189,7 @@ export default function ReverseCommerceModal({ isOpen, onClose, cartReturnableIt
             <div className={styles.confirmedItems}>
               {selectedItems.map(({ product, quantity }) => (
                 <div key={product.id} className={styles.confirmedItem}>
+                  {/* eslint-disable-next-line @next/next/no-img-element -- product.image comes from the product catalog's heterogeneous external hosts, not compatible with next/image's static remotePatterns allowlist */}
                   <img
                     src={product.image}
                     alt={product.name}

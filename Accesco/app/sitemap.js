@@ -1,5 +1,7 @@
 import { fetchBlogs } from '../lib/blogService';
 
+export const dynamic = 'force-dynamic';
+
 const SITE_URL = 'https://accescoliving.com';
 
 const STATIC_ROUTES = [

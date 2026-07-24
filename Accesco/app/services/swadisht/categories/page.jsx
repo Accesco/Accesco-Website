@@ -2,6 +2,7 @@
 
 import { useState, useMemo, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import SwadishttHeader from '../components/SwadishttHeader';
 import { RESTAURANTS } from '../lib/swadishttData';
@@ -350,9 +351,11 @@ export default function CategoriesPage() {
                     )}
 
                     <div className={styles.dishImageBox}>
-                      <img
+                      <Image
                         src={dish.image}
                         alt={dish.name}
+                        fill
+                        sizes="(max-width: 768px) 50vw, 300px"
                         className={styles.dishImage}
                         onError={(e) => {
                           e.currentTarget.src = `https://placehold.co/300x200/F5EAE0/6B1D3A/png?text=${encodeURIComponent(dish.name)}`;

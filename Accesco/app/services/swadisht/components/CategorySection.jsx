@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import Link from 'next/link';
 import styles from './CategorySection.module.css';
 
@@ -32,9 +33,11 @@ export default function CategorySection() {
             className={styles.categoryCard}
           >
             <div className={styles.imageWrap}>
-              <img
+              <Image
                 src={category.image}
                 alt={category.name}
+                width={106}
+                height={106}
                 draggable={false}
                 onError={(e) => { e.target.style.display = 'none'; }}
               />
