@@ -1018,3 +1018,90 @@
 .service-card.instastyle .service-card-bottom {
   border-top-color: #eaded8;
 }
+
+/* ===== MEMBERSHIP CARD FINAL FIXES ===== */
+
+.membership-card {
+  background:
+    radial-gradient(
+      circle at 14% 4%,
+      rgba(255, 255, 255, 0.18),
+      transparent 34%
+    ),
+    radial-gradient(
+      circle at 85% 100%,
+      rgba(49, 0, 26, 0.25),
+      transparent 40%
+    ),
+    linear-gradient(
+      118deg,
+      #c9166e 0%,
+      #a30057 42%,
+      #7a0042 72%,
+      #58002f 100%
+    ) !important;
+}
+
+.membership-connected {
+  display: none !important;
+}
+
+.membership-avatar {
+  position: relative;
+  overflow: hidden !important;
+}
+
+.membership-avatar img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.membership-avatar-edit {
+  position: absolute;
+  right: -6px;
+  bottom: -5px;
+  z-index: 5;
+  display: flex;
+  width: 32px;
+  height: 32px;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #ffffff;
+  border-radius: 50%;
+  background: #8d004b;
+  box-shadow: 0 5px 14px rgba(58, 0, 31, 0.28);
+  color: #ffffff;
+  cursor: pointer;
+  font-size: 15px;
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease;
+}
+
+.membership-avatar-edit:hover {
+  background: #b20b60;
+  transform: scale(1.08);
+}
+
+.membership-avatar-edit input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+}
+
+@media (max-width: 700px) {
+  .membership-avatar-edit {
+    right: -5px;
+    bottom: -5px;
+    width: 27px;
+    height: 27px;
+    font-size: 12px;
+  }
+}
+
