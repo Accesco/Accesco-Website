@@ -39,22 +39,62 @@ const services = [
 ];
 
 const accountItems = [
-  { label: 'Account details', icon: 'ri-user-line', active: true },
-  { label: 'Addresses', icon: 'ri-map-pin-line' },
-  { label: 'Payment methods', icon: 'ri-bank-card-line' },
-  { label: 'Redeem a code', icon: 'ri-coupon-3-line' },
-  { label: 'Bookmarks', icon: 'ri-bookmark-line' },
-  { label: 'Subscriptions', icon: 'ri-file-list-3-line' },
-  { label: 'Notifications', icon: 'ri-notification-3-line' },
-  { label: 'Language & region', icon: 'ri-global-line' },
-  { label: 'Security & login', icon: 'ri-shield-keyhole-line' },
-  { label: 'Help & support', icon: 'ri-question-line' },
+  {
+    label: 'Account details',
+    icon: 'ri-user-line',
+    href: '/profile#account-details',
+  },
+  {
+    label: 'Addresses',
+    icon: 'ri-map-pin-line',
+    href: '/profile?section=addresses',
+  },
+  {
+    label: 'Payment methods',
+    icon: 'ri-bank-card-line',
+    href: '/profile?section=payment-methods',
+  },
+  {
+    label: 'Redeem a code',
+    icon: 'ri-coupon-3-line',
+    href: '/profile?section=redeem-code',
+  },
+  {
+    label: 'Bookmarks',
+    icon: 'ri-bookmark-line',
+    href: '/profile?section=bookmarks',
+  },
+  {
+    label: 'Subscriptions',
+    icon: 'ri-file-list-3-line',
+    href: '/profile?section=subscriptions',
+  },
+  {
+    label: 'Notifications',
+    icon: 'ri-notification-3-line',
+    href: '/profile?section=notifications',
+  },
+  {
+    label: 'Language & region',
+    icon: 'ri-global-line',
+    href: '/profile?section=language-region',
+  },
+  {
+    label: 'Security & login',
+    icon: 'ri-shield-keyhole-line',
+    href: '/profile?section=security-login',
+  },
+  {
+    label: 'Help & support',
+    icon: 'ri-question-line',
+    href: '/contact',
+  },
 ];
 
 const exploreItems = [
   { label: 'Invite & earn', icon: 'ri-gift-line', href: '/referral' },
   { label: 'Accesco Library', icon: 'ri-play-circle-line', href: '/accesco-library' },
-  { label: 'Xpense Meter', icon: 'ri-calculator-line', href: '/calculator' },
+  { label: 'Xpense Meter', icon: 'ri-calculator-line', href: '/xpense-meter' },
   { label: 'Partner with us', icon: 'ri-shake-hands-line', href: '/partner' },
 ];
 
@@ -143,6 +183,36 @@ const saveProfileChanges = (event) => {
   setIsEditing(false);
 };
 
+const handleProfileImageChange = (event) => {
+  const file = event.target.files?.[0];
+
+  if (!file) return;
+
+  if (!file.type.startsWith('image/')) {
+    alert('Please select an image file.');
+    return;
+  }
+
+  if (file.size > 2 * 1024 * 1024) {
+    alert('Please select an image smaller than 2 MB.');
+    return;
+  }
+
+  const reader = new FileReader();
+
+  reader.onload = () => {
+    if (typeof reader.result !== 'string') return;
+
+    signIn({
+      ...user,
+      profileImage: reader.result,
+    });
+  };
+
+  reader.readAsDataURL(file);
+  event.target.value = '';
+};
+
   return (
     <div className="profile-shell">
       <AccescoHeader />
@@ -178,7 +248,6 @@ const saveProfileChanges = (event) => {
 
                 <div className="membership-topline">
                   <span>Accesco Member</span>
-                  <span>Est. 2024</span>
                 </div>
 
                 <div className="membership-main">
@@ -192,8 +261,30 @@ const saveProfileChanges = (event) => {
                   </div>
 
                   <div className="membership-avatar-wrap">
-                    <div className="membership-avatar">{initials}</div>
-                    <span className="membership-connected">Connected</span>
+                    <div className="membership-avatar">
+                      {user?.profileImage ? (
+                        <img
+                          src={user.profileImage}
+                          alt={`${displayName}'s profile`}
+                        />
+                      ) : (
+                        initials
+                      )}
+                    </div>
+
+                    <label
+                      className="membership-avatar-edit"
+                      title="Change profile photo"
+                      aria-label="Change profile photo"
+                    >
+                      <i className="ri-pencil-line" />
+
+                      <input
+                        type="file"
+                        accept="image/png,image/jpeg,image/webp"
+                        onChange={handleProfileImageChange}
+                      />
+                    </label>
                   </div>
                 </div>
 
@@ -260,15 +351,17 @@ const saveProfileChanges = (event) => {
                     <p className="sidebar-label">Account</p>
                     <nav aria-label="Account settings">
                       {accountItems.map((item) => (
-                        <button
-                          type="button"
-                          className={item.active ? 'active' : ''}
-                          key={item.label}
-                        >
-                          <i className={item.icon} />
-                          <span>{item.label}</span>
-                        </button>
-                      ))}
+  <Link
+    href={item.href}
+    className={
+      item.href === '/profile#account-details' ? 'active' : ''
+    }
+    key={item.label}
+  >
+    <i className={item.icon} />
+    <span>{item.label}</span>
+  </Link>
+))}
                     </nav>
 
                     <p className="sidebar-label explore-label">Explore</p>

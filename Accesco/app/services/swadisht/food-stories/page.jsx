@@ -1,370 +1,177 @@
-'use client';
+"use client";
 
-import Image from 'next/image';
-import Link from 'next/link';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import Link from "next/link";
+import { useEffect, useRef, useState } from "react";
 
-const BACKGROUND_IMAGE_URL =
-  'PASTE_YOUR_DIRECT_BACKGROUND_IMAGE_LINK_HERE';
-
-const REELS = [
+const DISHES = [
   {
-    id: 'paneer-tikka',
-    title: 'Smoky Paneer Tikka',
-    restaurant: 'Royal Tandoor',
-    videoFile: '1-paneer-tikka.mp4',
+    id: "pasta",
+    title: "Cheesy Baked Pasta",
+    restaurant: "The Pasta Project",
+    username: "@foodie_delhi",
+    location: "Gurgaon, India",
+    price: 249,
+    rating: 4.8,
+    reviews: "2.4K",
+    video: "/video/swadisht-reels/10-pasta.mp4",
+    image:
+      "https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?w=1200&h=900&fit=crop",
     description:
-      'Smoky paneer tikka, charred peppers and a fresh squeeze of lemon.',
-    tags: ['#PaneerLove', '#TandooriCravings', '#SwadishttReels'],
-    orderItems: [
-      {
-        name: 'Smoky Paneer Tikka',
-        detail: '1 plate',
-        price: 279,
-        image:
-          'https://images.unsplash.com/photo-1567188040759-fb8a883dc6d8?w=180&h=180&fit=crop',
-      },
-      {
-        name: 'Mint Chutney',
-        detail: '1 cup',
-        price: 39,
-        image:
-          'https://images.unsplash.com/photo-1601050690597-df0568f70950?w=180&h=180&fit=crop',
-      },
-      {
-        name: 'Masala Onions',
-        detail: '1 portion',
-        price: 29,
-        image:
-          'https://images.unsplash.com/photo-1508747703725-719777637510?w=180&h=180&fit=crop',
-      },
-    ],
+      "Creamy white sauce pasta baked to perfection with loads of mozzarella cheese, aromatic herbs and fresh vegetables.",
+    caption: "Too cheesy to handle! 😍",
+    tags: ["#Trending", "#CheeseLovers", "#MustTry"],
+    likes: "24.8K",
+    comments: "1.2K",
+    saves: "5.6K",
   },
   {
-    id: 'chocolate-cake',
-    title: 'Belgian Chocolate Lava Cake',
-    restaurant: 'Sweet Treats',
-    videoFile: '2-chocolate-cake.mp4',
+    id: "paneer",
+    title: "Paneer Tikka Masala",
+    restaurant: "Royal Tandoor",
+    username: "@indianfoodstories",
+    location: "Bengaluru, India",
+    price: 229,
+    rating: 4.7,
+    reviews: "1.9K",
+    video: "/video/swadisht-reels/1-paneer-tikka.mp4",
+    image:
+      "https://images.unsplash.com/photo-1567188040759-fb8a883dc6d8?w=1200&h=900&fit=crop",
     description:
-      'Decadent Belgian chocolate lava cake with a melt-in-your-mouth centre.',
-    tags: ['#ChocolateLove', '#DessertGoals', '#SwadishttReels'],
-    orderItems: [
-      {
-        name: 'Belgian Chocolate Lava Cake',
-        detail: '1 piece',
-        price: 249,
-        image:
-          'https://images.unsplash.com/photo-1606313564200-e75d5e30476c?w=180&h=180&fit=crop',
-      },
-      {
-        name: 'Vanilla Ice Cream',
-        detail: '1 scoop',
-        price: 69,
-        image:
-          'https://images.unsplash.com/photo-1563805042-7684c019e1cb?w=180&h=180&fit=crop',
-      },
-      {
-        name: 'Chocolate Sauce',
-        detail: '30 ml',
-        price: 39,
-        image:
-          'https://images.unsplash.com/photo-1575377427642-087cf684f29d?w=180&h=180&fit=crop',
-      },
-    ],
+      "Smoky paneer tikka served with creamy tomato gravy, charred peppers and freshly prepared mint chutney.",
+    caption: "The perfect smoky paneer bite! 🔥",
+    tags: ["#PaneerLove", "#Tandoori", "#FreshlyMade"],
+    likes: "19.4K",
+    comments: "986",
+    saves: "4.8K",
   },
   {
-    id: 'lasagna',
-    title: 'Cheesy Baked Lasagna',
-    restaurant: 'Pizza Corner',
-    videoFile: '3-lasagana.mp4',
+    id: "burger",
+    title: "Loaded Cheese Burger",
+    restaurant: "Burger Junction",
+    username: "@burgerdiaries",
+    location: "Mumbai, India",
+    price: 199,
+    rating: 4.6,
+    reviews: "1.7K",
+    video: "/video/swadisht-reels/6-roll.mp4",
+    image:
+      "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=1200&h=900&fit=crop",
     description:
-      'Layers of pasta, rich tomato sauce and molten cheese baked until golden.',
-    tags: ['#CheesePull', '#ItalianCravings', '#SwadishttReels'],
-    orderItems: [
-      {
-        name: 'Cheesy Baked Lasagna',
-        detail: '1 serving',
-        price: 349,
-        image:
-          'https://images.unsplash.com/photo-1574894709920-11b28e7367e3?w=180&h=180&fit=crop',
-      },
-      {
-        name: 'Garlic Bread',
-        detail: '4 pieces',
-        price: 119,
-        image:
-          'https://images.unsplash.com/photo-1573140401552-3fab0b24306f?w=180&h=180&fit=crop',
-      },
-      {
-        name: 'Herb Dip',
-        detail: '30 ml',
-        price: 39,
-        image:
-          'https://images.unsplash.com/photo-1559314809-0d155014e29e?w=180&h=180&fit=crop',
-      },
-    ],
+      "A juicy grilled patty topped with molten cheese, caramelised onions, crisp vegetables and signature sauce.",
+    caption: "Loaded, cheesy and worth every bite 🍔",
+    tags: ["#BurgerLove", "#CheesePull", "#FoodGoals"],
+    likes: "21.6K",
+    comments: "1.1K",
+    saves: "5.1K",
   },
   {
-    id: 'gulab-jamun',
-    title: 'Warm Gulab Jamun',
-    restaurant: 'Sweet Treats',
-    videoFile: '4-gulab-jamoon.mp4',
+    id: "noodles",
+    title: "Veg Hakka Noodles",
+    restaurant: "China Wok Express",
+    username: "@streetfoodindia",
+    location: "Delhi, India",
+    price: 189,
+    rating: 4.5,
+    reviews: "1.5K",
+    video: "/video/swadisht-reels/8-momo.mp4",
+    image:
+      "https://images.unsplash.com/photo-1585032226651-759b368d7246?w=1200&h=900&fit=crop",
     description:
-      'Soft, warm gulab jamuns soaked in fragrant cardamom syrup.',
-    tags: ['#IndianDessert', '#SweetCravings', '#SwadishttReels'],
-    orderItems: [
-      {
-        name: 'Warm Gulab Jamun',
-        detail: '4 pieces',
-        price: 129,
-        image:
-          'https://images.unsplash.com/photo-1666190094765-9688bbf9743a?w=180&h=180&fit=crop',
-      },
-      {
-        name: 'Rabri',
-        detail: '1 cup',
-        price: 79,
-        image:
-          'https://images.unsplash.com/photo-1631452180519-c014fe946bc7?w=180&h=180&fit=crop',
-      },
-      {
-        name: 'Pistachio Crumble',
-        detail: '1 topping',
-        price: 29,
-        image:
-          'https://images.unsplash.com/photo-1521305916504-4a1121188589?w=180&h=180&fit=crop',
-      },
-    ],
+      "Wok-tossed noodles loaded with fresh vegetables, aromatic sauces and the perfect amount of smoky flavour.",
+    caption: "That wok-tossed flavour hits different! 🍜",
+    tags: ["#NoodleLove", "#WokTossed", "#StreetFood"],
+    likes: "17.9K",
+    comments: "875",
+    saves: "4.2K",
   },
   {
-    id: 'french-fries',
-    title: 'Crispy French Fries',
-    restaurant: 'Burger Junction',
-    videoFile: '5-french-fries.mp4',
+    id: "cake",
+    title: "Chocolate Lava Cake",
+    restaurant: "Sweet Treats",
+    username: "@dessertfirst",
+    location: "Pune, India",
+    price: 149,
+    rating: 4.8,
+    reviews: "2.1K",
+    video: "/video/swadisht-reels/2-chocolate-cake.mp4",
+    image:
+      "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?w=1200&h=900&fit=crop",
     description:
-      'Golden, crunchy fries tossed with our signature seasoning.',
-    tags: ['#FriesForever', '#SnackTime', '#SwadishttReels'],
-    orderItems: [
-      {
-        name: 'Crispy French Fries',
-        detail: '1 regular',
-        price: 149,
-        image:
-          'https://images.unsplash.com/photo-1573080496219-bb080dd4f877?w=180&h=180&fit=crop',
-      },
-      {
-        name: 'Cheese Dip',
-        detail: '30 ml',
-        price: 49,
-        image:
-          'https://images.unsplash.com/photo-1628088062854-d1870b4553da?w=180&h=180&fit=crop',
-      },
-      {
-        name: 'Smoky Mayo',
-        detail: '30 ml',
-        price: 39,
-        image:
-          'https://images.unsplash.com/photo-1574894709920-11b28e7367e3?w=180&h=180&fit=crop',
-      },
-    ],
-  },
-  {
-    id: 'roll',
-    title: 'Loaded Food Roll',
-    restaurant: 'Burger Junction',
-    videoFile: '6-roll.mp4',
-    description:
-      'A warm, loaded roll packed with fresh veggies and bold sauces.',
-    tags: ['#RollGoals', '#StreetFood', '#SwadishttReels'],
-    orderItems: [
-      {
-        name: 'Loaded Food Roll',
-        detail: '1 roll',
-        price: 189,
-        image:
-          'https://images.unsplash.com/photo-1601050690117-94f5f6fa8bd7?w=180&h=180&fit=crop',
-      },
-      {
-        name: 'Masala Fries',
-        detail: '1 small',
-        price: 99,
-        image:
-          'https://images.unsplash.com/photo-1630384060421-cb20d0e0649d?w=180&h=180&fit=crop',
-      },
-      {
-        name: 'Mint Mayo',
-        detail: '30 ml',
-        price: 39,
-        image:
-          'https://images.unsplash.com/photo-1601050690597-df0568f70950?w=180&h=180&fit=crop',
-      },
-    ],
-  },
-  {
-    id: 'momo',
-    title: 'Steaming Hot Momos',
-    restaurant: 'China Wok Express',
-    videoFile: '8-momo.mp4',
-    description:
-      'Juicy steamed momos served piping hot with fiery chilli dip.',
-    tags: ['#MomoLove', '#SteamAndServe', '#SwadishttReels'],
-    orderItems: [
-      {
-        name: 'Steaming Hot Momos',
-        detail: '6 pieces',
-        price: 179,
-        image:
-          'https://images.unsplash.com/photo-1625220194771-7ebdea0b70b9?w=180&h=180&fit=crop',
-      },
-      {
-        name: 'Chilli Dip',
-        detail: '30 ml',
-        price: 39,
-        image:
-          'https://images.unsplash.com/photo-1601050690117-94f5f6fa8bd7?w=180&h=180&fit=crop',
-      },
-      {
-        name: 'Clear Soup',
-        detail: '1 cup',
-        price: 69,
-        image:
-          'https://images.unsplash.com/photo-1603105037880-880cd4edfb0d?w=180&h=180&fit=crop',
-      },
-    ],
-  },
-  {
-    id: 'biryani',
-    title: 'Classic Dum Biryani',
-    restaurant: 'Biryani House',
-    videoFile: '9-biryani.mp4',
-    description:
-      'Fragrant basmati rice, slow-cooked masala and a dramatic dum reveal.',
-    tags: ['#BiryaniLove', '#DumCooked', '#SwadishttReels'],
-    orderItems: [
-      {
-        name: 'Classic Dum Biryani',
-        detail: '1 portion',
-        price: 299,
-        image:
-          'https://images.unsplash.com/photo-1563379926898-05f4575a45d8?w=180&h=180&fit=crop',
-      },
-      {
-        name: 'Boondi Raita',
-        detail: '1 cup',
-        price: 59,
-        image:
-          'https://images.unsplash.com/photo-1601050690597-df0568f70950?w=180&h=180&fit=crop',
-      },
-      {
-        name: 'Mirchi Salan',
-        detail: '1 cup',
-        price: 69,
-        image:
-          'https://images.unsplash.com/photo-1603894584373-5ac82b2ae398?w=180&h=180&fit=crop',
-      },
-    ],
-  },
-  {
-    id: 'pasta',
-    title: 'Creamy Italian Pasta',
-    restaurant: 'Cafe Mocha',
-    videoFile: '10-pasta.mp4',
-    description:
-      'Silky pasta coated in a creamy herb sauce and finished with parmesan.',
-    tags: ['#PastaNight', '#CreamyGoodness', '#SwadishttReels'],
-    orderItems: [
-      {
-        name: 'Creamy Italian Pasta',
-        detail: '1 plate',
-        price: 279,
-        image:
-          'https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?w=180&h=180&fit=crop',
-      },
-      {
-        name: 'Garlic Bread',
-        detail: '4 pieces',
-        price: 119,
-        image:
-          'https://images.unsplash.com/photo-1573140401552-3fab0b24306f?w=180&h=180&fit=crop',
-      },
-      {
-        name: 'Parmesan Topping',
-        detail: '1 portion',
-        price: 49,
-        image:
-          'https://images.unsplash.com/photo-1559561853-08451507cbe7?w=180&h=180&fit=crop',
-      },
-    ],
-  },
-  {
-    id: 'pizza',
-    title: 'Cheesy Loaded Pizza',
-    restaurant: 'Pizza Corner',
-    videoFile: '11-pizza.mp4',
-    description:
-      'A loaded pizza with bubbling cheese, colourful toppings and crisp edges.',
-    tags: ['#PizzaLove', '#CheesePull', '#SwadishttReels'],
-    orderItems: [
-      {
-        name: 'Cheesy Loaded Pizza',
-        detail: '1 medium',
-        price: 399,
-        image:
-          'https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=180&h=180&fit=crop',
-      },
-      {
-        name: 'Garlic Bread',
-        detail: '4 pieces',
-        price: 119,
-        image:
-          'https://images.unsplash.com/photo-1573140401552-3fab0b24306f?w=180&h=180&fit=crop',
-      },
-      {
-        name: 'Jalapeño Dip',
-        detail: '30 ml',
-        price: 49,
-        image:
-          'https://images.unsplash.com/photo-1601050690597-df0568f70950?w=180&h=180&fit=crop',
-      },
-    ],
-  },
-].map((reel, index) => ({
-  ...reel,
-  views: 1400 + index * 184,
-  comments: 85 + index * 13,
-  videoUrl: `/video/swadisht-reels/${reel.videoFile}`,
-}));
-
-const STARTER_COMMENTS = [
-  {
-    id: 'starter-1',
-    name: 'sweet_tooth_101',
-    text: 'Absolutely divine! The final reveal is just perfect. 🤎',
-    time: '2h',
-    likes: 36,
+      "A rich Belgian chocolate cake with a warm molten centre, baked fresh and served with chocolate sauce.",
+    caption: "Wait for that chocolate centre! 🍫",
+    tags: ["#ChocolateLove", "#DessertGoals", "#SweetCravings"],
+    likes: "28.3K",
+    comments: "1.8K",
+    saves: "7.4K",
   },
 ];
 
-function Icon({ name, filled = false, size = 22 }) {
+const INITIAL_COMMENTS = [
+  {
+    id: "comment-1",
+    name: "Ananya Verma",
+    image:
+      "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=80&h=80&fit=crop",
+    text: "Super cheesy and absolutely delicious! Will order again for sure.",
+    time: "2 hours ago",
+    likes: 243,
+  },
+  {
+    id: "comment-2",
+    name: "Rohit Singh",
+    image:
+      "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=80&h=80&fit=crop",
+    text: "Perfectly baked and super filling. Loved the flavour!",
+    time: "4 hours ago",
+    likes: 187,
+  },
+  {
+    id: "comment-3",
+    name: "Mehak Sharma",
+    image:
+      "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=80&h=80&fit=crop",
+    text: "The best meal I’ve had in a long time. Packaging was great too!",
+    time: "5 hours ago",
+    likes: 132,
+  },
+];
+
+function Icon({ name, size = 20, filled = false }) {
   const icons = {
-    back: <path d="m15 18-6-6 6-6" />,
     heart: (
       <path d="M20.8 4.7a5.5 5.5 0 0 0-7.8 0L12 5.8l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1.1L12 21l7.8-7.4 1.1-1.1a5.5 5.5 0 0 0-.1-7.8Z" />
     ),
     comment: (
-      <path d="M21 11.5a8.4 8.4 0 0 1-9 8.5 9.8 9.8 0 0 1-3.8-.8L3 21l1.7-5a8.6 8.6 0 1 1 16.3-4.5Z" />
+      <path d="M21 11.5a8.5 8.5 0 0 1-9 8.5 10 10 0 0 1-3.8-.8L3 21l1.7-5A8.5 8.5 0 1 1 21 11.5Z" />
     ),
-    bookmark: <path d="M6 3.8h12v17l-6-3.8-6 3.8v-17Z" />,
+    bookmark: <path d="M6 3.5h12v17L12 17l-6 3.5v-17Z" />,
     share: (
       <>
-        <path d="m21 3-8.4 18-2.2-7.4L3 11 21 3Z" />
-        <path d="M10.4 13.6 21 3" />
+        <circle cx="18" cy="5" r="2.5" />
+        <circle cx="6" cy="12" r="2.5" />
+        <circle cx="18" cy="19" r="2.5" />
+        <path d="m8.2 10.8 7.6-4.5M8.2 13.2l7.6 4.5" />
       </>
     ),
-    plus: (
+    volume: (
       <>
-        <path d="M12 5v14" />
-        <path d="M5 12h14" />
+        <path d="M5 9v6h4l5 4V5L9 9H5Z" />
+        <path d="M17 9a4 4 0 0 1 0 6" />
+      </>
+    ),
+    muted: (
+      <>
+        <path d="M5 9v6h4l5 4V5L9 9H5Z" />
+        <path d="m18 9 4 4m0-4-4 4" />
+      </>
+    ),
+    fullscreen: <path d="M8 3H3v5M16 3h5v5M21 16v5h-5M3 16v5h5" />,
+    grid: (
+      <>
+        <rect x="4" y="4" width="6" height="6" rx="1" />
+        <rect x="14" y="4" width="6" height="6" rx="1" />
+        <rect x="4" y="14" width="6" height="6" rx="1" />
+        <rect x="14" y="14" width="6" height="6" rx="1" />
       </>
     ),
     bag: (
@@ -373,84 +180,7 @@ function Icon({ name, filled = false, size = 22 }) {
         <path d="M9 8V6a3 3 0 0 1 6 0v2" />
       </>
     ),
-    arrowRight: <path d="m9 18 6-6-6-6" />,
-    send: (
-      <>
-        <path d="m21 3-8.4 18-2.2-7.4L3 11 21 3Z" />
-        <path d="M10.4 13.6 21 3" />
-      </>
-    ),
-    fullscreen: (
-      <>
-        <path d="M8 3H3v5" />
-        <path d="M16 3h5v5" />
-        <path d="M21 16v5h-5" />
-        <path d="M3 16v5h5" />
-      </>
-    ),
-    play: <path d="m9 6 8 6-8 6V6Z" />,
-    pause: (
-      <>
-        <path d="M9 5v14" />
-        <path d="M15 5v14" />
-      </>
-    ),
-    volume: (
-      <>
-        <path d="M5 9v6h4l5 4V5L9 9H5Z" />
-        <path d="M17 8.5a5 5 0 0 1 0 7" />
-      </>
-    ),
-    muted: (
-      <>
-        <path d="M5 9v6h4l5 4V5L9 9H5Z" />
-        <path d="m18 9 4 4" />
-        <path d="m22 9-4 4" />
-      </>
-    ),
-    more: (
-      <>
-        <circle cx="5" cy="12" r="1" fill="currentColor" stroke="none" />
-        <circle cx="12" cy="12" r="1" fill="currentColor" stroke="none" />
-        <circle cx="19" cy="12" r="1" fill="currentColor" stroke="none" />
-      </>
-    ),
-    scooter: (
-      <>
-        <circle cx="7" cy="18" r="2.5" />
-        <circle cx="18" cy="18" r="2.5" />
-        <path d="M9.5 18h5.5l2-8h-5l-2 5H6" />
-        <path d="M15 7h3l2 3" />
-        <path d="M7 15 5 9h4" />
-      </>
-    ),
-    quality: (
-      <>
-        <path d="M12 3 5 6v5c0 4.5 2.8 8 7 10 4.2-2 7-5.5 7-10V6l-7-3Z" />
-        <path d="m9.5 12 1.7 1.7 3.5-4" />
-      </>
-    ),
-    package: (
-      <>
-        <path d="m3 7 9-4 9 4-9 4-9-4Z" />
-        <path d="M3 7v10l9 4 9-4V7" />
-        <path d="M12 11v10" />
-      </>
-    ),
-    truck: (
-      <>
-        <path d="M3 6h11v10H3z" />
-        <path d="M14 10h4l3 3v3h-7z" />
-        <circle cx="7" cy="18" r="2" />
-        <circle cx="18" cy="18" r="2" />
-      </>
-    ),
-    sparkle: (
-      <>
-        <path d="M12 2l1.2 3.8L17 7l-3.8 1.2L12 12l-1.2-3.8L7 7l3.8-1.2L12 2Z" />
-        <path d="M19 13l.7 2.3L22 16l-2.3.7L19 19l-.7-2.3L16 16l2.3-.7L19 13Z" />
-      </>
-    ),
+    arrow: <path d="m9 18 6-6-6-6" />,
   };
 
   return (
@@ -458,2327 +188,2608 @@ function Icon({ name, filled = false, size = 22 }) {
       width={size}
       height={size}
       viewBox="0 0 24 24"
-      aria-hidden="true"
-      fill={filled ? 'currentColor' : 'none'}
+      fill={filled ? "currentColor" : "none"}
       stroke="currentColor"
       strokeWidth="1.8"
       strokeLinecap="round"
       strokeLinejoin="round"
+      aria-hidden="true"
     >
       {icons[name]}
     </svg>
   );
 }
 
-function formatCount(value) {
-  if (value >= 1000) {
-    return `${(value / 1000).toFixed(1).replace('.0', '')}K`;
-  }
+function Story({
+  dish,
+  index,
+  active,
+  onSelectDish,
+  onChangeDish,
+  scrollDirection,
+}) {
+  const videoRef = useRef(null);
+  const scrollLockedRef = useRef(false);
+  const wheelDeltaRef = useRef(0);
+  const wheelResetRef = useRef(null);
+  const touchStartYRef = useRef(null);
 
-  return String(value);
-}
-
-function formatTime(value) {
-  if (!Number.isFinite(value)) {
-    return '0:00';
-  }
-
-  const minutes = Math.floor(value / 60);
-  const seconds = Math.floor(value % 60)
-    .toString()
-    .padStart(2, '0');
-
-  return `${minutes}:${seconds}`;
-}
-
-export default function FoodStoriesPage() {
-  const [activeIndex, setActiveIndex] = useState(0);
-  const [liked, setLiked] = useState(() => new Set());
-  const [saved, setSaved] = useState(() => new Set());
-  const [commentsByReel, setCommentsByReel] = useState({});
-  const [commentText, setCommentText] = useState('');
-  const [cartItems, setCartItems] = useState(() => new Set());
   const [muted, setMuted] = useState(true);
-  const [isPlaying, setIsPlaying] = useState(true);
-  const [currentTime, setCurrentTime] = useState(6);
-  const [duration, setDuration] = useState(30);
-  const [videoFailed, setVideoFailed] = useState(false);
-  const [toast, setToast] = useState('');
+  const [playing, setPlaying] = useState(true);
+  const [liked, setLiked] = useState(false);
+  const [saved, setSaved] = useState(false);
+  const [following, setFollowing] = useState(false);
+  const [progress, setProgress] = useState(0);
 
-const videoRef = useRef(null);
-const wheelLockRef = useRef(false);
-const wheelDeltaRef = useRef(0);
-const wheelResetRef = useRef(null);
-const touchStartYRef = useRef(null);
+  const [commentsOpen, setCommentsOpen] = useState(false);
+  const [commentText, setCommentText] = useState("");
+  const [comments, setComments] = useState(INITIAL_COMMENTS);
 
-const [scrollDirection, setScrollDirection] = useState('next');
+  useEffect(() => {
+    const video = videoRef.current;
 
-  const reel = REELS[activeIndex];
+    if (!video) return;
 
-  const comments = useMemo(
-    () => [
-      ...STARTER_COMMENTS,
-      ...(commentsByReel[reel.id] || []),
-    ],
-    [commentsByReel, reel.id],
-  );
-
-  const isLiked = liked.has(reel.id);
-  const isSaved = saved.has(reel.id);
-
-  const toggleSet = (setter, id) => {
-    setter((current) => {
-      const next = new Set(current);
-
-      if (next.has(id)) {
-        next.delete(id);
-      } else {
-        next.add(id);
-      }
-
-      return next;
-    });
-  };
-
-const changeReel = (direction) => {
-  if (wheelLockRef.current) {
-    return;
-  }
-
-  wheelLockRef.current = true;
-
-  setScrollDirection(direction > 0 ? 'next' : 'previous');
-
-  setActiveIndex((current) => {
-    const next = current + direction;
-
-    if (next < 0) {
-      return REELS.length - 1;
+    if (active && !commentsOpen) {
+      video.play().catch(() => undefined);
+      setPlaying(true);
+    } else {
+      video.pause();
+      setPlaying(false);
     }
-
-    if (next >= REELS.length) {
-      return 0;
-    }
-
-    return next;
-  });
-
-  window.setTimeout(() => {
-    wheelLockRef.current = false;
-  }, 560);
-};
-
-const handleWheel = (event) => {
-  event.preventDefault();
-  event.stopPropagation();
-
-  if (wheelLockRef.current) {
-    return;
-  }
-
-  wheelDeltaRef.current += event.deltaY;
-
-  if (wheelResetRef.current) {
-    window.clearTimeout(wheelResetRef.current);
-  }
-
-  wheelResetRef.current = window.setTimeout(() => {
-    wheelDeltaRef.current = 0;
-  }, 130);
-
-  if (Math.abs(wheelDeltaRef.current) < 55) {
-    return;
-  }
-
-  const direction = wheelDeltaRef.current > 0 ? 1 : -1;
-
-  wheelDeltaRef.current = 0;
-
-  changeReel(direction);
-};
-
-const handleTouchStart = (event) => {
-  touchStartYRef.current = event.touches[0]?.clientY ?? null;
-};
-
-const handleTouchEnd = (event) => {
-  if (touchStartYRef.current === null) {
-    return;
-  }
-
-  const endY = event.changedTouches[0]?.clientY;
-
-  if (typeof endY !== 'number') {
-    touchStartYRef.current = null;
-    return;
-  }
-
-  const distance = touchStartYRef.current - endY;
-
-  touchStartYRef.current = null;
-
-  if (Math.abs(distance) < 45) {
-    return;
-  }
-
-  changeReel(distance > 0 ? 1 : -1);
-};
+  }, [active, commentsOpen]);
 
   const togglePlayback = () => {
     const video = videoRef.current;
 
-    if (!video || videoFailed) {
-      return;
-    }
+    if (!video) return;
 
     if (video.paused) {
       video.play().catch(() => undefined);
-      setIsPlaying(true);
+      setPlaying(true);
     } else {
       video.pause();
-      setIsPlaying(false);
+      setPlaying(false);
     }
   };
 
-  const handleProgress = (event) => {
-    const video = videoRef.current;
-
-    if (!video || !duration) {
-      return;
-    }
-
-    const rect = event.currentTarget.getBoundingClientRect();
-    const ratio = Math.min(
-      1,
-      Math.max(0, (event.clientX - rect.left) / rect.width),
-    );
-
-    video.currentTime = ratio * duration;
-    setCurrentTime(video.currentTime);
+  const openComments = () => {
+    videoRef.current?.pause();
+    setPlaying(false);
+    setCommentsOpen(true);
   };
 
-  const shareReel = async () => {
-    const url =
-      `${window.location.origin}` +
-      `/services/swadisht/food-stories?reel=${reel.id}`;
+  const closeComments = () => {
+    setCommentsOpen(false);
 
-    try {
-      if (navigator.share) {
-        await navigator.share({
-          title: reel.title,
-          text: reel.description,
-          url,
-        });
-      } else if (navigator.clipboard) {
-        await navigator.clipboard.writeText(url);
-        setToast('Reel link copied');
-      }
-    } catch {
-      // User closed the share sheet.
+    if (active) {
+      videoRef.current?.play().catch(() => undefined);
+      setPlaying(true);
     }
   };
 
-  const openFullscreen = () => {
-    videoRef.current?.requestFullscreen?.();
-  };
-
-  const postComment = (event) => {
+  const submitComment = (event) => {
     event.preventDefault();
 
     const text = commentText.trim();
 
-    if (!text) {
-      return;
-    }
+    if (!text) return;
 
-    setCommentsByReel((current) => ({
+    setComments((current) => [
       ...current,
-      [reel.id]: [
-        ...(current[reel.id] || []),
-        {
-          id: String(Date.now()),
-          name: 'you',
-          text,
-          time: 'now',
-          likes: 0,
-        },
-      ],
-    }));
+      {
+        id: `comment-${Date.now()}`,
+        name: "You",
+        image: "",
+        text,
+        time: "now",
+        likes: 0,
+      },
+    ]);
 
-    setCommentText('');
+    setCommentText("");
   };
 
-  useEffect(() => {
-    const requested = new URLSearchParams(
-      window.location.search,
-    ).get('reel');
+  const shareDish = async () => {
+    const url = `${window.location.origin}/services/swadisht/food-stories?dish=${dish.id}`;
 
-    if (!requested) {
-      return;
+    try {
+      if (navigator.share) {
+        await navigator.share({
+          title: dish.title,
+          text: dish.description,
+          url,
+        });
+      } else {
+        await navigator.clipboard.writeText(url);
+      }
+    } catch {
+      // Share menu closed.
+    }
+  };
+
+  const changeReel = (direction) => {
+    if (scrollLockedRef.current) return;
+
+    scrollLockedRef.current = true;
+    onChangeDish(direction);
+
+    window.setTimeout(() => {
+      scrollLockedRef.current = false;
+    }, 850);
+  };
+
+  const handleReelWheel = (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+
+    if (scrollLockedRef.current) return;
+
+    wheelDeltaRef.current += event.deltaY;
+
+    if (wheelResetRef.current) {
+      window.clearTimeout(wheelResetRef.current);
     }
 
-    const requestedIndex = REELS.findIndex(
-      (item) => item.id === requested,
-    );
+    wheelResetRef.current = window.setTimeout(() => {
+      wheelDeltaRef.current = 0;
+    }, 160);
 
-    if (requestedIndex >= 0) {
-      setActiveIndex(requestedIndex);
-    }
-  }, []);
+    if (Math.abs(wheelDeltaRef.current) < 100) return;
 
-  useEffect(() => {
-    const video = videoRef.current;
+    const direction = wheelDeltaRef.current > 0 ? 1 : -1;
 
-    setVideoFailed(false);
-    setCurrentTime(0);
-    setDuration(30);
-    setIsPlaying(true);
+    wheelDeltaRef.current = 0;
+    changeReel(direction);
+  };
 
-    if (!video) {
-      return;
-    }
+  const handleReelTouchStart = (event) => {
+    touchStartYRef.current = event.touches[0]?.clientY ?? null;
+  };
 
-    video.muted = muted;
-    video.load();
-    video.play().catch(() => undefined);
-  }, [activeIndex, muted]);
+  const handleReelTouchEnd = (event) => {
+    if (touchStartYRef.current === null) return;
 
-  useEffect(() => {
-    const handleKey = (event) => {
-      if (event.key === 'ArrowDown') {
-        changeReel(1);
-      }
+    const endY = event.changedTouches[0]?.clientY;
 
-      if (event.key === 'ArrowUp') {
-        changeReel(-1);
-      }
+    if (typeof endY !== "number") return;
 
-      if (event.key === ' ') {
-        event.preventDefault();
-        togglePlayback();
-      }
+    const distance = touchStartYRef.current - endY;
 
-      if (event.key.toLowerCase() === 'm') {
-        setMuted((current) => !current);
-      }
-    };
+    touchStartYRef.current = null;
 
-    window.addEventListener('keydown', handleKey);
+    if (Math.abs(distance) < 45) return;
 
-    return () => {
-      window.removeEventListener('keydown', handleKey);
-    };
-  });
+    changeReel(distance > 0 ? 1 : -1);
+  };
 
-  useEffect(() => {
-    if (!toast) {
-      return undefined;
-    }
-
-    const timer = window.setTimeout(() => {
-      setToast('');
-    }, 1800);
-
-    return () => window.clearTimeout(timer);
-  }, [toast]);
-
-  const backgroundStyle =
-    BACKGROUND_IMAGE_URL &&
-    !BACKGROUND_IMAGE_URL.startsWith('PASTE_')
-      ? {
-          '--swadishtt-reel-background': `url("${BACKGROUND_IMAGE_URL}")`,
-        }
-      : undefined;
+  const suggestions = DISHES.filter((item) => item.id !== dish.id).slice(0, 4);
 
   return (
-    <main
-      className="sw-reel-page"
-      style={backgroundStyle}
-    >
-      <header className="sw-stories-header">
-        <div className="sw-header-left">
-          <Link
-            href="/services/swadisht"
-            className="sw-header-control"
-            aria-label="Back to Swadishtt"
-          >
-            <Icon name="back" size={22} />
-          </Link>
-
-          <Link
-            href="/services/swadisht"
-            className="sw-header-logo-link"
-            aria-label="Swadishtt home"
-          >
-            <Image
-              src="/images/swadisht/swadisht_logo.JPG"
-              alt="Swadishtt"
-              width={46}
-              height={46}
-              className="sw-header-logo"
-            />
-          </Link>
-
-          <div className="sw-header-copy">
-            <h1>
-              Discover Your Next <span>Favourite Bite</span>
-            </h1>
-            <p>Shorts. Stories. Swaad.</p>
-          </div>
+    <section className="fs-story" data-index={index}>
+      <div className="fs-content">
+        <div className="fs-heading">
+          <h1>
+            Discover food worth <span>craving.</span>
+          </h1>
+          <p>Real people try it. Real reviews. Order instantly.</p>
         </div>
 
-        <button
-          type="button"
-          className="sw-header-control"
-          onClick={() => setMuted((current) => !current)}
-          aria-label={muted ? 'Turn sound on' : 'Mute sound'}
-        >
-          <Icon name={muted ? 'muted' : 'volume'} size={20} />
-        </button>
-      </header>
-
-      <div
-        key={reel.id}
-        className="sw-reel-shell"
-      >
-<section
-  key={reel.id}
-  className={`sw-video-card ${
-    scrollDirection === 'next'
-      ? 'sw-reel-enter-next'
-      : 'sw-reel-enter-previous'
-  }`}
-  onWheel={handleWheel}
-  onTouchStart={handleTouchStart}
-  onTouchEnd={handleTouchEnd}
-  tabIndex={0}
-  aria-label={`${reel.title} reel`}
->
-          {!videoFailed && (
-            <video
-              key={reel.videoUrl}
-              ref={videoRef}
-              className="sw-video"
-              src={reel.videoUrl}
-              muted={muted}
-              loop
-              playsInline
-              preload="auto"
-              onClick={togglePlayback}
-              onLoadedMetadata={(event) => {
-                setDuration(event.currentTarget.duration || 30);
-              }}
-              onTimeUpdate={(event) => {
-                setCurrentTime(event.currentTarget.currentTime);
-              }}
-              onPlay={() => setIsPlaying(true)}
-              onPause={() => setIsPlaying(false)}
-              onError={() => setVideoFailed(true)}
-            />
-          )}
-
-          {videoFailed && (
-            <div className="sw-video-fallback">
-              <span>Video unavailable</span>
-              <strong>{reel.title}</strong>
-              <p>{reel.videoFile}</p>
-            </div>
-          )}
-
-          <div className="sw-video-shade" />
-
-          <div className="sw-video-topbar">
-            <span className="sw-trending-pill">
-              <span aria-hidden="true">🔥</span>
-              Trending
-            </span>
-
-            <button
-              type="button"
-              className="sw-video-more"
-              aria-label="More options"
-            >
-              <Icon name="more" size={21} />
-            </button>
-          </div>
-
-          <button
-            type="button"
-            className="sw-play-toggle"
-            onClick={togglePlayback}
-            aria-label={isPlaying ? 'Pause reel' : 'Play reel'}
-          >
-            <Icon
-              name={isPlaying ? 'pause' : 'play'}
-              filled={!isPlaying}
-              size={20}
-            />
-          </button>
-
-          <button
-            type="button"
-            className="sw-volume-toggle"
-            onClick={() => setMuted((current) => !current)}
-            aria-label={muted ? 'Turn sound on' : 'Mute sound'}
-          >
-            <Icon name={muted ? 'muted' : 'volume'} size={18} />
-          </button>
-
-          <div className="sw-video-actions">
-            <button
-              type="button"
-              className={
-                isLiked
-                  ? 'sw-action-button sw-action-active'
-                  : 'sw-action-button'
-              }
-              onClick={() => toggleSet(setLiked, reel.id)}
-              aria-label="Like reel"
-            >
-              <span>
-                <Icon name="heart" filled={isLiked} />
-              </span>
-              <b>{formatCount(reel.views + (isLiked ? 1 : 0))}</b>
-            </button>
-
-            <button
-              type="button"
-              className="sw-action-button"
-              onClick={() => {
-                document
-                  .querySelector('.sw-comments-card')
-                  ?.scrollIntoView({ behavior: 'smooth' });
-              }}
-              aria-label="View comments"
-            >
-              <span>
-                <Icon name="comment" />
-              </span>
-              <b>{reel.comments + (commentsByReel[reel.id]?.length || 0)}</b>
-            </button>
-
-            <button
-              type="button"
-              className={
-                isSaved
-                  ? 'sw-action-button sw-action-active'
-                  : 'sw-action-button'
-              }
-              onClick={() => toggleSet(setSaved, reel.id)}
-              aria-label="Save reel"
-            >
-              <span>
-                <Icon name="bookmark" filled={isSaved} />
-              </span>
-              <b>SAVE</b>
-            </button>
-
-            <button
-              type="button"
-              className="sw-action-button"
-              onClick={shareReel}
-              aria-label="Share reel"
-            >
-              <span>
-                <Icon name="share" />
-              </span>
-              <b>SHARE</b>
-            </button>
-          </div>
-
-          <div className="sw-video-copy">
-            <strong>{reel.title}</strong>
-            <p>{reel.description}</p>
-
-            <div className="sw-video-tags">
-              {reel.tags.map((tag) => (
-                <span key={tag}>{tag}</span>
-              ))}
-            </div>
-          </div>
-
-          <div
-            className="sw-progress-track"
-            role="slider"
-            aria-label="Video progress"
-            aria-valuemin={0}
-            aria-valuemax={Math.max(1, duration)}
-            aria-valuenow={currentTime}
-            tabIndex={0}
-            onClick={handleProgress}
+        <div className="fs-main-grid">
+          <article
+            className="fs-video-card"
+            onWheel={handleReelWheel}
+            onTouchStart={handleReelTouchStart}
+            onTouchEnd={handleReelTouchEnd}
           >
             <div
-              className="sw-progress-fill"
-              style={{
-                width: `${Math.min(
-                  100,
-                  Math.max(0, (currentTime / Math.max(1, duration)) * 100),
-                )}%`,
-              }}
-            />
-
-            <span
-              className="sw-progress-thumb"
-              style={{
-                left: `${Math.min(
-                  100,
-                  Math.max(0, (currentTime / Math.max(1, duration)) * 100),
-                )}%`,
-              }}
-            />
-          </div>
-
-          <div className="sw-video-footer">
-            <span>
-              {formatTime(currentTime)} / {formatTime(duration)}
-            </span>
-
-            <button
-              type="button"
-              onClick={openFullscreen}
-              aria-label="Open video fullscreen"
+              className={`fs-reel-frame ${
+                scrollDirection === "next"
+                  ? "fs-reel-enter-next"
+                  : "fs-reel-enter-previous"
+              }`}
             >
-              <Icon name="fullscreen" size={18} />
-            </button>
-          </div>
-        </section>
+              <video
+                ref={videoRef}
+                src={dish.video}
+                poster={dish.image}
+                muted={muted}
+                loop
+                playsInline
+                preload={active ? "auto" : "metadata"}
+                onClick={togglePlayback}
+                onTimeUpdate={(event) => {
+                  const video = event.currentTarget;
 
-       <aside
-  key={`details-${reel.id}`}
-  className="sw-details-column sw-details-enter"
->
-          <section className="sw-details-card">
-            <div className="sw-about-section">
-              <h2>About this reel</h2>
-              <p>{reel.description}</p>
-              <p className="sw-about-highlight">
-  Made fresh, finished beautifully, and impossible to resist.
-</p>
+                  if (video.duration) {
+                    setProgress((video.currentTime / video.duration) * 100);
+                  }
+                }}
+              />
 
-              <div className="sw-outline-tags">
-                {reel.tags.map((tag) => (
-                  <span key={tag}>{tag}</span>
-                ))}
-              </div>
-            </div>
+              <div className="fs-video-overlay" />
 
-            <div className="sw-delivery-card">
-              <div className="sw-delivery-heading">
-                <span className="sw-delivery-icon">
-                  <Icon name="scooter" size={30} />
-                </span>
+              <div className="fs-creator">
+                <img src={dish.image} alt="" />
 
                 <div>
-                  <strong>Delivered in 11 minutes</strong>
-                  <span>Hot, fresh &amp; on your table in no time.</span>
-                </div>
-              </div>
-
-              <div className="sw-delivery-features">
-                <div>
-                  <Icon name="sparkle" size={20} />
-                  <span>Wide Range</span>
+                  <strong>{dish.username}</strong>
+                  <span>{dish.location}</span>
                 </div>
 
-                <div>
-                  <Icon name="quality" size={20} />
-                  <span>Top Quality</span>
-                </div>
-
-                <div>
-                  <Icon name="package" size={20} />
-                  <span>Safe Packaging</span>
-                </div>
-
-                <div>
-                  <Icon name="truck" size={20} />
-                  <span>Superfast Delivery</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="sw-order-section">
-              <h3>Order this now</h3>
-
-              <div className="sw-order-list">
-                {reel.orderItems.map((item) => {
-                  const itemKey = `${reel.id}-${item.name}`;
-                  const added = cartItems.has(itemKey);
-
-                  return (
-                    <div className="sw-order-item" key={item.name}>
-                      <Image src={item.image} alt="" width={180} height={180} />
-
-                      <div>
-                        <strong>{item.name}</strong>
-                        <span>
-                          {item.detail} &nbsp;•&nbsp; ₹{item.price}
-                        </span>
-                      </div>
-
-                      <button
-                        type="button"
-                        className={added ? 'sw-add-button sw-added' : 'sw-add-button'}
-                        onClick={() => {
-                          toggleSet(setCartItems, itemKey);
-                          setToast(added ? 'Removed from order' : 'Added to order');
-                        }}
-                        aria-label={
-                          added
-                            ? `Remove ${item.name}`
-                            : `Add ${item.name}`
-                        }
-                      >
-                        <Icon name={added ? 'quality' : 'plus'} size={18} />
-                      </button>
-                    </div>
-                  );
-                })}
-              </div>
-
-              <div className="sw-order-actions">
-                <Link
-                  href={`/services/swadisht/restaurant/${reel.restaurant
-                    .toLowerCase()
-                    .replaceAll(' ', '-')}`}
-                  className="sw-primary-button"
+                <button
+                  type="button"
+                  className={following ? "active" : ""}
+                  onClick={() => setFollowing((value) => !value)}
                 >
-                  <Icon name="bag" size={18} />
-                  Order now
-                </Link>
+                  {following ? "Following" : "Follow"}
+                </button>
 
-                <button type="button" className="sw-secondary-button">
-                  View recipe
-                  <Icon name="arrowRight" size={18} />
+                <span className="fs-grid-icon">
+                  <Icon name="grid" size={15} />
+                </span>
+              </div>
+
+              {!playing && (
+                <button
+                  type="button"
+                  className="fs-play"
+                  onClick={togglePlayback}
+                  aria-label="Play"
+                >
+                  ▶
+                </button>
+              )}
+
+              <div className="fs-reel-actions">
+                <button
+                  type="button"
+                  className={liked ? "active" : ""}
+                  onClick={() => setLiked((value) => !value)}
+                >
+                  <span>
+                    <Icon name="heart" size={20} filled={liked} />
+                  </span>
+                  <b>{dish.likes}</b>
+                </button>
+
+                <button type="button" onClick={openComments}>
+                  <span>
+                    <Icon name="comment" size={20} />
+                  </span>
+                  <b>{dish.comments}</b>
+                </button>
+
+                <button
+                  type="button"
+                  className={saved ? "active" : ""}
+                  onClick={() => setSaved((value) => !value)}
+                >
+                  <span>
+                    <Icon name="bookmark" size={19} filled={saved} />
+                  </span>
+                  <b>{dish.saves}</b>
+                </button>
+
+                <button type="button" onClick={shareDish}>
+                  <span>
+                    <Icon name="share" size={19} />
+                  </span>
+                  <b>Share</b>
+                </button>
+              </div>
+
+              <div className="fs-video-copy">
+                <strong>{dish.title} 🍝</strong>
+                <p>{dish.caption}</p>
+
+                <div>
+                  {dish.tags.map((tag) => (
+                    <span key={tag}>{tag}</span>
+                  ))}
+                </div>
+              </div>
+
+              <div className="fs-video-controls">
+                <button
+                  type="button"
+                  onClick={() => setMuted((value) => !value)}
+                >
+                  <Icon name={muted ? "muted" : "volume"} size={15} />
+                </button>
+
+                <small>0:08 / 0:15</small>
+
+                <div className="fs-progress">
+                  <span style={{ width: `${progress}%` }} />
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => videoRef.current?.requestFullscreen?.()}
+                >
+                  <Icon name="fullscreen" size={15} />
                 </button>
               </div>
             </div>
-          </section>
 
-          <section className="sw-comments-card">
-            <div className="sw-comments-heading">
-              <h3>
-                Comments ({reel.comments + (commentsByReel[reel.id]?.length || 0)})
-              </h3>
+            {commentsOpen && (
+              <div className="fs-comments-backdrop" onClick={closeComments}>
+                <section
+                  className="fs-comments-panel"
+                  onClick={(event) => event.stopPropagation()}
+                >
+                  <header>
+                    <h3>Comments</h3>
+                    <button type="button" onClick={closeComments}>
+                      ×
+                    </button>
+                  </header>
 
-              <button type="button">View all</button>
-            </div>
+                  <div className="fs-drawer-comments">
+                    {comments.map((comment) => (
+                      <article key={comment.id}>
+                        {comment.image ? (
+                          <img src={comment.image} alt="" />
+                        ) : (
+                          <span className="fs-avatar">Y</span>
+                        )}
 
-            <form className="sw-comment-box" onSubmit={postComment}>
-              <span className="sw-avatar">A</span>
+                        <div>
+                          <strong>{comment.name}</strong>
+                          <small>{comment.time}</small>
+                          <p>{comment.text}</p>
+                          <button type="button">Reply</button>
+                        </div>
 
-              <input
-                value={commentText}
-                onChange={(event) => setCommentText(event.target.value)}
-                placeholder="Add a comment..."
-              />
-
-              <button
-                type="submit"
-                disabled={!commentText.trim()}
-                aria-label="Post comment"
-              >
-                <Icon name="send" size={18} />
-              </button>
-            </form>
-
-            <div className="sw-comments-list">
-              {comments.map((comment) => (
-                <article className="sw-comment" key={comment.id}>
-                  <span className="sw-comment-avatar">
-                    {comment.name.charAt(0).toUpperCase()}
-                  </span>
-
-                  <div className="sw-comment-content">
-                    <div>
-                      <strong>{comment.name}</strong>
-                      <span>{comment.time}</span>
-                    </div>
-
-                    <p>{comment.text}</p>
-                    <button type="button">Reply</button>
+                        <span>♡</span>
+                      </article>
+                    ))}
                   </div>
 
-                  <button
-                    type="button"
-                    className="sw-comment-like"
-                    aria-label="Like comment"
-                  >
-                    <Icon name="heart" size={17} />
-                    <span>{comment.likes}</span>
-                  </button>
+                  <form onSubmit={submitComment}>
+                    <span className="fs-avatar">Y</span>
+
+                    <input
+                      value={commentText}
+                      onChange={(event) => setCommentText(event.target.value)}
+                      placeholder="Add a comment..."
+                      autoFocus
+                    />
+
+                    <button type="submit" disabled={!commentText.trim()}>
+                      Post
+                    </button>
+                  </form>
+                </section>
+              </div>
+            )}
+          </article>
+
+          <aside className="fs-right-column">
+            <section className="fs-product-card">
+              <div className="fs-product-top">
+                <span>🔥 Trending Today</span>
+                <strong>₹{dish.price}</strong>
+              </div>
+
+              <h2>{dish.title}</h2>
+
+              <div className="fs-rating">
+                <span>☆</span>
+                <strong>{dish.rating}</strong>
+                <small>({dish.reviews} reviews)</small>
+              </div>
+
+              <p className="fs-description">{dish.description}</p>
+
+              <div className="fs-benefits">
+                <div>
+                  <span className="green">♧</span>
+                  <small>MADE</small>
+                  <strong>Fresh Daily</strong>
+                </div>
+
+                <div>
+                  <span className="blue">♢</span>
+                  <small>HYGIENIC</small>
+                  <strong>Preparation</strong>
+                </div>
+
+                <div>
+                  <span className="orange">◷</span>
+                  <small>DELIVERED</small>
+                  <strong>Piping Hot</strong>
+                </div>
+
+                <div>
+                  <span className="pink">♡</span>
+                  <small>LOVED BY</small>
+                  <strong>10K+ Foodies</strong>
+                </div>
+              </div>
+
+              <Link href="/services/swadisht/cart" className="fs-main-order">
+                Order Now
+                <span>₹{dish.price}</span>
+                <Icon name="arrow" size={16} />
+              </Link>
+            </section>
+
+            <section className="fs-review-card">
+              <div className="fs-review-heading">
+                <h3>What people are saying</h3>
+                <button type="button" onClick={openComments}>
+                  See all reviews
+                </button>
+              </div>
+
+              {INITIAL_COMMENTS.map((comment) => (
+                <article key={comment.id}>
+                  <img src={comment.image} alt="" />
+
+                  <div>
+                    <strong>{comment.name}</strong>
+                    <span>☆ ☆ ☆ ☆ ☆</span>
+                    <p>{comment.text}</p>
+                    <small>♡ {comment.likes}</small>
+                  </div>
+
+                  <time>{comment.time}</time>
                 </article>
               ))}
-            </div>
-          </section>
-        </aside>
+            </section>
+          </aside>
+        </div>
+
+        <section className="fs-more">
+          <header>
+            <h3>More dishes you’ll love </h3>
+            <button
+              type="button"
+              onClick={() => onSelectDish((index + 1) % DISHES.length)}
+            >
+              View all
+            </button>
+          </header>
+
+          <div className="fs-dish-row">
+            {suggestions.map((item) => {
+              const itemIndex = DISHES.findIndex(
+                (dishItem) => dishItem.id === item.id,
+              );
+
+              return (
+                <button
+                  type="button"
+                  className="fs-dish-card"
+                  key={item.id}
+                  onClick={() => onSelectDish(itemIndex)}
+                >
+                  <div>
+                    <img src={item.image} alt={item.title} />
+                    <span>▶</span>
+                  </div>
+
+                  <h4>{item.title}</h4>
+
+                  <footer>
+                    <span>☆ {item.rating}</span>
+                    <strong>₹{item.price}</strong>
+                  </footer>
+                </button>
+              );
+            })}
+          </div>
+        </section>
+      </div>
+    </section>
+  );
+}
+
+export default function FoodStoriesPage() {
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [quantity, setQuantity] = useState(1);
+  const [scrollDirection, setScrollDirection] = useState("next");
+  const parentReelLockRef = useRef(false);
+  const parentUnlockTimerRef = useRef(null);
+
+  const activeDish = DISHES[activeIndex];
+
+  const selectDish = (index) => {
+    setScrollDirection(index >= activeIndex ? "next" : "previous");
+    setActiveIndex(index);
+    setQuantity(1);
+  };
+
+  const changeDish = (direction) => {
+    if (parentReelLockRef.current) return;
+
+    parentReelLockRef.current = true;
+    setScrollDirection(direction > 0 ? "next" : "previous");
+
+    setActiveIndex((current) => {
+      const next = current + direction;
+
+      if (next < 0) {
+        return DISHES.length - 1;
+      }
+
+      if (next >= DISHES.length) {
+        return 0;
+      }
+
+      return next;
+    });
+
+    setQuantity(1);
+
+    if (parentUnlockTimerRef.current) {
+      window.clearTimeout(parentUnlockTimerRef.current);
+    }
+
+    parentUnlockTimerRef.current = window.setTimeout(() => {
+      parentReelLockRef.current = false;
+    }, 900);
+  };
+
+  useEffect(() => {
+    return () => {
+      if (parentUnlockTimerRef.current) {
+        window.clearTimeout(parentUnlockTimerRef.current);
+      }
+    };
+  }, []);
+
+  return (
+    <main className="fs-page">
+      <header className="fs-navbar">
+        <div className="fs-navbar-inner">
+          <Link href="/services/swadisht" className="fs-brand">
+            <img src="/images/swadisht/swadisht_logo.JPG" alt="" />
+            <strong>Swadishtt</strong>
+          </Link>
+
+          <nav>
+            <Link href="/services/swadisht" className="active">
+              Discover
+            </Link>
+            <Link href="/services/swadisht">Meals</Link>
+            <Link href="/services/swadisht">Offers</Link>
+            <Link href="/services/swadisht/food-stories">Food Stories</Link>
+            <Link href="/services/swadisht">Favourites</Link>
+          </nav>
+
+          <div className="fs-nav-actions">
+            <input type="search" placeholder="Search for dishes, cuisines..." />
+
+            <Link href="/services/swadisht/cart">
+              <Icon name="bag" size={17} />
+              Cart
+            </Link>
+          </div>
+        </div>
+      </header>
+
+      <div className="fs-feed">
+        <Story
+          key={activeDish.id}
+          dish={activeDish}
+          index={activeIndex}
+          active
+          onSelectDish={selectDish}
+          onChangeDish={changeDish}
+          scrollDirection={scrollDirection}
+        />
       </div>
 
-      {toast && <div className="sw-toast">{toast}</div>}
+      <footer className="fs-sticky-bar">
+        <div className="fs-sticky-product">
+          <img src={activeDish.image} alt="" />
+
+          <div>
+            <strong>{activeDish.title}</strong>
+            <span>Serves 1 • {activeDish.restaurant}</span>
+          </div>
+        </div>
+
+        <div className="fs-sticky-actions">
+          <div>
+            <button
+              type="button"
+              onClick={() => setQuantity((current) => Math.max(1, current - 1))}
+            >
+              −
+            </button>
+
+            <span>{quantity}</span>
+
+            <button
+              type="button"
+              onClick={() => setQuantity((current) => current + 1)}
+            >
+              +
+            </button>
+          </div>
+
+          <Link href="/services/swadisht/cart">
+            Order Now
+            <span>₹{activeDish.price * quantity}</span>
+          </Link>
+        </div>
+      </footer>
 
       <style jsx global>{`
-        .sw-reel-page,
-        .sw-reel-page * {
+        .fs-page,
+        .fs-page * {
           box-sizing: border-box;
         }
 
-        .sw-reel-page {
-          position: fixed;
-          inset: 0;
-          z-index: 9999;
-          overflow-y: auto;
-          color: #321a21;
-          background-color: #fff7f0;
-          background-image:
-            linear-gradient(
-              rgba(255, 250, 245, 0.76),
-              rgba(255, 250, 245, 0.76)
-            ),
-            var(--swadishtt-reel-background, none),
-            radial-gradient(
-              circle at 10% 12%,
-              rgba(152, 44, 69, 0.07),
-              transparent 28%
-            ),
-            radial-gradient(
-              circle at 90% 86%,
-              rgba(215, 140, 74, 0.08),
-              transparent 32%
-            );
-          background-position: center;
-          background-size: cover;
-          background-repeat: no-repeat;
-          background-attachment: fixed;
-          font-family:
-            Inter,
-            ui-sans-serif,
-            system-ui,
-            -apple-system,
-            BlinkMacSystemFont,
-            "Segoe UI",
-            sans-serif;
-        }
-
-        .sw-reel-shell {
-          width: min(1120px, calc(100% - 36px));
-          min-height: 100dvh;
-          margin: 0 auto;
-          padding: 26px 0;
-          display: grid;
-          grid-template-columns: minmax(360px, 410px) minmax(420px, 1fr);
-          align-items: stretch;
-          gap: 38px;
-        }
-
-       .sw-video-card {
-  position: sticky;
-  top: 26px;
-  height: calc(100dvh - 52px);
-  min-height: 660px;
-  overflow: hidden;
-
-  overscroll-behavior: contain;
-  touch-action: pan-y;
-
-  border: 1px solid rgba(92, 34, 49, 0.12);
-  border-radius: 25px;
-  background: #150c08;
-}
-
-        .sw-video,
-        .sw-video-shade,
-        .sw-video-fallback {
-          position: absolute;
-          inset: 0;
-        }
-
-        .sw-video {
-          z-index: 1;
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
-          background: #120a08;
-          cursor: pointer;
-        }
-
-        .sw-video-fallback {
-          z-index: 1;
-          padding: 34px;
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          align-items: center;
-          gap: 8px;
-          color: #ffffff;
-          text-align: center;
-          background:
-            radial-gradient(
-              circle at 50% 18%,
-              rgba(222, 129, 83, 0.3),
-              transparent 28%
-            ),
-            linear-gradient(150deg, #6c1c35, #1b0f12 70%);
-        }
-
-        .sw-video-fallback span {
-          color: rgba(255, 255, 255, 0.65);
-          font-size: 12px;
-          text-transform: uppercase;
-          letter-spacing: 0.12em;
-        }
-
-        .sw-video-fallback strong {
-          max-width: 280px;
-          font-family: Georgia, serif;
-          font-size: 30px;
-        }
-
-        .sw-video-fallback p {
+        html,
+        body {
           margin: 0;
-          color: rgba(255, 255, 255, 0.58);
-          font-size: 12px;
+          overflow: hidden;
         }
 
-        .sw-video-shade {
-          z-index: 2;
-          pointer-events: none;
-          background:
-            linear-gradient(
-              to bottom,
-              rgba(0, 0, 0, 0.34) 0%,
-              rgba(0, 0, 0, 0.02) 35%,
-              rgba(0, 0, 0, 0.08) 58%,
-              rgba(0, 0, 0, 0.8) 100%
-            );
+        .fs-page {
+          height: 100dvh;
+          overflow: hidden;
+          background: #fffdfa;
+          color: #121827;
+          font-family: Inter, Arial, sans-serif;
         }
 
-        .sw-video-topbar {
-          position: absolute;
-          top: 22px;
-          right: 22px;
-          left: 22px;
-          z-index: 5;
+        .fs-navbar {
+          position: relative;
+          z-index: 100;
+          height: 48px;
+          border-bottom: 1px solid #e6e6e8;
+          background: #ffffff;
+        }
+
+        .fs-navbar-inner {
+          width: min(1280px, calc(100% - 28px));
+          height: 100%;
+          margin: 0 auto;
           display: flex;
           align-items: center;
-          justify-content: space-between;
         }
 
-        .sw-trending-pill {
-          min-height: 31px;
-          padding: 0 13px;
-          display: inline-flex;
+        .fs-brand {
+          display: flex;
           align-items: center;
           gap: 7px;
-          border: 1px solid rgba(255, 255, 255, 0.12);
-          border-radius: 999px;
-          color: #ffffff;
-          background: rgba(43, 29, 22, 0.42);
-          backdrop-filter: blur(12px);
+          color: #ed174c;
+          text-decoration: none;
+        }
+
+        .fs-brand img {
+          width: 25px;
+          height: 29px;
+          object-fit: contain;
+        }
+
+        .fs-brand strong {
+          font-size: 16px;
+        }
+
+        .fs-navbar nav {
+          display: flex;
+          align-items: center;
+          align-self: stretch;
+          gap: 24px;
+          margin-left: 27px;
+        }
+
+        .fs-navbar nav a {
+          display: flex;
+          align-items: center;
+          color: #747b88;
           font-size: 11px;
+          font-weight: 500;
+          text-decoration: none;
+        }
+
+        .fs-navbar nav a.active {
+          border-bottom: 2px solid #ed174c;
+          color: #ed174c;
+        }
+
+        .fs-nav-actions {
+          display: flex;
+          align-items: center;
+          gap: 17px;
+          margin-left: auto;
+        }
+
+        .fs-nav-actions input {
+          width: 220px;
+          height: 30px;
+          padding: 0 14px;
+          border: 0;
+          border-radius: 18px;
+          outline: none;
+          background: #f4f5f7;
+          color: #5f6673;
+          font-size: 10px;
+        }
+
+        .fs-nav-actions a {
+          display: flex;
+          align-items: center;
+          gap: 5px;
+          color: #ed174c;
+          font-size: 11px;
+          font-weight: 700;
+          text-decoration: none;
+        }
+
+        .fs-feed {
+          height: calc(100dvh - 48px);
+          overflow-x: hidden;
+          overflow-y: auto;
+          scroll-snap-type: y mandatory;
+          scroll-behavior: smooth;
+          overscroll-behavior-y: contain;
+          scrollbar-width: none;
+        }
+
+        .fs-feed::-webkit-scrollbar {
+          display: none;
+        }
+
+        .fs-story {
+          min-height: 100%;
+          padding: 14px 16px 74px;
+          scroll-snap-align: start;
+          scroll-snap-stop: always;
+        }
+
+        .fs-content {
+          width: min(1180px, 100%);
+          margin: 0 auto;
+        }
+
+        .fs-heading {
+          margin-bottom: 15px;
+          text-align: center;
+        }
+
+        .fs-heading h1 {
+          margin: 0;
+          color: #121827;
+          font-size: clamp(29px, 3vw, 38px);
+          font-weight: 850;
+          letter-spacing: -1.8px;
+          line-height: 1.05;
+        }
+
+        .fs-heading h1 span {
+          color: #ed174c;
+        }
+
+        .fs-heading p {
+          margin: 7px 0 0;
+          color: #7c8390;
+          font-size: 11px;
+        }
+
+        .fs-main-grid {
+          display: grid;
+          grid-template-columns: minmax(0, 1.45fr) minmax(340px, 0.92fr);
+          gap: 20px;
+          align-items: start;
+        }
+
+        .fs-video-card {
+          position: relative;
+          height: 445px;
+          overflow: hidden;
+          border-radius: 14px;
+          background: #651329;
+          color: #ffffff;
+          box-shadow: 0 13px 30px rgba(43, 22, 27, 0.18);
+        }
+
+        .fs-video-card video {
+          width: 100%;
+          height: 100%;
+          display: block;
+          object-fit: cover;
+        }
+
+        .fs-video-overlay {
+          position: absolute;
+          inset: 0;
+          pointer-events: none;
+          background: linear-gradient(
+            to bottom,
+            rgba(28, 0, 8, 0.26),
+            transparent 34%,
+            transparent 55%,
+            rgba(112, 0, 32, 0.87)
+          );
+        }
+
+        .fs-creator {
+          position: absolute;
+          top: 13px;
+          right: 14px;
+          left: 14px;
+          z-index: 4;
+          display: flex;
+          align-items: center;
+          gap: 8px;
+        }
+
+        .fs-creator > img {
+          width: 31px;
+          height: 31px;
+          object-fit: cover;
+          border: 2px solid #ffffff;
+          border-radius: 50%;
+        }
+
+        .fs-creator > div {
+          display: grid;
+        }
+
+        .fs-creator strong {
+          font-size: 10px;
+        }
+
+        .fs-creator span {
+          margin-top: 2px;
+          color: rgba(255, 255, 255, 0.82);
+          font-size: 8px;
+        }
+
+        .fs-creator button {
+          margin-left: auto;
+          padding: 6px 14px;
+          border: 1px solid rgba(255, 255, 255, 0.35);
+          border-radius: 18px;
+          background: rgba(255, 255, 255, 0.17);
+          color: #ffffff;
+          cursor: pointer;
+          font-size: 9px;
           font-weight: 700;
         }
 
-        .sw-video-more,
-        .sw-play-toggle,
-        .sw-volume-toggle,
-        .sw-video-footer button {
-          padding: 0;
-          border: 0;
-          color: #ffffff;
-          background: transparent;
-          cursor: pointer;
+        .fs-creator button.active {
+          background: #ffffff;
+          color: #ed174c;
         }
 
-        .sw-play-toggle {
+        .fs-grid-icon {
+          display: grid;
+          place-items: center;
+          color: #ffffff;
+        }
+
+        .fs-play {
           position: absolute;
           top: 50%;
           left: 50%;
-          z-index: 5;
-          width: 48px;
-          height: 48px;
-          display: grid;
-          place-items: center;
-          border: 1px solid rgba(255, 255, 255, 0.22);
-          border-radius: 50%;
-          opacity: 0;
-          background: rgba(16, 10, 8, 0.42);
-          backdrop-filter: blur(10px);
-          transform: translate(-50%, -50%);
-          transition: opacity 160ms ease;
-        }
-
-        .sw-video-card:hover .sw-play-toggle {
-          opacity: 1;
-        }
-
-        .sw-volume-toggle {
-          position: absolute;
-          top: 66px;
-          right: 23px;
-          z-index: 5;
-          width: 34px;
-          height: 34px;
-          display: grid;
-          place-items: center;
-          border: 1px solid rgba(255, 255, 255, 0.16);
-          border-radius: 50%;
-          background: rgba(20, 12, 10, 0.34);
-          backdrop-filter: blur(10px);
-        }
-
-        .sw-video-actions {
-          position: absolute;
-          right: 17px;
-          bottom: 122px;
           z-index: 6;
-          display: grid;
-          gap: 14px;
-        }
-
-        .sw-action-button {
-          padding: 0;
-          display: grid;
-          justify-items: center;
-          gap: 5px;
-          border: 0;
-          color: #ffffff;
-          background: transparent;
-          cursor: pointer;
-        }
-
-        .sw-action-button > span {
-          width: 42px;
-          height: 42px;
-          display: grid;
-          place-items: center;
-          border: 1px solid rgba(255, 255, 255, 0.22);
+          width: 50px;
+          height: 50px;
+          border: 1px solid rgba(255, 255, 255, 0.65);
           border-radius: 50%;
-          color: #a61e43;
-          background: rgba(255, 255, 255, 0.97);
-          box-shadow: 0 8px 22px rgba(0, 0, 0, 0.2);
-          transition:
-            color 160ms ease,
-            background 160ms ease,
-            transform 160ms ease;
-        }
-
-        .sw-action-button:hover > span {
-          transform: translateY(-2px);
-        }
-
-        .sw-action-button b {
-          color: #ffffff;
-          font-size: 10px;
-          line-height: 1;
-          text-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
-        }
-
-        .sw-action-active > span {
-          color: #ffffff;
-          border-color: #b10f3b;
-          background: linear-gradient(145deg, #d2274a, #97163b);
-        }
-
-        .sw-video-copy {
-          position: absolute;
-          right: 76px;
-          bottom: 86px;
-          left: 18px;
-          z-index: 5;
-          color: #ffffff;
-        }
-
-        .sw-video-copy > strong {
-          display: block;
-          margin-bottom: 7px;
-          font-size: 14px;
-          font-weight: 800;
-        }
-
-        .sw-video-copy > p {
-          max-width: 300px;
-          margin: 0;
-          color: rgba(255, 255, 255, 0.88);
-          font-size: 11px;
-          line-height: 1.52;
-        }
-
-        .sw-video-tags {
-          margin-top: 13px;
-          display: flex;
-          flex-wrap: wrap;
-          gap: 6px;
-        }
-
-        .sw-video-tags span {
-          padding: 6px 9px;
-          border-radius: 999px;
-          color: #ffffff;
-          background: rgba(83, 19, 38, 0.74);
-          backdrop-filter: blur(8px);
-          font-size: 9px;
-          font-weight: 700;
-        }
-
-        .sw-progress-track {
-          position: absolute;
-          right: 18px;
-          bottom: 53px;
-          left: 18px;
-          z-index: 7;
-          height: 4px;
-          border-radius: 999px;
-          background: rgba(255, 255, 255, 0.35);
-          cursor: pointer;
-        }
-
-        .sw-progress-fill {
-          height: 100%;
-          border-radius: inherit;
-          background: #b71040;
-        }
-
-        .sw-progress-thumb {
-          position: absolute;
-          top: 50%;
-          width: 11px;
-          height: 11px;
-          border-radius: 50%;
-          background: #ffffff;
-          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.22);
           transform: translate(-50%, -50%);
-        }
-
-        .sw-video-footer {
-          position: absolute;
-          right: 18px;
-          bottom: 16px;
-          left: 18px;
-          z-index: 7;
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
+          background: rgba(255, 255, 255, 0.22);
           color: #ffffff;
-          font-size: 10px;
-          font-weight: 700;
+          cursor: pointer;
         }
 
-        .sw-details-column {
-          min-width: 0;
+        .fs-reel-actions {
+          position: absolute;
+          right: 12px;
+          bottom: 82px;
+          z-index: 5;
           display: grid;
-          align-content: start;
-          gap: 17px;
-        }
-
-        .sw-details-card,
-        .sw-comments-card {
-          border: 1px solid rgba(113, 48, 62, 0.08);
-          border-radius: 20px;
-          background: rgba(255, 252, 248, 0.86);
-          box-shadow:
-            0 20px 48px rgba(76, 36, 46, 0.08),
-            inset 0 1px 0 rgba(255, 255, 255, 0.88);
-          backdrop-filter: blur(14px);
-        }
-
-        .sw-details-card {
-          padding: 18px;
-        }
-
-        .sw-about-section h2,
-        .sw-order-section h3,
-        .sw-comments-heading h3 {
-          margin: 0;
-          color: #8b1738;
-          font-size: 13px;
-          font-weight: 850;
-        }
-
-        .sw-about-section p {
-          margin: 11px 0 0;
-          color: #4c3a3f;
-          font-size: 12px;
-          line-height: 1.55;
-        }
-
-        .sw-outline-tags {
-          margin-top: 14px;
-          display: flex;
-          flex-wrap: wrap;
           gap: 8px;
         }
 
-        .sw-outline-tags span {
-          padding: 7px 11px;
-          border: 1px solid rgba(164, 28, 65, 0.32);
-          border-radius: 999px;
-          color: #a31d45;
-          background: rgba(255, 255, 255, 0.48);
-          font-size: 9px;
-          font-weight: 750;
-        }
-
-        .sw-delivery-card {
-          margin-top: 17px;
-          padding: 14px;
-          border: 1px solid rgba(187, 95, 66, 0.13);
-          border-radius: 14px;
-          background:
-            linear-gradient(
-              115deg,
-              rgba(255, 248, 241, 0.96),
-              rgba(255, 240, 229, 0.78)
-            );
-        }
-
-        .sw-delivery-heading {
-          display: flex;
-          align-items: center;
-          gap: 12px;
-        }
-
-        .sw-delivery-icon {
-          color: #a71d42;
-        }
-
-        .sw-delivery-heading > div {
-          display: grid;
-          gap: 4px;
-        }
-
-        .sw-delivery-heading strong {
-          color: #90193a;
-          font-size: 12px;
-        }
-
-        .sw-delivery-heading span {
-          color: #604b50;
-          font-size: 10px;
-        }
-
-        .sw-delivery-features {
-          margin-top: 16px;
-          display: grid;
-          grid-template-columns: repeat(4, 1fr);
-          gap: 9px;
-        }
-
-        .sw-delivery-features > div {
-          min-width: 0;
+        .fs-reel-actions button {
           display: grid;
           justify-items: center;
-          gap: 6px;
-          color: #a01c42;
-          text-align: center;
+          gap: 2px;
+          padding: 0;
+          border: 0;
+          background: transparent;
+          color: #ffffff;
+          cursor: pointer;
         }
 
-        .sw-delivery-features span {
-          color: #7a4f59;
+        .fs-reel-actions button > span {
+          display: grid;
+          place-items: center;
+          width: 34px;
+          height: 34px;
+          border-radius: 50%;
+          background: #ffffff;
+          color: #2e2930;
+          box-shadow: 0 3px 9px rgba(0, 0, 0, 0.2);
+        }
+
+        .fs-reel-actions button.active > span {
+          color: #ed174c;
+        }
+
+        .fs-reel-actions b {
+          color: #ffffff;
           font-size: 8px;
-          line-height: 1.2;
         }
 
-        .sw-order-section {
-          margin-top: 18px;
-          padding-top: 16px;
-          border-top: 1px solid rgba(109, 48, 62, 0.09);
+        .fs-video-copy {
+          position: absolute;
+          right: 70px;
+          bottom: 59px;
+          left: 14px;
+          z-index: 5;
         }
 
-        .sw-order-list {
-          margin-top: 11px;
-          display: grid;
-          gap: 10px;
+        .fs-video-copy > strong {
+          display: inline-flex;
+          padding: 6px 10px;
+          border-radius: 15px;
+          background: rgba(219, 18, 71, 0.88);
+          font-size: 9px;
         }
 
-        .sw-order-item {
-          display: grid;
-          grid-template-columns: 44px minmax(0, 1fr) auto;
+        .fs-video-copy p {
+          margin: 6px 0;
+          font-size: 9px;
+        }
+
+        .fs-video-copy > div {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 5px;
+        }
+
+        .fs-video-copy > div span {
+          padding: 3px 7px;
+          border-radius: 12px;
+          background: rgba(255, 255, 255, 0.14);
+          font-size: 7px;
+        }
+
+        .fs-video-controls {
+          position: absolute;
+          right: 13px;
+          bottom: 12px;
+          left: 13px;
+          z-index: 5;
+          display: flex;
           align-items: center;
-          gap: 10px;
+          gap: 8px;
+          padding: 7px 9px;
+          border-radius: 7px;
+          background: rgba(177, 8, 53, 0.62);
         }
 
-        .sw-order-item img {
-          width: 44px;
-          height: 44px;
-          display: block;
-          border-radius: 10px;
-          object-fit: cover;
-          background: #f3e6df;
-        }
-
-        .sw-order-item > div {
-          min-width: 0;
+        .fs-video-controls button {
           display: grid;
+          place-items: center;
+          padding: 0;
+          border: 0;
+          background: transparent;
+          color: #ffffff;
+          cursor: pointer;
+        }
+
+        .fs-video-controls small {
+          flex: none;
+          font-size: 8px;
+        }
+
+        .fs-progress {
+          height: 3px;
+          flex: 1;
+          overflow: hidden;
+          border-radius: 10px;
+          background: rgba(255, 255, 255, 0.28);
+        }
+
+        .fs-progress span {
+          display: block;
+          height: 100%;
+          background: #ff365f;
+        }
+
+        .fs-right-column {
+          display: grid;
+          gap: 13px;
+        }
+
+        .fs-product-card,
+        .fs-review-card {
+          border: 1px solid #e1e3e7;
+          border-radius: 13px;
+          background: #ffffff;
+          box-shadow: 0 3px 9px rgba(30, 27, 31, 0.05);
+        }
+
+        .fs-product-card {
+          height: 253px;
+          padding: 15px;
+        }
+
+        .fs-product-top {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+        }
+
+        .fs-product-top > span {
+          padding: 5px 9px;
+          border: 1px solid #f4d8af;
+          border-radius: 14px;
+          background: #fffaf0;
+          color: #c97913;
+          font-size: 8px;
+          font-weight: 700;
+        }
+
+        .fs-product-top > strong {
+          color: #ed174c;
+          font-size: 19px;
+        }
+
+        .fs-product-card h2 {
+          margin: 8px 0 3px;
+          font-size: 18px;
+          line-height: 1.15;
+        }
+
+        .fs-rating {
+          display: flex;
+          align-items: center;
           gap: 4px;
         }
 
-        .sw-order-item strong {
+        .fs-rating > span {
+          color: #f2ad00;
+          font-size: 14px;
+        }
+
+        .fs-rating strong {
+          font-size: 9px;
+        }
+
+        .fs-rating small {
+          color: #989eaa;
+          font-size: 8px;
+        }
+
+        .fs-description {
+          height: 35px;
+          margin: 10px 0;
           overflow: hidden;
-          color: #39272c;
+          color: #717986;
+          font-size: 9px;
+          line-height: 1.45;
+        }
+
+        .fs-benefits {
+          display: grid;
+          grid-template-columns: repeat(2, 1fr);
+          gap: 8px;
+          padding: 9px 11px;
+          border: 1px solid #ebecf0;
+          border-radius: 9px;
+          background: #fafafa;
+        }
+
+        .fs-benefits > div {
+          display: grid;
+          grid-template-columns: 21px 1fr;
+          grid-template-rows: auto auto;
+          align-items: center;
+        }
+
+        .fs-benefits > div > span {
+          grid-row: 1 / 3;
+          font-size: 15px;
+        }
+
+        .fs-benefits small {
+          color: #989eaa;
+          font-size: 6px;
+        }
+
+        .fs-benefits strong {
+          font-size: 8px;
+        }
+
+        .fs-benefits .green {
+          color: #12b86a;
+        }
+
+        .fs-benefits .blue {
+          color: #397cff;
+        }
+
+        .fs-benefits .orange {
+          color: #ff9417;
+        }
+
+        .fs-benefits .pink {
+          color: #ed174c;
+        }
+
+        .fs-main-order {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 8px;
+          height: 37px;
+          margin-top: 10px;
+          border-radius: 8px;
+          background: #ed174c;
+          color: #ffffff;
+          box-shadow: 0 5px 12px rgba(237, 23, 76, 0.22);
+          font-size: 10px;
+          font-weight: 750;
+          text-decoration: none;
+        }
+
+        .fs-main-order span {
+          padding-left: 8px;
+          border-left: 1px solid rgba(255, 255, 255, 0.4);
+        }
+
+        .fs-review-card {
+          height: 179px;
+          padding: 11px 15px;
+          overflow: hidden;
+        }
+
+        .fs-review-heading {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          margin-bottom: 3px;
+        }
+
+        .fs-review-heading h3 {
+          margin: 0;
           font-size: 11px;
+        }
+
+        .fs-review-heading button {
+          border: 0;
+          background: transparent;
+          color: #ed174c;
+          cursor: pointer;
+          font-size: 7px;
+          font-weight: 700;
+        }
+
+        .fs-review-card article {
+          display: grid;
+          grid-template-columns: 25px 1fr auto;
+          gap: 7px;
+          padding: 6px 0;
+          border-bottom: 1px solid #eeeeef;
+        }
+
+        .fs-review-card article:last-child {
+          border-bottom: 0;
+        }
+
+        .fs-review-card article img {
+          width: 25px;
+          height: 25px;
+          object-fit: cover;
+          border-radius: 50%;
+        }
+
+        .fs-review-card article > div {
+          min-width: 0;
+        }
+
+        .fs-review-card article strong {
+          display: block;
+          font-size: 7px;
+        }
+
+        .fs-review-card article div > span {
+          display: block;
+          color: #f2ad00;
+          font-size: 6px;
+        }
+
+        .fs-review-card article p {
+          margin: 2px 0;
+          overflow: hidden;
+          color: #7b818c;
+          font-size: 6.5px;
+          line-height: 1.3;
           text-overflow: ellipsis;
           white-space: nowrap;
         }
 
-        .sw-order-item span {
-          color: #756166;
-          font-size: 9px;
+        .fs-review-card article small {
+          color: #df4970;
+          font-size: 6px;
         }
 
-        .sw-add-button {
-          width: 30px;
-          height: 30px;
-          padding: 0;
-          display: grid;
-          place-items: center;
-          border: 1px solid rgba(174, 31, 70, 0.38);
-          border-radius: 50%;
-          color: #b11f48;
-          background: #ffffff;
-          cursor: pointer;
-          transition:
-            color 160ms ease,
-            background 160ms ease;
+        .fs-review-card article time {
+          color: #a1a6b0;
+          font-size: 5.5px;
+          white-space: nowrap;
         }
 
-        .sw-add-button.sw-added {
-          color: #ffffff;
-          background: #a71c42;
+        .fs-more {
+          margin-top: 18px;
         }
 
-        .sw-order-actions {
-          margin-top: 17px;
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 12px;
-        }
-
-        .sw-primary-button,
-        .sw-secondary-button {
-          min-height: 44px;
-          padding: 0 16px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          gap: 9px;
-          border-radius: 10px;
-          font-size: 11px;
-          font-weight: 800;
-          text-decoration: none;
-          cursor: pointer;
-        }
-
-        .sw-primary-button {
-          border: 0;
-          color: #ffffff;
-          background: linear-gradient(135deg, #bd1544, #8d0d34);
-          box-shadow: 0 10px 22px rgba(139, 16, 52, 0.2);
-        }
-
-        .sw-secondary-button {
-          border: 1px solid rgba(139, 23, 58, 0.16);
-          color: #8d1738;
-          background: rgba(255, 255, 255, 0.72);
-        }
-
-        .sw-comments-card {
-          padding: 17px;
-        }
-
-        .sw-comments-heading {
+        .fs-more > header {
           display: flex;
           align-items: center;
           justify-content: space-between;
+          margin-bottom: 9px;
         }
 
-        .sw-comments-heading button,
-        .sw-comment-content button {
-          padding: 0;
+        .fs-more h3 {
+          margin: 0;
+          font-size: 13px;
+        }
+
+        .fs-more header button {
           border: 0;
-          color: #9b173e;
           background: transparent;
-          font-size: 9px;
-          font-weight: 750;
+          color: #ed174c;
           cursor: pointer;
+          font-size: 8px;
+          font-weight: 700;
         }
 
-        .sw-comment-box {
-          margin-top: 13px;
+        .fs-dish-row {
           display: grid;
-          grid-template-columns: 34px minmax(0, 1fr) 32px;
+          grid-template-columns: repeat(4, 1fr);
+          gap: 14px;
+        }
+
+        .fs-dish-card {
+          overflow: hidden;
+          padding: 0;
+          border: 1px solid #e1e3e6;
+          border-radius: 11px;
+          background: #ffffff;
+          color: #161a23;
+          cursor: pointer;
+          text-align: left;
+        }
+
+        .fs-dish-card > div {
+          position: relative;
+          height: 88px;
+          overflow: hidden;
+        }
+
+        .fs-dish-card img {
+          width: 100%;
+          height: 100%;
+          display: block;
+          object-fit: cover;
+        }
+
+        .fs-dish-card > div span {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          display: grid;
+          place-items: center;
+          width: 25px;
+          height: 25px;
+          border: 2px solid #ed174c;
+          border-radius: 50%;
+          transform: translate(-50%, -50%);
+          background: #ffffff;
+          color: #ed174c;
+          font-size: 8px;
+        }
+
+        .fs-dish-card h4 {
+          margin: 7px 9px 4px;
+          overflow: hidden;
+          font-size: 9px;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+
+        .fs-dish-card footer {
+          display: flex;
+          justify-content: space-between;
+          padding: 0 9px 7px;
+          font-size: 7px;
+        }
+
+        .fs-dish-card footer strong {
+          color: #ed174c;
+        }
+
+        .fs-sticky-bar {
+          position: fixed;
+          right: 0;
+          bottom: 0;
+          left: 0;
+          z-index: 200;
+          height: 58px;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding: 6px max(16px, calc((100% - 1180px) / 2));
+          border-top: 1px solid #e5e6e8;
+          background: rgba(255, 255, 255, 0.97);
+          box-shadow: 0 -5px 16px rgba(31, 26, 28, 0.07);
+          backdrop-filter: blur(12px);
+        }
+
+        .fs-sticky-product {
+          display: flex;
           align-items: center;
           gap: 9px;
         }
 
-        .sw-avatar,
-        .sw-comment-avatar {
-          display: grid;
-          place-items: center;
-          border-radius: 50%;
-          color: #ffffff;
-          background: linear-gradient(145deg, #cf7d64, #7e203d);
-          font-weight: 800;
-        }
-
-        .sw-avatar {
-          width: 34px;
-          height: 34px;
-          font-size: 11px;
-        }
-
-        .sw-comment-box input {
-          min-width: 0;
+        .fs-sticky-product img {
+          width: 38px;
           height: 38px;
-          padding: 0 13px;
-          border: 1px solid rgba(105, 62, 72, 0.12);
-          border-radius: 999px;
-          outline: none;
-          color: #3c2a2f;
-          background: rgba(255, 255, 255, 0.72);
-          font-size: 10px;
+          object-fit: cover;
+          border-radius: 7px;
         }
 
-        .sw-comment-box input:focus {
-          border-color: rgba(161, 28, 65, 0.34);
-        }
-
-        .sw-comment-box > button {
-          width: 32px;
-          height: 32px;
-          padding: 0;
+        .fs-sticky-product > div {
           display: grid;
-          place-items: center;
-          border: 0;
-          color: #a11c43;
-          background: transparent;
-          cursor: pointer;
+          gap: 2px;
         }
 
-        .sw-comment-box > button:disabled {
-          opacity: 0.35;
-          cursor: default;
+        .fs-sticky-product strong {
+          font-size: 9px;
         }
 
-        .sw-comments-list {
-          margin-top: 13px;
-          display: grid;
-          gap: 14px;
+        .fs-sticky-product span {
+          color: #8c929d;
+          font-size: 7px;
         }
 
-        .sw-comment {
-          display: grid;
-          grid-template-columns: 34px minmax(0, 1fr) auto;
-          align-items: start;
-          gap: 10px;
-        }
-
-        .sw-comment-avatar {
-          width: 34px;
-          height: 34px;
-          font-size: 10px;
-        }
-
-        .sw-comment-content {
-          min-width: 0;
-        }
-
-        .sw-comment-content > div {
+        .fs-sticky-actions {
           display: flex;
           align-items: center;
-          gap: 7px;
+          gap: 11px;
         }
 
-        .sw-comment-content strong {
-          color: #33242a;
-          font-size: 10px;
+        .fs-sticky-actions > div {
+          display: flex;
+          align-items: center;
+          gap: 11px;
+          height: 38px;
+          padding: 0 12px;
+          border-radius: 8px;
+          background: #f3f4f6;
         }
 
-        .sw-comment-content span {
-          color: #9a888d;
-          font-size: 9px;
-        }
-
-        .sw-comment-content p {
-          margin: 5px 0 6px;
-          color: #4f3c42;
-          font-size: 10px;
-          line-height: 1.45;
-        }
-
-        .sw-comment-like {
-          padding: 0;
-          display: grid;
-          justify-items: center;
-          gap: 2px;
+        .fs-sticky-actions button {
           border: 0;
-          color: #a31b42;
           background: transparent;
+          color: #747b87;
           cursor: pointer;
+          font-size: 16px;
         }
 
-        .sw-comment-like span {
+        .fs-sticky-actions > div span {
+          font-size: 10px;
+          font-weight: 700;
+        }
+
+        .fs-sticky-actions > a {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 10px;
+          height: 40px;
+          min-width: 150px;
+          padding: 0 16px;
+          border-radius: 8px;
+          background: #ed174c;
+          color: #ffffff;
+          font-size: 10px;
+          font-weight: 750;
+          text-decoration: none;
+        }
+
+        .fs-sticky-actions > a span {
+          padding-left: 10px;
+          border-left: 1px solid rgba(255, 255, 255, 0.4);
+        }
+
+        .fs-comments-backdrop {
+          position: absolute;
+          inset: 0;
+          z-index: 30;
+          display: flex;
+          justify-content: flex-end;
+          background: rgba(15, 9, 11, 0.46);
+          backdrop-filter: blur(3px);
+        }
+
+        .fs-comments-panel {
+          width: min(350px, 88%);
+          height: 100%;
+          display: flex;
+          flex-direction: column;
+          background: #ffffff;
+          color: #171923;
+          box-shadow: -14px 0 30px rgba(0, 0, 0, 0.22);
+        }
+
+        .fs-comments-panel > header {
+          height: 52px;
+          flex: none;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding: 0 16px;
+          border-bottom: 1px solid #e9eaed;
+        }
+
+        .fs-comments-panel h3 {
+          margin: 0;
+          font-size: 14px;
+        }
+
+        .fs-comments-panel > header button {
+          width: 29px;
+          height: 29px;
+          border: 0;
+          border-radius: 50%;
+          background: #f3f4f5;
+          cursor: pointer;
+          font-size: 20px;
+        }
+
+        .fs-drawer-comments {
+          flex: 1;
+          overflow-y: auto;
+          overscroll-behavior: contain;
+          padding: 4px 14px;
+        }
+
+        .fs-drawer-comments article {
+          display: grid;
+          grid-template-columns: 31px 1fr 20px;
+          gap: 8px;
+          padding: 11px 0;
+          border-bottom: 1px solid #ededee;
+        }
+
+        .fs-drawer-comments img,
+        .fs-avatar {
+          width: 31px;
+          height: 31px;
+          display: grid;
+          place-items: center;
+          object-fit: cover;
+          border-radius: 50%;
+        }
+
+        .fs-avatar {
+          background: linear-gradient(135deg, #f5ccd9, #ed174c);
+          color: #ffffff;
+          font-size: 10px;
+          font-weight: 700;
+        }
+
+        .fs-drawer-comments article div {
+          min-width: 0;
+        }
+
+        .fs-drawer-comments article strong {
+          margin-right: 6px;
           font-size: 9px;
         }
 
-        .sw-toast {
-          position: fixed;
-          bottom: 24px;
-          left: 50%;
-          z-index: 100;
-          padding: 11px 17px;
-          border-radius: 999px;
-          color: #ffffff;
-          background: rgba(60, 27, 36, 0.94);
-          box-shadow: 0 12px 30px rgba(53, 24, 32, 0.24);
-          font-size: 11px;
-          font-weight: 750;
-          transform: translateX(-50%);
+        .fs-drawer-comments article small {
+          color: #9a9ea8;
+          font-size: 7px;
         }
 
-        @media (max-width: 920px) {
-          .sw-reel-shell {
-            width: min(760px, calc(100% - 28px));
-            grid-template-columns: 1fr;
-            gap: 18px;
-          }
-
-          .sw-video-card {
-            position: relative;
-            top: auto;
-            height: min(76dvh, 720px);
-            min-height: 600px;
-          }
+        .fs-drawer-comments article p {
+          margin: 4px 0;
+          color: #626873;
+          font-size: 9px;
+          line-height: 1.4;
         }
 
-        @media (max-width: 560px) {
-          .sw-reel-page {
-            background-attachment: scroll;
+        .fs-drawer-comments article button {
+          padding: 0;
+          border: 0;
+          background: transparent;
+          color: #9297a1;
+          cursor: pointer;
+          font-size: 7px;
+        }
+
+        .fs-comments-panel form {
+          flex: none;
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          padding: 10px 12px;
+          border-top: 1px solid #e8e9eb;
+        }
+
+        .fs-comments-panel form input {
+          min-width: 0;
+          height: 34px;
+          flex: 1;
+          padding: 0 11px;
+          border: 1px solid #dedfe3;
+          border-radius: 18px;
+          outline: none;
+          background: #f7f7f8;
+          font-size: 9px;
+        }
+
+        .fs-comments-panel form input:focus {
+          border-color: #ed174c;
+        }
+
+        .fs-comments-panel form button {
+          border: 0;
+          background: transparent;
+          color: #ed174c;
+          cursor: pointer;
+          font-size: 9px;
+          font-weight: 700;
+        }
+
+        .fs-comments-panel form button:disabled {
+          color: #b7bac1;
+        }
+
+        @media (max-width: 850px) {
+          .fs-navbar {
+            height: 50px;
           }
 
-          .sw-reel-shell {
+          .fs-navbar-inner {
+            width: calc(100% - 24px);
+          }
+
+          .fs-navbar nav,
+          .fs-nav-actions input {
+            display: none;
+          }
+
+          .fs-nav-actions {
+            margin-left: auto;
+          }
+
+          .fs-feed {
+            height: calc(100dvh - 50px);
+          }
+
+          .fs-story {
+            min-height: 100%;
+            padding: 14px 12px 83px;
+          }
+
+          .fs-content {
             width: 100%;
-            padding: 0;
-            gap: 0;
           }
 
-          .sw-video-card {
-            height: 100dvh;
-            min-height: 0;
-            border: 0;
-            border-radius: 0;
-            box-shadow: none;
+          .fs-heading h1 {
+            font-size: 27px;
           }
 
-          .sw-details-column {
-            padding: 14px;
-            background: #fff7f0;
+          .fs-main-grid {
+            display: block;
           }
 
-          .sw-details-card,
-          .sw-comments-card {
-            border-radius: 17px;
+          .fs-video-card {
+            height: min(61svh, 520px);
+            min-height: 450px;
           }
 
-          .sw-video-actions {
-            bottom: 132px;
+          .fs-right-column {
+            margin-top: 13px;
           }
 
-          .sw-video-copy {
-            bottom: 92px;
+          .fs-product-card {
+            height: auto;
           }
 
-          .sw-delivery-features {
-            grid-template-columns: repeat(2, 1fr);
+          .fs-description {
+            height: auto;
           }
 
-          .sw-order-actions {
-            grid-template-columns: 1fr;
+          .fs-review-card {
+            height: 220px;
+          }
+
+          .fs-more {
+            margin-top: 17px;
+          }
+
+          .fs-dish-row {
+            display: flex;
+            gap: 11px;
+            overflow-x: auto;
+            padding-bottom: 8px;
+            scrollbar-width: none;
+          }
+
+          .fs-dish-row::-webkit-scrollbar {
+            display: none;
+          }
+
+          .fs-dish-card {
+            flex: 0 0 70%;
+          }
+
+          .fs-sticky-bar {
+            padding: 6px 10px;
+          }
+
+          .fs-sticky-product > div {
+            display: none;
+          }
+
+          .fs-sticky-actions {
+            flex: 1;
+            justify-content: flex-end;
+          }
+
+          .fs-sticky-actions > a {
+            min-width: 115px;
+            padding: 0 11px;
+          }
+
+          .fs-comments-panel {
+            width: 100%;
           }
         }
 
-        /* =========================================================
-   FINAL REFERENCE LAYOUT OVERRIDES
-   Paste this at the very bottom of the page CSS
-   ========================================================= */
-
-/* Desktop: wheel changes reels instead of moving the page */
-.sw-reel-page {
-  overflow: hidden !important;
-}
-
-/* Match the compact two-column spacing from the reference */
-.sw-reel-shell {
-  width: min(860px, calc(100% - 40px)) !important;
-  min-height: 100dvh !important;
-  margin: 0 auto !important;
-  padding: 24px 0 18px !important;
-
-  display: grid !important;
-  grid-template-columns: 400px 355px !important;
-  align-items: start !important;
-  justify-content: center !important;
-  gap: 40px !important;
-
-  animation: swReelEnter 460ms
-    cubic-bezier(0.22, 0.78, 0.22, 1) both;
-}
-
-@keyframes swReelEnter {
-  from {
-    opacity: 0;
-    transform: translateY(24px) scale(0.985);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-
-/* Reel dimensions */
-.sw-video-card {
-  position: sticky !important;
-  top: 24px !important;
-
-  width: 400px !important;
-  height: min(620px, calc(100dvh - 48px)) !important;
-  min-height: 560px !important;
-
-  overflow: hidden !important;
-  overscroll-behavior: contain !important;
-  touch-action: pan-y !important;
-
-  border-radius: 24px !important;
-
-  box-shadow:
-    0 28px 65px rgba(66, 30, 39, 0.17),
-    0 7px 20px rgba(66, 30, 39, 0.08) !important;
-}
-
-/* Right column */
-.sw-details-column {
-  width: 355px !important;
-  min-width: 0 !important;
-
-  display: grid !important;
-  align-content: start !important;
-  gap: 12px !important;
-}
-
-.sw-details-card,
-.sw-comments-card {
-  border: 1px solid rgba(113, 48, 62, 0.08) !important;
-  border-radius: 17px !important;
-
-  background: rgba(255, 252, 248, 0.92) !important;
-
-  box-shadow:
-    0 16px 38px rgba(76, 36, 46, 0.07),
-    inset 0 1px 0 rgba(255, 255, 255, 0.9) !important;
-
-  backdrop-filter: blur(14px) !important;
-  -webkit-backdrop-filter: blur(14px) !important;
-}
-
-.sw-details-card {
-  padding: 16px !important;
-}
-
-.sw-comments-card {
-  padding: 15px 16px !important;
-}
-
-/* About section */
-.sw-about-section h2 {
-  margin: 0 !important;
-  font-size: 13px !important;
-}
-
-.sw-about-section p {
-  margin: 8px 0 0 !important;
-  color: #4c3a3f !important;
-  font-size: 11px !important;
-  line-height: 1.48 !important;
-}
-
-/* Replace the unwanted sweet-cravings sentence using CSS */
-.sw-about-section p:nth-of-type(2) {
-  font-size: 0 !important;
-  line-height: 0 !important;
-}
-
-.sw-about-section p:nth-of-type(2)::after {
-  content: "Made fresh, finished beautifully, and impossible to resist.";
-  display: block;
-
-  color: #6e3d49;
-  font-size: 11px;
-  font-weight: 650;
-  line-height: 1.48;
-}
-
-/* Hashtag pills */
-.sw-outline-tags {
-  margin-top: 11px !important;
-
-  display: flex !important;
-  flex-wrap: wrap !important;
-  gap: 7px !important;
-}
-
-.sw-outline-tags span {
-  padding: 6px 10px !important;
-
-  border: 1px solid rgba(164, 28, 65, 0.3) !important;
-  border-radius: 999px !important;
-
-  color: #a31d45 !important;
-  background: rgba(255, 255, 255, 0.52) !important;
-
-  font-size: 8px !important;
-  font-weight: 750 !important;
-}
-
-/* Delivery box */
-.sw-delivery-card {
-  margin-top: 13px !important;
-  padding: 12px !important;
-
-  border-radius: 13px !important;
-
-  background:
-    linear-gradient(
-      115deg,
-      rgba(255, 248, 241, 0.97),
-      rgba(255, 240, 229, 0.78)
-    ) !important;
-}
-
-.sw-delivery-heading {
-  gap: 10px !important;
-}
-
-.sw-delivery-heading strong {
-  font-size: 11px !important;
-}
-
-.sw-delivery-heading span {
-  font-size: 9px !important;
-}
-
-.sw-delivery-features {
-  margin-top: 13px !important;
-
-  display: grid !important;
-  grid-template-columns: repeat(4, 1fr) !important;
-  gap: 7px !important;
-}
-
-.sw-delivery-features span {
-  font-size: 7px !important;
-}
-
-/* Order section */
-.sw-order-section {
-  margin-top: 14px !important;
-  padding-top: 13px !important;
-}
-
-.sw-order-list {
-  margin-top: 9px !important;
-
-  display: grid !important;
-  gap: 8px !important;
-}
-
-.sw-order-item {
-  display: grid !important;
-  grid-template-columns: 40px minmax(0, 1fr) auto !important;
-  align-items: center !important;
-  gap: 9px !important;
-}
-
-.sw-order-item img {
-  width: 40px !important;
-  height: 40px !important;
-
-  border-radius: 9px !important;
-}
-
-.sw-order-item strong {
-  font-size: 10px !important;
-}
-
-.sw-order-item span {
-  font-size: 8px !important;
-}
-
-.sw-add-button {
-  width: 28px !important;
-  height: 28px !important;
-}
-
-/* Bottom order buttons */
-.sw-order-actions {
-  margin-top: 14px !important;
-
-  display: grid !important;
-  grid-template-columns: 1fr 1fr !important;
-  gap: 10px !important;
-}
-
-.sw-primary-button,
-.sw-secondary-button {
-  min-height: 40px !important;
-  padding: 0 13px !important;
-
-  border-radius: 9px !important;
-
-  font-size: 10px !important;
-}
-
-/* Comments */
-.sw-comments-heading h3 {
-  font-size: 12px !important;
-}
-
-.sw-comment-box {
-  margin-top: 11px !important;
-}
-
-.sw-comments-list {
-  margin-top: 11px !important;
-  gap: 11px !important;
-}
-
-.sw-comment-content p {
-  margin: 4px 0 5px !important;
-  font-size: 9px !important;
-}
-
-/* Reel overlay spacing */
-.sw-video-actions {
-  right: 16px !important;
-  bottom: 116px !important;
-  gap: 12px !important;
-}
-
-.sw-action-button > span {
-  width: 40px !important;
-  height: 40px !important;
-}
-
-.sw-video-copy {
-  right: 72px !important;
-  bottom: 84px !important;
-  left: 17px !important;
-}
-
-.sw-video-copy > strong {
-  margin-bottom: 6px !important;
-  font-size: 12px !important;
-}
-
-.sw-video-copy > p {
-  font-size: 10px !important;
-  line-height: 1.45 !important;
-}
-
-.sw-video-tags {
-  margin-top: 11px !important;
-  gap: 5px !important;
-}
-
-.sw-video-tags span {
-  padding: 5px 8px !important;
-  font-size: 8px !important;
-}
-
-.sw-progress-track {
-  right: 17px !important;
-  bottom: 49px !important;
-  left: 17px !important;
-}
-
-.sw-video-footer {
-  right: 17px !important;
-  bottom: 14px !important;
-  left: 17px !important;
-}
-
-/* Tablet/mobile must scroll normally */
-@media (max-width: 920px) {
-  .sw-reel-page {
-    overflow-y: auto !important;
-  }
-
-  .sw-reel-shell {
-    width: min(760px, calc(100% - 28px)) !important;
-    min-height: auto !important;
-    padding: 18px 0 !important;
-
-    grid-template-columns: 1fr !important;
-    gap: 18px !important;
-  }
-
-  .sw-video-card {
-    position: relative !important;
-    top: auto !important;
-
-    width: 100% !important;
-    height: min(76dvh, 720px) !important;
-    min-height: 600px !important;
-  }
-
-  .sw-details-column {
-    width: 100% !important;
-  }
-}
-
-@media (max-width: 560px) {
-  .sw-reel-shell {
-    width: 100% !important;
-    padding: 0 !important;
-    gap: 0 !important;
-  }
-
-  .sw-video-card {
-    width: 100% !important;
-    height: 100dvh !important;
-    min-height: 0 !important;
-
-    border-radius: 0 !important;
-  }
-
-  .sw-details-column {
-    padding: 14px !important;
-  }
-
-  .sw-order-actions {
-    grid-template-columns: 1fr !important;
-  }
-}
-
-/* =====================================================
-   INSTAGRAM-STYLE REEL SCROLL + FIXED COMMENTS PANEL
-   ===================================================== */
-
-/* Remove the previous whole-layout animation */
-.sw-reel-shell {
-  animation: none !important;
-}
-
-/* Only the reel transitions */
-.sw-video-card {
-  overscroll-behavior: contain !important;
-  touch-action: pan-y !important;
-  will-change: transform, opacity;
-}
-
-.sw-reel-enter-next {
-  animation:
-    swInstaNext 520ms
-    cubic-bezier(0.2, 0.82, 0.2, 1)
-    both !important;
-}
-
-.sw-reel-enter-previous {
-  animation:
-    swInstaPrevious 520ms
-    cubic-bezier(0.2, 0.82, 0.2, 1)
-    both !important;
-}
-
-@keyframes swInstaNext {
-  from {
-    opacity: 0.35;
-    transform:
-      translateY(13%)
-      scale(0.985);
-  }
-
-  to {
-    opacity: 1;
-    transform:
-      translateY(0)
-      scale(1);
-  }
-}
-
-@keyframes swInstaPrevious {
-  from {
-    opacity: 0.35;
-    transform:
-      translateY(-13%)
-      scale(0.985);
-  }
-
-  to {
-    opacity: 1;
-    transform:
-      translateY(0)
-      scale(1);
-  }
-}
-
-/* Soft transition for the information panel */
-.sw-details-enter {
-  animation:
-    swDetailsEnter 380ms ease-out
-    both;
-}
-
-@keyframes swDetailsEnter {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* Keep the desktop page fixed */
-.sw-reel-page {
-  overflow: hidden !important;
-}
-
-/* Let the complete right column scroll independently */
-.sw-details-column {
-  position: sticky !important;
-  top: 24px !important;
-
-  width: 355px !important;
-  max-height: calc(100dvh - 48px) !important;
-
-  overflow-x: hidden !important;
-  overflow-y: auto !important;
-  overscroll-behavior: contain !important;
-
-  padding-right: 7px !important;
-  padding-bottom: 24px !important;
-
-  scrollbar-width: thin;
-  scrollbar-color:
-    rgba(145, 27, 59, 0.24)
-    transparent;
-}
-
-/* Chrome and Edge scrollbar */
-.sw-details-column::-webkit-scrollbar {
-  width: 5px;
-}
-
-.sw-details-column::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.sw-details-column::-webkit-scrollbar-thumb {
-  border-radius: 999px;
-  background:
-    rgba(145, 27, 59, 0.22);
-}
-
-.sw-details-column::-webkit-scrollbar-thumb:hover {
-  background:
-    rgba(145, 27, 59, 0.38);
-}
-
-/* Ensure comments can reach the bottom */
-.sw-comments-card {
-  flex-shrink: 0 !important;
-  min-height: max-content !important;
-  margin-bottom: 22px !important;
-  overflow: visible !important;
-}
-
-.sw-comments-list {
-  padding-bottom: 8px !important;
-}
-
-/* Prevent wheel events on the right panel
-   from changing the reel */
-.sw-details-column {
-  pointer-events: auto;
-}
-
-/* Tablet and mobile: normal page scrolling */
-@media (max-width: 920px) {
-  .sw-reel-page {
-    overflow-y: auto !important;
-  }
-
-  .sw-details-column {
-    position: static !important;
-
-    width: 100% !important;
-    max-height: none !important;
-
-    overflow: visible !important;
-
-    padding-right: 0 !important;
-    padding-bottom: 24px !important;
-
-    scrollbar-width: none;
-  }
-
-  .sw-details-column::-webkit-scrollbar {
-    display: none;
-  }
-
-  .sw-video-card {
-    touch-action: pan-y !important;
-  }
-}
-
-
-/* =====================================================
-   RESTORED ONE-LINE SWADISHTT HEADER
-   ===================================================== */
-
-.sw-stories-header {
-  position: fixed;
-  inset: 0 0 auto;
-  z-index: 80;
-  height: 84px;
-  padding: 0 clamp(20px, 4vw, 64px);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  border-bottom: 1px solid rgba(107, 29, 58, 0.08);
-  background: rgba(255, 250, 245, 0.9);
-  box-shadow: 0 8px 28px rgba(72, 34, 43, 0.055);
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
-}
-
-.sw-header-left {
-  min-width: 0;
-  display: flex;
-  align-items: center;
-  gap: 13px;
-}
-
-.sw-header-control {
-  width: 44px;
-  height: 44px;
-  flex: 0 0 auto;
-  padding: 0;
-  display: grid;
-  place-items: center;
-  border: 1px solid rgba(107, 29, 58, 0.14);
-  border-radius: 50%;
-  color: #7b1d3b;
-  background: rgba(255, 255, 255, 0.9);
-  box-shadow:
-    0 7px 19px rgba(72, 34, 43, 0.075),
-    inset 0 1px 0 rgba(255, 255, 255, 0.96);
-  cursor: pointer;
-  text-decoration: none;
-  transition:
-    transform 160ms ease,
-    border-color 160ms ease,
-    box-shadow 160ms ease;
-}
-
-.sw-header-control:hover {
-  border-color: rgba(107, 29, 58, 0.3);
-  box-shadow:
-    0 10px 24px rgba(72, 34, 43, 0.12),
-    inset 0 1px 0 rgba(255, 255, 255, 0.98);
-  transform: translateY(-1px);
-}
-
-.sw-header-logo-link {
-  width: 46px;
-  height: 46px;
-  flex: 0 0 auto;
-  display: grid;
-  place-items: center;
-  overflow: hidden;
-  border-radius: 13px;
-  background: #ffffff;
-  text-decoration: none;
-}
-
-.sw-header-logo {
-  width: 100%;
-  height: 100%;
-  display: block;
-  object-fit: contain;
-}
-
-.sw-header-copy {
-  min-width: 0;
-  display: flex;
-  align-items: baseline;
-  gap: 14px;
-}
-
-.sw-header-copy h1 {
-  margin: 0;
-  color: #25181b;
-  font-family: Georgia, "Times New Roman", serif;
-  font-size: clamp(23px, 2.25vw, 37px);
-  font-weight: 700;
-  line-height: 1;
-  letter-spacing: -0.045em;
-  white-space: nowrap;
-}
-
-.sw-header-copy h1 span {
-  color: #7d1d3b;
-  font-family:
-    Inter,
-    ui-sans-serif,
-    system-ui,
-    sans-serif;
-  font-weight: 500;
-  letter-spacing: -0.035em;
-}
-
-.sw-header-copy p {
-  margin: 0;
-  padding-left: 14px;
-  border-left: 1px solid rgba(107, 29, 58, 0.16);
-  color: #79676c;
-  font-size: 11px;
-  font-weight: 650;
-  letter-spacing: 0.025em;
-  white-space: nowrap;
-}
-
-/* Keep the restored header above the full layout */
-.sw-reel-shell {
-  height: 100dvh !important;
-  min-height: 0 !important;
-  padding: 104px 0 18px !important;
-}
-
-.sw-video-card {
-  position: relative !important;
-  top: auto !important;
-  height: min(620px, calc(100dvh - 122px)) !important;
-  min-height: 520px !important;
-}
-
-.sw-details-column {
-  position: relative !important;
-  top: auto !important;
-  max-height: calc(100dvh - 122px) !important;
-  padding-bottom: 18px !important;
-}
-
-/* The right panel scrolls without changing the reel */
-.sw-details-column {
-  overflow-y: auto !important;
-  overscroll-behavior: contain !important;
-}
-
-/* Mobile/tablet */
-@media (max-width: 920px) {
-  .sw-stories-header {
-    height: 74px;
-    padding: 0 14px;
-  }
-
-  .sw-header-left {
-    gap: 9px;
-  }
-
-  .sw-header-control {
-    width: 40px;
-    height: 40px;
-  }
-
-  .sw-header-logo-link {
-    width: 40px;
-    height: 40px;
-    border-radius: 11px;
-  }
-
-  .sw-header-copy {
-    gap: 0;
-  }
-
-  .sw-header-copy h1 {
-    max-width: calc(100vw - 158px);
-    overflow: hidden;
-    font-size: 18px;
-    line-height: 1.05;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  .sw-header-copy p {
-    display: none;
-  }
-
-  .sw-reel-page {
-    overflow-y: auto !important;
-  }
-
-  .sw-reel-shell {
-    width: min(760px, calc(100% - 28px)) !important;
-    height: auto !important;
-    min-height: 100dvh !important;
-    padding: 92px 0 18px !important;
-  }
-
-  .sw-video-card {
-    width: 100% !important;
-    height: min(76dvh, 720px) !important;
-    min-height: 600px !important;
-  }
-
-  .sw-details-column {
-    position: static !important;
-    width: 100% !important;
-    max-height: none !important;
-    overflow: visible !important;
-    padding-right: 0 !important;
-  }
-}
-
-@media (max-width: 560px) {
-  .sw-stories-header {
-    height: 66px;
-    padding: 0 10px;
-  }
-
-  .sw-header-control {
-    width: 38px;
-    height: 38px;
-  }
-
-  .sw-header-logo-link {
-    width: 38px;
-    height: 38px;
-  }
-
-  .sw-header-copy h1 {
-    max-width: calc(100vw - 144px);
-    font-size: 15px;
-  }
-
-  .sw-reel-shell {
-    width: 100% !important;
-    padding: 66px 0 0 !important;
-  }
-
-  .sw-video-card {
-    height: calc(100dvh - 66px) !important;
-    min-height: 0 !important;
-    border-radius: 0 !important;
-  }
-
-  .sw-details-column {
-    padding: 14px !important;
-  }
-}
-
+        /* ===== FINAL DESKTOP FIT OVERRIDE ===== */
+
+        @media (min-width: 851px) {
+          .fs-story {
+            padding: 9px 16px 62px !important;
+          }
+
+          .fs-content {
+            width: min(1320px, calc(100% - 32px)) !important;
+          }
+
+          .fs-heading {
+            margin-bottom: 12px !important;
+          }
+
+          .fs-heading h1 {
+            font-size: 32px !important;
+            line-height: 1 !important;
+          }
+
+          .fs-heading p {
+            margin-top: 6px !important;
+            font-size: 10px !important;
+          }
+
+          /* Video becomes narrower; right column gets more width */
+          .fs-main-grid {
+            --stage-height: clamp(360px, 52dvh, 408px);
+
+            grid-template-columns:
+              minmax(0, 1.18fr)
+              minmax(390px, 0.92fr) !important;
+
+            gap: 18px !important;
+            align-items: start !important;
+          }
+
+          .fs-video-card {
+            width: 100% !important;
+            height: var(--stage-height) !important;
+            min-height: 0 !important;
+          }
+
+          /* Both boxes must fit within the video's height */
+          .fs-right-column {
+            height: var(--stage-height) !important;
+            min-height: 0 !important;
+            display: grid !important;
+            grid-template-rows:
+              minmax(0, 1.45fr)
+              minmax(0, 1fr) !important;
+
+            gap: 12px !important;
+          }
+
+          .fs-product-card,
+          .fs-review-card {
+            width: 100% !important;
+            height: auto !important;
+            min-height: 0 !important;
+            max-height: none !important;
+            overflow: hidden !important;
+          }
+
+          /* Keep the order button inside the first box */
+          .fs-product-card {
+            display: flex !important;
+            flex-direction: column !important;
+            padding: 12px 14px !important;
+          }
+
+          .fs-product-card h2 {
+            margin: 6px 0 2px !important;
+            font-size: 17px !important;
+            line-height: 1.1 !important;
+          }
+
+          .fs-product-top > span {
+            padding: 4px 8px !important;
+            font-size: 7px !important;
+          }
+
+          .fs-product-top > strong {
+            font-size: 17px !important;
+          }
+
+          .fs-rating {
+            line-height: 1 !important;
+          }
+
+          .fs-description {
+            height: auto !important;
+            margin: 7px 0 !important;
+            display: -webkit-box;
+            overflow: hidden !important;
+            font-size: 8px !important;
+            line-height: 1.35 !important;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 2;
+          }
+
+          .fs-benefits {
+            gap: 5px 8px !important;
+            padding: 7px 9px !important;
+          }
+
+          .fs-benefits > div > span {
+            font-size: 13px !important;
+          }
+
+          .fs-benefits small {
+            font-size: 5.5px !important;
+          }
+
+          .fs-benefits strong {
+            font-size: 7px !important;
+          }
+
+          .fs-main-order {
+            height: 32px !important;
+            min-height: 32px !important;
+            margin-top: auto !important;
+            font-size: 9px !important;
+          }
+
+          /* Compact review box */
+          .fs-review-card {
+            padding: 8px 13px !important;
+            overflow-y: auto !important;
+            scrollbar-width: none;
+          }
+
+          .fs-review-card::-webkit-scrollbar {
+            display: none;
+          }
+
+          .fs-review-heading {
+            margin-bottom: 1px !important;
+          }
+
+          .fs-review-heading h3 {
+            font-size: 10px !important;
+          }
+
+          .fs-review-card article {
+            gap: 6px !important;
+            padding: 4px 0 !important;
+          }
+
+          .fs-review-card article img {
+            width: 22px !important;
+            height: 22px !important;
+          }
+
+          .fs-review-card article strong {
+            font-size: 6.5px !important;
+          }
+
+          .fs-review-card article p {
+            margin: 1px 0 !important;
+            font-size: 6px !important;
+            line-height: 1.2 !important;
+          }
+
+          .fs-review-card article time,
+          .fs-review-card article small {
+            font-size: 5px !important;
+          }
+
+          /* Make recommendation cards fit underneath */
+          .fs-more {
+            margin-top: 12px !important;
+          }
+
+          .fs-more > header {
+            margin-bottom: 6px !important;
+          }
+
+          .fs-more h3 {
+            font-size: 12px !important;
+          }
+
+          .fs-dish-row {
+            gap: 12px !important;
+          }
+
+          .fs-dish-card > div {
+            height: 70px !important;
+          }
+
+          .fs-dish-card h4 {
+            margin: 5px 8px 3px !important;
+            font-size: 8px !important;
+          }
+
+          .fs-dish-card footer {
+            padding: 0 8px 5px !important;
+            font-size: 6.5px !important;
+          }
+        }
+
+        /* ===== FONT SIZE + SCROLLABLE RIGHT COLUMN ===== */
+
+        @media (min-width: 851px) {
+          /* Keep the right-side cards inside the available height */
+          .fs-right-column {
+            height: var(--stage-height) !important;
+            min-height: 0 !important;
+
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 12px !important;
+
+            overflow-x: hidden !important;
+            overflow-y: auto !important;
+            overscroll-behavior: contain;
+
+            padding-right: 5px !important;
+
+            scrollbar-width: thin;
+            scrollbar-color: rgba(237, 23, 76, 0.45) transparent;
+          }
+
+          .fs-right-column::-webkit-scrollbar {
+            width: 4px;
+          }
+
+          .fs-right-column::-webkit-scrollbar-track {
+            background: transparent;
+          }
+
+          .fs-right-column::-webkit-scrollbar-thumb {
+            border-radius: 20px;
+            background: rgba(237, 23, 76, 0.45);
+          }
+
+          /* Let both cards use their actual content height */
+          .fs-product-card,
+          .fs-review-card {
+            width: 100% !important;
+            height: auto !important;
+            min-height: auto !important;
+            max-height: none !important;
+            flex: 0 0 auto !important;
+            overflow: visible !important;
+          }
+
+          .fs-product-card {
+            padding: 14px 15px !important;
+          }
+
+          .fs-review-card {
+            padding: 11px 14px !important;
+          }
+
+          /* Slight overall font increase */
+          .fs-navbar nav a,
+          .fs-nav-actions a {
+            font-size: 12px !important;
+          }
+
+          .fs-nav-actions input {
+            font-size: 11px !important;
+          }
+
+          .fs-heading h1 {
+            font-size: 34px !important;
+          }
+
+          .fs-heading p {
+            font-size: 11.5px !important;
+          }
+
+          .fs-creator strong {
+            font-size: 11px !important;
+          }
+
+          .fs-creator span {
+            font-size: 8.5px !important;
+          }
+
+          .fs-creator button {
+            font-size: 9.5px !important;
+          }
+
+          .fs-video-copy > strong {
+            font-size: 10px !important;
+          }
+
+          .fs-video-copy p {
+            font-size: 9.5px !important;
+          }
+
+          .fs-video-copy > div span {
+            font-size: 7.5px !important;
+          }
+
+          .fs-product-top > span {
+            font-size: 8px !important;
+          }
+
+          .fs-product-top > strong {
+            font-size: 18px !important;
+          }
+
+          .fs-product-card h2 {
+            font-size: 19px !important;
+          }
+
+          .fs-rating strong {
+            font-size: 10px !important;
+          }
+
+          .fs-rating small {
+            font-size: 8.5px !important;
+          }
+
+          .fs-description {
+            height: auto !important;
+            font-size: 9.5px !important;
+            line-height: 1.4 !important;
+          }
+
+          .fs-benefits small {
+            font-size: 6.5px !important;
+          }
+
+          .fs-benefits strong {
+            font-size: 7.5px !important;
+          }
+
+          .fs-main-order {
+            min-height: 34px !important;
+            height: 34px !important;
+            margin-top: 10px !important;
+            font-size: 10px !important;
+          }
+
+          .fs-review-heading h3 {
+            font-size: 11.5px !important;
+          }
+
+          .fs-review-heading button {
+            font-size: 7.5px !important;
+          }
+
+          .fs-review-card article {
+            padding: 6px 0 !important;
+          }
+
+          .fs-review-card article img {
+            width: 26px !important;
+            height: 26px !important;
+          }
+
+          .fs-review-card article strong {
+            font-size: 8px !important;
+          }
+
+          .fs-review-card article div > span {
+            font-size: 7px !important;
+          }
+
+          .fs-review-card article p {
+            margin: 2px 0 !important;
+            font-size: 7px !important;
+            line-height: 1.35 !important;
+          }
+
+          .fs-review-card article small,
+          .fs-review-card article time {
+            font-size: 6px !important;
+          }
+
+          .fs-more h3 {
+            font-size: 13px !important;
+          }
+
+          .fs-more header button {
+            font-size: 8.5px !important;
+          }
+
+          .fs-dish-card h4 {
+            font-size: 9px !important;
+          }
+
+          .fs-dish-card footer {
+            font-size: 7px !important;
+          }
+
+          .fs-sticky-product strong {
+            font-size: 10px !important;
+          }
+
+          .fs-sticky-product span {
+            font-size: 8px !important;
+          }
+        }
+
+        /* ===== LARGER RIGHT-COLUMN TEXT ===== */
+
+        @media (min-width: 851px) {
+          .fs-product-top > span {
+            font-size: 10px !important;
+          }
+
+          .fs-product-top > strong {
+            font-size: 22px !important;
+          }
+
+          .fs-product-card h2 {
+            font-size: 22px !important;
+            line-height: 1.15 !important;
+          }
+
+          .fs-rating > span {
+            font-size: 16px !important;
+          }
+
+          .fs-rating strong {
+            font-size: 12px !important;
+          }
+
+          .fs-rating small {
+            font-size: 10px !important;
+          }
+
+          .fs-description {
+            font-size: 11px !important;
+            line-height: 1.45 !important;
+          }
+
+          .fs-benefits small {
+            font-size: 7.5px !important;
+          }
+
+          .fs-benefits strong {
+            font-size: 9px !important;
+          }
+
+          .fs-benefits > div > span {
+            font-size: 15px !important;
+          }
+
+          .fs-main-order {
+            font-size: 11.5px !important;
+          }
+
+          .fs-review-heading h3 {
+            font-size: 14px !important;
+          }
+
+          .fs-review-heading button {
+            font-size: 9px !important;
+          }
+
+          .fs-review-card article strong {
+            font-size: 10.5px !important;
+          }
+
+          .fs-review-card article div > span {
+            font-size: 8.5px !important;
+          }
+
+          .fs-review-card article p {
+            font-size: 9px !important;
+            line-height: 1.4 !important;
+          }
+
+          .fs-review-card article small {
+            font-size: 8px !important;
+          }
+
+          .fs-review-card article time {
+            font-size: 7.5px !important;
+          }
+        }
+
+        /* Slightly larger review text */
+        .fs-review-heading h3 {
+          font-size: 15px !important;
+        }
+
+        .fs-review-heading button {
+          font-size: 9.5px !important;
+        }
+
+        .fs-review-card article strong {
+          font-size: 11.5px !important;
+        }
+
+        .fs-review-card article div > span {
+          font-size: 9px !important;
+        }
+
+        .fs-review-card article p {
+          font-size: 10px !important;
+          line-height: 1.45 !important;
+        }
+
+        .fs-review-card article small {
+          font-size: 8.5px !important;
+        }
+
+        .fs-review-card article time {
+          font-size: 8px !important;
+        }
+
+        /* ===== VISIBLE COMMENT DRAWER TEXT ===== */
+
+        .fs-comments-panel > header h3 {
+          font-size: 18px !important;
+        }
+
+        .fs-drawer-comments article strong {
+          font-size: 14px !important;
+          font-weight: 700 !important;
+        }
+
+        .fs-drawer-comments article small {
+          font-size: 10.5px !important;
+        }
+
+        .fs-drawer-comments article p {
+          margin: 7px 0 !important;
+          font-size: 13px !important;
+          line-height: 1.5 !important;
+        }
+
+        .fs-drawer-comments article button {
+          font-size: 11px !important;
+        }
+
+        .fs-drawer-comments article > span:last-child {
+          font-size: 22px !important;
+        }
+
+        .fs-comments-panel form input {
+          font-size: 13px !important;
+        }
+
+        .fs-comments-panel form button {
+          font-size: 12px !important;
+        }
+        /* ===== CLEAR, READABLE COMMENT TEXT ===== */
+
+        .fs-review-heading h3,
+        .fs-comments-panel > header h3 {
+          font-size: 20px !important;
+        }
+
+        .fs-review-heading button {
+          font-size: 12px !important;
+        }
+
+        /* User names */
+        .fs-review-card article strong,
+        .fs-drawer-comments article strong {
+          font-size: 16px !important;
+          font-weight: 750 !important;
+        }
+
+        /* Comment time */
+        .fs-review-card article time,
+        .fs-drawer-comments article small {
+          font-size: 11px !important;
+        }
+
+        /* Star rating */
+        .fs-review-card article div > span {
+          font-size: 13px !important;
+        }
+
+        /* Main comment text */
+        .fs-review-card article p,
+        .fs-drawer-comments article p {
+          margin: 7px 0 !important;
+          font-size: 15px !important;
+          line-height: 1.5 !important;
+        }
+
+        /* Like count and Reply */
+        .fs-review-card article small,
+        .fs-drawer-comments article button {
+          font-size: 12px !important;
+        }
+
+        /* Profile photos */
+        .fs-review-card article img,
+        .fs-drawer-comments article img,
+        .fs-drawer-comments .fs-avatar {
+          width: 40px !important;
+          height: 40px !important;
+        }
+
+        /* More breathing space between comments */
+        .fs-review-card article,
+        .fs-drawer-comments article {
+          padding: 14px 0 !important;
+          gap: 12px !important;
+        }
+
+        /* ===== BALANCED COMMENT TEXT SIZE ===== */
+
+        .fs-review-heading h3,
+        .fs-comments-panel > header h3 {
+          font-size: 16px !important;
+        }
+
+        .fs-review-heading button {
+          font-size: 10px !important;
+        }
+
+        .fs-review-card article strong,
+        .fs-drawer-comments article strong {
+          font-size: 13px !important;
+          font-weight: 700 !important;
+        }
+
+        .fs-review-card article time,
+        .fs-drawer-comments article small {
+          font-size: 9px !important;
+        }
+
+        .fs-review-card article div > span {
+          font-size: 10px !important;
+        }
+
+        .fs-review-card article p,
+        .fs-drawer-comments article p {
+          margin: 5px 0 !important;
+          font-size: 12px !important;
+          line-height: 1.4 !important;
+        }
+
+        .fs-review-card article small,
+        .fs-drawer-comments article button {
+          font-size: 9.5px !important;
+        }
+
+        .fs-review-card article img,
+        .fs-drawer-comments article img,
+        .fs-drawer-comments .fs-avatar {
+          width: 32px !important;
+          height: 32px !important;
+        }
+
+        .fs-review-card article,
+        .fs-drawer-comments article {
+          padding: 9px 0 !important;
+          gap: 9px !important;
+        }
+
+        /* ===== RECOMMENDATION CARDS — TARGET DESIGN ===== */
+
+        @media (min-width: 851px) {
+          .fs-more {
+            position: relative;
+            width: min(1180px, 100%) !important;
+            margin: 24px auto 0 !important;
+          }
+
+          .fs-more > header {
+            margin-bottom: 20px !important;
+          }
+
+          .fs-more h3 {
+            margin: 0 !important;
+            font-size: 19px !important;
+            font-weight: 800 !important;
+            letter-spacing: -0.3px !important;
+          }
+
+          .fs-more header button {
+            font-size: 12px !important;
+            font-weight: 700 !important;
+          }
+
+          .fs-dish-row {
+            display: grid !important;
+            grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+            gap: 22px !important;
+          }
+
+          .fs-dish-card {
+            width: 100% !important;
+            overflow: hidden !important;
+            border: 1px solid #dfe1e5 !important;
+            border-radius: 15px !important;
+            background: #ffffff !important;
+            box-shadow: 0 2px 8px rgba(25, 27, 35, 0.04) !important;
+          }
+
+          .fs-dish-card > div {
+            position: relative !important;
+            width: 100% !important;
+            height: 146px !important;
+            overflow: hidden !important;
+          }
+
+          .fs-dish-card img {
+            width: 100% !important;
+            height: 100% !important;
+            display: block !important;
+            object-fit: cover !important;
+            object-position: center !important;
+          }
+
+          .fs-dish-card > div span {
+            width: 34px !important;
+            height: 34px !important;
+            border: 2px solid #ed174c !important;
+            border-radius: 50% !important;
+            background: rgba(255, 255, 255, 0.94) !important;
+            color: #ed174c !important;
+            font-size: 11px !important;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.12) !important;
+          }
+
+          .fs-dish-card h4 {
+            margin: 14px 14px 9px !important;
+            overflow: hidden !important;
+            color: #161a25 !important;
+            font-size: 13px !important;
+            font-weight: 750 !important;
+            line-height: 1.2 !important;
+            text-overflow: ellipsis !important;
+            white-space: nowrap !important;
+          }
+
+          .fs-dish-card footer {
+            display: flex !important;
+            align-items: center !important;
+            justify-content: space-between !important;
+            padding: 0 14px 14px !important;
+            font-size: 11px !important;
+          }
+
+          .fs-dish-card footer span {
+            color: #323846 !important;
+            font-weight: 650 !important;
+          }
+
+          .fs-dish-card footer span::first-letter {
+            color: #f5b400 !important;
+          }
+
+          .fs-dish-card footer strong {
+            color: #ed174c !important;
+            font-size: 12px !important;
+            font-weight: 750 !important;
+          }
+
+          /* White circular carousel arrow */
+          .fs-more::after {
+            content: "›";
+            position: absolute;
+            top: 132px;
+            right: -17px;
+            z-index: 5;
+
+            display: grid;
+            place-items: center;
+
+            width: 38px;
+            height: 38px;
+
+            border: 1px solid #dfe1e5;
+            border-radius: 50%;
+
+            background: #ffffff;
+            color: #737985;
+
+            box-shadow: 0 3px 10px rgba(25, 27, 35, 0.12);
+
+            font-size: 23px;
+            line-height: 1;
+
+            pointer-events: none;
+          }
+        }
+
+        /* Only the video changes like an Instagram reel */
+        @media (min-width: 851px) {
+          .fs-feed {
+            height: calc(100dvh - 48px) !important;
+            overflow: hidden !important;
+            scroll-snap-type: none !important;
+          }
+
+          .fs-story {
+            min-height: 0 !important;
+            height: 100% !important;
+            overflow: hidden !important;
+            scroll-snap-align: none !important;
+          }
+
+          .fs-video-card {
+            overscroll-behavior: contain;
+            touch-action: pan-y;
+          }
+        }
+
+        /* ===== VIDEO-ONLY INSTAGRAM REEL ANIMATION ===== */
+
+        .fs-video-card {
+          position: relative;
+          overflow: hidden !important;
+          isolation: isolate;
+          background: #651329;
+        }
+
+        .fs-reel-frame {
+          position: absolute;
+          inset: 0;
+          width: 100%;
+          height: 100%;
+          overflow: hidden;
+          border-radius: inherit;
+          will-change: transform, opacity;
+          backface-visibility: hidden;
+          transform: translate3d(0, 0, 0);
+        }
+
+        .fs-reel-enter-next {
+          animation: fsReelEnterNext 460ms cubic-bezier(0.22, 1, 0.36, 1) both;
+        }
+
+        .fs-reel-enter-previous {
+          animation: fsReelEnterPrevious 460ms cubic-bezier(0.22, 1, 0.36, 1)
+            both;
+        }
+
+        @keyframes fsReelEnterNext {
+          from {
+            opacity: 0.82;
+            transform: translate3d(0, 100%, 0);
+          }
+
+          to {
+            opacity: 1;
+            transform: translate3d(0, 0, 0);
+          }
+        }
+
+        @keyframes fsReelEnterPrevious {
+          from {
+            opacity: 0.82;
+            transform: translate3d(0, -100%, 0);
+          }
+
+          to {
+            opacity: 1;
+            transform: translate3d(0, 0, 0);
+          }
+        }
+
+        .fs-right-column {
+          animation: fsDetailsRefresh 220ms ease both;
+        }
+
+        @keyframes fsDetailsRefresh {
+          from {
+            opacity: 0.76;
+          }
+
+          to {
+            opacity: 1;
+          }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .fs-reel-enter-next,
+          .fs-reel-enter-previous,
+          .fs-right-column {
+            animation: none !important;
+          }
+        }
+
+        /* ===== KEEP RECOMMENDATIONS ABOVE THE FIXED ORDER BAR ===== */
+
+        @media (min-width: 851px) {
+          .fs-feed {
+            height: calc(100dvh - 48px - 58px) !important;
+          }
+
+          .fs-story {
+            padding-bottom: 10px !important;
+          }
+        }
+
+        /* Compact layout for shorter laptop screens */
+        @media (min-width: 851px) and (max-height: 820px) {
+          .fs-heading {
+            margin-bottom: 8px !important;
+          }
+
+          .fs-heading h1 {
+            font-size: 30px !important;
+          }
+
+          .fs-heading p {
+            margin-top: 4px !important;
+          }
+
+          .fs-main-grid {
+            --stage-height: clamp(315px, 43dvh, 350px) !important;
+          }
+
+          .fs-more {
+            margin-top: 10px !important;
+          }
+
+          .fs-more > header {
+            margin-bottom: 7px !important;
+          }
+
+          .fs-dish-card > div {
+            height: 92px !important;
+          }
+
+          .fs-dish-card h4 {
+            margin: 7px 10px 4px !important;
+            font-size: 10px !important;
+          }
+
+          .fs-dish-card footer {
+            padding: 0 10px 7px !important;
+            font-size: 8px !important;
+          }
+
+          .fs-more::after {
+            top: 82px !important;
+          }
+        }
       `}</style>
     </main>
   );

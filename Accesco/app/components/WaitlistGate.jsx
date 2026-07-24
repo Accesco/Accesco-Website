@@ -5,15 +5,22 @@ import { useRouter } from 'next/navigation'
 import { BellRing } from 'lucide-react'
 import { isWaitlistRegistered } from '../../lib/waitlistService'
 
-// Gates an entire service area (Swadishtt, Grokly, InstaStyle) behind waitlist
-// registration, verified against Firestore (see waitlistService.isWaitlistRegistered)
-// rather than trusted from a local flag. There's still no server session here,
-// so this is a client-side nudge, not a hard security boundary.
 export default function WaitlistGate({ children }) {
   const router = useRouter()
-  const [status, setStatus] = useState('checking') // 'checking' | 'blocked' | 'allowed'
+
+  const [status, setStatus] = useState(
+    process.env.NODE_ENV === 'development'
+      ? 'allowed'
+      : 'checking'
+  )
 
   useEffect(() => {
+    // Allow all service pages when previewing locally with npm run dev.
+    if (process.env.NODE_ENV === 'development') {
+      setStatus('allowed')
+      return
+    }
+
     let cancelled = false
     let timeout
 
@@ -26,6 +33,7 @@ export default function WaitlistGate({ children }) {
       }
 
       setStatus('blocked')
+
       timeout = setTimeout(() => {
         router.push('/#waitlist')
       }, 2200)
@@ -33,7 +41,10 @@ export default function WaitlistGate({ children }) {
 
     return () => {
       cancelled = true
-      if (timeout) clearTimeout(timeout)
+
+      if (timeout) {
+        clearTimeout(timeout)
+      }
     }
   }, [router])
 
@@ -45,9 +56,6 @@ export default function WaitlistGate({ children }) {
     )
   }
 
-  // 'checking' (pre-effect, including SSR) and 'allowed' both render the real
-  // page — there's no server session to gate on, so a brief flash of gated
-  // content before the effect resolves is an accepted trade-off here.
   return children
 }
 
@@ -56,18 +64,30 @@ function WaitlistPrompt({ onGoNow }) {
     <div style={styles.backdrop}>
       <div style={styles.card}>
         <div style={styles.iconCircle}>
-          <BellRing size={28} color="#ffffff" strokeWidth={2.2} />
+          <BellRing
+            size={28}
+            color="#ffffff"
+            strokeWidth={2.2}
+          />
         </div>
 
-        <h2 style={styles.title}>Join the Waitlist First</h2>
+        <h2 style={styles.title}>
+          Join the Waitlist First
+        </h2>
 
         <p style={styles.message}>
           Please register on our waitlist to explore our services.
         </p>
 
-        <p style={styles.subtext}>Taking you there now…</p>
+        <p style={styles.subtext}>
+          Taking you there now…
+        </p>
 
-        <button type="button" style={styles.button} onClick={onGoNow}>
+        <button
+          type="button"
+          style={styles.button}
+          onClick={onGoNow}
+        >
           Go to Waitlist
         </button>
       </div>
@@ -78,6 +98,7 @@ function WaitlistPrompt({ onGoNow }) {
             opacity: 0;
             transform: translateY(10px) scale(0.98);
           }
+
           to {
             opacity: 1;
             transform: translateY(0) scale(1);
@@ -102,6 +123,7 @@ const styles = {
 
     background:
       'radial-gradient(circle at 50% 0%, rgba(197,0,98,0.16), transparent 60%), rgba(10,10,12,0.92)',
+
     backdropFilter: 'blur(6px)',
     WebkitBackdropFilter: 'blur(6px)',
   },
@@ -140,6 +162,7 @@ const styles = {
 
     background:
       'linear-gradient(135deg, #eb006b 0%, #af0052 55%, #6f0035 100%)',
+
     boxShadow: '0 12px 26px rgba(197,0,98,0.35)',
   },
 
