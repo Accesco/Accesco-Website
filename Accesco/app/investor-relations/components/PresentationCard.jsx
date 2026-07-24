@@ -11,6 +11,8 @@
     </article>
   );
 }*/
+import Image from 'next/image';
+
 export default function PresentationCard({ title, href }) {
   return (
     <article className="presentation-card deck-card">
@@ -21,10 +23,12 @@ export default function PresentationCard({ title, href }) {
         className="deck-link"
       >
         <div className="deck-preview-wrapper">
-          <img
+          <Image
             src="/images/corporate-deck-cover.png"
             alt={`${title} preview`}
             className="deck-cover"
+            width={1742}
+            height={931}
           />
 
           <div className="deck-overlay">

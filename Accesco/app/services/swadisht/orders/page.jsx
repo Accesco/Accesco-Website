@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import SwadishttHeader from '../components/SwadishttHeader';
 import { useSwadishtt } from '../contexts/SwadishttContext';
@@ -120,9 +121,11 @@ function OrderCard({ order, index, onReorder }) {
             <p className={styles.detailSectionLabel}>Items Ordered</p>
             {items.map((item, itemIdx) => (
               <div key={`${orderId}-${item.id || itemIdx}`} className={styles.detailItem}>
-                <img
+                <Image
                   src={item.image}
                   alt={item.name}
+                  width={48}
+                  height={48}
                   className={styles.detailItemImage}
                   onError={(e) => {
                     e.currentTarget.src = `https://placehold.co/52x52/262626/FAF9F6/png?text=${encodeURIComponent(item.name || 'Item')}`;

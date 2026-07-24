@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useSwadishtt } from '../contexts/SwadishttContext';
 import SwadishttHeader from '../components/SwadishttHeader';
@@ -175,9 +176,11 @@ function CartContent() {
               {cart.map((item, index) => (
                 <div key={`${item.id}-${index}`} className={styles.cartItem}>
                   <div className={styles.itemImage}>
-                    <img
+                    <Image
                       src={item.image}
                       alt={item.name}
+                      fill
+                      sizes="80px"
                       onError={(e) => {
                         e.target.src = `https://placehold.co/100x80/262626/FAF9F6/png?text=${encodeURIComponent(item.name)}`;
                       }}

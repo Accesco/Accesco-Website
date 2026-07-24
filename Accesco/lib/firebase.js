@@ -19,13 +19,4 @@ export const db      = getFirestore(app);
 export const storage = getStorage(app);
 export const auth    = getAuth(app);
 
-// Disable reCAPTCHA app verification for phone/email auth testing in non-production environments
-if (typeof window !== 'undefined') {
-  try {
-    auth.settings.appVerificationDisabledForTesting = true;
-  } catch (e) {
-    // Ignore setting errors in SSR
-  }
-}
-
 export default app;

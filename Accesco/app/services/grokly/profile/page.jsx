@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useMemo, useEffect, Suspense } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useGrokly } from '../contexts/GroklyContext';
@@ -138,7 +139,8 @@ function ReverseCommerceView({ orders, walletBalance, ecoHistory, formatDate, sh
               </div>
               {ret.items.map(item => (
                 <div key={item.id} style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                  <img src={item.image} alt={item.name} style={{ width: '36px', height: '36px', borderRadius: '8px', objectFit: 'cover', border: '1px solid #e5e7eb' }} onError={e => { e.target.src = `https://placehold.co/36x36/e8f5e9/0c831f?text=${item.name[0]}`; }} />
+                  {/* eslint-disable-next-line @next/next/no-img-element -- item.image comes from the product catalog's heterogeneous external hosts, not compatible with next/image's static remotePatterns allowlist */}
+                  <img src={item.image} alt={item.name} width={36} height={36} style={{ borderRadius: '8px', objectFit: 'cover', border: '1px solid #e5e7eb' }} onError={e => { e.target.src = `https://placehold.co/36x36/e8f5e9/0c831f?text=${item.name[0]}`; }} />
                   <div>
                     <p style={{ margin: 0, fontSize: '13px', fontWeight: 600, color: '#374151' }}>{item.name}</p>
                     <p style={{ margin: 0, fontSize: '11px', color: '#9ca3af' }}>{item.quantity} unit{item.quantity > 1 ? 's' : ''}</p>
@@ -162,7 +164,8 @@ function ReverseCommerceView({ orders, walletBalance, ecoHistory, formatDate, sh
                   </div>
                   {ret.items.map(item => (
                     <div key={item.id} style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                      <img src={item.image} alt={item.name} style={{ width: '36px', height: '36px', borderRadius: '8px', objectFit: 'cover', border: '1px solid #e5e7eb' }} onError={e => { e.target.src = `https://placehold.co/36x36/e8f5e9/0c831f?text=${item.name[0]}`; }} />
+                      {/* eslint-disable-next-line @next/next/no-img-element -- item.image comes from the product catalog's heterogeneous external hosts, not compatible with next/image's static remotePatterns allowlist */}
+                  <img src={item.image} alt={item.name} width={36} height={36} style={{ borderRadius: '8px', objectFit: 'cover', border: '1px solid #e5e7eb' }} onError={e => { e.target.src = `https://placehold.co/36x36/e8f5e9/0c831f?text=${item.name[0]}`; }} />
                       <div style={{ flex: 1 }}>
                         <p style={{ margin: 0, fontSize: '13px', fontWeight: 600, color: '#374151' }}>{item.name}</p>
                         <p style={{ margin: 0, fontSize: '11px', color: '#9ca3af' }}>{item.quantity} unit{item.quantity > 1 ? 's' : ''}</p>
@@ -791,7 +794,7 @@ function GroklyProfileInner() {
                                 const prod = getProductInfo(item.id);
                                 return (
                                   <div key={`${item.id}-${idx}`} className={styles.tinyThumbnailFrame}>
-                                    <img src={prod.image} alt={prod.name} />
+                                    <Image src={prod.image} alt={prod.name} width={28} height={28} />
                                   </div>
                                 );
                               })}
@@ -853,9 +856,11 @@ function GroklyProfileInner() {
                       return (
                         <div key={item.id} className={styles.detailItemRow}>
                           <div className={styles.detailItemThumb}>
-                            <img 
-                              src={prod.image} 
-                              alt={prod.name} 
+                            <Image
+                              src={prod.image}
+                              alt={prod.name}
+                              width={48}
+                              height={48}
                               onError={(e) => {
                                 e.target.src = 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=100&h=100&fit=crop';
                               }}
@@ -935,7 +940,7 @@ function GroklyProfileInner() {
                         return (
                           <div key={item.id} className={styles.detailItemRow}>
                             <div className={styles.detailItemThumb}>
-                              <img src={prod.image} alt={prod.name} />
+                              <Image src={prod.image} alt={prod.name} width={48} height={48} />
                             </div>
                             <div className={styles.detailItemInfo}>
                               <h4 className={styles.detailItemName}>{prod.name}</h4>

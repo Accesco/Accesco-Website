@@ -83,7 +83,8 @@ export default function InstaStyleOrdersPage() {
                 <div className={styles.orderMain}>
                   <div style={{ width: '80px', height: '80px', position: 'relative', borderRadius: '12px', overflow: 'hidden', border: '1px solid #eee' }}>
                     {order.items && order.items[0] && order.items[0].image ? (
-                      <Image src={order.items[0].image} alt="Product" fill style={{ objectFit: 'cover' }} />
+                      // eslint-disable-next-line @next/next/no-img-element -- order item image comes from the product catalog's heterogeneous external hosts, not compatible with next/image's static remotePatterns allowlist
+                      <img src={order.items[0].image} alt="Product" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                     ) : (
                       <div style={{ width: '100%', height: '100%', background: '#f4f4f4', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#111', fontWeight: 700 }}>INS</div>
                     )}

@@ -1,5 +1,6 @@
 "use client";
 import dynamic from "next/dynamic";
+import Image from "next/image";
 
 
 
@@ -318,7 +319,7 @@ function XpmIntroHeader() {
       </button>
 
       <div className="xpm-intro-brand">
-        <img src="/images/accesco_original.png" alt="Accesco Living" />
+        <Image src="/images/accesco_original.png" alt="Accesco Living" width={42} height={42} />
         <strong>Accesco Living</strong>
       </div>
 
@@ -397,7 +398,7 @@ export default function XpenseMeterPage() {
   <section className="xp-launch-page">
     <header className="xp-launch-topbar">
       <div className="xp-launch-brand">
-        <img src="/logo.png" alt="Accesco Living" />
+        <Image src="/logo.png" alt="Accesco Living" width={58} height={58} />
         <span>
           Accesco
           <br />
@@ -608,7 +609,7 @@ export default function XpenseMeterPage() {
         <section className="xp-shell">
           <div className="xp-home-top">
             <div className="xp-brand">
-              <img src="/logo.png" alt="Accesco Living" />
+              <Image src="/logo.png" alt="Accesco Living" width={42} height={42} />
               <span>
                 Accesco
                 <br />
@@ -646,10 +647,12 @@ export default function XpenseMeterPage() {
     <span>Free delivery on all orders</span>
   </div>
 
-  <img
+  <Image
     src="https://i.pinimg.com/736x/19/14/73/191473a355d06fcdde41e234744007cb.jpg"
     alt="Free delivery"
     className="xp-plus-delivery-img"
+    width={86}
+    height={58}
   />
 </div>
             </div>
@@ -721,7 +724,7 @@ export default function XpenseMeterPage() {
 
                     <div className="xp-img-row">
                       {order.images.map((image) => (
-                        <img src={image} alt="" key={image} />
+                        <Image src={image} alt="" key={image} width={38} height={38} />
                       ))}
                     </div>
 
@@ -741,7 +744,7 @@ export default function XpenseMeterPage() {
         <section className="xp-app">
           <aside className="xp-sidebar">
             <div className="xp-side-logo">
-              <img src="/logo.png" alt="Accesco Living" />
+              <Image src="/logo.png" alt="Accesco Living" width={72} height={72} />
               <strong>Accesco Living</strong>
             </div>
 
@@ -839,7 +842,7 @@ export default function XpenseMeterPage() {
                   ['Bread', '₹560', productImages.thali],
                 ].map(([name, price, image]) => (
                   <div key={name}>
-                    <img src={image} alt="" />
+                    <Image src={image} alt="" width={38} height={38} />
                     <span>{name}</span>
                     <strong>{price}</strong>
                   </div>
@@ -907,7 +910,7 @@ export default function XpenseMeterPage() {
         <section className="xp-app">
           <aside className="xp-sidebar">
             <div className="xp-side-logo">
-              <img src="/logo.png" alt="Accesco Living" />
+              <Image src="/logo.png" alt="Accesco Living" width={72} height={72} />
               <strong>Accesco Living</strong>
             </div>
 

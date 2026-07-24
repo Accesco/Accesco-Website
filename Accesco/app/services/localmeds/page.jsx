@@ -1,6 +1,7 @@
 'use client'
 
 
+import Image from 'next/image'
 import './localmeds.css'
 import JsonLd from '../../../components/JsonLd';
 const serviceSchema = {
@@ -36,7 +37,7 @@ export default function LocalMedsPage() {
       <nav className="lm-nav">
         <div className="lm-nav-inner">
           <div className="lm-nav-brand">
-            <img src="/images/localmeds-logo.png" alt="LocalMeds" className="lm-nav-logo" />
+            <Image src="/images/localmeds-logo.png" alt="LocalMeds" className="lm-nav-logo" width={37} height={36} />
             <span className="lm-nav-name">LocalMeds</span>
           </div>
           <span className="lm-coming-badge">Coming Soon</span>
@@ -47,7 +48,7 @@ export default function LocalMedsPage() {
       <section className="lm-hero">
         <div className="lm-hero-content">
           <div className="lm-logo-glow">
-            <img src="/images/localmeds-logo.png" alt="LocalMeds Logo" className="lm-hero-logo" />
+            <Image src="/images/localmeds-logo.png" alt="LocalMeds Logo" className="lm-hero-logo" width={110} height={110} />
           </div>
 
           <div className="lm-tag">🚀 Something amazing is coming</div>
@@ -80,7 +81,7 @@ export default function LocalMedsPage() {
 
       {/* Footer */}
       <footer className="lm-footer">
-        <img src="/images/localmeds-logo.png" alt="LocalMeds" className="lm-footer-logo" />
+        <Image src="/images/localmeds-logo.png" alt="LocalMeds" className="lm-footer-logo" width={49} height={48} />
         <p className="lm-footer-text">© 2026 LocalMeds. All rights reserved.</p>
         <p className="lm-footer-sub">Healthcare at your fingertips — coming soon.</p>
       </footer>

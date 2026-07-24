@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import Image from 'next/image';
 import AccescoHeader from '../../components/AccescoHeader';
 import './press.css';
 
@@ -247,17 +248,19 @@ export default function PressPage() {
               {pressReleases.map((release) => (
                 <article key={release.id} className={`press-card ${release.isFeatured ? 'featured' : ''}`}>
                   <div className="press-card-image-wrap">
-                    <img
+                    <Image
                       src={release.image}
                       alt={release.title}
                       className="press-card-image"
+                      fill
+                      sizes="(max-width: 768px) 100vw, 400px"
                       onError={(e) => {
                         e.currentTarget.src = '/images/banners/hero-main.jpg';
                       }}
                     />
                     {release.logo && (
                       <div className="pioneer-logo-badge">
-                        <img src={release.logo} alt="Publisher Logo" />
+                        <Image src={release.logo} alt="Publisher Logo" fill sizes="48px" />
                       </div>
                     )}
                   </div>

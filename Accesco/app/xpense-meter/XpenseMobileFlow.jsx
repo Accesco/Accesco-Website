@@ -3,6 +3,7 @@
 
 
 import { useEffect, useMemo, useState } from 'react';
+import Image from 'next/image';
 
 const productImages = {
   tomato:
@@ -317,7 +318,7 @@ function XpmIntroHeader() {
       </button>
 
       <div className="xpm-intro-brand">
-        <img src="/images/accesco_original.png" alt="Accesco Living" />
+        <Image src="/images/accesco_original.png" alt="Accesco Living" width={42} height={42} />
         <strong>Accesco Living</strong>
       </div>
 
@@ -446,10 +447,12 @@ export default function XpenseMobileFlow() {
     </div>
 
     <div className="xpm-rider-wrap">
-      <img
+      <Image
         src="/images/delivery_xpenseMeter.png"
         alt="Xpense Meter delivery rider"
         className="xpm-rider-img"
+        width={561}
+        height={633}
       />
     </div>
 
@@ -550,27 +553,36 @@ export default function XpenseMobileFlow() {
 
               <section className="xpm-products">
                 <article>
-                  <img
+                  <Image
                     src="https://images.unsplash.com/photo-1571771894821-ce9b6c11b08e?auto=format&fit=crop&w=300&q=80"
                     alt="Banana"
+                    width={300}
+                    height={52}
+                    style={{ width: '100%', height: '52px', objectFit: 'cover' }}
                   />
                   <b>Banana</b>
                   <span>₹45</span>
                 </article>
 
                 <article>
-                  <img
+                  <Image
                     src="https://images.unsplash.com/photo-1631452180519-c014fe946bc7?auto=format&fit=crop&w=300&q=80"
                     alt="Paneer"
+                    width={300}
+                    height={52}
+                    style={{ width: '100%', height: '52px', objectFit: 'cover' }}
                   />
                   <b>Paneer</b>
                   <span>₹120</span>
                 </article>
 
                 <article>
-                  <img
+                  <Image
                     src="https://images.unsplash.com/photo-1615485290382-441e4d049cb5?auto=format&fit=crop&w=300&q=80"
                     alt="Oats"
+                    width={300}
+                    height={52}
+                    style={{ width: '100%', height: '52px', objectFit: 'cover' }}
                   />
                   <b>Oats</b>
                   <span>₹99</span>
