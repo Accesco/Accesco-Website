@@ -43,7 +43,7 @@ export const products = [
       { name: 'Charcoal', hex: '#36454F', images: ['https://images.unsplash.com/photo-1544923246-77307dd654cb?w=600&h=800&fit=crop'] }
     ],
     images: [
-      { url: 'https://images.unsplash.com/photo-1544923246-77307dd654cb?w=600&h=800&fit=crop', alt: 'Sleek Wool Overcoat', isPrimary: true, order: 1 }
+      { url: 'https://plus.unsplash.com/premium_photo-1674719144570-0728faf14f96?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', alt: 'Sleek Wool Overcoat', isPrimary: true, order: 1 }
     ],
     description: 'A premium wool-blend overcoat with a tailored silhouette, perfect for layering during colder months.',
     material: '60% Wool, 40% Polyester',
@@ -817,7 +817,7 @@ export const products = [
       { name: 'Charcoal', hex: '#36454F', images: ['https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=600&h=800&fit=crop'] }
     ],
     images: [
-      { url: 'https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=600&h=800&fit=crop', alt: 'Premium Hoodie', isPrimary: true, order: 1 },
+      { url: 'https://images.unsplash.com/photo-1685354218016-3899c9ef79ad?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8N3x8aG9vZGllfGVufDB8fDB8fHww', alt: 'Premium Hoodie', isPrimary: true, order: 1 },
     ],
     description: 'Ultra-soft premium cotton-fleece hoodie with a relaxed fit. Features a kangaroo pocket and adjustable drawstring hood.',
     material: '80% Cotton, 20% Polyester Fleece',
@@ -1100,7 +1100,7 @@ export const products = [
       { name: 'Tan Brown', hex: '#B27A50', images: ['https://images.pexels.com/photos/1232459/pexels-photo-1232459.jpeg?w=600&h=800&fit=crop'] }
     ],
     images: [
-      { url: 'https://images.pexels.com/photos/1232459/pexels-photo-1232459.jpeg?w=600&h=800&fit=crop', alt: 'Leather Backpack', isPrimary: true, order: 1 }
+      { url: 'https://plus.unsplash.com/premium_photo-1678739395192-bfdd13322d34?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8bGVhdGhlciUyMGJhZ3xlbnwwfHwwfHx8MA%3D%3D', alt: 'Leather Backpack', isPrimary: true, order: 1 }
     ],
     description: 'Sleek, minimalist leather backpack featuring clean lines and a spacious laptop sleeve.',
     material: 'Genuine Cowhide Leather',
