@@ -511,6 +511,21 @@ function Story({
                   <Icon name="fullscreen" size={15} />
                 </button>
               </div>
+
+              <Link
+                href="/services/swadisht/cart"
+                className="fs-mobile-order-card"
+              >
+                <img src={dish.image} alt="" />
+                <span>
+                  <strong>{dish.title}</strong>
+                  <small>{dish.restaurant} &nbsp;•&nbsp; 30–35 mins</small>
+                </span>
+                <b>₹{dish.price}</b>
+                <em>
+                  Order Now <Icon name="arrow" size={15} />
+                </em>
+              </Link>
             </div>
 
             {commentsOpen && (
@@ -745,6 +760,14 @@ export default function FoodStoriesPage() {
     <main className="fs-page">
       <header className="fs-navbar">
         <div className="fs-navbar-inner">
+          <button
+            type="button"
+            className="fs-mobile-menu"
+            aria-label="Open menu"
+          >
+            ☰
+          </button>
+
           <Link href="/services/swadisht" className="fs-brand">
             <img src="/images/swadisht/swadisht_logo.JPG" alt="" />
             <strong>Swadishtt</strong>
@@ -765,9 +788,30 @@ export default function FoodStoriesPage() {
 
             <Link href="/services/swadisht/cart">
               <Icon name="bag" size={17} />
-              Cart
+              <span className="fs-cart-label">Cart</span>
             </Link>
           </div>
+
+          <button
+            type="button"
+            className="fs-mobile-bell"
+            aria-label="Notifications"
+          >
+            <svg
+              width="21"
+              height="21"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.8"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9" />
+              <path d="M10 21h4" />
+            </svg>
+          </button>
         </div>
       </header>
 
@@ -818,6 +862,32 @@ export default function FoodStoriesPage() {
           </Link>
         </div>
       </footer>
+
+      <nav className="fs-mobile-nav" aria-label="Swadishtt mobile navigation">
+        <Link href="/services/swadisht">
+          <span>⌂</span>
+          <small>Home</small>
+        </Link>
+        <Link href="/services/swadisht">
+          <span>⌕</span>
+          <small>Search</small>
+        </Link>
+        <Link
+          href="/services/swadisht/food-stories"
+          className="fs-mobile-nav-main"
+          aria-label="Discover"
+        >
+          +
+        </Link>
+        <Link href="/services/swadisht/orders">
+          <span>▣</span>
+          <small>Orders</small>
+        </Link>
+        <Link href="/profile">
+          <span>♙</span>
+          <small>Profile</small>
+        </Link>
+      </nav>
 
       <style jsx global>{`
         .fs-page,
@@ -2788,6 +2858,445 @@ export default function FoodStoriesPage() {
 
           .fs-more::after {
             top: 82px !important;
+          }
+        }
+
+        /* ===== SWADISHTT MOBILE DISCOVER ===== */
+
+        .fs-mobile-menu,
+        .fs-mobile-bell,
+        .fs-mobile-nav,
+        .fs-mobile-order-card {
+          display: none;
+        }
+
+        @media (max-width: 850px) {
+          html,
+          body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden !important;
+            background: #09090b;
+          }
+
+          .fs-page {
+            height: 100dvh;
+            background: #09090b;
+            color: #ffffff;
+          }
+
+          .fs-navbar {
+            z-index: 500;
+            height: 54px !important;
+            border: 0;
+            background: linear-gradient(
+              180deg,
+              rgba(190, 9, 61, 0.98),
+              rgba(145, 5, 45, 0.96)
+            );
+          }
+
+          .fs-navbar-inner {
+            width: 100% !important;
+            padding: 0 13px;
+          }
+
+          .fs-mobile-menu,
+          .fs-mobile-bell {
+            display: grid;
+            place-items: center;
+            width: 31px;
+            height: 31px;
+            padding: 0;
+            border: 0;
+            background: transparent;
+            color: #ffffff;
+            cursor: pointer;
+            font-size: 20px;
+          }
+
+          .fs-mobile-menu {
+            font-size: 0;
+          }
+
+          .fs-mobile-menu::before {
+            content: "☰";
+            font-size: 20px;
+            transform: scaleX(0.85);
+          }
+
+          .fs-mobile-bell {
+            margin-left: 4px;
+          }
+
+          .fs-mobile-bell svg {
+            display: block;
+          }
+
+          .fs-brand {
+            margin: 0 auto;
+            gap: 0;
+            color: #ffffff;
+          }
+
+          .fs-brand img {
+            display: none;
+          }
+
+          .fs-brand strong {
+            font-size: 18px;
+            font-weight: 800;
+            letter-spacing: 0.01em;
+          }
+
+          .fs-nav-actions {
+            margin-left: 0;
+            gap: 0;
+          }
+
+          .fs-nav-actions a {
+            width: 31px;
+            height: 31px;
+            padding: 0;
+            justify-content: center;
+            color: #ffffff;
+          }
+
+          .fs-cart-label {
+            display: none;
+          }
+
+          .fs-feed {
+            height: calc(100dvh - 54px - 56px) !important;
+            overflow: hidden !important;
+            background: #09090b;
+            scroll-snap-type: none;
+          }
+
+          .fs-story {
+            width: 100%;
+            height: 100% !important;
+            min-height: 0 !important;
+            padding: 0 !important;
+            overflow: hidden;
+            background: #09090b;
+          }
+
+          .fs-content {
+            width: 100% !important;
+            height: 100%;
+          }
+
+          .fs-heading,
+          .fs-right-column,
+          .fs-more,
+          .fs-sticky-bar {
+            display: none !important;
+          }
+
+          .fs-main-grid {
+            display: block !important;
+            width: 100%;
+            height: 100%;
+          }
+
+          .fs-video-card {
+            width: 100%;
+            height: 100% !important;
+            min-height: 0 !important;
+            border: 0 !important;
+            border-radius: 0 !important;
+            background: #18070c;
+            box-shadow: none !important;
+            touch-action: pan-y;
+          }
+
+          .fs-reel-frame,
+          .fs-video-card video,
+          .fs-video-overlay {
+            border-radius: 0 !important;
+          }
+
+          .fs-video-card video {
+            object-position: center center;
+          }
+
+          .fs-video-overlay {
+            background:
+              linear-gradient(
+                180deg,
+                rgba(95, 0, 27, 0.35) 0%,
+                transparent 25%,
+                transparent 46%,
+                rgba(22, 0, 7, 0.9) 82%,
+                #100006 100%
+              ),
+              linear-gradient(90deg, rgba(77, 0, 22, 0.14), transparent);
+          }
+
+          .fs-creator {
+            top: 12px;
+            left: 14px;
+            right: 14px;
+            gap: 9px;
+            min-height: 52px;
+            padding: 8px 10px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            background: rgba(169, 12, 55, 0.78);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+          }
+
+          .fs-creator img {
+            width: 32px;
+            height: 32px;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+          }
+
+          .fs-creator strong {
+            color: #ffffff;
+            font-size: 12px !important;
+          }
+
+          .fs-creator span {
+            color: rgba(255, 255, 255, 0.72);
+            font-size: 8px !important;
+          }
+
+          .fs-creator button {
+            min-width: 58px;
+            height: 27px;
+            border: 0;
+            border-radius: 16px;
+            background: #ed174c;
+            color: #ffffff;
+            font-size: 9px !important;
+          }
+
+          .fs-grid-icon {
+            color: #ffffff;
+          }
+
+          .fs-reel-actions {
+            right: 14px;
+            bottom: 192px;
+            gap: 13px;
+          }
+
+          .fs-reel-actions button > span {
+            width: 40px;
+            height: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.24);
+            background: rgba(168, 20, 55, 0.82);
+            color: #ffffff;
+            backdrop-filter: blur(8px);
+          }
+
+          .fs-reel-actions button b {
+            margin-top: 3px;
+            color: #ffffff;
+            font-size: 8px;
+          }
+
+          .fs-video-copy {
+            right: 70px;
+            bottom: 137px;
+            left: 14px;
+          }
+
+          .fs-video-copy > strong {
+            display: inline-flex;
+            width: fit-content;
+            padding: 7px 11px;
+            border-radius: 18px;
+            background: rgba(213, 15, 67, 0.92);
+            color: #ffffff;
+            font-size: 17px !important;
+            line-height: 1.1;
+          }
+
+          .fs-video-copy p {
+            margin: 8px 0 7px;
+            color: #ffffff;
+            font-size: 11px !important;
+            line-height: 1.35;
+          }
+
+          .fs-video-copy > div {
+            gap: 6px;
+          }
+
+          .fs-video-copy > div span {
+            padding: 4px 7px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.12);
+            color: #ffffff;
+            font-size: 8px !important;
+          }
+
+          .fs-video-controls {
+            display: none !important;
+          }
+
+          .fs-mobile-order-card {
+            position: absolute;
+            right: 12px;
+            bottom: 12px;
+            left: 12px;
+            z-index: 15;
+
+            display: grid;
+            grid-template-columns: 38px minmax(0, 1fr) auto;
+            grid-template-rows: auto auto;
+            align-items: center;
+            gap: 2px 9px;
+
+            min-height: 90px;
+            padding: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 13px;
+
+            background: rgba(25, 20, 22, 0.94);
+            color: #ffffff;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.36);
+            text-decoration: none;
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+          }
+
+          .fs-mobile-order-card > img {
+            grid-row: 1 / 2;
+            width: 38px;
+            height: 38px;
+            border-radius: 8px;
+            object-fit: cover;
+          }
+
+          .fs-mobile-order-card > span {
+            min-width: 0;
+          }
+
+          .fs-mobile-order-card > span strong,
+          .fs-mobile-order-card > span small {
+            display: block;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+          }
+
+          .fs-mobile-order-card > span strong {
+            font-size: 11px;
+          }
+
+          .fs-mobile-order-card > span small {
+            margin-top: 4px;
+            color: rgba(255, 255, 255, 0.62);
+            font-size: 8px;
+          }
+
+          .fs-mobile-order-card > b {
+            align-self: start;
+            color: #ffffff;
+            font-size: 13px;
+          }
+
+          .fs-mobile-order-card > em {
+            grid-column: 1 / -1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            height: 34px;
+            margin-top: 4px;
+            border-radius: 8px;
+            background: #ed174c;
+            color: #ffffff;
+            font-size: 11px;
+            font-style: normal;
+            font-weight: 750;
+          }
+
+          .fs-mobile-nav {
+            position: fixed;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            z-index: 1000;
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            align-items: center;
+            height: calc(56px + env(safe-area-inset-bottom));
+            padding: 4px 10px env(safe-area-inset-bottom);
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            background: #09090b;
+          }
+
+          .fs-mobile-nav a {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 2px;
+            color: #ffffff;
+            text-decoration: none;
+          }
+
+          .fs-mobile-nav a > span {
+            font-size: 20px;
+            line-height: 1;
+          }
+
+          .fs-mobile-nav a > small {
+            font-size: 8px;
+            letter-spacing: 0.08em;
+          }
+
+          .fs-mobile-nav .fs-mobile-nav-main {
+            width: 39px;
+            height: 39px;
+            margin: 0 auto;
+            border-radius: 50%;
+            background: #ed174c;
+            box-shadow: 0 7px 20px rgba(237, 23, 76, 0.35);
+            font-size: 27px;
+            line-height: 1;
+          }
+
+          .fs-comments-backdrop {
+            align-items: stretch;
+            background: #09090b;
+          }
+
+          .fs-comments-panel {
+            width: 100%;
+            height: 100%;
+            max-height: none;
+            border-left: 0;
+            background: #09090b;
+            color: #ffffff;
+          }
+
+          .fs-comments-panel > header,
+          .fs-comments-panel form {
+            border-color: rgba(255, 255, 255, 0.1);
+            background: #101012;
+          }
+
+          .fs-drawer-comments article {
+            border-color: rgba(255, 255, 255, 0.08);
+          }
+
+          .fs-drawer-comments article p,
+          .fs-drawer-comments article small,
+          .fs-drawer-comments article button {
+            color: #a8a8af !important;
+          }
+
+          .fs-comments-panel form input {
+            border-color: #29292e;
+            background: #17171a;
+            color: #ffffff;
           }
         }
       `}</style>
