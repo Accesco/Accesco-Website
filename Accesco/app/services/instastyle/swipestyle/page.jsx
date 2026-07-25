@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState, useRef } from 'react';
+import { useMemo, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { products } from '@/lib/mockData';
@@ -107,11 +107,14 @@ export default function SwipeStylePage() {
   const [cart, setCart] = useState([]);
   const [lastAction, setLastAction] = useState(null); // 'added' | 'removed' | 'error' | null
   const [showCartMobile, setShowCartMobile] = useState(false);
+  const [history, setHistory] = useState([]);
 
   const current = swipePool[index % swipePool.length];
   const next = swipePool[(index + 1) % swipePool.length];
 
   const handleSwipe = (direction, product) => {
+    if (!product) return;
+    setHistory((prev) => [...prev.slice(-9), { index, direction, product }]);
     if (direction === 'right') {
       try {
         const defaultSize = product.sizes?.[0] || 'M';
@@ -161,6 +164,28 @@ export default function SwipeStylePage() {
       setIndex((prev) => (prev + 1) % swipePool.length);
       setTimeout(() => setLastAction(null), 1400);
     }, 80);
+  };
+
+
+  const handleUndo = () => {
+    const last = history[history.length - 1];
+    if (!last) return;
+
+    if (last.direction === 'right') {
+      const addedItem = cart.find((item) => item.id === last.product.id);
+      if (addedItem) {
+        globalRemoveFromCart(
+          addedItem.id,
+          addedItem.selectedSize,
+          addedItem.selectedColor
+        );
+        setCart((prev) => prev.filter((item) => item.id !== addedItem.id));
+      }
+    }
+
+    setIndex(last.index);
+    setHistory((prev) => prev.slice(0, -1));
+    setLastAction(null);
   };
 
   const removeFromCart = (id) => {
@@ -261,86 +286,99 @@ export default function SwipeStylePage() {
       </AnimatePresence>
 
       <main className={styles.layout}>
-        {/* Swipe Deck */}
-        <section className={styles.deckSection}>
-          <div className={styles.deckHint}>
-            <span className={styles.hintLeft}>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
-              </svg>
-              Left — Skip
-            </span>
-            <span className={styles.hintRight}>
-              Right — Add
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/>
-              </svg>
-            </span>
+        <section className={styles.swipeStage}>
+          <div className={styles.heroCopy}>
+            <h1>
+              Find your
+              <span>perfect style,</span>
+              one swipe
+              <br />at a time.
+            </h1>
+            <p>
+              Swipe right to add what you love, left to skip. Building your cart has never been this fun!
+            </p>
           </div>
 
-          <div className={styles.cardContainer}>
-            {/* Background card (next) */}
-            {next && (
-              <div className={styles.cardBehindWrapper}>
-                <SwipeCard 
-                  key={`behind-${next.id}`} 
-                  product={next} 
-                  onSwipe={() => {}} 
-                  isTop={false} 
-                  isInCart={!!cart.find((p) => p.id === next.id)}
-                />
-              </div>
-            )}
-            {/* Top card (current) */}
-            <AnimatePresence mode="popLayout">
-              {current && (
-                <SwipeCard
-                  key={current.id}
-                  product={current}
-                  onSwipe={handleSwipe}
-                  isTop={true}
-                  isInCart={!!cart.find((p) => p.id === current.id)}
-                />
-              )}
-            </AnimatePresence>
-          </div>
-
-          <div className={styles.actions}>
-            <button
-              className={styles.skipBtn}
-              onClick={() => handleSwipe('left', current)}
-              aria-label={current && cart.find((p) => p.id === current.id) ? "Remove item from cart" : "Skip item"}
-            >
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" className={styles.btnIcon} strokeLinecap="round" strokeLinejoin="round">
-                {current && cart.find((p) => p.id === current.id) ? (
-                  <>
-                    <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/>
-                  </>
-                ) : (
-                  <path d="M18 6L6 18M6 6l12 12" />
-                )}
-              </svg>
-            </button>
-            <div className={styles.actionCenter}>
-              <p className={styles.cardCount}>{index + 1} / {swipePool.length}</p>
+          <div className={styles.deckArea}>
+            <div className={styles.remainingPill}>
+              <span className={styles.sparkle}>♢</span>
+              {swipePool.length - (index % swipePool.length)} remaining
             </div>
+
             <button
-              className={styles.addBtn}
-              onClick={() => handleSwipe('right', current)}
-              aria-label="Add to cart"
+              className={`${styles.sideAction} ${styles.sideSkip}`}
+              onClick={() => handleSwipe('left', current)}
+              aria-label="Skip item"
             >
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" className={styles.btnIcon} strokeLinecap="round" strokeLinejoin="round">
-                <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
-                <line x1="3" y1="6" x2="21" y2="6"/>
-                <path d="M16 10a4 4 0 0 1-8 0"/>
-              </svg>
+              <img src="/images/swipestyle/skip-circle.png" alt="" />
             </button>
+            <img
+              className={`${styles.arrow} ${styles.arrowLeft}`}
+              src="/images/swipestyle/arrow-left.png"
+              alt=""
+            />
+
+            <div className={styles.cardContainer}>
+              {next && (
+                <div className={styles.cardBehindWrapper}>
+                  <SwipeCard
+                    key={`behind-${next.id}`}
+                    product={next}
+                    onSwipe={() => {}}
+                    isTop={false}
+                    isInCart={!!cart.find((p) => p.id === next.id)}
+                  />
+                </div>
+              )}
+              <AnimatePresence mode="popLayout">
+                {current && (
+                  <SwipeCard
+                    key={current.id}
+                    product={current}
+                    onSwipe={handleSwipe}
+                    isTop={true}
+                    isInCart={!!cart.find((p) => p.id === current.id)}
+                  />
+                )}
+              </AnimatePresence>
+            </div>
+
+            <img
+              className={`${styles.arrow} ${styles.arrowRight}`}
+              src="/images/swipestyle/arrow-right.png"
+              alt=""
+            />
+            <button
+              className={`${styles.sideAction} ${styles.sideAdd}`}
+              onClick={() => handleSwipe('right', current)}
+              aria-label="Add item"
+            >
+              <img src="/images/swipestyle/bag-icon.png" alt="" />
+            </button>
+
+            <div className={styles.actions}>
+              <button className={styles.skipBtn} onClick={() => handleSwipe('left', current)} aria-label="Skip item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" className={styles.btnIcon} strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M18 6L6 18M6 6l12 12" />
+                </svg>
+              </button>
+              <button className={styles.undoBtn} onClick={handleUndo} disabled={!history.length} aria-label="Undo last swipe">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" className={styles.undoIcon} strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M9 7H4v5" />
+                  <path d="M4 12a8 8 0 1 0 2.3-5.7L4 8" />
+                </svg>
+              </button>
+              <button className={styles.addBtn} onClick={() => handleSwipe('right', current)} aria-label="Add to cart">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" className={styles.btnIcon} strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="20 6 9 17 4 12" />
+                </svg>
+              </button>
+            </div>
+            <p className={styles.swipeHelper}>♢ Swipe to discover more styles</p>
           </div>
         </section>
 
-        {/* Cart Sidebar */}
         <aside className={`${styles.cartSection} ${showCartMobile ? styles.cartOpen : ''}`}>
-          {/* Mobile close */}
           <button className={styles.cartClose} onClick={() => setShowCartMobile(false)} aria-label="Close cart">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
@@ -349,9 +387,7 @@ export default function SwipeStylePage() {
 
           <div className={styles.cartHeader}>
             <h3>
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/>
-              </svg>
+              <img src="/images/swipestyle/bag-icon.png" alt="" />
               Cart
             </h3>
             <span className={styles.cartCount}>{cart.length} items</span>
@@ -360,91 +396,44 @@ export default function SwipeStylePage() {
           <div className={styles.cartItems}>
             {cart.length === 0 ? (
               <div className={styles.emptyCart}>
-                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" style={{ opacity: 0.3 }}>
-                  <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/>
-                </svg>
+                <img src="/images/swipestyle/bag-icon.png" alt="" />
                 <p>Swipe right to add items</p>
-                <p style={{ fontSize: '0.75rem', opacity: 0.5 }}>Swipe left to skip items</p>
+                <span>Swipe left to skip items</span>
               </div>
             ) : (
               <AnimatePresence>
                 {cart.map((item) => (
-                  <motion.div
-                    key={item.id}
-                    className={styles.cartItem}
-                    initial={{ opacity: 0, x: 30 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: -30, height: 0, marginBottom: 0, padding: 0 }}
-                    transition={{ duration: 0.25 }}
-                    layout="position"
-                  >
-                    <div className={styles.cartItemMain}>
-                      <img src={item.images[0].url} alt={item.name} className={styles.cartThumb} />
-                      <div className={styles.cartItemInfo}>
-                        <p className={styles.cartItemName}>{item.name}</p>
-                        <p className={styles.cartItemBrand}>{item.brand}</p>
-                        <p className={styles.cartItemPrice}>
-                          ₹{(item.discountedPrice || item.price).toLocaleString('en-IN')}
-                        </p>
-                      </div>
-                      <button
-                        className={styles.cartRemoveBtn}
-                        onClick={() => removeFromCart(item.id)}
-                        aria-label={`Remove ${item.name}`}
-                      >
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
-                        </svg>
-                      </button>
-                    </div>
-                    
-                    {/* Size and Color Selectors */}
-                    <div className={styles.cartItemSelectors}>
-                      <div className={styles.selectorField}>
-                        <label>Size</label>
-                        <select
-                          value={item.selectedSize || 'Free Size'}
-                          onChange={(e) => updateCartItem(item.id, 'selectedSize', e.target.value)}
-                        >
-                          {(item.sizes && item.sizes.length > 0 ? item.sizes : ['Free Size']).map((sz) => (
-                            <option key={sz} value={sz}>{sz}</option>
-                          ))}
+                  <motion.div key={item.id} className={styles.cartItem} initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -30 }} layout="position">
+                    <img src={item.images[0].url} alt={item.name} className={styles.cartThumb} />
+                    <div className={styles.cartItemInfo}>
+                      <p className={styles.cartItemBrand}>{item.brand}</p>
+                      <p className={styles.cartItemName}>{item.name}</p>
+                      <p className={styles.cartItemPrice}>₹{(item.discountedPrice || item.price).toLocaleString('en-IN')}</p>
+                      <div className={styles.cartItemSelectors}>
+                        <select value={item.selectedSize || 'Free Size'} onChange={(e) => updateCartItem(item.id, 'selectedSize', e.target.value)}>
+                          {(item.sizes?.length ? item.sizes : ['Free Size']).map((size) => <option key={size}>{size}</option>)}
                         </select>
-                      </div>
-                      <div className={styles.selectorField}>
-                        <label>Color</label>
-                        <select
-                          value={item.selectedColor || 'Default'}
-                          onChange={(e) => updateCartItem(item.id, 'selectedColor', e.target.value)}
-                        >
-                          {(item.colors && item.colors.length > 0 ? item.colors : ['Default']).map((col) => {
-                            const name = typeof col === 'string' ? col : col.name;
-                            return <option key={name} value={name}>{name}</option>;
+                        <select value={item.selectedColor || 'Default'} onChange={(e) => updateCartItem(item.id, 'selectedColor', e.target.value)}>
+                          {(item.colors?.length ? item.colors : ['Default']).map((color) => {
+                            const name = typeof color === 'string' ? color : color.name;
+                            return <option key={name}>{name}</option>;
                           })}
                         </select>
                       </div>
                     </div>
+                    <button className={styles.cartRemoveBtn} onClick={() => removeFromCart(item.id)} aria-label={`Remove ${item.name}`}>×</button>
                   </motion.div>
                 ))}
               </AnimatePresence>
             )}
           </div>
 
-          {cart.length > 0 && (
-            <div className={styles.cartFooter}>
-              <div className={styles.cartTotal}>
-                <span>Total</span>
-                <span>₹{cartTotal.toLocaleString('en-IN')}</span>
-              </div>
-              <button 
-                onClick={handleProceedToCheckout} 
-                className={styles.ctaLink} 
-                style={{ border: 'none', cursor: 'pointer', width: '100%' }}
-              >
-                Complete Cart & Checkout
-              </button>
-            </div>
-          )}
+          <div className={styles.cartFooter}>
+            <div className={styles.cartTotal}><span>Total</span><strong>₹{cartTotal.toLocaleString('en-IN')}</strong></div>
+            <button onClick={handleProceedToCheckout} className={styles.ctaLink} disabled={!cart.length}>
+              View Cart <span>›</span>
+            </button>
+          </div>
         </aside>
       </main>
 
