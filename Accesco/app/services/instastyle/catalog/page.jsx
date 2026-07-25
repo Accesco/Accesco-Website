@@ -9,12 +9,72 @@ import {
   sortProducts,
   getProductCategoryIds,
 } from "@/lib/mockData";
+import {
+  LayoutGrid,
+  UserRound,
+  PersonStanding,
+  Baby,
+  ShoppingBag,
+} from "lucide-react";
 import styles from "./catalog.module.css";
 import Select from "@/components/instastyle/Select";
+const categoryIcons = {
+  all: <LayoutGrid size={18} strokeWidth={1.8} />,
+  men: <UserRound size={18} strokeWidth={1.8} />,
+  women: <PersonStanding size={18} strokeWidth={1.8} />,
+  kids: <Baby size={18} strokeWidth={1.8} />,
+  accessories: <ShoppingBag size={18} strokeWidth={1.8} />,
+};
+const heroContent = {
+  all: {
+    kicker: "The Studio",
+    title: "Fashion, Refined",
+    description:
+      "A refined selection where quality, craftsmanship, and style come together.",
+    tag: "Crafted for Every Occasion Designed for Everyone",
+    image: "/images/instastyle/hero-all.jpg",
+  },
 
+  men: {
+    kicker: "The Curation",
+    title: "Shop the Edit",
+    description:
+      "A meticulously curated selection of premium pieces, balanced by timeless design and superior craftsmanship.",
+    tag: "Curated with Care. Chosen for you.",
+    image: "/images/instastyle/hero-men.jpg",
+  },
+
+  women: {
+    kicker: "The Collection",
+    title: "Everyday Luxe",
+    description:
+      "From everyday essentials to statement pieces, discover styles crafted with refined details and timeless elegance.",
+    tag: "Thoughtfully Chosen Just for you.",
+    image: "/images/instastyle/hero-women.jpg",
+  },
+
+  kids: {
+    kicker: "For Little Ones",
+    title: "Grow in Style",
+    description:
+      "Premium essentials thoughtfully chosen for comfort, confidence, and every new adventure.",
+    tag: "Made for Little Moments",
+    image: "/images/instastyle/hero-kids.jpg",
+  },
+
+  accessories: {
+    kicker: "The Details",
+    title: "Pure Elegance",
+    description:
+      "A exceptional accessories crafted to add character, refinement, and lasting style.",
+    tag: "Carefully Chosen with Care",
+    image: "/images/instastyle/hero-accessories.jpg",
+  },
+};
 // ✅ Inner component that uses useSearchParams
 function CatalogContent() {
   const searchParams = useSearchParams();
+
   const [allProducts, setAllProducts] = useState(products);
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [sortBy, setSortBy] = useState("newest");
@@ -24,6 +84,10 @@ function CatalogContent() {
     priceRange: [0, 10000],
   });
   const [showFilters, setShowFilters] = useState(false);
+
+  // ✅ AFTER selectedCategory exists
+  const currentHero =
+    heroContent[selectedCategory] || heroContent.all;
 
   useEffect(() => {
     const category = searchParams.get("category");
@@ -118,7 +182,7 @@ function CatalogContent() {
     });
 
     return sortProducts(filtered, sortBy);
-  }, [selectedCategory, filters, sortBy]);
+}, [allProducts, selectedCategory, filters, sortBy]);
 
   const activeFilterCount =
     filters.size.length + (filters.priceRange[1] < 10000 ? 1 : 0);
@@ -143,45 +207,93 @@ function CatalogContent() {
   return (
     <div className={styles.catalogPage}>
       {/* Header */}
-      <div className={styles.catalogHeader}>
-        <div className={styles.container}>
-          <p className={styles.kicker}>The Curation</p>
-          <h1>Shop the Edit</h1>
-          <p className={styles.description}>
-            A meticulously curated selection of premium pieces, balanced by
-            timeless design and superior craftsmanship.
-          </p>
-          <div className={styles.headerInfo}>
-            <span className={styles.countInfo}>
-              {displayedProducts.length} items found
-            </span>
-          </div>
-        </div>
-      </div>
+     <div
+  className={styles.catalogHeader}
+  style={{
+    backgroundImage: `
+     
+      url("${currentHero.image}")
+    `,
+  }}
+>
+  <div className={styles.container}>
+    <p className={styles.kicker}>{currentHero.kicker}</p>
 
-      {/* Category Tabs */}
-      <div className={styles.categoryTabs}>
-        <div className={styles.container}>
-          <div className={styles.tabsWrapper}>
-            <button
-              className={`${styles.tab} ${selectedCategory === "all" ? styles.active : ""}`}
-              onClick={() => setSelectedCategory("all")}
-            >
-              Everything
-            </button>
-            {categories.map((cat) => (
-              <button
-                key={cat.id}
-                className={`${styles.tab} ${selectedCategory === cat.id ? styles.active : ""}`}
-                onClick={() => setSelectedCategory(cat.id)}
-              >
-                {cat.name}
-              </button>
-            ))}
-          </div>
-        </div>
-      </div>
+    <h1>{currentHero.title}</h1>
 
+    <p className={styles.description}>
+      {currentHero.description}
+    </p>
+
+    <div className={styles.headerInfo}>
+      <span className={styles.heroTag}>
+        {currentHero.tag}
+      </span>
+
+      <span className={styles.countInfo}>
+        {displayedProducts.length} items found
+      </span>
+    </div>
+  </div>
+</div>
+      
+
+      {/* Catalog Navigation */}
+<div className={styles.categoryTabs}>
+  <div className={styles.catalogNav}>
+    <div className={styles.catalogNavCategories}>
+      <button
+        className={`${styles.catalogNavItem} ${
+          selectedCategory === "all" ? styles.active : ""
+        }`}
+        onClick={() => setSelectedCategory("all")}
+      >
+        <span className={styles.navIcon}>⌘</span>
+        <span>Everything</span>
+      </button>
+
+      {categories.map((cat) => (
+        <button
+          key={cat.id}
+          className={`${styles.catalogNavItem} ${
+            selectedCategory === cat.id ? styles.active : ""
+          }`}
+          onClick={() => setSelectedCategory(cat.id)}
+        >
+          <span className={styles.navIcon}>
+  {categoryIcons[cat.id]}
+</span>
+          <span>{cat.name}</span>
+        </button>
+      ))}
+    </div>
+
+    <div className={styles.catalogNavActions}>
+      <button
+        type="button"
+        className={styles.refineNavButton}
+        onClick={() => setShowFilters(!showFilters)}
+      >
+        <span>☷</span>
+        Refine
+      </button>
+
+      <div className={styles.navSort}>
+        <Select
+          value={sortBy}
+          options={[
+            { value: "newest", label: "Newest" },
+            { value: "price-low-high", label: "Price: Low to High" },
+            { value: "price-high-low", label: "Price: High to Low" },
+            { value: "rating", label: "Top Rated" },
+          ]}
+          onChange={setSortBy}
+          placeholder="Sort by"
+        />
+      </div>
+    </div>
+  </div>
+</div>  
       <div className={styles.container}>
         <div className={styles.catalogContent}>
           {/* Filters Sidebar */}
@@ -249,19 +361,7 @@ function CatalogContent() {
                   ? ` • ${activeFilterCount} active filters`
                   : ""}
               </div>
-              <div className={styles.sortWrapper}>
-                <Select
-                  value={sortBy}
-                  options={[
-                    { value: "newest", label: "Newest" },
-                    { value: "price-low-high", label: "Price: Low to High" },
-                    { value: "price-high-low", label: "Price: High to Low" },
-                    { value: "rating", label: "Top Rated" },
-                  ]}
-                  onChange={setSortBy}
-                  placeholder="Sort by"
-                />
-              </div>
+          
             </div>
 
             {activeFilterCount > 0 && (
