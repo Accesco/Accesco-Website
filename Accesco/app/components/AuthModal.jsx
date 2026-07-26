@@ -62,6 +62,22 @@ export default function AuthModal({
   // reset internal state).
   mandatory = false,
 }) {
+  if (!isOpen) return null
+
+  return (
+    <AuthModalContent
+      isOpen={isOpen}
+      onClose={onClose}
+      onSuccess={onSuccess}
+    />
+  )
+}
+
+function AuthModalContent({
+  isOpen,
+  onClose,
+  onSuccess,
+}) {
   const [name, setName] = useState('')
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
@@ -584,8 +600,6 @@ export default function AuthModal({
 
     transition: '150ms ease',
   })
-
-  if (!isOpen) return null
 
   return (
     <div
