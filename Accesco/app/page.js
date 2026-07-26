@@ -62,11 +62,6 @@ export default function HomePage() {
   {/* Intelligence Image */}
   <div className="intelligenceSection">
     
-    <picture>
-  <source
-    media="(max-width: 768px)"
-    srcSet="/images/YOUR-MOBILE-IMAGE.jpeg"
-  />
     <Image
   src="/images/intelligence-layer.png"
   alt="Accesco Intelligence Layer"
@@ -76,7 +71,6 @@ export default function HomePage() {
   sizes="100vw"
   quality={80}
 />
-</picture>
   </div>
 
   {/* Poster */}

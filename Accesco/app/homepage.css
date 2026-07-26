@@ -2449,12 +2449,16 @@ opacity:0.5;
   .intelligenceImage {
     width: 100%;
     max-width: none;
+    height: auto;
     border-radius: 0;
     box-shadow: none;
     display: block;
-    object-fit: cover;
-    mix-blend-mode: multiply;
-    filter: contrast(1.08) saturate(1.05);
+    object-fit: contain;
+
+    /* Must stay normal/none: the artwork has a transparent background, and
+       `multiply` composites it against the section as pure black. */
+    mix-blend-mode: normal;
+    filter: none;
   }
 }
 
