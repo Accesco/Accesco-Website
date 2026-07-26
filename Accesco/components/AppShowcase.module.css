@@ -1620,3 +1620,102 @@
   background: #c60055;
   color: #ffffff;
 }
+
+/* ===== EXACT FEEDBACK HEADER MATCH ===== */
+
+.feedbackHeader {
+  min-height: 170px !important;
+  padding: 26px 38px 22px !important;
+
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+
+  background: linear-gradient(
+    90deg,
+    #e8e2ef 0%,
+    #ebe4ef 14%,
+    #f4eaf0 30%,
+    #f5eef2 50%,
+    #f6e3e8 70%,
+    #f0c6db 100%
+  ) !important;
+
+  border-bottom: 1px solid #cfc3c9 !important;
+  box-shadow: 0 2px 3px rgba(53, 32, 43, 0.12) !important;
+}
+
+.feedbackHeaderContent {
+  width: auto !important;
+  max-width: 520px !important;
+  color: #1d1b20 !important;
+}
+
+.feedbackEyebrow {
+  margin: 0 0 14px !important;
+  color: #c60055 !important;
+  font-size: 11px !important;
+  font-weight: 800 !important;
+  line-height: 1 !important;
+  letter-spacing: 0.08em !important;
+  text-transform: uppercase !important;
+}
+
+.feedbackTitle {
+  margin: 0 !important;
+  color: #1d1b20 !important;
+  font-size: 42px !important;
+  font-weight: 800 !important;
+  line-height: 1.05 !important;
+  letter-spacing: -0.045em !important;
+  text-transform: none !important;
+}
+
+.feedbackHeaderText {
+  margin: 15px 0 0 !important;
+  color: #655b61 !important;
+  font-size: 13px !important;
+  line-height: 1.45 !important;
+  opacity: 1 !important;
+}
+
+.feedbackHeaderText strong {
+  color: #c60055 !important;
+  font-weight: 800 !important;
+}
+
+.feedbackHeaderMark {
+  width: 110px !important;
+  height: 110px !important;
+  margin-right: 32px !important;
+  object-fit: contain !important;
+  flex: 0 0 110px !important;
+}
+
+@media (max-width: 640px) {
+  .feedbackHeader {
+    min-height: 155px !important;
+    padding: 22px 18px !important;
+  }
+
+  .feedbackEyebrow {
+    margin-bottom: 10px !important;
+    font-size: 9px !important;
+  }
+
+  .feedbackTitle {
+    font-size: 30px !important;
+  }
+
+  .feedbackHeaderText {
+    margin-top: 11px !important;
+    font-size: 11px !important;
+  }
+
+  .feedbackHeaderMark {
+    width: 72px !important;
+    height: 72px !important;
+    margin-right: 0 !important;
+    flex-basis: 72px !important;
+  }
+}

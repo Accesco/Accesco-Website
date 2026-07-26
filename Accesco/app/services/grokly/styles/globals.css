@@ -24,7 +24,7 @@
 /* Mobile Content Padding */
 @media (max-width: 768px) {
   .grokly-content {
-    padding: 16px;
+    padding: 12px;
     padding-bottom: calc(var(--grokly-bottom-nav-height) + 16px);
   }
 }
@@ -33,12 +33,13 @@
 .product-grid {
   display: grid;
   gap: 12px;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  width: 100%;
 }
 
 @media (max-width: 768px) {
   .product-grid {
-    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    grid-template-columns: repeat(2, 1fr) !important;
     gap: 10px;
   }
 }
@@ -238,6 +239,9 @@
   gap: 24px;
   align-items: flex-start;
   margin-top: 16px;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 .grokly-category-sidebar {
@@ -331,10 +335,15 @@
   .grokly-category-layout {
     flex-direction: column;
     gap: 12px;
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
   }
 
   .grokly-category-sidebar {
     width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
     position: sticky;
     top: calc(var(--grokly-mobile-header-height) - 1px);
     z-index: 50;
@@ -350,6 +359,7 @@
     background: var(--grokly-bg-white);
     max-height: none;
     box-shadow: var(--grokly-shadow-sm);
+    min-width: 0;
   }
 
   .grokly-category-sidebar::-webkit-scrollbar {

@@ -406,7 +406,16 @@ export default function AccescoHeader() {
             ) : user ? (
               // 2. Mounted & Logged In
               <Link href="/profile" className={styles.userButton}>
-                <div className={styles.avatar}>{initials}</div>
+                <div className={styles.avatar}>
+  {user?.profileImage ? (
+    <img
+      src={user.profileImage}
+      alt={`${user.name}'s profile`}
+    />
+  ) : (
+    initials
+  )}
+</div>
                 <span>{user.name.split(' ')[0]}</span>
               </Link>
             ) : (

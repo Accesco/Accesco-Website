@@ -133,7 +133,7 @@ export default function GroklyCategoryPage() {
         />
 
         {/* Main Content */}
-        <main style={{ flex: 1, maxWidth: 'var(--grokly-max-width)', margin: '0 auto', width: '100%', padding: '20px', boxSizing: 'border-box' }}>
+        <main className="grokly-content">
           <div className="grokly-category-layout">
             {/* Left Sidebar */}
             <aside className="grokly-category-sidebar">
@@ -172,11 +172,11 @@ export default function GroklyCategoryPage() {
               />
 
               {isLoading ? (
-                <div style={{ display: 'grid', gap: '12px', gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))' }}>
+                <div className="product-grid">
                   <ProductSkeleton count={12} />
                 </div>
               ) : filteredProducts.length > 0 ? (
-                <div style={{ display: 'grid', gap: '12px', gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))' }}>
+                <div className="product-grid">
                   {filteredProducts.map((product) => (
                     <ProductCard 
                       key={product.id} 
