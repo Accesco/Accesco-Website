@@ -69,6 +69,7 @@ export default function AuthModal({
       isOpen={isOpen}
       onClose={onClose}
       onSuccess={onSuccess}
+      mandatory={mandatory}
     />
   )
 }
@@ -77,6 +78,7 @@ function AuthModalContent({
   isOpen,
   onClose,
   onSuccess,
+  mandatory,
 }) {
   const [name, setName] = useState('')
   const [firstName, setFirstName] = useState('')
