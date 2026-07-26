@@ -144,8 +144,10 @@ export default function RootLayout({ children }) {
   <BreadcrumbJsonLd />
   <ReferralCapture />
 
-  {children}
-  <CookieConsent />
+  <AuthGate>
+    {children}
+    <CookieConsent />
+  </AuthGate>
 
 </AuthProvider>
 
