@@ -24,7 +24,8 @@ import BottomNav from './components/BottomNav';
 import { categories, getProductsByCategory, searchProducts } from './lib/groklyData';
 import { useProducts } from './hooks/useProducts';
 import './styles/variables.css';
-
+import './styles/GroklyFooter.css';
+import GroklyFooter from './components/GroklyFooter';
 import JsonLd from '../../../components/JsonLd';
 import { dishes } from './lib/dishesData';
 import GroceryStories from './components/GroceryStories';
@@ -2078,7 +2079,7 @@ function GroklyPageContent() {
             )
           )}
         </main>
-
+<GroklyFooter />
         <CartDrawer />
         <LocationModal />
         <FloatingCartBar />
