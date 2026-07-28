@@ -579,15 +579,18 @@
 }
 
 .storyImg {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 100% !important;
+  max-height: 100% !important;
+  object-fit: cover !important;
+  display: block;
 }
 
 .storyGradient {
   position: absolute;
   inset: 0;
-  background: linear-gradient(to bottom, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 40%, rgba(0,0,0,0.7) 100%);
+  background: linear-gradient(to bottom, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.05) 40%, rgba(0,0,0,0.85) 100%);
   z-index: 1;
 }
 
@@ -595,7 +598,7 @@
   position: absolute;
   top: 10px;
   left: 10px;
-  background-color: rgba(0,0,0,0.5);
+  background-color: rgba(0,0,0,0.55);
   backdrop-filter: blur(4px);
   color: var(--sw-white);
   font-size: 10px;
@@ -618,6 +621,12 @@
   font-weight: 700;
   z-index: 2;
   line-height: 1.3;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  word-break: break-word;
 }
 
 .storyArrowBtn {
@@ -1797,18 +1806,27 @@
   }
 
   .storyCard {
-    flex: 0 0 130px;
-    width: 130px;
-    height: 215px;
-    border-radius: 13px;
+    flex: 0 0 135px;
+    width: 135px;
+    height: 220px;
+    border-radius: 14px;
     scroll-snap-align: start;
+    position: relative;
+    overflow: hidden;
   }
 
   .storyTitleText {
-    right: 9px;
+    right: 10px;
     bottom: 10px;
-    left: 9px;
+    left: 10px;
     font-size: 11px;
+    line-height: 1.25;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    word-break: break-word;
   }
 
   .storyView {

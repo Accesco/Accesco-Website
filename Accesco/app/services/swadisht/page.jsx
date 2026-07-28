@@ -123,11 +123,11 @@ const cravingCategories = [
 ];
 
 const storyItems = [
-  { id: 1, title: 'Crispy Butter Masala Dosa', views: '4.2k', image: 'https://images.unsplash.com/photo-1668236543090-82eba5ee5976?w=300&auto=format&fit=crop&q=80' },
-  { id: 2, title: 'Classic Dum Biryani Prep', views: '8.5k', image: 'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=300&auto=format&fit=crop&q=80' },
-  { id: 3, title: 'Making of Tandoori Roti', views: '12.1k', image: 'https://images.unsplash.com/photo-1780907084884-ded9fddbb474?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8dGFuZG9vcmklMjByb3RpfGVufDB8fDB8fHww' },
-  { id: 4, title: 'The Perfect Samosa Fold', views: '3.1k', image: 'https://plus.unsplash.com/premium_photo-1695297516676-04a259917c03?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8c2Ftb3NhfGVufDB8fDB8fHww' },
-  { id: 5, title: 'Chilled Mango Lassi Pour', views: '6.7k', image: 'https://images.unsplash.com/photo-1601493700631-2b16ec4b4716?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8bWFuZ28lMjBsYXNzaXxlbnwwfHwwfHx8MA%3D%3D' }
+  { id: 1, title: 'Crispy Butter Masala Dosa', views: '4.2k', image: 'https://images.unsplash.com/photo-1668236543090-82eba5ee5976?w=400&h=650&fit=crop&q=80' },
+  { id: 2, title: 'Classic Dum Biryani Prep', views: '8.5k', image: 'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=400&h=650&fit=crop&q=80' },
+  { id: 3, title: 'Making of Tandoori Roti', views: '12.1k', image: 'https://images.unsplash.com/photo-1626777552726-4a6b54c97e46?w=400&h=650&fit=crop&q=80' },
+  { id: 4, title: 'The Perfect Samosa Fold', views: '3.1k', image: 'https://images.unsplash.com/photo-1601050690597-df0568f70950?w=400&h=650&fit=crop&q=80' },
+  { id: 5, title: 'Chilled Mango Lassi Pour', views: '6.7k', image: 'https://images.unsplash.com/photo-1601493700631-2b16ec4b4716?w=400&h=650&fit=crop&q=80' }
 ];
 const trendingRestaurants = RESTAURANTS
   .filter((restaurant) => restaurant.rating >= 4.4)
