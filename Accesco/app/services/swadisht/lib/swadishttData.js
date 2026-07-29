@@ -58,7 +58,7 @@ export const RESTAURANTS = [
         category: 'Main Course',
         description: 'Silky spinach gravy with fresh cottage cheese cubes, tempered with cumin.',
         price: 260,
-        image: 'https://images.pexels.com/photos/3996419/pexels-photo-3996419.jpeg?w=600&h=400&fit=crop',
+        image: '/images/swadisht/restaurants/palak-paneer.jfif',
         isVeg: true,
         isBestseller: false
       },
@@ -68,7 +68,7 @@ export const RESTAURANTS = [
         category: 'Main Course',
         description: 'Dry-spiced cauliflower and potato stir-fry with ginger and turmeric.',
         price: 190,
-        image: 'https://images.pexels.com/photos/8695497/pexels-photo-8695497.jpeg?w=600&h=400&fit=crop',
+        image: '/images/swadisht/restaurants/alo-gobi.jfif',
         isVeg: true,
         isBestseller: false
       },
@@ -88,7 +88,7 @@ export const RESTAURANTS = [
         category: 'Main Course',
         description: 'Spiced chickpea curry served with fluffy deep-fried leavened bread.',
         price: 240,
-        image: 'https://images.pexels.com/photos/3996419/pexels-photo-3996419.jpeg?w=600&h=400&fit=crop',
+        image: '/images/swadisht/restaurants/chole-bhature.jfif',
         isVeg: true,
         isBestseller: false
       },
@@ -98,7 +98,7 @@ export const RESTAURANTS = [
         category: 'Beverages',
         description: 'Thick chilled yogurt drink blended with Alphonso mango pulp.',
         price: 110,
-        image: 'https://images.pexels.com/photos/4197444/pexels-photo-4197444.jpeg?w=600&h=400&fit=crop',
+        image: '/images/swadisht/restaurants/mango-lassi.jfif',
         isVeg: true,
         isBestseller: false
       },
@@ -108,7 +108,7 @@ export const RESTAURANTS = [
         category: 'Breads',
         description: 'Stuffed leavened bread baked in tandoor, filled with spiced potatoes.',
         price: 90,
-        image: 'https://images.pexels.com/photos/8695497/pexels-photo-8695497.jpeg?w=600&h=400&fit=crop',
+        image: '/images/swadisht/restaurants/kulcha-amritsari.jfif',
         isVeg: true,
         isBestseller: false
       },
@@ -128,7 +128,7 @@ export const RESTAURANTS = [
         category: 'Breads',
         description: 'Fluffy naan stuffed with almonds, raisins and coconut flakes.',
         price: 110,
-        image: 'https://images.pexels.com/photos/1640770/pexels-photo-1640770.jpeg?w=600&h=400&fit=crop',
+        image: '/images/swadisht/restaurants/peshwari-naan.jfif',
         isVeg: true,
         isBestseller: false
       },
@@ -138,7 +138,7 @@ export const RESTAURANTS = [
         category: 'Desserts',
         description: 'Chilled thickened milk with rose syrup, vermicelli and basil seeds.',
         price: 160,
-        image: 'https://images.pexels.com/photos/1640772/pexels-photo-1640772.jpeg?w=600&h=400&fit=crop',
+        image: '/images/swadisht/restaurants/rabri-faluda.jfif',
         isVeg: true,
         isBestseller: false
       },
@@ -148,7 +148,7 @@ export const RESTAURANTS = [
         category: 'Beverages',
         description: 'Cooling salted buttermilk lassi with cumin and coriander.',
         price: 80,
-        image: 'https://images.pexels.com/photos/4197444/pexels-photo-4197444.jpeg?w=600&h=400&fit=crop',
+        image: '/images/swadisht/restaurants/lassi-salted.jfif',
         isVeg: true,
         isBestseller: false
       },
@@ -158,7 +158,7 @@ export const RESTAURANTS = [
         category: 'Main Course',
         description: 'Slow-cooked chicken in a clay pot with creamy cashew gravy.',
         price: 380,
-        image: 'https://images.pexels.com/photos/699953/pexels-photo-699953.jpeg?w=600&h=400&fit=crop',
+        image: '/images/swadisht/restaurants/chicken-handi.jfif',
         isVeg: false,
         isBestseller: false
       },
@@ -168,7 +168,7 @@ export const RESTAURANTS = [
         category: 'Starters',
         description: 'Delicate patties of spinach, green peas, paneer and spices, shallow fried.',
         price: 155,
-        image: 'https://images.pexels.com/photos/3407777/pexels-photo-3407777.jpeg?w=600&h=400&fit=crop',
+        image: '/images/swadisht/restaurants/hara-bhara-kebab.jfif',
         isVeg: false,
         isBestseller: false
       },
@@ -178,7 +178,7 @@ export const RESTAURANTS = [
         category: 'Desserts',
         description: 'Spiced grilled paneer cubes wrapped in a soft roomali roti.',
         price: 160,
-        image: 'https://images.pexels.com/photos/3735149/pexels-photo-3735149.jpeg?w=600&h=400&fit=crop',
+        image: '/images/swadisht/restaurants/gulab-jamun-with-rabri.jfif',
         isVeg: true,
         isBestseller: false
       },
@@ -188,7 +188,7 @@ export const RESTAURANTS = [
         category: 'Main Course',
         description: 'Soya chunks marinated in rich cashew cream and grilled in tandoor.',
         price: 165,
-        image: 'https://images.pexels.com/photos/1640769/pexels-photo-1640769.jpeg?w=600&h=400&fit=crop',
+        image: '/images/swadisht/restaurants/paneer-lababdar.jfif',
         isVeg: false,
         isBestseller: false
       },
@@ -198,7 +198,7 @@ export const RESTAURANTS = [
         category: 'Starters',
         description: 'Crispy potato fingers tossed in a sweet and spicy sesame sauce.',
         price: 170,
-        image: 'https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?w=600&h=400&fit=crop',
+        image: '/images/swadisht/restaurants/paneer-tikka-kathi-roll.jfif',
         isVeg: true,
         isBestseller: false
       },
@@ -208,7 +208,7 @@ export const RESTAURANTS = [
         category: 'Desserts',
         description: 'Golden fried sweet corn kernels tossed with garlic and spring onions.',
         price: 175,
-        image: 'https://images.pexels.com/photos/4197444/pexels-photo-4197444.jpeg?w=600&h=400&fit=crop',
+        image: '/images/swadisht/restaurants/rasmalai-saffron.jfif',
         isVeg: false,
         isBestseller: false
       },
@@ -218,7 +218,7 @@ export const RESTAURANTS = [
         category: 'Main Course',
         description: 'Button mushrooms sauteed with crushed black pepper, curry leaves and onions.',
         price: 180,
-        image: 'https://images.pexels.com/photos/4911986/pexels-photo-4911986.jpeg?w=600&h=400&fit=crop',
+        image: '/images/swadisht/restaurants/methi-matar-malai.jfif',
         isVeg: true,
         isBestseller: false
       },
@@ -228,7 +228,7 @@ export const RESTAURANTS = [
         category: 'Starters',
         description: 'Crispy pastry rolls stuffed with seasoned stir-fried vegetables.',
         price: 185,
-        image: 'https://images.pexels.com/photos/4518672/pexels-photo-4518672.jpeg?w=600&h=400&fit=crop',
+        image: '/images/swadisht/restaurants/tandoori-malai-soya-chaap.jfif',
         isVeg: false,
         isBestseller: false
       },
@@ -258,7 +258,7 @@ export const RESTAURANTS = [
         category: 'Starters',
         description: 'Juicy chicken wings coated in tandoori spices and charred.',
         price: 200,
-        image: 'https://images.pexels.com/photos/60616/fried-chicken-restaurant-60616.jpeg?w=600&h=400&fit=crop',
+        image: '/images/swadisht/restaurants/crispy-honey-chilli-potato.jfif',
         isVeg: true,
         isBestseller: false
       },
@@ -268,7 +268,7 @@ export const RESTAURANTS = [
         category: 'Desserts',
         description: 'Stir-fried fish chunks with bell peppers, green chillies and soy.',
         price: 205,
-        image: 'https://images.pexels.com/photos/5718092/pexels-photo-5718092.jpeg?w=600&h=400&fit=crop',
+        image: '/images/swadisht/restaurants/kesar-pista-kulfi.jfif',
         isVeg: false,
         isBestseller: false
       },
@@ -278,7 +278,7 @@ export const RESTAURANTS = [
         category: 'Main Course',
         description: 'Tender tandoori chicken simmered in a rich buttery tomato gravy finished with fresh cream and aromatic Indian spices.',
         price: 350,
-        image: 'https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?w=600&h=400&fit=crop',
+        image: '/images/swadisht/restaurants/butter-chicken.jfif',
         isVeg: false,
         isBestseller: true
       },
@@ -288,7 +288,7 @@ export const RESTAURANTS = [
         category: 'Main Course',
         description: 'Smoky grilled paneer cubes cooked in a creamy onion tomato gravy with bold North Indian spices and herbs.',
         price: 280,
-        image: 'https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?w=600&h=400&fit=crop',
+        image: '/images/swadisht/restaurants/paneer-tikka-masala.jfif',
         isVeg: true,
         isBestseller: true
       },
@@ -298,7 +298,7 @@ export const RESTAURANTS = [
         category: 'Main Course',
         description: 'Slow-cooked black lentils and kidney beans blended with butter, cream, and traditional Punjabi flavors.',
         price: 220,
-        image: 'https://images.pexels.com/photos/1640773/pexels-photo-1640773.jpeg?w=600&h=400&fit=crop',
+        image: '/images/swadisht/restaurants/dal-makhani.jfif',
         isVeg: true,
         isBestseller: false
       },
@@ -308,7 +308,7 @@ export const RESTAURANTS = [
         category: 'Starters',
         description: 'Juicy chicken marinated overnight in yogurt and spices, then flame-grilled in a traditional clay tandoor.',
         price: 320,
-        image: 'https://images.pexels.com/photos/1640770/pexels-photo-1640770.jpeg?w=600&h=400&fit=crop',
+        image: '/images/swadisht/restaurants/tandoori-chicken.jfif',
         isVeg: false,
         isBestseller: true
       },
@@ -318,7 +318,7 @@ export const RESTAURANTS = [
         category: 'Breads',
         description: 'Soft freshly baked naan brushed with melted garlic butter and topped with coriander for extra flavor.',
         price: 60,
-        image: 'https://images.pexels.com/photos/1640780/pexels-photo-1640780.jpeg?w=600&h=400&fit=crop',
+        image: '/images/swadisht/restaurants/garlic-naan.jfif',
         isVeg: true,
         isBestseller: false
       },
@@ -328,7 +328,7 @@ export const RESTAURANTS = [
         category: 'Rice',
         description: 'Fragrant basmati rice layered with spiced meat, caramelized onions, saffron, and slow-cooked dum flavors.',
         price: 380,
-        image: 'https://images.pexels.com/photos/1640774/pexels-photo-1640774.jpeg?w=600&h=400&fit=crop',
+        image: '/images/swadisht/restaurants/biryani.jfif',
         isVeg: false,
         isBestseller: true
       }
