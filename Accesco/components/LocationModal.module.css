@@ -15,34 +15,22 @@
   padding: 20px;
 }
 
+/* Modal Container (Fixed height allows content to render beautifully) */
 .modal {
   background: #ffffff;
   width: 100%;
-  max-width: 480px;
-  border-radius: 12px;
+  max-width: 450px;
+  height: 580px; 
+  max-height: 90vh;
+  border-radius: 16px;
   border: 1px solid #e5e7eb;
-  padding: 24px;
+  padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 20px;
   box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
   animation: slideUp 0.3s ease-out;
   position: relative;
-  max-height: 90vh;
-  overflow-y: auto;
-}
-
-.modal::-webkit-scrollbar {
-  width: 4px;
-}
-
-.modal::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.modal::-webkit-scrollbar-thumb {
-  background: rgba(0, 0, 0, 0.12);
-  border-radius: 4px;
+  overflow: hidden; 
 }
 
 @keyframes slideUp {
@@ -52,219 +40,1421 @@
 
 .header {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid #f0f0f0;
-  padding-bottom: 16px;
+  padding: 10px 16px;
+  background: #ffffff;
+  border-bottom: 1px solid #f1f3f5;
+  height: 52px;
+  flex-shrink: 0;
+  box-sizing: border-box;
+}
+
+/* Circular back button */
+.backBtn {
+  background: none;
+  border: 1px solid #e2e8f0;
+  cursor: pointer;
+  width: 32px;
+  height: 32px;
+  margin-right: 12px;
+  color: #111111;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background 0.15s, border-color 0.15s, transform 0.15s;
+}
+
+.backBtn:hover {
+  background: #fdf2f8; 
+  border-color: #c2185b;
 }
 
 .header h3 {
   margin: 0;
-  font-size: 20px;
+  font-size: 1.05rem;
   font-weight: 700;
-  color: #1a1a1a;
+  color: #111111;
   letter-spacing: -0.5px;
 }
 
-.closeBtn {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  background: #f5f5f5;
-  border: none;
-  font-size: 22px;
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  cursor: pointer;
-  color: #666;
+/* List view main container */
+.listViewContent {
+  padding: 16px;
+  background-color: #f8f9fc;
+  overflow-y: auto;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s;
-  z-index: 10;
-}
-
-.closeBtn:hover {
-  background: #e0e0e0;
-  color: #000;
-}
-
-.detectBtn {
-  background-color: #FAF9F6;
-  border: 1px solid rgba(13, 13, 13, 0.12);
-  padding: 14px;
-  border-radius: 12px;
-  font-weight: 700;
-  font-size: 15px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  transition: all 0.2s ease;
-  color: #0D0D0D;
-}
-
-.detectBtn:hover:not(:disabled) {
-  background-color: #F2F1EF;
-  border-color: rgba(13, 13, 13, 0.22);
-}
-
-.detectBtn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-  transform: none;
-}
-
-.manualForm {
-  display: flex;
-  position: relative;
-  border: 1px solid #e0e0e0;
-  border-radius: 12px;
-  overflow: hidden;
-  transition: border-color 0.2s;
-}
-
-.manualForm:focus-within {
-  border-color: #1a1a1a;
-}
-
-.manualForm input {
+  flex-direction: column;
+  gap: 12px;
   flex: 1;
-  padding: 14px 16px;
-  border: none;
-  font-size: 15px;
+  min-height: 0;
+}
+
+/* Dark pink themed scrollbars */
+.listViewContent::-webkit-scrollbar,
+.mapViewContent::-webkit-scrollbar,
+.manualFormViewContent::-webkit-scrollbar {
+  width: 6px;
+}
+
+.listViewContent::-webkit-scrollbar-track,
+.mapViewContent::-webkit-scrollbar-track,
+.manualFormViewContent::-webkit-scrollbar-track {
   background: transparent;
 }
 
-.manualForm input:focus {
-  outline: none;
+.listViewContent::-webkit-scrollbar-thumb,
+.mapViewContent::-webkit-scrollbar-thumb,
+.manualFormViewContent::-webkit-scrollbar-thumb {
+  background-color: rgba(194, 24, 91, 0.22);
+  border-radius: 10px;
 }
 
-.manualForm button {
-  padding: 0 24px;
-  background-color: #1a1a1a;
-  color: #fff;
+/* Search Box design */
+.searchContainer {
+  position: relative;
+  width: 100%;
+}
+
+.searchIcon {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #7b809a;
+  pointer-events: none;
+  display: flex;
+}
+
+.searchInput {
+  width: 100%;
+  padding: 10px 14px 10px 44px;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  font-size: 0.88rem;
+  font-weight: 500;
+  background-color: #ffffff;
+  color: #111111;
+  outline: none;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+  transition: border-color 0.2s, box-shadow 0.2s;
+  box-sizing: border-box;
+}
+
+.searchInput:focus {
+  border-color: #c2185b;
+  box-shadow: 0 4px 12px rgba(194, 24, 91, 0.08);
+}
+
+/* Quick Action Options List */
+.optionsList {
+  background: #ffffff;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.03);
+  border: 1px solid #e2e8f0;
+}
+
+.optionItem {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 12px 16px;
+  background: none;
   border: none;
   cursor: pointer;
-  font-weight: 600;
-  font-size: 14px;
-  transition: background 0.2s;
+  text-align: left;
+  border-bottom: 1px solid #f8f9fa;
+  transition: background-color 0.15s;
 }
 
-.manualForm button:hover:not(:disabled) {
-  background-color: #333;
+.optionItem:last-child {
+  border-bottom: none;
 }
 
-.manualForm button:disabled {
-  background-color: #ccc;
-  cursor: not-allowed;
+.optionItem:hover {
+  background-color: #fdf2f8;
 }
 
-.error {
-  color: #d32f2f;
-  font-size: 14px;
-  background: #fef0f0;
-  border: 1px solid #fadcdc;
-  padding: 12px;
-  border-radius: 8px;
+.optionIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 12px;
+  flex-shrink: 0;
+}
+
+.optionText {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #1a1a1a;
+  text-transform: none !important;
+}
+
+.optionTextPink {
+  color: #c2185b; 
+}
+
+.optionChevron {
+  margin-left: auto;
+  color: #7b809a;
+  display: flex;
+  align-items: center;
+}
+
+/* Saved Addresses Section spacing */
+.sectionTitle {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #111111;
+  margin: 10px 0 2px 2px;
+}
+
+/* Saved Addresses List card wrapper */
+.savedAddressesCard {
+  background-color: #ffffff;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.03);
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #e2e8f0;
+}
+
+.addressRowContainer {
+  display: flex;
+  flex-direction: column;
+}
+
+.addressItem {
+  padding: 14px 16px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+
+.addressItem:hover {
+  background-color: #fafbfc;
+}
+
+.addressItemActive {
+  background-color: #f0fdf4;
+}
+
+.addressIcon {
+  color: #4b5563;
+  margin-top: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.addressDetails {
+  flex: 1;
+}
+
+.addressTypeHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.addressType {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #111111;
+  text-transform: none !important;
+}
+
+.badgeSelected {
+  background-color: #c3fae8;
+  color: #0ca678;
+  border: 1px solid #96f2d7;
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: 4px;
+}
+
+.addressText {
+  font-size: 0.82rem;
+  color: #64748b;
+  line-height: 1.4;
   margin: 0;
-  font-weight: 500;
+  text-align: left;
+}
+
+.dashedDivider {
+  height: 1px;
+  border-bottom: 1px dashed #e2e8f0;
+  margin: 0 16px;
+}
+
+.addressActions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-left: auto;
+  align-self: center;
+}
+
+.actionBtn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #94a3b8;
+  padding: 6px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.15s, color 0.15s;
+}
+
+.actionBtn:hover {
+  background-color: #f1f5f9;
+  color: #475569;
+}
+
+/* Map View Layout */
+.mapViewContent {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto; 
+  background-color: #f8f9fc;
 }
 
 .mapContainer {
+  height: 220px; 
   width: 100%;
-  border-radius: 12px;
-  overflow: hidden;
-  border: 1px solid #eaeaea;
-  box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
   position: relative;
-  z-index: 1;
+  flex-shrink: 0;
+  border-bottom: 1px solid #eaeaea;
 }
 
+/* Detected Location display card (Mirroring image properties) */
 .addressDisplay {
   background-color: #f9f9f9;
   padding: 16px;
   border-radius: 12px;
   border: 1px solid #f0f0f0;
+  margin: 12px 16px 8px 16px; /* Reduced margins to compress the inner gap */
+  flex-shrink: 0;
+  box-sizing: border-box;
 }
 
 .addressDisplay strong {
   display: block;
-  font-size: 12px;
+  font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  color: #888;
+  color: #888888;
+  font-weight: 700;
   margin-bottom: 6px;
 }
 
 .addressDisplay p {
   margin: 0;
-  font-size: 15px;
+  font-size: 14px;
   color: #1a1a1a;
-  line-height: 1.5;
+  line-height: 1.45;
   font-weight: 500;
+  text-align: left;
 }
 
+/* Brand Dark Pink Confirm Button */
 .confirmBtn {
-  background-color: #0D0D0D;
-  color: white;
+  margin: 8px 16px 16px 16px; /* Removed auto margin-top to keep the button snug against the card above */
+  padding: 12px;
+  background-color: #c2185b; /* BRAND COLOR: DARK PINK */
+  color: #ffffff;
   border: none;
-  padding: 16px;
-  border-radius: 8px;
-  font-size: 16px;
+  border-radius: 12px;
+  font-size: 0.95rem;
   font-weight: 700;
   cursor: pointer;
-  transition: transform 0.1s, background 0.2s;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  flex-shrink: 0;
+  box-shadow: 0 4px 14px rgba(194, 24, 91, 0.15);
+  transition: background-color 0.2s, transform 0.1s, box-shadow 0.2s;
   display: flex;
   align-items: center;
   justify-content: center;
-  text-align: center;
-  width: 100%;
   box-sizing: border-box;
-  line-height: 1; 
+}
+
+.confirmBtn:hover:not(:disabled) {
+  background-color: #ad1457;
+  box-shadow: 0 6px 18px rgba(194, 24, 91, 0.25);
 }
 
 .confirmBtn:active:not(:disabled) {
   transform: scale(0.98);
 }
 
-.confirmBtn:hover:not(:disabled) {
-  background-color: #2D2D2D;
-}
-
 .confirmBtn:disabled {
-  background-color: #EAE8E5;
-  color: #8A8782;
+  background-color: #cbd5e1;
+  color: #94a3b8;
   box-shadow: none;
   cursor: not-allowed;
 }
 
-.detectLocationBtn {
+/* Manual Form View Layout */
+.manualFormViewContent {
+  padding: 14px;
+  background-color: #f8f9fc;
+  overflow-y: auto;
+  flex: 1;
+  min-height: 0;
+}
+
+.manualAddressForm {
+  background-color: #ffffff;
+  padding: 14px;
+  border-radius: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.04);
+  border: 1px solid #e2e8f0;
+}
+
+.formRow {
+  display: flex;
+  gap: 12px;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.formLabel {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #64748b;
+  margin-left: 2px;
+}
+
+.formInput {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  outline: none;
+  background-color: #f8fafc;
+  transition: border-color 0.15s, background-color 0.15s;
+  box-sizing: border-box;
+}
+
+.formInput:focus {
+  border-color: #c2185b;
+  background-color: #ffffff;
+}
+
+.error {
+  margin: 12px 16px 0 16px;
+  padding: 10px 14px;
+  background-color: #fef2f2;
+  color: #b91c1c;
+  font-size: 0.82rem;
+  border-radius: 8px;
+  border: 1px solid #fca5a5;
+}
+
+/* =========================================================
+   MAP VIEW COMPACT LAYOUT OVERRIDE
+   Paste this at the END of LocationModal.module.css
+   ========================================================= */
+
+/* Make the modal fit the map, address and button content */
+.modal:has(.mapViewContent) {
+  height: auto;
+  max-height: calc(100dvh - 32px);
+  overflow: hidden;
+}
+
+/* Stop the map view from stretching and creating blank space */
+.modal:has(.mapViewContent) .mapViewContent {
+  display: flex;
+  flex-direction: column;
+  flex: 0 1 auto;
+  width: 100%;
+  min-height: 0;
+  max-height: calc(100dvh - 84px);
+  overflow-y: auto;
+  overflow-x: hidden;
+  gap: 0;
+  padding: 0;
+  background-color: #f8f9fc;
+  box-sizing: border-box;
+}
+
+/* Keep map at a controlled height */
+.modal:has(.mapViewContent) .mapContainer {
+  width: 100%;
+  height: 210px;
+  min-height: 210px;
+  flex: 0 0 210px;
+  position: relative;
+  overflow: hidden;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+/* Keep errors close to the map */
+.modal:has(.mapViewContent) .error {
+  margin: 10px 16px 0;
+  padding: 10px 12px;
+  flex-shrink: 0;
+}
+
+/* Remove the large gap around the detected address */
+.modal:has(.mapViewContent) .addressDisplay {
+  width: calc(100% - 32px);
+  margin: 10px 16px 6px;
+  padding: 12px 14px;
+
+  background-color: #f9f9f9;
+  border: 1px solid #eeeeee;
+  border-radius: 12px;
+
+  flex: 0 0 auto;
+  box-sizing: border-box;
+}
+
+/* Compact detected-location heading */
+.modal:has(.mapViewContent) .addressDisplay strong {
+  display: block;
+  margin: 0 0 5px;
+  font-size: 11px;
+  line-height: 1.2;
+  font-weight: 700;
+  color: #888888;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Compact address text */
+.modal:has(.mapViewContent) .addressDisplay p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.4;
+  font-weight: 500;
+  color: #1a1a1a;
+  text-align: left;
+  overflow-wrap: anywhere;
+}
+
+/* Bring the confirm button directly under the address */
+.modal:has(.mapViewContent) .confirmBtn {
+  width: calc(100% - 32px);
+  min-height: 46px;
+
+  margin: 0 16px 14px;
+  padding: 12px 16px;
+
+  flex: 0 0 auto;
+  box-sizing: border-box;
+
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  width: calc(100% - 24px);
-  margin: 0 12px 12px 12px;
-  padding: 10px 16px;
-  background-color: #fff4f4;
-  color: #e23744;
-  border: 1px solid #f8d7da;
-  border-radius: 8px;
-  font-size: 14px;
+
+  background-color: #c2185b;
+  color: #ffffff;
+  border: none;
+  border-radius: 12px;
+
+  font-size: 0.95rem;
   font-weight: 700;
+  line-height: 1.2;
   cursor: pointer;
-  transition: all 0.2s ease;
+
+  box-shadow: 0 4px 14px rgba(194, 24, 91, 0.15);
 }
 
-.detectLocationBtn:hover {
-  background-color: #ffebeb;
-  border-color: #f5c2c7;
+/* Button interaction states */
+.modal:has(.mapViewContent) .confirmBtn:hover:not(:disabled) {
+  background-color: #ad1457;
+  box-shadow: 0 6px 18px rgba(194, 24, 91, 0.24);
 }
 
-.detectLocationBtn:active {
+.modal:has(.mapViewContent) .confirmBtn:active:not(:disabled) {
   transform: scale(0.98);
+}
+
+.modal:has(.mapViewContent) .confirmBtn:disabled {
+  background-color: #cbd5e1;
+  color: #94a3b8;
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
+/* Mobile layout */
+@media (max-width: 520px) {
+  .overlay {
+    padding: 10px;
+    align-items: center;
+  }
+
+  .modal:has(.mapViewContent) {
+    width: 100%;
+    height: auto;
+    max-height: calc(100dvh - 20px);
+    border-radius: 14px;
+  }
+
+  .modal:has(.mapViewContent) .mapViewContent {
+    max-height: calc(100dvh - 72px);
+  }
+
+  .modal:has(.mapViewContent) .mapContainer {
+    height: 185px;
+    min-height: 185px;
+    flex-basis: 185px;
+  }
+
+  .modal:has(.mapViewContent) .addressDisplay {
+    width: calc(100% - 24px);
+    margin: 8px 12px 6px;
+    padding: 11px 12px;
+  }
+
+  .modal:has(.mapViewContent) .confirmBtn {
+    width: calc(100% - 24px);
+    min-height: 44px;
+    margin: 0 12px 12px;
+  }
+
+  .modal:has(.mapViewContent) .error {
+    margin: 8px 12px 0;
+  }
+}
+
+/* Very short screens */
+@media (max-height: 600px) {
+  .modal:has(.mapViewContent) .mapContainer {
+    height: 150px;
+    min-height: 150px;
+    flex-basis: 150px;
+  }
+
+  .modal:has(.mapViewContent) .addressDisplay {
+    padding: 9px 12px;
+    margin-top: 7px;
+  }
+
+  .modal:has(.mapViewContent) .confirmBtn {
+    min-height: 42px;
+    padding: 10px 14px;
+    margin-bottom: 10px;
+  }
+}
+
+/* =========================================================
+   FINAL OVERRIDE
+   1. Confirm Location button becomes black
+   2. Location list becomes properly scrollable
+   3. Prevents saved addresses from getting cut
+   ========================================================= */
+
+/* Black Confirm Location button */
+.confirmBtn {
+  background-color: #111111 !important;
+  color: #ffffff !important;
+  border: none !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18) !important;
+}
+
+.confirmBtn:hover:not(:disabled) {
+  background-color: #000000 !important;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25) !important;
+}
+
+.confirmBtn:active:not(:disabled) {
+  background-color: #000000 !important;
+  transform: scale(0.98);
+}
+
+.confirmBtn:disabled {
+  background-color: #cbd5e1 !important;
+  color: #94a3b8 !important;
+  box-shadow: none !important;
+}
+
+
+/* Make the location-selection modal fit the screen */
+.modal:has(.listViewContent) {
+  height: min(720px, calc(100dvh - 24px)) !important;
+  max-height: calc(100dvh - 24px) !important;
+  overflow: hidden !important;
+}
+
+
+/* Keep header fixed and allow only content below it to scroll */
+.modal:has(.listViewContent) .header {
+  flex: 0 0 56px;
+  height: 56px;
+}
+
+
+/* Main location screen scrolling */
+.listViewContent {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  height: auto !important;
+
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  overscroll-behavior: contain;
+
+  padding: 16px 14px 32px !important;
+  gap: 14px !important;
+
+  scrollbar-gutter: stable;
+  -webkit-overflow-scrolling: touch;
+}
+
+
+/* Ensure the saved-address card is never clipped */
+.savedAddressesCard {
+  flex: 0 0 auto !important;
+  overflow: visible !important;
+  margin-bottom: 8px !important;
+}
+
+
+/* Address rows must keep their full content height */
+.addressRowContainer,
+.addressItem {
+  flex-shrink: 0 !important;
+}
+
+
+/* Allow address text to display properly */
+.addressDetails {
+  min-width: 0;
+}
+
+.addressText {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+
+/* Keep action icons visible */
+.addressActions {
+  flex-shrink: 0;
+}
+
+
+/* Visible scrollbar */
+.listViewContent::-webkit-scrollbar {
+  width: 6px;
+}
+
+.listViewContent::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.listViewContent::-webkit-scrollbar-thumb {
+  background: rgba(17, 17, 17, 0.22);
+  border-radius: 20px;
+}
+
+.listViewContent::-webkit-scrollbar-thumb:hover {
+  background: rgba(17, 17, 17, 0.36);
+}
+
+
+/* Mobile screen correction */
+@media (max-width: 520px) {
+  .overlay {
+    padding: 0 !important;
+    align-items: center !important;
+  }
+
+  .modal:has(.listViewContent) {
+    width: 100% !important;
+    max-width: 100% !important;
+    height: 100dvh !important;
+    max-height: 100dvh !important;
+    border-radius: 0 !important;
+    border: none !important;
+  }
+
+  .modal:has(.listViewContent) .header {
+    flex-basis: 56px;
+    height: 56px;
+  }
+
+  .listViewContent {
+    padding: 16px 14px 40px !important;
+  }
+}
+
+
+/* Short-height laptop/mobile screens */
+@media (max-height: 700px) and (min-width: 521px) {
+  .modal:has(.listViewContent) {
+    height: calc(100dvh - 20px) !important;
+    max-height: calc(100dvh - 20px) !important;
+  }
+
+  .listViewContent {
+    padding-bottom: 28px !important;
+  }
+}
+
+/* =========================================================
+   FINAL LOCATION MODAL OVERRIDE
+   Paste at the END of LocationModal.module.css
+   ========================================================= */
+
+/* Restore original modal size — do not enlarge the box */
+.modal,
+.modal:has(.listViewContent) {
+  width: 100% !important;
+  max-width: 450px !important;
+  height: 580px !important;
+  max-height: 90vh !important;
+  overflow: hidden !important;
+  border-radius: 16px !important;
+}
+
+
+/* Keep the header fixed inside the modal */
+.modal:has(.listViewContent) .header {
+  height: 52px !important;
+  flex: 0 0 52px !important;
+}
+
+
+/* Scroll only the content below the header */
+.listViewContent,
+.modal:has(.listViewContent) .listViewContent {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  height: auto !important;
+  max-height: none !important;
+
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+
+  padding: 16px !important;
+  padding-bottom: 28px !important;
+
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 12px !important;
+
+  background-color: #f8f9fc !important;
+
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-gutter: stable;
+}
+
+
+/* Prevent sections from shrinking inside the scroll area */
+.searchContainer,
+.optionsList,
+.sectionTitle,
+.savedAddressesCard,
+.addressRowContainer,
+.addressItem {
+  flex-shrink: 0 !important;
+}
+
+
+/* Dark-pink text for every location option */
+.optionItem .optionText {
+  color: #c2185b !important;
+}
+
+
+/* Keep WhatsApp icon green */
+.optionItem .optionIcon svg[style] {
+  color: #25d366 !important;
+}
+
+
+/* Ensure saved-address content remains properly visible */
+.savedAddressesCard {
+  overflow: hidden !important;
+  margin-bottom: 4px !important;
+}
+
+.addressDetails {
+  min-width: 0 !important;
+}
+
+.addressActions {
+  flex-shrink: 0 !important;
+}
+
+
+/* Scrollbar styling */
+.listViewContent::-webkit-scrollbar {
+  width: 6px;
+}
+
+.listViewContent::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.listViewContent::-webkit-scrollbar-thumb {
+  background-color: rgba(194, 24, 91, 0.28);
+  border-radius: 20px;
+}
+
+.listViewContent::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(194, 24, 91, 0.45);
+}
+
+
+/* Black Confirm Location button */
+.confirmBtn {
+  background-color: #111111 !important;
+  color: #ffffff !important;
+  border: none !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18) !important;
+}
+
+.confirmBtn:hover:not(:disabled) {
+  background-color: #000000 !important;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25) !important;
+}
+
+.confirmBtn:active:not(:disabled) {
+  background-color: #000000 !important;
+  transform: scale(0.98);
+}
+
+.confirmBtn:disabled {
+  background-color: #cbd5e1 !important;
+  color: #94a3b8 !important;
+  box-shadow: none !important;
+}
+
+
+/* Mobile: retain the same modal design without full-screen enlargement */
+@media (max-width: 520px) {
+  .overlay {
+    padding: 12px !important;
+    align-items: center !important;
+  }
+
+  .modal,
+  .modal:has(.listViewContent) {
+    width: 100% !important;
+    max-width: 450px !important;
+    height: 580px !important;
+    max-height: calc(100dvh - 24px) !important;
+    border-radius: 16px !important;
+    border: 1px solid #e5e7eb !important;
+  }
+
+  .listViewContent,
+  .modal:has(.listViewContent) .listViewContent {
+    padding: 14px !important;
+    padding-bottom: 28px !important;
+  }
+}
+
+/* WhatsApp row like Zepto */
+
+.friendOption {
+  background: #ffffff;
+}
+
+.friendOption:hover {
+  background: #fafafa;
+}
+
+.friendText {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #222222;
+  flex: 1;
+}
+
+.friendOption .optionChevron {
+  color: #7b809a;
+}
+
+.friendOption .optionIcon {
+  color: #25d366;
+}
+
+/* =========================================================
+   PREMIUM LOCATION MODAL OVERRIDE
+   ========================================================= */
+
+/* Do not force text into uppercase anywhere in the modal */
+.modal button,
+.modal h3,
+.modal h4,
+.modal span,
+.modal p,
+.modal label,
+.optionText,
+.addressType,
+.sectionTitle,
+.confirmBtn,
+.formLabel,
+.addressDisplay strong {
+  text-transform: none !important;
+}
+
+/* Slightly more premium quick-actions card */
+.optionsList {
+  background: #ffffff;
+  border: 1px solid #e7e9ee;
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow:
+    0 1px 2px rgba(15, 23, 42, 0.03),
+    0 8px 24px rgba(15, 23, 42, 0.045);
+}
+
+/* Keep first three options dark pink */
+.optionItem .optionText {
+  color: #c2185b !important;
+  font-weight: 650;
+  letter-spacing: -0.01em;
+  text-transform: none !important;
+}
+
+/* Separate Request Address card */
+.friendAddressCard {
+  width: 100%;
+  min-height: 62px;
+  padding: 0 18px;
+
+  display: flex;
+  align-items: center;
+  gap: 14px;
+
+  background: #ffffff;
+  border: 1px solid #e7e9ee;
+  border-radius: 15px;
+
+  color: #18181b;
+  text-align: left;
+  text-transform: none !important;
+
+  cursor: pointer;
+  box-sizing: border-box;
+
+  box-shadow:
+    0 1px 2px rgba(15, 23, 42, 0.03),
+    0 8px 24px rgba(15, 23, 42, 0.045);
+
+  transition:
+    transform 0.16s ease,
+    border-color 0.16s ease,
+    box-shadow 0.16s ease,
+    background-color 0.16s ease;
+}
+
+.friendAddressCard:hover {
+  background: #ffffff;
+  border-color: #d9dde5;
+  box-shadow:
+    0 2px 5px rgba(15, 23, 42, 0.04),
+    0 12px 30px rgba(15, 23, 42, 0.07);
+  transform: translateY(-1px);
+}
+
+.friendAddressCard:active {
+  transform: scale(0.992);
+}
+
+.friendAddressCard:focus-visible {
+  outline: 3px solid rgba(37, 211, 102, 0.18);
+  outline-offset: 2px;
+}
+
+/* Premium WhatsApp icon */
+.friendAddressIcon {
+  width: 28px;
+  height: 28px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  color: #20b95a;
+  flex-shrink: 0;
+}
+
+/* Normal sentence-case black text */
+.friendAddressText {
+  flex: 1;
+  min-width: 0;
+
+  color: #18181b;
+  font-size: 0.9rem;
+  font-weight: 650;
+  line-height: 1.3;
+  letter-spacing: -0.012em;
+
+  text-transform: none !important;
+}
+
+/* Grey premium chevron */
+.friendAddressChevron {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  color: #667085;
+  flex-shrink: 0;
+
+  transition:
+    transform 0.16s ease,
+    color 0.16s ease;
+}
+
+.friendAddressCard:hover .friendAddressChevron {
+  color: #344054;
+  transform: translateX(2px);
+}
+
+/* Saved Addresses heading */
+.sectionTitle {
+  margin: 12px 2px 2px;
+  color: #18181b;
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  text-transform: none !important;
+}
+
+/* Keep existing modal height and scroll only inner content */
+.modal,
+.modal:has(.listViewContent) {
+  width: 100% !important;
+  max-width: 450px !important;
+  height: 580px !important;
+  max-height: 90vh !important;
+  overflow: hidden !important;
+}
+
+.listViewContent,
+.modal:has(.listViewContent) .listViewContent {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  height: auto !important;
+
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+
+  padding: 16px !important;
+  padding-bottom: 28px !important;
+
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 12px !important;
+
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}
+
+/* Do not let sections shrink while scrolling */
+.searchContainer,
+.optionsList,
+.friendAddressCard,
+.sectionTitle,
+.savedAddressesCard {
+  flex-shrink: 0 !important;
+}
+
+/* Black confirm button, but keep sentence case */
+.confirmBtn {
+  background: #111111 !important;
+  color: #ffffff !important;
+  text-transform: none !important;
+}
+
+.confirmBtn:hover:not(:disabled) {
+  background: #000000 !important;
+}
+
+/* Mobile keeps the same box size and scrolls internally */
+@media (max-width: 520px) {
+  .overlay {
+    padding: 12px !important;
+  }
+
+  .modal,
+  .modal:has(.listViewContent) {
+    height: 580px !important;
+    max-height: calc(100dvh - 24px) !important;
+    border-radius: 16px !important;
+  }
+
+  .friendAddressCard {
+    min-height: 58px;
+    padding: 0 15px;
+    gap: 12px;
+  }
+
+  .friendAddressText {
+    font-size: 0.87rem;
+  }
+}
+
+/* Clean WhatsApp icon */
+.friendAddressIcon {
+  width: 24px;
+  height: 24px;
+  flex: 0 0 24px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  color: #25d366;
+  line-height: 0;
+}
+
+.friendAddressIcon svg {
+  display: block;
+  width: 22px;
+  height: 22px;
+  overflow: visible;
+}
+
+/* =========================================================
+   SAVED ADDRESS ACTIONS
+   ========================================================= */
+
+.addressRowContainer {
+  position: relative;
+}
+
+.addressItem {
+  position: relative;
+}
+
+.addressActions {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: auto;
+  align-self: center;
+  flex-shrink: 0;
+}
+
+.actionBtn {
+  width: 34px;
+  height: 34px;
+  padding: 0;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  background: transparent;
+  border: none;
+  border-radius: 9px;
+
+  color: #8da0bb;
+  cursor: pointer;
+
+  transition:
+    color 0.16s ease,
+    background-color 0.16s ease,
+    transform 0.16s ease;
+}
+
+.actionBtn:hover {
+  color: #111827;
+  background-color: #f1f5f9;
+}
+
+.actionBtn:active {
+  transform: scale(0.92);
+}
+
+.actionBtn:focus-visible {
+  outline: 2px solid rgba(194, 24, 91, 0.3);
+  outline-offset: 1px;
+}
+
+/* Three-dot dropdown */
+.addressMenu {
+  position: absolute;
+  top: 40px;
+  right: 0;
+
+  width: 176px;
+  padding: 6px;
+
+  background: rgba(255, 255, 255, 0.98);
+  border: 1px solid #e4e7ec;
+  border-radius: 12px;
+
+  z-index: 50;
+
+  box-shadow:
+    0 4px 8px rgba(15, 23, 42, 0.06),
+    0 18px 42px rgba(15, 23, 42, 0.14);
+
+  animation: addressMenuOpen 0.14s ease-out;
+}
+
+.addressMenuUp {
+  top: auto;
+  bottom: 40px;
+}
+
+@keyframes addressMenuOpen {
+  from {
+    opacity: 0;
+    transform: translateY(-5px) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.addressMenuItem {
+  width: 100%;
+  min-height: 40px;
+  padding: 9px 11px;
+
+  display: flex;
+  align-items: center;
+
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+
+  color: #1f2937;
+  font-size: 0.84rem;
+  font-weight: 600;
+  text-align: left;
+  text-transform: none !important;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease;
+}
+
+.addressMenuItem:hover {
+  background-color: #f5f7fa;
+  color: #111111;
+}
+
+.deleteMenuItem {
+  color: #dc2626;
+}
+
+.deleteMenuItem:hover {
+  color: #b91c1c;
+  background-color: #fff1f2;
+}
+
+/* Allow the dropdown menu to appear outside the address card */
+.savedAddressesCard {
+  overflow: visible !important;
+}
+
+.addressRowContainer {
+  overflow: visible !important;
+}
+
+/* Keep sentence case */
+.addressMenu,
+.addressMenuItem,
+.actionBtn {
+  text-transform: none !important;
+}
+
+/* Darker premium pink for the first three location options */
+.optionItem .optionText,
+.optionItem .optionTextPink {
+  color: #8f004f !important;
+}
+
+/* Make their icons the same darker pink */
+.optionItem .optionIcon svg {
+  stroke: #8f004f !important;
+}
+
+/* Slightly darker on hover */
+.optionItem:hover .optionText,
+.optionItem:hover .optionTextPink {
+  color: #760041 !important;
+}
+
+.optionItem:hover .optionIcon svg {
+  stroke: #760041 !important;
+}
+
+/* =========================================================
+   REMOVE BOTTOM SPACE FROM MAP / CONFIRM LOCATION VIEW
+   ========================================================= */
+
+.modal.mapModal,
+.modal.mapModal:has(.mapViewContent) {
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: calc(100dvh - 24px) !important;
+  overflow: hidden !important;
+}
+
+/* Do not stretch the map content to fill 580px */
+.modal.mapModal .mapViewContent {
+  flex: 0 0 auto !important;
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: calc(100dvh - 76px) !important;
+
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+/* Keep address and button close together */
+.modal.mapModal .addressDisplay {
+  flex-shrink: 0 !important;
+  margin-bottom: 6px !important;
+}
+
+/* Modal should end immediately after the button */
+.modal.mapModal .confirmBtn {
+  flex-shrink: 0 !important;
+  margin-top: 0 !important;
+  margin-bottom: 14px !important;
+}
+
+/* Mobile correction */
+@media (max-width: 520px) {
+  .modal.mapModal,
+  .modal.mapModal:has(.mapViewContent) {
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: calc(100dvh - 24px) !important;
+  }
 }
