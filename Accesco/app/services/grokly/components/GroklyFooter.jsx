@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 const footerSections = [
   {
     title: "Shop",
@@ -76,11 +78,19 @@ export default function GroklyFooter() {
               className="grokly-footer-logo"
               aria-label="Grokly home"
             >
-              <span className="grokly-footer-logo-icon">
-                <i className="ri-shopping-basket-2-fill" />
-              </span>
+ <span className="grokly-footer-logo-box">
+  <Image
+    src="/images/grokly-icon.png"
+    alt="Grokly logo"
+    width={48}
+    height={48}
+    className="grokly-footer-logo-image"
+  />
+</span>
 
-              <span className="grokly-footer-logo-text">Grokly</span>
+<span className="grokly-footer-logo-text">
+  Grokly
+</span>
             </a>
 
             <p className="grokly-footer-description">
@@ -154,18 +164,20 @@ export default function GroklyFooter() {
 
         <div className="grokly-footer-divider" />
 
-        <div className="grokly-footer-bottom">
-          <p>
-            © 2026 Grokly by Accesco Living. All rights reserved. · Bengaluru,
-            Karnataka · India
-          </p>
+<div className="grokly-footer-bottom">
+  <p className="grokly-footer-location">
+    Bengaluru, Karnataka • India
+  </p>
 
-          <div className="grokly-footer-bottom-links">
-            <a href="#">Terms</a>
-            <a href="#">Privacy</a>
-            <a href="#">Refund Policy</a>
-          </div>
-        </div>
+  <p className="grokly-footer-copyright">
+    © 2026 Grokly by Accesco Living. All rights reserved.
+  </p>
+
+  <div
+    className="grokly-footer-bottom-spacer"
+    aria-hidden="true"
+  />
+</div>
       </div>
     </footer>
   );
