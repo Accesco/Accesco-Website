@@ -6,17 +6,20 @@ import { useGrokly } from '../contexts/GroklyContext';
 import { products } from '../lib/groklyData';
 import { dishIngredients } from '../lib/dishesData';
 import styles from './checkout.module.css';
-
-// Combined lookup: regular products + dish ingredients (which have their own IDs)
-const allPurchasable = [...products, ...dishIngredients];
 import { useAuth } from '../../../components/AuthProvider';
 import AuthModal from '../../../components/AuthModal';
 import { payWithRazorpay } from '@/lib/razorpayService';
-import { 
-  ArrowLeft, MapPin, Phone, User, CreditCard, 
+import { syncOrderToFirebase } from '@/lib/orderSyncService';
+import { saveAddress } from '@/lib/addressService';
+import {
+  ArrowLeft, MapPin, Phone, User, CreditCard,
   ShieldCheck, ShoppingBag, Clock, Zap, Sparkles,
   RefreshCw, Leaf
 } from 'lucide-react';
+
+const safeProducts = Array.isArray(products) ? products : [];
+const safeIngredients = Array.isArray(dishIngredients) ? dishIngredients : [];
+const allPurchasable = [...safeProducts, ...safeIngredients];
 
 export default function GroklyCheckout() {
   const { cart, placeOrder, location, cartHydrated, returnItems, setReturnItems } = useGrokly();
@@ -33,29 +36,26 @@ export default function GroklyCheckout() {
   });
 
   useEffect(() => {
-    if (location) {
-      setCustomerDetails(prev => ({
-        ...prev,
-        address: location
-      }));
+    if (!location) return;
+    const resolvedLoc = typeof location === 'string' ? location : (location.fullAddress || location.area || '');
+    if (resolvedLoc) {
+      setCustomerDetails(prev => (prev.address === resolvedLoc ? prev : { ...prev, address: resolvedLoc }));
     }
   }, [location]);
 
-  const [eta , setEta] = useState(0);
+  const [eta, setEta] = useState(0);
   const [deliverySpeed, setDeliverySpeed] = useState('instant');
 
   // Pre-populate customer name and phone from authenticated user session
   useEffect(() => {
-    if (user) {
-      setCustomerDetails(prev => ({
-        ...prev,
-        name: user.name || prev.name,
-        phone: user.phone || prev.phone
-      }));
-    }
+    if (!user) return;
+    setCustomerDetails(prev => {
+      const nextName = user.name || prev.name;
+      const nextPhone = user.phone || prev.phone;
+      if (prev.name === nextName && prev.phone === nextPhone) return prev;
+      return { ...prev, name: nextName, phone: nextPhone };
+    });
   }, [user]);
-
-
 
   const cartItems = Object.entries(cart)
     .map(([id, qty]) => ({ product: allPurchasable.find(p => p.id === id), quantity: qty }))
@@ -163,24 +163,29 @@ export default function GroklyCheckout() {
     return {};
   };
 
+  const [paymentMethod, setPaymentMethod] = useState('upi');
+
   // Places the order for a specific logged-in user, after payment succeeds.
   const submitOrder = async (activeUser) => {
     setIsProcessing(true);
     setPaymentError('');
 
     try {
-      const payment = await payWithRazorpay({
-        amount: total,
-        receipt: `grokly_${Date.now()}`,
-        name: 'Grokly',
-        description: `Grokly order · ${cartItems.length} item(s)`,
-        prefill: {
-          name: activeUser?.name || customerDetails.name,
-          email: activeUser?.email || '',
-          contact: activeUser?.phone || customerDetails.phone,
-        },
-        theme: { color: '#0c831f' },
-      });
+      let payment = {};
+      if (paymentMethod === 'upi') {
+        payment = await payWithRazorpay({
+          amount: total,
+          receipt: `grokly_${Date.now()}`,
+          name: 'Grokly',
+          description: `Grokly order · ${cartItems.length} item(s)`,
+          prefill: {
+            name: activeUser?.name || customerDetails.name,
+            email: activeUser?.email || '',
+            contact: activeUser?.phone || customerDetails.phone,
+          },
+          theme: { color: '#0c831f' },
+        });
+      }
 
       const resolvedEta = deliverySpeed === 'batched' ? (eta ? eta + 15 : 25) : eta;
       const order = placeOrder({
@@ -192,9 +197,10 @@ export default function GroklyCheckout() {
         eta: resolvedEta,
         items: cartItems.map(i => ({ id: i.product.id, name: i.product.name, price: i.product.price, quantity: i.quantity, sku: i.product.sku || '' })),
         totals: { subtotal, deliveryFee, discount, total },
-        paymentMethod: 'razorpay',
-        razorpayOrderId: payment.orderId,
-        razorpayPaymentId: payment.paymentId,
+        paymentMethod: paymentMethod === 'cod' ? 'cod' : 'upi',
+        paymentStatus: paymentMethod === 'cod' ? 'PENDING' : 'PAID',
+        razorpayOrderId: payment.orderId || null,
+        razorpayPaymentId: payment.paymentId || null,
         address: customerDetails.address,
         customerName: activeUser?.name || customerDetails.name,
         phone: activeUser?.phone || customerDetails.phone,
@@ -206,6 +212,27 @@ export default function GroklyCheckout() {
         returnCredits: returnItems.reduce((s, i) => s + (i.creditsEarned || i.quantity * 10), 0),
         ...getDeliveryCoords(),
       });
+
+      // Sync order & payment directly to Firebase Firestore
+      try {
+        await syncOrderToFirebase({
+          ...order,
+          venture: 'grokly',
+          userId: activeUser?.uid || activeUser?.id || null,
+          paymentStatus: paymentMethod === 'cod' ? 'PENDING' : 'PAID',
+          eta: resolvedEta,
+        });
+
+        if (activeUser?.uid && customerDetails.address) {
+          saveAddress(activeUser.uid, {
+            name: customerDetails.name,
+            phone: customerDetails.phone,
+            address: customerDetails.address,
+          }).catch(console.error);
+        }
+      } catch (fbErr) {
+        console.error('Error syncing Grokly order to Firebase:', fbErr);
+      }
 
       router.push(`/services/grokly/order-tracking?id=${order.id}&eta=${resolvedEta}`);
     } catch (err) {
@@ -273,7 +300,7 @@ export default function GroklyCheckout() {
     };
 
     fetchEta();
-  }, []); 
+  }, []);
 
   if (cartItems.length === 0 && !isProcessing) {
     // Show loading spinner while cart is still hydrating from Firestore
@@ -310,15 +337,15 @@ export default function GroklyCheckout() {
               <MapPin size={18} className={styles.sectionHeaderIcon} />
               <h2>Delivery Details</h2>
             </div>
-            
+
             <div className={styles.formGroup}>
               <label>Full Name</label>
               <div className={styles.inputWrapper}>
                 <User size={16} className={styles.inputIcon} />
-                <input 
-                  type="text" 
+                <input
+                  type="text"
                   value={customerDetails.name}
-                  onChange={(e) => setCustomerDetails({...customerDetails, name: e.target.value})}
+                  onChange={(e) => setCustomerDetails({ ...customerDetails, name: e.target.value })}
                   placeholder="Enter your full name"
                 />
               </div>
@@ -328,10 +355,10 @@ export default function GroklyCheckout() {
               <label>Phone Number</label>
               <div className={styles.inputWrapper}>
                 <Phone size={16} className={styles.inputIcon} />
-                <input 
-                  type="text" 
+                <input
+                  type="text"
                   value={customerDetails.phone}
-                  onChange={(e) => setCustomerDetails({...customerDetails, phone: e.target.value})}
+                  onChange={(e) => setCustomerDetails({ ...customerDetails, phone: e.target.value })}
                   placeholder="Enter phone number"
                 />
               </div>
@@ -339,9 +366,9 @@ export default function GroklyCheckout() {
 
             <div className={styles.formGroup}>
               <label>Delivery Address {isLoadingLocation && '(Detecting...)'}</label>
-              <textarea 
+              <textarea
                 value={customerDetails.address}
-                onChange={(e) => setCustomerDetails({...customerDetails, address: e.target.value})}
+                onChange={(e) => setCustomerDetails({ ...customerDetails, address: e.target.value })}
                 placeholder={isLoadingLocation ? 'Fetching your location...' : 'Enter your delivery address'}
                 disabled={isLoadingLocation}
                 rows={3}
@@ -358,9 +385,9 @@ export default function GroklyCheckout() {
                 <p className={styles.speedSubheading}>Help reduce traffic emissions by choosing to batch your delivery.</p>
               </div>
             </div>
-            
+
             <div className={styles.speedOptions}>
-              <div 
+              <div
                 className={`${styles.speedOption} ${deliverySpeed === 'instant' ? styles.speedOptionInstantActive : ''}`}
                 onClick={() => setDeliverySpeed('instant')}
               >
@@ -373,7 +400,7 @@ export default function GroklyCheckout() {
                 <span className={styles.speedOffText}>Standard</span>
               </div>
 
-              <div 
+              <div
                 className={`${styles.speedOption} ${deliverySpeed === 'batched' ? styles.speedOptionActive : ''}`}
                 onClick={() => setDeliverySpeed('batched')}
               >
@@ -430,16 +457,27 @@ export default function GroklyCheckout() {
               </>
             )}
           </section>
-          
+
           <section className={styles.section}>
             <div className={styles.sectionHeader}>
               <CreditCard size={18} className={styles.sectionHeaderIcon} />
               <h2>Payment Method</h2>
             </div>
-            <div className={styles.paymentOption}>
-              <input type="radio" checked readOnly id="upi-radio" />
-              <label htmlFor="upi-radio" className={styles.paymentInfo}>
-                <strong>UPI (PhonePe / Google Pay / BHIM)</strong>
+
+            <div
+              className={styles.paymentOption}
+              style={{ cursor: 'pointer', marginBottom: '10px' }}
+              onClick={() => setPaymentMethod('upi')}
+            >
+              <input
+                type="radio"
+                name="grokly-payment"
+                checked={paymentMethod === 'upi'}
+                onChange={() => setPaymentMethod('upi')}
+                id="grokly-upi"
+              />
+              <label htmlFor="grokly-upi" className={styles.paymentInfo} style={{ cursor: 'pointer' }}>
+                <strong>UPI (PhonePe / Google Pay / Paytm)</strong>
                 <p>Instant digital transfer through secure verification</p>
               </label>
               <div className={styles.shieldBadge}>
@@ -447,9 +485,27 @@ export default function GroklyCheckout() {
                 <span>Secure</span>
               </div>
             </div>
+
+            <div
+              className={styles.paymentOption}
+              style={{ cursor: 'pointer' }}
+              onClick={() => setPaymentMethod('cod')}
+            >
+              <input
+                type="radio"
+                name="grokly-payment"
+                checked={paymentMethod === 'cod'}
+                onChange={() => setPaymentMethod('cod')}
+                id="grokly-cod"
+              />
+              <label htmlFor="grokly-cod" className={styles.paymentInfo} style={{ cursor: 'pointer' }}>
+                <strong>Cash on Delivery (COD)</strong>
+                <p>Pay with cash or UPI at your doorstep upon delivery</p>
+              </label>
+            </div>
           </section>
         </div>
-        
+
         <div className={styles.summary}>
           {/* Save Time Next Time Card */}
           <div className={styles.saveTimeCard}>
@@ -468,7 +524,7 @@ export default function GroklyCheckout() {
           </div>
 
           <h2 className={styles.summaryHeading}>Bill Details</h2>
-          
+
           <div className={styles.summaryItems}>
             {cartItems.map(({ product, quantity }) => (
               <div key={product.id} className={styles.item}>
@@ -477,9 +533,9 @@ export default function GroklyCheckout() {
               </div>
             ))}
           </div>
-          
+
           <div className={styles.divider} />
-          
+
           <div className={styles.row}>
             <span>Item Subtotal</span>
             <span>₹{subtotal}</span>
@@ -500,9 +556,9 @@ export default function GroklyCheckout() {
               <span>-₹20</span>
             </div>
           )}
-          
+
           <div className={styles.divider} />
-          
+
           <div className={`${styles.row} ${styles.total}`}>
             <span>To Pay</span>
             <span>₹{total}</span>

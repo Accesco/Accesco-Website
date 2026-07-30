@@ -24,7 +24,7 @@ export async function generateMetadata({ params }) {
       title: title,
       description: desc,
       url: `https://accescoliving.com/services/instastyle/products/${id}`,
-      type: 'product',
+      type: 'website',
       images: [
         {
           url: product.image,

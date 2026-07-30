@@ -23,7 +23,7 @@ export async function generateMetadata({ params }) {
       title: `${restaurant.name} | Swadisht by Accesco`,
       description: desc,
       url: `https://accescoliving.com/services/swadisht/restaurant/${slug}`,
-      type: 'restaurant',
+      type: 'website',
       images: [
         {
           url: restaurant.image,

@@ -196,3 +196,11 @@ export function sendCartReminder(ctx = {}) {
     },
   );
 }
+
+export function triggerNotification(opts = {}) {
+  const { type, orderId, message } = opts;
+  if (typeof window !== 'undefined' && 'Notification' in window && Notification.permission === 'granted') {
+    new Notification(type || 'Order Update', { body: message || `Order #${orderId} updated.` });
+  }
+  return buildNotification(type || NOTIFICATION_TYPES.PREPARING, 'Order Update', message || `Order #${orderId}`, opts);
+}

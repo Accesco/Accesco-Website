@@ -40,8 +40,8 @@ const services = [
 
 const accountItems = [
   { label: 'Account details', icon: 'ri-user-line', active: true },
-  { label: 'Addresses', icon: 'ri-map-pin-line' },
-  { label: 'Payment methods', icon: 'ri-bank-card-line' },
+  { label: 'Payment methods', icon: 'ri-bank-card-line', href: '/profile/payment-methods' },
+  { label: 'Payment history', icon: 'ri-history-line', href: '/profile/payment-history' },
   { label: 'Redeem a code', icon: 'ri-coupon-3-line' },
   { label: 'Bookmarks', icon: 'ri-bookmark-line' },
   { label: 'Subscriptions', icon: 'ri-file-list-3-line' },
@@ -259,16 +259,23 @@ const saveProfileChanges = (event) => {
                   <aside className="account-sidebar">
                     <p className="sidebar-label">Account</p>
                     <nav aria-label="Account settings">
-                      {accountItems.map((item) => (
-                        <button
-                          type="button"
-                          className={item.active ? 'active' : ''}
-                          key={item.label}
-                        >
-                          <i className={item.icon} />
-                          <span>{item.label}</span>
-                        </button>
-                      ))}
+                      {accountItems.map((item) =>
+                        item.href ? (
+                          <Link href={item.href} className={item.active ? 'active' : ''} key={item.label}>
+                            <i className={item.icon} />
+                            <span>{item.label}</span>
+                          </Link>
+                        ) : (
+                          <button
+                            type="button"
+                            className={item.active ? 'active' : ''}
+                            key={item.label}
+                          >
+                            <i className={item.icon} />
+                            <span>{item.label}</span>
+                          </button>
+                        )
+                      )}
                     </nav>
 
                     <p className="sidebar-label explore-label">Explore</p>

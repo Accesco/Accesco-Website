@@ -1,15 +1,13 @@
 'use client';
 
-// Force dynamic rendering to prevent prerendering
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
-
+import styles from "./checkout.module.css";
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSwadishtt } from '../contexts/SwadishttContext';
 import SwadishttHeader from '../components/SwadishttHeader';
-import styles from './checkout.module.css';
 import { payWithRazorpay } from '@/lib/razorpayService';
+import { syncOrderToFirebase } from '@/lib/orderSyncService';
+import { saveAddress } from '@/lib/addressService';
 
 const ORDERS_STORAGE_KEY = 'swadishtt-orders';
 
@@ -33,7 +31,7 @@ function CheckoutContent() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [paymentError, setPaymentError] = useState('');
   const [placedOrder, setPlacedOrder] = useState(null);
-  
+
   // Validation error states
   const [addressErrors, setAddressErrors] = useState({});
   const [isPlacingOrder, setIsPlacingOrder] = useState(false);
@@ -65,17 +63,17 @@ function CheckoutContent() {
     } catch (error) {
       console.error('Error reading userLocation from localStorage:', error);
     }
-    
+
     const resolvedName = typeof storedUser?.name === 'string' ? storedUser.name : '';
     const resolvedPhone = typeof storedUser?.phone === 'string' ? storedUser.phone : '';
     const resolvedEmail = typeof storedUser?.email === 'string' ? storedUser.email : '';
-    
+
     const resolvedCity =
       (typeof storedLocation?.city === 'string' && storedLocation.city) ||
       (typeof storedLocation?.state === 'string' && storedLocation.state) ||
       (typeof storedLocation?.region === 'string' && storedLocation.region) ||
       '';
-    
+
     const resolvedAddress =
       (typeof storedLocation?.fullAddress === 'string' && storedLocation.fullAddress) ||
       (typeof storedLocation?.formattedAddress === 'string' && storedLocation.formattedAddress) ||
@@ -83,10 +81,10 @@ function CheckoutContent() {
       (typeof storedLocation?.area === 'string' && resolvedCity
         ? `${storedLocation.area}, ${resolvedCity}`
         : typeof storedLocation?.area === 'string'
-        ? storedLocation.area
-        : '') ||
+          ? storedLocation.area
+          : '') ||
       '';
-    
+
     const resolvedPincode =
       (typeof storedLocation?.pincode === 'string' && storedLocation.pincode) ||
       (typeof storedLocation?.pinCode === 'string' && storedLocation.pinCode) ||
@@ -95,7 +93,7 @@ function CheckoutContent() {
       (typeof storedLocation?.pincode === 'number' && String(storedLocation.pincode)) ||
       (typeof storedLocation?.postalCode === 'number' && String(storedLocation.postalCode)) ||
       '';
-    
+
     setDeliveryAddress((prev) => ({
       ...prev,
       name: prev.name || resolvedName,
@@ -189,10 +187,36 @@ function CheckoutContent() {
         sku: item.sku || `SWD-GEN-${item.id.replace(/[^0-9]/g, '') || '00'}`,
       })),
     };
-    
+
     setPlacedOrder(nextOrder);
     persistOrder(nextOrder);
     setLastOrderId(orderId);
+
+    // Sync order & payment directly to Firebase Firestore
+    try {
+      let currentUid = null;
+      try {
+        const rawUser = localStorage.getItem('accesco_user');
+        if (rawUser) {
+          const u = JSON.parse(rawUser);
+          currentUid = u.uid || u.id;
+        }
+      } catch (e) { }
+
+      await syncOrderToFirebase({
+        ...nextOrder,
+        venture: 'swadisht',
+        userId: currentUid,
+        paymentStatus: paymentMethod === 'cod' ? 'PENDING' : 'PAID',
+        eta: deliverySpeed === 'batched' ? 25 : 10,
+      });
+
+      if (currentUid && deliveryAddress) {
+        saveAddress(currentUid, deliveryAddress).catch(console.error);
+      }
+    } catch (firebaseErr) {
+      console.error('Error syncing Swadishtt order to Firebase:', firebaseErr);
+    }
 
     // Send confirmation email
     try {
@@ -270,8 +294,15 @@ function CheckoutContent() {
   };
 
   if (cart.length === 0 && !orderPlaced) {
-    router.push('/services/swadisht/cart');
-    return null;
+    return (
+      <div className={styles.page}>
+        <SwadishttHeader />
+        <div style={{ textAlign: 'center', padding: '80px 20px', color: '#666' }}>
+          <h2>Your cart is empty</h2>
+          <p style={{ marginTop: '10px' }}>Redirecting to cart...</p>
+        </div>
+      </div>
+    );
   }
 
   if (orderPlaced) {
@@ -488,7 +519,7 @@ function CheckoutContent() {
   return (
     <div className={styles.page}>
       <SwadishttHeader />
-      
+
       <div className={styles.container}>
         <div className={styles.checkoutLayout}>
           {/* Main Content */}
@@ -519,8 +550,8 @@ function CheckoutContent() {
                         className={`${styles.formInput} ${addressErrors.name ? styles.inputError : ''}`}
                         value={deliveryAddress.name}
                         onChange={(e) => {
-                          setDeliveryAddress({...deliveryAddress, name: e.target.value});
-                          setAddressErrors({...addressErrors, name: ''});
+                          setDeliveryAddress({ ...deliveryAddress, name: e.target.value });
+                          setAddressErrors({ ...addressErrors, name: '' });
                         }}
                       />
                       {addressErrors.name && <span className={styles.fieldError}>{addressErrors.name}</span>}
@@ -532,8 +563,8 @@ function CheckoutContent() {
                         className={`${styles.formInput} ${addressErrors.phone ? styles.inputError : ''}`}
                         value={deliveryAddress.phone}
                         onChange={(e) => {
-                          setDeliveryAddress({...deliveryAddress, phone: e.target.value});
-                          setAddressErrors({...addressErrors, phone: ''});
+                          setDeliveryAddress({ ...deliveryAddress, phone: e.target.value });
+                          setAddressErrors({ ...addressErrors, phone: '' });
                         }}
                       />
                       {addressErrors.phone && <span className={styles.fieldError}>{addressErrors.phone}</span>}
@@ -548,8 +579,8 @@ function CheckoutContent() {
                       placeholder="For order confirmation"
                       value={deliveryAddress.email}
                       onChange={(e) => {
-                        setDeliveryAddress({...deliveryAddress, email: e.target.value});
-                        setAddressErrors({...addressErrors, email: ''});
+                        setDeliveryAddress({ ...deliveryAddress, email: e.target.value });
+                        setAddressErrors({ ...addressErrors, email: '' });
                       }}
                     />
                     {addressErrors.email && <span className={styles.fieldError}>{addressErrors.email}</span>}
@@ -561,8 +592,8 @@ function CheckoutContent() {
                       className={`${styles.formTextarea} ${addressErrors.address ? styles.inputError : ''}`}
                       value={deliveryAddress.address}
                       onChange={(e) => {
-                        setDeliveryAddress({...deliveryAddress, address: e.target.value});
-                        setAddressErrors({...addressErrors, address: ''});
+                        setDeliveryAddress({ ...deliveryAddress, address: e.target.value });
+                        setAddressErrors({ ...addressErrors, address: '' });
                       }}
                       rows={3}
                     />
@@ -575,7 +606,7 @@ function CheckoutContent() {
                       type="text"
                       className={styles.formInput}
                       value={deliveryAddress.landmark}
-                      onChange={(e) => setDeliveryAddress({...deliveryAddress, landmark: e.target.value})}
+                      onChange={(e) => setDeliveryAddress({ ...deliveryAddress, landmark: e.target.value })}
                     />
                   </div>
 
@@ -587,8 +618,8 @@ function CheckoutContent() {
                         className={`${styles.formInput} ${addressErrors.city ? styles.inputError : ''}`}
                         value={deliveryAddress.city}
                         onChange={(e) => {
-                          setDeliveryAddress({...deliveryAddress, city: e.target.value});
-                          setAddressErrors({...addressErrors, city: ''});
+                          setDeliveryAddress({ ...deliveryAddress, city: e.target.value });
+                          setAddressErrors({ ...addressErrors, city: '' });
                         }}
                       />
                       {addressErrors.city && <span className={styles.fieldError}>{addressErrors.city}</span>}
@@ -600,8 +631,8 @@ function CheckoutContent() {
                         className={`${styles.formInput} ${addressErrors.pincode ? styles.inputError : ''}`}
                         value={deliveryAddress.pincode}
                         onChange={(e) => {
-                          setDeliveryAddress({...deliveryAddress, pincode: e.target.value});
-                          setAddressErrors({...addressErrors, pincode: ''});
+                          setDeliveryAddress({ ...deliveryAddress, pincode: e.target.value });
+                          setAddressErrors({ ...addressErrors, pincode: '' });
                         }}
                       />
                       {addressErrors.pincode && <span className={styles.fieldError}>{addressErrors.pincode}</span>}
@@ -620,7 +651,7 @@ function CheckoutContent() {
               <section className={styles.deliverySpeedBox}>
                 <h3 className={styles.speedHeading}>Would you wait 15 minutes to save ₹20?</h3>
                 <div className={styles.speedOptions}>
-                  <div 
+                  <div
                     className={`${styles.speedOption} ${deliverySpeed === 'instant' ? styles.speedOptionInstantActive : ''}`}
                     onClick={() => setDeliverySpeed('instant')}
                   >
@@ -638,7 +669,7 @@ function CheckoutContent() {
                     <span className={styles.speedOffText}>₹0 off</span>
                   </div>
 
-                  <div 
+                  <div
                     className={`${styles.speedOption} ${deliverySpeed === 'batched' ? styles.speedOptionActive : ''}`}
                     onClick={() => setDeliverySpeed('batched')}
                   >
@@ -668,13 +699,13 @@ function CheckoutContent() {
                 <button className={styles.backBtn} onClick={() => setStep(1)}>
                   &larr; Back to Address
                 </button>
-                
+
                 <h2 className={styles.stepTitle}>Payment Method</h2>
-                
+
                 {paymentError && <p className={styles.paymentError}>{paymentError}</p>}
 
                 <div className={styles.paymentMethods}>
-                  <div 
+                  <div
                     className={`${styles.paymentOption} ${paymentMethod === 'upi' ? styles.selected : ''}`}
                     onClick={() => { setPaymentMethod('upi'); setPaymentError(''); }}
                   >
@@ -687,7 +718,7 @@ function CheckoutContent() {
                     </div>
                   </div>
 
-                  <div 
+                  <div
                     className={`${styles.paymentOption} ${paymentMethod === 'card' ? styles.selected : ''}`}
                     onClick={() => { setPaymentMethod('card'); setPaymentError(''); }}
                   >
@@ -700,7 +731,7 @@ function CheckoutContent() {
                     </div>
                   </div>
 
-                  <div 
+                  <div
                     className={`${styles.paymentOption} ${paymentMethod === 'netbanking' ? styles.selected : ''}`}
                     onClick={() => { setPaymentMethod('netbanking'); setPaymentError(''); }}
                   >
@@ -713,7 +744,7 @@ function CheckoutContent() {
                     </div>
                   </div>
 
-                  <div 
+                  <div
                     className={`${styles.paymentOption} ${paymentMethod === 'cod' ? styles.selected : ''}`}
                     onClick={() => { setPaymentMethod('cod'); setPaymentError(''); }}
                   >
@@ -748,12 +779,12 @@ function CheckoutContent() {
           <div className={styles.sidebarSection}>
             <div className={styles.summaryCard}>
               <h3 className={styles.summaryTitle}>Order Summary</h3>
-              
+
               <div className={styles.orderItems}>
                 {cart.map((item, index) => (
                   <div key={index} className={styles.orderItem}>
-                    <img 
-                      src={item.image} 
+                    <img
+                      src={item.image}
                       alt={item.name}
                       className={styles.orderItemImage}
                       onError={(e) => {

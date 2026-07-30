@@ -7,6 +7,8 @@ import { useCart } from '@/contexts/CartContext';
 import styles from './checkout.module.css';
 import Select from '@/components/instastyle/Select';
 import { payWithRazorpay } from '@/lib/razorpayService';
+import { syncOrderToFirebase } from '@/lib/orderSyncService';
+import { saveAddress } from '@/lib/addressService';
 
 export default function CheckoutPage() {
   const router = useRouter();
@@ -365,7 +367,7 @@ export default function CheckoutPage() {
     setIsProcessing(true);
     setPaymentError('');
 
-    const placeTheOrder = (paymentInfo = {}) => {
+    const placeTheOrder = async (paymentInfo = {}) => {
       const order = placeOrder({
         total: finalTotal,
         subtotal,
@@ -378,9 +380,45 @@ export default function CheckoutPage() {
         customerEmail: formData.email,
         customerName: formData.fullName,
         paymentMethod: formData.paymentMethod,
+        paymentStatus: formData.paymentMethod === 'cod' ? 'PENDING' : 'PAID',
         eta: deliverySpeed === 'batched' ? (typeof batchedETA !== 'undefined' ? batchedETA : null) : (deliveryETA || null),
         ...paymentInfo,
       });
+
+      // Sync order & payment directly to Firebase Firestore
+      try {
+        let currentUid = null;
+        try {
+          const rawUser = localStorage.getItem('accesco_user');
+          if (rawUser) {
+            const u = JSON.parse(rawUser);
+            currentUid = u.uid || u.id;
+          }
+        } catch (e) {}
+
+        await syncOrderToFirebase({
+          ...order,
+          venture: 'instastyle',
+          userId: currentUid,
+          paymentStatus: formData.paymentMethod === 'cod' ? 'PENDING' : 'PAID',
+          eta: deliveryETA || 20,
+        });
+
+        if (currentUid && formData.addressLine1) {
+          saveAddress(currentUid, {
+            name: formData.fullName,
+            phone: formData.phone,
+            email: formData.email,
+            address: formData.addressLine1,
+            city: formData.city,
+            state: formData.state,
+            pincode: formData.pincode,
+          }).catch(console.error);
+        }
+      } catch (fbErr) {
+        console.error('Error syncing InstaStyle order to Firebase:', fbErr);
+      }
+
       router.push(`/services/instastyle/order-tracking?id=${order.id}`);
     };
 

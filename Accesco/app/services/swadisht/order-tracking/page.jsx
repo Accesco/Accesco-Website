@@ -7,6 +7,10 @@ import styles from './tracking.module.css';
 import dynamic from 'next/dynamic';
 import { advanceOrderStatus, updateOrderStatusLocal, ORDER_STATUSES } from '@/lib/mailService';
 
+import { db } from '@/lib/firebase';
+import { doc, onSnapshot } from 'firebase/firestore';
+import { subscribeToRiderLocation } from '@/lib/riderTrackingService';
+
 const LiveTrackingMap = dynamic(() => import('../components/Map/LiveTrackingMap'), {
   ssr: false,
   loading: () => <div style={{ height: '480px', background: '#F5F3F4' }} />,
@@ -38,6 +42,60 @@ export default function SwadishttTrackingPage() {
     const storedOrders = JSON.parse(localStorage.getItem('swadishtt-orders') || '[]');
     const found = storedOrders.find((o) => o.id === orderId);
     if (found) setOrder(found);
+  }, [orderId]);
+
+  // Realtime Firestore Listener for Order & Rider Telemetry
+  useEffect(() => {
+    if (!orderId) return;
+
+    // 1. Listen to orders/{orderId}
+    const orderDocRef = doc(db, 'orders', orderId);
+    const unsubOrder = onSnapshot(orderDocRef, (snap) => {
+      if (snap.exists()) {
+        const firestoreData = snap.data();
+        setOrder((prev) => ({
+          ...(prev || {}),
+          ...firestoreData,
+          id: orderId,
+        }));
+      }
+    });
+
+    // 2. Listen to rider_tracking/{orderId}
+    const unsubRider = subscribeToRiderLocation(orderId, (riderData) => {
+      if (riderData) {
+        setOrder((prev) => {
+          if (!prev) return prev;
+          const remainingDist = riderData.remainingDistance;
+          let calculatedStatus = prev.status;
+
+          if (riderData.status === 'delivered' || riderData.orderStatus === 'DELIVERED') {
+            calculatedStatus = 'DELIVERED';
+          } else if (remainingDist !== undefined && remainingDist <= 1.0 && remainingDist > 0) {
+            calculatedStatus = 'DISPATCHED';
+          } else if (riderData.orderStatus) {
+            calculatedStatus = riderData.orderStatus;
+          }
+
+          return {
+            ...prev,
+            status: calculatedStatus,
+            deliveryPartner: {
+              ...(prev.deliveryPartner || {}),
+              name: riderData.riderName || prev.deliveryPartner?.name || 'Ravi Kumar',
+              distanceKm: remainingDist ?? prev.deliveryPartner?.distanceKm ?? 1.8,
+              etaMinutes: riderData.remainingETA ?? prev.deliveryPartner?.etaMinutes ?? 10,
+              statusText: riderData.status === 'arriving' ? 'Rider is arriving soon' : prev.deliveryPartner?.statusText,
+            },
+          };
+        });
+      }
+    });
+
+    return () => {
+      unsubOrder();
+      unsubRider();
+    };
   }, [orderId]);
 
   const handleAdvanceStatus = useCallback(() => {
