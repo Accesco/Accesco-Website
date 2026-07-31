@@ -48,6 +48,28 @@ export default function BrandPartnership() {
               At Accesco Living, we believe in the power of partnerships. Collaborate with us and be part of a shared vision for innovative living across India.
             </p>
 
+            <ul className="benefit-list">
+              <li>
+                <strong>Reach engaged households</strong> across our Grokly grocery,
+                Swadishtt food, and InstaStyle fashion audiences with one collaboration.
+              </li>
+              <li>
+                <strong>Flexible collaboration formats</strong> — Instagram and social
+                campaigns, YouTube integrations, UGC creation, ambassadorships, or
+                straightforward barter/product exchange.
+              </li>
+              <li>
+                <strong>Fast turnaround</strong> — our partnerships team typically responds
+                to new brand requests within 48 hours.
+              </li>
+              <li>
+                Not a brand?{' '}
+                <Link href="/partner/vendor">List as a vendor</Link>,{' '}
+                <Link href="/partner/delivery">join as a delivery partner</Link>, or{' '}
+                <Link href="/partner/creator">apply as a creator</Link> using the tabs below.
+              </li>
+            </ul>
+
             {/* Real Accesco Logo — white-filtered for dark background */}
             <div className="al-brand-graphic-wrapper">
               <Image
@@ -91,6 +113,15 @@ export default function BrandPartnership() {
             <h2 className="form-heading">Partner with Accesco Living</h2>
             <p className="form-subtitle">
               Fill in your details below and our team will get back to you to explore collaboration opportunities.
+            </p>
+            <p className="form-note-text">
+              We work with brands of every size — from single-city D2C labels
+              looking for their first retail moment, to established names
+              wanting a direct line into households already ordering groceries,
+              food, and fashion through Accesco Living every day. Tell us a bit
+              about your brand and what you're hoping to achieve, and our
+              partnerships team will follow up with next steps, timelines, and
+              a proposal tailored to your budget.
             </p>
 
             <form onSubmit={handleSubmit} className="partnership-form">

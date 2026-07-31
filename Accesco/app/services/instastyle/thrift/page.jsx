@@ -187,6 +187,21 @@ export default function ThriftMarketplace() {
     <div className={styles.page}>
       <header className={styles.hero}>
         <div className={styles.heroOverlay} aria-hidden="true" />
+        <div className={styles.heroContent}>
+          <span className={styles.heroBadge}>
+            <span className={styles.heroBadgeDot} />
+            Pre-Loved Luxury
+          </span>
+          <h1 className={styles.heroTitle}>InstaStyle Thrift Marketplace</h1>
+          <p className={styles.heroSubtitle}>
+            Authenticated pre-owned fashion from top brands, at a fraction of the price —
+            plus an easy way to sell your own pre-loved pieces.
+          </p>
+          <div className={styles.heroActions}>
+            <a href="#collection" className={styles.heroBtn}>Shop Thrift</a>
+            <a href="#sell" className={styles.heroBtnSecondary}>Sell Your Clothes</a>
+          </div>
+        </div>
       </header>
 
       <section id="sell" className={styles.sellSection}>
