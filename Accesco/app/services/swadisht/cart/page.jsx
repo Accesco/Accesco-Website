@@ -281,65 +281,75 @@ function CartContent() {
             </div>
           </div>
 
-          {/* ── Eco Container Return Widget ── */}
-          <div className={styles.supportWidget}>
-            <div className={styles.supportWidgetHeader}>
-              <div className={styles.supportHeaderLeft}>
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2E7D32" strokeWidth="2">
-                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-                </svg>
-                <span className={styles.supportWidgetTitle}>Return Eco Container</span>
-              </div>
-              <button
-                className={styles.supportToggleBtn}
-                onClick={() => { setShowSupportPanel(!showSupportPanel); setReturnScheduled(false); }}
-              >
-                {showSupportPanel ? 'Close' : 'Schedule Pickup'}
-              </button>
-            </div>
+          {/* ── Reusable Container Card ── */}
+<div className={styles.supportWidget}>
+  {!returnScheduled ? (
+    <>
+      <div className={styles.containerInfoRow}>
+        <div className={styles.containerIcon}>
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.8"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="M6 7h12l-1 12H7L6 7Z" />
+            <path d="M9 7V5a3 3 0 0 1 6 0v2" />
+            <circle cx="9" cy="21" r="1" />
+            <circle cx="15" cy="21" r="1" />
+          </svg>
+        </div>
 
-            {showSupportPanel && (
-              <div className={styles.supportPanelBody}>
-                <div className={styles.supportSection}>
-                  {!returnScheduled ? (
-                    <>
-                      <p className={styles.supportDesc}>
-                        Return any Swadishtt eco-tiffin or container with your next delivery. Earn <strong>₹10 Green Points</strong> per container.
-                      </p>
-                      <div className={styles.ecoSteps}>
-                        <div className={styles.ecoStep}>
-                          <span>1</span> Keep your used container ready
-                        </div>
-                        <div className={styles.ecoStep}>
-                          <span>2</span> Hand it to our delivery partner
-                        </div>
-                        <div className={styles.ecoStep}>
-                          <span>3</span> ₹10 Green Points added automatically
-                        </div>
-                      </div>
-                      <button
-                        className={styles.supportActionBtn}
-                        onClick={() => setReturnScheduled(true)}
-                      >
-                        Schedule Container Return Pickup
-                      </button>
-                    </>
-                  ) : (
-                    <div className={styles.supportSuccess}>
-                      <div className={styles.supportSuccessIcon}>
-                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#2E7D32" strokeWidth="2.5">
-                          <polyline points="20 6 9 17 4 12" />
-                        </svg>
-                      </div>
-                      <strong>Return Scheduled!</strong>
-                      <p>Our delivery partner will collect your container during your next delivery. ₹10 Green Points will be credited after pickup verification.</p>
-                    </div>
-                  )}
-                </div>
-              </div>
-            )}
-          </div>
+        <div className={styles.containerText}>
+          <h4>Reusable Container</h4>
 
+          <p>
+            This order came in an Accesco reusable container.
+          </p>
+
+          <span>
+            Return it with your next Swadishtt order.
+          </span>
+        </div>
+      </div>
+
+      <button
+        className={styles.supportActionBtn}
+        onClick={() => setReturnScheduled(true)}
+      >
+        Return Container
+      </button>
+    </>
+  ) : (
+    <div className={styles.supportSuccess}>
+      <div className={styles.supportSuccessIcon}>
+        <svg
+          width="22"
+          height="22"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <polyline points="20 6 9 17 4 12" />
+        </svg>
+      </div>
+
+      <div>
+        <strong>Return Scheduled</strong>
+        <p>
+          Your reusable container will be collected with your next delivery.
+        </p>
+      </div>
+    </div>
+  )}
+</div>
           {/* Right Pane: Sticky Checkout Breakdown */}
           <div className={styles.rightPane}>
             <div className={styles.summaryCard}>
