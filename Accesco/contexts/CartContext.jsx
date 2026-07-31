@@ -4,6 +4,7 @@ import { createContext, useContext, useState, useEffect, useRef } from 'react';
 import { db } from '@/lib/firebase';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { useAuth } from '@/app/components/AuthProvider';
+import { trackAddToCart, trackRemoveFromCart, trackPurchase } from '@/lib/gtag';
 
 const CartContext = createContext();
 
@@ -97,7 +98,7 @@ export function CartProvider({ children }) {
       } catch (error) {
         console.warn('Cart cloud read fallback to local only:', error);
       }
-      
+
       // Fallback
       loadData(CART_STORAGE_KEY, setCart);
       isHydrated.current = true;
@@ -154,7 +155,7 @@ export function CartProvider({ children }) {
   // ═══════════════════════════════════════════════
   // ETA & ORDER ACCEPTANCE SIMULATION
   // ═══════════════════════════════════════════════
-  
+
   useEffect(() => {
     if (orders.length === 0) return;
 
@@ -162,15 +163,15 @@ export function CartProvider({ children }) {
       setOrders(prevOrders => {
         let changed = false;
         const now = Date.now();
-        
+
         const newOrders = prevOrders.map(order => {
           if (order.status === 'DELIVERED') return order;
-          
+
           const orderTime = new Date(order.timestamp).getTime();
           const elapsedSeconds = (now - orderTime) / 1000;
-          
+
           let newStatus = order.status;
-          
+
           if (order.status === 'PLACED' && elapsedSeconds > 5) {
             newStatus = 'CONFIRMED';
           } else if (order.status === 'CONFIRMED' && elapsedSeconds > 15) {
@@ -263,9 +264,9 @@ export function CartProvider({ children }) {
   const addToCart = (product, size, color, quantity = 1) => {
     setCart(prev => {
       const existingIndex = prev.findIndex(
-        item => item.id === product.id && 
-                item.selectedSize === size && 
-                item.selectedColor === color
+        item => item.id === product.id &&
+          item.selectedSize === size &&
+          item.selectedColor === color
       );
 
       if (existingIndex > -1) {
@@ -290,16 +291,32 @@ export function CartProvider({ children }) {
       }];
     });
 
+    trackAddToCart({
+      id: product.id,
+      name: product.name,
+      price: product.discountedPrice || product.price,
+      quantity,
+    });
+
     // Show success feedback
     return true;
   };
 
   // Remove item from cart
   const removeFromCart = (productId, size, color) => {
+    const targetItem = cart.find(
+      item => item.id === productId &&
+        item.selectedSize === size &&
+        item.selectedColor === color
+    );
+    if (targetItem) {
+      trackRemoveFromCart(targetItem);
+    }
+
     setCart(prev => prev.filter(
-      item => !(item.id === productId && 
-                item.selectedSize === size && 
-                item.selectedColor === color)
+      item => !(item.id === productId &&
+        item.selectedSize === size &&
+        item.selectedColor === color)
     ));
   };
 
@@ -311,9 +328,9 @@ export function CartProvider({ children }) {
     }
 
     setCart(prev => prev.map(item =>
-      item.id === productId && 
-      item.selectedSize === size && 
-      item.selectedColor === color
+      item.id === productId &&
+        item.selectedSize === size &&
+        item.selectedColor === color
         ? { ...item, quantity: newQuantity }
         : item
     ));
@@ -353,17 +370,24 @@ export function CartProvider({ children }) {
       venture: 'InstaStyle',
       ...orderData
     };
-    
+
     // Reduce stock
     setInventory(prev => {
       const next = { ...prev };
       cart.forEach(item => {
         if (!next[item.id]) next[item.id] = {};
-        const currentSizeStock = next[item.id][item.selectedSize] !== undefined ? 
-                                next[item.id][item.selectedSize] : 10;
+        const currentSizeStock = next[item.id][item.selectedSize] !== undefined ?
+          next[item.id][item.selectedSize] : 10;
         next[item.id][item.selectedSize] = Math.max(0, currentSizeStock - item.quantity);
       });
       return next;
+    });
+
+    trackPurchase({
+      transactionId: newOrder.id,
+      value: total,
+      currency: 'INR',
+      items: cart,
     });
 
     setOrders(prev => [newOrder, ...prev]);
@@ -381,7 +405,7 @@ export function CartProvider({ children }) {
   };
 
   const updateOrderStatus = (orderId, status) => {
-    setOrders(prev => prev.map(order => 
+    setOrders(prev => prev.map(order =>
       order.id === orderId ? { ...order, status } : order
     ));
   };

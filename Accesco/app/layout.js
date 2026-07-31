@@ -8,6 +8,7 @@ import CookieConsent from './components/CookieConsent';
 import ReferralCapture from './components/ReferralCapture';
 import JsonLd from '@/components/JsonLd';
 import BreadcrumbJsonLd from '@/components/BreadcrumbJsonLd';
+import GoogleAnalytics from '@/components/GoogleAnalytics';
 
 const sora = Sora({
   subsets: ['latin'],
@@ -137,13 +138,13 @@ export default function RootLayout({ children }) {
 
       <body>
         <AuthProvider>
-  <BreadcrumbJsonLd />
-  <ReferralCapture />
+          <BreadcrumbJsonLd />
+          <ReferralCapture />
 
-  {children}
-  <CookieConsent />
+          {children}
+          <CookieConsent />
 
-</AuthProvider>
+        </AuthProvider>
 
         {/* RemixIcon loaded lazily — only needed for a few social icons */}
         <Script id="load-remixicon" strategy="lazyOnload">
@@ -157,19 +158,7 @@ export default function RootLayout({ children }) {
           `}
         </Script>
 
-        <Script
-          src="https://www.googletagmanager.com/gtag/js?id=G-SH32KGLK5F"
-          strategy="afterInteractive"
-        />
-
-        <Script id="google-analytics" strategy="afterInteractive">
-          {`
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', 'G-SH32KGLK5F');
-          `}
-        </Script>
+        <GoogleAnalytics />
 
         <Script
           src="https://www.gstatic.com/dialogflow-console/fast/messenger/bootstrap.js?v=1"

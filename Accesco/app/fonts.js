@@ -6,7 +6,6 @@ import {
   Plus_Jakarta_Sans,
   Caveat,
   Nunito,
-  Nunito_Sans,
   DM_Serif_Display,
   Baloo_2,
   DM_Sans,
@@ -20,8 +19,8 @@ export const jetbrainsMono = JetBrains_Mono({ subsets: ['latin'], variable: '--f
 export const playfairDisplay = Playfair_Display({ subsets: ['latin'], variable: '--font-playfair-display', display: 'swap' });
 export const plusJakartaSans = Plus_Jakarta_Sans({ subsets: ['latin'], variable: '--font-plus-jakarta-sans', display: 'swap' });
 export const caveat = Caveat({ subsets: ['latin'], variable: '--font-caveat', display: 'swap' });
-export const nunito = Nunito({ subsets: ['latin'], variable: '--font-nunito', display: 'swap' });
-export const nunitoSans = Nunito_Sans({ subsets: ['latin'], variable: '--font-nunito-sans', display: 'swap' });
+export const nunito = Nunito({ subsets: ['latin'], weight: ['300', '400', '600', '700', '800'], variable: '--font-nunito', display: 'swap' });
+export const nunitoSans = { variable: '--font-nunito-sans', className: '' };
 export const dmSerifDisplay = DM_Serif_Display({ weight: ['400'], subsets: ['latin'], variable: '--font-dm-serif-display', display: 'swap' });
 export const baloo2 = Baloo_2({ subsets: ['latin'], variable: '--font-baloo-2', display: 'swap' });
 export const dmSans = DM_Sans({ subsets: ['latin'], variable: '--font-dm-sans', display: 'swap' });
