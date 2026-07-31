@@ -15,13 +15,15 @@ if (!getApps().length) {
     });
   }
   
-  // If credential is not provided, initializeApp will attempt to use
-  // Application Default Credentials (ADC) if available in the deployment environment.
-  // We still provide projectId as a fallback for verifyIdToken to work without ADC.
-  initializeApp({
-    credential,
+  const config = {
     projectId: process.env.FIREBASE_PROJECT_ID || 'accesco-db'
-  });
+  };
+  
+  if (credential) {
+    config.credential = credential;
+  }
+  
+  initializeApp(config);
 }
 
 export const adminAuth = getAuth();

@@ -147,7 +147,7 @@ function CartContent() {
               <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
             </svg>
           </div>
-          <h2 className={styles.emptyTitle}>Your cart is empty</h2>
+          <h1 className={styles.emptyTitle}>Your cart is empty</h1>
           <p className={styles.emptyText}>Add items from restaurants to get started</p>
           <Link href="/services/swadisht" className={styles.browseBtn}>
             Browse Restaurants
@@ -166,7 +166,7 @@ function CartContent() {
           {/* Left Pane: Items List */}
           <div className={styles.leftPane}>
             <div className={styles.paneHeader}>
-              <h2 className={styles.paneTitle}>Your Cart ({cart.length} items)</h2>
+              <h1 className={styles.paneTitle}>Your Cart ({cart.length} items)</h1>
               <button className={styles.clearBtn} onClick={clearCart}>
                 Clear All
               </button>

@@ -525,10 +525,12 @@ function AuthModalContent({
       // Firebase session is kept alive to allow getIdToken() for secure API calls
       
       // Referral profile creation/attribution is a side effect — never let
-      // it block or fail the sign-in itself.
-      initializeReferralProfile(p, n, getStoredReferralCode()).catch((err) =>
-        console.error('Referral profile init failed:', err),
-      )
+      // it fail the sign-in itself.
+      try {
+        await initializeReferralProfile(p, n, getStoredReferralCode())
+      } catch (err) {
+        console.error('Referral profile init failed:', err)
+      }
 
       const user = {
         name: n,
