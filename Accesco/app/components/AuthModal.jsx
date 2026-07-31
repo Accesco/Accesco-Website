@@ -304,8 +304,8 @@ function AuthModalContent({
   // Completes sign-in for a social user whose phone was already verified on
   // a prior visit — no OTP needed again, just restore the app session.
   const completeVerifiedSocialUser = async (existing, firebaseUser) => {
-    await signOut(auth)
-
+    // Session persists to allow getIdToken() for secure API calls
+    
     const user = {
       name: existing.name || firebaseUser.displayName || 'Accesco User',
       phone: existing.phone || firebaseUser.phoneNumber || null,
@@ -522,9 +522,8 @@ function AuthModalContent({
         },
       )
 
-      // Sign out of Firebase Auth after the write — we only needed phone verification
-      await signOut(auth)
-
+      // Firebase session is kept alive to allow getIdToken() for secure API calls
+      
       // Referral profile creation/attribution is a side effect — never let
       // it block or fail the sign-in itself.
       initializeReferralProfile(p, n, getStoredReferralCode()).catch((err) =>
