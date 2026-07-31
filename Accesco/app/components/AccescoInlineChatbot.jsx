@@ -54,7 +54,7 @@ const [typing, setTyping] = useState(false)
     endRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, typing]);
 
-  const sendMessage = (e) => {
+  const sendMessage = async (e) => {
     e.preventDefault();
 
     const value = input.trim();
@@ -73,19 +73,32 @@ const [typing, setTyping] = useState(false)
     setInput('');
     setTyping(true);
 
-    setTimeout(() => {
-      setMessages((prev) => [
-        ...prev,
-        {
-          id: Date.now() + 1,
-          role: 'bot',
-          text: getAccescoReply(value),
-          time: getChatTime(),
-        },
-      ]);
+    // TEMPORARY TEST: call FastAPI ML server; fall back to rule-based reply if server is down
+    let botText;
+    try {
+      const res = await fetch('http://localhost:8000/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text: value, top_k: 3 }),
+      });
+      if (!res.ok) throw new Error('server error');
+      const data = await res.json();
+      botText = data.reply;
+    } catch (err) {
+      botText = getAccescoReply(value);
+    }
 
-      setTyping(false);
-    }, 650);
+    setMessages((prev) => [
+      ...prev,
+      {
+        id: Date.now() + 1,
+        role: 'bot',
+        text: botText,
+        time: getChatTime(),
+      },
+    ]);
+
+    setTyping(false);
   };
 
   return (
@@ -198,7 +211,14 @@ const [typing, setTyping] = useState(false)
 
                   <div className="ac-ai-message-stack">
                     <div className="ac-ai-bubble">
-                      <span>{msg.text}</span>
+                      <span style={{ whiteSpace: 'pre-wrap' }}>
+                        {msg.text.split('\n').map((line, i, arr) => (
+                          <span key={i}>
+                            {line}
+                            {i < arr.length - 1 && <br />}
+                          </span>
+                        ))}
+                      </span>
 
                       {msg.role === 'user' && (
                         <span className="ac-ai-user-time">

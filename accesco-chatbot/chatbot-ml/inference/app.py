@@ -15,6 +15,7 @@ os.environ.setdefault("MKL_NUM_THREADS", "1")
 
 import json
 import pickle
+import re
 
 import faiss
 import numpy as np
@@ -101,6 +102,7 @@ class ProductResult(BaseModel):
     sub_category: str
     selling_price: str
     sku_id: str
+    service: str
 
 class SearchResponse(BaseModel):
     query: str
@@ -120,12 +122,13 @@ INTENT_CONFIDENCE_THRESHOLD = 0.30
 # Keyword fallback for queries the model is unsure about (< threshold)
 # Keys are intent names; values are (must_any, must_all) keyword tuples.
 FALLBACK_RULES: list[tuple[str, list[str], list[str]]] = [
-    ("greeting", ["hi", "hello", "hey", "namaste"], []),
+    ("greeting", ["hi", "hello", "hey", "namaste", "good morning", "good afternoon", "good evening", "good night"], []),
     ("delivery_order", ["deliver", "delivery", "shipping", "courier"], ["area", "where", "near", "location", "pin", "zip", "pincode"]),
-    ("grokly_grocery", ["grocery", "groceries", "vegetables", "fruits", "milk", "groceries delivered"], []),
-    ("swadisht_food", ["food delivery", "swadisht", "food order", "restaurant"], []),
+    ("grokly_grocery", ["grocery", "groceries", "vegetables", "fruits", "milk", "grokly", "groceries delivered"], []),
+    ("swadisht_food", ["food delivery", "swadisht", "swadish", "swadhish", "swadhissht", "food order", "restaurant"], []),
     ("instastyle_fashion", ["fashion", "clothes", "instastyle", "apparel"], []),
     ("localmeds_pharmacy", ["medicine", "pharmacy", "meds", "localmeds"], []),
+    ("xpense_budget", ["xpense", "budget", "spending", "spend tracker"], []),
     ("pricing_payment", ["price", "cost", "how much", "charge", "payment", "pay"], []),
     ("waitlist_launch", ["waitlist", "early access", "launch", "beta", "sign up", "sign-up"], []),
     ("returns_refunds", ["return", "refund", "exchange", "replace"], []),
@@ -133,6 +136,22 @@ FALLBACK_RULES: list[tuple[str, list[str], list[str]]] = [
     ("support_contact", ["contact", "support", "help line", "reach", "phone number", "email"], []),
     ("privacy_security", ["privacy", "secure", "data safe", "security", "personal data"], []),
 ]
+
+def keyword_intent(text: str) -> str | None:
+    """Rule-based intent from FALLBACK_RULES, or None if no rule matches.
+    Short keywords (<=3 chars, e.g. "hi") match as whole words so they
+    don't false-positive inside longer words ("swadhissht" contains "hi")."""
+    text_l = text.lower()
+
+    def has(kw: str) -> bool:
+        if len(kw) <= 3:
+            return re.search(rf"\b{re.escape(kw)}\b", text_l) is not None
+        return kw in text_l
+
+    for fallback_intent, must_any, secondary in FALLBACK_RULES:
+        if any(has(k) for k in must_any) and (not secondary or any(has(k) for k in secondary)):
+            return fallback_intent
+    return None
 
 def classify_intent(text: str) -> tuple[str, float]:
     """Classify user intent with the fine-tuned DistilBERT model."""
@@ -147,28 +166,38 @@ def classify_intent(text: str) -> tuple[str, float]:
     if confidence >= INTENT_CONFIDENCE_THRESHOLD:
         return intent, confidence
     # Low confidence → fall back on keyword rules
-    text_l = text.lower()
-    for fallback_intent, must_any, secondary in FALLBACK_RULES:
-        if any(k in text_l for k in must_any) and (not secondary or any(k in text_l for k in secondary)):
-            return fallback_intent, confidence
+    fallback = keyword_intent(text)
+    if fallback:
+        return fallback, confidence
     return "unknown", confidence
 
 
 # ─── Product search via FAISS ───────────────────────────────────────────────
 
 MAX_PRODUCT_DISTANCE = 15.0
+# If the top product match is closer than this, the query is clearly about a product
+PRODUCT_QUERY_DISTANCE = 1.1
 
-def search_products(text: str, top_k: int = 5) -> list[dict]:
-    """Embed the query and return top_k closest products from the FAISS index.
+# Which Accesco vertical (service) a category belongs to.
+# Default: Grokly (grocery). No fashion/food products exist in the catalog yet.
+LOCALMEDS_CATEGORIES = {"Pharma & Wellness", "Health & Hygiene"}
+
+def service_for(category: str) -> str:
+    return "LocalMeds" if category in LOCALMEDS_CATEGORIES else "Grokly"
+
+def search_products(text: str, top_k: int = 5) -> tuple[list[dict], float]:
+    """Embed the query and return (top_k closest products, best distance).
     Results beyond MAX_PRODUCT_DISTANCE are discarded as irrelevant."""
     vec = EMBED_MODEL.encode([text]).astype(np.float32)
     distances, indices = INDEX.search(vec, top_k)
     results = []
+    best_distance = float("inf")
     for idx, dist in zip(indices[0], distances[0]):
         if idx < 0 or idx >= len(CATALOG):
             continue
         if dist > MAX_PRODUCT_DISTANCE:
             continue
+        best_distance = min(best_distance, float(dist))
         p = CATALOG[int(idx)]
         results.append({
             "product_name": p["product_name"],
@@ -177,8 +206,11 @@ def search_products(text: str, top_k: int = 5) -> list[dict]:
             "sub_category": p["sub_category"],
             "selling_price": p["selling_price"],
             "sku_id": p["sku_id"],
+            "service": service_for(p["category"]),
         })
-    return results
+    if best_distance == float("inf"):
+        best_distance = MAX_PRODUCT_DISTANCE
+    return results, best_distance
 
 
 # ─── Route: Health check ────────────────────────────────────────────────────
@@ -200,45 +232,127 @@ def predict(query: Query):
 
 @app.post("/search", response_model=SearchResponse)
 def search(query: Query):
-    results = search_products(query.text, query.top_k)
+    results, _ = search_products(query.text, query.top_k)
     return SearchResponse(query=query.text, results=[ProductResult(**r) for r in results])
 
 
+# ─── Reply builders ─────────────────────────────────────────────────────────
+
+def time_of_day_greeting(text: str) -> str | None:
+    """Return a time-matched greeting reply, or None if not a time greeting.
+    Uses difflib to tolerate typos ("good afternon" → afternoon)."""
+    import difflib
+
+    tl = text.lower().strip(" ?!.")
+    if not tl.startswith("good "):
+        return None
+    words = tl.split()
+    if len(words) < 2:
+        return None
+    period = words[1]
+    matches = {"morning": "Good morning! I hope you have a bright and productive day. How can I help you at Accesco?",
+               "afternoon": "Good afternoon! Hope your day is going well. What can I do for you at Accesco?",
+               "evening": "Good evening! How can I help you today?",
+               "night": "Good night! If you need anything from Accesco, I'll be right here when you're back."}
+    best = difflib.get_close_matches(period, list(matches), n=1, cutoff=0.72)
+    if not best:
+        return None
+    return matches[best[0]]
+
+def is_info_question(text: str) -> bool:
+    tl = text.lower()
+    return any(phrase in tl for phrase in
+               ("what is", "what are", "whats ", "what's", "wht is", "whts ", "wat is",
+                "wat are", "who is", "who are", "tell me about", "explain",
+                "about the app", "about accesco"))
+
+def format_products(products: list[dict]) -> str:
+    """Structured, bullet-point listing of products for the chat reply."""
+    lines = []
+    for p in products[:3]:
+        lines.append(
+            f"• {p['product_name']}\n"
+            f"  Brand: {p['brand']} | Category: {p['category']} ({p['sub_category']})\n"
+            f"  Available on: {p['service']} | Price: Rs. {p['selling_price']}"
+        )
+    return "\n\n".join(lines)
+
+
 # ─── Route: Combined chat ───────────────────────────────────────────────────
+
+# Single-word vertical names → explanation only, never product listings
+SINGLE_WORD_INFO = {
+    "grokly": "grokly_grocery",
+    "swadisht": "swadisht_food",
+    "instastyle": "instastyle_fashion",
+    "localmeds": "localmeds_pharmacy",
+    "xpense": "xpense_budget",
+}
 
 @app.post("/chat", response_model=ChatResponse)
 def chat(query: Query):
     text = query.text
 
-    # 1. Classify intent
+    # 1. Time-of-day greetings get a matching reply, no products
+    time_greeting = time_of_day_greeting(text)
+    if time_greeting:
+        return ChatResponse(reply=time_greeting, intent="greeting", confidence=0.99, products=[])
+
+    # 2. Single-word vertical names ("grokly", "swadishtt") → explanation only.
+    #    Prefix matching tolerates typos ("swadishtt" → swadisht).
+    single_word = text.strip().lower()
+    if len(single_word.split()) == 1:
+        for name, intent in SINGLE_WORD_INFO.items():
+            if single_word == name or (len(single_word) >= 4 and single_word.startswith(name)) or (len(name) >= 4 and name.startswith(single_word)):
+                return ChatResponse(
+                    reply=INTENT_REPLIES[intent], intent=intent, confidence=0.99, products=[]
+                )
+
+    # 3. Classify intent
     intent, confidence = classify_intent(text)
 
-    # 2. Search products (only relevant for product-related intents)
+    # 4. Search products + best distance
+    products, best_distance = search_products(text, query.top_k)
+
+    # 5. Info questions ("what is X", "tell me about X") → explanation only.
+    #    Keyword rules first, so typos of vertical names ("what is swadhissht")
+    #    resolve to the right intent instead of the model's misclassification.
+    if is_info_question(text):
+        kw = keyword_intent(text)
+        if kw is not None:
+            intent = kw
+        elif intent in ("greeting", "unknown"):
+            intent = "about_brand"
+        reply = INTENT_REPLIES.get(
+            intent, "Accesco Living is an intelligent commerce ecosystem built for urban Indian households."
+        )
+        return ChatResponse(reply=reply, intent=intent, confidence=confidence, products=[])
+
+    # 6. "Greeting" classification but a strong product match exists → it's a product query
+    #    ("amul taaza" was misclassified as greeting; FAISS distance separates the two)
+    if intent == "greeting" and best_distance < PRODUCT_QUERY_DISTANCE:
+        intent = "localmeds_pharmacy" if products[0]["service"] == "LocalMeds" else "grokly_grocery"
+        confidence = round(confidence, 3)
+
+    # 7. Build reply
     PRODUCT_INTENTS = {"grokly_grocery", "swadisht_food", "instastyle_fashion",
                        "localmeds_pharmacy", "unknown"}
-    products = search_products(text, query.top_k) if intent in PRODUCT_INTENTS else []
-
-    # 3. Build reply
-    if intent == "unknown":
-        if products:
-            category = products[0]["category"]
+    show_products = intent in PRODUCT_INTENTS and bool(products)
+    if show_products:
+        listing = format_products(products)
+        if intent == "unknown":
             reply = (
-                f"I found a few products in **{category}** — for example "
-                f"**{products[0]['product_name']}** at ₹{products[0]['selling_price']}. "
-                f"Can you tell me more about what you're looking for?"
+                f"I found these matching products for you:\n\n{listing}\n\n"
+                "Can you tell me more about what you're looking for?"
             )
         else:
-            reply = (
-                "I'm still learning! Could you rephrase your question? "
-                "You can ask about products, prices, or services on Accesco."
-            )
+            reply = f"Here are the best matches for you:\n\n{listing}"
     elif intent == "greeting":
         reply = INTENT_REPLIES["greeting"]
-    elif intent in PRODUCT_INTENTS and products:
-        first = products[0]
+    elif intent == "unknown":
         reply = (
-            f"{INTENT_REPLIES.get(intent, '')} Here's a product you might like: "
-            f"**{first['product_name']}** ({first['category']}) at ₹{first['selling_price']}."
+            "I'm still learning! Could you rephrase your question? "
+            "You can ask about products, prices, or services on Accesco."
         )
     else:
         reply = INTENT_REPLIES.get(intent, "I'm here to help with anything about Accesco Living.")
@@ -247,5 +361,5 @@ def chat(query: Query):
         reply=reply,
         intent=intent,
         confidence=confidence,
-        products=[ProductResult(**p) for p in products[:3]],
+        products=[ProductResult(**p) for p in products[:3]] if show_products else [],
     )
