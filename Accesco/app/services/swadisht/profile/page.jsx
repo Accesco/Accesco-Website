@@ -198,7 +198,7 @@ export default function SwadishttProfilePage() {
               <div className={styles.avatar}>
                 {(profile.name || 'U').charAt(0).toUpperCase()}
               </div>
-              <h2 className={styles.profileName}>{profile.name || 'Accesco User'}</h2>
+              <h1 className={styles.profileName}>{profile.name || 'Accesco User'}</h1>
               <p className={styles.profilePhone}>
                 {profile.phone || 'No phone number linked'}
               </p>

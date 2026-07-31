@@ -156,9 +156,9 @@ export default function GroklyCategoryPage() {
             <div style={{ flex: 1, minWidth: 0 }}>
               <div className="grokly-category-header">
                 <div>
-                  <h2 className="grokly-category-title">
+                  <h1 className="grokly-category-title">
                     {activeCategoryObject ? activeCategoryObject.name : 'Category'}
-                  </h2>
+                  </h1>
                   <p className="grokly-category-count">
                     Showing {filteredProducts.length} {filteredProducts.length === 1 ? 'item' : 'items'}
                   </p>

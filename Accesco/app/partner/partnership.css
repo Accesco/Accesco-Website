@@ -107,6 +107,44 @@ body {
   margin-bottom: 40px;
 }
 
+.benefit-list {
+  list-style: none;
+  padding: 0;
+  margin: -16px 0 32px;
+  max-width: 460px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.benefit-list li {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.75);
+  padding-left: 18px;
+  position: relative;
+}
+
+.benefit-list li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 9px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent-pink);
+}
+
+.benefit-list strong {
+  color: rgba(255, 255, 255, 0.95);
+}
+
+.benefit-list a {
+  color: var(--accent-pink);
+  text-decoration: underline;
+}
+
 .al-brand-graphic-wrapper {
   display: flex;
   align-items: center;
@@ -246,6 +284,14 @@ body {
   color: var(--text-grey);
   font-size: 0.95rem;
   line-height: 1.5;
+  margin-bottom: 16px;
+}
+
+.form-note-text {
+  color: var(--text-grey);
+  font-size: 0.85rem;
+  line-height: 1.6;
+  opacity: 0.85;
   margin-bottom: 36px;
 }
 
