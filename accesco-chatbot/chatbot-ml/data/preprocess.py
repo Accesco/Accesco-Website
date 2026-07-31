@@ -26,12 +26,19 @@ os.makedirs(OUT_DIR, exist_ok=True)
 os.makedirs(MODELS_DIR, exist_ok=True)
 
 XLSX_PATH = os.path.join(DATA_DIR, "Accesco QC SKU Master Inventory.xlsx")
-PDF_PATH = os.path.join(DATA_DIR, "Accesco_Circular_Commerce_SKU_Recovery_Framework.pdf")
 CATALOG_PATH = os.path.join(OUT_DIR, "product_catalog.json")
 RECOVERY_PATH = os.path.join(OUT_DIR, "recovery_framework.json")
 FAISS_INDEX_PATH = os.path.join(MODELS_DIR, "product_index.faiss")
 FAISS_MAPPING_PATH = os.path.join(MODELS_DIR, "product_ids.pkl")
 EMBED_MODEL_NAME = "all-MiniLM-L6-v2"
+
+# Auto-discover every PDF in chatbot-data/ — new PDFs added later are picked up automatically
+def find_pdfs():
+    pdfs = sorted(f for f in os.listdir(DATA_DIR) if f.lower().endswith(".pdf"))
+    if not pdfs:
+        raise FileNotFoundError(f"No PDF files found in {DATA_DIR}")
+    print(f"Found {len(pdfs)} PDF(s): {pdfs}")
+    return [os.path.join(DATA_DIR, f) for f in pdfs]
 
 
 # ─── 1. Parse SKU Master xlsx → product_catalog.json ────────────────────────
@@ -80,31 +87,33 @@ def parse_xlsx():
 # ─── 2. Parse SKU Recovery PDF → recovery_framework.json ─────────────────────
 #
 # Uses pdfplumber to extract both tables (category → recovery method mapping)
-# and plain text paragraphs from the PDF.
-def parse_pdf():
-    """Parse the Circular Commerce SKU Recovery Framework PDF → recovery_framework.json"""
+# and plain text paragraphs from the PDF. Processes ALL PDFs in chatbot-data/.
+def parse_pdfs():
+    """Parse every PDF in chatbot-data/ → recovery_framework.json"""
     recovery_rows = []
     text_chunks = []
-    with pdfplumber.open(PDF_PATH) as pdf:
-        for page in pdf.pages:
-            # Extract tables (Category, Representative SKUs, Take Back, Recovery)
-            tables = page.extract_tables()
-            for table in tables:
-                header = table[0]
-                for row in table[1:]:
-                    recovery_rows.append(dict(zip(header, row)))
-            # Extract plain text paragraphs
-            text = page.extract_text()
-            if text:
-                paragraphs = [p.strip() for p in text.split("\n") if p.strip()]
-                text_chunks.extend(paragraphs)
+    for pdf_path in find_pdfs():
+        print(f"Parsing {os.path.basename(pdf_path)}...")
+        with pdfplumber.open(pdf_path) as pdf:
+            for page in pdf.pages:
+                # Extract tables (Category, Representative SKUs, Take Back, Recovery)
+                tables = page.extract_tables()
+                for table in tables:
+                    header = table[0]
+                    for row in table[1:]:
+                        recovery_rows.append(dict(zip(header, row)))
+                # Extract plain text paragraphs
+                text = page.extract_text()
+                if text:
+                    paragraphs = [p.strip() for p in text.split("\n") if p.strip()]
+                    text_chunks.extend(paragraphs)
     output = {
         "recovery_table": recovery_rows,
         "text_chunks": text_chunks,
     }
     with open(RECOVERY_PATH, "w") as f:
         json.dump(output, f, indent=2)
-    print(f"Parsed PDF: {len(recovery_rows)} recovery rows, {len(text_chunks)} text chunks → {RECOVERY_PATH}")
+    print(f"Parsed PDFs: {len(recovery_rows)} recovery rows, {len(text_chunks)} text chunks → {RECOVERY_PATH}")
     return output
 
 
@@ -138,6 +147,6 @@ def build_faiss_index(catalog):
 if __name__ == "__main__":
     print("=== Phase 1: Data Preparation ===")
     catalog = parse_xlsx()
-    parse_pdf()
+    parse_pdfs()
     build_faiss_index(catalog)
     print("=== Phase 1 Complete ===")
