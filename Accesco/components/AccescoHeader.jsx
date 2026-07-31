@@ -40,19 +40,7 @@ export default function AccescoHeader() {
 
     if (user) {
       setIsAuthOpen(false);
-      return;
     }
-
-    const timer = setTimeout(() => {
-      const localUser = localStorage.getItem('accesco_user');
-      const isLoggedOut = !localUser || localUser === 'null' || localUser === 'undefined' || localUser === '{}';
-
-      if (isLoggedOut && !user) {
-        setIsAuthOpen(true);
-      }
-    }, 800);
-
-    return () => clearTimeout(timer);
   }, [pathname, user]);
 
   useEffect(() => {
