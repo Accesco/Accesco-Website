@@ -171,6 +171,13 @@ export async function addWaitlistEntry(data) {
     }
   }).catch((err) => console.error('Confirmation email failed:', err));
 
+  // If this person was referred, joining the waitlist is the conversion
+  // event pre-launch (ordering itself is gated behind the waitlist, so a
+  // "first order" is unrealistic to wait for). Non-blocking side effect.
+  import('./referralFulfillment').then(({ markWaitlistJoinAndFulfillGifts }) =>
+    markWaitlistJoinAndFulfillGifts({ phone: data.phone }),
+  ).catch((err) => console.error('Referral waitlist conversion failed:', err));
+
   return docRef.id;
 }
 
