@@ -10,7 +10,7 @@ const RETURN_ITEMS = [
     id: 'pizza-box',
     name: 'Pizza Box',
     type: 'Cardboard box',
-    icon: '🍕',
+    icon: '📦',
     availableQty: 1,
     points: 1,
     defaultSelected: true,
@@ -19,7 +19,7 @@ const RETURN_ITEMS = [
     id: 'garlic-bread-box',
     name: 'Garlic Bread Box',
     type: 'Cardboard box',
-    icon: '🥖',
+    icon: '🥡',
     availableQty: 1,
     points: 1,
     defaultSelected: true,
@@ -28,7 +28,7 @@ const RETURN_ITEMS = [
     id: 'sauce-container',
     name: 'Sauce Container',
     type: 'Plastic container',
-    icon: '🥣',
+    icon: '🫙',
     availableQty: 2,
     points: 1,
     defaultSelected: true,
@@ -135,11 +135,6 @@ function SustainabilityCard({
 }
 
 function ReturnSummary({ selectedItems, totalItems, method }) {
-  const methodLabel =
-    method === 'store'
-      ? 'Swadishtt Store / Partner Outlet'
-      : 'Return with next delivery';
-
   return (
     <aside className={styles.summaryCard}>
       <h2 className={styles.summaryTitle}>Return Summary</h2>
@@ -178,29 +173,18 @@ function ReturnSummary({ selectedItems, totalItems, method }) {
 
           <div className={styles.pickupDetailRow}>
             <span>Return option</span>
-            <strong>{methodLabel}</strong>
+            <strong>Return with next delivery</strong>
           </div>
 
-          {method === 'delivery' && (
-            <>
-              <div className={styles.pickupDetailRow}>
-                <span>Pickup time</span>
-                <strong>Today, 6:00 PM – 9:00 PM</strong>
-              </div>
+          <div className={styles.pickupDetailRow}>
+            <span>Pickup time</span>
+            <strong>Today, 6:00 PM – 9:00 PM</strong>
+          </div>
 
-            <div className={styles.pickupDetailRow}>
-  <span>Pickup address</span>
-  <p>Same as the delivery address for this order.</p>
-</div>
-            </>
-          )}
-
-          {method === 'store' && (
-            <div className={styles.pickupDetailRow}>
-              <span>Drop-off location</span>
-              <strong>Nearest partner outlet</strong>
-            </div>
-          )}
+          <div className={styles.pickupDetailRow}>
+            <span>Pickup address</span>
+            <p>Same as the delivery address for this order.</p>
+          </div>
         </div>
       )}
     </aside>
@@ -573,52 +557,6 @@ export default function SwadishttReturnContainerPage() {
 
                       <div className={styles.methodTags}>
                         <span>🛍 No extra charges</span>
-                        <span>🌿 Eco-friendly</span>
-                      </div>
-                    </div>
-                  </button>
-
-                  <button
-                    type="button"
-                    className={`${styles.returnMethodCard} ${
-                      selectedMethod === 'store'
-                        ? styles.returnMethodSelected
-                        : ''
-                    }`}
-                    onClick={() => setSelectedMethod('store')}
-                  >
-                    <span
-                      className={`${styles.methodRadio} ${
-                        selectedMethod === 'store'
-                          ? styles.methodRadioSelected
-                          : ''
-                      }`}
-                    >
-                      {selectedMethod === 'store' && (
-                        <span className={styles.methodRadioDot} />
-                      )}
-                    </span>
-
-                    <img
-                      src="/images/returns/partner-store.png"
-                      alt="Swadishtt partner store"
-                      className={styles.methodImage}
-                    />
-
-                    <div className={styles.methodContent}>
-                      <div className={styles.methodTitleRow}>
-                        <h2>
-                          Return at Swadishtt Store / Partner Outlet
-                        </h2>
-                      </div>
-
-                      <p>
-                        Drop the items at any nearby Swadishtt store or
-                        partner outlet.
-                      </p>
-
-                      <div className={styles.methodTags}>
-                        <span>📍 Find stores nearby</span>
                         <span>🌿 Eco-friendly</span>
                       </div>
                     </div>
