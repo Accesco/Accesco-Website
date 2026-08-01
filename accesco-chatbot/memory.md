@@ -8,6 +8,7 @@
 | Phase 2: Model Training | ✅ Completed | `chatbot-ml/train/train_classifier.py` |
 | Phase 3: Inference Server | ✅ Completed | `chatbot-ml/inference/app.py` |
 | Phase 4: Frontend Integration | 🧪 Tested (temporary UI wiring, REVERTED after testing) | `Accesco/app/components/AccescoInlineChatbot.jsx` |
+| Phase 3.5: Delivery Coverage Lookup | ✅ Completed | `chatbot-ml/data/build_delivery_coverage.py` + `app.py` |
 
 ## Phase 1 — Completed
 
@@ -132,6 +133,35 @@ restore the original file from the backup at
 `/var/folders/.../opencode/AccescoInlineChatbot.jsx.orig` (temp dir) so the
 Next.js app is left 100% identical to before the test.
 **DO NOT forget this — reverting is part of the task, not optional.**
+
+## Phase 3.5 — Delivery Coverage Lookup (Completed)
+
+- [x] `chatbot-ml/data/build_delivery_coverage.py` merges `Tier List.xlsx` (110
+      pincodes, tier, opportunity score) + `coordinates .xlsx` (110 pincodes,
+      areas, lat/long) → `chatbot-ml/data/delivery_coverage.json`
+      (110 zones, 255 individual area names, 1 zone = 1 pincode)
+- [x] `app.py` loads coverage JSON at startup; `/chat` answers coverage queries
+      BEFORE product search (never misrouted to product listings)
+- [x] Matching pipeline: pincode regex (6-digit) → exact area match → substring
+      match (≥4 chars, handles "koramangala" → "koramangala (blocks 1-3 & 5-8)",
+      "electronic city" → "Electronic City Phase 1 & 2") → difflib typo tolerance
+      ("marthahalli" → Marathahalli) → 3-letter aliases (btm, hsr)
+- [x] Reply templates: covered zone (area + pincode, NO tier info shown),
+      uncovered pincode (waitlist nudge), area-list questions ("where do u
+      deliver?", "areas u deliver", "list out few areas") → 110-pincode
+      summary, "do you cover bangalore/bengaluru?" (summary), no-match
+      delivery intent (asks for area/pincode)
+- [x] FALLBACK_RULES: added delivery_order rule for coverage keywords
+      (cover/coverage/serviceable) — no secondary keyword needed
+- [x] Verified: 17-query test pass incl. regression (greeting, amul milk,
+      amul taaza, shampoo, what is grokly all unchanged)
+
+### Commands
+
+```bash
+# Rebuild coverage JSON after editing Tier List / coordinates spreadsheets
+python3 accesco-chatbot/chatbot-ml/data/build_delivery_coverage.py
+```
 
 ## Known Open Questions / Decisions
 

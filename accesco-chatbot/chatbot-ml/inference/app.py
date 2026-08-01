@@ -62,6 +62,24 @@ INTENT_TOKENIZER = AutoTokenizer.from_pretrained(
 with open(os.path.join(MODELS_DIR, "label_map.json")) as f:
     LABEL_MAP = {int(k): v for k, v in json.load(f).items()}
 
+# Delivery coverage zones (pincode → areas, tier, score, coords)
+# Built by chatbot-ml/data/build_delivery_coverage.py from the Tier List
+# and coordinates spreadsheets. One zone per pincode; each zone lists the
+# individual area names covered by that pincode.
+with open(os.path.join(DATA_DIR, "delivery_coverage.json")) as f:
+    COVERAGE = json.load(f)["zones"]
+
+PINCODE_TO_ZONE = {z["pincode"]: z for z in COVERAGE}
+# Flat lookup list: (area_name_lower, zone) for matching user area queries
+AREA_INDEX = [
+    (area.lower(), zone) for zone in COVERAGE for area in zone["areas"]
+]
+# Name → zone lookup (last zone wins if two pincodes list the same area name)
+AREA_NAME_TO_ZONE = {name: zone for name, zone in AREA_INDEX}
+# 3-letter abbreviations → full area name (too short for safe substring/fuzzy)
+AREA_ALIASES = {"btm": "btm layout 2nd stage", "hsr": "hsr layout (sectors 1-7)"}
+COVERED_PINCODE_COUNT = len(COVERAGE)
+
 # Intent → canned reply fallback (used when intent has no FAQ answer)
 INTENT_REPLIES = {
     "greeting": "Hello! Welcome to Accesco Living. How can I help you today?",
@@ -124,6 +142,9 @@ INTENT_CONFIDENCE_THRESHOLD = 0.30
 FALLBACK_RULES: list[tuple[str, list[str], list[str]]] = [
     ("greeting", ["hi", "hello", "hey", "namaste", "good morning", "good afternoon", "good evening", "good night"], []),
     ("delivery_order", ["deliver", "delivery", "shipping", "courier"], ["area", "where", "near", "location", "pin", "zip", "pincode"]),
+    # Delivery coverage questions ("what areas do you cover?") — the coverage
+    # keywords are specific enough that no secondary keyword is required
+    ("delivery_order", ["cover", "coverage", "serviceable", "serviceability"], []),
     ("grokly_grocery", ["grocery", "groceries", "vegetables", "fruits", "milk", "grokly", "groceries delivered"], []),
     ("swadisht_food", ["food delivery", "swadisht", "swadish", "swadhish", "swadhissht", "food order", "restaurant"], []),
     ("instastyle_fashion", ["fashion", "clothes", "instastyle", "apparel"], []),
@@ -266,6 +287,132 @@ def is_info_question(text: str) -> bool:
                 "wat are", "who is", "who are", "tell me about", "explain",
                 "about the app", "about accesco"))
 
+
+# ─── Delivery coverage lookup ───────────────────────────────────────────────
+
+PINCODE_RE = re.compile(r"\b(\d{6})\b")
+
+# Words stripped from the query before area matching ("do you deliver to X?" → "X")
+COVERAGE_STOPWORDS = {
+    "a", "an", "the", "to", "at", "in", "on", "for", "of", "do", "does", "did",
+    "you", "your", "my", "me", "i", "is", "are", "was", "were", "have", "has",
+    "deliver", "delivery", "delivered", "shipping", "ship", "courier", "area",
+    "areas", "pincode", "pin", "zip", "code", "near", "around", "what", "which",
+    "cover", "covered", "coverage", "serviceable", "serviceability", "serve",
+    "serving", "only", "there", "here", "check", "please", "tell", "where",
+    "colony", "locality", "bangalore", "bengaluru",
+}
+
+def find_pincode(text: str) -> str | None:
+    """Return a 6-digit pincode from the query, or None."""
+    m = PINCODE_RE.search(text)
+    return m.group(1) if m else None
+
+def match_area(text: str) -> tuple[str, dict] | None:
+    """Find the best-matching covered area for a user query.
+
+    Returns (matched_area_name, zone) or None. Matching order:
+      1. exact match ("indiranagar", "mg road")
+      2. 3-letter abbreviation aliases ("btm" → BTM Layout, "hsr" → HSR Layout)
+      3. substring match ("koramangala" → "koramangala (blocks 1-3 & 5-8)",
+         "electronic city" → "Electronic City Phase 1 & 2") — single-token
+         substring requires 4+ chars so "san" can't match inside "Lakkasandra"
+      4. difflib typo tolerance ("marthahalli" → Marathahalli)
+    """
+    import difflib
+
+    cleaned = re.sub(r"[^a-z0-9 ]+", " ", text.lower())
+    tokens = [t for t in cleaned.split() if t and t not in COVERAGE_STOPWORDS]
+    if not tokens:
+        return None
+
+    all_names = [name for name, _ in AREA_INDEX]
+    seen = set()
+    candidates = [" ".join(tokens)]
+    for i in range(len(tokens) - 1):
+        candidates.append(" ".join(tokens[i:i + 2]))
+    candidates.extend(tokens)
+
+    for cand in candidates:
+        if cand in seen:
+            continue
+        seen.add(cand)
+        if cand in AREA_NAME_TO_ZONE:
+            return cand, AREA_NAME_TO_ZONE[cand]
+        if cand in AREA_ALIASES and AREA_ALIASES[cand] in AREA_NAME_TO_ZONE:
+            alias = AREA_ALIASES[cand]
+            return alias, AREA_NAME_TO_ZONE[alias]
+        if len(cand) >= 4:
+            substr = [name for name in all_names if cand in name]
+            if substr:
+                return substr[0], AREA_NAME_TO_ZONE[substr[0]]
+        fuzzy = difflib.get_close_matches(cand, all_names, n=1, cutoff=0.80)
+        if fuzzy:
+            return fuzzy[0], AREA_NAME_TO_ZONE[fuzzy[0]]
+    return None
+
+def format_zone_answer(zone: dict, matched_area: str | None = None) -> str:
+    """Build the coverage confirmation reply for a matched zone."""
+    if matched_area:
+        area = matched_area[:1].upper() + matched_area[1:]
+    else:
+        area = zone["areas_text"]
+    return (
+        f"Yes, we deliver to {area} (pincode {zone['pincode']})! "
+        "You can shop with us there."
+    )
+
+def format_area_summary() -> str:
+    """Summary reply for "what areas do you deliver to?" style questions."""
+    examples = ", ".join(
+        z["areas"][0] for z in COVERAGE[:6] if z["areas"]
+    )
+    return (
+        f"We deliver to {COVERED_PINCODE_COUNT} pincodes across Bengaluru, "
+        f"including {examples} and more. Tell me your area or pincode "
+        "and I'll confirm if we serve it!"
+    )
+
+def coverage_reply(text: str) -> str | None:
+    """Build a delivery-coverage reply for the query, or None if not a
+    coverage question. Checks pincode first, then area names."""
+    tl = text.lower()
+
+    # Questions asking for the list of covered areas ("where do u deliver?",
+    # "areas u deliver", "list out few areas") → summary reply
+    asks_for_areas = (
+        "where" in tl and ("deliver" in tl or "serve" in tl or "cover" in tl)
+    ) or (
+        "area" in tl and ("list" in tl or "which" in tl or "what" in tl)
+    ) or (
+        "areas" in tl and ("deliver" in tl or "cover" in tl or "serve" in tl)
+    )
+    if asks_for_areas:
+        return format_area_summary()
+
+    pin = find_pincode(text)
+    if pin:
+        zone = PINCODE_TO_ZONE.get(pin)
+        if zone:
+            return format_zone_answer(zone)
+        return (
+            f"We're not delivering to {pin} yet — we currently serve "
+            f"{COVERED_PINCODE_COUNT} pincodes across Bengaluru. "
+            "Join the waitlist and we'll notify you when we expand to your area!"
+        )
+
+    match = match_area(text)
+    if match:
+        area, zone = match
+        return format_zone_answer(zone, area)
+
+    if "bangalore" in tl or "bengaluru" in tl:
+        return (
+            f"We currently deliver to {COVERED_PINCODE_COUNT} pincodes across "
+            "Bengaluru. Tell me your area or pincode and I'll confirm if we serve it!"
+        )
+    return None
+
 def format_products(products: list[dict]) -> str:
     """Structured, bullet-point listing of products for the chat reply."""
     lines = []
@@ -311,10 +458,27 @@ def chat(query: Query):
     # 3. Classify intent
     intent, confidence = classify_intent(text)
 
-    # 4. Search products + best distance
+    # 4. Delivery coverage lookup runs before product search so area/pincode
+    #    queries ("marathahalli", "do you deliver to 560037?", "whitefield")
+    #    are never misrouted into product listings, regardless of intent
+    coverage = coverage_reply(text)
+    if coverage:
+        return ChatResponse(
+            reply=coverage, intent="delivery_order", confidence=0.99, products=[]
+        )
+    if intent == "delivery_order":
+        return ChatResponse(
+            reply=(
+                "Could you share your area name or pincode? "
+                "I'll check right away if we deliver there."
+            ),
+            intent="delivery_order", confidence=confidence, products=[],
+        )
+
+    # 5. Search products + best distance
     products, best_distance = search_products(text, query.top_k)
 
-    # 5. Info questions ("what is X", "tell me about X") → explanation only.
+    # 6. Info questions ("what is X", "tell me about X") → explanation only.
     #    Keyword rules first, so typos of vertical names ("what is swadhissht")
     #    resolve to the right intent instead of the model's misclassification.
     if is_info_question(text):
@@ -328,13 +492,13 @@ def chat(query: Query):
         )
         return ChatResponse(reply=reply, intent=intent, confidence=confidence, products=[])
 
-    # 6. "Greeting" classification but a strong product match exists → it's a product query
+    # 7. "Greeting" classification but a strong product match exists → it's a product query
     #    ("amul taaza" was misclassified as greeting; FAISS distance separates the two)
     if intent == "greeting" and best_distance < PRODUCT_QUERY_DISTANCE:
         intent = "localmeds_pharmacy" if products[0]["service"] == "LocalMeds" else "grokly_grocery"
         confidence = round(confidence, 3)
 
-    # 7. Build reply
+    # 8. Build reply
     PRODUCT_INTENTS = {"grokly_grocery", "swadisht_food", "instastyle_fashion",
                        "localmeds_pharmacy", "unknown"}
     show_products = intent in PRODUCT_INTENTS and bool(products)
