@@ -1,237 +1,1269 @@
 .page {
-  background: #FAFAFA;
   min-height: 100vh;
-  color: #1C1C1C;
-  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  padding-top: 80px;
-  padding-bottom: 60px;
-}
-
-.container {
-  max-width: 480px;
-  margin: 0 auto;
-  padding: 20px 16px;
-}
-
-.card {
-  background: #fff;
-  border: 1px solid #EAEAEA;
-  border-radius: 20px;
-  padding: 24px 20px;
-}
-
-.cardCenter {
-  background: #fff;
-  border: 1px solid #EAEAEA;
-  border-radius: 20px;
-  padding: 32px 20px;
-  text-align: center;
-}
-
-.backIconBtn {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background: #F5F5F5;
-  border: none;
+  background: #ffffff;
+  color: #1c1c1c;
+  font-family:
+    'Plus Jakarta Sans',
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    Roboto,
+    sans-serif;
+  padding-top: 74px;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  margin-bottom: 16px;
+  flex-direction: column;
 }
 
-.title {
-  font-size: 20px;
-  font-weight: 800;
-  color: #1C1C1C;
-  text-align: center;
-  margin-bottom: 24px;
-}
-
-.illustrationWrap {
-  display: flex;
-  justify-content: center;
-  margin: 20px 0 28px;
-}
-
-.boxIllustration {
-  width: 140px;
-  height: 90px;
-  position: relative;
-}
-
-.boxLid {
-  width: 140px;
-  height: 24px;
-  background: #8BC34A;
-  border-radius: 12px 12px 4px 4px;
-  border: 2px solid #689F38;
-}
-
-.boxBody {
-  width: 130px;
-  height: 66px;
-  margin: -4px auto 0;
-  background: #FFFFFF;
-  border: 2px solid #D0D0D0;
-  border-top: none;
-  border-radius: 0 0 12px 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-}
-
-.checkBadge {
-  width: 38px;
-  height: 38px;
-  border-radius: 50%;
-  background: #4CAF50;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.incentiveBox {
-  background: #F1F8E9;
-  border: 1px solid #C8E6C9;
-  border-radius: 14px;
-  padding: 16px;
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  margin-bottom: 24px;
-}
-
-.giftIcon {
-  font-size: 24px;
-}
-
-.incentiveTitle {
-  font-size: 14px;
-  font-weight: 800;
-  color: #2E7D32;
-}
-
-.incentiveSub {
-  font-size: 12px;
-  color: #4CAF50;
-  margin-top: 2px;
-}
-
-.pointsEarnedBox {
-  background: #F1F8E9;
-  border: 1px solid #C8E6C9;
-  border-radius: 14px;
-  padding: 18px;
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  margin: 24px 0;
-  text-align: left;
-}
-
-.pointsMetaLabel {
-  font-size: 12px;
-  color: #4CAF50;
-  display: block;
-}
-
-.pointsVal {
-  font-size: 16px;
-  font-weight: 800;
-  color: #2E7D32;
-  margin: 2px 0;
-}
-
-.pointsMetaSub {
-  font-size: 11px;
-  color: #81C784;
-}
-
-.importantSection {
-  margin-bottom: 28px;
-}
-
-.importantSectionLeft {
-  text-align: left;
-  margin-bottom: 28px;
-}
-
-.importantHeading {
-  font-size: 12px;
-  font-weight: 800;
-  letter-spacing: 0.5px;
-  color: #1C1C1C;
-  margin-bottom: 14px;
-}
-
-.checkItem {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  font-size: 13px;
-  font-weight: 600;
-  color: #424242;
-  margin-bottom: 12px;
-}
-
-.checkDot {
-  width: 14px;
-  height: 14px;
-  border-radius: 50%;
-  background: #E0E0E0;
-}
-
-.confirmBtn {
+.main {
+  flex: 1;
   width: 100%;
-  background: #FF5722;
-  color: #fff;
-  border: none;
-  padding: 16px;
-  border-radius: 12px;
-  font-size: 15px;
+}
+
+.breadcrumb {
+  width: min(1160px, calc(100% - 48px));
+  margin: 20px auto 0;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 7px;
+  font-size: 10px;
+  color: #8a8a8a;
+}
+
+.breadcrumbPart {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.breadcrumbSeparator {
+  color: #b5b5b5;
+}
+
+.inactiveBreadcrumb {
+  color: #7d7d7d;
+}
+
+.activeBreadcrumb {
+  color: #d7192d;
+  font-weight: 700;
+}
+
+.pageSection,
+.confirmedPage {
+  width: min(1160px, calc(100% - 48px));
+  margin: 28px auto 44px;
+}
+
+.headingBlock {
+  margin-bottom: 24px;
+}
+
+.headingBlock h1 {
+  margin: 0 0 7px;
+  font-size: 24px;
+  line-height: 1.25;
   font-weight: 800;
-  cursor: pointer;
-  transition: background 0.2s;
+  color: #181818;
+  letter-spacing: -0.4px;
 }
 
-.confirmBtn:hover {
-  background: #E64A19;
-}
-
-.confirmedTitle {
-  font-size: 22px;
-  font-weight: 800;
-  color: #1C1C1C;
-  margin-bottom: 8px;
-}
-
-.confirmedSub {
-  font-size: 13px;
-  color: #616161;
+.headingBlock p {
+  margin: 0;
+  color: #777777;
+  font-size: 12px;
   line-height: 1.5;
 }
 
-.primaryActionBtn {
-  width: 100%;
-  background: #FF5722;
-  color: #fff;
-  border: none;
-  padding: 16px;
-  border-radius: 12px;
-  font-size: 15px;
-  font-weight: 800;
-  cursor: pointer;
-  margin-bottom: 12px;
+.twoColumnLayout,
+.confirmationLayout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 310px;
+  gap: 28px;
+  align-items: start;
 }
 
-.secondaryTextBtn {
-  background: none;
+.leftColumn,
+.confirmationMain {
+  min-width: 0;
+}
+
+/* Select items */
+
+.itemsCard {
+  background: #ffffff;
+  border: 1px solid #e5e5e5;
+  border-radius: 10px;
+  padding: 14px;
+  box-shadow: 0 2px 7px rgba(0, 0, 0, 0.035);
+}
+
+.cardLabel {
+  margin: 0 0 12px;
+  font-size: 11px;
+  font-weight: 800;
+  color: #262626;
+}
+
+.itemsList {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.itemRow {
+  min-height: 58px;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 9px 12px;
+  border: 1px solid #eeeeee;
+  border-radius: 7px;
+  background: #ffffff;
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.itemRowSelected {
+  background: #fff2f3;
+  border-color: #ffd4d8;
+}
+
+.itemCheckboxWrap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.itemCheckboxWrap input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.customCheckbox {
+  width: 15px;
+  height: 15px;
+  border-radius: 3px;
+  border: 1.5px solid #d8d8d8;
+  background: #ffffff;
+  color: #ffffff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.itemCheckboxWrap input:checked + .customCheckbox {
+  background: #d7192d;
+  border-color: #d7192d;
+}
+
+.itemIcon {
+  width: 28px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 19px;
+  flex-shrink: 0;
+}
+
+.itemInformation {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.itemInformation strong {
+  font-size: 11px;
+  font-weight: 800;
+  color: #202020;
+}
+
+.itemInformation span {
+  font-size: 9px;
+  color: #888888;
+}
+
+.quantityArea {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.quantityControls {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.quantityControls button {
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  border: 1px solid #dedede;
+  background: #ffffff;
+  border-radius: 4px;
+  color: #202020;
+  font-size: 13px;
+  line-height: 1;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.quantityControls button:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.quantityControls span {
+  min-width: 14px;
+  text-align: center;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.availableQuantity {
+  font-size: 8px;
+  color: #777777;
+}
+
+.pointsLabel {
+  font-size: 8px;
+  color: #d7192d;
+  font-weight: 700;
+}
+
+.recyclingMessage {
+  margin-top: 12px;
+  min-height: 40px;
+  border-radius: 7px;
+  background: #eff9ed;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 9px 12px;
+  font-size: 9px;
+  font-weight: 700;
+  color: #275f36;
+}
+
+.smallLeafIcon {
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  background: #ffffff;
+  color: #2d9348;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* Summary */
+
+.summaryCard {
+  background: #ffffff;
+  border: 1px solid #dfdfdf;
+  border-radius: 10px;
+  padding: 22px 20px;
+  box-shadow: 0 2px 7px rgba(0, 0, 0, 0.055);
+  position: sticky;
+  top: 92px;
+}
+
+.summaryTitle {
+  margin: 0 0 24px;
+  font-size: 18px;
+  font-weight: 800;
+  color: #171717;
+}
+
+.summaryHeading {
+  margin-bottom: 14px;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.summaryHeading span {
+  color: #d7192d;
+}
+
+.summaryItems {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.summaryItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 10px;
+}
+
+.summaryItemLeft {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.summaryItemLeft span:last-child {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.summaryItemIcon {
+  width: 16px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.summaryItem strong {
+  font-size: 10px;
+  flex-shrink: 0;
+}
+
+.emptySummary {
+  margin: 0;
+  color: #8b8b8b;
+  font-size: 10px;
+}
+
+.summaryTotal {
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid #ebebeb;
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.summaryTotal strong {
+  color: #d7192d;
+}
+
+.sustainabilityCard {
+  margin-top: 18px;
+  min-height: 82px;
+  padding: 15px;
+  border-radius: 8px;
+  background: #eff9ed;
+  display: flex;
+  align-items: flex-start;
+  gap: 11px;
+}
+
+.leafIcon {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  color: #14853d;
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.sustainabilityCard strong {
+  display: block;
+  margin: 1px 0 4px;
+  font-size: 10px;
+  font-weight: 800;
+  color: #202020;
+}
+
+.sustainabilityCard p {
+  margin: 0;
+  font-size: 9px;
+  line-height: 1.5;
+  color: #777777;
+}
+
+.pickupDetails {
+  margin-top: 22px;
+  padding-top: 18px;
+  border-top: 1px solid #ececec;
+}
+
+.pickupDetails h3 {
+  margin: 0 0 16px;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.pickupDetailRow {
+  display: grid;
+  grid-template-columns: 92px 1fr;
+  gap: 10px;
+  margin-bottom: 11px;
+  font-size: 9px;
+  align-items: start;
+}
+
+.pickupDetailRow > span {
+  color: #4f4f4f;
+}
+
+.pickupDetailRow strong {
+  color: #19863f;
+  line-height: 1.4;
+}
+
+.pickupDetailRow p {
+  margin: 0;
+  color: #303030;
+  line-height: 1.5;
+}
+
+/* Buttons */
+
+.continueButton,
+.doneButton {
+  width: 390px;
+  max-width: 100%;
+  min-height: 42px;
+  margin: 24px auto 0;
+  padding: 0 18px;
   border: none;
-  color: #FF5722;
-  font-size: 14px;
+  border-radius: 6px;
+  background: #d7192d;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 130px;
+  font-size: 11px;
+  font-weight: 800;
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease;
+}
+
+.continueButton:hover,
+.doneButton:hover {
+  background: #be1426;
+}
+
+.continueButton:active,
+.doneButton:active {
+  transform: scale(0.995);
+}
+
+.continueButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.desktopBackButton {
+  margin: 0 0 15px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: #555555;
+  font-size: 11px;
   font-weight: 700;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+/* Return methods */
+
+.returnMethodList {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.returnMethodCard {
+  width: 100%;
+  min-height: 138px;
+  padding: 20px 22px;
+  border: 1px solid #dedede;
+  border-radius: 10px;
+  background: #ffffff;
+  display: grid;
+  grid-template-columns: 20px 120px minmax(0, 1fr);
+  align-items: center;
+  gap: 16px;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.returnMethodCard:hover {
+  box-shadow: 0 5px 14px rgba(0, 0, 0, 0.05);
+}
+
+.returnMethodSelected {
+  border-color: #ee3447;
+  background: #fff7f7;
+}
+
+.methodRadio {
+  width: 18px;
+  height: 18px;
+  border: 1.5px solid #9a9a9a;
+  border-radius: 50%;
+  background: #ffffff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.methodRadioSelected {
+  border-color: #e51b32;
+}
+
+.methodRadioDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #e51b32;
+}
+
+.methodImage {
+  width: 112px;
+  height: 96px;
+  object-fit: contain;
+}
+
+.methodContent {
+  min-width: 0;
+}
+
+.methodTitleRow {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 9px;
+  margin-bottom: 7px;
+}
+
+.methodTitleRow h2 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 800;
+  color: #171717;
+}
+
+.recommendedBadge {
+  padding: 4px 8px;
+  border-radius: 12px;
+  background: #ddf5df;
+  color: #268142;
+  font-size: 9px;
+  font-weight: 800;
+}
+
+.methodContent p {
+  margin: 0 0 9px;
+  color: #777777;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.methodTags {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 13px;
+}
+
+.methodTags span {
+  font-size: 9px;
+  font-weight: 700;
+  color: #262626;
+}
+
+.leftColumn > .sustainabilityCard {
+  min-height: 70px;
+  margin-top: 18px;
+}
+
+/* Confirmation */
+
+.successBanner {
+  min-height: 142px;
+  padding: 24px 26px;
+  border-radius: 10px;
+  background: #eaf8ec;
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  position: relative;
+  overflow: hidden;
+}
+
+.successCheck {
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  background: #168a3f;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.successContent {
+  flex: 1;
+  position: relative;
+  z-index: 1;
+}
+
+.successContent h1 {
+  margin: 0 0 9px;
+  font-size: 19px;
+  font-weight: 800;
+}
+
+.successContent p {
+  margin: 0 0 4px;
+  font-size: 10px;
+  color: #707070;
+}
+
+.requestId {
+  display: inline-block;
+  margin-top: 7px;
+  padding: 5px 10px;
+  border-radius: 20px;
+  background: #ffffff;
+  color: #1d8742;
+  font-size: 9px;
+  font-weight: 800;
+}
+
+.successImage {
+  width: 125px;
+  height: 95px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.nextStepsCard {
+  margin-top: 14px;
+  padding: 22px 26px;
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+  background: #ffffff;
+}
+
+.nextStepsCard h2 {
+  margin: 0 0 20px;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.nextStep {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 18px;
+}
+
+.nextStep:last-child {
+  margin-bottom: 0;
+}
+
+.nextStepIcon {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #eff9ed;
+  color: #198844;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 15px;
+}
+
+.nextStep strong {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 11px;
+}
+
+.nextStep p {
+  margin: 0;
+  color: #777777;
+  font-size: 9px;
+  line-height: 1.5;
+}
+
+.nextStep span {
+  color: #198844;
+  font-size: 9px;
+  font-weight: 800;
+}
+
+.trackReturnCard {
+  min-height: 88px;
+  margin-top: 14px;
+  padding: 15px 20px;
+  border-radius: 10px;
+  background: #fff2f2;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.trackIcon {
+  width: 46px;
+  height: 46px;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #df1b32;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  flex-shrink: 0;
+}
+
+.trackContent {
+  flex: 1;
+  min-width: 0;
+}
+
+.trackContent strong {
+  display: block;
+  margin-bottom: 5px;
+  font-size: 11px;
+}
+
+.trackContent p {
+  margin: 0;
+  color: #777777;
+  font-size: 9px;
+}
+
+.trackContent span {
+  color: #d7192d;
+  font-weight: 800;
+}
+
+.trackReturnCard button {
+  min-width: 135px;
+  height: 38px;
+  padding: 0 14px;
+  border: 1px solid #ebd8d8;
+  border-radius: 7px;
+  background: #ffffff;
+  color: #d7192d;
+  font-size: 9px;
+  font-weight: 800;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.doneButton {
+  margin-top: 14px;
+}
+
+/* Footer */
+
+.helpFooter {
+  min-height: 66px;
+  padding: 16px 32px;
+  border-top: 1px solid #ededed;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  color: #777777;
+  font-size: 9px;
+}
+
+.helpFooter strong {
+  color: #202020;
+  font-size: 9px;
+}
+
+.helpIcon {
+  width: 28px;
+  height: 28px;
+  border-radius: 7px;
+  background: #fff0f2;
+  color: #d7192d;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.helpFooter u {
+  color: #d7192d;
+  text-underline-offset: 2px;
+}
+
+/* Tablet */
+
+@media (max-width: 960px) {
+  .twoColumnLayout,
+  .confirmationLayout {
+    grid-template-columns: 1fr;
+  }
+
+  .summaryCard {
+    position: static;
+  }
+
+  .returnMethodCard {
+    grid-template-columns: 20px 105px minmax(0, 1fr);
+  }
+}
+
+/* Mobile */
+
+@media (max-width: 640px) {
+  .page {
+    padding-top: 66px;
+  }
+
+  .breadcrumb,
+  .pageSection,
+  .confirmedPage {
+    width: calc(100% - 28px);
+  }
+
+  .breadcrumb {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    white-space: nowrap;
+    padding-bottom: 5px;
+  }
+
+  .headingBlock h1 {
+    font-size: 21px;
+  }
+
+  .itemsCard {
+    padding: 10px;
+  }
+
+  .itemRow {
+    gap: 8px;
+    padding: 10px 9px;
+  }
+
+  .itemIcon {
+    width: 24px;
+    font-size: 16px;
+  }
+
+  .itemInformation strong {
+    font-size: 10px;
+  }
+
+  .quantityControls {
+    gap: 3px;
+  }
+
+  .quantityControls button {
+    width: 18px;
+    height: 18px;
+  }
+
+  .returnMethodCard {
+    grid-template-columns: 20px 76px minmax(0, 1fr);
+    gap: 9px;
+    padding: 16px 12px;
+  }
+
+  .methodImage {
+    width: 72px;
+    height: 72px;
+  }
+
+  .methodTitleRow h2 {
+    font-size: 13px;
+  }
+
+  .methodContent p {
+    font-size: 9px;
+  }
+
+  .methodTags {
+    gap: 7px;
+  }
+
+  .methodTags span {
+    font-size: 8px;
+  }
+
+  .successBanner {
+    padding: 20px 16px;
+    gap: 14px;
+  }
+
+  .successCheck {
+    width: 48px;
+    height: 48px;
+  }
+
+  .successContent h1 {
+    font-size: 16px;
+  }
+
+  .successImage {
+    display: none;
+  }
+
+  .trackReturnCard {
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .trackReturnCard button {
+    width: 100%;
+  }
+
+  .continueButton,
+  .doneButton {
+    width: 100%;
+    justify-content: space-between;
+    gap: 0;
+  }
+
+  .helpFooter {
+    padding: 15px;
+    flex-wrap: wrap;
+  }
+}
+/* Larger typography and roomier components */
+
+.headingBlock h1 {
+  font-size: 30px;
+}
+
+.headingBlock p {
+  font-size: 15px;
+}
+
+.breadcrumb {
+  font-size: 13px;
+}
+
+.cardLabel {
+  font-size: 15px;
+  margin-bottom: 16px;
+}
+
+.itemRow {
+  min-height: 76px;
+  padding: 14px 16px;
+  gap: 14px;
+}
+
+.customCheckbox {
+  width: 19px;
+  height: 19px;
+}
+
+.itemIcon {
+  width: 38px;
+  height: 38px;
+  font-size: 25px;
+}
+
+.itemInformation strong {
+  font-size: 15px;
+}
+
+.itemInformation span {
+  font-size: 12px;
+}
+
+.quantityControls button {
+  width: 27px;
+  height: 27px;
+  font-size: 17px;
+}
+
+.quantityControls span {
+  min-width: 20px;
+  font-size: 14px;
+}
+
+.availableQuantity {
+  font-size: 11px;
+}
+
+.pointsLabel {
+  font-size: 11px;
+}
+
+.recyclingMessage {
+  min-height: 54px;
+  padding: 12px 15px;
+  font-size: 12px;
+}
+
+.smallLeafIcon {
+  width: 32px;
+  height: 32px;
+}
+
+.summaryCard {
+  padding: 26px 24px;
+}
+
+.summaryTitle {
+  font-size: 22px;
+}
+
+.summaryHeading {
+  font-size: 14px;
+}
+
+.summaryItem {
+  font-size: 13px;
+}
+
+.summaryItem strong {
+  font-size: 13px;
+}
+
+.summaryItemIcon {
+  width: 22px;
+  font-size: 16px;
+}
+
+.emptySummary {
+  font-size: 13px;
+}
+
+.summaryTotal {
+  font-size: 14px;
+}
+
+.sustainabilityCard {
+  min-height: 96px;
+  padding: 18px;
+}
+
+.leafIcon {
+  width: 38px;
+  height: 38px;
+}
+
+.sustainabilityCard strong {
+  font-size: 13px;
+}
+
+.sustainabilityCard p {
+  font-size: 12px;
+}
+
+.pickupDetails h3 {
+  font-size: 14px;
+}
+
+.pickupDetailRow {
+  grid-template-columns: 110px 1fr;
+  font-size: 12px;
+}
+
+.continueButton,
+.doneButton {
+  width: 460px;
+  min-height: 50px;
+  font-size: 14px;
+  border-radius: 8px;
+}
+
+.desktopBackButton {
+  font-size: 14px;
+}
+
+.returnMethodCard {
+  min-height: 170px;
+  padding: 24px 26px;
+  grid-template-columns: 24px 150px minmax(0, 1fr);
+  gap: 20px;
+}
+
+.methodRadio {
+  width: 21px;
+  height: 21px;
+}
+
+.methodRadioDot {
+  width: 9px;
+  height: 9px;
+}
+
+.methodImage {
+  width: 140px;
+  height: 120px;
+}
+
+.methodTitleRow h2 {
+  font-size: 20px;
+}
+
+.recommendedBadge {
+  font-size: 11px;
+  padding: 5px 10px;
+}
+
+.methodContent p {
+  font-size: 14px;
+}
+
+.methodTags span {
+  font-size: 12px;
+}
+
+.successBanner {
+  min-height: 170px;
+  padding: 30px;
+}
+
+.successCheck {
+  width: 68px;
+  height: 68px;
+}
+
+.successContent h1 {
+  font-size: 24px;
+}
+
+.successContent p {
+  font-size: 13px;
+}
+
+.requestId {
+  font-size: 12px;
+}
+
+.successImage {
+  width: 150px;
+  height: 120px;
+}
+
+.nextStepsCard {
+  padding: 28px 30px;
+}
+
+.nextStepsCard h2 {
+  font-size: 16px;
+}
+
+.nextStep {
+  gap: 18px;
+  margin-bottom: 22px;
+}
+
+.nextStepIcon {
+  width: 44px;
+  height: 44px;
+  font-size: 18px;
+}
+
+.nextStep strong {
+  font-size: 14px;
+}
+
+.nextStep p {
+  font-size: 12px;
+}
+
+.nextStep span {
+  font-size: 12px;
+}
+
+.trackReturnCard {
+  min-height: 105px;
+  padding: 20px 24px;
+}
+
+.trackIcon {
+  width: 54px;
+  height: 54px;
+}
+
+.trackContent strong {
+  font-size: 14px;
+}
+
+.trackContent p {
+  font-size: 12px;
+}
+
+.trackReturnCard button {
+  min-width: 160px;
+  height: 44px;
+  font-size: 12px;
+}
+
+.helpFooter {
+  font-size: 12px;
+}
+
+.helpFooter strong {
+  font-size: 12px;
+}
+
+@media (max-width: 640px) {
+  .headingBlock h1 {
+    font-size: 24px;
+  }
+
+  .headingBlock p {
+    font-size: 14px;
+  }
+
+  .breadcrumb {
+    font-size: 11px;
+  }
+
+  .itemRow {
+    min-height: 68px;
+    padding: 12px;
+  }
+
+  .itemInformation strong {
+    font-size: 13px;
+  }
+
+  .itemInformation span {
+    font-size: 11px;
+  }
+
+  .methodTitleRow h2 {
+    font-size: 16px;
+  }
+
+  .methodContent p {
+    font-size: 12px;
+  }
+
+  .methodTags span {
+    font-size: 10px;
+  }
 }

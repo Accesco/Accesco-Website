@@ -1,0 +1,312 @@
+.page {
+  min-height: 100vh;
+  background: #ffffff;
+  color: #1c1c1c;
+  font-family:
+    'Plus Jakarta Sans',
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    sans-serif;
+  padding-top: 74px;
+  display: flex;
+  flex-direction: column;
+}
+
+.main {
+  width: 100%;
+  flex: 1;
+}
+
+.breadcrumb {
+  width: min(1160px, calc(100% - 48px));
+  margin: 18px auto 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  color: #8a8a8a;
+}
+
+.activeBreadcrumb {
+  color: #d7192d;
+  font-weight: 700;
+}
+
+.content {
+  width: min(1160px, calc(100% - 48px));
+  margin: 22px auto 40px;
+}
+
+.headingBlock {
+  margin-bottom: 28px;
+}
+
+.headingBlock h1 {
+  margin: 0 0 7px;
+  font-size: 24px;
+  line-height: 1.2;
+  font-weight: 800;
+  letter-spacing: -0.35px;
+}
+
+.headingBlock p {
+  margin: 0;
+  font-size: 12px;
+  color: #777777;
+}
+
+.optionsGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.optionCard {
+  position: relative;
+  min-height: 310px;
+  padding: 26px 20px 20px;
+  background: #ffffff;
+  border: 1px solid #e7e7e7;
+  border-radius: 10px;
+  box-shadow: 0 2px 7px rgba(0, 0, 0, 0.04);
+  text-align: center;
+  cursor: pointer;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease,
+    transform 0.2s ease;
+}
+
+.optionCard:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 5px 16px rgba(0, 0, 0, 0.06);
+}
+
+.optionCardSelected {
+  border-color: #f04452;
+  background: #fffafa;
+  box-shadow: none;
+}
+
+.radioCircle {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  width: 15px;
+  height: 15px;
+  border: 1.5px solid #dddddd;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #ffffff;
+}
+
+.radioCircleSelected {
+  border-color: #df1f35;
+}
+
+.radioDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #df1f35;
+}
+
+.optionImage {
+  width: 150px;
+  height: 150px;
+  margin: 3px auto 8px;
+  display: block;
+  object-fit: contain;
+}
+
+.optionCard h2 {
+  margin: 0 0 8px;
+  font-size: 14px;
+  font-weight: 800;
+  color: #1c1c1c;
+}
+
+.optionCard p {
+  max-width: 220px;
+  margin: 0 auto;
+  font-size: 11px;
+  line-height: 1.55;
+  color: #777777;
+}
+
+.optionLinks {
+  margin-top: 8px;
+  min-height: 17px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.optionLinks span {
+  font-size: 10px;
+  color: #169a57;
+  font-weight: 700;
+}
+
+.impactBanner {
+  margin-top: 30px;
+  width: 100%;
+  min-height: 82px;
+  padding: 18px 24px;
+  border-radius: 9px;
+  background: #eff9ed;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.impactIcon {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #ffffff;
+  color: #3b9b58;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.impactBanner strong {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.impactBanner p {
+  margin: 0;
+  font-size: 10px;
+  color: #727272;
+}
+
+.continueButton {
+  width: 430px;
+  max-width: 100%;
+  min-height: 42px;
+  margin: 12px auto 0;
+  border: none;
+  border-radius: 7px;
+  background: #d7192d;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 120px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease;
+}
+
+.continueButton:hover {
+  background: #bf1426;
+}
+
+.continueButton:active {
+  transform: scale(0.995);
+}
+
+.helpFooter {
+  min-height: 72px;
+  padding: 18px 34px;
+  border-top: 1px solid #eeeeee;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 10px;
+  color: #777777;
+}
+
+.helpFooter strong {
+  color: #1c1c1c;
+  font-size: 10px;
+}
+
+.helpIcon {
+  width: 28px;
+  height: 28px;
+  border-radius: 7px;
+  background: #fff0f2;
+  color: #d7192d;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.helpFooter u {
+  color: #d7192d;
+  text-underline-offset: 2px;
+}
+
+@media (max-width: 900px) {
+  .optionsGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .optionCard {
+    min-height: auto;
+  }
+
+  .continueButton {
+    gap: 70px;
+  }
+}
+
+@media (max-width: 600px) {
+  .page {
+    padding-top: 66px;
+  }
+
+  .breadcrumb,
+  .content {
+    width: calc(100% - 28px);
+  }
+
+  .breadcrumb {
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  .headingBlock h1 {
+    font-size: 21px;
+  }
+
+  .optionCard {
+    padding: 24px 16px 18px;
+  }
+
+  .optionImage {
+    width: 130px;
+    height: 130px;
+  }
+
+  .impactBanner {
+    padding: 16px;
+  }
+
+  .continueButton {
+    width: 100%;
+    justify-content: space-between;
+    padding: 0 20px;
+    gap: 0;
+  }
+
+  .helpFooter {
+    padding: 16px;
+    flex-wrap: wrap;
+  }
+}
