@@ -6,6 +6,31 @@ import SwadishttHeader from '../components/SwadishttHeader';
 import styles from './profile.module.css';
 
 const ORDERS_KEY = 'swadishtt-orders';
+const RETURNS_KEY = 'sw_container_returns';
+
+function formatReturnDate(value) {
+  if (!value) return 'Date unavailable';
+  const parsed = new Date(value);
+  if (Number.isNaN(parsed.getTime())) return 'Date unavailable';
+  return parsed.toLocaleString('en-IN', {
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric',
+  });
+}
+
+function formatReturnMethod(method) {
+  if (method === 'pickup') return 'Doorstep Pickup';
+  if (method === 'drop-off') return 'Partner Store Drop-off';
+  return method || 'Doorstep Pickup';
+}
+
+function matchesReturnFilter(status, filter) {
+  if (filter === 'all') return true;
+  const normalized = (status || 'scheduled').toLowerCase();
+  if (filter === 'completed') return normalized === 'completed';
+  return normalized !== 'completed';
+}
 
 const menuItems = [
   ['orders', 'Order History', 'history'],
@@ -180,6 +205,7 @@ export default function SwadishttProfilePage() {
     pincode: '',
   });
   const [orders, setOrders] = useState([]);
+  const [returns, setReturns] = useState([]);
   const [section, setSection] = useState('orders');
   const [search, setSearch] = useState('');
   const [returnFilter, setReturnFilter] = useState('all');
@@ -232,10 +258,34 @@ export default function SwadishttProfilePage() {
     } catch (error) {
       console.error(error);
     }
+
+    try {
+      const existingReturns = JSON.parse(
+        localStorage.getItem(RETURNS_KEY) || '[]'
+      );
+      setReturns(Array.isArray(existingReturns) ? existingReturns : []);
+    } catch (error) {
+      console.error(error);
+    }
   }, []);
 
   const firstName = profile.name.trim().split(' ')[0] || 'Sample';
   const initial = firstName.charAt(0).toUpperCase();
+
+  const lastDeliveredOrder = useMemo(
+    () =>
+      orders.find(
+        (order) => order.status?.toLowerCase() === 'delivered'
+      ) || null,
+    [orders]
+  );
+  const lastOrderId = lastDeliveredOrder?.id || orders[0]?.id || '0';
+
+  const filteredReturns = useMemo(
+    () =>
+      returns.filter((ret) => matchesReturnFilter(ret.status, returnFilter)),
+    [returns, returnFilter]
+  );
 
   const filteredBaskets = useMemo(
     () =>
@@ -629,14 +679,60 @@ export default function SwadishttProfilePage() {
                     ))}
                   </div>
 
-                  <div className={styles.returnEmpty}>
-                    <Icon type="return" className={styles.largeIcon} />
-                    <h3>No container returns yet</h3>
-                    <p>
-                      Reusable Swadishtt container returns will appear
-                      here.
-                    </p>
-                  </div>
+                  {filteredReturns.length === 0 ? (
+                    <div className={styles.returnEmpty}>
+                      <Icon type="return" className={styles.largeIcon} />
+                      <h3>No container returns yet</h3>
+                      <p>
+                        Reusable Swadishtt container returns will appear
+                        here.
+                      </p>
+                      <Link
+                        href={`/services/swadisht/orders/${lastOrderId}/return-container`}
+                        className={styles.primaryButton}
+                      >
+                        Schedule a Return →
+                      </Link>
+                    </div>
+                  ) : (
+                    <>
+                      <div className={styles.orderList}>
+                        {filteredReturns.map((ret) => {
+                          const itemCount = Array.isArray(ret.items)
+                            ? ret.items.length
+                            : 0;
+                          const isCompleted =
+                            (ret.status || '').toLowerCase() === 'completed';
+
+                          return (
+                            <Link
+                              key={ret.requestId}
+                              href={`/services/swadisht/orders/${ret.orderId}`}
+                              className={styles.order}
+                            >
+                              <div>
+                                <strong>Return #{ret.requestId}</strong>
+                                <span>
+                                  Order #{ret.orderId} · {itemCount}{' '}
+                                  {itemCount === 1 ? 'item' : 'items'} ·{' '}
+                                  {formatReturnMethod(ret.returnMethod)}
+                                </span>
+                                <span>{formatReturnDate(ret.timestamp)}</span>
+                              </div>
+                              <em>{isCompleted ? 'Completed' : 'Scheduled'}</em>
+                            </Link>
+                          );
+                        })}
+                      </div>
+
+                      <Link
+                        href={`/services/swadisht/orders/${lastOrderId}/return-container`}
+                        className={`${styles.smallButton} ${styles.returnActionRow}`}
+                      >
+                        + Schedule Another Return
+                      </Link>
+                    </>
+                  )}
 
                   <div className={styles.greenNotice}>
                     Green Points are added after the return is completed.

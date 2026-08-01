@@ -498,6 +498,11 @@
   text-align: center;
 }
 
+.returnActionRow {
+  display: inline-block;
+  margin-top: 16px;
+}
+
 .greenNotice {
   padding: 18px 20px;
   color: #17783c;
