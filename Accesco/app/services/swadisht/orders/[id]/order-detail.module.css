@@ -36,18 +36,27 @@
   to { transform: rotate(360deg); }
 }
 
+.backRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
 .backBtn {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
   background: none;
   border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.pageTitle {
   font-size: 18px;
   font-weight: 800;
   color: #1C1C1C;
-  cursor: pointer;
-  padding: 0;
-  margin-bottom: 20px;
+  margin: 0;
 }
 
 .statusBanner {

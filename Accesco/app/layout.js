@@ -3,7 +3,6 @@ import localFont from 'next/font/local';
 import { spaceGrotesk } from '@/app/fonts';
 import './globals.css';
 import { AuthProvider } from './components/AuthProvider';
-import AuthGate from './components/AuthGate';
 import CookieConsent from './components/CookieConsent';
 import ReferralCapture from './components/ReferralCapture';
 import JsonLd from '@/components/JsonLd';
@@ -141,15 +140,12 @@ export default function RootLayout({ children }) {
 
       <body>
         <AuthProvider>
-  <BreadcrumbJsonLd />
-  <ReferralCapture />
-
-  <AuthGate>
-    {children}
-    <CookieConsent />
-  </AuthGate>
-
-</AuthProvider>
+          <BreadcrumbJsonLd />
+          <ReferralCapture />
+          
+          {children}
+          <CookieConsent />
+        </AuthProvider>
 
         {/* RemixIcon loaded lazily — only needed for a few social icons */}
         <Script id="load-remixicon" strategy="lazyOnload">

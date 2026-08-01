@@ -345,9 +345,9 @@ export default function SwadishttProfilePage() {
                 <div className={styles.avatar}>{initial}</div>
                 <span>♛ Premium Member</span>
               </div>
-              <h1>{profile.name}</h1>
-              <p>{profile.phone}</p>
-              <p>{profile.email}</p>
+              <h1>{profile.name || 'Accesco User'}</h1>
+              <p>{profile.phone || 'No phone number linked'}</p>
+              <p>{profile.email || 'No email linked'}</p>
             </section>
 
             <section className={styles.wallet}>
