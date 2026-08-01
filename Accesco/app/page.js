@@ -11,7 +11,9 @@ import Footer from '../components/Footer';
 
 const AppShowcase = dynamic(() => import('../components/AppShowcase'), { ssr: true });
 const XpenseIntro = dynamic(() => import('@/components/XpenseIntro'), { ssr: false });
-const AccescoInlineChatbot = dynamic(() => import('./components/AccescoInlineChatbot'), { ssr: false });
+const AccescoInlineChatbot = dynamic(() => import('./components/AccescoInlineChatbot'), {
+  ssr: false,
+});
 
 export default function HomePage() {
   const [isClient, setIsClient] = useState(false);
@@ -49,10 +51,10 @@ export default function HomePage() {
   <>
     <AccescoHeader />
       <main>
-        {/* Ã¢â€â‚¬Ã¢â€â‚¬ Hero Section Ã¢â€â‚¬Ã¢â€â‚¬ */}
+        {/* ——— Hero Section ——— */}
         <Hero />
 
-        {/* Ã¢â€â‚¬Ã¢â€â‚¬ Services Section Ã¢â€â‚¬Ã¢â€â‚¬ */}
+        {/* ——— Services Section ——— */}
        <section
   id="services"
 >
@@ -141,7 +143,7 @@ export default function HomePage() {
                   }}
                   aria-label="Previous"
                 >
-                  Ã¢â‚¬Â¹
+                  ‹
                 </button>
 
                 <div ref={scrollRef} id="services-scroll-container" className="services-grid">
@@ -230,22 +232,23 @@ export default function HomePage() {
                   }}
                   aria-label="Next"
                 >
-                  Ã¢â‚¬Âº
+                  ›
                 </button>
               </div>
          
       </div>
         </section>
-        {/* Ã¢â€â‚¬Ã¢â€â‚¬ Xpense Meter Section Ã¢â€â‚¬Ã¢â€â‚¬ */}
+        {/* ——— Xpense Meter Section ——— */}
         <Suspense fallback={<div style={{ height: '800px', background: '#fff2eb' }} />}>
           <XpenseIntro />
         </Suspense>
-        {/* Ã¢â€â‚¬Ã¢â€â‚¬ Waitlist / App Showcase Ã¢â€â‚¬Ã¢â€â‚¬ */}
+        
+        {/* ——— Waitlist / App Showcase ——— */}
         <Suspense fallback={<div style={{ height: '600px', background: '#fff2eb' }} />}>
           <AppShowcase />
         </Suspense>
 
-        {/* Ã¢â€â‚¬Ã¢â€â‚¬ About Accesco Living (SEO copy) Ã¢â€â‚¬Ã¢â€â‚¬ */}
+        {/* ——— About Accesco Living (SEO copy) ——— */}
  <section className="about-accesco-section">
   <picture>
     <source
@@ -268,8 +271,6 @@ export default function HomePage() {
       </Suspense>
 
      {isClient && <AccescoInlineChatbot />}
-
-      {/* Ã¢â€â‚¬Ã¢â€â‚¬ Combined & Optimized Styles Ã¢â€â‚¬Ã¢â€â‚¬ */}
       </>
   );
 }

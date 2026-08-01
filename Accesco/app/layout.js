@@ -7,6 +7,8 @@ import CookieConsent from './components/CookieConsent';
 import ReferralCapture from './components/ReferralCapture';
 import JsonLd from '@/components/JsonLd';
 import BreadcrumbJsonLd from '@/components/BreadcrumbJsonLd';
+import GoogleAnalytics from '@/components/GoogleAnalytics';
+import { GA_MEASUREMENT_ID } from '@/lib/gtag';
 
 // Self-hosted from Google Fonts (public/fonts/) — see app/fonts.js for why.
 const sora = localFont({
@@ -159,19 +161,26 @@ export default function RootLayout({ children }) {
           `}
         </Script>
 
-        <Script
-          src="https://www.googletagmanager.com/gtag/js?id=G-SH32KGLK5F"
-          strategy="afterInteractive"
-        />
+        {GA_MEASUREMENT_ID && (
+          <>
+            <Script
+              src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
+              strategy="afterInteractive"
+            />
+            <Script id="google-analytics" strategy="afterInteractive">
+              {`
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', '${GA_MEASUREMENT_ID}', {
+                  page_path: window.location.pathname,
+                });
+              `}
+            </Script>
+          </>
+        )}
 
-        <Script id="google-analytics" strategy="afterInteractive">
-          {`
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', 'G-SH32KGLK5F');
-          `}
-        </Script>
+        <GoogleAnalytics />
 
         <Script
           src="https://www.gstatic.com/dialogflow-console/fast/messenger/bootstrap.js?v=1"
