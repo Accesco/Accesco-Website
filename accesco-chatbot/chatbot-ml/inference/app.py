@@ -80,6 +80,19 @@ AREA_NAME_TO_ZONE = {name: zone for name, zone in AREA_INDEX}
 AREA_ALIASES = {"btm": "btm layout 2nd stage", "hsr": "hsr layout (sectors 1-7)"}
 COVERED_PINCODE_COUNT = len(COVERAGE)
 
+# SKU Recovery Framework index (built by chatbot-ml/data/build_recovery_index.py).
+# Rows are answered via embedding retrieval — the classifier only routes.
+with open(os.path.join(DATA_DIR, "recovery_index.json")) as f:
+    RECOVERY_ROWS = json.load(f)["rows"]
+
+# Embed every recovery search text once at startup; store per row so the
+# query is matched against the best-fitting search text of each row.
+RECOVERY_ROW_VECTORS: list[list[np.ndarray]] = []
+for _row in RECOVERY_ROWS:
+    texts = _row["search_texts"]
+    vecs = EMBED_MODEL.encode(texts, normalize_embeddings=True).astype(np.float32)
+    RECOVERY_ROW_VECTORS.append(vecs)
+
 # Intent → canned reply fallback (used when intent has no FAQ answer)
 INTENT_REPLIES = {
     "greeting": "Hello! Welcome to Accesco Living. How can I help you today?",
@@ -145,6 +158,18 @@ FALLBACK_RULES: list[tuple[str, list[str], list[str]]] = [
     # Delivery coverage questions ("what areas do you cover?") — the coverage
     # keywords are specific enough that no secondary keyword is required
     ("delivery_order", ["cover", "coverage", "serviceable", "serviceability"], []),
+    # Circular commerce / SKU recovery framework. Placed BEFORE the product
+    # rules so "do you take back milk bottles?" isn't stolen by grokly ("milk"),
+    # and before returns_refunds so "can I return my packaging?" routes here.
+    ("circular_recycle", ["take back", "takeback", "recycl", "e-waste", "ewaste",
+                          "packaging", "empty bottle", "empty bottles", "dispose",
+                          "disposal", "resale", "what happens to", "fulfillment hub"], []),
+    # "old" / "reuse" / "recover" / "collect" are ambiguous alone ("recover my
+    # password"), so they require a recovery-ish secondary word. Note: keywords
+    # of len <= 3 ("old") match as whole words — "amul gold" never hits "old".
+    ("circular_recycle", ["reuse", "recover", "old", "collect"],
+     ["bottle", "phone", "packaging", "item", "return", "recycl", "waste", "electronics",
+      "charger", "battery", "jar", "toy", "clothes", "shoe", "container", "can", "glass"]),
     ("grokly_grocery", ["grocery", "groceries", "vegetables", "fruits", "milk", "grokly", "groceries delivered"], []),
     ("swadisht_food", ["food delivery", "swadisht", "swadish", "swadhish", "swadhissht", "food order", "restaurant"], []),
     ("instastyle_fashion", ["fashion", "clothes", "instastyle", "apparel"], []),
@@ -343,9 +368,20 @@ def match_area(text: str) -> tuple[str, dict] | None:
             alias = AREA_ALIASES[cand]
             return alias, AREA_NAME_TO_ZONE[alias]
         if len(cand) >= 4:
-            substr = [name for name in all_names if cand in name]
-            if substr:
-                return substr[0], AREA_NAME_TO_ZONE[substr[0]]
+            # Word-boundary substring: candidate must appear as whole word(s)
+            # inside the area name, so "order" never matches "Attibele bORder
+            # zone" and "koramangala" still matches "Koramangala (blocks...)"
+            cand_words = cand.split()
+            for name in all_names:
+                name_words = name.split()
+                if len(cand_words) == 1:
+                    if cand_words[0] in name_words:
+                        return name, AREA_NAME_TO_ZONE[name]
+                elif any(
+                    name_words[i:i + len(cand_words)] == cand_words
+                    for i in range(len(name_words) - len(cand_words) + 1)
+                ):
+                    return name, AREA_NAME_TO_ZONE[name]
         fuzzy = difflib.get_close_matches(cand, all_names, n=1, cutoff=0.80)
         if fuzzy:
             return fuzzy[0], AREA_NAME_TO_ZONE[fuzzy[0]]
@@ -425,9 +461,125 @@ def format_products(products: list[dict]) -> str:
     return "\n\n".join(lines)
 
 
-# ─── Route: Combined chat ───────────────────────────────────────────────────
+# ─── SKU Recovery Framework retrieval ───────────────────────────────────────
 
-# Single-word vertical names → explanation only, never product listings
+# Min cosine similarity between query and a row's search texts for a confident
+# answer. Below it → generic circular reply + ask, never a guessed row.
+RECOVERY_SIM_THRESHOLD = 0.45
+# If the 2nd-best row is within this gap of the best, the query is ambiguous
+# ("bottles" → Beverages vs Baby vs Personal Care) → ask instead of guessing
+RECOVERY_AMBIGUITY_GAP = 0.05
+
+# Weak-detection vocabulary: typo-tolerant fallback for phrasings the keyword
+# rules miss ("do u take bak bottels"). Only honored when retrieval similarity
+# is strong enough — otherwise the query passes through untouched.
+RECOVERY_HINT_VOCAB = [
+    "take back", "taken back", "recycl", "reuse", "resale", "recover",
+    "e-waste", "ewaste", "bottle", "bottles", "packaging", "dispose",
+    "disposal", "returned", "accepted", "empty", "wrapper", "sachet",
+    "biomedical", "tubs", "stroller", "charger", "battery", "collect",
+    "what happens to", "old",
+]
+
+def recovery_hint(text: str) -> bool:
+    """Weak recovery detection: difflib match of query tokens against the
+    hint vocabulary ("take bak" → "take back"). Word-boundary match for the
+    short ones ("old") so "gold"/"bold" don't trigger. A negative vocabulary
+    ("refund", "order", "password", ...) blocks queries that clearly belong
+    to other intents, so "can I return my order?" never routes to recovery."""
+    import difflib
+
+    tl = text.lower()
+    if any(w in tl for w in ("refund", "exchange", "replace", "order", "account",
+                             "password", "login", "payment", "deliver", "delivery",
+                             "price", "cost", "track")):
+        return False
+    for phrase in RECOVERY_HINT_VOCAB:
+        if " " in phrase and phrase in tl:
+            return True
+    vocab_words = {w for w in RECOVERY_HINT_VOCAB if " " not in w}
+    for token in re.findall(r"[a-z]{3,}", tl):
+        if token in vocab_words or len(token) > 3 and difflib.get_close_matches(token, vocab_words, n=1, cutoff=0.78):
+            return True
+    return False
+
+def recovery_row_for(text: str) -> tuple[int, float] | None:
+    """Return (row_index, best_similarity) of the best-matching recovery row,
+    or None if the query is not recovery-flavored at all."""
+    vec = EMBED_MODEL.encode([text], normalize_embeddings=True).astype(np.float32)[0]
+    best_row, best_sim = -1, -1.0
+    for i, row_vecs in enumerate(RECOVERY_ROW_VECTORS):
+        sims = vec @ row_vecs.T
+        sim = float(sims.max())
+        if sim > best_sim:
+            best_row, best_sim = i, sim
+    if best_row < 0:
+        return None
+    return best_row, best_sim
+
+def recovery_reply_for(text: str, intent: str) -> str | None:
+    """Build a SKU recovery framework reply for the query, or None if the
+    query isn't recovery-related (products etc. pass through untouched).
+
+    Strong detection (recovery keyword rules or the classifier) gets a reply
+    either way — a confident row, or a generic circular answer when no row
+    is close. Weak detection (typo-tolerant hint) only answers when a row
+    matches confidently, so unrelated queries flow to their normal intents."""
+    strong = keyword_intent(text) == "circular_recycle" or intent == "circular_recycle"
+    if not strong and not recovery_hint(text):
+        return None
+    # Conceptual questions ("what is circular commerce?") keep using the
+    # explanation path — the recovery table only answers item/category lookups
+    if is_info_question(text):
+        return None
+
+    matched = recovery_row_for(text)
+    if not matched:
+        return None
+    best_row, best_sim = matched
+
+    if best_sim < RECOVERY_SIM_THRESHOLD:
+        if not strong:
+            return None
+        return (
+            INTENT_REPLIES["circular_recycle"] + " "
+            "Tell me the item or category, and I'll check our recovery framework."
+        )
+
+    # Ambiguity: a second row nearly as close → ask which item
+    vec = EMBED_MODEL.encode([text], normalize_embeddings=True).astype(np.float32)[0]
+    sims_by_row = [float((vec @ rv.T).max()) for rv in RECOVERY_ROW_VECTORS]
+    order = sorted(range(len(sims_by_row)), key=lambda i: sims_by_row[i], reverse=True)
+    second = order[1] if len(order) > 1 else best_row
+    if second != best_row and (sims_by_row[best_row] - sims_by_row[second]) <= RECOVERY_AMBIGUITY_GAP:
+        top = order[:3]
+        options = "\n".join(
+            f"• {RECOVERY_ROWS[i]['category']} — {RECOVERY_ROWS[i]['skus']}"
+            for i in top
+        )
+        return (
+            "I found a few possible items — which one did you mean?\n"
+            f"{options}"
+        )
+
+    row = RECOVERY_ROWS[best_row]
+    take_back = row["take_back"]
+    if take_back == "Yes":
+        return (
+            f"For {row['category']}, yes — we take back {row['skus']}. "
+            f"Recovery: {row['recovery']}."
+        )
+    if take_back == "Selective":
+        return (
+            f"For {row['category']}, we take back {row['skus']} selectively — "
+            "check with your delivery partner."
+        )
+    return (
+        f"For {row['category']}, we don't take back {row['skus']}."
+    )
+
+
+# ─── Route: Combined chat ───────────────────────────────────────────────────
 SINGLE_WORD_INFO = {
     "grokly": "grokly_grocery",
     "swadisht": "swadisht_food",
@@ -475,10 +627,19 @@ def chat(query: Query):
             intent="delivery_order", confidence=confidence, products=[],
         )
 
-    # 5. Search products + best distance
+    # 5. SKU recovery framework: routed by recovery keywords or the
+    #    circular_recycle intent, answered from the 19-row table via
+    #    embedding retrieval. Never falls through to product search.
+    recovery = recovery_reply_for(text, intent)
+    if recovery:
+        return ChatResponse(
+            reply=recovery, intent="circular_recycle", confidence=confidence, products=[]
+        )
+
+    # 6. Search products + best distance
     products, best_distance = search_products(text, query.top_k)
 
-    # 6. Info questions ("what is X", "tell me about X") → explanation only.
+    # 7. Info questions ("what is X", "tell me about X") → explanation only.
     #    Keyword rules first, so typos of vertical names ("what is swadhissht")
     #    resolve to the right intent instead of the model's misclassification.
     if is_info_question(text):
@@ -492,13 +653,13 @@ def chat(query: Query):
         )
         return ChatResponse(reply=reply, intent=intent, confidence=confidence, products=[])
 
-    # 7. "Greeting" classification but a strong product match exists → it's a product query
+    # 8. "Greeting" classification but a strong product match exists → it's a product query
     #    ("amul taaza" was misclassified as greeting; FAISS distance separates the two)
     if intent == "greeting" and best_distance < PRODUCT_QUERY_DISTANCE:
         intent = "localmeds_pharmacy" if products[0]["service"] == "LocalMeds" else "grokly_grocery"
         confidence = round(confidence, 3)
 
-    # 8. Build reply
+    # 9. Build reply
     PRODUCT_INTENTS = {"grokly_grocery", "swadisht_food", "instastyle_fashion",
                        "localmeds_pharmacy", "unknown"}
     show_products = intent in PRODUCT_INTENTS and bool(products)

@@ -9,6 +9,7 @@
 | Phase 3: Inference Server | ✅ Completed | `chatbot-ml/inference/app.py` |
 | Phase 4: Frontend Integration | 🧪 Tested (temporary UI wiring, REVERTED after testing) | `Accesco/app/components/AccescoInlineChatbot.jsx` |
 | Phase 3.5: Delivery Coverage Lookup | ✅ Completed | `chatbot-ml/data/build_delivery_coverage.py` + `app.py` |
+| Phase 3.6: SKU Recovery Framework RAG | ✅ Completed | `chatbot-ml/data/build_recovery_index.py` + `app.py` |
 
 ## Phase 1 — Completed
 
@@ -161,6 +162,51 @@ Next.js app is left 100% identical to before the test.
 ```bash
 # Rebuild coverage JSON after editing Tier List / coordinates spreadsheets
 python3 accesco-chatbot/chatbot-ml/data/build_delivery_coverage.py
+```
+
+## Phase 3.6 — SKU Recovery Framework RAG (Completed, no retraining)
+
+- [x] `chatbot-ml/data/build_recovery_index.py` converts `recovery_framework.json`
+      → `chatbot-ml/data/recovery_index.json`: 19 rows, each with canonical
+      text + category boost vocabulary + per-SKU + per-category paraphrase
+      expansions (551 search texts; generic words like "bottles"/"toys" are
+      EXCLUDED from expansions so ambiguous queries surface as asks instead
+      of phrase-collision false positives)
+- [x] `app.py` embeds all search texts at startup (all-MiniLM-L6-v2) →
+      cosine similarity retrieval; `/chat` routes recovery BEFORE product
+      search via:
+  - Strong detection: recovery keyword rules (take back/recycl/e-waste/
+    packaging/dispose/resale/what happens to/...) moved BEFORE grokly &
+    returns_refunds so "take back milk bottles" isn't stolen by "milk",
+    "return my packaging" routes to recovery not returns policy
+  - Second circular rule: old/reuse/recover/collect REQUIRE a recovery-ish
+    secondary word ("amul gold" never matches "old" — word-boundary)
+  - Weak detection: `recovery_hint()` difflib typo fallback ("take bak" →
+    take back) with a NEGATIVE vocabulary (refund/order/password/deliver...)
+    and it only answers when a row matches confidently — unrelated queries
+    pass through untouched
+  - Classifier `circular_recycle` intent also routes to the handler
+- [x] Answer templates: Yes → "we take back {skus}. Recovery: {recovery}.",
+      Selective → "taken back selectively", Reject → "we don't take back",
+      ambiguous (top-2 within 0.05 gap) → "which one did you mean?" with
+      options, below 0.45 sim → generic circular reply + ask (weak detections
+      below threshold pass through instead)
+- [x] Eval: `chatbot-ml/inference/test_recovery.py` — 47-question suite
+      (19 categories + typos + ambiguous + pass-through + conceptual):
+      **47/47 (100%)**. All non-recovery queries (amul milk, hello, shampoo
+      price, dolo 650, can i return my order, UPI, recover my password,
+      what is circular commerce) untouched.
+- [x] Full /chat regression: delivery coverage, products, greetings, info,
+      waitlist, privacy all verified working
+
+### Commands
+
+```bash
+# Rebuild recovery index after editing recovery_framework.json / build script
+python3 accesco-chatbot/chatbot-ml/data/build_recovery_index.py
+
+# Run the recovery eval suite (imports app; loads models ~10-15s)
+python3 accesco-chatbot/chatbot-ml/inference/test_recovery.py
 ```
 
 ## Known Open Questions / Decisions
