@@ -14,6 +14,7 @@
 | Phase 3.8: Xfail fixes + rule hardening | ✅ Completed | `app.py` + `train/train_classifier.py` (12-epoch retrain) |
 | Phase 3.9: Marketing recovery FAQ answers | ✅ Completed | `chatbot-ml/data/build_recovery_faq.py` + `app.py` |
 | Phase 3.10: Dolo fix + filename reconciliation | ✅ Completed | `build_delivery_coverage.py` + `app.py` |
+| Phase 3.11: SKU FAQ in training data + routing fixes | ✅ Completed | `train_classifier.py` + `app.py` + `test_suite.csv` |
 
 ## Phase 1 — Completed
 
@@ -315,6 +316,62 @@ cd accesco-chatbot/chatbot-ml && python3 -m uvicorn inference.app:app --port 800
 python3 accesco-chatbot/chatbot-ml/test_suite_runner.py
 python3 accesco-chatbot/chatbot-ml/test_suite_runner.py --category coverage
 python3 accesco-chatbot/chatbot-ml/test_suite_runner.py --only 41,55 -v
+```
+
+## Phase 3.11 — SKU FAQ in training data + routing fixes (Completed, 2026-08-04)
+
+- [x] Full preprocessing rerun: `preprocess.py` (10,711 products, 3 PDFs → 19
+      recovery rows + 1,202 text chunks), `build_recovery_index.py` (19 rows /
+      551 search texts), `build_recovery_faq.py` (38 FAQs),
+      `build_delivery_coverage.py` (110 zones / 255 areas)
+- [x] All 38 SKURecovery.pdf questions appended to `faq_labeled.csv` (dedup-safe
+      script; 410 → 448 rows, circular_recycle 65 → 103)
+- [x] BUGFIX `train_classifier.py`: CSV opened without `encoding="utf-8"` —
+      the new FAQ answers contain curly quotes/em-dashes that CRASH cp1252
+      decode on Windows. Two training runs "succeeded" (exit 0 through a
+      pipe) but never saved the model. Lesson: verify `model.safetensors`
+      timestamp after every retrain, don't trust piped exit codes.
+- [x] Retrained 12 epochs (5 was undertrained on 448 rows: eval 0.733) →
+      train 0.997, **eval 0.822** (best yet; 90-row eval split)
+- [x] ROUTING FIX 1 (`app.py`): `recovery_faq_reply()` moved BEFORE
+      `coverage_reply()` — coverage's fuzzy area matcher was hijacking FAQ
+      wording ("where do returned SKUs go after collection?" → zone "Gpo",
+      "available in every city?" → "City Market"). Safe because the FAQ's
+      negative vocab (deliver/order/track/...) passes real delivery queries
+      through; all 20 coverage rows still green
+- [x] ROUTING FIX 2 (`app.py`): category FAQs now defer to the 19-row table
+      only when row sim ≥ FAQ sim (relative check, was fixed 0.45 bar) —
+      "furniture through accesco?" (FAQ 0.99 vs row 0.56) now gets the FAQ
+      answer instead of "which one did you mean? • Kitchen — Cookware".
+      Item lookups ("cosmetic bottles") still score higher on their row, so
+      the row table keeps them
+- [x] ROUTING FIX 3 (`app.py`): `RECOVERY_FAQ_THRESHOLD` 0.70 → 0.65
+      ("can I schedule a recovery pickup?" scores 0.68 vs its FAQ question)
+- [x] `test_suite.csv`: 95 → **112 rows** (17 new `sku_faq` rows #96–112
+      covering the PDF's general/beverages/dairy/fashion/e-waste/medicines/
+      furniture/food-waste sections); rows #56/#67 accept the richer
+      FAQ-based answers ("handed back"/"certified handlers") that replaced
+      the older row-table phrasing
+- [x] Suite: **112/112 pass, 0 xfail** (~4 min). Known imperfection: #110
+      "empty medicine bottles" answers from the Beverages FAQ (embedding-
+      nearest), not the Medicines entry — passes, but worth a
+      disambiguation improvement later
+
+### Commands
+
+```bash
+# Full preprocess (catalog + PDFs + FAISS; ~2 min)
+python3 accesco-chatbot/chatbot-ml/data/preprocess.py
+python3 accesco-chatbot/chatbot-ml/data/build_recovery_index.py
+python3 accesco-chatbot/chatbot-ml/data/build_recovery_faq.py
+python3 accesco-chatbot/chatbot-ml/data/build_delivery_coverage.py
+
+# Retrain (STOP the uvicorn server first — Windows file lock on model.safetensors)
+python3 accesco-chatbot/chatbot-ml/train/train_classifier.py 12
+# then VERIFY: model.safetensors timestamp must be fresh
+
+# Windows: set PYTHONIOENCODING=utf-8 before running any of these
+# (scripts print → and the data contains em-dashes; cp1252 console crashes)
 ```
 
 ## Known Open Questions / Decisions

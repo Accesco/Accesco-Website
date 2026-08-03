@@ -530,8 +530,10 @@ RECOVERY_SIM_THRESHOLD = 0.45
 # ("bottles" → Beverages vs Baby vs Personal Care) → ask instead of guessing
 RECOVERY_AMBIGUITY_GAP = 0.05
 # Min cosine sim between the query and a marketing FAQ question for a direct
-# FAQ answer. Kept high so item lookups keep flowing to the row table.
-RECOVERY_FAQ_THRESHOLD = 0.70
+# FAQ answer. Item lookups are kept on the row table by the relative
+# FAQ-vs-row check in recovery_faq_reply, so this gate only filters
+# unrelated queries ("schedule a recovery pickup" scores 0.68).
+RECOVERY_FAQ_THRESHOLD = 0.65
 
 # Weak-detection vocabulary: typo-tolerant fallback for phrasings the keyword
 # rules miss ("do u take bak bottels"). Only honored when retrieval similarity
@@ -607,9 +609,12 @@ def recovery_faq_reply(text: str) -> str | None:
     if faq["category"] != "General":
         # Category FAQ ("do you take back empty bottles?") must not steal an
         # item lookup the 19-row table answers confidently ("cosmetic
-        # bottles" → Beauty). Only step in when no row matches well.
-        row_sims = [float((vec @ rv.T).max()) for rv in RECOVERY_ROW_VECTORS]
-        if max(row_sims) >= RECOVERY_SIM_THRESHOLD:
+        # bottles" → Beauty). Defer to the row table only when it matches
+        # the query at least as strongly as the FAQ — a fixed row threshold
+        # blocked FAQ wins like "furniture through accesco?" (FAQ 0.99 vs
+        # row 0.56).
+        row_best = max(float((vec @ rv.T).max()) for rv in RECOVERY_ROW_VECTORS)
+        if row_best >= best:
             return None
     return faq["answer"]
 
@@ -706,24 +711,26 @@ def chat(query: Query):
     # 3. Classify intent
     intent, confidence = classify_intent(text)
 
-    # 4. Delivery coverage lookup runs before product search so area/pincode
-    #    queries ("marathahalli", "do you deliver to 560037?", "whitefield")
-    #    are never misrouted into product listings, regardless of intent
-    coverage = coverage_reply(text)
-    if coverage:
-        return ChatResponse(
-            reply=coverage, intent="delivery_order", confidence=0.99, products=[]
-        )
-
-    # 4b. SKU Recovery marketing FAQ answers general/category questions with
-    #     detailed Q&As. Must run BEFORE the delivery_order early-return and
-    #     the row table — the model sometimes routes "what is the sku
-    #     recovery framework?" to delivery_order (conf ~0.87), and the FAQ is
-    #     the right answer for it. Guards block order/refund/delivery queries.
+    # 4. SKU Recovery marketing FAQ answers general/category questions with
+    #    detailed Q&As. Must run BEFORE coverage and the delivery_order
+    #    early-return — the model sometimes routes "what is the sku recovery
+    #    framework?" to delivery_order (conf ~0.87), and coverage's fuzzy
+    #    area matcher can hijack FAQ wording ("where do returned SKUs go"
+    #    → area "Gpo"). The FAQ's negative vocabulary blocks real
+    #    order/refund/delivery queries, so coverage still gets them.
     faq_answer = recovery_faq_reply(text)
     if faq_answer:
         return ChatResponse(
             reply=faq_answer, intent="circular_recycle", confidence=confidence, products=[]
+        )
+
+    # 4b. Delivery coverage lookup runs before product search so area/pincode
+    #     queries ("marathahalli", "do you deliver to 560037?", "whitefield")
+    #     are never misrouted into product listings, regardless of intent
+    coverage = coverage_reply(text)
+    if coverage:
+        return ChatResponse(
+            reply=coverage, intent="delivery_order", confidence=0.99, products=[]
         )
 
     if intent == "delivery_order":

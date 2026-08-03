@@ -54,7 +54,7 @@ id,category,question,expected_intent,reply_contains,expect_products,known_issue,
 53,coverage,"do you deliver here?",delivery_order,share your area,no,no,misrouted to returns_refunds (conf 0.38); should ask for area/pincode
 54,coverage,"do you deliver to mumbai?",delivery_order,share your area|not delivering,no,no,misrouted to delivery_partner (conf 0.48); should ask for pincode or say no
 55,recovery,"do you take back milk bottles?",circular_recycle,take back|which one,no,,Fresh & Dairy row (may show disambiguation)
-56,recovery,"can I return empty PET bottles?",circular_recycle,take back|which one,no,,weak-hint path via bottle vocab
+56,recovery,"can I return empty PET bottles?",circular_recycle,take back|which one|handed back,no,,now answered by Beverages FAQ (handed back to delivery partner) - better than old row-table reply
 57,recovery,"what happens to old phones?",circular_recycle,take back,no,,Electronics row via what-happens-to keyword
 58,recovery,"do you accept old chargers?",circular_recycle,take back,no,,old+charger secondary keyword rule
 59,recovery,"do you take bubble wrap back?",circular_recycle,selectively|which one,no,,Packaging Selective row
@@ -65,7 +65,7 @@ id,category,question,expected_intent,reply_contains,expect_products,known_issue,
 64,recovery,"do you take back old clothes?",circular_recycle,take back,no,,Fashion row
 65,recovery,"can I recycle shampoo bottles?",circular_recycle,take back|which one,no,,Personal Care row
 66,recovery,"what do you do with returned packaging?",circular_recycle,take back|circular|which one,no,,packaging keyword strong route
-67,recovery,"can you collect used batteries?",circular_recycle,take back|circular|recovery|which one,no,,collect+battery rule - may fall to generic reply
+67,recovery,"can you collect used batteries?",circular_recycle,take back|circular|recovery|which one|certified handlers,no,,now answered by E-waste FAQ (certified handlers) - better than old generic reply
 68,returns,"I want to return my order",returns_refunds,refund,no,,order blocks recovery hint - stays returns intent
 69,returns,"how do I get a refund?",returns_refunds,refund,no,,refund FAQ
 70,returns,"can I exchange a product I bought?",returns_refunds,refund|exchange,no,,exchange keyword
@@ -94,3 +94,20 @@ id,category,question,expected_intent,reply_contains,expect_products,known_issue,
 93,unknown,"what's the weather today?",any,,any,,off-topic question - behavioral probe
 94,mixed,"amul gold milk price",grokly_grocery|swadisht_food|pricing_payment|unknown,,any,,product+price query; gold must not trigger old/recovery; products shown correctly
 95,mixed,"do you take back amul gold milk bottles?",circular_recycle,take back|which one,no,,brand name with gold plus recovery phrasing
+96,sku_faq,"what is the sku recovery framework?",circular_recycle,taking back eligible,no,,FAQ General Q1 verbatim
+97,sku_faq,"how does the sku recovery framework work?",circular_recycle,fulfillment hub|flagged for recovery,no,,FAQ General Q2 verbatim
+98,sku_faq,"how is sku recovery different from a normal return?",circular_recycle,faulty or unwanted,no,,FAQ General Q3 paraphrased (regular->normal)
+99,sku_faq,"does every product qualify for sku recovery?",circular_recycle,enrolled|product page,no,,FAQ General Q4 paraphrased - avoids blocked word order
+100,sku_faq,"can I schedule a recovery pickup?",circular_recycle,through the app|standalone,no,,FAQ General Q5 paraphrased
+101,sku_faq,"do I get rewards for returning used items?",circular_recycle,reward points|credits,no,,FAQ General Q6 - rewards phrasing must not hijack to referral_rewards
+102,sku_faq,"is there a fee for returning items through sku recovery?",circular_recycle,free,no,,FAQ General Q7
+103,sku_faq,"where do returned SKUs go after collection?",circular_recycle,fulfillment hub,no,,FAQ General Q8 verbatim
+104,sku_faq,"is sku recovery available in every city?",circular_recycle,Bengaluru|city by city,no,,FAQ General Q9 paraphrased
+105,sku_faq,"what's not accepted under the sku recovery framework?",circular_recycle,accepted|eligible,no,,FAQ General Q11
+106,sku_faq,"is there a deposit for returning beverage containers?",circular_recycle,deposit|credit,no,,FAQ Beverages Q16 paraphrased
+107,sku_faq,"can I return empty milk pouches?",circular_recycle,recycling|take back|milestones,no,,FAQ Dairy Q18 - row table may also answer (either accepted)
+108,sku_faq,"do you resell returned clothing?",circular_recycle,resale|donation|textile,no,,FAQ Fashion Q20 paraphrased
+109,sku_faq,"is e-waste collected by accesco?",circular_recycle,e-waste|recycling|take back,no,,FAQ Electronics Q25 - row table may also answer
+110,sku_faq,"can I return empty medicine bottles?",circular_recycle,recycling|take back|pharmacy,no,,FAQ Medicines Q36 paraphrased
+111,sku_faq,"can I return furniture or appliances through accesco?",circular_recycle,case-by-case|support,no,,FAQ Furniture Q37
+112,sku_faq,"does sku recovery cover food waste?",circular_recycle,composted|perishable,no,,FAQ Food Waste Q38 - negative answer

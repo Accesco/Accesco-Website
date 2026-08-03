@@ -36,7 +36,7 @@ torch.manual_seed(SEED)
 
 def load_data():
     rows = []
-    with open(DATA_PATH) as f:
+    with open(DATA_PATH, encoding="utf-8") as f:
         for r in csv.DictReader(f):
             rows.append(r)
     intents = sorted({r["intent"] for r in rows})
