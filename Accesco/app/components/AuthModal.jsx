@@ -25,6 +25,7 @@ import {
   markReferralVisitConsumed,
   isValidReferralCodeFormat,
   normalizeReferralCode,
+  validateReferralCode,
 } from '../../lib/referralService'
 
 function GoogleIcon() {
@@ -98,6 +99,11 @@ function AuthModalContent({
   // mark it spent after signup — see markReferralVisitConsumed.
   const [referralVisitUid, setReferralVisitUid] =
     useState(null)
+  // Live check of whether the typed code actually exists:
+  // 'idle' | 'checking' | 'valid' | 'invalid' | 'unknown' (couldn't reach the
+  // server — never blocks signup on our own outage).
+  const [referralStatus, setReferralStatus] =
+    useState({ state: 'idle' })
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
@@ -140,6 +146,51 @@ function AuthModalContent({
     }
   }, [])
 
+  // Check the typed referral code against the server as they type, so a
+  // mistyped code is caught here rather than silently dropping attribution
+  // after the account already exists.
+  useEffect(() => {
+    const code = referralCode.trim()
+
+    if (!code) {
+      setReferralStatus({ state: 'idle' })
+      return undefined
+    }
+
+    if (!isValidReferralCodeFormat(code)) {
+      setReferralStatus({ state: 'invalid' })
+      return undefined
+    }
+
+    setReferralStatus({ state: 'checking' })
+
+    let cancelled = false
+
+    const timeout = setTimeout(async () => {
+      const result = await validateReferralCode(code)
+      if (cancelled) return
+
+      if (result.valid === null) {
+        // Couldn't reach the server — don't accuse the user of a bad code.
+        setReferralStatus({ state: 'unknown' })
+      } else if (result.valid) {
+        setReferralStatus({
+          state: 'valid',
+          referrerName: result.isMarketing
+            ? null
+            : result.referrerName || null,
+        })
+      } else {
+        setReferralStatus({ state: 'invalid' })
+      }
+    }, 450)
+
+    return () => {
+      cancelled = true
+      clearTimeout(timeout)
+    }
+  }, [referralCode])
+
   useEffect(() => {
     if (resendCooldown <= 0) return undefined
 
@@ -175,6 +226,7 @@ function AuthModalContent({
     setReferralCode('')
     setReferralPrefilled(false)
     setReferralVisitUid(null)
+    setReferralStatus({ state: 'idle' })
 
     setError('')
     setSuccess(false)
@@ -222,6 +274,44 @@ function AuthModalContent({
     return '+91' + stripped.replace(/\D/g, '')
   }
 
+  // Returns an error message if the entered referral code can't be used, or
+  // null if it's fine — including when the field is empty, since it's optional.
+  const validateReferralBeforeSubmit = async () => {
+    const code = referralCode.trim().toUpperCase()
+
+    if (!code) return null
+
+    if (!isValidReferralCodeFormat(code)) {
+      return 'Referral code should be 4-20 letters or numbers, e.g. ACCLAUNCH'
+    }
+
+    // The live check already cleared this exact code — no need to re-ask.
+    if (referralStatus.state === 'valid') return null
+
+    const result = await validateReferralCode(code)
+
+    if (result.valid === null) {
+      // Our own outage, not a bad code — never block signup on it.
+      setReferralStatus({ state: 'unknown' })
+      return null
+    }
+
+    if (!result.valid) {
+      setReferralStatus({ state: 'invalid' })
+
+      return `You're using a wrong referral code — "${code}" doesn't exist. Please check it, or leave the field blank.`
+    }
+
+    setReferralStatus({
+      state: 'valid',
+      referrerName: result.isMarketing
+        ? null
+        : result.referrerName || null,
+    })
+
+    return null
+  }
+
   // Step 1 → validate details, then send phone OTP and move to verify step
   const handleDetailsSubmit = async (e) => {
     e.preventDefault()
@@ -260,14 +350,12 @@ function AuthModalContent({
       return setError('Enter a valid email address')
     }
 
-    // Referral code is optional — only shape-check it when one was typed.
-    if (
-      referralCode.trim() &&
-      !isValidReferralCodeFormat(referralCode)
-    ) {
-      return setError(
-        'Referral code should be 4-20 letters or numbers, e.g. ACCLAUNCH',
-      )
+    // Referral code is optional — only checked when one was actually typed.
+    const referralError =
+      await validateReferralBeforeSubmit()
+
+    if (referralError) {
+      return setError(referralError)
     }
 
     setStep('verify')
@@ -454,13 +542,11 @@ function AuthModalContent({
       )
     }
 
-    if (
-      referralCode.trim() &&
-      !isValidReferralCodeFormat(referralCode)
-    ) {
-      return setError(
-        'Referral code should be 4-20 letters or numbers, e.g. ACCLAUNCH',
-      )
+    const referralError =
+      await validateReferralBeforeSubmit()
+
+    if (referralError) {
+      return setError(referralError)
     }
 
     setStep('verify')
@@ -670,6 +756,77 @@ function AuthModalContent({
 
     transition: '150ms ease',
   })
+
+  // Referral field styling + helper line, shared by the phone and social
+  // signup steps so both give identical feedback on a bad code.
+  const referralInputStyle = () => {
+    const base = {
+      ...inputStyle('referralCode'),
+      textTransform: 'uppercase',
+    }
+
+    if (referralStatus.state === 'invalid') {
+      return {
+        ...base,
+        border: '1px solid #c50062',
+        background: 'rgba(197,0,98,0.05)',
+      }
+    }
+
+    if (referralStatus.state === 'valid') {
+      return { ...base, border: '1px solid #16a34a' }
+    }
+
+    return base
+  }
+
+  const renderReferralNote = () => {
+    if (referralStatus.state === 'checking') {
+      return (
+        <span style={styles.referralNoteMuted}>
+          Checking code…
+        </span>
+      )
+    }
+
+    if (referralStatus.state === 'invalid') {
+      return (
+        <span style={styles.referralNoteError}>
+          Wrong referral code — check it, or leave
+          this blank
+        </span>
+      )
+    }
+
+    if (referralStatus.state === 'valid') {
+      return (
+        <span style={styles.referralNoteValid}>
+          {referralStatus.referrerName
+            ? `Valid code — invited by ${referralStatus.referrerName} ✓`
+            : 'Referral code applied ✓'}
+        </span>
+      )
+    }
+
+    if (referralStatus.state === 'unknown') {
+      return (
+        <span style={styles.referralNoteMuted}>
+          Could not verify right now — you can
+          continue
+        </span>
+      )
+    }
+
+    if (referralPrefilled) {
+      return (
+        <span style={styles.referralNote}>
+          Applied from your invite link
+        </span>
+      )
+    }
+
+    return null
+  }
 
   return (
     <div
@@ -927,10 +1084,7 @@ function AuthModalContent({
                       </label>
 
                       <input
-                        style={{
-                          ...inputStyle('referralCode'),
-                          textTransform: 'uppercase',
-                        }}
+                        style={referralInputStyle()}
                         type="text"
                         placeholder="eg. ACCLAUNCH"
                         value={referralCode}
@@ -948,11 +1102,7 @@ function AuthModalContent({
                         autoComplete="off"
                       />
 
-                      {referralPrefilled && (
-                        <span style={styles.referralNote}>
-                          Applied from your invite link
-                        </span>
-                      )}
+                      {renderReferralNote()}
                     </div>
 
                     <button
@@ -1033,10 +1183,7 @@ function AuthModalContent({
                       </label>
 
                       <input
-                        style={{
-                          ...inputStyle('referralCode'),
-                          textTransform: 'uppercase',
-                        }}
+                        style={referralInputStyle()}
                         type="text"
                         placeholder="eg. ACCLAUNCH"
                         value={referralCode}
@@ -1054,11 +1201,7 @@ function AuthModalContent({
                         autoComplete="off"
                       />
 
-                      {referralPrefilled && (
-                        <span style={styles.referralNote}>
-                          Applied from your invite link
-                        </span>
-                      )}
+                      {renderReferralNote()}
                     </div>
 
                     <button
@@ -1685,6 +1828,30 @@ socialButtonFull: {
     fontSize: 8,
     lineHeight: 1.2,
     fontWeight: 500,
+  },
+
+  referralNoteMuted: {
+    color: 'rgba(26,26,26,0.5)',
+
+    fontSize: 8,
+    lineHeight: 1.2,
+    fontWeight: 500,
+  },
+
+  referralNoteError: {
+    color: '#c50062',
+
+    fontSize: 8,
+    lineHeight: 1.2,
+    fontWeight: 600,
+  },
+
+  referralNoteValid: {
+    color: '#16a34a',
+
+    fontSize: 8,
+    lineHeight: 1.2,
+    fontWeight: 600,
   },
 
   submit: {

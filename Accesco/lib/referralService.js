@@ -42,9 +42,39 @@ export function normalizeReferralCode(code) {
   return clean || null;
 }
 
-/** Shape check only — real existence is validated server-side on attribution. */
+/** Shape check only — call validateReferralCode() to confirm it really exists. */
 export function isValidReferralCodeFormat(code) {
   return /^[A-Z0-9]{4,20}$/.test(normalizeReferralCode(code) || '');
+}
+
+/**
+ * Confirms a referral code resolves to a real profile (a user's code or one of
+ * the house marketing codes), so a mistyped code is caught before signup
+ * instead of silently failing attribution afterwards.
+ *
+ * A network/server failure resolves to `{ valid: null }` — "couldn't check",
+ * which callers should treat as non-blocking rather than as "wrong code".
+ *
+ * @returns {Promise<{ valid: boolean|null, referrerName?: string, isMarketing?: boolean }>}
+ */
+export async function validateReferralCode(code) {
+  const clean = normalizeReferralCode(code);
+  if (!clean) return { valid: false, reason: 'empty' };
+
+  try {
+    const response = await fetch('/api/referral/validate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ code: clean }),
+    });
+
+    if (!response.ok) return { valid: null };
+
+    return await response.json();
+  } catch (err) {
+    console.error('[referral] Failed to validate referral code:', err);
+    return { valid: null };
+  }
 }
 
 function normalizePhoneDigits(phone) {
