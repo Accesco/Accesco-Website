@@ -62,6 +62,24 @@ export default function AuthModal({
   // reset internal state).
   mandatory = false,
 }) {
+  if (!isOpen) return null
+
+  return (
+    <AuthModalContent
+      isOpen={isOpen}
+      onClose={onClose}
+      onSuccess={onSuccess}
+      mandatory={mandatory}
+    />
+  )
+}
+
+function AuthModalContent({
+  isOpen,
+  onClose,
+  onSuccess,
+  mandatory,
+}) {
   const [name, setName] = useState('')
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
@@ -286,8 +304,8 @@ export default function AuthModal({
   // Completes sign-in for a social user whose phone was already verified on
   // a prior visit — no OTP needed again, just restore the app session.
   const completeVerifiedSocialUser = async (existing, firebaseUser) => {
-    await signOut(auth)
-
+    // Session persists to allow getIdToken() for secure API calls
+    
     const user = {
       name: existing.name || firebaseUser.displayName || 'Accesco User',
       phone: existing.phone || firebaseUser.phoneNumber || null,
@@ -504,14 +522,15 @@ export default function AuthModal({
         },
       )
 
-      // Sign out of Firebase Auth after the write — we only needed phone verification
-      await signOut(auth)
-
+      // Firebase session is kept alive to allow getIdToken() for secure API calls
+      
       // Referral profile creation/attribution is a side effect — never let
-      // it block or fail the sign-in itself.
-      initializeReferralProfile(p, n, getStoredReferralCode()).catch((err) =>
-        console.error('Referral profile init failed:', err),
-      )
+      // it fail the sign-in itself.
+      try {
+        await initializeReferralProfile(p, n, getStoredReferralCode())
+      } catch (err) {
+        console.error('Referral profile init failed:', err)
+      }
 
       const user = {
         name: n,
@@ -584,8 +603,6 @@ export default function AuthModal({
 
     transition: '150ms ease',
   })
-
-  if (!isOpen) return null
 
   return (
     <div

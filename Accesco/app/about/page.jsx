@@ -19,9 +19,9 @@ export default function AboutPage() {
         <section className="about-mission-section">
           <div className="about-container">
             <div className="mission-content">
-              <h2 className="mission-title">
+              <h1 className="mission-title">
                 Making everyday commerce transparent, intelligent, and circular
-              </h2>
+              </h1>
               <p className="mission-description">
                 For the household, the local producer, and the planet — simultaneously.
               </p>

@@ -8,7 +8,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useGSAP } from '@gsap/react';
 import FeatureAccordion from '@/components/instastyle/FeatureAccordion';
 import FashionCollections from '@/components/instastyle/FashionCollections';
-import SwipeStyleShowcase from '@/components/instastyle/SwipeStyleShowcase';
+// import SwipeStyleShowcase from '@/components/instastyle/SwipeStyleShowcase';
 import DeliveryHero from '@/components/instastyle/DeliveryHero';
 import JsonLd from '../../../components/JsonLd';
 import StyleStories from './components/StyleStories';
@@ -773,7 +773,7 @@ export default function InstaStyleLanding({ featuredProducts, brandSet, category
 
 
       {/* ── SWIPE STYLE DISCOVERY ── */}
-      <SwipeStyleShowcase />
+      {/* <SwipeStyleShowcase /> */}
 
 
 

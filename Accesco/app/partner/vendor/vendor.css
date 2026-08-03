@@ -129,8 +129,18 @@
   line-height: 1.7;
   color: rgba(255, 253, 248, 0.72);
   max-width: 720px;
-  margin: 0 auto 48px;
+  margin: 0 auto 24px;
   animation: fadeInUp 0.8s ease-out 0.4s both;
+}
+
+.vendor-hero-description {
+  font-family: var(--font-dm-sans), sans-serif;
+  font-size: 0.95rem;
+  line-height: 1.7;
+  color: rgba(255, 253, 248, 0.6);
+  max-width: 640px;
+  margin: 0 auto 48px;
+  animation: fadeInUp 0.8s ease-out 0.5s both;
 }
 
 .vendor-hero-stats {

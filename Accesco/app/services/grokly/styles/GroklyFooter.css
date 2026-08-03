@@ -1,0 +1,679 @@
+/* =========================================================
+   GROKLY FOOTER
+   Clean, compact and uncluttered while keeping all content
+   ========================================================= */
+
+.grokly-footer {
+  width: 100%;
+  margin-top: 80px;
+  background: #a9d867;
+  color: #1b3a2b;
+  font-family: var(--grokly-font-primary);
+  box-sizing: border-box;
+}
+
+.grokly-footer *,
+.grokly-footer *::before,
+.grokly-footer *::after {
+  box-sizing: border-box;
+}
+
+.grokly-footer-container {
+  width: 100%;
+  max-width: 1480px;
+  margin: 0 auto;
+  padding: 0 44px;
+}
+
+/* =========================================================
+   MAIN LAYOUT
+   ========================================================= */
+
+.grokly-footer-main {
+  display: grid;
+  grid-template-columns: minmax(285px, 1.2fr) minmax(0, 3.8fr);
+  align-items: start;
+  gap: clamp(52px, 6vw, 92px);
+  padding: 52px 0 46px;
+}
+
+/* =========================================================
+   BRAND
+   ========================================================= */
+
+.grokly-footer-brand {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.grokly-footer-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 18px;
+
+  color: #153d2c;
+  text-decoration: none;
+}
+
+.grokly-footer-logo-icon {
+  width: 48px;
+  height: 48px;
+  flex: 0 0 48px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 12px;
+  background: #153d2c;
+  color: #a9d867;
+  font-size: 23px;
+}
+
+.grokly-footer-logo-text {
+  color: #153d2c;
+  font-family: var(--grokly-font-display);
+  font-size: 31px;
+  line-height: 1;
+  font-weight: 900;
+  letter-spacing: -0.025em;
+}
+
+.grokly-footer-description {
+  max-width: 300px;
+  margin: 0 0 22px;
+
+  color: rgba(21, 61, 44, 0.86);
+  font-size: 14px;
+  line-height: 1.65;
+  font-weight: 400;
+}
+
+/* =========================================================
+   SOCIAL ICONS
+   ========================================================= */
+
+.grokly-footer-socials {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 11px;
+  margin: 0 0 24px;
+}
+
+.grokly-footer-social-link {
+  width: 38px;
+  height: 38px;
+  flex: 0 0 38px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  border: 1.4px solid rgba(21, 61, 44, 0.9);
+  border-radius: 50%;
+
+  background: transparent;
+  color: #153d2c;
+
+  text-decoration: none;
+  font-size: 17px;
+
+  transition:
+    color 0.18s ease,
+    background-color 0.18s ease,
+    transform 0.18s ease;
+}
+
+.grokly-footer-social-link:hover {
+  background: #153d2c;
+  color: #a9d867;
+  transform: translateY(-2px);
+}
+
+/* =========================================================
+   APP BUTTONS
+   ========================================================= */
+
+.grokly-footer-apps {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 148px));
+  gap: 10px;
+}
+
+.grokly-footer-app-button {
+  min-width: 0;
+  min-height: 54px;
+  padding: 9px 12px;
+
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 12px;
+
+  background: rgba(255, 255, 255, 0.42);
+  color: #153d2c;
+
+  text-decoration: none;
+
+  transition:
+    background-color 0.18s ease,
+    transform 0.18s ease,
+    box-shadow 0.18s ease;
+}
+
+.grokly-footer-app-button:hover {
+  background: rgba(255, 255, 255, 0.62);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(21, 61, 44, 0.08);
+}
+
+.grokly-footer-app-button i {
+  flex-shrink: 0;
+  font-size: 25px;
+}
+
+.grokly-footer-app-text {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.grokly-footer-app-text small {
+  margin-bottom: 2px;
+
+  font-size: 9px;
+  line-height: 1.1;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.grokly-footer-app-text strong {
+  font-size: 14px;
+  line-height: 1.15;
+  font-weight: 750;
+  white-space: nowrap;
+}
+
+/* =========================================================
+   LINK COLUMNS
+   ========================================================= */
+
+.grokly-footer-links {
+  min-width: 0;
+
+  display: grid;
+  grid-template-columns: repeat(4, minmax(120px, 1fr));
+  align-items: start;
+  gap: clamp(32px, 4vw, 66px);
+}
+
+.grokly-footer-column {
+  min-width: 0;
+}
+
+.grokly-footer-heading {
+  margin: 4px 0 20px;
+
+  color: rgba(21, 61, 44, 0.78);
+  font-size: 12px;
+  line-height: 1.2;
+  font-weight: 800;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+.grokly-footer-list {
+  margin: 0;
+  padding: 0;
+
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+
+  list-style: none;
+}
+
+.grokly-footer-list li {
+  margin: 0;
+  padding: 0;
+}
+
+.grokly-footer-list a {
+  display: inline-block;
+
+  color: rgba(21, 61, 44, 0.88);
+  font-size: 14px;
+  line-height: 1.4;
+  font-weight: 500;
+  text-decoration: none;
+
+  transition:
+    color 0.18s ease,
+    transform 0.18s ease;
+}
+
+.grokly-footer-list a:hover {
+  color: #0c2e20;
+  transform: translateX(3px);
+}
+
+/* =========================================================
+   DIVIDER
+   ========================================================= */
+
+.grokly-footer-divider {
+  width: 100%;
+  height: 1px;
+  background: rgba(21, 61, 44, 0.34);
+}
+
+/* =========================================================
+   BOTTOM SECTION
+   ========================================================= */
+
+.grokly-footer-bottom {
+  min-height: 70px;
+  padding: 20px 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 28px;
+
+  color: rgba(21, 61, 44, 0.78);
+  font-size: 13px;
+}
+
+.grokly-footer-bottom p {
+  margin: 0;
+  line-height: 1.5;
+}
+
+.grokly-footer-bottom-links {
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 24px;
+}
+
+.grokly-footer-bottom-links a {
+  color: rgba(21, 61, 44, 0.78);
+  font-size: 13px;
+  font-weight: 500;
+  text-decoration: none;
+
+  transition: color 0.18s ease;
+}
+
+.grokly-footer-bottom-links a:hover {
+  color: #0c2e20;
+}
+
+/* =========================================================
+   TABLET
+   ========================================================= */
+
+@media (max-width: 1150px) {
+  .grokly-footer-container {
+    padding: 0 32px;
+  }
+
+  .grokly-footer-main {
+    grid-template-columns: 1fr;
+    gap: 42px;
+  }
+
+  .grokly-footer-brand {
+    max-width: 660px;
+  }
+
+  .grokly-footer-description {
+    max-width: 500px;
+  }
+
+  .grokly-footer-apps {
+    grid-template-columns: repeat(2, 155px);
+  }
+
+  .grokly-footer-links {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 32px;
+  }
+}
+
+/* =========================================================
+   SMALL TABLET
+   ========================================================= */
+
+@media (max-width: 850px) {
+  .grokly-footer {
+    margin-top: 60px;
+  }
+
+  .grokly-footer-main {
+    padding: 44px 0 38px;
+  }
+
+  .grokly-footer-links {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 52px;
+    row-gap: 36px;
+  }
+
+  .grokly-footer-bottom {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .grokly-footer-bottom-links {
+    justify-content: flex-start;
+  }
+}
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 560px) {
+  .grokly-footer {
+    margin-top: 48px;
+  }
+
+  .grokly-footer-container {
+    padding: 0 20px;
+  }
+
+  .grokly-footer-main {
+    gap: 38px;
+    padding: 38px 0 34px;
+  }
+
+  .grokly-footer-logo {
+    margin-bottom: 16px;
+  }
+
+  .grokly-footer-logo-icon {
+    width: 44px;
+    height: 44px;
+    flex-basis: 44px;
+  }
+
+  .grokly-footer-logo-text {
+    font-size: 28px;
+  }
+
+  .grokly-footer-description {
+    max-width: 100%;
+    font-size: 13.5px;
+  }
+
+  .grokly-footer-apps {
+    width: 100%;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .grokly-footer-app-button {
+    width: 100%;
+    padding: 9px 10px;
+  }
+
+  .grokly-footer-links {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 24px;
+    row-gap: 32px;
+  }
+
+  .grokly-footer-heading {
+    margin-bottom: 16px;
+    font-size: 11.5px;
+  }
+
+  .grokly-footer-list {
+    gap: 12px;
+  }
+
+  .grokly-footer-list a {
+    font-size: 13px;
+  }
+
+  .grokly-footer-bottom {
+    padding: 18px 0 22px;
+    font-size: 12px;
+  }
+
+  .grokly-footer-bottom-links {
+    gap: 16px;
+  }
+
+  .grokly-footer-bottom-links a {
+    font-size: 12px;
+  }
+}
+
+/* =========================================================
+   VERY SMALL MOBILE
+   ========================================================= */
+
+@media (max-width: 390px) {
+  .grokly-footer-apps {
+    grid-template-columns: 1fr;
+  }
+
+  .grokly-footer-links {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Remove policy links area and make footer text black */
+.grokly-footer,
+.grokly-footer a,
+.grokly-footer p,
+.grokly-footer span,
+.grokly-footer h3,
+.grokly-footer small,
+.grokly-footer strong,
+.grokly-footer i {
+  color: #000000 !important;
+}
+
+/* Keep the footer bottom clean */
+.grokly-footer-bottom {
+  justify-content: center !important;
+  text-align: center;
+}
+
+/* Ensure the removed links section never takes space */
+.grokly-footer-bottom-links {
+  display: none !important;
+}
+
+/* Keep icon backgrounds readable */
+.grokly-footer-logo-icon {
+  background: #1b3a2b !important;
+  color: #a9d867 !important;
+}
+
+/* Social icons stay visible */
+.grokly-footer-social-link {
+  border-color: #000000 !important;
+  color: #000000 !important;
+}
+
+.grokly-footer-social-link:hover {
+  background: #000000 !important;
+  color: #ffffff !important;
+}
+
+/* Actual Grokly footer logo */
+.grokly-footer-logo-image {
+  width: 52px;
+  height: 52px;
+  object-fit: contain;
+  flex-shrink: 0;
+  display: block;
+}
+
+/* Old basket icon is no longer needed */
+.grokly-footer-logo-icon {
+  display: none;
+}
+
+/* =========================================================
+   FOOTER LOGO + BOTTOM BAR OVERRIDE
+   ========================================================= */
+
+/* Logo row */
+.grokly-footer-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 18px;
+  text-decoration: none;
+}
+
+/* Dark-green rounded outer box */
+.grokly-footer-logo-box {
+  width: 64px;
+  height: 64px;
+  flex: 0 0 64px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 11px;
+  background: #173f2f;
+  border-radius: 20px;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+/* Lime square inside the dark box */
+.grokly-footer-logo-image {
+  width: 42px !important;
+  height: 42px !important;
+  display: block;
+  object-fit: contain;
+
+  background: #b9ff65;
+  border-radius: 0;
+}
+
+/* Hide the previous basket-icon wrapper if still present */
+.grokly-footer-logo-icon {
+  display: none !important;
+}
+
+/* Logo text */
+.grokly-footer-logo-text {
+  color: #000000 !important;
+  font-size: 31px;
+  line-height: 1;
+  font-weight: 900;
+}
+
+
+/* Footer bottom exactly like the reference */
+.grokly-footer-bottom {
+  min-height: 72px;
+  padding: 20px 0;
+
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 24px;
+
+  color: #000000;
+  box-sizing: border-box;
+}
+
+/* Left-side location */
+.grokly-footer-location {
+  justify-self: start;
+  margin: 0;
+
+  color: #000000 !important;
+  font-size: 14px;
+  line-height: 1.4;
+  font-weight: 800;
+}
+
+/* Copyright stays perfectly centred */
+.grokly-footer-copyright {
+  justify-self: center;
+  margin: 0;
+
+  color: rgba(0, 0, 0, 0.58) !important;
+  font-size: 12px;
+  line-height: 1.4;
+  font-weight: 500;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.grokly-footer-bottom-spacer {
+  justify-self: end;
+}
+
+/* Keep the divider darker and clean */
+.grokly-footer-divider {
+  height: 1px;
+  background: rgba(0, 0, 0, 0.45);
+}
+
+
+/* Tablet/mobile */
+@media (max-width: 768px) {
+  .grokly-footer-logo-box {
+    width: 58px;
+    height: 58px;
+    flex-basis: 58px;
+    padding: 10px;
+    border-radius: 18px;
+  }
+
+  .grokly-footer-logo-image {
+    width: 38px !important;
+    height: 38px !important;
+  }
+
+  .grokly-footer-bottom {
+    grid-template-columns: 1fr;
+    justify-items: start;
+    gap: 8px;
+    padding: 18px 0;
+  }
+
+  .grokly-footer-location,
+  .grokly-footer-copyright,
+  .grokly-footer-bottom-spacer {
+    justify-self: start;
+  }
+
+  .grokly-footer-copyright {
+    text-align: left;
+    white-space: normal;
+  }
+
+  .grokly-footer-bottom-spacer {
+    display: none;
+  }
+}
+
+/* Make footer location text less bold */
+.grokly-footer-location {
+  font-weight: 500 !important;
+}
+

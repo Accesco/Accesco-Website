@@ -18,7 +18,6 @@
   background: #fffaf7;
 }
 
-
 .referralHeader {
   position: relative;
   z-index: 5;
@@ -39,24 +38,33 @@
 .referralBrand {
   display: flex;
   align-items: center;
-  gap: 15px;
+  gap: 12px;
   color: #7f003f;
-  font-size: 18px;
-  font-weight: 800;
+  font-size: 17px;
+  font-weight: 900;
   text-decoration: none;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.03em;
 }
 
 .referralLogo {
   width: 39px;
   height: 39px;
-  display: grid;
-  place-items: center;
-  color: white;
+  display: block;
+  object-fit: contain;
   border-radius: 11px;
-  background: linear-gradient(145deg, #99004e, #670035);
-  font-size: 22px;
-  font-weight: 900;
+}
+
+.brandText {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.05;
+}
+
+.brandText small {
+  color: #9a8b91;
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.42em;
 }
 
 .referralNavigation {
@@ -94,123 +102,519 @@
 .referralMain {
   position: relative;
   z-index: 2;
-  width: min(1440px, calc(100% - 40px));
+  width: min(1180px, calc(100% - 40px));
   margin: 0 auto;
-  padding: 48px 0 70px;
+  padding: 34px 0 70px;
 }
 
-.referralHero {
-  min-height: 355px;
-  padding: 10px 30px 28px;
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 50px;
-}
-
-.referralHero h1 {
-  margin: 0;
-  color: #1d181a;
-  font-family: Georgia, 'Times New Roman', serif;
-  font-size: clamp(44px, 4.6vw, 68px);
-  font-weight: 400;
-  line-height: 1.08;
-  letter-spacing: -0.04em;
-}
-
-.referralHero h1 span {
-  color: var(--ref-maroon);
-}
-
-.referralHero > div > p {
-  margin: 25px 0 0;
-  color: #514a4d;
-  font-size: 18px;
-  line-height: 1.65;
-}
-
-.quickStats {
-  width: min(590px, 100%);
-  margin-top: 34px;
-  padding: 18px 8px;
+.heroBanner {
+  min-height: 345px;
+  padding: 48px;
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  border: 1px solid #e9dcd6;
-  border-radius: 17px;
-  background: rgba(255, 255, 255, 0.55);
-}
-
-.quickStat {
-  min-width: 0;
-  padding: 0 17px;
-  display: flex;
+  grid-template-columns: minmax(0, 1.05fr) minmax(280px, 0.95fr);
   align-items: center;
-  gap: 14px;
+  gap: 44px;
+  overflow: hidden;
+  border-radius: 24px;
+  background: linear-gradient(135deg, #7a0040, #5a002f);
+  box-shadow: 0 24px 60px rgba(90, 0, 47, 0.18);
 }
 
-.quickStat + .quickStat {
-  border-left: 1px solid #eee3de;
+.heroCopy {
+  position: relative;
+  z-index: 1;
 }
 
-.quickIcon {
-  width: 43px;
-  height: 43px;
-  flex: 0 0 43px;
-  display: grid;
-  place-items: center;
-  color: #8d0045;
-  border-radius: 50%;
-  background: #f8e9ed;
-  font-size: 21px;
+.heroBadge {
+  width: fit-content;
+  min-height: 36px;
+  padding: 0 16px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.38);
+  border-radius: 999px;
+  color: white;
+  background: rgba(255, 255, 255, 0.12);
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.heroBadge svg {
+  width: 15px;
+  height: 15px;
+}
+
+.heroTitle {
+  margin: 22px 0 0;
+  color: white;
+  font-size: 44px;
+  font-weight: 800;
+  line-height: 1.08;
+  letter-spacing: 0;
+}
+
+.heroSub {
+  max-width: 560px;
+  margin: 18px 0 0;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 15px;
+  line-height: 1.7;
+}
+
+.heroCta,
+.ctaBanner button {
+  min-height: 46px;
+  margin-top: 26px;
+  padding: 0 24px;
+  border: 0;
+  border-radius: 999px;
+  color: var(--ref-maroon);
+  background: white;
+  font: inherit;
+  font-size: 14px;
   font-weight: 900;
+  cursor: pointer;
 }
 
-.coinIcon {
-  color: #ef9e1b;
-  background: #fff1dc;
+/* image served from public/images/referral/referral-logo.png */
+.heroArt {
+  min-height: 245px;
+  align-self: stretch;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  overflow: hidden;
+  margin-bottom: -48px;
 }
 
-.quickStat strong,
-.quickStat small {
+.heroArtImg {
+  width: 100%;
+  max-width: 480px;
+  height: auto;
+  max-height: calc(100% + 48px);
+  object-fit: contain;
+  object-position: bottom;
   display: block;
 }
 
-.quickStat strong {
-  font-size: 22px;
+.statsRow,
+.progressRow {
+  margin-top: 20px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
 }
 
-.quickStat small {
-  margin-top: 2px;
-  color: #62585d;
+.earnedCard,
+.codeCard,
+.howCard,
+.progressCard,
+.historyCard {
+  border: 1px solid var(--ref-border);
+  background: white;
+  box-shadow: 0 18px 50px rgba(92, 27, 50, 0.06);
+}
+
+.earnedCard {
+  min-height: 245px;
+  padding: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 28px;
+  border-radius: 18px;
+  text-align: left;
+}
+
+.earnedImg {
+  width: 150px;
+  height: auto;
+  flex: 0 0 auto;
+}
+
+.earnedInfo {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.codeCard {
+  min-height: 245px;
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: 18px;
+  text-align: center;
+}
+
+.earnedCard p,
+.codeCard p {
+  margin: 15px 0 0;
+  color: var(--ref-muted);
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.earnedAmount {
+  margin-top: 8px;
+  color: var(--ref-maroon);
+  font-size: 32px;
+  line-height: 1;
+}
+
+.earnedCard small {
+  margin-top: 8px;
+  color: var(--ref-muted);
   font-size: 12px;
 }
 
-.statsLookup {
-  width: 380px;
-  margin-top: 15px;
-  padding: 22px;
-  border: 1px solid #eaded8;
-  border-radius: 18px;
-  background: rgba(255, 255, 255, 0.89);
-  box-shadow: 0 18px 55px rgba(87, 0, 46, 0.08);
+.earnedCard button,
+.shareBtn,
+.shareInputRow button {
+  min-height: 44px;
+  padding: 0 20px;
+  border: 0;
+  border-radius: 999px;
+  color: white;
+  background: linear-gradient(135deg, #97004c, #700038);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 900;
+  cursor: pointer;
 }
 
-.statsLookup label,
-.shareSection label {
-  display: block;
-  margin-bottom: 8px;
-  font-family: Georgia, 'Times New Roman', serif;
+.earnedCard button {
+  margin-top: 20px;
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.48;
+}
+
+.codeBox {
+  width: min(360px, 100%);
+  margin: 19px 0 18px;
+  padding: 19px;
+  color: var(--ref-maroon);
+  border: 1px solid #e7cdd9;
+  border-radius: 14px;
+  background: #fffaf7;
+  font-size: 22px;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-align: center;
+}
+
+.codeActions {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+}
+
+.copyBtn,
+.milestoneToggle {
+  min-height: 44px;
+  padding: 0 20px;
+  border: 1px solid rgba(136, 0, 68, 0.28);
+  border-radius: 999px;
+  color: var(--ref-maroon);
+  background: white;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.howSection {
+  margin-top: 36px;
+}
+
+.howSection h2 {
+  margin: 0 0 18px;
+  text-align: center;
+  font-size: 28px;
+  line-height: 1.2;
+}
+
+.howCard {
+  padding: 34px;
+  border-radius: 18px;
+}
+
+.howSteps {
+  display: grid;
+  grid-template-columns: 1fr 34px 1fr 34px 1fr;
+  align-items: start;
+  gap: 18px;
+}
+
+.howStep {
+  min-width: 0;
+  text-align: center;
+}
+
+.howIcon {
+  position: relative;
+  width: 72px;
+  height: 72px;
+  margin: 0 auto;
+  display: grid;
+  place-items: center;
+  color: var(--ref-maroon);
+  border-radius: 50%;
+  background: #f8e8ea;
+  font-size: 28px;
+}
+
+.howIcon svg {
+  width: 30px;
+  height: 30px;
+}
+
+.howIcon span {
+  position: absolute;
+  left: 0;
+  bottom: -2px;
+  width: 24px;
+  height: 24px;
+  display: grid;
+  place-items: center;
+  color: white;
+  border: 2px solid white;
+  border-radius: 50%;
+  background: var(--ref-maroon);
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.howStep h3 {
+  margin: 19px 0 0;
   font-size: 16px;
 }
 
-.statsLookup > div,
+.howStep p {
+  max-width: 230px;
+  margin: 8px auto 0;
+  color: var(--ref-muted);
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.stepArrow {
+  margin-top: 24px;
+  color: var(--ref-maroon);
+  font-size: 28px;
+  font-weight: 900;
+  text-align: center;
+}
+
+.progressCard,
+.historyCard {
+  border-radius: 18px;
+}
+
+.progressCard,
+.historyCard {
+  padding: 24px;
+}
+
+.cardHeading,
+.historyHeading {
+  display: flex;
+  align-items: center;
+}
+
+.cardHeading {
+  gap: 12px;
+}
+
+.cardHeading span,
+.ctaIcon,
+.headingIcon {
+  width: 42px;
+  height: 42px;
+  flex: 0 0 42px;
+  display: grid;
+  place-items: center;
+  color: var(--ref-maroon);
+  border-radius: 50%;
+  background: #f8e8ea;
+  font-size: 19px;
+}
+
+.cardHeading span svg,
+.ctaIcon svg,
+.headingIcon svg {
+  width: 20px;
+  height: 20px;
+}
+
+.cardHeading h2,
+.historyHeading h2 {
+  margin: 0;
+  font-size: 18px;
+}
+
+.segmentSummary {
+  margin-top: 30px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 18px;
+}
+
+.segmentBar {
+  display: flex;
+  gap: 4px;
+}
+
+.segmentBar span {
+  height: 14px;
+  flex: 1;
+  border-radius: 4px;
+  background: #ddd;
+}
+
+.segmentBar span.filled {
+  background: var(--ref-maroon);
+}
+
+.segmentSummary strong {
+  color: var(--ref-maroon);
+  font-size: 18px;
+}
+
+.bonusCaption {
+  margin: 17px 0 0;
+  color: var(--ref-muted);
+  font-size: 13px;
+  text-align: right;
+}
+
+.bonusCaption strong {
+  color: var(--ref-maroon);
+}
+
+.milestoneToggle {
+  margin-top: 24px;
+}
+
+.milestonePanel {
+  margin-top: 18px;
+  padding-top: 18px;
+  border-top: 1px solid #eee2dd;
+}
+
+.historyHeading {
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.historyHeading a {
+  color: var(--ref-maroon);
+  font-size: 13px;
+  font-weight: 900;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.historyTable {
+  width: 100%;
+  margin-top: 24px;
+  border-collapse: collapse;
+}
+
+.historyTable th,
+.historyTable td {
+  padding: 14px 8px;
+  border-bottom: 1px solid #f0e6e1;
+  font-size: 13px;
+  text-align: left;
+}
+
+.historyTable th {
+  color: var(--ref-muted);
+  font-size: 11px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.pillPending,
+.pillCompleted {
+  min-height: 26px;
+  padding: 0 10px;
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 900;
+}
+
+.pillPending {
+  color: #8a6a1f;
+  background: #f3e2c7;
+}
+
+.pillCompleted {
+  color: #1d7a43;
+  background: #d9f2e0;
+}
+
+.rewardValue {
+  color: var(--ref-maroon);
+  font-weight: 900;
+}
+
+.ctaBanner {
+  margin-top: 20px;
+  padding: 28px 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  border-radius: 20px;
+  background: linear-gradient(135deg, #7a0040, #5a002f);
+}
+
+.ctaBanner > div {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.ctaIcon {
+  color: white;
+  background: rgba(255, 255, 255, 0.14);
+}
+
+.ctaBanner h2 {
+  margin: 0;
+  color: white;
+  font-size: 20px;
+}
+
+.ctaBanner p {
+  margin: 6px 0 0;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 13px;
+}
+
+.ctaBanner button {
+  flex: 0 0 auto;
+  margin-top: 0;
+}
+
 .shareInputRow {
   display: flex;
   gap: 9px;
 }
 
-.statsLookup input,
-.shareInputRow input {
+.shareInputRow input,
+.shareInputRow select {
   width: 100%;
   min-width: 0;
   height: 46px;
@@ -222,63 +626,16 @@
   font: inherit;
 }
 
-.statsLookup input:focus,
-.shareInputRow input:focus {
+.shareInputRow input:focus,
+.shareInputRow select:focus {
   border-color: #97004c;
   box-shadow: 0 0 0 3px rgba(151, 0, 76, 0.08);
 }
 
-.statsLookup button,
 .shareInputRow button {
-  min-width: 112px;
-  height: 46px;
-  padding: 0 17px;
-  border: 0;
+  min-width: 126px;
   border-radius: 10px;
-  color: white;
-  background: linear-gradient(135deg, #97004c, #700038);
-  font: inherit;
-  font-size: 12px;
-  font-weight: 800;
   white-space: nowrap;
-  cursor: pointer;
-}
-
-button:disabled {
-  cursor: not-allowed;
-  opacity: 0.48;
-}
-
-.errorMessage {
-  margin: 12px 0 0;
-  color: #a01840;
-  font-size: 12px;
-  line-height: 1.45;
-}
-
-.referralLayout {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 360px;
-  align-items: start;
-  gap: 26px;
-}
-
-.referralDashboard,
-.leaderboardCard {
-  border: 1px solid #eadfda;
-  border-radius: 25px;
-  background: rgba(255, 255, 255, 0.92);
-  box-shadow: 0 22px 60px rgba(92, 27, 50, 0.07);
-}
-
-.referralDashboard {
-  padding: 28px 24px 20px;
-}
-
-.leaderboardCard {
-  position: sticky;
-  top: 25px;
-  padding: 28px 24px;
 }
 
 .sectionHeading {
@@ -287,26 +644,9 @@ button:disabled {
   gap: 14px;
 }
 
-.headingIcon {
-  width: 53px;
-  height: 53px;
-  flex: 0 0 53px;
-  display: grid;
-  place-items: center;
-  border-radius: 50%;
-  background: #f8e8ea;
-  font-size: 23px;
-}
-
-.trophyIcon {
-  background: #fff0df;
-}
-
 .sectionHeading h2 {
   margin: 0;
-  font-family: Georgia, 'Times New Roman', serif;
   font-size: 22px;
-  font-weight: 400;
 }
 
 .sectionHeading p {
@@ -316,7 +656,7 @@ button:disabled {
 }
 
 .meterScroller {
-  margin-top: 32px;
+  margin-top: 20px;
   overflow-x: auto;
   padding: 10px 0;
 }
@@ -421,6 +761,12 @@ button:disabled {
   color: #850043;
 }
 
+.currentProgress span svg {
+  width: 16px;
+  height: 16px;
+  display: block;
+}
+
 .currentProgress p {
   margin: 0;
   font-size: 12px;
@@ -522,218 +868,78 @@ button:disabled {
   font-weight: 800;
 }
 
-.shareSection {
-  margin-top: 19px;
-  border: 1px solid #eadfda;
-  border-radius: 18px;
-  overflow: hidden;
+.errorMessage {
+  margin: 12px 0 0;
+  color: #a01840;
+  font-size: 12px;
+  line-height: 1.45;
 }
 
-.referralLinkBlock {
-  padding: 19px;
-}
-
-.shareSection p {
-  margin: -3px 0 10px;
-  color: #6d6267;
-  font-size: 10px;
-}
-
-.shareBottom {
+.referralFooter {
+  padding: 48px 30px;
   display: grid;
-  grid-template-columns: 1.35fr 0.9fr;
-  border-top: 1px solid #eee2dd;
-}
-
-.shareBottom form,
-.socialSharing {
-  padding: 18px;
-}
-
-.socialSharing {
-  border-left: 1px solid #eee2dd;
-}
-
-.socialSharing > div {
-  display: flex;
-  gap: 15px;
-}
-
-.socialSharing button {
-  width: 44px;
-  height: 44px;
-  display: grid;
-  place-items: center;
-  color: #21191c;
-  border: 1px solid #e5d9d3;
-  border-radius: 50%;
-  background: white;
-  font-size: 17px;
-  font-weight: 700;
-  cursor: pointer;
-}
-
-.referralNotes {
-  margin-top: 17px;
-  padding: 15px 8px;
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  border: 1px solid #eadfd9;
-  border-radius: 15px;
-  background: #fffaf7;
-}
-
-.referralNotes > div {
-  padding: 0 11px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.referralNotes > div + div {
-  border-left: 1px solid #eee2dd;
-}
-
-.referralNotes span {
-  font-size: 19px;
-}
-
-.referralNotes p {
-  margin: 0;
-  color: #675c61;
-  font-size: 9.5px;
-  line-height: 1.5;
-}
-
-.leaderboardList {
-  margin-top: 27px;
-  display: flex;
-  flex-direction: column;
-  gap: 13px;
-}
-
-.leaderboardRow {
-  padding: 15px 13px;
-  display: grid;
-  grid-template-columns: 28px 43px minmax(0, 1fr) auto;
-  align-items: center;
-  gap: 10px;
-  border: 1px solid #eadfd9;
-  border-radius: 15px;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 32px;
+  border-top: 1px solid #eadfd9;
   background: white;
 }
 
-.rankBadge {
-  width: 27px;
-  height: 27px;
-  display: grid;
-  place-items: center;
-  color: white;
-  border-radius: 50%;
-  background: #a67c52;
-  font-size: 11px;
+.footerBrand {
+  color: var(--ref-maroon);
+  font-size: 18px;
+  font-weight: 400;
+  text-decoration: none;
+}
+
+.footerBrand strong {
   font-weight: 900;
 }
 
-.rank1 {
-  background: #dda324;
-}
-
-.rank2 {
-  background: #a5a5a5;
-}
-
-.rank3 {
-  background: #bb653c;
-}
-
-.avatar {
-  width: 43px;
-  height: 43px;
-  display: grid;
-  place-items: center;
-  color: white;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #9e0050, #650034);
-  font-size: 13px;
-  font-weight: 800;
-}
-
-.avatar2 {
-  background: linear-gradient(135deg, #857d82, #50494d);
-}
-
-.avatar3 {
-  background: linear-gradient(135deg, #8a536b, #583343);
-}
-
-.leaderboardUser {
-  min-width: 0;
-}
-
-.leaderboardUser strong,
-.leaderboardUser small,
-.leaderboardCoins strong,
-.leaderboardCoins small {
-  display: block;
-}
-
-.leaderboardUser strong {
-  overflow: hidden;
-  font-size: 12px;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.leaderboardUser small {
-  margin-top: 5px;
+.referralFooter p {
+  max-width: 360px;
+  margin: 18px 0 22px;
   color: var(--ref-muted);
-  font-size: 9.5px;
-}
-
-.leaderboardCoins {
-  text-align: right;
-}
-
-.leaderboardCoins strong {
-  color: #850043;
   font-size: 13px;
+  line-height: 1.7;
 }
 
-.leaderboardCoins small {
-  margin-top: 5px;
-  color: #665b60;
-  font-size: 9px;
-}
-
-.emptyLeaderboard {
-  padding: 30px 15px;
-  color: #74686d;
-  border: 1px dashed #ded2cc;
-  border-radius: 14px;
-  text-align: center;
+.referralFooter small {
+  color: var(--ref-muted);
   font-size: 12px;
+}
+
+.referralFooter nav {
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+}
+
+.referralFooter h3 {
+  margin: 0 0 6px;
+  font-size: 14px;
+}
+
+.referralFooter a {
+  color: #6f6469;
+  font-size: 13px;
+  text-decoration: none;
+}
+
+.referralFooter a:hover {
+  color: var(--ref-maroon);
 }
 
 @media (max-width: 1050px) {
-  .referralHero {
-    min-height: auto;
-  }
-
-  .statsLookup {
-    display: none;
-  }
-
-  .referralLayout {
-    grid-template-columns: 1fr;
-  }
-
-  .leaderboardCard {
-    position: static;
+  .heroBanner {
+    grid-template-columns: 1fr 0.7fr;
   }
 
   .rewardGrid {
     grid-template-columns: repeat(2, 1fr);
+  }
+
+  .referralFooter {
+    grid-template-columns: 1.4fr 1fr 1fr;
   }
 }
 
@@ -766,77 +972,86 @@ button:disabled {
 
   .referralMain {
     width: calc(100% - 20px);
-    padding-top: 35px;
+    padding-top: 24px;
   }
 
-  .referralHero {
-    padding: 0 8px 35px;
-  }
-
-  .referralHero h1 {
-    font-size: 39px;
-  }
-
-  .referralHero > div > p {
-    font-size: 15px;
-  }
-
-  .quickStats {
+  .heroBanner {
+    padding: 30px 22px;
     grid-template-columns: 1fr;
-    gap: 14px;
   }
 
-  .quickStat {
-    padding: 0 14px;
+  .heroTitle {
+    font-size: 36px;
   }
 
-  .quickStat + .quickStat {
-    padding-top: 14px;
-    border-top: 1px solid #eee3de;
-    border-left: 0;
+  .heroArt {
+    display: none;
   }
 
-  .referralDashboard,
-  .leaderboardCard {
-    padding: 20px 13px;
-    border-radius: 20px;
+  .statsRow,
+  .progressRow {
+    grid-template-columns: 1fr;
   }
 
-  .sectionHeading h2 {
-    font-size: 18px;
+  .earnedCard,
+  .codeCard,
+  .progressCard,
+  .historyCard {
+    padding: 20px 14px;
+  }
+
+  .earnedCard {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .earnedInfo {
+    align-items: center;
+  }
+
+  .codeActions,
+  .shareInputRow,
+  .ctaBanner,
+  .ctaBanner > div {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .codeActions button,
+  .shareInputRow button,
+  .ctaBanner button {
+    width: 100%;
+  }
+
+  .howCard {
+    padding: 24px 16px;
+  }
+
+  .howSteps {
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
+
+  .stepArrow {
+    display: none;
+  }
+
+  .segmentSummary {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .segmentSummary strong,
+  .bonusCaption {
+    text-align: right;
+  }
+
+  .referralFooter {
+    grid-template-columns: 1fr;
+    padding: 36px 20px;
   }
 
   .rewardGrid {
     grid-template-columns: 1fr;
-  }
-
-  .shareBottom {
-    grid-template-columns: 1fr;
-  }
-
-  .socialSharing {
-    border-top: 1px solid #eee2dd;
-    border-left: 0;
-  }
-
-  .referralNotes {
-    grid-template-columns: 1fr;
-  }
-
-  .referralNotes > div {
-    padding: 12px;
-  }
-
-  .referralNotes > div + div {
-    border-top: 1px solid #eee2dd;
-    border-left: 0;
-  }
-
-  .shareInputRow {
-    flex-direction: column;
-  }
-
-  .shareInputRow button {
-    width: 100%;
   }
 }

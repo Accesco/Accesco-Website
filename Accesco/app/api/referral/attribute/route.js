@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { db } from '../../../../lib/firebase';
-import { collection, doc, getDocs, query, where, runTransaction, addDoc } from 'firebase/firestore';
+import { collection, doc, getDocs, query, where, runTransaction, addDoc, arrayUnion } from 'firebase/firestore';
 import { COINS_PER_REFERRAL } from '../../../../lib/giftCatalog';
 
 export const dynamic = 'force-dynamic';
@@ -59,10 +59,17 @@ export async function POST(request) {
 
       const newReferralCount = (referrerSnap.data().referralCount || 0) + 1;
       const newCoins = (referrerSnap.data().coins || 0) + COINS_PER_REFERRAL;
+      const refereeData = refereeSnap.data();
 
       transaction.update(referrerRef, {
         referralCount: newReferralCount,
         coins: newCoins,
+        referredUsers: arrayUnion({
+          phone: refereeData.phone || refereeDigits,
+          name: refereeData.name || '',
+          status: 'pending',
+          referredAt: new Date().toISOString(),
+        }),
       });
 
       transaction.update(refereeRef, {
