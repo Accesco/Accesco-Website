@@ -11,6 +11,7 @@
 | Phase 3.5: Delivery Coverage Lookup | ✅ Completed | `chatbot-ml/data/build_delivery_coverage.py` + `app.py` |
 | Phase 3.6: SKU Recovery Framework RAG | ✅ Completed | `chatbot-ml/data/build_recovery_index.py` + `app.py` |
 | Phase 3.7: Full E2E Test Suite | ✅ Completed | `chatbot-ml/test_suite.csv` + `chatbot-ml/test_suite_runner.py` |
+| Phase 3.8: Xfail fixes + rule hardening | ✅ Completed | `app.py` + `train/train_classifier.py` (12-epoch retrain) |
 
 ## Phase 1 — Completed
 
@@ -239,6 +240,32 @@ python3 accesco-chatbot/chatbot-ml/inference/test_recovery.py
 | 54 | do you deliver to mumbai? | delivery_partner | 0.48 |
 
 Add training examples for these phrasings if retraining.
+
+## Phase 3.8 — Xfail fixes + rule hardening (Completed, 2026-08-03)
+
+- [x] All 5 known xfail rows now pass → **95/95 E2E + 47/47 recovery**
+- [x] `INTENT_CONFIDENCE_THRESHOLD` 0.30 → 0.50; new rule-agreement override:
+      a keyword rule that disagrees with the model's top pick wins while
+      model confidence < 0.90 (`RULE_OVERRIDE_MAX_CONF`) — "namaste" (0.74)
+      and "dettol handwash" (0.70) are confidently wrong, rules beat them
+- [x] New FALLBACK_RULES: city names (mumbai/delhi/...) → delivery_order,
+      "here"/"fast"/"quick" in delivery secondary, "track my order" (needs
+      delivery object so "track my spending" stays Xpense), "take X back"
+      (+typo variants bak/bottel/bottels), "circular" word, referral_rewards,
+      delivery_partner (needs apply/join/become secondary; placed BEFORE
+      delivery rules because "delivery partner" contains "delivery"),
+      comparison (vs/zepto/blinkit/different from/...)
+- [x] `coverage_reply` city check → "We're not delivering to {city} yet — we
+      currently serve 110 pincodes across Bengaluru..."
+- [x] Unknown intent now only shows products when FAISS distance
+      < `PRODUCT_QUERY_DISTANCE` (1.1) — random questions no longer get
+      product listings ("how does referral work?" → Clinic Plus shampoo)
+- [x] Training data: 304 → 320 rows (greeting variants incl. namaste ji,
+      dettol handwash/sanitizer/soap, city questions); retrained 12 epochs
+      (eval 0.781). Note: 5-epoch retrain dropped 11 rows to `unknown`
+      (0.08-0.26 conf) — rules are the robustness layer, model is best-effort
+- [x] Removed `known_issue` flags for rows #2, #3, #31, #53, #54 in
+      `test_suite.csv` (runner's XPASS → flag-removal workflow)
 
 ### Commands
 

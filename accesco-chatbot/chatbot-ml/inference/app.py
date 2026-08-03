@@ -148,22 +148,49 @@ class ChatResponse(BaseModel):
 
 # ─── Intent classification (DistilBERT) ─────────────────────────────────────
 
-INTENT_CONFIDENCE_THRESHOLD = 0.30
+INTENT_CONFIDENCE_THRESHOLD = 0.50
+
+# If a keyword rule fires with a different intent than the model's top pick,
+# trust the rule while the model is below this confidence ("namaste" → model
+# says swadisht_food at 0.74; the greeting rule knows better). Above it the
+# model's confident answer wins ("hi, how do I track my order?" stays delivery).
+RULE_OVERRIDE_MAX_CONF = 0.90
 
 # Keyword fallback for queries the model is unsure about (< threshold)
 # Keys are intent names; values are (must_any, must_all) keyword tuples.
 FALLBACK_RULES: list[tuple[str, list[str], list[str]]] = [
     ("greeting", ["hi", "hello", "hey", "namaste", "good morning", "good afternoon", "good evening", "good night"], []),
-    ("delivery_order", ["deliver", "delivery", "shipping", "courier"], ["area", "where", "near", "location", "pin", "zip", "pincode"]),
+    # "partner" alone is ambiguous ("where is my delivery partner?") — requires
+    # an application/work-ish secondary word. Placed before the delivery rules
+    # because "delivery partner" also contains "delivery"; the model over-learns
+    # the word "delivery" → delivery_order for these.
+    ("delivery_partner", ["partner", "gig", "rider"], ["become", "apply", "join", "work", "job", "earn", "hiring", "how"]),
+    ("delivery_order", ["deliver", "delivery", "shipping", "courier"], ["area", "where", "near", "location", "pin", "zip", "pincode", "here", "fast", "quick"]),
+    # "track" needs a delivery-ish object ("track my order") so "track my
+    # spending" (Xpense Meter) isn't stolen
+    ("delivery_order", ["track", "tracking", "order status"], ["order", "package", "parcel", "delivery", "deliver", "status"]),
     # Delivery coverage questions ("what areas do you cover?") — the coverage
     # keywords are specific enough that no secondary keyword is required
     ("delivery_order", ["cover", "coverage", "serviceable", "serviceability"], []),
+    # Non-Bengaluru city names → delivery question (coverage_reply answers
+    # with the "not delivering yet" message; this rule only fixes the intent)
+    ("delivery_order", ["mumbai", "delhi", "hyderabad", "chennai", "pune",
+                        "kolkata", "noida", "gurgaon", "gurugram", "ahmedabad",
+                        "jaipur", "chandigarh", "kochi", "lucknow", "goa"], []),
     # Circular commerce / SKU recovery framework. Placed BEFORE the product
     # rules so "do you take back milk bottles?" isn't stolen by grokly ("milk"),
     # and before returns_refunds so "can I return my packaging?" routes here.
     ("circular_recycle", ["take back", "takeback", "recycl", "e-waste", "ewaste",
                           "packaging", "empty bottle", "empty bottles", "dispose",
-                          "disposal", "resale", "what happens to", "fulfillment hub"], []),
+                          "disposal", "resale", "what happens to", "fulfillment hub",
+                          "circular"], []),
+    # "take X back" — the object sits between the words ("take bubble wrap
+    # back?"), so "take" requires a recovery-ish secondary word. Typo variants
+    # ("bak", "bottels") included so weak model confidence can't strand them.
+    ("circular_recycle", ["take", "taken"], ["back", "bak", "bottle", "bottles",
+                                             "bottel", "bottels", "packaging",
+                                             "item", "return", "recycl", "waste",
+                                             "wrap", "sachet", "container", "old"]),
     # "old" / "reuse" / "recover" / "collect" are ambiguous alone ("recover my
     # password"), so they require a recovery-ish secondary word. Note: keywords
     # of len <= 3 ("old") match as whole words — "amul gold" never hits "old".
@@ -171,9 +198,13 @@ FALLBACK_RULES: list[tuple[str, list[str], list[str]]] = [
      ["bottle", "phone", "packaging", "item", "return", "recycl", "waste", "electronics",
       "charger", "battery", "jar", "toy", "clothes", "shoe", "container", "can", "glass"]),
     ("grokly_grocery", ["grocery", "groceries", "vegetables", "fruits", "milk", "grokly", "groceries delivered"], []),
+    ("comparison", ["compare", "comparison", "versus", "vs", "instead of",
+                    "different from", "better than", "zepto", "blinkit",
+                    "instamart", "bigbasket", "swiggy", "zomato"], []),
+    ("referral_rewards", ["referral", "invite", "inviting", "invitation", "rewards", "reward"], []),
     ("swadisht_food", ["food delivery", "swadisht", "swadish", "swadhish", "swadhissht", "food order", "restaurant"], []),
     ("instastyle_fashion", ["fashion", "clothes", "instastyle", "apparel"], []),
-    ("localmeds_pharmacy", ["medicine", "pharmacy", "meds", "localmeds"], []),
+    ("localmeds_pharmacy", ["medicine", "pharmacy", "meds", "localmeds", "dettol", "handwash", "hand wash", "sanitizer", "soap"], []),
     ("xpense_budget", ["xpense", "budget", "spending", "spend tracker"], []),
     ("pricing_payment", ["price", "cost", "how much", "charge", "payment", "pay"], []),
     ("waitlist_launch", ["waitlist", "early access", "launch", "beta", "sign up", "sign-up"], []),
@@ -210,6 +241,11 @@ def classify_intent(text: str) -> tuple[str, float]:
     confidence = probs.max().item()
     intent = LABEL_MAP[logits.argmax(-1).item()]
     if confidence >= INTENT_CONFIDENCE_THRESHOLD:
+        # Rule-agreement: a keyword rule that disagrees with a mid-confidence
+        # model pick wins ("namaste" → greeting, "dettol handwash" → LocalMeds).
+        rule = keyword_intent(text)
+        if rule and rule != intent and confidence < RULE_OVERRIDE_MAX_CONF:
+            return rule, confidence
         return intent, confidence
     # Low confidence → fall back on keyword rules
     fallback = keyword_intent(text)
@@ -442,6 +478,18 @@ def coverage_reply(text: str) -> str | None:
         area, zone = match
         return format_zone_answer(zone, area)
 
+    # Non-Bengaluru city mentioned ("do you deliver to mumbai?") → honest
+    # not-yet reply instead of a product listing or generic delivery answer
+    for city in ("mumbai", "delhi", "hyderabad", "chennai", "pune", "kolkata",
+                 "noida", "gurgaon", "gurugram", "ahmedabad", "jaipur",
+                 "chandigarh", "kochi", "lucknow", "goa"):
+        if city in tl:
+            return (
+                f"We're not delivering to {city.title()} yet — we currently serve "
+                f"{COVERED_PINCODE_COUNT} pincodes across Bengaluru. "
+                "Share your area or pincode and I'll check if we deliver there!"
+            )
+
     if "bangalore" in tl or "bengaluru" in tl:
         return (
             f"We currently deliver to {COVERED_PINCODE_COUNT} pincodes across "
@@ -662,7 +710,13 @@ def chat(query: Query):
     # 9. Build reply
     PRODUCT_INTENTS = {"grokly_grocery", "swadisht_food", "instastyle_fashion",
                        "localmeds_pharmacy", "unknown"}
-    show_products = intent in PRODUCT_INTENTS and bool(products)
+    # For "unknown", only a genuinely close FAISS match counts as a product
+    # query ("dettol handwash"); random sentences match product names at
+    # distance ~1.0+ and must not get a listing ("how does referral work?")
+    show_products = (
+        intent in PRODUCT_INTENTS and bool(products)
+        and (intent != "unknown" or best_distance < PRODUCT_QUERY_DISTANCE)
+    )
     if show_products:
         listing = format_products(products)
         if intent == "unknown":

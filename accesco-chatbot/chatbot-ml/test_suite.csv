@@ -1,7 +1,7 @@
 id,category,question,expected_intent,reply_contains,expect_products,known_issue,notes
 1,greeting,"hi",greeting,Hello,no,,plain greeting
-2,greeting,"hello there",greeting,Hello,no,yes,model misroutes to referral_rewards at conf 0.37 (above fallback threshold)
-3,greeting,"namaste",greeting,Hello,no,yes,model misroutes to swadisht_food at conf 0.74 and shows products
+2,greeting,"hello there",greeting,Hello,no,no,model misroutes to referral_rewards at conf 0.37 (above fallback threshold)
+3,greeting,"namaste",greeting,Hello,no,no,model misroutes to swadisht_food at conf 0.74 and shows products
 4,greeting,"good morning",greeting,Good morning,no,,time-of-day greeting
 5,greeting,"good afternon",greeting,Good afternoon,no,,typo tolerance via difflib
 6,greeting,"good evening",greeting,Good evening,no,,time-of-day greeting
@@ -29,7 +29,7 @@ id,category,question,expected_intent,reply_contains,expect_products,known_issue,
 28,product,"maggi noodles",grokly_grocery|swadisht_food|unknown,best matches|matching products,yes,,popular product search; intent label loose
 29,product,"I want to buy shampoo",grokly_grocery|instastyle_fashion|unknown,best matches|matching products,yes,,correct shampoo products returned; intent label loose
 30,product,"paracetamol tablets",localmeds_pharmacy|grokly_grocery|unknown,best matches|matching products,yes,,pharma product routes to LocalMeds service
-31,product,"dettol handwash",grokly_grocery|localmeds_pharmacy|unknown,best matches|matching products,yes,yes,misrouted to circular_recycle (model conf 0.70) - no products shown
+31,product,"dettol handwash",grokly_grocery|localmeds_pharmacy|unknown,best matches|matching products,yes,no,misrouted to circular_recycle (model conf 0.70) - no products shown
 32,product,"coca cola",grokly_grocery|unknown,best matches|matching products,yes,,beverage product
 33,product,"fresh vegetables",grokly_grocery|unknown,best matches|matching products,yes,,category-level grocery query
 34,product,"dog food",grokly_grocery|swadisht_food|unknown,best matches|matching products,yes,,correct Pedigree products returned; intent label loose
@@ -51,8 +51,8 @@ id,category,question,expected_intent,reply_contains,expect_products,known_issue,
 50,coverage,"what areas do you deliver to?",delivery_order,pincodes across,no,,area summary reply
 51,coverage,"where do you deliver?",delivery_order,pincodes across,no,,area summary reply
 52,coverage,"do you deliver in bangalore?",delivery_order,pincodes across,no,,city-level generic reply
-53,coverage,"do you deliver here?",delivery_order,share your area,no,yes,misrouted to returns_refunds (conf 0.38); should ask for area/pincode
-54,coverage,"do you deliver to mumbai?",delivery_order,share your area|not delivering,no,yes,misrouted to delivery_partner (conf 0.48); should ask for pincode or say no
+53,coverage,"do you deliver here?",delivery_order,share your area,no,no,misrouted to returns_refunds (conf 0.38); should ask for area/pincode
+54,coverage,"do you deliver to mumbai?",delivery_order,share your area|not delivering,no,no,misrouted to delivery_partner (conf 0.48); should ask for pincode or say no
 55,recovery,"do you take back milk bottles?",circular_recycle,take back|which one,no,,Fresh & Dairy row (may show disambiguation)
 56,recovery,"can I return empty PET bottles?",circular_recycle,take back|which one,no,,weak-hint path via bottle vocab
 57,recovery,"what happens to old phones?",circular_recycle,take back,no,,Electronics row via what-happens-to keyword
