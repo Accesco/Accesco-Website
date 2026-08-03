@@ -21,7 +21,10 @@ import {
 } from '../../lib/waitlistService'
 import {
   initializeReferralProfile,
-  getStoredReferralCode,
+  getPendingReferral,
+  markReferralVisitConsumed,
+  isValidReferralCodeFormat,
+  normalizeReferralCode,
 } from '../../lib/referralService'
 
 function GoogleIcon() {
@@ -85,6 +88,16 @@ function AuthModalContent({
   const [lastName, setLastName] = useState('')
   const [phone, setPhone] = useState('')
   const [email, setEmail] = useState('')
+  // Optional referral code — a friend's code, or one of the house marketing
+  // codes (see lib/marketingReferralCodes.js). Pre-filled when the visitor
+  // arrived through a `?ref=CODE` link, but always editable and never required.
+  const [referralCode, setReferralCode] = useState('')
+  const [referralPrefilled, setReferralPrefilled] =
+    useState(false)
+  // uid of the anonymous visit doc the prefilled code came from, so we can
+  // mark it spent after signup — see markReferralVisitConsumed.
+  const [referralVisitUid, setReferralVisitUid] =
+    useState(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
@@ -106,6 +119,26 @@ function AuthModalContent({
   // been rendered in this element" even after clear()+innerHTML wipe. Give
   // every attempt a brand-new container element instead.
   const recaptchaContainerIdRef = useRef(null)
+
+  // Load any referral captured from a `?ref=CODE` link. It lives in Firestore
+  // under the visitor's anonymous uid, so this must happen while that
+  // anonymous session is still current — verifying the OTP replaces it with
+  // the phone user and the uid is gone.
+  useEffect(() => {
+    let cancelled = false
+
+    getPendingReferral().then((pending) => {
+      if (cancelled || !pending) return
+
+      setReferralCode(pending.code)
+      setReferralPrefilled(true)
+      setReferralVisitUid(pending.visitUid)
+    })
+
+    return () => {
+      cancelled = true
+    }
+  }, [])
 
   useEffect(() => {
     if (resendCooldown <= 0) return undefined
@@ -139,6 +172,9 @@ function AuthModalContent({
     setLastName('')
     setPhone('')
     setEmail('')
+    setReferralCode('')
+    setReferralPrefilled(false)
+    setReferralVisitUid(null)
 
     setError('')
     setSuccess(false)
@@ -222,6 +258,16 @@ function AuthModalContent({
       !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)
     ) {
       return setError('Enter a valid email address')
+    }
+
+    // Referral code is optional — only shape-check it when one was typed.
+    if (
+      referralCode.trim() &&
+      !isValidReferralCodeFormat(referralCode)
+    ) {
+      return setError(
+        'Referral code should be 4-20 letters or numbers, e.g. ACCLAUNCH',
+      )
     }
 
     setStep('verify')
@@ -408,6 +454,15 @@ function AuthModalContent({
       )
     }
 
+    if (
+      referralCode.trim() &&
+      !isValidReferralCodeFormat(referralCode)
+    ) {
+      return setError(
+        'Referral code should be 4-20 letters or numbers, e.g. ACCLAUNCH',
+      )
+    }
+
     setStep('verify')
 
     if (!phoneCodeSent) {
@@ -526,8 +581,20 @@ function AuthModalContent({
       
       // Referral profile creation/attribution is a side effect — never let
       // it fail the sign-in itself.
+      // Whatever's in the field is what applies — it starts out pre-filled
+      // from the `?ref=` link and the user is free to change or clear it.
+      // Absent a code, no attribution happens.
       try {
-        await initializeReferralProfile(p, n, getStoredReferralCode())
+        const appliedCode = normalizeReferralCode(referralCode)
+
+        await initializeReferralProfile(p, n, appliedCode)
+
+        if (appliedCode && referralVisitUid) {
+          await markReferralVisitConsumed(
+            referralVisitUid,
+            p,
+          )
+        }
       } catch (err) {
         console.error('Referral profile init failed:', err)
       }
@@ -851,6 +918,43 @@ function AuthModalContent({
                       />
                     </div>
 
+                    <div style={styles.field}>
+                      <label style={styles.label}>
+                        Referral Code{' '}
+                        <em style={styles.optional}>
+                          (Optional)
+                        </em>
+                      </label>
+
+                      <input
+                        style={{
+                          ...inputStyle('referralCode'),
+                          textTransform: 'uppercase',
+                        }}
+                        type="text"
+                        placeholder="eg. ACCLAUNCH"
+                        value={referralCode}
+                        onChange={(e) =>
+                          setReferralCode(
+                            e.target.value.toUpperCase(),
+                          )
+                        }
+                        onFocus={() =>
+                          setFocused('referralCode')
+                        }
+                        onBlur={() => setFocused('')}
+                        maxLength={20}
+                        disabled={loading}
+                        autoComplete="off"
+                      />
+
+                      {referralPrefilled && (
+                        <span style={styles.referralNote}>
+                          Applied from your invite link
+                        </span>
+                      )}
+                    </div>
+
                     <button
                       type="submit"
                       style={styles.submit}
@@ -918,6 +1022,43 @@ function AuthModalContent({
                         disabled={loading}
                         autoFocus
                       />
+                    </div>
+
+                    <div style={styles.field}>
+                      <label style={styles.label}>
+                        Referral Code{' '}
+                        <em style={styles.optional}>
+                          (Optional)
+                        </em>
+                      </label>
+
+                      <input
+                        style={{
+                          ...inputStyle('referralCode'),
+                          textTransform: 'uppercase',
+                        }}
+                        type="text"
+                        placeholder="eg. ACCLAUNCH"
+                        value={referralCode}
+                        onChange={(e) =>
+                          setReferralCode(
+                            e.target.value.toUpperCase(),
+                          )
+                        }
+                        onFocus={() =>
+                          setFocused('referralCode')
+                        }
+                        onBlur={() => setFocused('')}
+                        maxLength={20}
+                        disabled={loading}
+                        autoComplete="off"
+                      />
+
+                      {referralPrefilled && (
+                        <span style={styles.referralNote}>
+                          Applied from your invite link
+                        </span>
+                      )}
                     </div>
 
                     <button
@@ -1536,6 +1677,14 @@ socialButtonFull: {
     fontSize: 8,
     fontStyle: 'normal',
     fontWeight: 400,
+  },
+
+  referralNote: {
+    color: '#cf0066',
+
+    fontSize: 8,
+    lineHeight: 1.2,
+    fontWeight: 500,
   },
 
   submit: {
