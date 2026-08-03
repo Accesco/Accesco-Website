@@ -246,12 +246,12 @@ export default function HomePage() {
         <Suspense fallback={<div style={{ height: '800px', background: '#fff2eb' }} />}>
           <XpenseIntro />
         </Suspense>
-        {/* Ã¢â€â‚¬Ã¢â€â‚¬ Waitlist / App Showcase Ã¢â€â‚¬Ã¢â€â‚¬ */}
+        {/* Ã¢â€ â‚¬Ã¢â€ â‚¬ Waitlist / App Showcase Ã¢â€ â‚¬Ã¢â€ â‚¬ */}
         <Suspense fallback={<div style={{ height: '600px', background: '#fff2eb' }} />}>
           <AppShowcase />
         </Suspense>
 
-        {/* Ã¢â€â‚¬Ã¢â€â‚¬ About Accesco Living (SEO copy) Ã¢â€â‚¬Ã¢â€â‚¬ */}
+        {/* Ã¢â€ â‚¬Ã¢â€ â‚¬ About Accesco Living (SEO copy) Ã¢â€ â‚¬Ã¢â€ â‚¬ */}
  <section className="about-accesco-section">
   <picture>
     <source
@@ -268,6 +268,31 @@ export default function HomePage() {
     />
   </picture>
 </section>
+
+        {/* ── Bengaluru Launch Banner Section ── */}
+        <section className="bengaluru-launch-section">
+          <div className="bengaluru-launch-wrapper">
+            <div className="bengaluru-launch-card">
+              <picture>
+                <source
+                  media="(max-width: 768px)"
+                  srcSet="/images/image.png"
+                />
+                <Image
+                  src="/images/image.png"
+                  alt="We're Coming, Bengaluru! - Accesco Living Launching Soon"
+                  width={3835}
+                  height={2690}
+                  className="bengaluru-launch-img"
+                  sizes="(max-width: 768px) 100vw, 1200px"
+                  quality={90}
+                  draggable={false}
+                  onContextMenu={(e) => e.preventDefault()}
+                />
+              </picture>
+            </div>
+          </div>
+        </section>
       </main>
       <Suspense fallback={null}>
         <Footer />
