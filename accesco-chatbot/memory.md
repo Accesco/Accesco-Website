@@ -12,6 +12,8 @@
 | Phase 3.6: SKU Recovery Framework RAG | ✅ Completed | `chatbot-ml/data/build_recovery_index.py` + `app.py` |
 | Phase 3.7: Full E2E Test Suite | ✅ Completed | `chatbot-ml/test_suite.csv` + `chatbot-ml/test_suite_runner.py` |
 | Phase 3.8: Xfail fixes + rule hardening | ✅ Completed | `app.py` + `train/train_classifier.py` (12-epoch retrain) |
+| Phase 3.9: Marketing recovery FAQ answers | ✅ Completed | `chatbot-ml/data/build_recovery_faq.py` + `app.py` |
+| Phase 3.10: Dolo fix + filename reconciliation | ✅ Completed | `build_delivery_coverage.py` + `app.py` |
 
 ## Phase 1 — Completed
 
@@ -225,9 +227,11 @@ python3 accesco-chatbot/chatbot-ml/inference/test_recovery.py
       server; per-row pass/fail + per-category scoreboard; exit 0/1 for CI;
       known-issue rows report XFAIL (or XPASS when fixed — remove flag)
 - [x] Verified against live server: **88/95 pass, 0 fail, 5 xfail** (~3.5 min)
-- [x] BUGFIX: `build_delivery_coverage.py` referenced `coordinates .xlsx`
-      (extra space) — file is `coordinates.xlsx`; fixed and regenerated
-      `delivery_coverage.json` (110 zones). Without it the server can't start.
+- [x] BUGFIX: `build_delivery_coverage.py` reads the coordinates spreadsheet as
+      `coordinates .xlsx` (extra space); the file exists WITH a space on this
+      machine but the teammate's fix assumed `coordinates.xlsx` (no space).
+      Now `_resolve()` picks whichever filename actually exists — portable
+      across both machines. Regenerated `delivery_coverage.json` (110 zones).
 
 ### Known xfail rows (model confidently wrong, above 0.30 fallback threshold)
 
@@ -266,6 +270,40 @@ Add training examples for these phrasings if retraining.
       (0.08-0.26 conf) — rules are the robustness layer, model is best-effort
 - [x] Removed `known_issue` flags for rows #2, #3, #31, #53, #54 in
       `test_suite.csv` (runner's XPASS → flag-removal workflow)
+
+## Phase 3.9 — Marketing recovery FAQ answers (Completed, 2026-08-03)
+
+- [x] Marketing delivered `chatbot-data/SKURecovery.pdf` — 38 customer-style
+      recovery Q&As (general/how-it-works, beverages, dairy, fashion,
+      e-waste, packaging, baby, medicines, furniture, food waste)
+- [x] `chatbot-ml/data/build_recovery_faq.py` → `recovery_faq.json` (38
+      entries; generated file gitignored); server embeds all FAQ questions
+      at startup
+- [x] `app.py` `recovery_faq_reply()` — runs BEFORE the delivery_order
+      early-return and the 19-row table. Guards: "circular commerce" keeps
+      its conceptual reply; negative vocab (order/refund/deliver/...) blocks
+      non-recovery queries. General-category FAQs answer at sim ≥ 0.70;
+      category FAQs only when no row answers confidently (row_best < 0.45) —
+      so "cosmetic bottles" stays on the Beauty row, not the Beverages FAQ
+- [x] 38 FAQ questions added to `faq_labeled.csv` (ids 321-358,
+      circular_recycle 7 → 45 rows); retrained 12 epochs → eval 0.806
+- [x] `test_recovery.py` now tests the combined FAQ+row path (51/51);
+      suite **95/95, recovery 51/51**
+
+## Phase 3.10 — Dolo fix + filename reconciliation (Completed, 2026-08-03)
+
+- [x] "dolo 650" was misclassified as `greeting` → added `dolo`/`paracetamol`/
+      `crocin`/`calpol` to the `localmeds_pharmacy` keyword rule + 3 training
+      rows (ids 359-361); retrained 12 epochs → eval 0.808; now answers with
+      the Dolo 650 product listing. Suites stay **95/95 + 51/51**
+- [x] `build_delivery_coverage.py` coordinates filename: `_resolve()` now picks
+      whichever exists — `coordinates .xlsx` (space, this machine) or
+      `coordinates.xlsx` (no space, teammate's) — portable across machines;
+      regenerated `delivery_coverage.json` (110 zones, unchanged data)
+- [x] NAV NOTE: latest model is **mildly overfitting** — train 0.993 vs
+      eval 0.806 (~19pt gap, noisy on a 73-row eval split). Not a blocker:
+      keyword rules + agreement override do the routing, so behavior is 95/95.
+      Root fix = more training questions (Tier-2 expansion pending).
 
 ### Commands
 

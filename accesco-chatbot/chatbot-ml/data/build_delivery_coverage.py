@@ -21,7 +21,22 @@ DATA_DIR = os.path.join(os.path.dirname(__file__), "../../chatbot-data")
 OUT_PATH = os.path.join(os.path.dirname(__file__), "delivery_coverage.json")
 
 TIER_PATH = os.path.join(DATA_DIR, "Tier List.xlsx")
-COORD_PATH = os.path.join(DATA_DIR, "coordinates .xlsx")
+
+
+def _resolve(*candidates: str) -> str:
+    """Return the first existing path among candidates, or the first one."""
+    for c in candidates:
+        if os.path.exists(c):
+            return c
+    return candidates[0]
+
+
+# Reconcile the "coordinates .xlsx" (space) vs "coordinates.xlsx" (no space)
+# filename mismatch between machines — whichever actually exists is used.
+COORD_PATH = _resolve(
+    os.path.join(DATA_DIR, "coordinates .xlsx"),
+    os.path.join(DATA_DIR, "coordinates.xlsx"),
+)
 
 
 def load_sheet(path: str) -> list[dict]:

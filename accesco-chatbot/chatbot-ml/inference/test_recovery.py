@@ -11,7 +11,14 @@ print(f"models loaded in {time.time()-t0:.0f}s\n")
 # expected: row category name (or "ambiguous" → expected must be in options,
 # or "pass" → must NOT be answered by recovery)
 TEST = [
+    # General FAQ answers (marketing Q&As) — the 19-row table can't answer
+    ("what is the sku recovery framework?", "packaging and items"),
+    ("how does the sku recovery framework work?", "flagged for recovery"),
+    ("is there a fee for returning items?", "free"),
+    ("do i get rewards for returning items?", "reward points"),
+    # Row-table answers (category FAQs must not steal confident row matches)
     ("do you take back glass bottles?", "Beverages"),
+    ("do you take back bottles?", "ambiguous"),
     ("what do you do with empty pet bottles?", "ambiguous"),
     ("can i return cola cans?", "Beverages"),
     ("do you take back milk bottles?", "Fresh & Dairy"),
@@ -47,7 +54,6 @@ TEST = [
     ("wht do u do with empty cola botles", "Beverages"),
     ("do u take bak milk bottels", "Fresh & Dairy"),
     ("shampo bottles returned?", "ambiguous"),
-    ("do you take back bottles?", "ambiguous"),
     ("do you take back glass?", "ambiguous"),
     # do you take back plastic? → Toys is the only row with "plastic" — a
     # bare "plastic" is accepted as a design decision (plastic toys direct)
@@ -69,7 +75,7 @@ correct = 0
 wrong = []
 for q, expected in TEST:
     intent, conf = app.classify_intent(q)
-    reply = app.recovery_reply_for(q, intent)
+    reply = app.recovery_faq_reply(q) or app.recovery_reply_for(q, intent)
     best_name = "none"
     if reply:
         vec = app.EMBED_MODEL.encode([q], normalize_embeddings=True).astype("float32")[0]

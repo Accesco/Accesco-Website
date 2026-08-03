@@ -93,6 +93,18 @@ for _row in RECOVERY_ROWS:
     vecs = EMBED_MODEL.encode(texts, normalize_embeddings=True).astype(np.float32)
     RECOVERY_ROW_VECTORS.append(vecs)
 
+# SKU Recovery marketing FAQ (built by chatbot-ml/data/build_recovery_faq.py).
+# 38 customer-style Q&As from SKURecovery.pdf — detailed answers for general
+# and category questions the 19-row table can't express.
+with open(os.path.join(DATA_DIR, "recovery_faq.json")) as f:
+    RECOVERY_FAQS = json.load(f)["faqs"]
+
+# Embed each FAQ question once at startup for semantic retrieval.
+RECOVERY_FAQ_QUESTIONS = [f["question"] for f in RECOVERY_FAQS]
+RECOVERY_FAQ_VECTORS = EMBED_MODEL.encode(
+    RECOVERY_FAQ_QUESTIONS, normalize_embeddings=True
+).astype(np.float32)
+
 # Intent → canned reply fallback (used when intent has no FAQ answer)
 INTENT_REPLIES = {
     "greeting": "Hello! Welcome to Accesco Living. How can I help you today?",
@@ -204,7 +216,7 @@ FALLBACK_RULES: list[tuple[str, list[str], list[str]]] = [
     ("referral_rewards", ["referral", "invite", "inviting", "invitation", "rewards", "reward"], []),
     ("swadisht_food", ["food delivery", "swadisht", "swadish", "swadhish", "swadhissht", "food order", "restaurant"], []),
     ("instastyle_fashion", ["fashion", "clothes", "instastyle", "apparel"], []),
-    ("localmeds_pharmacy", ["medicine", "pharmacy", "meds", "localmeds", "dettol", "handwash", "hand wash", "sanitizer", "soap"], []),
+    ("localmeds_pharmacy", ["medicine", "pharmacy", "meds", "localmeds", "dettol", "handwash", "hand wash", "sanitizer", "soap", "dolo", "paracetamol", "crocin", "calpol"], []),
     ("xpense_budget", ["xpense", "budget", "spending", "spend tracker"], []),
     ("pricing_payment", ["price", "cost", "how much", "charge", "payment", "pay"], []),
     ("waitlist_launch", ["waitlist", "early access", "launch", "beta", "sign up", "sign-up"], []),
@@ -517,6 +529,9 @@ RECOVERY_SIM_THRESHOLD = 0.45
 # If the 2nd-best row is within this gap of the best, the query is ambiguous
 # ("bottles" → Beverages vs Baby vs Personal Care) → ask instead of guessing
 RECOVERY_AMBIGUITY_GAP = 0.05
+# Min cosine sim between the query and a marketing FAQ question for a direct
+# FAQ answer. Kept high so item lookups keep flowing to the row table.
+RECOVERY_FAQ_THRESHOLD = 0.70
 
 # Weak-detection vocabulary: typo-tolerant fallback for phrasings the keyword
 # rules miss ("do u take bak bottels"). Only honored when retrieval similarity
@@ -564,6 +579,39 @@ def recovery_row_for(text: str) -> tuple[int, float] | None:
     if best_row < 0:
         return None
     return best_row, best_sim
+
+def recovery_faq_reply(text: str) -> str | None:
+    """Answer from the marketing FAQ (38 Q&As), or None if no close match.
+
+    Runs before the row-table path. A high similarity bar keeps it from
+    hijacking queries the row table answers better ("do you take back
+    plastic?" must stay on the Toys row, not the Beverages FAQ). General
+    questions (fees, rewards, how it works) can't be answered by the 19-row
+    table, so they're answered directly; category FAQs only when the row
+    table has no confident row for the query. Guards: the conceptual
+    "circular commerce" question keeps its explanation reply, and the
+    negative vocabulary blocks order/refund/delivery queries."""
+    tl = text.lower()
+    if "circular commerce" in tl:
+        return None
+    if any(w in tl for w in ("refund", "exchange", "replace", "order", "account",
+                             "password", "login", "payment", "deliver", "delivery",
+                             "price", "cost", "track")):
+        return None
+    vec = EMBED_MODEL.encode([text], normalize_embeddings=True).astype(np.float32)[0]
+    sims = vec @ RECOVERY_FAQ_VECTORS.T
+    best = float(sims.max())
+    if best < RECOVERY_FAQ_THRESHOLD:
+        return None
+    faq = RECOVERY_FAQS[int(sims.argmax())]
+    if faq["category"] != "General":
+        # Category FAQ ("do you take back empty bottles?") must not steal an
+        # item lookup the 19-row table answers confidently ("cosmetic
+        # bottles" → Beauty). Only step in when no row matches well.
+        row_sims = [float((vec @ rv.T).max()) for rv in RECOVERY_ROW_VECTORS]
+        if max(row_sims) >= RECOVERY_SIM_THRESHOLD:
+            return None
+    return faq["answer"]
 
 def recovery_reply_for(text: str, intent: str) -> str | None:
     """Build a SKU recovery framework reply for the query, or None if the
@@ -666,6 +714,18 @@ def chat(query: Query):
         return ChatResponse(
             reply=coverage, intent="delivery_order", confidence=0.99, products=[]
         )
+
+    # 4b. SKU Recovery marketing FAQ answers general/category questions with
+    #     detailed Q&As. Must run BEFORE the delivery_order early-return and
+    #     the row table — the model sometimes routes "what is the sku
+    #     recovery framework?" to delivery_order (conf ~0.87), and the FAQ is
+    #     the right answer for it. Guards block order/refund/delivery queries.
+    faq_answer = recovery_faq_reply(text)
+    if faq_answer:
+        return ChatResponse(
+            reply=faq_answer, intent="circular_recycle", confidence=confidence, products=[]
+        )
+
     if intent == "delivery_order":
         return ChatResponse(
             reply=(
