@@ -353,6 +353,7 @@ export default function AccescoHeader() {
                 className={styles.storeIcon}
                 width={14}
                 height={14}
+                unoptimized
               />
 
               <Image
@@ -361,6 +362,7 @@ export default function AccescoHeader() {
                 className={styles.storeIcon}
                 width={14}
                 height={14}
+                unoptimized
               />
             </a>
           </div>

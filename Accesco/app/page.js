@@ -11,7 +11,7 @@ import Footer from '../components/Footer';
 
 const AppShowcase = dynamic(() => import('../components/AppShowcase'), { ssr: true });
 const XpenseIntro = dynamic(() => import('@/components/XpenseIntro'), { ssr: false });
-const AccescoInlineChatbot = dynamic(() => import('./components/AccescoInlineChatbot'), {
+const AccescoInlineChatbot = dynamic(() => import('@/app/components/AccescoInlineChatbot'), {
   ssr: false,
 });
 
@@ -242,7 +242,6 @@ export default function HomePage() {
         <Suspense fallback={<div style={{ height: '800px', background: '#fff2eb' }} />}>
           <XpenseIntro />
         </Suspense>
-        
         {/* ——— Waitlist / App Showcase ——— */}
         <Suspense fallback={<div style={{ height: '600px', background: '#fff2eb' }} />}>
           <AppShowcase />
@@ -265,6 +264,31 @@ export default function HomePage() {
     />
   </picture>
 </section>
+
+        {/* ── Bengaluru Launch Banner Section ── */}
+        <section className="bengaluru-launch-section">
+          <div className="bengaluru-launch-wrapper">
+            <div className="bengaluru-launch-card">
+              <picture>
+                <source
+                  media="(max-width: 768px)"
+                  srcSet="/images/image.png"
+                />
+                <Image
+                  src="/images/image.png"
+                  alt="We're Coming, Bengaluru! - Accesco Living Launching Soon"
+                  width={3835}
+                  height={2690}
+                  className="bengaluru-launch-img"
+                  sizes="(max-width: 768px) 100vw, 1200px"
+                  quality={90}
+                  draggable={false}
+                  onContextMenu={(e) => e.preventDefault()}
+                />
+              </picture>
+            </div>
+          </div>
+        </section>
       </main>
       <Suspense fallback={null}>
         <Footer />
