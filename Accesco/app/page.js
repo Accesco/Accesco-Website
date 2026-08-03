@@ -11,7 +11,7 @@ import Footer from '../components/Footer';
 
 const AppShowcase = dynamic(() => import('../components/AppShowcase'), { ssr: true });
 const XpenseIntro = dynamic(() => import('@/components/XpenseIntro'), { ssr: false });
-const AccescoInlineChatbot = dynamic(() => import('./components/AccescoInlineChatbot'), {
+const AccescoInlineChatbot = dynamic(() => import('@/app/components/AccescoInlineChatbot'), {
   ssr: false,
 });
 
