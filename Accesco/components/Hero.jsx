@@ -1,19 +1,8 @@
 'use client';
 
-import React from 'react';
 import Image from 'next/image';
 
 export default function Hero() {
-  const videoRef = React.useRef(null);
-
-  React.useEffect(() => {
-    if (videoRef.current) {
-      videoRef.current.play().catch(error => {
-        console.log("Video autoplay failed, user Avenir Nextaction may be required:", error);
-      });
-    }
-  }, []);
-
   return (
     <section className="hero" id="home">
       <style jsx>{`
@@ -28,7 +17,7 @@ export default function Hero() {
           align-items: center;
           box-sizing: border-box;
           font-family: 'Avenir Next', sans-serif;
-          padding: 130px 20px 40px 20px; /* Leave room at the bottom for the scroll down button */
+          padding: 130px 20px 40px 20px;
           overflow: hidden;
         }
 
@@ -41,11 +30,8 @@ export default function Hero() {
           object-fit: cover;
           opacity: 1;
           z-index: 0;
-            filter: brightness(2);
+          filter: brightness(2);
         }
-
-     
-
 
         .hero-main-content {
           position: relative;
@@ -58,7 +44,6 @@ export default function Hero() {
           align-items: center;
           justify-content: center;
           gap: 20px;
-          /* Removed margin: auto so flexGrow spacers handle vertical centering perfectly */
         }
 
         .hero-top-spacer {
@@ -75,7 +60,6 @@ export default function Hero() {
           width: clamp(120px, 16vw, 170px);
           height: auto;
           object-fit: contain;
-          /* Removed margin-bottom to ensure gap provides equal spacing */
         }
 
         .hero-title {
@@ -164,10 +148,6 @@ export default function Hero() {
           background: transparent !important;
         }
 
-        .app-btn-link:hover {
-          transform: none;
-        }
-
         .scroll-down-btn {
           display: flex;
           flex-direction: column;
@@ -188,7 +168,7 @@ export default function Hero() {
           opacity: 1;
           transform: translateY(4px);
         }
-        
+
         .scroll-down-btn i {
           font-size: 24px;
           line-height: 1;
@@ -232,16 +212,16 @@ export default function Hero() {
 
         @media (max-width: 768px) {
           .hero {
-            padding: 90px 15px 40px 15px; /* Added padding top to avoid overlapping header */
+            padding: 90px 15px 40px 15px;
           }
           .hero-bottom-spacer {
-            display: none; /* Removes bottom spacer on mobile to push content down like Zomato */
+            display: none;
           }
           .hero-main-content {
             gap: 12px;
           }
           .hero-logo-img {
-            width: 90px; /* Reduced to fit all content within viewport */
+            width: 90px;
           }
           .hero-title {
             font-size: 24px;
@@ -257,31 +237,31 @@ export default function Hero() {
             font-size: 14px;
             margin-top: 5px;
           }
-         .app-btn-link {
-  border-radius: 12px;
-  padding: 2px;
-}
-
-.app-btn-link img { 
-  height: 38px;
-  border-radius: 10px !important;
-}
+          .app-btn-link {
+            border-radius: 12px;
+            padding: 2px;
+          }
+          .app-btn-link img { 
+            height: 38px;
+            border-radius: 10px !important;
+          }
           .hero-app-buttons {
             margin-top: 5px;
           }
         }
       `}</style>
 
+      {/* Decorative background video marked accessible-hidden for screen readers */}
       <video
-        ref={videoRef}
         className="hero-bg-video"
         autoPlay
         muted
         loop
         playsInline
-        preload="none"
-        fetchPriority="low"
+        preload="metadata"
         poster="/images/accesco_white.png"
+        aria-hidden="true"
+        tabIndex={-1}
       >
         <source src="/images/herovideo.MP4" type="video/mp4" />
         Your browser does not support the video tag.
@@ -295,9 +275,10 @@ export default function Hero() {
           src="/images/accesco_white.png"
           className="hero-logo-img"
           alt="Accesco Original White Logo"
-          width={2002}
-          height={1950}
+          width={170}
+          height={166}
           priority
+          sizes="(max-width: 768px) 90px, 170px"
         />
 
         <h1 className="hero-title">Accesco Living</h1>
@@ -310,14 +291,7 @@ export default function Hero() {
           Accesco | India’s Intelligent delivery app
         </div>
 
-
-
-
-
-        <a
-          href="#services"
-          className="scroll-down-btn"
-        >
+        <a href="#services" className="scroll-down-btn">
           SCROLL DOWN <i className="ri-arrow-down-s-line"></i>
         </a>
       </div>
