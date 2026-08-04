@@ -3,6 +3,8 @@ import { db } from './firebase';
 import {
   collection,
   addDoc,
+  doc,
+  updateDoc,
   getDocs,
   query,
   orderBy,
@@ -55,6 +57,23 @@ export async function addBlog(postData) {
     return docRef.id;
   } catch (err) {
     console.error('Failed to add blog:', err);
+    throw err;
+  }
+}
+
+// Update an existing blog post in Firestore
+export async function updateBlog(id, postData) {
+  try {
+    await updateDoc(doc(db, COLLECTION, id), {
+      title:    postData.title,
+      Content:  postData.content,
+      Category: postData.category,
+      Author:   postData.author,
+      img_url:  postData.image,
+      Excerpt:  postData.excerpt,
+    });
+  } catch (err) {
+    console.error('Failed to update blog:', err);
     throw err;
   }
 }
