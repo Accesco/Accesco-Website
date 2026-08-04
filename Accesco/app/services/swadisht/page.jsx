@@ -105,7 +105,7 @@ const cravingCategories = [
   {
     id: 'healthy',
     label: 'Healthy',
-    image: '/images/swadisht/categories/salad.png',
+    image: '/images/swadisht/categories/biryani.png',
   },
   {
     id: 'thali',

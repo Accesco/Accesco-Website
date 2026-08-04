@@ -116,7 +116,7 @@ export default function HomePage() {
   <Image src="/images/pizza.png" className="popItem popPizza" alt="Pizza" width={200} height={200} />
   <Image src="/images/Grocery.png" className="popItem popGrocery" alt="Grocery Basket" width={200} height={200} />
   <Image src="/images/hoodie.png" className="popItem popHoodie" alt="Hoodie" width={200} height={200} />
-  <Image src="/images/salad.png" className="popItem popSalad" alt="Salad" width={200} height={200} />
+  <Image src="/images/swadisht/categories/main.png" className="popItem popSalad" alt="Salad" width={200} height={200} />
   <Image src="/images/Jeans.png" className="popItem popJeans" alt="Jeans" width={200} height={200} />
 </div>
               <h2 className="deliveryHeadingTitle">
