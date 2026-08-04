@@ -6,11 +6,12 @@ import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '../app/components/AuthProvider';
 import dynamic from 'next/dynamic';
-const AuthModal = dynamic(() => import('../app/components/AuthModal'), { ssr: false });
 import styles from './AccescoHeader.module.css';
 import { getPersonCity } from '../lib/locationService';
 
-import LocationModal from './LocationModal';
+// Lazy load heavy modals so their JS bundles are downloaded only when needed
+const AuthModal = dynamic(() => import('../app/components/AuthModal'), { ssr: false });
+const LocationModal = dynamic(() => import('./LocationModal'), { ssr: false });
 
 export default function AccescoHeader() {
   const pathname = usePathname();
@@ -22,14 +23,13 @@ export default function AccescoHeader() {
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [isServicesOpen, setIsServicesOpen] = useState(false);
   const [isPartnersOpen, setIsPartnersOpen] = useState(false);
-  const [isMobileServicesOpen, setIsMobileServicesOpen] = useState(false);
-  const [isMobilePartnersOpen, setIsMobilePartnersOpen] = useState(false);
   const [selectedLocation, setSelectedLocation] = useState('{"city":"Bengaluru, Karnataka"}');
+  const [isLocationModalOpen, setIsLocationModalOpen] = useState(false);
+
   const dropdownRef = useRef(null);
   const partnersDropdownRef = useRef(null);
   const timeoutRef = useRef(null);
   const partnersTimeoutRef = useRef(null);
-  const [isLocationModalOpen, setIsLocationModalOpen] = useState(false);
 
   useEffect(() => {
     setIsMounted(true);
@@ -41,6 +41,17 @@ export default function AccescoHeader() {
     if (user) {
       setIsAuthOpen(false);
     }
+
+    const timer = setTimeout(() => {
+      const localUser = localStorage.getItem('accesco_user');
+      const isLoggedOut = !localUser || localUser === 'null' || localUser === 'undefined' || localUser === '{}';
+
+      if (isLoggedOut && !user) {
+        setIsAuthOpen(true);
+      }
+    }, 1200);
+
+    return () => clearTimeout(timer);
   }, [pathname, user]);
 
   useEffect(() => {
@@ -150,22 +161,6 @@ export default function AccescoHeader() {
     signIn(userData);
     setIsAuthOpen(false);
   }, [signIn]);
-
-  const handleSignOut = useCallback(() => {
-    signOut();
-    setIsMobileMenuOpen(false);
-  }, [signOut]);
-
-  const handleMouseEnter = () => {
-    if (timeoutRef.current) clearTimeout(timeoutRef.current);
-    setIsServicesOpen(true);
-  };
-
-  const handleMouseLeave = () => {
-    timeoutRef.current = setTimeout(() => {
-      setIsServicesOpen(false);
-    }, 150);
-  };
 
   const handlePartnersMouseEnter = () => {
     if (partnersTimeoutRef.current) clearTimeout(partnersTimeoutRef.current);
@@ -369,40 +364,45 @@ export default function AccescoHeader() {
         </div>
       </header>
 
-      <AuthModal 
-        isOpen={isAuthOpen} 
-        onClose={() => setIsAuthOpen(false)} 
-        onSuccess={handleAuthSuccess} 
-      />
+      {/* Conditionally rendered so heavy modal JS bundles only download when triggered */}
+      {isAuthOpen && (
+        <AuthModal 
+          isOpen={isAuthOpen} 
+          onClose={() => setIsAuthOpen(false)} 
+          onSuccess={handleAuthSuccess} 
+        />
+      )}
 
-      <LocationModal 
-        isOpen={isLocationModalOpen} 
-        onClose={() => setIsLocationModalOpen(false)}
-        onLocationSelect={(locationData) => {
-          const { fullAddress, lat, lng } = locationData; 
-          
-          const parts = fullAddress.split(',');
-          const resolvedArea = parts[0]?.trim() || fullAddress;
-          const resolvedCity = parts[1]?.trim() || '';
+      {isLocationModalOpen && (
+        <LocationModal 
+          isOpen={isLocationModalOpen} 
+          onClose={() => setIsLocationModalOpen(false)}
+          onLocationSelect={(locationData) => {
+            const { fullAddress, lat, lng } = locationData; 
+            
+            const parts = fullAddress.split(',');
+            const resolvedArea = parts[0]?.trim() || fullAddress;
+            const resolvedCity = parts[1]?.trim() || '';
 
-          const locationObject = {
-            area: resolvedArea,
-            city: resolvedCity,
-            latitude: lat,
-            longitude: lng,
-            lat: lat,
-            lon: lng,
-            fullAddress: fullAddress,
-            formattedAddress: fullAddress,
-            displayAddress: resolvedCity || resolvedArea,
-            timestamp: new Date().toISOString()
-          };
+            const locationObject = {
+              area: resolvedArea,
+              city: resolvedCity,
+              latitude: lat,
+              longitude: lng,
+              lat: lat,
+              lon: lng,
+              fullAddress: fullAddress,
+              formattedAddress: fullAddress,
+              displayAddress: resolvedCity || resolvedArea,
+              timestamp: new Date().toISOString()
+            };
 
-          const locationStr = JSON.stringify(locationObject);
-          setSelectedLocation(locationStr);
-          localStorage.setItem('userLocation', locationStr);
-        }}
-      />
+            const locationStr = JSON.stringify(locationObject);
+            setSelectedLocation(locationStr);
+            localStorage.setItem('userLocation', locationStr);
+          }}
+        />
+      )}
     </>
   );
 }

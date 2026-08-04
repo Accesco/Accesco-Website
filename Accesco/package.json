@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@gsap/react": "^2.1.2",
+    "@next/bundle-analyzer": "^16.2.12",
     "caniuse-lite": "1.0.30001806",
     "cloudinary": "^2.9.0",
     "firebase": "^11.2.0",
