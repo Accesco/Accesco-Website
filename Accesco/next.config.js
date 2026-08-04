@@ -1,5 +1,9 @@
 /** @type {import('next').NextConfig} */
-const path = require('path')
+const path = require('path');
+
+const withBundleAnalyzer = require('@next/bundle-analyzer')({
+  enabled: process.env.ANALYZE === 'true',
+});
 
 const nextConfig = {
   images: {
@@ -17,8 +21,9 @@ const nextConfig = {
         hostname: '**',
       },
     ],
-    deviceSizes: [640, 750, 828, 1080, 1200, 1920],
-    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
+    // Tightened device sizes to serve smaller images for ~380px-500px card containers
+    deviceSizes: [384, 500, 640, 750, 828, 1080, 1200, 1920],
+    imageSizes: [16, 32, 48, 64, 96, 128, 256],
   },
 
   reactStrictMode: true,
@@ -26,7 +31,12 @@ const nextConfig = {
   output: 'standalone',
 
   experimental: {
-    optimizePackageImports: ['lucide-react', 'framer-motion'],
+    optimizePackageImports: [
+      'lucide-react',
+      'framer-motion',
+      'react-icons',
+      '@gsap/react',
+    ],
   },
 
   async redirects() {
@@ -67,6 +77,22 @@ const nextConfig = {
             key: 'X-Frame-Options',
             value: 'SAMEORIGIN',
           },
+          {
+            key: 'X-XSS-Protection',
+            value: '1; mode=block',
+          },
+          {
+            key: 'Referrer-Policy',
+            value: 'strict-origin-when-cross-origin',
+          },
+          {
+            key: 'Cross-Origin-Opener-Policy',
+            value: 'same-origin-allow-popups',
+          },
+          {
+            key: 'Permissions-Policy',
+            value: 'camera=(), microphone=(), geolocation=(self)',
+          },
         ],
       },
       {
@@ -83,7 +109,7 @@ const nextConfig = {
         headers: [
           {
             key: 'Cache-Control',
-            value: 'public, max-age=86400, stale-while-revalidate=604800',
+            value: 'public, max-age=31536000, immutable',
           },
         ],
       },
@@ -92,7 +118,7 @@ const nextConfig = {
         headers: [
           {
             key: 'Cache-Control',
-            value: 'public, max-age=86400, stale-while-revalidate=604800',
+            value: 'public, max-age=31536000, immutable',
           },
         ],
       },
@@ -100,9 +126,9 @@ const nextConfig = {
   },
 
   webpack: (config) => {
-    config.resolve.alias['@'] = path.resolve(__dirname)
-    return config
+    config.resolve.alias['@'] = path.resolve(__dirname);
+    return config;
   },
-}
+};
 
-module.exports = nextConfig
+module.exports = withBundleAnalyzer(nextConfig);
