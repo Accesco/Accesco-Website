@@ -60,6 +60,12 @@ export default function ContactPage() {
               <p className="hero-description">
                 Have a question or need support? Our team is here to help you.
               </p>
+              <p className="hero-subtext">
+                Whether you're tracking a Grokly grocery order, sorting out an InstaStyle
+                return, booking a table through Swadishtt, or exploring a partnership with
+                Accesco Living, reach out below — a real person on our Bengaluru support
+                team reads and replies to every message.
+              </p>
             </div>
           </div>
         </section>
@@ -222,6 +228,46 @@ export default function ContactPage() {
                     We respect your privacy. Your information will never be shared with third parties.
                   </p>
                 </form>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Common Questions */}
+        <section className="contact-faq-section">
+          <div className="contact-container">
+            <h3>Common questions</h3>
+            <div className="contact-faq-list">
+              <div className="contact-faq-item">
+                <h4>How long does support take to respond?</h4>
+                <p>
+                  Most emails to support@accescoliving.com get a reply within 24 hours,
+                  and often within 2–4 hours during business hours (Mon–Sat, 9AM–6PM IST).
+                </p>
+              </div>
+              <div className="contact-faq-item">
+                <h4>I have an issue with an order — who do I contact?</h4>
+                <p>
+                  Use the form on this page and select "Order Issues" as the category.
+                  Include your order ID and the app (Grokly, Swadishtt, or InstaStyle) so
+                  we can route it to the right team immediately.
+                </p>
+              </div>
+              <div className="contact-faq-item">
+                <h4>I want to become a delivery partner, vendor, or creator.</h4>
+                <p>
+                  Select "Partnership Inquiry" in the form, or visit our{' '}
+                  <a href="/partner">partner page</a> to apply directly as a delivery
+                  rider, vendor, or content creator.
+                </p>
+              </div>
+              <div className="contact-faq-item">
+                <h4>Where is Accesco Living based?</h4>
+                <p>
+                  We're headquartered in Bengaluru, Karnataka, India, and currently serve
+                  households across the city through our grocery, food, and fashion
+                  delivery platforms.
+                </p>
               </div>
             </div>
           </div>

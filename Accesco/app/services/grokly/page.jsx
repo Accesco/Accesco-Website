@@ -1803,19 +1803,31 @@ function GroklyPageContent() {
                   }}
                   className="hide-scrollbar"
                 >
-                  {products
-                    .filter((p) =>
-                      [
-                        "munch-001",
-                        "munch-002",
-                        "munch-003",
-                        "munch-005",
-                        "munch-006",
-                        "drink-001",
-                        "drink-002",
-                        "drink-003",
-                        "drink-004",
-                      ].includes(p.id),
+                
+  {products
+  .filter((p) =>
+    [
+      "munch-001",
+      "munch-002",
+      "munch-003",
+      "munch-005",
+      "munch-006",
+      "munch-011",
+      "munch-012",
+      "munch-013",
+      "munch-014",
+      "munch-016",
+      "drink-001",
+      "drink-003",
+      "drink-004",
+      "drink-005",
+      "drinks-001",
+      "drinks-002",
+      "drinks-003",
+      "drinks-004",
+      "drinks-005",
+      "drinks-006",
+].includes(p.id),
                     )
                     .map((product) => (
                       <div
@@ -1888,6 +1900,15 @@ function GroklyPageContent() {
                         "atta-001",
                         "atta-002",
                         "atta-003",
+                        "atta-011",
+                        "atta-012",
+                        "atta-013",
+                        "atta-014",
+                        "atta-015",
+                        "atta-016",
+                        "atta-017",
+                        "atta-018",
+                        "atta-019",
                         "masala-001",
                         "masala-003",
                       ].includes(p.id),

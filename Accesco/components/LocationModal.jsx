@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import styles from "./LocationModal.module.css";
+import { useAuth } from "@/app/components/AuthProvider";
+import { fetchSavedAddresses, createAddress, updateAddress, deleteAddress, selectAddress } from "@/lib/addressService";
 
 /* -------------------------------------------------------------------------- */
 /*                                   MAP                                      */
@@ -342,6 +344,7 @@ export default function LocationModal({
   onClose,
   onLocationSelect,
 }) {
+  const { user, getIdToken } = useAuth?.() || {};
   const [view, setView] = useState("list");
   const [mapPurpose, setMapPurpose] = useState("current");
 
@@ -402,56 +405,56 @@ export default function LocationModal({
       return;
     }
 
-    try {
-      const storedValue = localStorage.getItem(
-        SAVED_ADDRESSES_KEY
-      );
-
-      if (!storedValue) {
-        setSavedAddresses(DEFAULT_SAVED_ADDRESSES);
-
-        localStorage.setItem(
-          SAVED_ADDRESSES_KEY,
-          JSON.stringify(DEFAULT_SAVED_ADDRESSES)
-        );
-
-        setSelectedAddressId("home");
-        return;
+    const loadAddresses = async () => {
+      setLoading(true);
+      if (user) {
+        const { addresses, error } = await fetchSavedAddresses(getIdToken, user.uid);
+        if (!error && addresses) {
+          const normalizedAddresses = addresses.map(normalizeStoredAddress);
+          setSavedAddresses(normalizedAddresses);
+          const selected = normalizedAddresses.find((item) => item.isDefault || item.tag === "Selected");
+          setSelectedAddressId(selected?.id || (normalizedAddresses.length > 0 ? normalizedAddresses[0].id : ""));
+          setLoading(false);
+          return;
+        }
       }
-
-      const parsedValue = JSON.parse(storedValue);
-
-      if (!Array.isArray(parsedValue)) {
-        setSavedAddresses(DEFAULT_SAVED_ADDRESSES);
+      
+      try {
+        const storedValue = localStorage.getItem(SAVED_ADDRESSES_KEY);
+        if (!storedValue) {
+          setSavedAddresses(user ? [] : DEFAULT_SAVED_ADDRESSES);
+          if (!user) {
+            localStorage.setItem(SAVED_ADDRESSES_KEY, JSON.stringify(DEFAULT_SAVED_ADDRESSES));
+            setSelectedAddressId("home");
+          } else {
+            setSelectedAddressId("");
+          }
+          setLoading(false);
+          return;
+        }
+        
+        const parsedValue = JSON.parse(storedValue);
+        if (!Array.isArray(parsedValue)) {
+          setSavedAddresses(user ? [] : DEFAULT_SAVED_ADDRESSES);
+          setSelectedAddressId("home");
+          setLoading(false);
+          return;
+        }
+        
+        const normalizedAddresses = parsedValue.map(normalizeStoredAddress);
+        setSavedAddresses(normalizedAddresses);
+        const selected = normalizedAddresses.find((item) => item.tag === "Selected");
+        setSelectedAddressId(selected?.id || normalizedAddresses[0]?.id || "");
+      } catch (storageError) {
+        console.error("Could not load saved addresses:", storageError);
+        setSavedAddresses(user ? [] : DEFAULT_SAVED_ADDRESSES);
         setSelectedAddressId("home");
-        return;
       }
+      setLoading(false);
+    };
 
-      const normalizedAddresses = parsedValue.map(
-        normalizeStoredAddress
-      );
-
-      setSavedAddresses(normalizedAddresses);
-
-      const selectedAddress = normalizedAddresses.find(
-        (item) => item.tag === "Selected"
-      );
-
-      setSelectedAddressId(
-        selectedAddress?.id ||
-          normalizedAddresses[0]?.id ||
-          ""
-      );
-    } catch (storageError) {
-      console.error(
-        "Could not load saved addresses:",
-        storageError
-      );
-
-      setSavedAddresses(DEFAULT_SAVED_ADDRESSES);
-      setSelectedAddressId("home");
-    }
-  }, [isOpen]);
+    loadAddresses();
+  }, [isOpen, user]);
 
   useEffect(() => {
     if (!openMenuId) return undefined;

@@ -21,7 +21,11 @@ import {
 } from '../../lib/waitlistService'
 import {
   initializeReferralProfile,
-  getStoredReferralCode,
+  getPendingReferral,
+  markReferralVisitConsumed,
+  isValidReferralCodeFormat,
+  normalizeReferralCode,
+  validateReferralCode,
 } from '../../lib/referralService'
 
 function GoogleIcon() {
@@ -81,12 +85,17 @@ function AuthModalContent({
   const [lastName, setLastName] = useState('')
   const [phone, setPhone] = useState('')
   const [email, setEmail] = useState('')
+  
+  const [referralCode, setReferralCode] = useState('')
+  const [referralPrefilled, setReferralPrefilled] = useState(false)
+  const [referralVisitUid, setReferralVisitUid] = useState(null)
+  const [referralStatus, setReferralStatus] = useState({ state: 'idle' })
+
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
   const [focused, setFocused] = useState('')
 
-  // OTP flow: 'details' collects info, 'verify' does phone (mandatory) + email (optional) OTP
   const [step, setStep] = useState('details')
   const [otpCode, setOtpCode] = useState('')
   const [phoneCodeSent, setPhoneCodeSent] = useState(false)
@@ -111,7 +120,66 @@ function AuthModalContent({
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [mandatory])
 
-  // Timer cooldown logic
+  // Load referral from `?ref=CODE` link visit
+  useEffect(() => {
+    let cancelled = false
+
+    getPendingReferral().then((pending) => {
+      if (cancelled || !pending) return
+
+      setReferralCode(pending.code)
+      setReferralPrefilled(true)
+      setReferralVisitUid(pending.visitUid)
+    })
+
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
+  // Live validation of typed referral code
+  useEffect(() => {
+    const code = referralCode.trim()
+
+    if (!code) {
+      setReferralStatus({ state: 'idle' })
+      return undefined
+    }
+
+    if (!isValidReferralCodeFormat(code)) {
+      setReferralStatus({ state: 'invalid' })
+      return undefined
+    }
+
+    setReferralStatus({ state: 'checking' })
+
+    let cancelled = false
+
+    const timeout = setTimeout(async () => {
+      const result = await validateReferralCode(code)
+      if (cancelled) return
+
+      if (result.valid === null) {
+        setReferralStatus({ state: 'unknown' })
+      } else if (result.valid) {
+        setReferralStatus({
+          state: 'valid',
+          referrerName: result.isMarketing
+            ? null
+            : result.referrerName || null,
+        })
+      } else {
+        setReferralStatus({ state: 'invalid' })
+      }
+    }, 450)
+
+    return () => {
+      cancelled = true
+      clearTimeout(timeout)
+    }
+  }, [referralCode])
+
+  // Timer cooldown
   useEffect(() => {
     if (resendCooldown <= 0) return undefined
 
@@ -159,6 +227,10 @@ function AuthModalContent({
     setLastName('')
     setPhone('')
     setEmail('')
+    setReferralCode('')
+    setReferralPrefilled(false)
+    setReferralVisitUid(null)
+    setReferralStatus({ state: 'idle' })
 
     setError('')
     setSuccess(false)
@@ -201,6 +273,39 @@ function AuthModalContent({
       return stripped
     }
     return '+91' + stripped.replace(/\D/g, '')
+  }
+
+  const validateReferralBeforeSubmit = async () => {
+    const code = referralCode.trim().toUpperCase()
+
+    if (!code) return null
+
+    if (!isValidReferralCodeFormat(code)) {
+      return 'Referral code should be 4-20 letters or numbers, e.g. ACCLAUNCH'
+    }
+
+    if (referralStatus.state === 'valid') return null
+
+    const result = await validateReferralCode(code)
+
+    if (result.valid === null) {
+      setReferralStatus({ state: 'unknown' })
+      return null
+    }
+
+    if (!result.valid) {
+      setReferralStatus({ state: 'invalid' })
+      return `You're using a wrong referral code — "${code}" doesn't exist. Please check it, or leave the field blank.`
+    }
+
+    setReferralStatus({
+      state: 'valid',
+      referrerName: result.isMarketing
+        ? null
+        : result.referrerName || null,
+    })
+
+    return null
   }
 
   const sendPhoneOtp = async () => {
@@ -251,8 +356,13 @@ function AuthModalContent({
     const p = phone.trim()
     const em = email.trim()
 
-    if (!n) return setError('Please enter your full name')
-    if (!p) return setError('Please enter your phone number')
+    if (!n) {
+      return setError('Please enter your full name')
+    }
+
+    if (!p) {
+      return setError('Please enter your phone number')
+    }
 
     if (!/^[+\d\s\-()]{7,20}$/.test(p)) {
       return setError('Enter a valid phone number with country code')
@@ -267,6 +377,11 @@ function AuthModalContent({
       return setError('Enter a valid email address')
     }
 
+    const referralError = await validateReferralBeforeSubmit()
+    if (referralError) {
+      return setError(referralError)
+    }
+
     setStep('verify')
 
     if (!phoneCodeSent) {
@@ -275,8 +390,6 @@ function AuthModalContent({
   }
 
   const completeVerifiedSocialUser = async (existing, firebaseUser) => {
-    await signOut(auth)
-
     const user = {
       name: existing.name || firebaseUser.displayName || 'Accesco User',
       phone: existing.phone || firebaseUser.phoneNumber || null,
@@ -358,6 +471,11 @@ function AuthModalContent({
     const docId = p.replace(/[^\d]/g, '')
     if (docId.length < 7) {
       return setError('Enter a valid phone number including digits')
+    }
+
+    const referralError = await validateReferralBeforeSubmit()
+    if (referralError) {
+      return setError(referralError)
     }
 
     setStep('verify')
@@ -454,11 +572,16 @@ function AuthModalContent({
         { merge: true },
       )
 
-      await signOut(auth)
+      try {
+        const appliedCode = normalizeReferralCode(referralCode)
+        await initializeReferralProfile(p, n, appliedCode)
 
-      initializeReferralProfile(p, n, getStoredReferralCode()).catch((err) =>
-        console.error('Referral profile init failed:', err),
-      )
+        if (appliedCode && referralVisitUid) {
+          await markReferralVisitConsumed(referralVisitUid, p)
+        }
+      } catch (err) {
+        console.error('Referral profile init failed:', err)
+      }
 
       const user = {
         name: n,
@@ -512,6 +635,65 @@ function AuthModalContent({
     boxShadow: focused === field ? '0 0 0 2px rgba(197,0,98,0.12)' : 'none',
     transition: '150ms ease',
   })
+
+  const referralInputStyle = () => {
+    const base = {
+      ...getInputStyle('referralCode'),
+      textTransform: 'uppercase',
+    }
+
+    if (referralStatus.state === 'invalid') {
+      return {
+        ...base,
+        border: '1px solid #c50062',
+        background: 'rgba(197,0,98,0.05)',
+      }
+    }
+
+    if (referralStatus.state === 'valid') {
+      return { ...base, border: '1px solid #16a34a' }
+    }
+
+    return base
+  }
+
+  const renderReferralNote = () => {
+    if (referralStatus.state === 'checking') {
+      return <span style={styles.referralNoteMuted}>Checking code…</span>
+    }
+
+    if (referralStatus.state === 'invalid') {
+      return (
+        <span style={styles.referralNoteError}>
+          Wrong referral code — check it, or leave this blank
+        </span>
+      )
+    }
+
+    if (referralStatus.state === 'valid') {
+      return (
+        <span style={styles.referralNoteValid}>
+          {referralStatus.referrerName
+            ? `Valid code — invited by ${referralStatus.referrerName} ✓`
+            : 'Referral code applied ✓'}
+        </span>
+      )
+    }
+
+    if (referralStatus.state === 'unknown') {
+      return (
+        <span style={styles.referralNoteMuted}>
+          Could not verify right now — you can continue
+        </span>
+      )
+    }
+
+    if (referralPrefilled) {
+      return <span style={styles.referralNote}>Applied from your invite link</span>
+    }
+
+    return null
+  }
 
   return (
     <div
@@ -693,6 +875,27 @@ function AuthModalContent({
                       />
                     </div>
 
+                    <div style={styles.field}>
+                      <label style={styles.label}>
+                        Referral Code <em style={styles.optional}>(Optional)</em>
+                      </label>
+                      <input
+                        style={referralInputStyle()}
+                        type="text"
+                        placeholder="eg. ACCLAUNCH"
+                        value={referralCode}
+                        onChange={(e) =>
+                          setReferralCode(e.target.value.toUpperCase())
+                        }
+                        onFocus={() => setFocused('referralCode')}
+                        onBlur={() => setFocused('')}
+                        maxLength={20}
+                        disabled={loading}
+                        autoComplete="off"
+                      />
+                      {renderReferralNote()}
+                    </div>
+
                     <button
                       type="submit"
                       style={styles.submit}
@@ -731,6 +934,27 @@ function AuthModalContent({
                         disabled={loading}
                         autoFocus
                       />
+                    </div>
+
+                    <div style={styles.field}>
+                      <label style={styles.label}>
+                        Referral Code <em style={styles.optional}>(Optional)</em>
+                      </label>
+                      <input
+                        style={referralInputStyle()}
+                        type="text"
+                        placeholder="eg. ACCLAUNCH"
+                        value={referralCode}
+                        onChange={(e) =>
+                          setReferralCode(e.target.value.toUpperCase())
+                        }
+                        onFocus={() => setFocused('referralCode')}
+                        onBlur={() => setFocused('')}
+                        maxLength={20}
+                        disabled={loading}
+                        autoComplete="off"
+                      />
+                      {renderReferralNote()}
                     </div>
 
                     <button
@@ -1128,6 +1352,34 @@ const styles = {
     fontSize: 8,
     fontStyle: 'normal',
     fontWeight: 400,
+  },
+
+  referralNote: {
+    color: '#cf0066',
+    fontSize: 8,
+    lineHeight: 1.2,
+    fontWeight: 500,
+  },
+
+  referralNoteMuted: {
+    color: 'rgba(26,26,26,0.5)',
+    fontSize: 8,
+    lineHeight: 1.2,
+    fontWeight: 500,
+  },
+
+  referralNoteError: {
+    color: '#c50062',
+    fontSize: 8,
+    lineHeight: 1.2,
+    fontWeight: 600,
+  },
+
+  referralNoteValid: {
+    color: '#16a34a',
+    fontSize: 8,
+    lineHeight: 1.2,
+    fontWeight: 600,
   },
 
   submit: {

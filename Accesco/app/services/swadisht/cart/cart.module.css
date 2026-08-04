@@ -652,127 +652,147 @@ gap: 6px;
   .rightPane { position: static; }
 }
 
-/* ── Eco Support Center Widget ── */
+/* ── Reusable Container Card ── */
+
 .supportWidget {
-  background: #F0FAF2;
-  border: 1.5px solid #A5D6A7;
-  border-radius: 16px;
-  padding: 16px 18px;
-  margin-top: 20px;
-}
-
-.supportWidgetHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.supportWidgetTitle {
-  font-size: 14px;
-  font-weight: 700;
-  color: #2E7D32;
-}
-
-.supportToggleBtn {
-  background: #2E7D32;
-  color: #fff;
+  width: 100%;
+  background: #fff1e8;
   border: none;
-  padding: 6px 14px;
-  border-radius: 20px;
-  font-size: 12px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: background 0.2s;
+  border-radius: 12px;
+  padding: 18px 12px 14px;
+  margin-top: 20px;
+  box-sizing: border-box;
 }
-.supportToggleBtn:hover { background: #1B5E20; }
 
-.supportPanelBody { margin-top: 14px; }
-
-.supportTabs {
+.containerInfoRow {
   display: flex;
-  gap: 8px;
-  margin-bottom: 14px;
+  align-items: flex-start;
+  gap: 12px;
 }
 
-.supportTab {
-  flex: 1;
-  padding: 8px;
-  border-radius: 10px;
-  border: 1.5px solid #A5D6A7;
-  background: #fff;
-  font-size: 12px;
-  font-weight: 600;
-  color: #2E7D32;
-  cursor: pointer;
-  transition: all 0.15s;
-}
-.supportTabActive {
-  background: #2E7D32;
-  border-color: #2E7D32;
-  color: #fff;
-}
-
-.supportSection { font-size: 13px; }
-
-.supportDesc { color: #424242; line-height: 1.5; margin-bottom: 12px; }
-
-.supportLabel {
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: #2E7D32;
-  margin-bottom: 10px;
-}
-
-.ecoSteps { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; }
-
-.ecoStep {
+.containerIcon {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: #fff7ed;
+  color: #ff5a00;
   display: flex;
   align-items: center;
-  gap: 10px;
-  font-size: 13px;
-  color: #424242;
-}
-.ecoStep span {
-  width: 22px; height: 22px;
-  border-radius: 50%;
-  background: #2E7D32;
-  color: #fff;
-  font-size: 11px;
-  font-weight: 700;
-  display: flex; align-items: center; justify-content: center;
+  justify-content: center;
   flex-shrink: 0;
+}
+
+.containerText {
+  flex: 1;
+  min-width: 0;
+}
+
+.containerText h4 {
+  margin: 1px 0 4px;
+  font-size: 13px;
+  line-height: 1.3;
+  font-weight: 700;
+  color: #20242c;
+}
+
+.containerText p {
+  margin: 0;
+  font-size: 10px;
+  line-height: 1.45;
+  font-weight: 400;
+  color: #7d828b;
+}
+
+.containerText span {
+  display: block;
+  margin-top: 6px;
+  font-size: 10px;
+  line-height: 1.4;
+  font-weight: 500;
+  color: #ff4f00;
 }
 
 .supportActionBtn {
   width: 100%;
-  background: #2E7D32;
-  color: #fff;
-  border: none;
-  padding: 12px;
+  height: 32px;
+  margin-top: 18px;
+  padding: 0 14px;
+  border: 1.5px solid #ff5a00;
   border-radius: 10px;
-  font-size: 13px;
+  background: #ffffff;
+  color: #ff4f00;
+  font-size: 11px;
   font-weight: 700;
   cursor: pointer;
-  margin-top: 8px;
-  transition: background 0.2s;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease,
+    transform 0.1s ease;
 }
-.supportActionBtn:hover:not(:disabled) { background: #1B5E20; }
-.supportActionBtn:disabled { background: #BDBDBD; cursor: not-allowed; }
+
+.supportActionBtn:hover {
+  background: #ff5a00;
+  color: #ffffff;
+}
+
+.supportActionBtn:active {
+  transform: scale(0.99);
+}
 
 .supportSuccess {
-  text-align: center;
-  padding: 16px 0;
+  min-height: 76px;
   display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: 6px;
+  gap: 12px;
 }
-.supportSuccessIcon { font-size: 28px; }
-.supportSuccess strong { font-size: 15px; color: #2E7D32; }
-.supportSuccess p { font-size: 13px; color: #616161; line-height: 1.5; margin: 0; }
 
+.supportSuccessIcon {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: #fff7ed;
+  color: #ff5a00;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.supportSuccess strong {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #20242c;
+}
+
+.supportSuccess p {
+  margin: 0;
+  font-size: 10px;
+  line-height: 1.45;
+  color: #7d828b;
+}
+
+@media (max-width: 480px) {
+  .supportWidget {
+    padding: 18px 11px 14px;
+    border-radius: 11px;
+  }
+
+  .containerInfoRow {
+    gap: 11px;
+  }
+
+  .containerIcon,
+  .supportSuccessIcon {
+    width: 40px;
+    height: 40px;
+  }
+
+  .supportActionBtn {
+    margin-top: 17px;
+  }
+}
 /* Issue item list */
 .issueItemList { display: flex; flex-direction: column; gap: 8px; }
 

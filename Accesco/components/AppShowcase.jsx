@@ -672,6 +672,32 @@ export default function AppShowcase() {
         </p>
       </section>
 
+      {/* ── Bengaluru Launch Banner Section ── */}
+      <section className="bengaluru-launch-section">
+        <div className="bengaluru-launch-wrapper">
+          <div className="bengaluru-launch-card">
+            <picture>
+              <source
+                media="(max-width: 768px)"
+                srcSet="/images/bengaluru-launch-map.jpg"
+              />
+              <Image
+                src="/images/bengaluru-launch-map.jpg"
+                alt="We're Coming, Bengaluru! - Accesco Living Launching Soon"
+                width={1920}
+                height={1347}
+                className="bengaluru-launch-img"
+                sizes="(max-width: 768px) 100vw, 1200px"
+                quality={90}
+                draggable={false}
+                onContextMenu={(e) => e.preventDefault()}
+              />
+            </picture>
+          </div>
+        </div>
+      </section>
+
+      {/* Unchanged bottom app download segments */}
       <div className={styles.downloadAppSection}>
         <Image
           src="/images/download-app-banner-desktop.png"

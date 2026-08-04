@@ -46,6 +46,71 @@
   text-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
 }
 
+.hero-subtext {
+  font-size: 15px;
+  line-height: 1.7;
+  color: #ffffff;
+  margin: 16px 0 0 0;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+  opacity: 0.92;
+}
+
+/* ===== COMMON QUESTIONS SECTION ===== */
+.contact-faq-section {
+  padding: 72px 24px;
+  background: #fafafa;
+  border-top: 1px solid #e5e5e5;
+}
+
+.contact-faq-section h3 {
+  font-size: 24px;
+  font-weight: 600;
+  color: #000000;
+  margin: 0 0 32px 0;
+  letter-spacing: -0.3px;
+  text-align: center;
+}
+
+.contact-faq-list {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.contact-faq-item {
+  background: #ffffff;
+  border: 1px solid #e5e5e5;
+  border-radius: 12px;
+  padding: 24px;
+}
+
+.contact-faq-item h4 {
+  font-size: 16px;
+  font-weight: 600;
+  color: #000000;
+  margin: 0 0 10px 0;
+}
+
+.contact-faq-item p {
+  font-size: 14px;
+  line-height: 1.6;
+  color: #555555;
+  margin: 0;
+}
+
+.contact-faq-item a {
+  color: inherit;
+  text-decoration: underline;
+}
+
+@media (max-width: 640px) {
+  .contact-faq-list {
+    grid-template-columns: 1fr;
+  }
+}
+
 /* ===== CONTACT MAIN SECTION (METHODS + FORM) ===== */
 .contact-main-section {
   padding: 80px 24px;

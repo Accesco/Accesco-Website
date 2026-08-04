@@ -1,3 +1,5 @@
+/* eslint parser: "espree", parserOptions: { ecmaVersion: 2022, sourceType: "module", ecmaFeatures: { jsx: true } } */
+
 import Image from 'next/image';
 import dynamic from 'next/dynamic';
 import './homepage.css';
@@ -13,6 +15,9 @@ import DeferredChatbot from '../components/DeferredChatbot';
 // Lazy load below-the-fold heavy components without blocking main thread
 const AppShowcase = dynamic(() => import('../components/AppShowcase'), { ssr: false });
 const XpenseIntro = dynamic(() => import('@/components/XpenseIntro'), { ssr: false });
+const AccescoInlineChatbot = dynamic(() => import('@/app/components/AccescoInlineChatbot'), {
+  ssr: false,
+});
 
 export const metadata = {
   title: 'Accesco Living - Intelligent Circular Commerce Ecosystem',
@@ -69,7 +74,10 @@ export default function HomePage() {
       </main>
 
       <Footer />
+
       <DeferredChatbot />
+
+      <AccescoInlineChatbot />
     </>
   );
 }
