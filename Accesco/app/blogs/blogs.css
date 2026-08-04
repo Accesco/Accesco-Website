@@ -505,6 +505,34 @@ object-position: center center !important;
   gap: 0.25rem;
 }
 
+.story-edit-btn {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(0, 0, 0, 0.55);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 14px;
+  z-index: 2;
+  opacity: 0;
+  transition: var(--transition);
+}
+
+.story-card:hover .story-edit-btn {
+  opacity: 1;
+}
+
+.story-edit-btn:hover {
+  background: var(--accent);
+}
+
 .story-content {
   padding: 1.5rem;
   display: flex;
