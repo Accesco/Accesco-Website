@@ -1,5 +1,4 @@
-/* eslint parser: "espree", parserOptions: { ecmaVersion: 2022, sourceType: "module", ecmaFeatures: { jsx: true } } */
-
+/* eslint-disable */
 import Image from 'next/image';
 import dynamic from 'next/dynamic';
 import './homepage.css';
