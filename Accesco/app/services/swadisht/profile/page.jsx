@@ -3,6 +3,14 @@
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import SwadishttHeader from '../components/SwadishttHeader';
+import { useAuth } from '../../../components/AuthProvider';
+import {
+  fetchProfile,
+  updateProfile,
+  updateDeliveryAddress,
+  uploadProfileImage,
+  deleteProfileImage,
+} from '../../../../lib/profileService';
 import styles from './profile.module.css';
 
 const ORDERS_KEY = 'swadishtt-orders';
@@ -124,6 +132,17 @@ function Icon({ type, className = '' }) {
         <path d="M13 8l4 4-4 4M17 12H8" />
       </>
     ),
+    camera: (
+      <>
+        <path d="M4 8h3l1.5-2h7L17 8h3a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1Z" />
+        <circle cx="12" cy="14" r="3.5" />
+      </>
+    ),
+    trash: (
+      <>
+        <path d="M4 7h16M9 7V4h6v3M6 7l1 13a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1l1-13" />
+      </>
+    ),
   };
 
   return (
@@ -168,10 +187,12 @@ function Heading({ icon, title, children }) {
 }
 
 export default function SwadishttProfilePage() {
+  const { user, getIdToken, signOut } = useAuth();
   const [profile, setProfile] = useState({
     name: 'Sample',
     phone: '9000000000',
     email: 'sample@gmail.com',
+    photoURL: null,
   });
   const [profileForm, setProfileForm] = useState(profile);
   const [address, setAddress] = useState({
@@ -189,16 +210,18 @@ export default function SwadishttProfilePage() {
   const [baskets, setBaskets] = useState(initialBaskets);
   const [openBasketMenu, setOpenBasketMenu] = useState(null);
   const [basketNotice, setBasketNotice] = useState('');
+  const [avatarUploading, setAvatarUploading] = useState(false);
 
   useEffect(() => {
     try {
-      const user = JSON.parse(
+      const cachedUser = JSON.parse(
         localStorage.getItem('accesco_user') || '{}'
       );
       const loadedProfile = {
-        name: user.name || 'Sample',
-        phone: user.phone || '9000000000',
-        email: user.email || 'sample@gmail.com',
+        name: cachedUser.name || 'Sample',
+        phone: cachedUser.phone || '9000000000',
+        email: cachedUser.email || 'sample@gmail.com',
+        photoURL: cachedUser.photoURL || null,
       };
       setProfile(loadedProfile);
       setProfileForm(loadedProfile);
@@ -233,6 +256,44 @@ export default function SwadishttProfilePage() {
       console.error(error);
     }
   }, []);
+
+  // Once signed in, the backend profile is the source of truth — overwrite the
+  // localStorage-seeded state above with the synced record.
+  useEffect(() => {
+    if (!user?.uid) return;
+
+    let cancelled = false;
+
+    (async () => {
+      const { profile: remoteProfile, error: profileError } = await fetchProfile(
+        getIdToken,
+        user.uid
+      );
+
+      if (cancelled) return;
+
+      if (remoteProfile) {
+        const loadedProfile = {
+          name: remoteProfile.name || 'Sample',
+          phone: remoteProfile.phone || '9000000000',
+          email: remoteProfile.email || 'sample@gmail.com',
+          photoURL: remoteProfile.photoURL || null,
+        };
+        setProfile(loadedProfile);
+        setProfileForm(loadedProfile);
+
+        if (remoteProfile.deliveryAddress) {
+          setAddress(remoteProfile.deliveryAddress);
+        }
+      } else if (profileError) {
+        console.error('Failed to load synced profile:', profileError);
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [user?.uid, getIdToken]);
 
   const firstName = profile.name.trim().split(' ')[0] || 'Sample';
   const initial = firstName.charAt(0).toUpperCase();
@@ -297,35 +358,142 @@ export default function SwadishttProfilePage() {
     showBasketNotice('Basket deleted');
   };
 
-  const saveProfile = (event) => {
+  const saveProfile = async (event) => {
     event.preventDefault();
+
+    const trimmedName = profileForm.name?.trim();
+    if (!trimmedName) {
+      showMessage('Full name is required');
+      return;
+    }
+
+    const nextProfile = {
+      name: trimmedName,
+      phone: profileForm.phone?.trim() || '',
+      email: profileForm.email?.trim() || '',
+    };
+
+    if (user?.uid) {
+      try {
+        await updateProfile(getIdToken, user.uid, nextProfile);
+      } catch (error) {
+        console.error('saveProfile error:', error);
+        showMessage(error.message || 'Failed to update profile');
+        return;
+      }
+    }
+
+    const mergedProfile = { ...profile, ...nextProfile };
+    const cachedUser = JSON.parse(localStorage.getItem('accesco_user') || '{}');
     localStorage.setItem(
       'accesco_user',
-      JSON.stringify(profileForm)
+      JSON.stringify({ ...cachedUser, ...nextProfile })
     );
-    setProfile(profileForm);
+
+    setProfile(mergedProfile);
+    setProfileForm(mergedProfile);
     setEditProfile(false);
     showMessage('Profile updated successfully');
   };
 
-  const saveAddress = (event) => {
+  const saveAddress = async (event) => {
     event.preventDefault();
+
+    const trimmedAddress = address.address?.trim();
+    const trimmedCity = address.city?.trim();
+    const trimmedPincode = address.pincode?.trim();
+
+    if (!trimmedAddress || trimmedAddress.length < 5 || !trimmedCity || !/^\d{6}$/.test(trimmedPincode || '')) {
+      showMessage('Please enter a complete address with a valid 6-digit pincode');
+      return;
+    }
+
+    const nextAddress = { address: trimmedAddress, city: trimmedCity, pincode: trimmedPincode };
+
+    if (user?.uid) {
+      try {
+        await updateDeliveryAddress(getIdToken, user.uid, nextAddress);
+      } catch (error) {
+        console.error('saveAddress error:', error);
+        showMessage(error.message || 'Failed to update delivery address');
+        return;
+      }
+    }
 
     localStorage.setItem(
       'userLocation',
       JSON.stringify({
-        fullAddress: address.address,
-        formattedAddress: address.address,
-        displayAddress: address.address,
-        area: address.address.split(',')[0]?.trim() || '',
-        city: address.city,
-        pincode: address.pincode,
-        postalCode: address.pincode,
+        fullAddress: nextAddress.address,
+        formattedAddress: nextAddress.address,
+        displayAddress: nextAddress.address,
+        area: nextAddress.address.split(',')[0]?.trim() || '',
+        city: nextAddress.city,
+        pincode: nextAddress.pincode,
+        postalCode: nextAddress.pincode,
       })
     );
 
+    setAddress(nextAddress);
     setEditAddress(false);
     showMessage('Delivery address saved successfully');
+  };
+
+  const handleAvatarChange = async (event) => {
+    const file = event.target.files?.[0];
+    event.target.value = '';
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      showMessage('Please select an image file.');
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      showMessage('Please select an image smaller than 5 MB.');
+      return;
+    }
+    if (!user?.uid) {
+      showMessage('Sign in to update your profile photo.');
+      return;
+    }
+
+    setAvatarUploading(true);
+    try {
+      const { photoURL } = await uploadProfileImage(getIdToken, user.uid, file);
+      setProfile((current) => ({ ...current, photoURL }));
+      setProfileForm((current) => ({ ...current, photoURL }));
+      const cachedUser = JSON.parse(localStorage.getItem('accesco_user') || '{}');
+      localStorage.setItem('accesco_user', JSON.stringify({ ...cachedUser, photoURL }));
+      showMessage('Profile photo updated successfully');
+    } catch (error) {
+      console.error('handleAvatarChange error:', error);
+      showMessage(error.message || 'Failed to update profile photo');
+    } finally {
+      setAvatarUploading(false);
+    }
+  };
+
+  const handleAvatarRemove = async () => {
+    if (!user?.uid) {
+      setProfile((current) => ({ ...current, photoURL: null }));
+      setProfileForm((current) => ({ ...current, photoURL: null }));
+      return;
+    }
+
+    setAvatarUploading(true);
+    try {
+      await deleteProfileImage(getIdToken, user.uid);
+      setProfile((current) => ({ ...current, photoURL: null }));
+      setProfileForm((current) => ({ ...current, photoURL: null }));
+      const cachedUser = JSON.parse(localStorage.getItem('accesco_user') || '{}');
+      delete cachedUser.photoURL;
+      localStorage.setItem('accesco_user', JSON.stringify(cachedUser));
+      showMessage('Profile photo removed');
+    } catch (error) {
+      console.error('handleAvatarRemove error:', error);
+      showMessage(error.message || 'Failed to remove profile photo');
+    } finally {
+      setAvatarUploading(false);
+    }
   };
 
   return (
@@ -342,7 +510,46 @@ export default function SwadishttProfilePage() {
           <aside className={styles.sidebar}>
             <section className={styles.userCard}>
               <div className={styles.userTop}>
-                <div className={styles.avatar}>{initial}</div>
+                <div className={styles.avatarWrap}>
+                  <div className={styles.avatar}>
+                    {profile.photoURL ? (
+                      <img
+                        src={profile.photoURL}
+                        alt={`${profile.name || 'Accesco User'}'s profile`}
+                        className={styles.avatarImage}
+                      />
+                    ) : (
+                      initial
+                    )}
+                  </div>
+
+                  <label
+                    className={styles.avatarEdit}
+                    title="Change profile photo"
+                    aria-label="Change profile photo"
+                  >
+                    <Icon type="camera" />
+                    <input
+                      type="file"
+                      accept="image/png,image/jpeg,image/webp"
+                      onChange={handleAvatarChange}
+                      disabled={avatarUploading}
+                    />
+                  </label>
+
+                  {profile.photoURL && (
+                    <button
+                      type="button"
+                      className={styles.avatarRemove}
+                      title="Remove profile photo"
+                      aria-label="Remove profile photo"
+                      onClick={handleAvatarRemove}
+                      disabled={avatarUploading}
+                    >
+                      <Icon type="trash" />
+                    </button>
+                  )}
+                </div>
                 <span>♛ Premium Member</span>
               </div>
               <h1>{profile.name || 'Accesco User'}</h1>
@@ -382,8 +589,8 @@ export default function SwadishttProfilePage() {
               <button
                 type="button"
                 className={styles.logout}
-                onClick={() => {
-                  localStorage.removeItem('accesco_user');
+                onClick={async () => {
+                  await signOut();
                   window.location.href = '/services/swadisht';
                 }}
               >
