@@ -1,12 +1,25 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useRouter, useSearchParams } from 'next/navigation';
 import AccescoHeader from '../../components/AccescoHeader';
 import AuthModal from '../components/AuthModal';
 import { useAuth } from '../components/AuthProvider';
 import './profile.css';
+
+// Import modular section components
+import AccountDetailsSection from './components/AccountDetailsSection';
+import AddressesSection from './components/AddressesSection';
+import PaymentMethodsSection from './components/PaymentMethodsSection';
+import RedeemCodeSection from './components/RedeemCodeSection';
+import BookmarksSection from './components/BookmarksSection';
+import SubscriptionsSection from './components/SubscriptionsSection';
+import NotificationsSection from './components/NotificationsSection';
+import LanguageRegionSection from './components/LanguageRegionSection';
+import SecurityLoginSection from './components/SecurityLoginSection';
+import HelpSupportSection from './components/HelpSupportSection';
 
 const services = [
   {
@@ -39,56 +52,16 @@ const services = [
 ];
 
 const accountItems = [
-  {
-    label: 'Account details',
-    icon: 'ri-user-line',
-    href: '/profile#account-details',
-  },
-  {
-    label: 'Addresses',
-    icon: 'ri-map-pin-line',
-    href: '/profile?section=addresses',
-  },
-  {
-    label: 'Payment methods',
-    icon: 'ri-bank-card-line',
-    href: '/profile?section=payment-methods',
-  },
-  {
-    label: 'Redeem a code',
-    icon: 'ri-coupon-3-line',
-    href: '/profile?section=redeem-code',
-  },
-  {
-    label: 'Bookmarks',
-    icon: 'ri-bookmark-line',
-    href: '/profile?section=bookmarks',
-  },
-  {
-    label: 'Subscriptions',
-    icon: 'ri-file-list-3-line',
-    href: '/profile?section=subscriptions',
-  },
-  {
-    label: 'Notifications',
-    icon: 'ri-notification-3-line',
-    href: '/profile?section=notifications',
-  },
-  {
-    label: 'Language & region',
-    icon: 'ri-global-line',
-    href: '/profile?section=language-region',
-  },
-  {
-    label: 'Security & login',
-    icon: 'ri-shield-keyhole-line',
-    href: '/profile?section=security-login',
-  },
-  {
-    label: 'Help & support',
-    icon: 'ri-question-line',
-    href: '/contact',
-  },
+  { id: 'account-details', label: 'Account details', icon: 'ri-user-line' },
+  { id: 'addresses', label: 'Addresses', icon: 'ri-map-pin-line' },
+  { id: 'payment-methods', label: 'Payment methods', icon: 'ri-bank-card-line' },
+  { id: 'redeem-code', label: 'Redeem a code', icon: 'ri-coupon-3-line' },
+  { id: 'bookmarks', label: 'Bookmarks', icon: 'ri-bookmark-line' },
+  { id: 'subscriptions', label: 'Subscriptions', icon: 'ri-file-list-3-line' },
+  { id: 'notifications', label: 'Notifications', icon: 'ri-notification-3-line' },
+  { id: 'language-region', label: 'Language & region', icon: 'ri-global-line' },
+  { id: 'security-login', label: 'Security & login', icon: 'ri-shield-keyhole-line' },
+  { id: 'help-support', label: 'Help & support', icon: 'ri-question-line' },
 ];
 
 const exploreItems = [
@@ -98,18 +71,90 @@ const exploreItems = [
   { label: 'Partner with us', icon: 'ri-shake-hands-line', href: '/partner' },
 ];
 
-export default function ProfilePage() {
+const AVAILABLE_COUPONS = [
+  { code: 'ACCESCO20', title: '20% OFF on First Grocery Order', expiry: 'Valid till 31 Aug', disc: 'Up to ₹100' },
+  { code: 'SWADISHT50', title: '₹50 OFF on Food Delivery', expiry: 'Valid till 15 Aug', disc: 'Min order ₹249' },
+  { code: 'FREEDEL', title: 'Free Delivery Across All Services', expiry: 'Valid today', disc: 'No min order' },
+];
+
+function ProfileContent() {
   const { user, loading, signOut, signIn } = useAuth();
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const sectionParam = searchParams?.get('section');
+
+  const [activeSection, setActiveSection] = useState('account-details');
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [totalOrders, setTotalOrders] = useState(0);
- const [city, setCity] = useState('Bengaluru, Karnataka');
+  const [city, setCity] = useState('Bengaluru, Karnataka');
 
-const [isEditing, setIsEditing] = useState(false);
-const [editName, setEditName] = useState('');
-const [editPhone, setEditPhone] = useState('');
-const [editEmail, setEditEmail] = useState('');
-const [editError, setEditError] = useState('');
+  // Edit details state
+  const [isEditing, setIsEditing] = useState(false);
+  const [editName, setEditName] = useState('');
+  const [editPhone, setEditPhone] = useState('');
+  const [editEmail, setEditEmail] = useState('');
+  const [editError, setEditError] = useState('');
 
+  // Real user state initialized without hardcoded mock data
+  const [addresses, setAddresses] = useState([]);
+  const [showAddressForm, setShowAddressForm] = useState(false);
+  const [newAddr, setNewAddr] = useState({ tag: 'Home', flat: '', street: '', city: 'Bengaluru', pincode: '' });
+
+  // Payment methods state
+  const [walletBalance, setWalletBalance] = useState(0);
+  const [addAmount, setAddAmount] = useState('');
+  const [showAddMoney, setShowAddMoney] = useState(false);
+  const [upiList, setUpiList] = useState([]);
+  const [newUpi, setNewUpi] = useState('');
+  const [showAddUpi, setShowAddUpi] = useState(false);
+  const [cardsList, setCardsList] = useState([]);
+
+  // Redeem code state
+  const [promoInput, setPromoInput] = useState('');
+  const [promoMessage, setPromoMessage] = useState({ type: '', text: '' });
+
+  // Bookmarks state
+  const [bookmarks, setBookmarks] = useState([]);
+  const [bookmarkFilter, setBookmarkFilter] = useState('All');
+
+  // Subscriptions state
+  const [subscriptions, setSubscriptions] = useState([]);
+
+  // Notifications preferences
+  const [notifSettings, setNotifSettings] = useState({
+    orderUpdates: true,
+    whatsappAlerts: true,
+    promoOffers: false,
+    dailyReminders: true,
+  });
+
+  // Language & Region state
+  const [selectedLang, setSelectedLang] = useState('English');
+  const [selectedCurrency, setSelectedCurrency] = useState('INR ₹ (India)');
+  const [langSaved, setLangSaved] = useState(false);
+
+  // Security state
+  const [twoFactor, setTwoFactor] = useState(false);
+  const [passwordForm, setPasswordForm] = useState({ current: '', next: '', confirm: '' });
+  const [passMsg, setPassMsg] = useState('');
+
+  // Support ticket state
+  const [supportTicket, setSupportTicket] = useState({ subject: '', message: '' });
+  const [ticketSent, setTicketSent] = useState(false);
+
+  // Sync searchParam with activeSection
+  useEffect(() => {
+    if (sectionParam) {
+      setActiveSection(sectionParam);
+    } else if (typeof window !== 'undefined' && window.location.hash) {
+      const hash = window.location.hash.replace('#', '');
+      if (accountItems.some((item) => item.id === hash)) {
+        setActiveSection(hash);
+      }
+    }
+  }, [sectionParam]);
+
+  // Load REAL data for the logged-in user
   useEffect(() => {
     const grokly = JSON.parse(localStorage.getItem('grokly_orders') || '[]');
     const swadishtt = JSON.parse(localStorage.getItem('swadishtt-orders') || '[]');
@@ -117,15 +162,70 @@ const [editError, setEditError] = useState('');
     setTotalOrders(grokly.length + swadishtt.length + instastyle.length);
 
     const savedLocation = localStorage.getItem('userLocation');
-    if (!savedLocation) return;
-
-    try {
-      const parsedLocation = JSON.parse(savedLocation);
-      setCity(parsedLocation?.city || parsedLocation?.displayAddress || 'Bengaluru, Karnataka');
-    } catch {
-      setCity(savedLocation);
+    if (savedLocation) {
+      try {
+        const parsedLocation = JSON.parse(savedLocation);
+        setCity(parsedLocation?.city || parsedLocation?.displayAddress || 'Bengaluru, Karnataka');
+      } catch {
+        setCity(savedLocation);
+      }
     }
-  }, []);
+
+    const userKey = user?.uid || user?.phone || 'guest';
+
+    // 1. Real Addresses
+    const savedAddresses = localStorage.getItem(`accesco_saved_addresses_${userKey}`) || localStorage.getItem('accesco_saved_addresses');
+    if (savedAddresses) {
+      try { setAddresses(JSON.parse(savedAddresses)); } catch (e) {}
+    } else {
+      setAddresses([]);
+    }
+
+    // 2. Real Wallet Balance & UPI
+    const savedWallet = localStorage.getItem(`accesco_wallet_balance_${userKey}`) || localStorage.getItem('grokly_wallet_balance');
+    setWalletBalance(savedWallet ? parseFloat(savedWallet) : 0);
+
+    const savedUpi = localStorage.getItem(`accesco_upi_list_${userKey}`);
+    if (savedUpi) {
+      try { setUpiList(JSON.parse(savedUpi)); } catch (e) {}
+    } else {
+      setUpiList([]);
+    }
+
+    const savedCards = localStorage.getItem(`accesco_saved_cards_${userKey}`);
+    if (savedCards) {
+      try { setCardsList(JSON.parse(savedCards)); } catch (e) {}
+    } else {
+      setCardsList([]);
+    }
+
+    // 3. Real Wishlist / Bookmarks
+    const groklyWish = JSON.parse(localStorage.getItem('grokly_wishlist') || '[]');
+    const swadishttWish = JSON.parse(localStorage.getItem('swadishtt_wishlist') || '[]');
+    const instastyleWish = JSON.parse(localStorage.getItem('instastyle_wishlist') || '[]');
+    const accescoWish = JSON.parse(localStorage.getItem(`accesco_bookmarks_${userKey}`) || '[]');
+    setBookmarks([...groklyWish, ...swadishttWish, ...instastyleWish, ...accescoWish]);
+
+    // 4. Real Subscriptions
+    const savedSubs = localStorage.getItem(`accesco_subscriptions_${userKey}`);
+    if (savedSubs) {
+      try { setSubscriptions(JSON.parse(savedSubs)); } catch (e) {}
+    } else {
+      setSubscriptions([]);
+    }
+
+    // 5. Real Notification preferences
+    const savedNotif = localStorage.getItem(`accesco_notif_settings_${userKey}`);
+    if (savedNotif) {
+      try { setNotifSettings(JSON.parse(savedNotif)); } catch (e) {}
+    }
+
+    // 6. Real Language & Currency
+    const savedLang = localStorage.getItem(`accesco_lang_${userKey}`);
+    if (savedLang) setSelectedLang(savedLang);
+    const savedCurr = localStorage.getItem(`accesco_currency_${userKey}`);
+    if (savedCurr) setSelectedCurrency(savedCurr);
+  }, [user]);
 
   const displayName = user?.name || 'Accesco User';
   const phone = user?.phone || 'Not added';
@@ -138,80 +238,174 @@ const [editError, setEditError] = useState('');
     .join('')
     .toUpperCase();
 
+  const userKey = user?.uid || user?.phone || 'guest';
+
+  const handleSectionSelect = (id) => {
+    setActiveSection(id);
+    const newUrl = `/profile?section=${id}`;
+    router.push(newUrl, { scroll: false });
+  };
+
   const closeLoginModal = () => setIsLoginModalOpen(false);
-const startEditing = () => {
-  setEditName(user?.name || '');
-  setEditPhone(user?.phone || '');
-  setEditEmail(user?.email || '');
-  setEditError('');
-  setIsEditing(true);
-};
 
-const cancelEditing = () => {
-  setEditError('');
-  setIsEditing(false);
-};
+  const startEditing = () => {
+    setEditName(user?.name || '');
+    setEditPhone(user?.phone || '');
+    setEditEmail(user?.email || '');
+    setEditError('');
+    setIsEditing(true);
+  };
 
-const saveProfileChanges = (event) => {
-  event.preventDefault();
+  const cancelEditing = () => {
+    setEditError('');
+    setIsEditing(false);
+  };
 
-  const updatedName = editName.trim();
-  const updatedPhone = editPhone.trim();
-  const updatedEmail = editEmail.trim();
+  const saveProfileChanges = (event) => {
+    event.preventDefault();
+    const updatedName = editName.trim();
+    const updatedPhone = editPhone.trim();
+    const updatedEmail = editEmail.trim();
 
-  if (!updatedName || !updatedPhone) {
-    setEditError('Name and phone number are required.');
-    return;
-  }
+    if (!updatedName || !updatedPhone) {
+      setEditError('Name and phone number are required.');
+      return;
+    }
 
-  if (
-    updatedEmail &&
-    !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(updatedEmail)
-  ) {
-    setEditError('Please enter a valid email address.');
-    return;
-  }
-
-  signIn({
-    ...user,
-    name: updatedName,
-    phone: updatedPhone,
-    email: updatedEmail || null,
-  });
-
-  setEditError('');
-  setIsEditing(false);
-};
-
-const handleProfileImageChange = (event) => {
-  const file = event.target.files?.[0];
-
-  if (!file) return;
-
-  if (!file.type.startsWith('image/')) {
-    alert('Please select an image file.');
-    return;
-  }
-
-  if (file.size > 2 * 1024 * 1024) {
-    alert('Please select an image smaller than 2 MB.');
-    return;
-  }
-
-  const reader = new FileReader();
-
-  reader.onload = () => {
-    if (typeof reader.result !== 'string') return;
+    if (updatedEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(updatedEmail)) {
+      setEditError('Please enter a valid email address.');
+      return;
+    }
 
     signIn({
       ...user,
-      profileImage: reader.result,
+      name: updatedName,
+      phone: updatedPhone,
+      email: updatedEmail || null,
     });
+
+    setEditError('');
+    setIsEditing(false);
   };
 
-  reader.readAsDataURL(file);
-  event.target.value = '';
-};
+  const handleProfileImageChange = (event) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    if (!file.type.startsWith('image/')) {
+      alert('Please select an image file.');
+      return;
+    }
+    if (file.size > 2 * 1024 * 1024) {
+      alert('Please select an image smaller than 2 MB.');
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => {
+      if (typeof reader.result !== 'string') return;
+      signIn({ ...user, profileImage: reader.result });
+    };
+    reader.readAsDataURL(file);
+    event.target.value = '';
+  };
+
+  // Address handlers
+  const handleAddAddress = (e) => {
+    e.preventDefault();
+    if (!newAddr.flat || !newAddr.street || !newAddr.pincode) return;
+    const added = {
+      id: `addr-${Date.now()}`,
+      tag: newAddr.tag,
+      name: displayName,
+      phone: phone,
+      flat: newAddr.flat,
+      street: newAddr.street,
+      city: newAddr.city,
+      state: 'Karnataka',
+      pincode: newAddr.pincode,
+      isDefault: addresses.length === 0,
+    };
+    const updated = [...addresses, added];
+    setAddresses(updated);
+    localStorage.setItem(`accesco_saved_addresses_${userKey}`, JSON.stringify(updated));
+    localStorage.setItem('accesco_saved_addresses', JSON.stringify(updated));
+    setNewAddr({ tag: 'Home', flat: '', street: '', city: 'Bengaluru', pincode: '' });
+    setShowAddressForm(false);
+  };
+
+  const setDefaultAddress = (id) => {
+    const updated = addresses.map((a) => ({ ...a, isDefault: a.id === id }));
+    setAddresses(updated);
+    localStorage.setItem(`accesco_saved_addresses_${userKey}`, JSON.stringify(updated));
+    localStorage.setItem('accesco_saved_addresses', JSON.stringify(updated));
+  };
+
+  const deleteAddress = (id) => {
+    const updated = addresses.filter((a) => a.id !== id);
+    setAddresses(updated);
+    localStorage.setItem(`accesco_saved_addresses_${userKey}`, JSON.stringify(updated));
+    localStorage.setItem('accesco_saved_addresses', JSON.stringify(updated));
+  };
+
+  // Wallet handler
+  const handleAddMoney = (e) => {
+    e.preventDefault();
+    const val = parseFloat(addAmount);
+    if (!val || val <= 0) return;
+    const newBal = walletBalance + val;
+    setWalletBalance(newBal);
+    localStorage.setItem(`accesco_wallet_balance_${userKey}`, newBal.toString());
+    localStorage.setItem('grokly_wallet_balance', newBal.toString());
+    setAddAmount('');
+    setShowAddMoney(false);
+  };
+
+  const handleAddUpi = (e) => {
+    e.preventDefault();
+    if (!newUpi || !newUpi.includes('@')) return;
+    const updated = [...upiList, newUpi.trim()];
+    setUpiList(updated);
+    localStorage.setItem(`accesco_upi_list_${userKey}`, JSON.stringify(updated));
+    setNewUpi('');
+    setShowAddUpi(false);
+  };
+
+  // Coupon handler
+  const handleRedeem = (e) => {
+    e.preventDefault();
+    if (!promoInput.trim()) return;
+    const code = promoInput.trim().toUpperCase();
+    if (code === 'ACCESCO20' || code === 'WELCOME50' || code === 'FREEDEL') {
+      const reward = code === 'WELCOME50' ? 50 : 20;
+      const newBal = walletBalance + reward;
+      setWalletBalance(newBal);
+      localStorage.setItem(`accesco_wallet_balance_${userKey}`, newBal.toString());
+      setPromoMessage({ type: 'success', text: `🎉 Coupon code '${code}' successfully redeemed! ₹${reward} added to your wallet.` });
+    } else {
+      setPromoMessage({ type: 'error', text: `❌ Invalid or expired coupon code '${code}'.` });
+    }
+  };
+
+  // Subscription toggle
+  const toggleSub = (id) => {
+    const updated = subscriptions.map((s) => (s.id === id ? { ...s, status: s.status === 'Active' ? 'Paused' : 'Active' } : s));
+    setSubscriptions(updated);
+    localStorage.setItem(`accesco_subscriptions_${userKey}`, JSON.stringify(updated));
+  };
+
+  // Password update
+  const handlePasswordSubmit = (e) => {
+    e.preventDefault();
+    if (!passwordForm.current || !passwordForm.next) {
+      setPassMsg('Please complete all password fields.');
+      return;
+    }
+    if (passwordForm.next !== passwordForm.confirm) {
+      setPassMsg('New passwords do not match.');
+      return;
+    }
+    setPassMsg('Password successfully updated!');
+    setPasswordForm({ current: '', next: '', confirm: '' });
+  };
 
   return (
     <div className="profile-shell">
@@ -231,7 +425,9 @@ const handleProfileImageChange = (event) => {
 
           {!loading && !user && (
             <section className="profile-guest">
-              <span className="profile-guest-icon"><i className="ri-user-line" /></span>
+              <span className="profile-guest-icon">
+                <i className="ri-user-line" />
+              </span>
               <h2>You’re not logged in</h2>
               <p>Log in to see your membership, orders, rewards and saved account details.</p>
               <button type="button" className="profile-login-btn" onClick={() => setIsLoginModalOpen(true)}>
@@ -263,10 +459,7 @@ const handleProfileImageChange = (event) => {
                   <div className="membership-avatar-wrap">
                     <div className="membership-avatar">
                       {user?.profileImage ? (
-                        <img
-                          src={user.profileImage}
-                          alt={`${displayName}'s profile`}
-                        />
+                        <img src={user.profileImage} alt={`${displayName}'s profile`} />
                       ) : (
                         initials
                       )}
@@ -278,7 +471,6 @@ const handleProfileImageChange = (event) => {
                       aria-label="Change profile photo"
                     >
                       <i className="ri-pencil-line" />
-
                       <input
                         type="file"
                         accept="image/png,image/jpeg,image/webp"
@@ -294,15 +486,17 @@ const handleProfileImageChange = (event) => {
                     <span>Total orders</span>
                   </div>
                   <div className="membership-stat">
-                    <strong>0</strong>
+                    <strong>{addresses.length}</strong>
                     <span>Saved addresses</span>
                   </div>
                   <div className="membership-stat">
-                    <strong>₹0</strong>
+                    <strong>₹{walletBalance}</strong>
                     <span>Reward balance</span>
                   </div>
                   <div className="membership-stat account-status">
-                    <strong><i /> Active</strong>
+                    <strong>
+                      <i /> Active
+                    </strong>
                     <span>Account status</span>
                   </div>
                 </div>
@@ -320,19 +514,21 @@ const handleProfileImageChange = (event) => {
                     <article className={`service-card ${service.className}`} key={service.name}>
                       <div className="service-card-top">
                         <span className="service-icon">
-  <Image
-    src={service.logo}
-    alt={`${service.name} logo`}
-    width={30}
-    height={30}
-  />
-</span>
+                          <Image
+                            src={service.logo}
+                            alt={`${service.name} logo`}
+                            width={30}
+                            height={30}
+                          />
+                        </span>
                         <span className="service-type">{service.type}</span>
                       </div>
                       <h3>{service.name}</h3>
                       <p>{service.description}</p>
                       <div className="service-card-bottom">
-                        <span><strong>0</strong> Orders placed</span>
+                        <span>
+                          <strong>0</strong> Orders placed
+                        </span>
                         <Link href={service.href}>{service.action}</Link>
                       </div>
                     </article>
@@ -351,17 +547,16 @@ const handleProfileImageChange = (event) => {
                     <p className="sidebar-label">Account</p>
                     <nav aria-label="Account settings">
                       {accountItems.map((item) => (
-  <Link
-    href={item.href}
-    className={
-      item.href === '/profile#account-details' ? 'active' : ''
-    }
-    key={item.label}
-  >
-    <i className={item.icon} />
-    <span>{item.label}</span>
-  </Link>
-))}
+                        <button
+                          type="button"
+                          key={item.id}
+                          className={`sidebar-nav-btn ${activeSection === item.id ? 'active' : ''}`}
+                          onClick={() => handleSectionSelect(item.id)}
+                        >
+                          <i className={item.icon} />
+                          <span>{item.label}</span>
+                        </button>
+                      ))}
                     </nav>
 
                     <p className="sidebar-label explore-label">Explore</p>
@@ -381,102 +576,120 @@ const handleProfileImageChange = (event) => {
                   </aside>
 
                   <div className="account-content">
-                    <form
-  className="settings-card details-card"
-  onSubmit={saveProfileChanges}
->
-  <div className="settings-card-header">
-    <span>Account details</span>
+                    {activeSection === 'account-details' && (
+                      <AccountDetailsSection
+                        displayName={displayName}
+                        phone={phone}
+                        email={email}
+                        isEditing={isEditing}
+                        editName={editName}
+                        editPhone={editPhone}
+                        editEmail={editEmail}
+                        editError={editError}
+                        setEditName={setEditName}
+                        setEditPhone={setEditPhone}
+                        setEditEmail={setEditEmail}
+                        startEditing={startEditing}
+                        cancelEditing={cancelEditing}
+                        saveProfileChanges={saveProfileChanges}
+                      />
+                    )}
 
-    <button
-      type="button"
-      onClick={isEditing ? cancelEditing : startEditing}
-    >
-      {isEditing ? 'Cancel' : 'Edit'}
-    </button>
-  </div>
+                    {activeSection === 'addresses' && (
+                      <AddressesSection
+                        addresses={addresses}
+                        showAddressForm={showAddressForm}
+                        setShowAddressForm={setShowAddressForm}
+                        newAddr={newAddr}
+                        setNewAddr={setNewAddr}
+                        handleAddAddress={handleAddAddress}
+                        setDefaultAddress={setDefaultAddress}
+                        deleteAddress={deleteAddress}
+                      />
+                    )}
 
-  <div className="settings-row">
-    <span>Name</span>
+                    {activeSection === 'payment-methods' && (
+                      <PaymentMethodsSection
+                        walletBalance={walletBalance}
+                        showAddMoney={showAddMoney}
+                        setShowAddMoney={setShowAddMoney}
+                        addAmount={addAmount}
+                        setAddAmount={setAddAmount}
+                        handleAddMoney={handleAddMoney}
+                        upiList={upiList}
+                        showAddUpi={showAddUpi}
+                        setShowAddUpi={setShowAddUpi}
+                        newUpi={newUpi}
+                        setNewUpi={setNewUpi}
+                        handleAddUpi={handleAddUpi}
+                        cardsList={cardsList}
+                      />
+                    )}
 
-    {isEditing ? (
-      <input
-        className="settings-edit-input"
-        type="text"
-        value={editName}
-        onChange={(event) => setEditName(event.target.value)}
-        aria-label="Name"
-        autoFocus
-      />
-    ) : (
-      <strong>{displayName}</strong>
-    )}
-  </div>
+                    {activeSection === 'redeem-code' && (
+                      <RedeemCodeSection
+                        promoInput={promoInput}
+                        setPromoInput={setPromoInput}
+                        promoMessage={promoMessage}
+                        setPromoMessage={setPromoMessage}
+                        handleRedeem={handleRedeem}
+                        coupons={AVAILABLE_COUPONS}
+                      />
+                    )}
 
-  <div className="settings-row">
-    <span>Phone</span>
+                    {activeSection === 'bookmarks' && (
+                      <BookmarksSection
+                        bookmarks={bookmarks}
+                        setBookmarks={setBookmarks}
+                        bookmarkFilter={bookmarkFilter}
+                        setBookmarkFilter={setBookmarkFilter}
+                      />
+                    )}
 
-    {isEditing ? (
-      <input
-        className="settings-edit-input"
-        type="tel"
-        value={editPhone}
-        onChange={(event) => setEditPhone(event.target.value)}
-        aria-label="Phone number"
-      />
-    ) : (
-      <strong>{phone}</strong>
-    )}
-  </div>
+                    {activeSection === 'subscriptions' && (
+                      <SubscriptionsSection
+                        subscriptions={subscriptions}
+                        toggleSub={toggleSub}
+                      />
+                    )}
 
-  <div className="settings-row">
-    <span>Email</span>
+                    {activeSection === 'notifications' && (
+                      <NotificationsSection
+                        notifSettings={notifSettings}
+                        setNotifSettings={setNotifSettings}
+                      />
+                    )}
 
-    {isEditing ? (
-      <input
-        className="settings-edit-input"
-        type="email"
-        value={editEmail}
-        onChange={(event) => setEditEmail(event.target.value)}
-        aria-label="Email address"
-        placeholder="Add email address"
-      />
-    ) : (
-      <strong>{email}</strong>
-    )}
-  </div>
+                    {activeSection === 'language-region' && (
+                      <LanguageRegionSection
+                        selectedLang={selectedLang}
+                        setSelectedLang={setSelectedLang}
+                        selectedCurrency={selectedCurrency}
+                        setSelectedCurrency={setSelectedCurrency}
+                        langSaved={langSaved}
+                        setLangSaved={setLangSaved}
+                      />
+                    )}
 
-  {editError && (
-    <p className="settings-edit-error">{editError}</p>
-  )}
+                    {activeSection === 'security-login' && (
+                      <SecurityLoginSection
+                        passwordForm={passwordForm}
+                        setPasswordForm={setPasswordForm}
+                        passMsg={passMsg}
+                        handlePasswordSubmit={handlePasswordSubmit}
+                        twoFactor={twoFactor}
+                        setTwoFactor={setTwoFactor}
+                      />
+                    )}
 
-  {isEditing && (
-    <div className="settings-actions">
-      <button type="submit">Save changes</button>
-    </div>
-  )}
-</form>
-
-                    <article className="settings-card security-card">
-                      <div className="settings-card-header">
-                        <span>Security snapshot</span>
-                      </div>
-                      <div className="security-row">
-                        <span>Login</span>
-                        <div>
-                          <strong>Protected account</strong>
-                          <small>Verified by phone and email</small>
-                        </div>
-                        <em><i /> Protected</em>
-                      </div>
-                      <div className="security-row">
-                        <span>Recovery</span>
-                        <div>
-                          <strong>Recovery details</strong>
-                          <small>Keep your phone number and email updated for safer access</small>
-                        </div>
-                      </div>
-                    </article>
+                    {activeSection === 'help-support' && (
+                      <HelpSupportSection
+                        supportTicket={supportTicket}
+                        setSupportTicket={setSupportTicket}
+                        ticketSent={ticketSent}
+                        setTicketSent={setTicketSent}
+                      />
+                    )}
                   </div>
                 </div>
               </section>
@@ -490,14 +703,22 @@ const handleProfileImageChange = (event) => {
         <span>Bengaluru, Karnataka · India</span>
       </footer>
 
-<AuthModal
-  isOpen={isLoginModalOpen}
-  onClose={closeLoginModal}
-  onSuccess={(userData) => {
-    signIn(userData);
-    setIsLoginModalOpen(false);
-  }}
-/>
+      <AuthModal
+        isOpen={isLoginModalOpen}
+        onClose={closeLoginModal}
+        onSuccess={(userData) => {
+          signIn(userData);
+          setIsLoginModalOpen(false);
+        }}
+      />
     </div>
+  );
+}
+
+export default function ProfilePage() {
+  return (
+    <Suspense fallback={<div className="profile-loading">Loading your profile…</div>}>
+      <ProfileContent />
+    </Suspense>
   );
 }
