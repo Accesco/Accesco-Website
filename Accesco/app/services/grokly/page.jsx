@@ -1481,6 +1481,8 @@ function GroklyPageContent() {
                           width={110}
                           height={110}
                           className="grokly-cat-img"
+                          draggable={false}
+                          onContextMenu={(e) => e.preventDefault()}
                         />
                       </div>
                       <span className="grokly-cat-title">

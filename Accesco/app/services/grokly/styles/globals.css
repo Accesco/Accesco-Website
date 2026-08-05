@@ -420,8 +420,7 @@
 }
 
 .grokly-cat-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.07);
   border-color: #e2e8f0;
 }
 
@@ -439,11 +438,15 @@
   width: 100% !important;
   height: 100% !important;
   object-fit: contain !important;
-  transition: transform 0.3s ease;
+  transition: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-user-drag: none;
+  pointer-events: none;
 }
 
 .grokly-cat-card:hover .grokly-cat-img {
-  transform: scale(1.06);
+  /* no scale – hover kept subtle */
 }
 
 .grokly-cat-title {
