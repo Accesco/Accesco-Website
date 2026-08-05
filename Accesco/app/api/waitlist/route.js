@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { checkRateLimit } from '../_lib/otp-store';
 
+export const dynamic = 'force-dynamic';
+
 function getClientIp(request) {
   const forwardedFor = request.headers.get('x-forwarded-for');
   if (forwardedFor) {
