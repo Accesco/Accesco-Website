@@ -130,29 +130,29 @@ export const categories = [
  * @type {Array<{bg: string, tag: string, title: string, sub: string}>}
  */
 export const banners = [
-  { 
-    bg: "linear-gradient(135deg,#0c831f,#065f17)", 
-    tag: "UP TO 30% OFF", 
-    title: "Farm Fresh Veggies", 
-    sub: "Direct from farm to your door in 11 mins" 
+  {
+    bg: "linear-gradient(135deg,#0c831f,#065f17)",
+    tag: "UP TO 30% OFF",
+    title: "Farm Fresh Veggies",
+    sub: "Direct from farm to your door in 11 mins"
   },
-  { 
-    bg: "linear-gradient(135deg,#1d4ed8,#1e40af)", 
-    tag: "BESTSELLERS", 
-    title: "Dairy Essentials", 
-    sub: "Amul, Mother Dairy & 100+ brands" 
+  {
+    bg: "linear-gradient(135deg,#1d4ed8,#1e40af)",
+    tag: "BESTSELLERS",
+    title: "Dairy Essentials",
+    sub: "Amul, Mother Dairy & 100+ brands"
   },
-  { 
-    bg: "linear-gradient(135deg,#b45309,#92400e)", 
-    tag: "SAVE BIG TODAY", 
-    title: "Morning Bliss", 
-    sub: "Tea, Coffee & Healthy Drinks" 
+  {
+    bg: "linear-gradient(135deg,#b45309,#92400e)",
+    tag: "SAVE BIG TODAY",
+    title: "Morning Bliss",
+    sub: "Tea, Coffee & Healthy Drinks"
   },
-  { 
-    bg: "linear-gradient(135deg,#7c3aed,#5b21b6)", 
-    tag: "NEW ARRIVALS", 
-    title: "Sweet Cravings", 
-    sub: "Chocolates, candy & more treats" 
+  {
+    bg: "linear-gradient(135deg,#7c3aed,#5b21b6)",
+    tag: "NEW ARRIVALS",
+    title: "Sweet Cravings",
+    sub: "Chocolates, candy & more treats"
   },
 ];
 
@@ -186,9 +186,9 @@ export function getProductsByCategory(categoryId, productsArray) {
  */
 export function searchProducts(query, productsArray) {
   if (!query || query.trim() === '') return productsArray;
-  
+
   const lowerQuery = query.toLowerCase().trim();
-  return productsArray.filter(product => 
+  return productsArray.filter(product =>
     product.name.toLowerCase().includes(lowerQuery) ||
     product.brand.toLowerCase().includes(lowerQuery) ||
     product.category.toLowerCase().includes(lowerQuery)
@@ -224,7 +224,7 @@ export function getFeaturedProducts(productsArray, limit = 20) {
  * @returns {Array} Products with the specified tag
  */
 export function getProductsByTag(tag, productsArray) {
-  return productsArray.filter(product => 
+  return productsArray.filter(product =>
     product.tags && product.tags.includes(tag)
   );
 }
@@ -237,7 +237,7 @@ export function getProductsByTag(tag, productsArray) {
  */
 export function sortProducts(productsArray, sortBy) {
   const sorted = [...productsArray];
-  
+
   switch (sortBy) {
     case 'price-low':
       return sorted.sort((a, b) => a.price - b.price);
