@@ -15,7 +15,14 @@ export async function verifyAuthToken(request) {
   try {
     const token = authHeader.split('Bearer ')[1];
     const decoded = await adminAuth.verifyIdToken(token);
-    
+
+    // Anonymous sessions exist only to hold a pre-signup referral visit (see
+    // lib/referralService.js). They are not accounts and must never satisfy
+    // an authenticated API call.
+    if (decoded.firebase?.sign_in_provider === 'anonymous') {
+      return { uid: null, error: 'Unauthorized: anonymous session' };
+    }
+
     // Verify that the requested UID matches the token's UID or phone number
     const tokenUid = decoded.uid;
     const tokenPhone = decoded.phone_number ? decoded.phone_number.replace(/[^\d]/g, '') : null;
