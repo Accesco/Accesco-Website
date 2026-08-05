@@ -56,15 +56,21 @@
 
 .brandText {
   display: flex;
-  flex-direction: column;
-  line-height: 1.05;
+  align-items: baseline;
+  gap: 4px;
+  font-family: var(--font-sora), 'Sora', sans-serif;
+  font-weight: 800;
+  font-size: 1.1rem;
+  color: #7A0042;
+  letter-spacing: -0.02em;
 }
 
 .brandText small {
-  color: #9a8b91;
-  font-size: 8px;
-  font-weight: 700;
-  letter-spacing: 0.42em;
+  font-family: inherit;
+  font-weight: inherit;
+  font-size: 1.1rem;
+  color: inherit;
+  letter-spacing: inherit;
 }
 
 .referralNavigation {
