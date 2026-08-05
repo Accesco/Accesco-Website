@@ -16,6 +16,7 @@
 | Phase 3.10: Dolo fix + filename reconciliation | ✅ Completed | `build_delivery_coverage.py` + `app.py` |
 | Phase 3.11: SKU FAQ in training data + routing fixes | ✅ Completed | `train_classifier.py` + `app.py` + `test_suite.csv` |
 | Phase 4: Live Catalog Sync + Commerce Actions | 📋 Planned (founder-approved plan, 2026-08-05) | see Phase 4 section below |
+| Phase 4a (M1): Live Catalog Sync Service | ✅ Completed (2026-08-05, E2E verified) | `chatbot-ml/inference/live_catalog.py` + `app.py` |
 
 ## Phase 1 — Completed
 
@@ -557,6 +558,80 @@ curl -X POST http://localhost:8000/refresh-products
 # Health now includes catalog_hash + last_sync
 curl http://localhost:8000/health
 ```
+
+## Phase 4a — Live Catalog Sync Service (Completed, 2026-08-05)
+
+**M1 scope done and E2E verified end-to-end — chatbot answers from LIVE
+Firestore, not the static xlsx catalog.**
+
+- [x] **NEW `chatbot-ml/inference/live_catalog.py`** — `LiveCatalog` class:
+  - Fetches via the site's existing APIs (no firebase deps in ML server):
+    `GET /api/products?ventureId=grokly&limit=1000` + `GET /api/instastyle/products?limit=1000`
+  - Normalizes both schemas into one record `{sku, name, brand, category,
+    sub_category, price, mrp, unit, image, in_stock, service, url}` with deep
+    links computed at build time (Grokly → `/services/grokly?search={name}`,
+    InstaStyle → `/services/instastyle/products/{_docId}`)
+  - Hash guard (`sha256` over sku-sorted JSON) skips identical rebuilds;
+    FAISS index built OUTSIDE the lock then swapped atomically under a
+    `threading.Lock` (readers never block during embedding)
+  - Single daemon worker: 600s wait timeout = 10-min polling backup;
+    `request_refresh()` (push hook) coalesces bursts → one rebuild
+  - Disk cache → `data/live_catalog.json` (temp-file + `os.replace()`);
+    FAISS never persisted
+- [x] **`app.py`**: removed static `product_catalog.json`/`product_index.faiss`/
+      `product_ids.pkl` load (faiss+pickle imports dropped); `search_products()`
+      now uses `LIVE.snapshot()`; `POST /refresh-products` returns **202**
+      `{"status":"queued","current_hash"}` non-blocking; `GET /health` extended
+      → `{status, products_indexed, catalog_hash, last_sync}`
+- [x] **NEW `chatbot-ml/inference/test_live_catalog.py`** — stdlib runner (no
+      pytest), fake deterministic embed model: **43/43 pass** — normalization,
+      price coercion, image extraction, hash stability/guard, atomic-swap
+      reader consistency under concurrent refresh, empty-catalog cold start,
+      disk-cache round-trip (+corrupted-cache tolerance), fetch-failure raise
+- [x] **E2E against live Firestore (real accescco-db project)**: 271 products
+      indexed (270 Grokly + 1 InstaStyle); `/search` returns live items
+      (Aashirvaad, Tata, InstaStyle T-Shirt); `/chat` returns live items with
+      correct service; hash guard skips identical rebuild (no duplicate log);
+      site down + restart → catalog loads from disk cache and keeps serving
+- [x] **Regression**: full `test_suite_runner.py` still **112/112 pass** — zero
+      regressions from switching the corpus
+- [x] Data-shape discoveries handled in `live_catalog.py`:
+  - InstaStyle `discountedPrice` is a **-1 sentinel** when no discount
+    (would have produced price -1 → now `<=0` falls back to `price`)
+  - InstaStyle top-level `images` is a list of **objects** `{url, alt,...}`
+    (not strings); `_first_image_url()` handles dicts, plain strings, and
+    `colors[0].images` fallback
+  - Grokly `category` is now slug-style (`atta-rice-dal`); LocalMeds mapping
+    updated to slug set `{"pharma-wellness"}`; `subCategory` often null →
+    normalized to ""; unnamed/`name:null` rows dropped
+  - Empty-catalog cold start returns `([], MAX_PRODUCT_DISTANCE)` — canned
+    replies, never crashes
+- ENV NOTE: this machine's homebrew python3.14 no longer has the ML deps.
+  Server now runs with **`/opt/anaconda3/bin/python3.13`** (has torch, fastapi,
+  transformers); installed `faiss-cpu`, `sentence-transformers`, `requests`
+  into anaconda base. Use this interpreter for uvicorn/tests.
+
+### M1 verification commands
+```bash
+# Terminal 1 — start the site (Firestore-backed APIs)
+cd Accesco && npm run dev          # port 3000
+
+# Terminal 2 — start the chatbot (anaconda python)
+cd accesco-chatbot/chatbot-ml && OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 \
+  /opt/anaconda3/bin/python3.13 -m uvicorn inference.app:app --port 8000
+
+# Terminal 3 — verify
+curl http://localhost:8000/health                    # products_indexed, catalog_hash, last_sync
+curl -X POST http://localhost:8000/refresh-products  # 202 {"status":"queued",...}
+curl -X POST http://localhost:8000/search -H "Content-Type: application/json" \
+  -d '{"text":"aashirvaad atta","top_k":3}'          # live Firestore products
+/opt/anaconda3/bin/python3.13 accesco-chatbot/chatbot-ml/inference/test_live_catalog.py  # 43/43
+/opt/anaconda3/bin/python3.13 accesco-chatbot/chatbot-ml/test_suite_runner.py            # 112/112
+```
+
+**Next (M2):** Next.js notify hook — `Accesco/lib/notifyChatbot.js` calling
+`POST /refresh-products` after product writes (touches Accesco dir, pending
+user go-ahead).
 
 ## Known Open Questions / Decisions
 

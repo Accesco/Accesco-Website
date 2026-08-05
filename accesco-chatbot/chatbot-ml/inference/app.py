@@ -14,10 +14,9 @@ os.environ.setdefault("OMP_NUM_THREADS", "1")
 os.environ.setdefault("MKL_NUM_THREADS", "1")
 
 import json
-import pickle
+import os
 import re
 
-import faiss
 import numpy as np
 import torch
 from fastapi import FastAPI
@@ -25,6 +24,11 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from sentence_transformers import SentenceTransformer
 from transformers import AutoModelForSequenceClassification, AutoTokenizer
+
+try:
+    from inference.live_catalog import LiveCatalog
+except ImportError:
+    from live_catalog import LiveCatalog
 
 torch.set_num_threads(1)
 
@@ -43,14 +47,18 @@ BASE = os.path.dirname(os.path.abspath(__file__))
 DATA_DIR = os.path.join(BASE, "../data")
 MODELS_DIR = os.path.join(BASE, "../models")
 
-with open(os.path.join(DATA_DIR, "product_catalog.json")) as f:
-    CATALOG = json.load(f)
-
-INDEX = faiss.read_index(os.path.join(MODELS_DIR, "product_index.faiss"))
-with open(os.path.join(MODELS_DIR, "product_ids.pkl"), "rb") as f:
-    PRODUCT_NAMES = pickle.load(f)
-
 EMBED_MODEL = SentenceTransformer("all-MiniLM-L6-v2", device="cpu")
+
+# Live product catalog (Firestore-backed via the Next.js site's APIs).
+# Replaces the static SKU-Master xlsx catalog: fetches Grokly + InstaStyle
+# products, rebuilds the FAISS index in memory and hot-swaps it atomically.
+# Refreshed by POST /refresh-products (site push hook) and a 10-minute poll.
+SITE_URL = os.environ.get("ACCESCO_SITE_URL", "http://localhost:3000")
+LIVE = LiveCatalog(
+    SITE_URL,
+    EMBED_MODEL,
+    cache_path=os.path.join(DATA_DIR, "live_catalog.json"),
+)
 
 # Intent classifier (DistilBERT, fine-tuned on FAQ data)
 INTENT_MODEL = AutoModelForSequenceClassification.from_pretrained(
@@ -272,35 +280,33 @@ MAX_PRODUCT_DISTANCE = 15.0
 # If the top product match is closer than this, the query is clearly about a product
 PRODUCT_QUERY_DISTANCE = 1.1
 
-# Which Accesco vertical (service) a category belongs to.
-# Default: Grokly (grocery). No fashion/food products exist in the catalog yet.
-LOCALMEDS_CATEGORIES = {"Pharma & Wellness", "Health & Hygiene"}
-
-def service_for(category: str) -> str:
-    return "LocalMeds" if category in LOCALMEDS_CATEGORIES else "Grokly"
-
 def search_products(text: str, top_k: int = 5) -> tuple[list[dict], float]:
     """Embed the query and return (top_k closest products, best distance).
-    Results beyond MAX_PRODUCT_DISTANCE are discarded as irrelevant."""
+    Results beyond MAX_PRODUCT_DISTANCE are discarded as irrelevant.
+    Searches the LIVE Firestore-backed catalog (snapshot-swapped by the
+    LiveCatalog worker). Empty catalog (cold start) → empty results."""
+    products, index = LIVE.snapshot()
+    if index is None or not products:
+        return [], MAX_PRODUCT_DISTANCE
     vec = EMBED_MODEL.encode([text]).astype(np.float32)
-    distances, indices = INDEX.search(vec, top_k)
+    distances, indices = index.search(vec, min(top_k, len(products)))
     results = []
     best_distance = float("inf")
     for idx, dist in zip(indices[0], distances[0]):
-        if idx < 0 or idx >= len(CATALOG):
+        if idx < 0 or idx >= len(products):
             continue
         if dist > MAX_PRODUCT_DISTANCE:
             continue
         best_distance = min(best_distance, float(dist))
-        p = CATALOG[int(idx)]
+        p = products[int(idx)]
         results.append({
-            "product_name": p["product_name"],
+            "product_name": p["name"],
             "brand": p["brand"],
             "category": p["category"],
             "sub_category": p["sub_category"],
-            "selling_price": p["selling_price"],
-            "sku_id": p["sku_id"],
-            "service": service_for(p["category"]),
+            "selling_price": p["price"],
+            "sku_id": p["sku"],
+            "service": p["service"],
         })
     if best_distance == float("inf"):
         best_distance = MAX_PRODUCT_DISTANCE
@@ -311,7 +317,27 @@ def search_products(text: str, top_k: int = 5) -> tuple[list[dict], float]:
 
 @app.get("/health")
 def health():
-    return {"status": "ok", "products_indexed": len(CATALOG)}
+    state = LIVE.state()
+    return {
+        "status": "ok",
+        "products_indexed": state["products_indexed"],
+        "catalog_hash": state["catalog_hash"],
+        "last_sync": state["last_sync"],
+    }
+
+
+# ─── Route: Refresh live catalog (push hook from the Next.js site) ──────────
+
+@app.post("/refresh-products", status_code=202)
+def refresh_products():
+    """Queue a background catalog rebuild and return immediately. The site
+    calls this after product writes; the worker coalesces bursts and the
+    10-minute poll covers anything missed."""
+    LIVE.request_refresh()
+    return {
+        "status": "queued",
+        "current_hash": LIVE.state()["catalog_hash"],
+    }
 
 
 # ─── Route: Intent classification ───────────────────────────────────────────
