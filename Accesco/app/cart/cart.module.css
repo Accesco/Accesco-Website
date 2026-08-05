@@ -1,0 +1,729 @@
+/* ================================================================
+   ACCESCO LIVING — UNIFIED CART PAGE
+   Aggregates Swadishtt (red) + Grokly (green) + Insta Style (brown)
+   ================================================================ */
+
+.page {
+  min-height: 100vh;
+  background: #F7F7F9;
+}
+
+/* ── Top bar ── */
+.topBar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: #FFFFFF;
+  border-bottom: 1px solid #EFEFF2;
+  padding: 16px 20px;
+}
+
+.topBarLeft {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-shrink: 0;
+}
+
+.backBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 9999px;
+  border: none;
+  background: none;
+  color: #111111;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.2s;
+}
+
+.backBtn:hover {
+  background: rgba(0, 0, 0, 0.06);
+}
+
+.title {
+  font-family: 'Sora', sans-serif;
+  font-weight: 800;
+  font-size: 1.35rem;
+  color: #111111;
+  line-height: 1.2;
+}
+
+.subtitle {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.82rem;
+  color: #8A8A93;
+  margin-top: 2px;
+}
+
+.searchWrap {
+  display: none;
+  flex: 1;
+  align-items: center;
+  gap: 8px;
+  max-width: 460px;
+  margin: 0 auto;
+  padding: 10px 16px;
+  border-radius: 9999px;
+  background: #F3F3F6;
+  color: #8A8A93;
+}
+
+.searchInput {
+  flex: 1;
+  border: none;
+  background: none;
+  outline: none;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.9rem;
+  color: #111111;
+}
+
+.searchInput::placeholder {
+  color: #A6A6AE;
+}
+
+.topBarRight {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+.iconBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  color: #111111;
+  cursor: pointer;
+  padding: 4px;
+  transition: color 0.2s;
+}
+
+.iconBtn:hover {
+  color: #7A0042;
+}
+
+/* ── Body layout ── */
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 16px;
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+.storesColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+}
+
+/* ── Empty state ── */
+.emptyState {
+  background: #FFFFFF;
+  border: 1px solid #EFEFF2;
+  border-radius: 16px;
+  padding: 48px 24px;
+  text-align: center;
+  color: #6B6B75;
+  font-family: 'DM Sans', sans-serif;
+}
+
+.emptyTitle {
+  font-family: 'Sora', sans-serif;
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: #111111;
+  margin-bottom: 8px;
+}
+
+.emptyDesc {
+  font-size: 0.9rem;
+  margin-bottom: 20px;
+}
+
+.emptyCta {
+  display: inline-flex;
+  padding: 10px 22px;
+  background: #7A0042;
+  color: #FFFDF8;
+  border-radius: 9999px;
+  text-decoration: none;
+  font-family: 'Sora', sans-serif;
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+
+/* ── Theme tints ── */
+.theme-swadishtt { --accent: #E14615; --tint: #FDECE4; --tint-border: #F6CDB8; }
+.theme-grokly { --accent: #2F9E44; --tint: #E9F7EA; --tint-border: #C3E6C5; }
+.theme-instastyle { --accent: #8A5A2B; --tint: #FBEEE1; --tint-border: #EFD7BA; }
+
+/* ── Store section ── */
+.storeSection {
+  background: #FFFFFF;
+  border: 1px solid var(--tint-border);
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.storeHeader {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px;
+  background: var(--tint);
+  border: none;
+  cursor: pointer;
+  text-align: left;
+}
+
+.storeName {
+  font-family: 'Sora', sans-serif;
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: var(--accent);
+}
+
+.storeHeaderRight {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.itemBadge {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--accent);
+  background: #FFFFFF;
+  border: 1px solid var(--accent);
+  border-radius: 9999px;
+  padding: 3px 10px;
+  white-space: nowrap;
+}
+
+.chevron {
+  color: var(--accent);
+  transition: transform 0.2s ease;
+  flex-shrink: 0;
+}
+
+.itemList {
+  background: #FFFFFF;
+}
+
+.itemRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 18px;
+  border-bottom: 1px solid #F1F1F4;
+  flex-wrap: wrap;
+}
+
+.itemImage {
+  width: 48px;
+  height: 48px;
+  border-radius: 10px;
+  object-fit: cover;
+  flex-shrink: 0;
+  background: #F1F1F4;
+}
+
+.itemInfo {
+  flex: 1 1 120px;
+  min-width: 0;
+}
+
+.itemName {
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 700;
+  font-size: 0.92rem;
+  color: #111111;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.itemVariant {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.76rem;
+  color: #9A9AA3;
+  margin-top: 2px;
+}
+
+.itemPrice {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.84rem;
+  color: #55555F;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.stepper {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid #E2E2E7;
+  border-radius: 8px;
+  overflow: hidden;
+  height: 28px;
+  flex-shrink: 0;
+}
+
+.stepperBtn {
+  width: 26px;
+  height: 100%;
+  border: none;
+  background: #FAFAFC;
+  color: #333333;
+  font-size: 1rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.stepperBtn:hover {
+  background: #EFEFF3;
+}
+
+.stepperQty {
+  min-width: 26px;
+  text-align: center;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #111111;
+}
+
+.itemLineTotal {
+  font-family: 'Sora', sans-serif;
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: #111111;
+  min-width: 56px;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.deleteBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  color: #B4B4BD;
+  cursor: pointer;
+  padding: 4px;
+  flex-shrink: 0;
+  transition: color 0.2s;
+}
+
+.deleteBtn:hover {
+  color: #E14615;
+}
+
+.subtotalRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 18px;
+  background: var(--tint);
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 600;
+  font-size: 0.86rem;
+  color: #333333;
+}
+
+.subtotalAmount {
+  color: var(--accent);
+  font-weight: 800;
+  font-family: 'Sora', sans-serif;
+}
+
+/* ── Mobile bill strip ── */
+.billMobile {
+  background: #FFFFFF;
+  border: 1px solid #EFEFF2;
+  border-radius: 16px;
+  padding: 16px 18px;
+}
+
+.billMobileTitle {
+  font-family: 'Sora', sans-serif;
+  font-weight: 700;
+  font-size: 1rem;
+  color: #111111;
+  margin-bottom: 12px;
+}
+
+.billMobileRow {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+
+.billMobileCol {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  text-align: center;
+  padding: 8px 4px;
+}
+
+.billMobileColLabel {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.72rem;
+  color: #6B6B75;
+}
+
+.billMobileColAmount {
+  font-family: 'Sora', sans-serif;
+  font-weight: 700;
+  font-size: 0.88rem;
+  color: #111111;
+}
+
+.billMobileTotalCol {
+  background: #EEF2FF;
+  border-radius: 12px;
+}
+
+.billMobileTotalCol .billMobileColLabel,
+.billMobileTotalCol .billMobileColAmount {
+  color: #2954E0;
+}
+
+/* ── Desktop bill summary ── */
+.summaryColumn {
+  display: none;
+}
+
+.billDesktop {
+  background: #FFFFFF;
+  border: 1px solid #EFEFF2;
+  border-radius: 18px;
+  padding: 22px;
+  position: sticky;
+  top: 88px;
+}
+
+.billHeading {
+  font-family: 'Sora', sans-serif;
+  font-weight: 800;
+  font-size: 1.15rem;
+  color: #111111;
+  margin-bottom: 16px;
+}
+
+.billStoreList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.billStoreRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.billDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+  background: var(--accent);
+  flex-shrink: 0;
+}
+
+.billStoreName {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.88rem;
+  color: #333333;
+}
+
+.billStoreAmount {
+  margin-left: auto;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 700;
+  font-size: 0.88rem;
+  color: #111111;
+}
+
+.billDivider {
+  height: 1px;
+  background: #EFEFF2;
+  margin: 14px 0;
+}
+
+.billLine {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.88rem;
+  color: #55555F;
+  margin-bottom: 10px;
+}
+
+.freeTag {
+  color: #2F9E44;
+  font-weight: 700;
+}
+
+.grandTotalLine {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-family: 'Sora', sans-serif;
+  font-weight: 800;
+  font-size: 1.1rem;
+  color: #111111;
+}
+
+.grandTotalLine span:last-child {
+  color: #2954E0;
+}
+
+.savingsLine {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 10px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #2F9E44;
+}
+
+.secureBox {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  background: #EEF2FF;
+  border-radius: 14px;
+  padding: 14px;
+  margin-top: 18px;
+}
+
+.secureIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: #DCE4FF;
+  color: #2954E0;
+  flex-shrink: 0;
+}
+
+.secureTitle {
+  font-family: 'Sora', sans-serif;
+  font-weight: 700;
+  font-size: 0.86rem;
+  color: #2954E0;
+}
+
+.secureDesc {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.78rem;
+  color: #6B6B75;
+  margin-top: 2px;
+}
+
+.featureGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  background: #EEF2FF;
+  border-radius: 14px;
+  padding: 14px 8px;
+  margin-top: 12px;
+}
+
+.featureItem {
+  text-align: center;
+}
+
+.featureIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: #DCE4FF;
+  color: #2954E0;
+  margin-bottom: 6px;
+}
+
+.featureTitle {
+  font-family: 'Sora', sans-serif;
+  font-weight: 700;
+  font-size: 0.68rem;
+  color: #111111;
+}
+
+.featureDesc {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.6rem;
+  color: #6B6B75;
+  margin-top: 2px;
+}
+
+.checkoutBtn {
+  width: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 18px;
+  padding: 14px;
+  border: none;
+  border-radius: 9999px;
+  background: #2954E0;
+  color: #FFFFFF;
+  font-family: 'Sora', sans-serif;
+  font-weight: 700;
+  font-size: 0.94rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.checkoutBtn:hover {
+  background: #1E40C7;
+}
+
+.saveForLaterBtn {
+  width: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 10px;
+  padding: 13px;
+  border: 1.5px solid #DCE4FF;
+  border-radius: 9999px;
+  background: #F5F8FF;
+  color: #2954E0;
+  font-family: 'Sora', sans-serif;
+  font-weight: 700;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.saveForLaterBtn:hover {
+  background: #EEF2FF;
+}
+
+.checkoutHint {
+  margin-top: 12px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.78rem;
+  color: #8A8A93;
+  text-align: center;
+}
+
+/* ── Mobile sticky-style checkout bar (in normal flow) ── */
+.checkoutBar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  max-width: 1280px;
+  margin: 0 16px 24px;
+  padding: 14px 18px;
+  border-radius: 16px;
+  background: #2954E0;
+  color: #FFFFFF;
+}
+
+.checkoutBarLabel {
+  font-family: 'Sora', sans-serif;
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.checkoutBarSub {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.72rem;
+  opacity: 0.85;
+}
+
+.checkoutBarAmount {
+  font-family: 'Sora', sans-serif;
+  font-weight: 800;
+  font-size: 1rem;
+  margin-right: auto;
+}
+
+.checkoutBarBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 18px;
+  border: none;
+  border-radius: 9999px;
+  background: #FFFFFF;
+  color: #2954E0;
+  font-family: 'Sora', sans-serif;
+  font-weight: 700;
+  font-size: 0.82rem;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.checkoutHintMobile {
+  max-width: 1280px;
+  margin: -12px 16px 20px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.78rem;
+  color: #8A8A93;
+  text-align: center;
+}
+
+/* ── Desktop layout (>=1024px) ── */
+@media (min-width: 1024px) {
+  .searchWrap {
+    display: flex;
+  }
+
+  .body {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 28px;
+    padding: 28px 32px;
+  }
+
+  .storesColumn {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .summaryColumn {
+    display: block;
+    width: 380px;
+    flex-shrink: 0;
+  }
+
+  .billMobile,
+  .checkoutBar,
+  .checkoutHintMobile {
+    display: none;
+  }
+}
