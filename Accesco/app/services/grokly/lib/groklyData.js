@@ -13,116 +13,116 @@ export const categories = [
     id: "all",
     name: "All",
     color: "#0c831f",
-    image: "https://images.unsplash.com/photo-1534723452862-4c874018d66d?w=100&h=100&fit=crop"
+    image: "/images/grokly-icon.png"
   },
- {
-  id: "vegetables-fruits",
-  name: "Veggies & Fruits",
-  color: "#10b981",
-  image: "https://images.pexels.com/photos/2893635/pexels-photo-2893635.jpeg"
-},
+  {
+    id: "vegetables-fruits",
+    name: "Veggies & Fruits",
+    color: "#10b981",
+    image: "/images/grokly/categories/vegetables-fruits.png"
+  },
   {
     id: "dairy-breakfast",
     name: "Dairy & Breakfast",
     color: "#3b82f6",
-    image: "https://images.pexels.com/photos/36040972/pexels-photo-36040972.jpeg"
+    image: "/images/grokly/categories/dairy-breakfast.png"
   },
   {
     id: "munchies",
     name: "Munchies",
     color: "#f59e0b",
-    image: "https://images.pexels.com/photos/7033900/pexels-photo-7033900.jpeg"
+    image: "/images/grokly/categories/munchies.png"
   },
   {
     id: "cold-drinks",
     name: "Cold Drinks",
     color: "#ef4444",
-    image: "https://images.pexels.com/photos/15205136/pexels-photo-15205136.jpeg"
+    image: "/images/grokly/categories/cold-drinks.png"
   },
   {
     id: "instant-frozen",
     name: "Instant & Frozen",
     color: "#8b5cf6",
-    image: "https://images.pexels.com/photos/4518673/pexels-photo-4518673.jpeg"
+    image: "/images/grokly/categories/instant-frozen.png"
   },
   {
     id: "tea-coffee",
     name: "Tea & Coffee",
     color: "#78350f",
-    image: "https://images.pexels.com/photos/7507583/pexels-photo-7507583.jpeg"
+    image: "/images/grokly/categories/tea-coffee.png"
   },
   {
     id: "bakery-biscuits",
     name: "Bakery & Biscuits",
     color: "#d97706",
-    image: "https://images.pexels.com/photos/7543099/pexels-photo-7543099.jpeg"
+    image: "/images/grokly/categories/bakery-biscuits.png"
   },
   {
     id: "sweet-tooth",
     name: "Sweet Tooth",
     color: "#ec4899",
-    image: "https://images.pexels.com/photos/4113363/pexels-photo-4113363.jpeg"
+    image: "/images/grokly/categories/sweet-tooth.png"
   },
   {
     id: "atta-rice-dal",
     name: "Atta, Rice & Dal",
     color: "#eab308",
-    image: "https://images.pexels.com/photos/5441094/pexels-photo-5441094.jpeg"
+    image: "/images/grokly/categories/atta-rice-dal.png"
   },
   {
     id: "masala-oil",
     name: "Masala & Oil",
     color: "#dc2626",
-    image: "https://images.pexels.com/photos/31275834/pexels-photo-31275834.jpeg"
+    image: "/images/grokly/categories/masala-oil.png"
   },
   {
     id: "sauces-spreads",
     name: "Sauces & Spreads",
     color: "#f97316",
-    image: "https://images.pexels.com/photos/12932886/pexels-photo-12932886.jpeg"
+    image: "/images/grokly/categories/sauces-spreads.png"
   },
   {
     id: "organic-healthy",
     name: "Organic & Healthy",
     color: "#059669",
-    image: "https://images.pexels.com/photos/18142621/pexels-photo-18142621.jpeg"
+    image: "/images/grokly/categories/organic-healthy.png"
   },
   {
     id: "baby-care",
     name: "Baby Care",
     color: "#06b6d4",
-    image: "https://images.pexels.com/photos/30344708/pexels-photo-30344708.jpeg"
+    image: "/images/grokly/categories/baby-care.png"
   },
   {
     id: "pharma-wellness",
     name: "Pharma & Wellness",
     color: "#0891b2",
-    image: "https://images.pexels.com/photos/20140029/pexels-photo-20140029.jpeg"
+    image: "/images/grokly/categories/pharma-wellness.png"
   },
   {
     id: "cleaning",
     name: "Cleaning",
     color: "#0284c7",
-    image: "https://images.pexels.com/photos/10573258/pexels-photo-10573258.jpeg"
+    image: "/images/grokly/categories/cleaning.png"
   },
   {
     id: "home-office",
     name: "Home & Office",
     color: "#6366f1",
-    image: "https://images.pexels.com/photos/7351636/pexels-photo-7351636.jpeg"
+    image: "/images/grokly/categories/home-office.png"
   },
   {
     id: "personal-care",
     name: "Personal Care",
     color: "#a855f7",
-    image: "https://images.pexels.com/photos/7622555/pexels-photo-7622555.jpeg"
+    image: "/images/grokly/categories/personal-care.png"
   },
   {
     id: "pet-care",
     name: "Pet Care",
     color: "#d946ef",
-    image: "https://images.pexels.com/photos/8434633/pexels-photo-8434633.jpeg"
-  },
+    image: "/images/grokly/categories/pet-care.png"
+  }
 ];
 
 /**
