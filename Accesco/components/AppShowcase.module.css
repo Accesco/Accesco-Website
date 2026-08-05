@@ -558,11 +558,20 @@
 }
 
 .feedbackHeaderMark {
+  display: inline-block !important;
   width: 110px !important;
   height: 110px !important;
   margin-right: 32px !important;
-  object-fit: contain !important;
   flex: 0 0 110px !important;
+  background-color: #c60055 !important;
+  -webkit-mask-image: url("/images/asterik.png") !important;
+  mask-image: url("/images/asterik.png") !important;
+  -webkit-mask-repeat: no-repeat !important;
+  mask-repeat: no-repeat !important;
+  -webkit-mask-position: center !important;
+  mask-position: center !important;
+  -webkit-mask-size: contain !important;
+  mask-size: contain !important;
 }
 
 .feedbackBody {

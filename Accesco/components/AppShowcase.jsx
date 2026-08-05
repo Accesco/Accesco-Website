@@ -405,13 +405,9 @@ export default function AppShowcase() {
               </p>
             </div>
 
-            <Image
-              src="/images/asterik.png"
-              alt=""
+            <span
               aria-hidden="true"
               className={styles.feedbackHeaderMark}
-              width={63}
-              height={71}
             />
           </div>
 

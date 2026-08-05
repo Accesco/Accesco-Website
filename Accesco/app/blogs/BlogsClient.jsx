@@ -309,8 +309,25 @@ export default function BlogsClient({ initialPosts }) {
     <h1>blog.</h1>
 
     <div className="hero-categories">
-      {['All', 'Groceries', 'Food', 'Fashion', 'Company news'].map((cat) => (
-        <button key={cat}>{cat}</button>
+      {[
+        { label: 'All Stories', value: 'All' },
+        { label: 'Business', value: 'Business' },
+        { label: 'Innovation', value: 'Innovation' },
+        { label: 'Lifestyle', value: 'Lifestyle' },
+      ].map(({ label, value }) => (
+        <button
+          key={value}
+          type="button"
+          className={
+            activeCategory === value ||
+            (value === 'Innovation' && activeCategory === 'Technology')
+              ? 'active'
+              : ''
+          }
+          onClick={() => filterArchive(value)}
+        >
+          {label}
+        </button>
       ))}
     </div>
   </div>

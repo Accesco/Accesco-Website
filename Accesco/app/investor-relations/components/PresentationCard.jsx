@@ -13,7 +13,11 @@
 }*/
 import Image from 'next/image';
 
-export default function PresentationCard({ title, href }) {
+export default function PresentationCard({ title, href, cover }) {
+  const coverSrc = cover?.src || '/images/corporate-deck-cover.png';
+  const coverWidth = cover?.width || 1742;
+  const coverHeight = cover?.height || 931;
+
   return (
     <article className="presentation-card deck-card">
       <a
@@ -24,11 +28,11 @@ export default function PresentationCard({ title, href }) {
       >
         <div className="deck-preview-wrapper">
           <Image
-            src="/images/corporate-deck-cover.png"
+            src={coverSrc}
             alt={`${title} preview`}
             className="deck-cover"
-            width={1742}
-            height={931}
+            width={coverWidth}
+            height={coverHeight}
           />
 
           <div className="deck-overlay">

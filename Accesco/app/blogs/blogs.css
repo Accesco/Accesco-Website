@@ -1608,9 +1608,10 @@ object-position: center center !important;
   font-weight: 800;
 }
 
-.hero-categories button:first-child {
+.hero-categories button.active {
   background: #fff;
   color: #c90064;
+  border-color: #fff;
 }
 
 .blog-hero-bottom-row {

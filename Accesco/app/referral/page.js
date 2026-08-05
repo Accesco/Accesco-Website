@@ -304,8 +304,8 @@ export default function ReferralPage() {
             className="referralLogo"
           />
           <span className="brandText">
-            ACCESCO
-            <small>L I V I N G</small>
+            Accesco
+            <small>Living</small>
           </span>
         </Link>
 
