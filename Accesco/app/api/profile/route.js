@@ -4,6 +4,8 @@ import { FieldValue } from 'firebase-admin/firestore';
 import { verifyAuthToken } from '../_lib/auth';
 import { isValidEmail, isValidPhone } from '../_lib/validators';
 
+export const dynamic = 'force-dynamic';
+
 // GET /api/profile — fetch the authenticated user's profile
 export async function GET(request) {
   try {
