@@ -533,6 +533,43 @@ object-position: center center !important;
   background: var(--accent);
 }
 
+.story-delete-btn {
+  position: absolute;
+  top: 0.75rem;
+  right: 3.25rem;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(0, 0, 0, 0.55);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 14px;
+  z-index: 2;
+  opacity: 0;
+  transition: var(--transition);
+}
+
+.story-card:hover .story-delete-btn {
+  opacity: 1;
+}
+
+.story-delete-btn:hover {
+  background: #ef4444;
+}
+
+.story-delete-btn:disabled {
+  cursor: not-allowed;
+  opacity: 1;
+}
+
+.spin-icon {
+  animation: spin 1s linear infinite;
+}
+
 .story-content {
   padding: 1.5rem;
   display: flex;
