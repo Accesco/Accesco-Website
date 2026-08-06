@@ -281,7 +281,7 @@ function AuthModalContent({
     if (!code) return null
 
     if (!isValidReferralCodeFormat(code)) {
-      return 'Referral code should be 4-20 letters or numbers, e.g. XYZ'
+      return 'Referral code should be 4-20 letters or numbers, Eg. XYZ'
     }
 
     if (referralStatus.state === 'valid') return null

@@ -964,12 +964,15 @@ button:disabled {
   }
 
   .referralNavigation a.getAppButton {
-    display: none !important;
+    display: inline-flex !important;
+    background: linear-gradient(135deg, #97004c, #700038) !important;
+    color: white !important;
+    height: 34px !important;
   }
 
   .referralNavigation a {
     min-width: auto;
-    height: 36px;
+    height: 34px;
     padding: 0 12px;
     font-size: 11px;
   }
