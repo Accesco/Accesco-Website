@@ -8,7 +8,12 @@
 #                         must contain at least ONE of them (blank = skip)
 #   3. expect_products  — "yes" (must return products), "no" (must not),
 #                         "any" (skip)
-#   4. known_issue      — "yes" marks a row that currently fails because of a
+#   4. expect_cards     — "yes" (must return product cards), "no" (must not),
+#                         "any" (skip)
+#   5. expect_action_url — pipe-separated substrings; at least one must appear
+#                         in an action's url. Literal "none" = must have NO
+#                         actions at all.
+#   6. known_issue      — "yes" marks a row that currently fails because of a
 #                         known model weakness (documented in notes). These are
 #                         reported as XFAIL and don't fail the run; if one
 #                         starts passing it's reported as XPASS (fixed — remove
@@ -82,6 +87,28 @@ def check_row(row: dict, resp: dict) -> list[str]:
         failures.append("products: expected results, got none")
     elif expect_products == "no" and got_products:
         failures.append(f"products: expected none, got {len(resp['products'])}")
+
+    # 4. cards (Phase 4c conversion cards)
+    expect_cards = row.get("expect_cards", "any").strip().lower()
+    got_cards = bool(resp.get("cards"))
+    if expect_cards == "yes" and not got_cards:
+        failures.append("cards: expected cards, got none")
+    elif expect_cards == "no" and got_cards:
+        failures.append(f"cards: expected none, got {len(resp['cards'])}")
+
+    # 5. action urls (any-of substrings; "none" = no actions at all)
+    expect_url = row.get("expect_action_url", "").strip()
+    if expect_url:
+        action_urls = " | ".join(
+            a.get("url", "") for a in (resp.get("actions") or [])
+        ).lower()
+        if expect_url.lower() == "none":
+            if action_urls:
+                failures.append(f"actions: expected none, got [{action_urls}]")
+        else:
+            options = [o.strip().lower() for o in expect_url.split("|") if o.strip()]
+            if not any(opt in action_urls for opt in options):
+                failures.append(f"actions: none of {options} in urls [{action_urls}]")
 
     return failures
 
@@ -164,7 +191,9 @@ def main() -> int:
         if show:
             print(f"{status} #{rid:>3} ({cat}) {question!r}")
             print(f"       intent={resp['intent']} conf={resp['confidence']:.2f} "
-                  f"products={len(resp.get('products') or [])}")
+                  f"products={len(resp.get('products') or [])} "
+                  f"cards={len(resp.get('cards') or [])} "
+                  f"actions={[a.get('url') for a in (resp.get('actions') or [])]}")
             if failures:
                 for fdesc in failures:
                     print(f"       ✗ {fdesc}")

@@ -18,7 +18,9 @@ TEST = [
     ("do i get rewards for returning items?", "reward points"),
     # Row-table answers (category FAQs must not steal confident row matches)
     ("do you take back glass bottles?", "Beverages"),
-    ("do you take back bottles?", "ambiguous"),
+    # Generic "bottles" is ambiguous for the row table — the Beverages FAQ
+    # answers it directly now (handed back to delivery partner)
+    ("do you take back bottles?", "handed back"),
     ("what do you do with empty pet bottles?", "ambiguous"),
     ("can i return cola cans?", "Beverages"),
     ("do you take back milk bottles?", "Fresh & Dairy"),
@@ -33,13 +35,16 @@ TEST = [
     ("do you take back cosmetic bottles?", "Beauty"),
     ("do you take back detergent bottles?", "Home Care"),
     ("do you take back strollers?", "Baby"),
-    ("do you reuse baby toys?", "ambiguous"),
+    # Baby FAQ now answers directly instead of "which one did you mean?"
+    ("do you reuse baby toys?", "returned for cleaning"),
     ("do you take back pet carriers?", "ambiguous"),
     ("do you take back old clothes?", "Fashion"),
     ("what happens to returned shoes?", "Fashion"),
     ("do you take back cookware?", "Kitchen"),
     ("do you take back old phones?", "Electronics"),
-    ("is e-waste collected?", "Electronics"),
+    # Electronics FAQ now answers directly ("schedule a pickup") instead of
+    # the bare row-table sentence
+    ("is e-waste collected?", "schedule a pickup"),
     ("can i return my old charger?", "Electronics"),
     ("do you take back books?", "Books & Stationery"),
     ("do you take back backpacks?", "Books & Stationery"),

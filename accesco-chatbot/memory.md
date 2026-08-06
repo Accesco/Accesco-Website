@@ -15,6 +15,11 @@
 | Phase 3.9: Marketing recovery FAQ answers | ✅ Completed | `chatbot-ml/data/build_recovery_faq.py` + `app.py` |
 | Phase 3.10: Dolo fix + filename reconciliation | ✅ Completed | `build_delivery_coverage.py` + `app.py` |
 | Phase 3.11: SKU FAQ in training data + routing fixes | ✅ Completed | `train_classifier.py` + `app.py` + `test_suite.csv` |
+| Phase 4: Live Catalog Sync + Commerce Actions | 📋 Planned (founder-approved plan, 2026-08-05) | see Phase 4 section below |
+| Phase 4a (M1): Live Catalog Sync Service | ✅ Completed (2026-08-05, E2E verified) | `chatbot-ml/inference/live_catalog.py` + `app.py` |
+| Phase 4b (M2): Next.js notify hook | ✅ Completed (2026-08-06) | `Accesco/lib/notifyChatbot.js` + both product POST routes |
+| Phase 4c+4d (M3): Response schema + commerce routing | ✅ Completed (2026-08-06, 132/132 suite) | `app.py` (Action/ProductCard/ChatResponse, commerce_reply) |
+| Phase 4: Frontend rendering (M4) | ✅ Completed (2026-08-06, 140/140 suite) | `Accesco/app/components/AccescoInlineChatbot.jsx` + `useProducts.js` + `page.jsx` + `app.py` |
 
 ## Phase 1 — Completed
 
@@ -374,10 +379,396 @@ python3 accesco-chatbot/chatbot-ml/train/train_classifier.py 12
 # (scripts print → and the data contains em-dashes; cp1252 console crashes)
 ```
 
+## Phase 4 — Live Catalog Sync + Commerce Actions (Planned, 2026-08-05)
+
+**Founder feedback (approved direction):**
+1. Any SKU added to the database must **auto-sync into the chatbot** — no manual
+   rebuild steps. "Auto-training" = rebuild FAISS index from Firestore, NOT
+   retraining DistilBERT (intent labels are product-agnostic).
+2. Product queries should drive **conversion**: category redirects ("I want to
+   buy snacks" → Munchies section button) and direct order buttons ("I want to
+   order Lay's chips ₹20" → product card + Order on Grokly button), with
+   product/category-level accuracy.
+
+### Exploration findings (verified)
+- Live product DB is **Firebase Firestore**: Grokly collection `products`
+  (`Accesco/app/api/products/route.js`), InstaStyle `instastyle_products`
+  (`Accesco/app/api/instastyle/products/route.js`). No webhooks on product add.
+- Chatbot currently searches a **static 10,711-SKU benchmark xlsx catalog**
+  (`product_catalog.json` + FAISS) — disconnected from what the site sells.
+- `/chat` already returns structured JSON; frontend (`AccescoInlineChatbot.jsx`)
+  renders only `data.reply` as plain text — no buttons/cards.
+- Deep-link targets: `/services/grokly/category/[id]` (25 ids, e.g. `munchies`),
+  `/services/grokly?search=...` (no per-product page),
+  `/services/instastyle/products/[id]` (resolves by doc ID or `id` — verified),
+  `/services/swadisht`, `/services/localmeds`, etc.
+
+### User decisions
+- **Firestore-only product knowledge** — retire xlsx catalog as the
+  order-answering source (files stay on disk; server stops loading them).
+- **Push hook + polling backup with hash guard**; non-blocking 202 rebuilds;
+  atomic index swap. All verticals get buttons.
+
+### Phase 4a — Live catalog sync service (`chatbot-ml/inference/live_catalog.py`, new)
+- Fetch via existing Next.js APIs (no firebase deps in ML server):
+  - `GET {ACCESCO_SITE_URL}/api/products?ventureId=grokly&limit=1000`
+    → `{products: [{id, sku, ventureId, name, brand, category, subCategory,
+    price, mrp, unit, image, inStock, ...}], count}`
+  - `GET {ACCESCO_SITE_URL}/api/instastyle/products?limit=1000`
+    → `{success, products: [{_docId, id, name, brand, category, subcategory,
+    price, discountedPrice, images[], inStock, ...}], count}` (GET orders by
+    timestamp desc; docs missing `timestamp` excluded by Firestore — acceptable)
+  - `ACCESCO_SITE_URL` env var, default `http://localhost:3000`. Add `requests`.
+- Normalize both schemas → `{sku, name, brand, category, sub_category, price,
+  mrp, unit, image, in_stock, service ("Grokly"|"InstaStyle"), url}`. Deep links
+  computed at build time: InstaStyle → `/services/instastyle/products/{_docId}`;
+  Grokly → `/services/grokly?search={encoded name}`. InstaStyle price =
+  `discountedPrice or price`; image = `images[0]`.
+- `LiveCatalog` class (plain `threading`):
+  - `fetch_products()` → both GETs, normalize, merge; raise only if both fail
+  - `compute_hash(products)` → `sha256(json.dumps(sorted-by-sku, sort_keys=True))`;
+    unchanged hash → skip rebuild
+  - `build_index(products)` → search texts `"{name} {brand} {category}
+    {sub_category}"`, reuse MiniLM `EMBED_MODEL`, `faiss.IndexFlatL2`,
+    in-memory only
+  - **Atomic swap**: build fully, then swap `(products, index, hash)` under a
+    `threading.Lock`; readers `snapshot()` under same lock. Never mutate live index.
+  - **Single daemon worker**: `while True: _rebuild_pending.wait(timeout=600);
+    clear; rebuild()`. 600s timeout = 10-min polling backup; one worker coalesces
+    bursts (5 rapid POSTs → 1 rebuild).
+  - **Disk cache** → `data/live_catalog.json` (products + hash + timestamp) via
+    temp-file + `os.replace()`. FAISS never persisted (rebuild is seconds).
+  - Startup: load cache if present, start worker, set pending for immediate fetch.
+- `app.py` changes:
+  - `POST /refresh-products` → set pending event, return **202**
+    `{"status":"queued","current_hash":...}` immediately (non-blocking)
+  - `GET /health` → `{status, products_indexed, catalog_hash, last_sync}`
+  - Replace module-level `CATALOG`/`INDEX` load (lines ~46–51) with `LiveCatalog`;
+    rewrite `search_products()` (line 282) to use `live.snapshot()`
+  - Empty-catalog cold start → `([], MAX_PRODUCT_DISTANCE)` — never crash,
+    fall through to canned replies
+  - Recalibrate `PRODUCT_QUERY_DISTANCE` (1.1 tuned on 10,711 products) against
+    the smaller Firestore corpus (Phase 4e)
+
+### Phase 4b — Next.js notify hook (`Accesco/lib/notifyChatbot.js`, new)
+- Fire-and-forget `fetch(CHATBOT_URL + /refresh-products, {method:'POST'})
+  .catch(()=>{})`; `CHATBOT_URL` env var, default `http://localhost:8000`.
+- Call (no await) after successful writes in `Accesco/app/api/products/route.js`
+  POST and `Accesco/app/api/instastyle/products/route.js` POST.
+- SKU writes never fail because chatbot is down; manual Firestore edits covered
+  by the 10-min poll.
+
+### Phase 4c — Response schema upgrade (`app.py`, ChatResponse at line 154)
+Add backward-compatible fields:
+```python
+class Action(BaseModel):            # type: "order"|"redirect", label, url (relative path)
+class ProductCard(BaseModel):       # name, brand, price, unit, image, service, url
+class ChatResponse(BaseModel):
+    reply: str; intent: str; confidence: float
+    products: ... = None            # legacy, kept
+    cards: list[ProductCard] | None = None
+    actions: list[Action] | None = None
+```
+- Product hit: reply text + `cards:[{Lay's..., url:"/services/grokly?search=..."}]`
+  + `actions:[{type:"order", label:"Order on Grokly", url:...}]`, `intent:"order_product"`
+- Category hit: `actions:[{type:"redirect", label:"Browse Munchies on Grokly",
+  url:"/services/grokly/category/munchies"}]`, `intent:"order_category"`
+- Relative URLs so dev/prod both work. Clients reading only `reply` unaffected.
+
+### Phase 4d — Commerce routing logic (`app.py`)
+**No DistilBERT retraining** — no order intent in the 17 labels; commerce
+detection layers on top of `classify_intent()` with rules + FAISS distance.
+Labels `order_product`/`order_category` synthesized in the response only.
+
+New constants near `FALLBACK_RULES` (~line 173):
+- `CATEGORY_LINKS`: keyword/synonym → (url, label) for all 25 Grokly category
+  ids ("snacks"/"chips"/"namkeen" → munchies; "milk"/"dairy"/"eggs" →
+  dairy-breakfast; ...) + InstaStyle categories ("menswear", "thrift" →
+  `/services/instastyle/...`)
+- `VERTICAL_LINKS`: intent → vertical root ("I want food" → `/services/swadisht`,
+  "medicines" → `/services/localmeds`, ...)
+- `ORDER_VERBS`: order/buy/purchase/get me/i want/i need/looking for/deliver...
+
+New functions: `has_order_intent(text)`, `match_category(text)` (longest-phrase-
+first + difflib 0.85 for typos), `fuzzy_brand_boost(text, products)` (difflib
+token re-rank so "lace chips" → Lay's), and `commerce_reply(...)` inserted in
+`chat()` after recovery, absorbing the existing product-search branch.
+
+Precedence (tight product beats category; category beats loose product):
+1. `best_distance < PRODUCT_QUERY_DISTANCE` → product cards + Order action
+   (top 1–3, out-of-stock noted)
+2. `match_category()` hit + (order verb OR vertical intent OR unknown)
+   → redirect action
+3. Order verb + `best_distance < ORDER_PRODUCT_DISTANCE` (looser, ~1.6)
+   → product cards
+4. Order verb + intent in VERTICAL_LINKS → vertical redirect
+5. None → fall through to existing info/canned paths unchanged. Info replies
+   ("what is grokly?") stay explanations but gain a vertical redirect action.
+
+### Phase 4e — Frontend rendering (`Accesco/app/components/AccescoInlineChatbot.jsx`)
+- In `sendMessage` (~line 85): capture `data.cards`/`data.actions` into the bot
+  message `{id, role, text, time, cards?, actions?}`. Offline fallback sets
+  neither — renders as today.
+- Render after text bubble: product cards (44px `<img>` thumbnail — plain img,
+  not next/image for external URLs — name, brand, "Rs. {price} · {unit}",
+  service badge, "Order" pill `<a href>`) + action-button row (pill `<a href>`
+  per action, `target="_self"`). ~60 lines styled-jsx, #97004F brand palette.
+- Keyed off optional fields → backward compatible.
+
+### Phase 4f — Testing
+- New: `chatbot-ml/inference/test_live_catalog.py` (pytest, no server): hash
+  guard, atomic-swap consistency, both-schema normalization fixtures,
+  empty-catalog behavior, disk-cache round-trip.
+- Extend `test_suite.csv` + `check_row()` with `expect_action_url` /
+  `expect_cards` columns. ~20 new rows: "I want to order lays chips" → cards +
+  grokly url; "i want to buy snacks" → `/category/munchies`; "buy milk" →
+  dairy-breakfast; "I want food" → `/services/swadisht`; "need medicines" →
+  `/services/localmeds`; "mens t-shirts" → instastyle; typo "lace chips";
+  regression rows asserting greetings/coverage/recovery return empty actions.
+  Update existing product rows 26–29 (expected corpus changes to Firestore).
+- Manual E2E: start both servers → note `/health` hash → POST a new SKU
+  ("Testo Cola") to `/api/products` → within ~2s `/health` shows new hash →
+  ask "I want to order testo cola" → card + Order button → click lands on grokly
+  search → restart chatbot with site down → catalog loads from disk cache.
+
+### Phase 4g — Rollout milestones
+- M1 LiveCatalog + `/refresh-products` + `/health` (verify: unit tests, curl
+  202, Firestore products in `/search`)
+- M2 Next.js notify hook (verify: SKU POST with chatbot up → hash changes;
+  chatbot down → write still 200)
+- M3 Schema + commerce routing; recalibrate distance thresholds (curl /chat
+  matrix + full suite)
+- M4 Frontend cards/buttons (manual E2E + offline fallback)
+- M5 Full regression, threshold tuning, document any XFAIL rows
+
+### Risks
+- Small Firestore corpus weakens FAISS separation → tunable thresholds +
+  fuzzy brand re-rank + M3 calibration
+- Grokly GET `limit` default 200 → pass 1000; >1000 products needs API
+  pagination (future note)
+- Windows file locks → FAISS in-memory only; JSON cache via temp+`os.replace()`;
+  new prints ASCII (cp1252)
+- CORS already `allow_origins=["*"]`; `/refresh-products` is server-to-server
+
+### Commands (once implemented)
+```bash
+# Start live-catalog server (unchanged)
+cd accesco-chatbot/chatbot-ml && python3 -m uvicorn inference.app:app --port 8000
+
+# Trigger a refresh
+curl -X POST http://localhost:8000/refresh-products
+
+# Health now includes catalog_hash + last_sync
+curl http://localhost:8000/health
+```
+
+## Phase 4a — Live Catalog Sync Service (Completed, 2026-08-05)
+
+**M1 scope done and E2E verified end-to-end — chatbot answers from LIVE
+Firestore, not the static xlsx catalog.**
+
+- [x] **NEW `chatbot-ml/inference/live_catalog.py`** — `LiveCatalog` class:
+  - Fetches via the site's existing APIs (no firebase deps in ML server):
+    `GET /api/products?ventureId=grokly&limit=1000` + `GET /api/instastyle/products?limit=1000`
+  - Normalizes both schemas into one record `{sku, name, brand, category,
+    sub_category, price, mrp, unit, image, in_stock, service, url}` with deep
+    links computed at build time (Grokly → `/services/grokly?search={name}`,
+    InstaStyle → `/services/instastyle/products/{_docId}`)
+  - Hash guard (`sha256` over sku-sorted JSON) skips identical rebuilds;
+    FAISS index built OUTSIDE the lock then swapped atomically under a
+    `threading.Lock` (readers never block during embedding)
+  - Single daemon worker: 600s wait timeout = 10-min polling backup;
+    `request_refresh()` (push hook) coalesces bursts → one rebuild
+  - Disk cache → `data/live_catalog.json` (temp-file + `os.replace()`);
+    FAISS never persisted
+- [x] **`app.py`**: removed static `product_catalog.json`/`product_index.faiss`/
+      `product_ids.pkl` load (faiss+pickle imports dropped); `search_products()`
+      now uses `LIVE.snapshot()`; `POST /refresh-products` returns **202**
+      `{"status":"queued","current_hash"}` non-blocking; `GET /health` extended
+      → `{status, products_indexed, catalog_hash, last_sync}`
+- [x] **NEW `chatbot-ml/inference/test_live_catalog.py`** — stdlib runner (no
+      pytest), fake deterministic embed model: **43/43 pass** — normalization,
+      price coercion, image extraction, hash stability/guard, atomic-swap
+      reader consistency under concurrent refresh, empty-catalog cold start,
+      disk-cache round-trip (+corrupted-cache tolerance), fetch-failure raise
+- [x] **E2E against live Firestore (real accescco-db project)**: 271 products
+      indexed (270 Grokly + 1 InstaStyle); `/search` returns live items
+      (Aashirvaad, Tata, InstaStyle T-Shirt); `/chat` returns live items with
+      correct service; hash guard skips identical rebuild (no duplicate log);
+      site down + restart → catalog loads from disk cache and keeps serving
+- [x] **Regression**: full `test_suite_runner.py` still **112/112 pass** — zero
+      regressions from switching the corpus
+- [x] Data-shape discoveries handled in `live_catalog.py`:
+  - InstaStyle `discountedPrice` is a **-1 sentinel** when no discount
+    (would have produced price -1 → now `<=0` falls back to `price`)
+  - InstaStyle top-level `images` is a list of **objects** `{url, alt,...}`
+    (not strings); `_first_image_url()` handles dicts, plain strings, and
+    `colors[0].images` fallback
+  - Grokly `category` is now slug-style (`atta-rice-dal`); LocalMeds mapping
+    updated to slug set `{"pharma-wellness"}`; `subCategory` often null →
+    normalized to ""; unnamed/`name:null` rows dropped
+  - Empty-catalog cold start returns `([], MAX_PRODUCT_DISTANCE)` — canned
+    replies, never crashes
+- ENV NOTE: this machine's homebrew python3.14 no longer has the ML deps.
+  Server now runs with **`/opt/anaconda3/bin/python3.13`** (has torch, fastapi,
+  transformers); installed `faiss-cpu`, `sentence-transformers`, `requests`
+  into anaconda base. Use this interpreter for uvicorn/tests.
+
+### M1 verification commands
+```bash
+# Terminal 1 — start the site (Firestore-backed APIs)
+cd Accesco && npm run dev          # port 3000
+
+# Terminal 2 — start the chatbot (anaconda python)
+cd accesco-chatbot/chatbot-ml && OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 \
+  /opt/anaconda3/bin/python3.13 -m uvicorn inference.app:app --port 8000
+
+# Terminal 3 — verify
+curl http://localhost:8000/health                    # products_indexed, catalog_hash, last_sync
+curl -X POST http://localhost:8000/refresh-products  # 202 {"status":"queued",...}
+curl -X POST http://localhost:8000/search -H "Content-Type: application/json" \
+  -d '{"text":"aashirvaad atta","top_k":3}'          # live Firestore products
+/opt/anaconda3/bin/python3.13 accesco-chatbot/chatbot-ml/inference/test_live_catalog.py  # 43/43
+/opt/anaconda3/bin/python3.13 accesco-chatbot/chatbot-ml/test_suite_runner.py            # 112/112
+```
+
+**Next (M4):** Frontend rendering — done in `Accesco/app/components/AccescoInlineChatbot.jsx`
+(captures `data.cards`/`data.actions`, renders 54px-thumb product cards + pill action row;
+lint clean). Manual E2E ran (2026-08-06) → cards/redirects verified, then **two defects fixed**:
+(1) weak-match leak, (2) Grokly redirect page empty — see "M4 post-E2E fixes" below.
+
+## M4 post-E2E fixes (2026-08-06)
+
+### Fix 1 — Weak-match leak (`app.py`)
+- Symptom: "i need a bag for school" / "i want phone case" / "show me realme phone"
+  fabricated unrelated product cards (Pringles, T-Shirt) because the P5 loose window
+  `ORDER_PRODUCT_DISTANCE = 1.6` admits FAISS hits as far as 1.5 when the catalog has
+  no such product.
+- Fix:
+  - `_query_tokens()` (meaningful >=4-char tokens minus category keywords) +
+    `_token_overlap()` (any token inside top-5 candidates' name+brand+category).
+  - P5 now requires token overlap → no overlap falls through to the canned reply.
+  - P3 card trim: only cards with per-item `distance < PRODUCT_QUERY_DISTANCE`
+    render ("mens t-shirts" → T-Shirt only, no Tawa/Baby Powder fringe).
+  - `search_products()` attaches per-result `"distance"`; `ProductResult.distance`
+    added (optional, backward compatible).
+- New suite rows 133–136 (weak-match guards, expect no cards/actions), 137
+  ("order surf excel detergent" → cards survive). Suite now **137/137**.
+
+### Fix 2 — Grokly redirect page empty (`useProducts.js` + `page.jsx`)
+- Symptom: clicking Order / product deep link (`/services/grokly?search=<name>`)
+  sometimes showed "No products found".
+- Root causes (TWO — first fix was necessary but not sufficient):
+  1. Grokly page fetched `/api/products?ventureId=grokly` **without** `limit` →
+     API default `limit=200` (route.js), but the live catalog has 265 Grokly
+     products. Products beyond the first 200 Firestore docs never load on the page.
+     → Fixed in `Accesco/app/services/grokly/hooks/useProducts.js` by fetching
+     `...&limit=1000` (same as the chatbot's live_catalog fetch).
+  2. **Stale `useMemo`** in `Accesco/app/services/grokly/page.jsx`: the
+     `filteredProducts` memo filters the async `products` array but the deps
+     array `[activeCategory, searchQuery, activeFilter, sortBy]` was **missing
+     `products`**. On a direct redirect load, render #1 computes the memo with
+     `products = []` (fetch in-flight); when the fetch resolves, none of the
+     memo deps changed → memo stays `[]` forever → "No products found" even
+     though the API returned the product. (Typing in the search box worked
+     because `searchQuery` changed → recompute.)
+     → Fixed by adding `products` to the deps array (page.jsx:134).
+
+### Fix 3 — Coverage matcher hijacks product queries ("garam masala" → "Agram") (`app.py`)
+- Symptom: typing "garam masala" answered "Yes, we deliver to Agram (pincode
+  560007)!" instead of showing the Everest Garam Masala product.
+- Root cause: `match_area()` difflib typo tolerance ran on ANY text (coverage
+  is checked before product search) with `cutoff=0.80`; "garam" vs "Agram"
+  (an actual covered area) scores exactly 0.800 → false positive.
+- Fix: raised difflib cutoff 0.80 → **0.85** (app.py `match_area`). Verified
+  no legitimate typo row drops below: marthahalli→Marathahalli 0.87,
+  marathahlli 0.87, kormangala→Koramangala 0.86; "gram"/"garam masala"/
+  other grocery tokens all below 0.85. Exact/substring area matching
+  unaffected ("agram", "hsr", "btm" still route to coverage).
+- New suite rows 138 (agram coverage still works), 139 ("garam masala" →
+  cards), 140 ("i want to order garam masala" → masala-oil category action,
+  no coverage reply). Suite now **140/140**; recovery 51/51.
+- Live-verified via `/chat`: "garam masala" → 3 cards incl. Everest Garam
+  Masala; "marthahalli" → Marathahalli coverage; "agram" → coverage.
+
+## Phase 4c+4d — M3: Response schema + commerce routing (Completed, 2026-08-06)
+
+### M3 scope completed — `/chat` drives conversion
+
+- [x] **Schema (`app.py`)**: new `Action` (type order/redirect, label, relative
+      url) + `ProductCard` (name, brand, price, image, service, url);
+      `ChatResponse` gains backward-compatible `cards` + `actions`. Old
+      `reply`/`products` clients unaffected.
+- [x] **`search_products()`** returns `url`/`unit`/`image`/`in_stock` per
+      result; `format_products()` marks `(out of stock)`.
+- [x] **`commerce_reply()`** layers conversion on top of `classify_intent()`
+      (no DistilBERT retraining; `order_product`/`order_category` synthesized
+      only in the response):
+  - `has_order_intent()` — whole-word regex ordering verbs ("buy", "need")
+  - `match_category()` — longest-phrase-first + difflib 0.85 typo tolerance
+  - `fuzzy_brand_rank()` — difflib token re-rank ("lace chips" → Lay's)
+  - `_brand_specific()` — apostrophe-tolerant ("lays" matches "Lay's"), so
+    branded orders stay product cards while category words get the shelf
+  - Precedence: **`COMMERCE_INTENTS` gate** (returns/pricing/support/account
+    intents NEVER get cards/actions) → order+category (non-brand) → category
+    without tight product → tight product (cards + Order button) → vertical
+    storefront → loose order product.
+- [x] **Deep links** from the app's real category ids (18 Grokly
+      `/services/grokly/category/{id}` + InstaStyle catalog men/women/kids/
+      accessories + thrift + four vertical roots). Pharmacy words excluded
+      from grocery shelf map ("medicines" → LocalMeds).
+- [x] **Info questions** ("what is grokly?") keep the text explanation but
+      gain a storefront redirect action.
+- [x] **Calibration**: `ORDER_PRODUCT_DISTANCE = 1.6` (new loose bar for order
+      verbs). `PRODUCT_QUERY_DISTANCE` (1.1) retested against the live corpus.
+
+### Tests (all green)
+- 132/132 suite: `test_suite.csv` grew to 132 rows — new `expect_cards` +
+  `expect_action_url` columns and checks in the runner; 20 new `commerce`
+  rows #113–132; existing product/info rows updated to calibrated behaviors.
+- 43/43 live-catalog unit, 51/51 recovery. `test_recovery.py` updated 3
+  probes whose answers were already FAQ-driven ("handed back", "returned for
+  cleaning", "schedule a pickup") — the old harness expected row-table
+  disambiguation that the marketing FAQ had replaced.
+
+| query | response |
+|---|---|
+| i want to order lays chips | ProductCard, Order on Grokly |
+| i want to buy snacks / buy milk / buy veggies | category shelf (munchies/dairy/veggies) |
+| need medicines / i want clothes / i want food | vertical redirect (LocalMeds/InstaStyle/Swadisht) |
+| i want to return my order | stays a refund reply (gate) |
+| amul taaza / coca cola / dettol handwash | product cards, Order button |
+
+## Phase 4b — Next.js notify hook (Completed, 2026-08-06)
+
+- [x] **NEW `Accesco/lib/notifyChatbot.js`** — fire-and-forget
+      `fetch(CHATBOT_URL + /refresh-products, {method:'POST'}).catch(()=>{})`;
+      `CHATBOT_URL` env var, default `http://localhost:8000`. Never blocks or
+      fails the caller — chatbot down = write still succeeds (10-min poll
+      covers manual edits / missed pushes).
+- [x] **Wired (no await) into both product-write routes:**
+  - `Accesco/app/api/products/route.js` POST — after successful `setDoc`
+  - `Accesco/app/api/instastyle/products/route.js` POST — after successful
+    `addDoc` (before the 201 response)
+- [x] Syntax-checked all three files (`node --check`). No `.env.example`
+      exists in Accesco; `CHATBOT_URL` default covers local dev.
+- [ ] VERIFICATION PENDING (needs both servers, ask user before running):
+      SKU POST with chatbot up → `/health` hash changes within ~2s; chatbot
+      down → POST still returns success.
+
+### M2 verification commands
+```bash
+# Terminal 1 — site up, Terminal 2 — chatbot up (anaconda python)
+curl -X POST http://localhost:3000/api/products -H "Content-Type: application/json" \
+  -d '{"sku":"TEST-COLA-001","ventureId":"grokly","name":"Testo Cola","price":20}'
+curl http://localhost:8000/health    # catalog_hash must change after ~2s
+```
+
 ## Known Open Questions / Decisions
 
-- Buy-redirect button SKIPPED for now (SKU Master xlsx has no product URLs) —
-  revisit in Phase 4 if product detail pages get URLs
+- Buy-redirect button SKIPPED for the xlsx catalog (no product URLs) — now
+  SOLVED via Phase 4: deep links computed from Firestore products/URLs in
+  `live_catalog.py` (order buttons + category/vertical redirects)
 - No venv; use `python3` with global site-packages (Python 3.14)
 - Git rule: ALWAYS ask user before any git operation (push/commit/merge)
 - The "1 of 1 error" in dev overlay (`r["@context"].toLowerCase`) is NOT from the

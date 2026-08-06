@@ -131,7 +131,7 @@ function GroklyPageContent() {
     }
 
     return filtered;
-  }, [activeCategory, searchQuery, activeFilter, sortBy]);
+  }, [activeCategory, searchQuery, activeFilter, sortBy, products]);
 
   const productsByCategory = useMemo(() => {
     if (activeCategory !== "all" || searchQuery.trim()) {
