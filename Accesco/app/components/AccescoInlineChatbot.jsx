@@ -234,15 +234,15 @@ const [typing, setTyping] = useState(false)
                     </div>
 
                     {msg.role === 'bot' && msg.cards && msg.cards.length > 0 && (
-                      <div className="ac-ai-product-cards">
+                      <div className="ac-ai-product-carousel">
                         {msg.cards.map((card, ci) => (
                           <a
                             key={ci}
-                            className="ac-ai-product-card"
+                            className="ac-ai-product-card-hz"
                             href={card.url || '#'}
                             target="_self"
                           >
-                            <div className="ac-ai-card-thumb">
+                            <div className="ac-ai-card-hz-thumb">
                               {card.image ? (
                                 <img src={card.image} alt={card.name} />
                               ) : (
@@ -251,18 +251,22 @@ const [typing, setTyping] = useState(false)
                                 </span>
                               )}
                             </div>
-                            <div className="ac-ai-card-body">
-                              <p className="ac-ai-card-name">{card.name}</p>
-                              <p className="ac-ai-card-meta">
-                                {card.brand ? `${card.brand}` : null}
-                                {card.service ? ` · ${card.service}` : ''}
-                              </p>
-                              <p className="ac-ai-card-price">
-                                {card.price ? `₹ ${card.price}` : ''}
-                                {card.unit ? ` / ${card.unit}` : ''}
-                              </p>
+                            <div className="ac-ai-card-hz-body">
+                              <p className="ac-ai-card-hz-name">{card.name}</p>
+                              
+                              <div className="ac-ai-card-hz-rating">
+                                <span className="ac-ai-star">★</span> {card.rating || '4.5'} <span className="ac-ai-reviews">({card.reviews || '423'})</span>
+                              </div>
+
+                              <div className="ac-ai-card-hz-price-row">
+                                <span className="ac-ai-card-hz-price">
+                                  ₹{card.price || '68'}
+                                </span>
+                                <span className="ac-ai-card-hz-old-price">
+                                  ₹{card.originalPrice || '95'}
+                                </span>
+                              </div>
                             </div>
-                            <span className="ac-ai-card-order">Order</span>
                           </a>
                         ))}
                       </div>
@@ -270,16 +274,22 @@ const [typing, setTyping] = useState(false)
 
                     {msg.role === 'bot' && msg.actions && msg.actions.length > 0 && (
                       <div className="ac-ai-actions">
-                        {msg.actions.map((action, ai) => (
-                          <a
-                            key={ai}
-                            className="ac-ai-action"
-                            href={action.url || '#'}
-                            target="_self"
-                          >
-                            {action.label}
-                          </a>
-                        ))}
+                        {msg.actions.map((action, ai) => {
+                          const lbl = (action.label || '').toLowerCase();
+                          const isOrder = lbl.includes('order') || lbl.includes('buy');
+                          return (
+                            <a
+                              key={ai}
+                              className={`ac-ai-action ${isOrder ? 'ac-ai-action-green' : 'ac-ai-action-maroon'}`}
+                              href={action.url || '#'}
+                              target="_self"
+                            >
+                              <span className="ac-ai-green-dot" />
+                              <span className="ac-ai-action-label">{action.label}</span>
+                              <span className="ac-ai-action-arrow">→</span>
+                            </a>
+                          );
+                        })}
                       </div>
                     )}
 
@@ -609,138 +619,277 @@ const [typing, setTyping] = useState(false)
           font-weight: 500;
         }
 
-        .ac-ai-product-cards {
+        .ac-ai-product-carousel {
           margin-top: 12px;
           display: flex;
-          flex-direction: column;
           gap: 12px;
-          align-items: flex-start;
+          overflow-x: auto;
+          padding: 8px;
+          margin-left: -8px;
+          margin-right: -8px;
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+          width: calc(100% + 16px);
+          max-width: calc(100% + 16px);
         }
 
-        .ac-ai-product-card {
+        .ac-ai-product-carousel::-webkit-scrollbar {
+          display: none;
+        }
+
+        .ac-ai-product-card-hz {
           display: flex;
-          align-items: center;
-          gap: 14px;
-          width: 100%;
-          max-width: 460px;
-          padding: 12px 16px;
-          border-radius: 16px;
-          background: #ffffff;
-          border: 1px solid #f3e0ea;
-          box-shadow:
-            0 3px 10px rgba(110, 0, 55, 0.08),
-            0 18px 40px rgba(90, 0, 48, 0.06);
+          flex-direction: column;
+          width: 175px;
+          flex: 0 0 auto;
+          border-radius: 14px;
+          background: #fffdfa;
+          border: 1px solid #f2ebe6;
           text-decoration: none;
-          transition:
-            box-shadow 180ms ease,
-            transform 180ms ease;
-        }
-
-        .ac-ai-product-card:hover {
-          transform: translateY(-2px);
-          box-shadow:
-            0 6px 18px rgba(110, 0, 55, 0.14),
-            0 24px 52px rgba(90, 0, 48, 0.09);
-        }
-
-        .ac-ai-card-thumb {
-          width: 54px;
-          height: 54px;
-          border-radius: 12px;
           overflow: hidden;
-          flex: 0 0 54px;
-          background: #fff1ea;
+          transition: transform 180ms ease, box-shadow 180ms ease;
+          /* Fix for webkit border-radius leak */
+          transform: translateZ(0); 
+        }
+
+        .ac-ai-product-card-hz:hover {
+          transform: translateY(-2px) translateZ(0);
+          box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+        }
+
+        .ac-ai-card-hz-thumb {
+          width: 100%;
+          height: 140px;
+          padding: 10px 10px 0 10px;
           display: flex;
           align-items: center;
           justify-content: center;
+          overflow: hidden;
         }
 
-        .ac-ai-card-thumb img {
+        .ac-ai-card-hz-thumb img {
           width: 100%;
           height: 100%;
           object-fit: cover;
+          border-radius: 8px;
         }
 
-        .ac-ai-card-thumb span {
+        .ac-ai-card-hz-thumb span {
           font-size: 26px;
           font-weight: 700;
           color: #8a0048;
         }
 
-        .ac-ai-card-body {
-          flex: 1;
-          min-width: 0;
+        .ac-ai-card-hz-body {
+          padding: 10px 14px 14px;
+          display: flex;
+          flex-direction: column;
+          gap: 6px;
         }
 
-        .ac-ai-card-name {
+        .ac-ai-card-hz-name {
           margin: 0;
+          font-size: 14px;
+          font-weight: 500;
+          color: #3d2b27;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+
+        .ac-ai-card-hz-rating {
+          font-size: 12px;
+          display: flex;
+          align-items: center;
+          gap: 4px;
+          color: #e58d4a;
+        }
+
+        .ac-ai-card-hz-rating .ac-ai-star {
+          font-size: 13px;
+        }
+
+        .ac-ai-card-hz-rating .ac-ai-reviews {
+          color: #8c7e7b;
+        }
+
+        .ac-ai-card-hz-price-row {
+          display: flex;
+          align-items: baseline;
+          gap: 8px;
+          margin-top: 4px;
+        }
+
+        .ac-ai-card-hz-price {
           font-size: 16px;
-          font-weight: 700;
-          line-height: 1.25;
-          color: #2a1a18;
-          overflow: hidden;
-          text-overflow: ellipsis;
-          white-space: nowrap;
-        }
-
-        .ac-ai-card-meta {
-          margin: 3px 0 0;
-          font-size: 13px;
-          color: #9c6a63;
-          overflow: hidden;
-          text-overflow: ellipsis;
-          white-space: nowrap;
-        }
-
-        .ac-ai-card-price {
-          margin: 4px 0 0;
-          font-size: 13px;
           font-weight: 600;
-          color: #8a0048;
+          color: #b92b27;
         }
 
-        .ac-ai-card-order {
-          margin-left: auto;
-          flex: 0 0 auto;
-          padding: 9px 18px;
-          border-radius: 999px;
-          background: linear-gradient(145deg, #8a0048 0%, #650035 100%);
-          color: #ffffff;
-          font-size: 13px;
-          font-weight: 700;
-          display: inline-block;
-        }
-
-        .ac-ai-card-order:hover {
-          box-shadow: 0 8px 18px rgba(80, 0, 40, 0.3);
+        .ac-ai-card-hz-old-price {
+          font-size: 12px;
+          color: #9c928f;
+          text-decoration: line-through;
         }
 
         .ac-ai-actions {
           margin-top: 14px;
           display: flex;
           flex-wrap: wrap;
-          gap: 10px;
+          gap: 8px;
+          align-items: center;
         }
 
+        /* Base action button */
         .ac-ai-action {
-          padding: 10px 20px;
+          position: relative;
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+          padding: 9px 16px;
           border-radius: 999px;
-          border: 1.5px solid #8a0048;
-          background: rgba(138, 0, 72, 0.06);
-          color: #8a0048;
-          font-size: 14px;
-          font-weight: 700;
+          font-size: 13px;
+          font-weight: 600;
           text-decoration: none;
-          transition:
-            background 160ms ease,
-            color 160ms ease,
-            transform 160ms ease;
+          letter-spacing: -0.01em;
+          cursor: pointer;
+          white-space: nowrap;
+          transition: transform 150ms ease, box-shadow 200ms ease, filter 200ms ease;
         }
 
-        .ac-ai-action:hover {
-          background: #8a0048;
+        .ac-ai-action:active {
+          transform: scale(0.96);
+        }
+
+        /* ORDER button — theme maroon, full-width rectangle, dot + arrow layout */
+        .ac-ai-action-green {
+          background: linear-gradient(135deg, #8a0048 0%, #5e0030 100%);
           color: #ffffff;
+          border: none;
+          border-radius: 10px;
+          width: 100%;
+          padding: 11px 14px 11px 14px;
+          justify-content: flex-start;
+          box-sizing: border-box;
+          overflow: visible;
+          box-shadow:
+            0 3px 12px rgba(90, 0, 48, 0.4),
+            inset 0 1px 0 rgba(255,255,255,0.12);
+        }
+
+        .ac-ai-action-green .ac-ai-green-dot {
+          display: block;
+          width: 8px;
+          height: 8px;
+          border-radius: 50%;
+          background: #ff7eb3;
+          flex: 0 0 8px;
+          box-shadow: 0 0 0 2px rgba(255, 126, 179, 0.35);
+          animation: acGreenPulse 2s infinite ease-in-out;
+        }
+
+        .ac-ai-action-green .ac-ai-action-label {
+          flex: 1;
+        }
+
+        .ac-ai-action-green .ac-ai-action-arrow {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          width: 20px;
+          height: 20px;
+          min-width: 20px;
+          background: rgba(255,255,255,0.15);
+          border-radius: 50%;
+          font-size: 11px;
+          flex: 0 0 20px;
+          transition: transform 200ms ease, background 200ms ease;
+        }
+
+        .ac-ai-action-green:hover {
+          background: linear-gradient(135deg, #a3005a 0%, #780040 100%);
           transform: translateY(-1px);
+          box-shadow: 0 6px 18px rgba(90, 0, 48, 0.5);
+        }
+
+        .ac-ai-action-green:hover .ac-ai-action-arrow {
+          transform: translateX(3px);
+          background: rgba(255,255,255,0.25);
+        }
+
+        /* BROWSE button — same as Order, theme maroon */
+        .ac-ai-action-maroon {
+          background: linear-gradient(135deg, #8a0048 0%, #5e0030 100%);
+          color: #ffffff;
+          border: none;
+          border-radius: 10px;
+          width: 100%;
+          padding: 11px 14px 11px 14px;
+          justify-content: flex-start;
+          box-sizing: border-box;
+          overflow: visible;
+          box-shadow:
+            0 3px 12px rgba(90, 0, 48, 0.4),
+            inset 0 1px 0 rgba(255,255,255,0.12);
+        }
+
+        .ac-ai-action-maroon .ac-ai-green-dot {
+          display: block;
+        }
+
+        .ac-ai-action-maroon .ac-ai-action-label {
+          flex: 1;
+        }
+
+        .ac-ai-action-maroon .ac-ai-action-arrow {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          width: 20px;
+          height: 20px;
+          min-width: 20px;
+          background: rgba(255,255,255,0.15);
+          border-radius: 50%;
+          font-size: 11px;
+          flex: 0 0 20px;
+          transition: transform 200ms ease, background 200ms ease;
+        }
+
+        .ac-ai-action-maroon:hover {
+          background: linear-gradient(135deg, #a3005a 0%, #780040 100%);
+          transform: translateY(-1px);
+          box-shadow: 0 6px 18px rgba(90, 0, 48, 0.5);
+        }
+
+        .ac-ai-action-maroon:hover .ac-ai-action-arrow {
+          transform: translateX(3px);
+          background: rgba(255,255,255,0.25);
+        }
+
+        /* Green dot — shared pulse animation */
+        .ac-ai-green-dot {
+          width: 8px;
+          height: 8px;
+          border-radius: 50%;
+          background: #52d68a;
+          flex: 0 0 8px;
+          box-shadow: 0 0 0 2px rgba(82, 214, 138, 0.3);
+          animation: acGreenPulse 2s infinite ease-in-out;
+        }
+
+        @keyframes acGreenPulse {
+          0%, 100% { box-shadow: 0 0 0 2px rgba(82, 214, 138, 0.3); }
+          50% { box-shadow: 0 0 0 5px rgba(82, 214, 138, 0.1); }
+        }
+
+        .ac-ai-action-label {
+          position: relative;
+          z-index: 1;
+        }
+
+        .ac-ai-action-arrow {
+          position: relative;
+          z-index: 1;
         }
 
         .ac-ai-bubble.typing {
@@ -912,10 +1061,10 @@ const [typing, setTyping] = useState(false)
         }
           /* SMALLER CHATBOT SIZE FIX */
 .ac-ai-window {
-  width: min(620px, calc(100vw - 32px)) !important;
-  height: min(610px, calc(100vh - 96px)) !important;
+  width: min(520px, calc(100vw - 32px)) !important;
+  height: min(480px, calc(100vh - 140px)) !important;
   right: 42px !important;
-  bottom: 84px !important;
+  bottom: 96px !important;
   border-radius: 22px !important;
 }
 
