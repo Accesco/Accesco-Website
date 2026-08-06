@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/firebase';
+import { notifyChatbotRefresh } from '@/lib/notifyChatbot';
 import {
   collection,
   getDocs,
@@ -115,6 +116,8 @@ export async function POST(request) {
     };
 
     const docRef = await addDoc(collection(db, COLLECTION), product);
+
+    notifyChatbotRefresh();
 
     return NextResponse.json(
       { success: true, product, docId: docRef.id },

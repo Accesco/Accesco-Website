@@ -154,16 +154,37 @@ class ProductResult(BaseModel):
     selling_price: str
     sku_id: str
     service: str
+    distance: float | None = None
 
 class SearchResponse(BaseModel):
     query: str
     results: list[ProductResult]
+
+class Action(BaseModel):
+    """Conversion action attached to a chat reply. `url` is a relative path
+    (deep link) so the same payload works in dev and prod."""
+    type: str       # "order" | "redirect"
+    label: str
+    url: str
+
+class ProductCard(BaseModel):
+    name: str
+    brand: str
+    price: str
+    unit: str
+    image: str
+    service: str
+    url: str
 
 class ChatResponse(BaseModel):
     reply: str
     intent: str
     confidence: float
     products: list[ProductResult] | None = None
+    # Phase 4c: backward-compatible conversion fields. Clients that only
+    # read `reply` keep working; new clients render cards + action buttons.
+    cards: list[ProductCard] | None = None
+    actions: list[Action] | None = None
 
 
 # ─── Intent classification (DistilBERT) ─────────────────────────────────────
@@ -307,10 +328,393 @@ def search_products(text: str, top_k: int = 5) -> tuple[list[dict], float]:
             "selling_price": p["price"],
             "sku_id": p["sku"],
             "service": p["service"],
+            "unit": p.get("unit", ""),
+            "image": p.get("image", ""),
+            "url": p.get("url", ""),
+            "in_stock": p.get("in_stock", True),
+            "distance": float(dist),
         })
     if best_distance == float("inf"):
         best_distance = MAX_PRODUCT_DISTANCE
     return results, best_distance
+
+
+# ─── Phase 4d: Commerce routing (order_product / order_category) ────────────
+#
+# Conversion layer layered on TOP of classify_intent(). No DistilBERT
+# retraining: the 17 labels are product-agnostic. "order_product" and
+# "order_category" are synthesized in the response only. Precedence:
+#   tight product > category redirect > loose order product > vertical
+# It absorbs the legacy product-search branch and only fires when it has
+# something to say — otherwise chat() falls through to canned replies.
+
+ORDER_PRODUCT_DISTANCE = 1.6  # looser FAISS bar when an explicit order verb present
+
+# Explicit purchase intent phrasings (short verbs match as whole words)
+ORDER_VERBS = [
+    "order", "buy", "purchase", "get me", "get myself", "send me",
+    "i want", "want to", "wanna", "i need", "need", "need to", "wish to",
+    "looking for", "grab", "pick up", "deliver to me",
+]
+
+# intent → (deep-link URL, button label) for vertical-level redirects.
+# Threaded through info replies (actions) and used for order-by-vertical.
+VERTICAL_LINKS = {
+    "grokly_grocery": ("/services/grokly", "Shop groceries on Grokly"),
+    "swadisht_food": ("/services/swadisht", "Shop food on Swadisht"),
+    "instastyle_fashion": ("/services/instastyle", "Shop fashion on InstaStyle"),
+    "localmeds_pharmacy": ("/services/localmeds", "Shop medicines on LocalMeds"),
+}
+
+# keyword / synonym → (category deep-link, button label). Longest phrase
+# wins. Pharmacy items deliberately stay OFF here so "medicines" redirects
+# to the LocalMeds vertical, not a Grokly category shelf.
+CATEGORY_LINKS = {
+    # Grokly categories (18 ids from app/services/grokly/lib/groklyData.js)
+    "milk": ("/services/grokly/category/dairy-breakfast", "Browse Dairy & Breakfast on Grokly"),
+    "dairy": ("/services/grokly/category/dairy-breakfast", "Browse Dairy & Breakfast on Grokly"),
+    "eggs": ("/services/grokly/category/dairy-breakfast", "Browse Dairy & Breakfast on Grokly"),
+    "curd": ("/services/grokly/category/dairy-breakfast", "Browse Dairy & Breakfast on Grokly"),
+    "yogurt": ("/services/grokly/category/dairy-breakfast", "Browse Dairy & Breakfast on Grokly"),
+    "yoghurt": ("/services/grokly/category/dairy-breakfast", "Browse Dairy & Breakfast on Grokly"),
+    "paneer": ("/services/grokly/category/dairy-breakfast", "Browse Dairy & Breakfast on Grokly"),
+    "cheese": ("/services/grokly/category/dairy-breakfast", "Browse Dairy & Breakfast on Grokly"),
+    "butter": ("/services/grokly/category/dairy-breakfast", "Browse Dairy & Breakfast on Grokly"),
+    "ghee": ("/services/grokly/category/dairy-breakfast", "Browse Dairy & Breakfast on Grokly"),
+    "breakfast": ("/services/grokly/category/dairy-breakfast", "Browse Dairy & Breakfast on Grokly"),
+    "cereal": ("/services/grokly/category/dairy-breakfast", "Browse Dairy & Breakfast on Grokly"),
+    "vegetables": ("/services/grokly/category/vegetables-fruits", "Browse Veggies & Fruits on Grokly"),
+    "veggies": ("/services/grokly/category/vegetables-fruits", "Browse Veggies & Fruits on Grokly"),
+    "fruits": ("/services/grokly/category/vegetables-fruits", "Browse Veggies & Fruits on Grokly"),
+    "produce": ("/services/grokly/category/vegetables-fruits", "Browse Veggies & Fruits on Grokly"),
+    "snacks": ("/services/grokly/category/munchies", "Browse Munchies on Grokly"),
+    "munchies": ("/services/grokly/category/munchies", "Browse Munchies on Grokly"),
+    "chips": ("/services/grokly/category/munchies", "Browse Munchies on Grokly"),
+    "namkeen": ("/services/grokly/category/munchies", "Browse Munchies on Grokly"),
+    "crisps": ("/services/grokly/category/munchies", "Browse Munchies on Grokly"),
+    "cold drink": ("/services/grokly/category/cold-drinks", "Browse Cold Drinks on Grokly"),
+    "cold drinks": ("/services/grokly/category/cold-drinks", "Browse Cold Drinks on Grokly"),
+    "soft drink": ("/services/grokly/category/cold-drinks", "Browse Cold Drinks on Grokly"),
+    "beverages": ("/services/grokly/category/cold-drinks", "Browse Cold Drinks on Grokly"),
+    "cola": ("/services/grokly/category/cold-drinks", "Browse Cold Drinks on Grokly"),
+    "soda": ("/services/grokly/category/cold-drinks", "Browse Cold Drinks on Grokly"),
+    "juice": ("/services/grokly/category/cold-drinks", "Browse Cold Drinks on Grokly"),
+    "instant": ("/services/grokly/category/instant-frozen", "Browse Instant & Frozen on Grokly"),
+    "instant food": ("/services/grokly/category/instant-frozen", "Browse Instant & Frozen on Grokly"),
+    "frozen": ("/services/grokly/category/instant-frozen", "Browse Instant & Frozen on Grokly"),
+    "noodles": ("/services/grokly/category/instant-frozen", "Browse Instant & Frozen on Grokly"),
+    "maggi": ("/services/grokly/category/instant-frozen", "Browse Instant & Frozen on Grokly"),
+    "ready to eat": ("/services/grokly/category/instant-frozen", "Browse Instant & Frozen on Grokly"),
+    "tea": ("/services/grokly/category/tea-coffee", "Browse Tea & Coffee on Grokly"),
+    "coffee": ("/services/grokly/category/tea-coffee", "Browse Tea & Coffee on Grokly"),
+    "chai": ("/services/grokly/category/tea-coffee", "Browse Tea & Coffee on Grokly"),
+    "bakery": ("/services/grokly/category/bakery-biscuits", "Browse Bakery & Biscuits on Grokly"),
+    "biscuits": ("/services/grokly/category/bakery-biscuits", "Browse Bakery & Biscuits on Grokly"),
+    "bread": ("/services/grokly/category/bakery-biscuits", "Browse Bakery & Biscuits on Grokly"),
+    "bakes": ("/services/grokly/category/bakery-biscuits", "Browse Bakery & Biscuits on Grokly"),
+    "sweet tooth": ("/services/grokly/category/sweet-tooth", "Browse Sweet Tooth on Grokly"),
+    "chocolate": ("/services/grokly/category/sweet-tooth", "Browse Sweet Tooth on Grokly"),
+    "candy": ("/services/grokly/category/sweet-tooth", "Browse Sweet Tooth on Grokly"),
+    "desserts": ("/services/grokly/category/sweet-tooth", "Browse Sweet Tooth on Grokly"),
+    "atta": ("/services/grokly/category/atta-rice-dal", "Browse Atta, Rice & Dal on Grokly"),
+    "flour": ("/services/grokly/category/atta-rice-dal", "Browse Atta, Rice & Dal on Grokly"),
+    "rice": ("/services/grokly/category/atta-rice-dal", "Browse Atta, Rice & Dal on Grokly"),
+    "dal": ("/services/grokly/category/atta-rice-dal", "Browse Atta, Rice & Dal on Grokly"),
+    "lentils": ("/services/grokly/category/atta-rice-dal", "Browse Atta, Rice & Dal on Grokly"),
+    "masala": ("/services/grokly/category/masala-oil", "Browse Masala & Oil on Grokly"),
+    "spices": ("/services/grokly/category/masala-oil", "Browse Masala & Oil on Grokly"),
+    "oil": ("/services/grokly/category/masala-oil", "Browse Masala & Oil on Grokly"),
+    "cooking oil": ("/services/grokly/category/masala-oil", "Browse Masala & Oil on Grokly"),
+    "sauces": ("/services/grokly/category/sauces-spreads", "Browse Sauces & Spreads on Grokly"),
+    "ketchup": ("/services/grokly/category/sauces-spreads", "Browse Sauces & Spreads on Grokly"),
+    "spread": ("/services/grokly/category/sauces-spreads", "Browse Sauces & Spreads on Grokly"),
+    "jam": ("/services/grokly/category/sauces-spreads", "Browse Sauces & Spreads on Grokly"),
+    "organic": ("/services/grokly/category/organic-healthy", "Browse Organic & Healthy on Grokly"),
+    "healthy": ("/services/grokly/category/organic-healthy", "Browse Organic & Healthy on Grokly"),
+    "baby": ("/services/grokly/category/baby-care", "Browse Baby Care on Grokly"),
+    "diapers": ("/services/grokly/category/baby-care", "Browse Baby Care on Grokly"),
+    "baby food": ("/services/grokly/category/baby-care", "Browse Baby Care on Grokly"),
+    "vitamins": ("/services/grokly/category/pharma-wellness", "Browse Pharma & Wellness on Grokly"),
+    "supplements": ("/services/grokly/category/pharma-wellness", "Browse Pharma & Wellness on Grokly"),
+    "wellness": ("/services/grokly/category/pharma-wellness", "Browse Pharma & Wellness on Grokly"),
+    "cleaning": ("/services/grokly/category/cleaning", "Browse Cleaning on Grokly"),
+    "detergent": ("/services/grokly/category/cleaning", "Browse Cleaning on Grokly"),
+    "dishwash": ("/services/grokly/category/cleaning", "Browse Cleaning on Grokly"),
+    "disinfectant": ("/services/grokly/category/cleaning", "Browse Cleaning on Grokly"),
+    "personal care": ("/services/grokly/category/personal-care", "Browse Personal Care on Grokly"),
+    "skincare": ("/services/grokly/category/personal-care", "Browse Personal Care on Grokly"),
+    "skin care": ("/services/grokly/category/personal-care", "Browse Personal Care on Grokly"),
+    "shampoo": ("/services/grokly/category/personal-care", "Browse Personal Care on Grokly"),
+    "conditioner": ("/services/grokly/category/personal-care", "Browse Personal Care on Grokly"),
+    "home": ("/services/grokly/category/home-office", "Browse Home & Office on Grokly"),
+    "home & office": ("/services/grokly/category/home-office", "Browse Home & Office on Grokly"),
+    "kitchen": ("/services/grokly/category/home-office", "Browse Home & Office on Grokly"),
+    "stationery": ("/services/grokly/category/home-office", "Browse Home & Office on Grokly"),
+    "pet": ("/services/grokly/category/pet-care", "Browse Pet Care on Grokly"),
+    "pets": ("/services/grokly/category/pet-care", "Browse Pet Care on Grokly"),
+    "pet care": ("/services/grokly/category/pet-care", "Browse Pet Care on Grokly"),
+    "dog food": ("/services/grokly/category/pet-care", "Browse Pet Care on Grokly"),
+    "pet food": ("/services/grokly/category/pet-care", "Browse Pet Care on Grokly"),
+    # Food is the Swadisht vertical, not a Grokly shelf — order queries
+    # redirect to the food storefront
+    "food": ("/services/swadisht", "Order food on Swadisht"),
+    "food delivery": ("/services/swadisht", "Order food on Swadisht"),
+    "meals": ("/services/swadisht", "Order food on Swadisht"),
+    "eat": ("/services/swadisht", "Order food on Swadisht"),
+    # InstaStyle (catalog categories from lib/mockData.js + thrift page)
+    "menswear": ("/services/instastyle/catalog?category=men", "Shop Men on InstaStyle"),
+    "mens": ("/services/instastyle/catalog?category=men", "Shop Men on InstaStyle"),
+    "women": ("/services/instastyle/catalog?category=women", "Shop Women on InstaStyle"),
+    "womenswear": ("/services/instastyle/catalog?category=women", "Shop Women on InstaStyle"),
+    "kids": ("/services/instastyle/catalog?category=kids", "Shop Kids on InstaStyle"),
+    "accessories": ("/services/instastyle/catalog?category=accessories", "Shop Accessories on InstaStyle"),
+    "thrift": ("/services/instastyle/thrift", "Browse Thrift on InstaStyle"),
+    "second hand": ("/services/instastyle/thrift", "Browse Thrift on InstaStyle"),
+    "preloved": ("/services/instastyle/thrift", "Browse Thrift on InstaStyle"),
+    "clothes": ("/services/instastyle/catalog", "Shop fashion on InstaStyle"),
+    "clothing": ("/services/instastyle/catalog", "Shop fashion on InstaStyle"),
+    "fashion": ("/services/instastyle/catalog", "Shop fashion on InstaStyle"),
+    "apparel": ("/services/instastyle/catalog", "Shop fashion on InstaStyle"),
+    "wear": ("/services/instastyle/catalog", "Shop fashion on InstaStyle"),
+}
+
+def has_order_intent(text: str) -> bool:
+    """'I want milk' / 'buy chips' / 'order lay's' — whole-word match for the
+    short verbs so 'order status' (delivery) and 'gold' (recovery) untouched."""
+    import re as _re
+    tl = text.lower()
+    for verb in ORDER_VERBS:
+        if len(verb) <= 3:
+            if _re.search(rf"\b{_re.escape(verb)}\b", tl):
+                return True
+        elif verb in tl:
+            return True
+    return False
+
+def match_category(text: str) -> tuple[str, str] | None:
+    """Return (deep-link, button label) for the best-matching category, or None.
+    Longest-phrase-first, then whole-word keys, then difflib typo tolerance,
+    then substring for 5+ char keys. Nothing matched → None (fall through)."""
+    import difflib
+
+    tl = text.lower()
+    # 1. multi-word phrases (fixed substring; longest first)
+    for phrase in sorted((k for k in CATEGORY_LINKS if " " in k),
+                         key=len, reverse=True):
+        if phrase in tl:
+            return CATEGORY_LINKS[phrase]
+    # 2. single keys that appear as whole words (short ones must be exact
+    #    words — "chai" inside "chaithra"? word boundary kills it)
+    single = sorted((k for k in CATEGORY_LINKS if " " not in k),
+                    key=len, reverse=True)
+    for key in single:
+        if len(key) <= 4 and re.search(rf"\b{re.escape(key)}\b", tl):
+            return CATEGORY_LINKS[key]
+    # 3. difflib per token ("snakcs" → "snacks", "milk" vs "mike")
+    tokens = re.findall(r"[a-z]{3,}", tl)
+    for token in tokens:
+        best = difflib.get_close_matches(token, single, n=1, cutoff=0.85)
+        if best:
+            return CATEGORY_LINKS[best[0]]
+    # 4. substring for longer keys ("breakfasts", "snacking")
+    for key in single:
+        if len(key) >= 5 and key in tl:
+            return CATEGORY_LINKS[key]
+    return None
+
+def fuzzy_brand_rank(text: str, products: list[dict]) -> list[dict]:
+    """Re-rank product results so brand/name tokens beat FAISS-only ordering
+    ("lace chips" → Lay's, "taaza" → Amul Taaza). Token-level difflib overlap
+    with the product name + brand. Falls back to the input order untouched."""
+    import difflib
+
+    if len(products) <= 1:
+        return products
+    tokens = [t for t in re.findall(r"[a-z0-9]+", text.lower()) if len(t) >= 3]
+    if not tokens:
+        return products
+
+    def score(p):
+        corpus = (str(p.get("product_name", "")) + " " + str(p.get("brand", ""))).lower()
+        cands = set(re.findall(r"[a-z0-9]+", corpus))
+        if not cands:
+            return 0.0
+        total = 0.0
+        for t in tokens:
+            total += max(difflib.SequenceMatcher(None, t, c).ratio() for c in cands)
+        return total / len(tokens)
+
+    return sorted(products, key=score, reverse=True)
+
+def product_card(p: dict) -> ProductCard:
+    return ProductCard(
+        name=p["product_name"],
+        brand=p["brand"],
+        price=p["selling_price"],
+        unit=p.get("unit", ""),
+        image=p.get("image", ""),
+        service=p["service"],
+        url=p.get("url", ""),
+    )
+
+PRODUCT_INTENTS = {"grokly_grocery", "swadisht_food", "instastyle_fashion",
+                   "localmeds_pharmacy", "unknown"}
+
+# Intents that can absorb product cards / redirect buttons. Everything else
+# (returns_refunds, pricing_payment, support_contact, ...) must NEVER be
+# hijacked by an order verb — "I want to return my order" is a return, not a
+# purchase, so it keeps the canned reply.
+COMMERCE_INTENTS = PRODUCT_INTENTS | set(VERTICAL_LINKS) | {"greeting"}
+
+def _order_action(ranked: list[dict]) -> None | list[Action]:
+    """Order button for the top-ranked product ('Order on Grokly')."""
+    if not ranked:
+        return None
+    return [Action(type="order", label=f"Order on {ranked[0]['service']}",
+                   url=ranked[0]["url"])]
+
+def _query_tokens(text: str) -> list[str]:
+    """Meaningful query tokens (>=4 chars), minus category shelf keywords."""
+    cat_words = set()
+    for key in CATEGORY_LINKS:
+        cat_words.update(w for w in key.split() if w)
+    return [t for t in re.findall(r"[a-z0-9]{4,}", text.lower()) if t not in cat_words]
+
+def _token_overlap(text: str, products: list[dict]) -> bool:
+    """True when any meaningful query token appears inside any candidate's
+    name+brand (+category). Stops loose FAISS hits from fabricating cards for
+    queries about products that don't exist ("bag for school" → Pringles must
+    not render; 'lays chips' → Lay's renders)."""
+    tokens = _query_tokens(text)
+    if not tokens or not products:
+        return False
+    for p in products[:5]:
+        corpus = (" ".join(str(p.get(f) or "") for f in
+                           ("product_name", "brand", "category"))).lower()
+        if any(t in corpus for t in tokens):
+            return True
+    return False
+
+def _brand_specific(text: str, products: list[dict], best_distance: float) -> bool:
+    """True when an order+category query names an actual product/brand rather
+    than just the category word ("buy Amul milk" vs "buy milk"). Category
+    keywords are excluded from the query tokens, then the rest are checked
+    against the top product's name+brand. Lets 'Lay's chips' keep its product
+    cards while 'buy snacks' gets the category shelf."""
+    if best_distance >= PRODUCT_QUERY_DISTANCE or not products:
+        return False
+    cat_words = set()
+    for key in CATEGORY_LINKS:
+        cat_words.update(w for w in key.split() if w)
+    tl = text.lower()
+    tokens = [t for t in re.findall(r"[a-z]{4,}", tl) if t not in cat_words]
+    if not tokens:
+        return False
+    top = products[0]
+    corpus = (str(top.get("product_name", "")) + " " + str(top.get("brand", ""))).lower()
+    corpus = re.sub(r"[^a-z0-9]", "", corpus)
+    for t in tokens:
+        if t in corpus:
+            return True
+    return False
+
+def commerce_reply(text: str, intent: str, confidence: float,
+                   products: list[dict], best_distance: float):
+    """Build a conversion-oriented reply (product cards / category / vertical
+    redirects), or None to fall through to the legacy canned-reply path.
+
+    Precedence:
+      1. order+category demand WITHOUT a specific product → category shelf
+         ("buy snacks", "i want milk") — the user wants to browse the category
+      2. order+category WITH a specific product name (brand overlap) falls
+         through to product cards ("i want to order lays chips")
+      3. tight product match → product cards + Order button
+         ("amul taaza", or a greeting that lands on a close product)
+      4. order verb + loose product match → product cards
+      5. order verb + vertical intent → the vertical storefront
+    """
+    order = has_order_intent(text)
+    # Non-commerce intents (returns, pricing, support, account...) never get
+    # product cards or redirects — the classic canned reply is the answer.
+    if intent not in COMMERCE_INTENTS:
+        return None
+    tight = bool(products) and best_distance < PRODUCT_QUERY_DISTANCE
+    cat = match_category(text)
+    cat_ok = bool(cat) and (order or intent in VERTICAL_LINKS
+                            or intent in ("unknown", "greeting"))
+
+    # P1 — category shelf for an order demand that isn't brand-specific
+    if cat_ok and order and not _brand_specific(text, products, best_distance):
+        url, label = cat
+        return ChatResponse(
+            reply="Looking for that? We've got a whole selection for it — tap the shortcut below.",
+            intent="order_category", confidence=confidence,
+            products=[], actions=[Action(type="redirect", label=label, url=url)],
+        )
+
+    # P2 — category redirect for non-order queries with no tight product
+    # ("mens t-shirts" → InstaStyle men), never stealing a tight product from
+    # a plain name search ("coca cola" stays product cards)
+    if cat_ok and not tight:
+        url, label = cat
+        return ChatResponse(
+            reply="Looking for that? We've got a whole selection for it — tap the shortcut below.",
+            intent="order_category", confidence=confidence,
+            products=[], actions=[Action(type="redirect", label=label, url=url)],
+        )
+
+    # P3 — tight product match ("amul taaza", "coca cola", brand-specific
+    #       order query that survived the category checks). Cards are trimmed
+    #       to the tight window so a 1.4-distance fringe product never renders
+    #       next to a 0.2 match ("mens t-shirts" → T-Shirt only, no Tawa).
+    if (
+        products
+        and best_distance < PRODUCT_QUERY_DISTANCE
+        and (intent in PRODUCT_INTENTS or intent == "greeting")
+    ):
+        ranked = fuzzy_brand_rank(text, products[:10])
+        if intent == "greeting":
+            service = ranked[0]["service"] if ranked else ""
+            intent = "localmeds_pharmacy" if service == "LocalMeds" else "grokly_grocery"
+        final_intent = "order_product" if has_order_intent(text) else intent
+        tight_cards = [p for p in ranked[:3] if p.get("distance", 0) < PRODUCT_QUERY_DISTANCE]
+        ranked = tight_cards or ranked[:3]
+        return ChatResponse(
+            reply="Here are the best matches for you:\n\n" + format_products(ranked),
+            intent=final_intent, confidence=confidence,
+            products=[ProductResult(**p) for p in ranked[:3]],
+            cards=[product_card(p) for p in ranked[:3]],
+            actions=_order_action(ranked),
+        )
+
+    # P4 — order verb + a vertical intent → the vertical storefront
+    # ("need medicines" → LocalMeds). Runs before the loose-product fallback
+    # so a vertical intent is never answered with an arbitrary cold hit.
+    if order and intent in VERTICAL_LINKS:
+        url, label = VERTICAL_LINKS[intent]
+        return ChatResponse(
+            reply="That's handled right on our storefront — tap the button to get started.",
+            intent="order_category", confidence=confidence,
+            products=[], actions=[Action(type="redirect", label=label, url=url)],
+        )
+
+    # P5 — explicit order verb + looser product match ("i want noodles").
+    # Token-overlap gate: the loose FAISS window (1.1–1.6) is wide enough that
+    # unrelated products sneak in ("i need a bag for school" → Pringles). Cards
+    # are only fabricated when the query actually names the matched product —
+    # otherwise fall through to the canned reply instead of showing junk.
+    if order and products and best_distance < ORDER_PRODUCT_DISTANCE:
+        ranked = fuzzy_brand_rank(text, products[:10])
+        if _token_overlap(text, products[:5]):
+            return ChatResponse(
+                reply="Here are the best matches for you:\n\n" + format_products(ranked),
+                intent="order_product", confidence=confidence,
+                products=[ProductResult(**p) for p in ranked[:3]],
+                cards=[product_card(p) for p in ranked[:3]],
+                actions=_order_action(ranked),
+            )
+
+    return None
 
 
 # ─── Route: Health check ────────────────────────────────────────────────────
@@ -456,7 +860,10 @@ def match_area(text: str) -> tuple[str, dict] | None:
                     for i in range(len(name_words) - len(cand_words) + 1)
                 ):
                     return name, AREA_NAME_TO_ZONE[name]
-        fuzzy = difflib.get_close_matches(cand, all_names, n=1, cutoff=0.80)
+        # difflib typo tolerance ("marthahalli" → Marathahalli). Cutoff 0.85
+        # blocks partial-anagram hits like "garam" → "agram" (0.80) while
+        # keeping real typos (marthahalli 0.87, kormangala 0.86).
+        fuzzy = difflib.get_close_matches(cand, all_names, n=1, cutoff=0.85)
         if fuzzy:
             return fuzzy[0], AREA_NAME_TO_ZONE[fuzzy[0]]
     return None
@@ -539,10 +946,11 @@ def format_products(products: list[dict]) -> str:
     """Structured, bullet-point listing of products for the chat reply."""
     lines = []
     for p in products[:3]:
+        stock = "" if p.get("in_stock", True) else " (out of stock)"
         lines.append(
             f"• {p['product_name']}\n"
             f"  Brand: {p['brand']} | Category: {p['category']} ({p['sub_category']})\n"
-            f"  Available on: {p['service']} | Price: Rs. {p['selling_price']}"
+            f"  Available on: {p['service']} | Price: Rs. {p['selling_price']}{stock}"
         )
     return "\n\n".join(lines)
 
@@ -783,6 +1191,8 @@ def chat(query: Query):
     # 7. Info questions ("what is X", "tell me about X") → explanation only.
     #    Keyword rules first, so typos of vertical names ("what is swadhissht")
     #    resolve to the right intent instead of the model's misclassification.
+    #    Vertical intents gain a storefront redirect action (conversion hint
+    #    without breaking the pure informational reply).
     if is_info_question(text):
         kw = keyword_intent(text)
         if kw is not None:
@@ -792,34 +1202,24 @@ def chat(query: Query):
         reply = INTENT_REPLIES.get(
             intent, "Accesco Living is an intelligent commerce ecosystem built for urban Indian households."
         )
-        return ChatResponse(reply=reply, intent=intent, confidence=confidence, products=[])
+        actions = None
+        if intent in VERTICAL_LINKS:
+            url, label = VERTICAL_LINKS[intent]
+            actions = [Action(type="redirect", label=label, url=url)]
+        return ChatResponse(reply=reply, intent=intent, confidence=confidence,
+                            products=[], actions=actions)
 
-    # 8. "Greeting" classification but a strong product match exists → it's a product query
-    #    ("amul taaza" was misclassified as greeting; FAISS distance separates the two)
-    if intent == "greeting" and best_distance < PRODUCT_QUERY_DISTANCE:
-        intent = "localmeds_pharmacy" if products[0]["service"] == "LocalMeds" else "grokly_grocery"
-        confidence = round(confidence, 3)
+    # 8. Commerce routing absorbs the product-search branch. Precedence:
+    #    tight product → cards + Order button (intent order_product when an
+    #    order verb present, else the classified intent); category / vertical
+    #    redirects for order-verb + loose/unknown queries. Returns None when
+    #    nothing commerce-flavored matched → canned replies below.
+    commerce = commerce_reply(text, intent, confidence, products, best_distance)
+    if commerce is not None:
+        return commerce
 
-    # 9. Build reply
-    PRODUCT_INTENTS = {"grokly_grocery", "swadisht_food", "instastyle_fashion",
-                       "localmeds_pharmacy", "unknown"}
-    # For "unknown", only a genuinely close FAISS match counts as a product
-    # query ("dettol handwash"); random sentences match product names at
-    # distance ~1.0+ and must not get a listing ("how does referral work?")
-    show_products = (
-        intent in PRODUCT_INTENTS and bool(products)
-        and (intent != "unknown" or best_distance < PRODUCT_QUERY_DISTANCE)
-    )
-    if show_products:
-        listing = format_products(products)
-        if intent == "unknown":
-            reply = (
-                f"I found these matching products for you:\n\n{listing}\n\n"
-                "Can you tell me more about what you're looking for?"
-            )
-        else:
-            reply = f"Here are the best matches for you:\n\n{listing}"
-    elif intent == "greeting":
+    # 9. Legacy canned replies (nothing commerce-flavored)
+    if intent == "greeting":
         reply = INTENT_REPLIES["greeting"]
     elif intent == "unknown":
         reply = (
@@ -833,5 +1233,5 @@ def chat(query: Query):
         reply=reply,
         intent=intent,
         confidence=confidence,
-        products=[ProductResult(**p) for p in products[:3]] if show_products else [],
+        products=[],
     )

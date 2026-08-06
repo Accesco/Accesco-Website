@@ -17,6 +17,9 @@
 | Phase 3.11: SKU FAQ in training data + routing fixes | ✅ Completed | `train_classifier.py` + `app.py` + `test_suite.csv` |
 | Phase 4: Live Catalog Sync + Commerce Actions | 📋 Planned (founder-approved plan, 2026-08-05) | see Phase 4 section below |
 | Phase 4a (M1): Live Catalog Sync Service | ✅ Completed (2026-08-05, E2E verified) | `chatbot-ml/inference/live_catalog.py` + `app.py` |
+| Phase 4b (M2): Next.js notify hook | ✅ Completed (2026-08-06) | `Accesco/lib/notifyChatbot.js` + both product POST routes |
+| Phase 4c+4d (M3): Response schema + commerce routing | ✅ Completed (2026-08-06, 132/132 suite) | `app.py` (Action/ProductCard/ChatResponse, commerce_reply) |
+| Phase 4: Frontend rendering (M4) | ✅ Completed (2026-08-06, 140/140 suite) | `Accesco/app/components/AccescoInlineChatbot.jsx` + `useProducts.js` + `page.jsx` + `app.py` |
 
 ## Phase 1 — Completed
 
@@ -629,9 +632,137 @@ curl -X POST http://localhost:8000/search -H "Content-Type: application/json" \
 /opt/anaconda3/bin/python3.13 accesco-chatbot/chatbot-ml/test_suite_runner.py            # 112/112
 ```
 
-**Next (M2):** Next.js notify hook — `Accesco/lib/notifyChatbot.js` calling
-`POST /refresh-products` after product writes (touches Accesco dir, pending
-user go-ahead).
+**Next (M4):** Frontend rendering — done in `Accesco/app/components/AccescoInlineChatbot.jsx`
+(captures `data.cards`/`data.actions`, renders 54px-thumb product cards + pill action row;
+lint clean). Manual E2E ran (2026-08-06) → cards/redirects verified, then **two defects fixed**:
+(1) weak-match leak, (2) Grokly redirect page empty — see "M4 post-E2E fixes" below.
+
+## M4 post-E2E fixes (2026-08-06)
+
+### Fix 1 — Weak-match leak (`app.py`)
+- Symptom: "i need a bag for school" / "i want phone case" / "show me realme phone"
+  fabricated unrelated product cards (Pringles, T-Shirt) because the P5 loose window
+  `ORDER_PRODUCT_DISTANCE = 1.6` admits FAISS hits as far as 1.5 when the catalog has
+  no such product.
+- Fix:
+  - `_query_tokens()` (meaningful >=4-char tokens minus category keywords) +
+    `_token_overlap()` (any token inside top-5 candidates' name+brand+category).
+  - P5 now requires token overlap → no overlap falls through to the canned reply.
+  - P3 card trim: only cards with per-item `distance < PRODUCT_QUERY_DISTANCE`
+    render ("mens t-shirts" → T-Shirt only, no Tawa/Baby Powder fringe).
+  - `search_products()` attaches per-result `"distance"`; `ProductResult.distance`
+    added (optional, backward compatible).
+- New suite rows 133–136 (weak-match guards, expect no cards/actions), 137
+  ("order surf excel detergent" → cards survive). Suite now **137/137**.
+
+### Fix 2 — Grokly redirect page empty (`useProducts.js` + `page.jsx`)
+- Symptom: clicking Order / product deep link (`/services/grokly?search=<name>`)
+  sometimes showed "No products found".
+- Root causes (TWO — first fix was necessary but not sufficient):
+  1. Grokly page fetched `/api/products?ventureId=grokly` **without** `limit` →
+     API default `limit=200` (route.js), but the live catalog has 265 Grokly
+     products. Products beyond the first 200 Firestore docs never load on the page.
+     → Fixed in `Accesco/app/services/grokly/hooks/useProducts.js` by fetching
+     `...&limit=1000` (same as the chatbot's live_catalog fetch).
+  2. **Stale `useMemo`** in `Accesco/app/services/grokly/page.jsx`: the
+     `filteredProducts` memo filters the async `products` array but the deps
+     array `[activeCategory, searchQuery, activeFilter, sortBy]` was **missing
+     `products`**. On a direct redirect load, render #1 computes the memo with
+     `products = []` (fetch in-flight); when the fetch resolves, none of the
+     memo deps changed → memo stays `[]` forever → "No products found" even
+     though the API returned the product. (Typing in the search box worked
+     because `searchQuery` changed → recompute.)
+     → Fixed by adding `products` to the deps array (page.jsx:134).
+
+### Fix 3 — Coverage matcher hijacks product queries ("garam masala" → "Agram") (`app.py`)
+- Symptom: typing "garam masala" answered "Yes, we deliver to Agram (pincode
+  560007)!" instead of showing the Everest Garam Masala product.
+- Root cause: `match_area()` difflib typo tolerance ran on ANY text (coverage
+  is checked before product search) with `cutoff=0.80`; "garam" vs "Agram"
+  (an actual covered area) scores exactly 0.800 → false positive.
+- Fix: raised difflib cutoff 0.80 → **0.85** (app.py `match_area`). Verified
+  no legitimate typo row drops below: marthahalli→Marathahalli 0.87,
+  marathahlli 0.87, kormangala→Koramangala 0.86; "gram"/"garam masala"/
+  other grocery tokens all below 0.85. Exact/substring area matching
+  unaffected ("agram", "hsr", "btm" still route to coverage).
+- New suite rows 138 (agram coverage still works), 139 ("garam masala" →
+  cards), 140 ("i want to order garam masala" → masala-oil category action,
+  no coverage reply). Suite now **140/140**; recovery 51/51.
+- Live-verified via `/chat`: "garam masala" → 3 cards incl. Everest Garam
+  Masala; "marthahalli" → Marathahalli coverage; "agram" → coverage.
+
+## Phase 4c+4d — M3: Response schema + commerce routing (Completed, 2026-08-06)
+
+### M3 scope completed — `/chat` drives conversion
+
+- [x] **Schema (`app.py`)**: new `Action` (type order/redirect, label, relative
+      url) + `ProductCard` (name, brand, price, image, service, url);
+      `ChatResponse` gains backward-compatible `cards` + `actions`. Old
+      `reply`/`products` clients unaffected.
+- [x] **`search_products()`** returns `url`/`unit`/`image`/`in_stock` per
+      result; `format_products()` marks `(out of stock)`.
+- [x] **`commerce_reply()`** layers conversion on top of `classify_intent()`
+      (no DistilBERT retraining; `order_product`/`order_category` synthesized
+      only in the response):
+  - `has_order_intent()` — whole-word regex ordering verbs ("buy", "need")
+  - `match_category()` — longest-phrase-first + difflib 0.85 typo tolerance
+  - `fuzzy_brand_rank()` — difflib token re-rank ("lace chips" → Lay's)
+  - `_brand_specific()` — apostrophe-tolerant ("lays" matches "Lay's"), so
+    branded orders stay product cards while category words get the shelf
+  - Precedence: **`COMMERCE_INTENTS` gate** (returns/pricing/support/account
+    intents NEVER get cards/actions) → order+category (non-brand) → category
+    without tight product → tight product (cards + Order button) → vertical
+    storefront → loose order product.
+- [x] **Deep links** from the app's real category ids (18 Grokly
+      `/services/grokly/category/{id}` + InstaStyle catalog men/women/kids/
+      accessories + thrift + four vertical roots). Pharmacy words excluded
+      from grocery shelf map ("medicines" → LocalMeds).
+- [x] **Info questions** ("what is grokly?") keep the text explanation but
+      gain a storefront redirect action.
+- [x] **Calibration**: `ORDER_PRODUCT_DISTANCE = 1.6` (new loose bar for order
+      verbs). `PRODUCT_QUERY_DISTANCE` (1.1) retested against the live corpus.
+
+### Tests (all green)
+- 132/132 suite: `test_suite.csv` grew to 132 rows — new `expect_cards` +
+  `expect_action_url` columns and checks in the runner; 20 new `commerce`
+  rows #113–132; existing product/info rows updated to calibrated behaviors.
+- 43/43 live-catalog unit, 51/51 recovery. `test_recovery.py` updated 3
+  probes whose answers were already FAQ-driven ("handed back", "returned for
+  cleaning", "schedule a pickup") — the old harness expected row-table
+  disambiguation that the marketing FAQ had replaced.
+
+| query | response |
+|---|---|
+| i want to order lays chips | ProductCard, Order on Grokly |
+| i want to buy snacks / buy milk / buy veggies | category shelf (munchies/dairy/veggies) |
+| need medicines / i want clothes / i want food | vertical redirect (LocalMeds/InstaStyle/Swadisht) |
+| i want to return my order | stays a refund reply (gate) |
+| amul taaza / coca cola / dettol handwash | product cards, Order button |
+
+## Phase 4b — Next.js notify hook (Completed, 2026-08-06)
+
+- [x] **NEW `Accesco/lib/notifyChatbot.js`** — fire-and-forget
+      `fetch(CHATBOT_URL + /refresh-products, {method:'POST'}).catch(()=>{})`;
+      `CHATBOT_URL` env var, default `http://localhost:8000`. Never blocks or
+      fails the caller — chatbot down = write still succeeds (10-min poll
+      covers manual edits / missed pushes).
+- [x] **Wired (no await) into both product-write routes:**
+  - `Accesco/app/api/products/route.js` POST — after successful `setDoc`
+  - `Accesco/app/api/instastyle/products/route.js` POST — after successful
+    `addDoc` (before the 201 response)
+- [x] Syntax-checked all three files (`node --check`). No `.env.example`
+      exists in Accesco; `CHATBOT_URL` default covers local dev.
+- [ ] VERIFICATION PENDING (needs both servers, ask user before running):
+      SKU POST with chatbot up → `/health` hash changes within ~2s; chatbot
+      down → POST still returns success.
+
+### M2 verification commands
+```bash
+# Terminal 1 — site up, Terminal 2 — chatbot up (anaconda python)
+curl -X POST http://localhost:3000/api/products -H "Content-Type: application/json" \
+  -d '{"sku":"TEST-COLA-001","ventureId":"grokly","name":"Testo Cola","price":20}'
+curl http://localhost:8000/health    # catalog_hash must change after ~2s
+```
 
 ## Known Open Questions / Decisions
 

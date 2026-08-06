@@ -75,6 +75,8 @@ const [typing, setTyping] = useState(false)
 
     // TEMPORARY TEST: call FastAPI ML server; fall back to rule-based reply if server is down
     let botText;
+    let botCards = null;
+    let botActions = null;
     try {
       const res = await fetch('http://localhost:8000/chat', {
         method: 'POST',
@@ -84,6 +86,8 @@ const [typing, setTyping] = useState(false)
       if (!res.ok) throw new Error('server error');
       const data = await res.json();
       botText = data.reply;
+      botCards = data.cards && data.cards.length ? data.cards : null;
+      botActions = data.actions && data.actions.length ? data.actions : null;
     } catch (err) {
       botText = getAccescoReply(value);
     }
@@ -95,6 +99,8 @@ const [typing, setTyping] = useState(false)
         role: 'bot',
         text: botText,
         time: getChatTime(),
+        cards: botCards,
+        actions: botActions,
       },
     ]);
 
@@ -226,6 +232,56 @@ const [typing, setTyping] = useState(false)
                         </span>
                       )}
                     </div>
+
+                    {msg.role === 'bot' && msg.cards && msg.cards.length > 0 && (
+                      <div className="ac-ai-product-cards">
+                        {msg.cards.map((card, ci) => (
+                          <a
+                            key={ci}
+                            className="ac-ai-product-card"
+                            href={card.url || '#'}
+                            target="_self"
+                          >
+                            <div className="ac-ai-card-thumb">
+                              {card.image ? (
+                                <img src={card.image} alt={card.name} />
+                              ) : (
+                                <span>
+                                  {(card.brand || card.service || card.name || '?').charAt(0)}
+                                </span>
+                              )}
+                            </div>
+                            <div className="ac-ai-card-body">
+                              <p className="ac-ai-card-name">{card.name}</p>
+                              <p className="ac-ai-card-meta">
+                                {card.brand ? `${card.brand}` : null}
+                                {card.service ? ` · ${card.service}` : ''}
+                              </p>
+                              <p className="ac-ai-card-price">
+                                {card.price ? `₹ ${card.price}` : ''}
+                                {card.unit ? ` / ${card.unit}` : ''}
+                              </p>
+                            </div>
+                            <span className="ac-ai-card-order">Order</span>
+                          </a>
+                        ))}
+                      </div>
+                    )}
+
+                    {msg.role === 'bot' && msg.actions && msg.actions.length > 0 && (
+                      <div className="ac-ai-actions">
+                        {msg.actions.map((action, ai) => (
+                          <a
+                            key={ai}
+                            className="ac-ai-action"
+                            href={action.url || '#'}
+                            target="_self"
+                          >
+                            {action.label}
+                          </a>
+                        ))}
+                      </div>
+                    )}
 
                     {msg.role === 'bot' && (
                       <div className="ac-ai-time">{msg.time}</div>
@@ -551,6 +607,140 @@ const [typing, setTyping] = useState(false)
           color: #8a0048;
           font-size: 18px;
           font-weight: 500;
+        }
+
+        .ac-ai-product-cards {
+          margin-top: 12px;
+          display: flex;
+          flex-direction: column;
+          gap: 12px;
+          align-items: flex-start;
+        }
+
+        .ac-ai-product-card {
+          display: flex;
+          align-items: center;
+          gap: 14px;
+          width: 100%;
+          max-width: 460px;
+          padding: 12px 16px;
+          border-radius: 16px;
+          background: #ffffff;
+          border: 1px solid #f3e0ea;
+          box-shadow:
+            0 3px 10px rgba(110, 0, 55, 0.08),
+            0 18px 40px rgba(90, 0, 48, 0.06);
+          text-decoration: none;
+          transition:
+            box-shadow 180ms ease,
+            transform 180ms ease;
+        }
+
+        .ac-ai-product-card:hover {
+          transform: translateY(-2px);
+          box-shadow:
+            0 6px 18px rgba(110, 0, 55, 0.14),
+            0 24px 52px rgba(90, 0, 48, 0.09);
+        }
+
+        .ac-ai-card-thumb {
+          width: 54px;
+          height: 54px;
+          border-radius: 12px;
+          overflow: hidden;
+          flex: 0 0 54px;
+          background: #fff1ea;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .ac-ai-card-thumb img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+
+        .ac-ai-card-thumb span {
+          font-size: 26px;
+          font-weight: 700;
+          color: #8a0048;
+        }
+
+        .ac-ai-card-body {
+          flex: 1;
+          min-width: 0;
+        }
+
+        .ac-ai-card-name {
+          margin: 0;
+          font-size: 16px;
+          font-weight: 700;
+          line-height: 1.25;
+          color: #2a1a18;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+
+        .ac-ai-card-meta {
+          margin: 3px 0 0;
+          font-size: 13px;
+          color: #9c6a63;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+
+        .ac-ai-card-price {
+          margin: 4px 0 0;
+          font-size: 13px;
+          font-weight: 600;
+          color: #8a0048;
+        }
+
+        .ac-ai-card-order {
+          margin-left: auto;
+          flex: 0 0 auto;
+          padding: 9px 18px;
+          border-radius: 999px;
+          background: linear-gradient(145deg, #8a0048 0%, #650035 100%);
+          color: #ffffff;
+          font-size: 13px;
+          font-weight: 700;
+          display: inline-block;
+        }
+
+        .ac-ai-card-order:hover {
+          box-shadow: 0 8px 18px rgba(80, 0, 40, 0.3);
+        }
+
+        .ac-ai-actions {
+          margin-top: 14px;
+          display: flex;
+          flex-wrap: wrap;
+          gap: 10px;
+        }
+
+        .ac-ai-action {
+          padding: 10px 20px;
+          border-radius: 999px;
+          border: 1.5px solid #8a0048;
+          background: rgba(138, 0, 72, 0.06);
+          color: #8a0048;
+          font-size: 14px;
+          font-weight: 700;
+          text-decoration: none;
+          transition:
+            background 160ms ease,
+            color 160ms ease,
+            transform 160ms ease;
+        }
+
+        .ac-ai-action:hover {
+          background: #8a0048;
+          color: #ffffff;
+          transform: translateY(-1px);
         }
 
         .ac-ai-bubble.typing {

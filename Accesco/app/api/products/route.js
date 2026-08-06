@@ -5,6 +5,7 @@
 
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/firebase';
+import { notifyChatbotRefresh } from '@/lib/notifyChatbot';
 import {
   collection,
   getDocs,
@@ -73,6 +74,8 @@ export async function POST(request) {
       { sku, ventureId, ...rest, updatedAt: now, createdAt: rest.createdAt || now },
       { merge: true }
     );
+
+    notifyChatbotRefresh();
 
     return NextResponse.json({ success: true, sku });
   } catch (error) {

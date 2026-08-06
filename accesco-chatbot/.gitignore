@@ -18,6 +18,7 @@ chatbot-ml/models/
 __pycache__/
 *.pyc
 *.pyo
+chatbot-ml/.pytest_cache/
 
 # macOS
 .DS_Store
