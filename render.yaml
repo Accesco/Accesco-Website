@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: accesco-chatbot
+    runtime: python
+    rootDir: accesco-chatbot/chatbot-ml
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn inference.app:app --host 0.0.0.0 --port $PORT
+    plan: free
+    envVars:
+      - key: ACCESCO_SITE_URL
+        value: https://accesco.in   # replace with your actual deployed site URL
+      - key: OMP_NUM_THREADS
+        value: "1"
+      - key: MKL_NUM_THREADS
+        value: "1"
+    healthCheckPath: /health
