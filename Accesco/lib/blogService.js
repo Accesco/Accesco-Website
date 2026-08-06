@@ -5,6 +5,7 @@ import {
   addDoc,
   doc,
   updateDoc,
+  deleteDoc,
   getDocs,
   query,
   orderBy,
@@ -74,6 +75,16 @@ export async function updateBlog(id, postData) {
     });
   } catch (err) {
     console.error('Failed to update blog:', err);
+    throw err;
+  }
+}
+
+// Delete a blog post from Firestore
+export async function deleteBlog(id) {
+  try {
+    await deleteDoc(doc(db, COLLECTION, id));
+  } catch (err) {
+    console.error('Failed to delete blog:', err);
     throw err;
   }
 }
