@@ -1,0 +1,141 @@
+id,category,question,expected_intent,reply_contains,expect_products,expect_cards,expect_action_url,known_issue,notes
+1,greeting,hi,greeting,Hello,no,no,none,,plain greeting
+2,greeting,hello there,greeting,Hello,no,no,none,no,model misroutes to referral_rewards at conf 0.37 (above fallback threshold)
+3,greeting,namaste,greeting,Hello,no,no,none,no,model misroutes to swadisht_food at conf 0.74 and shows products
+4,greeting,good morning,greeting,Good morning,no,no,none,,time-of-day greeting
+5,greeting,good afternon,greeting,Good afternoon,no,no,none,,typo tolerance via difflib
+6,greeting,good evening,greeting,Good evening,no,no,none,,time-of-day greeting
+7,greeting,good night,greeting,Good night,no,no,none,,time-of-day greeting
+8,vertical,grokly,grokly_grocery,grocery,no,no,none,,single-word vertical name
+9,vertical,swadisht,swadisht_food,food,no,no,none,,single-word vertical name
+10,vertical,swadishtt,swadisht_food,food,no,no,none,,single-word vertical typo (prefix match)
+11,vertical,instastyle,instastyle_fashion,fashion,no,no,none,,single-word vertical name
+12,vertical,localmeds,localmeds_pharmacy,pharmacy,no,no,none,,single-word vertical name
+13,vertical,xpense,xpense_budget,budget,no,no,none,,single-word vertical name
+14,info,what is grokly?,grokly_grocery,grocery,no,no,/services/grokly,,info question about vertical
+15,info,what is swadisht?,swadisht_food,food,no,no,/services/swadisht,,info question about vertical
+16,info,what is instastyle?,instastyle_fashion,fashion,no,no,/services/instastyle,,info question about vertical
+17,info,what is localmeds?,localmeds_pharmacy,pharmacy,no,no,/services/localmeds,,info question about vertical
+18,info,what is xpense meter?,xpense_budget,budget,no,no,none,,info question about vertical
+19,info,what is swadhissht,swadisht_food,food,no,no,/services/swadisht,,info question with heavy typo (keyword rule)
+20,info,tell me about accesco,about_brand,Accesco,no,no,none,,brand info question
+21,info,what is circular commerce?,circular_recycle,circular,no,no,none,,conceptual question uses explanation not recovery table
+22,waitlist,how do I join the waitlist?,waitlist_launch,waitlist,no,no,none,,waitlist FAQ
+23,waitlist,when is the app launching?,waitlist_launch,waitlist|launch,no,no,none,,launch timing
+24,waitlist,how do I get early access?,waitlist_launch,Early Access|waitlist,no,no,none,,early access FAQ
+25,waitlist,what do I get for joining the waitlist early?,waitlist_launch,waitlist|launch,no,no,none,,waitlist perks
+26,product,amul gold full cream milk,grokly_grocery|swadisht_food|unknown,best matches|matching products,yes,yes,/services/grokly?search,,exact catalog product; model says swadisht_food but products shown are correct
+27,product,amul taaza,grokly_grocery|swadisht_food|unknown,best matches|matching products,yes,yes,/services/grokly?search,,correct Amul Taaza products returned; intent label loose
+28,product,maggi noodles,grokly_grocery|swadisht_food|unknown,best matches|matching products,yes,yes,/services/grokly?search,,popular product search; intent label loose
+29,product,I want to buy shampoo,order_category,,no,no,/services/grokly/category/personal-care,,correct shampoo products returned; intent label loose
+30,product,paracetamol tablets,localmeds_pharmacy|grokly_grocery|unknown,best matches|matching products,yes,yes,/services/grokly?search|/services/localmeds,,pharma product routes to LocalMeds service
+31,product,dettol handwash,grokly_grocery|localmeds_pharmacy|unknown,best matches|matching products,yes,yes,/services/grokly?search,no,misrouted to circular_recycle (model conf 0.70) - no products shown
+32,product,coca cola,grokly_grocery|unknown,best matches|matching products,yes,yes,/services/grokly?search,,beverage product
+33,product,fresh vegetables,grokly_grocery|unknown,best matches|matching products,yes,any,,,category-level grocery query
+34,product,dog food,grokly_grocery|swadisht_food|unknown,best matches|matching products,yes,yes,/services/grokly?search,,correct Pedigree products returned; intent label loose
+35,coverage,do you deliver to 560001?,delivery_order,"Yes, we deliver",no,no,none,,covered pincode (MG Road)
+36,coverage,do you deliver to 560003,delivery_order,"Yes, we deliver",no,no,none,,covered pincode (Malleshwaram)
+37,coverage,is 560005 serviceable?,delivery_order,"Yes, we deliver",no,no,none,,covered pincode (Fraser Town)
+38,coverage,do you deliver to 110001?,delivery_order,not delivering,no,no,none,,uncovered pincode (Delhi)
+39,coverage,can you deliver to 999999,delivery_order,not delivering,no,no,none,,invalid pincode
+40,coverage,do you deliver to marathahalli?,delivery_order,"Yes, we deliver",no,no,none,,covered area exact
+41,coverage,marthahalli,delivery_order,"Yes, we deliver",no,no,none,,area name typo (difflib fuzzy)
+42,coverage,do you deliver in koramangala?,delivery_order,"Yes, we deliver",no,no,none,,substring match to Koramangala (blocks 1-3 & 5-8)
+43,coverage,whitefield delivery available?,delivery_order,"Yes, we deliver",no,no,none,,covered area
+44,coverage,do you deliver to indiranagar,delivery_order,"Yes, we deliver",no,no,none,,covered area
+45,coverage,do you deliver to btm,delivery_order,"Yes, we deliver",no,no,none,,3-letter abbreviation alias
+46,coverage,hsr,delivery_order,"Yes, we deliver",no,no,none,,3-letter abbreviation alias single word
+47,coverage,electronic city delivery?,delivery_order,"Yes, we deliver",no,no,none,,multi-word substring match
+48,coverage,do you deliver to jayanagar?,delivery_order,"Yes, we deliver",no,no,none,,single-token whole-word match
+49,coverage,do you deliver to mg road?,delivery_order,"Yes, we deliver",no,no,none,,short area name
+50,coverage,what areas do you deliver to?,delivery_order,pincodes across,no,no,none,,area summary reply
+51,coverage,where do you deliver?,delivery_order,pincodes across,no,no,none,,area summary reply
+52,coverage,do you deliver in bangalore?,delivery_order,pincodes across,no,no,none,,city-level generic reply
+53,coverage,do you deliver here?,delivery_order,share your area,no,no,none,no,misrouted to returns_refunds (conf 0.38); should ask for area/pincode
+54,coverage,do you deliver to mumbai?,delivery_order,share your area|not delivering,no,no,none,no,misrouted to delivery_partner (conf 0.48); should ask for pincode or say no
+55,recovery,do you take back milk bottles?,circular_recycle,take back|which one,no,no,none,,Fresh & Dairy row (may show disambiguation)
+56,recovery,can I return empty PET bottles?,circular_recycle,take back|which one|handed back,no,no,none,,now answered by Beverages FAQ (handed back to delivery partner) - better than old row-table reply
+57,recovery,what happens to old phones?,circular_recycle,take back,no,no,none,,Electronics row via what-happens-to keyword
+58,recovery,do you accept old chargers?,circular_recycle,take back,no,no,none,,old+charger secondary keyword rule
+59,recovery,do you take bubble wrap back?,circular_recycle,selectively|which one,no,no,none,,Packaging Selective row
+60,recovery,do you take back food-soiled wrappers?,circular_recycle,don't take back|which one,no,no,none,,Reject row - No takeback
+61,recovery,can I return cardboard boxes for recycling?,circular_recycle,take back|which one,no,no,none,,Packaging Yes row
+62,recovery,do u take bak empty bottels,circular_recycle,take back|which one|recovery framework,no,no,none,,heavy typos - falls to generic circular reply asking for the item (acceptable)
+63,recovery,how does the recycling program work?,circular_recycle,circular|recovery|which one,no,no,none,,generic question - retrieval may disambiguate instead of explaining
+64,recovery,do you take back old clothes?,circular_recycle,take back,no,no,none,,Fashion row
+65,recovery,can I recycle shampoo bottles?,circular_recycle,take back|which one,no,no,none,,Personal Care row
+66,recovery,what do you do with returned packaging?,circular_recycle,take back|circular|which one,no,no,none,,packaging keyword strong route
+67,recovery,can you collect used batteries?,circular_recycle,take back|circular|recovery|which one|certified handlers,no,no,none,,now answered by E-waste FAQ (certified handlers) - better than old generic reply
+68,returns,I want to return my order,returns_refunds,refund,no,no,none,,order blocks recovery hint - stays returns intent
+69,returns,how do I get a refund?,returns_refunds,refund,no,no,none,,refund FAQ
+70,returns,can I exchange a product I bought?,returns_refunds,refund|exchange,no,no,none,,exchange keyword
+71,pricing,what payment methods do you accept?,pricing_payment,UPI,no,no,none,,payment methods FAQ
+72,pricing,can I pay with UPI?,pricing_payment,UPI,no,no,none,,payment keyword rule
+73,pricing,are there delivery charges?,pricing_payment|delivery_order,,no,no,none,,ambiguous pricing vs delivery - behavioral probe
+74,privacy,is my data safe with accesco?,privacy_security,secure,no,no,none,,data safety FAQ
+75,privacy,how secure is my payment information?,privacy_security|pricing_payment,secure|UPI,no,no,none,,privacy vs payment overlap
+76,support,how do I contact customer support?,support_contact,contact|support,no,no,none,,support FAQ
+77,support,what is your support email?,support_contact,contact|support,no,no,none,,email keyword rule
+78,referral,how does the referral program work?,referral_rewards,referral|rewards,no,no,none,,referral FAQ
+79,referral,do I get rewards for inviting friends?,referral_rewards,referral|rewards,no,no,none,,invite phrasing
+80,account,can I have multiple addresses on my account?,account_features,addresses|account,no,no,none,,account features FAQ
+81,account,how do I reset my password?,account_features,addresses|account,no,no,none,,password keyword rule
+82,partner,how can I become a delivery partner?,delivery_partner,partner|gig,no,no,none,,partner application FAQ
+83,partner,how do I apply as a delivery partner?,delivery_partner,partner|gig,no,no,none,,partner application FAQ
+84,comparison,how is accesco different from zepto?,comparison|about_brand,one login|ecosystem,no,no,none,,competitor comparison
+85,comparison,why should I use accesco instead of blinkit?,comparison|about_brand,one login|ecosystem,no,no,none,,competitor comparison
+86,xpense,how does xpense meter track my spending?,xpense_budget,budget|spending,no,no,none,,xpense FAQ
+87,xpense,can I set a monthly budget?,xpense_budget,budget,no,no,none,,budget keyword
+88,about,who is accesco living?,about_brand,ecosystem|Accesco,no,no,none,,brand info question
+89,about,tell me about the app,about_brand|account_features,Accesco,no,no,none,,model picks account_features (conf 0.69); accepted as long as reply stays on-brand
+90,delivery,how fast is delivery?,delivery_order|grokly_grocery,,no,no,none,,speed question - behavioral probe
+91,delivery,can I track my order?,delivery_order,share your area|track,no,no,none,,tracking question asks for area (known behavior)
+92,unknown,asdkjhqwe zxcvpoiu,any,,any,no,none,,gibberish lands on comparison (conf 0.65) - model overconfident on noise; behavioral probe only
+93,unknown,what's the weather today?,any,,any,no,none,,off-topic question - behavioral probe
+94,mixed,amul gold milk price,grokly_grocery|swadisht_food|pricing_payment|unknown,,any,yes,/services/grokly?search,,product+price query; gold must not trigger old/recovery; products shown correctly
+95,mixed,do you take back amul gold milk bottles?,circular_recycle,take back|which one,no,no,none,,brand name with gold plus recovery phrasing
+96,sku_faq,what is the sku recovery framework?,circular_recycle,taking back eligible,no,no,none,,FAQ General Q1 verbatim
+97,sku_faq,how does the sku recovery framework work?,circular_recycle,fulfillment hub|flagged for recovery,no,no,none,,FAQ General Q2 verbatim
+98,sku_faq,how is sku recovery different from a normal return?,circular_recycle,faulty or unwanted,no,no,none,,FAQ General Q3 paraphrased (regular->normal)
+99,sku_faq,does every product qualify for sku recovery?,circular_recycle,enrolled|product page,no,no,none,,FAQ General Q4 paraphrased - avoids blocked word order
+100,sku_faq,can I schedule a recovery pickup?,circular_recycle,through the app|standalone,no,no,none,,FAQ General Q5 paraphrased
+101,sku_faq,do I get rewards for returning used items?,circular_recycle,reward points|credits,no,no,none,,FAQ General Q6 - rewards phrasing must not hijack to referral_rewards
+102,sku_faq,is there a fee for returning items through sku recovery?,circular_recycle,free,no,no,none,,FAQ General Q7
+103,sku_faq,where do returned SKUs go after collection?,circular_recycle,fulfillment hub,no,no,none,,FAQ General Q8 verbatim
+104,sku_faq,is sku recovery available in every city?,circular_recycle,Bengaluru|city by city,no,no,none,,FAQ General Q9 paraphrased
+105,sku_faq,what's not accepted under the sku recovery framework?,circular_recycle,accepted|eligible,no,no,none,,FAQ General Q11
+106,sku_faq,is there a deposit for returning beverage containers?,circular_recycle,deposit|credit,no,no,none,,FAQ Beverages Q16 paraphrased
+107,sku_faq,can I return empty milk pouches?,circular_recycle,recycling|take back|milestones,no,no,none,,FAQ Dairy Q18 - row table may also answer (either accepted)
+108,sku_faq,do you resell returned clothing?,circular_recycle,resale|donation|textile,no,no,none,,FAQ Fashion Q20 paraphrased
+109,sku_faq,is e-waste collected by accesco?,circular_recycle,e-waste|recycling|take back,no,no,none,,FAQ Electronics Q25 - row table may also answer
+110,sku_faq,can I return empty medicine bottles?,circular_recycle,recycling|take back|pharmacy,no,no,none,,FAQ Medicines Q36 paraphrased
+111,sku_faq,can I return furniture or appliances through accesco?,circular_recycle,case-by-case|support,no,no,none,,FAQ Furniture Q37
+112,sku_faq,does sku recovery cover food waste?,circular_recycle,composted|perishable,no,no,none,,FAQ Food Waste Q38 - negative answer
+113,commerce,i want to order lays chips,any,best matches,yes,yes,/services/grokly?search,,
+114,commerce,i want to buy snacks,any,,no,no,/services/grokly/category/munchies,,
+115,commerce,buy milk,any,,any,any,/services/grokly/category/dairy-breakfast|/services/grokly?search,,
+116,commerce,i want food,any,,no,no,/services/swadisht,,
+117,commerce,need medicines,any,,no,no,/services/localmeds,,
+118,commerce,mens t-shirts,any,best matches,yes,yes,/services/instastyle/products|/services/instastyle/catalog,,
+119,commerce,lace chips,any,best matches,yes,yes,/services/grokly?search,,
+120,commerce,i want to order testo cola,any,,no,no,/services/grokly/category/cold-drinks,,
+121,commerce,order dettol handwash,any,best matches,yes,yes,/services/grokly?search|/services/localmeds,,
+122,commerce,i need paracetamol,any,,no,no,/services/localmeds,,
+123,commerce,i want to buy vegetables,any,,no,no,/services/grokly/category/vegetables-fruits,,
+124,commerce,i need dog food,any,,no,no,/services/grokly/category/pet-care,,
+125,commerce,want coffee,any,,any,any,/services/grokly/category/tea-coffee|/services/grokly?search,,
+126,commerce,grab some biscuits for me,any,,no,no,/services/grokly/category/bakery-biscuits,,
+127,commerce,send me some chocolate,any,,any,any,/services/grokly/category/sweet-tooth|/services/grokly?search,,
+128,commerce,i want new clothes,any,,no,no,/services/instastyle,,
+129,commerce,hello,greeting,Hello,no,no,none,,
+130,commerce,do you deliver to marathahalli?,delivery_order,"Yes, we deliver",no,no,none,,
+131,commerce,do you take back milk bottles?,circular_recycle,take back|which one,no,no,none,,
+132,commerce,what is grokly?,grokly_grocery,grocery,no,no,/services/grokly,,
+133,commerce,i need a bag for school,unknown|greeting,,no,no,none,,weak-match guard: no bag products in catalog
+134,commerce,i want phone case,unknown|greeting,,no,no,none,,weak-match guard: no phone-case products
+135,commerce,show me realme phone,unknown|greeting,,no,no,none,,weak-match guard: no electronics
+136,commerce,school bag,unknown|greeting,,no,no,none,,weak-match guard: bag not in catalog
+137,commerce,order surf excel detergent,grokly_grocery|order_product,detergent,yes,yes,/services/grokly?search,,tight brand match keeps cards
+138,coverage,do you deliver to agram?,delivery_order,"Yes, we deliver to Agram",no,no,,,agram is a real covered area — exact token match still works
+139,commerce,garam masala,any,garam masala,yes,yes,/services/grokly?search,,"garam must not fuzzy-match area ""agram"" (0.80 < 0.85 cutoff); cards render"
+140,commerce,i want to order garam masala,any,,no,no,/services/grokly/category,,"""i want to order"" routes to masala-oil category page — key: no coverage reply"

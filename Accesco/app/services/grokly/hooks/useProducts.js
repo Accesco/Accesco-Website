@@ -26,7 +26,7 @@ export function useProducts({ category = 'all', searchQuery = '', sortBy = null 
     setIsLoading(true);
     setError(null);
     try {
-      const res = await fetch('/api/products?ventureId=grokly');
+      const res = await fetch('/api/products?ventureId=grokly&limit=1000');
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Failed to load products');
       setProducts(data.products || []);
