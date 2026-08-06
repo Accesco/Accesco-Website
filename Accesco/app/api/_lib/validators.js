@@ -14,3 +14,7 @@ export function isValidPhone(phone) {
 export function isValidPincode(pincode) {
   return typeof pincode === 'string' && PINCODE_REGEX.test(pincode);
 }
+
+export function isPositiveInteger(value) {
+  return typeof value === 'number' && Number.isInteger(value) && value > 0;
+}
