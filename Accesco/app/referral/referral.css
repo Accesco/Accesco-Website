@@ -963,6 +963,10 @@ button:disabled {
     gap: 6px;
   }
 
+  .referralNavigation a.getAppButton {
+    display: none !important;
+  }
+
   .referralNavigation a {
     min-width: auto;
     height: 36px;

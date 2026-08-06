@@ -917,21 +917,20 @@
 }
 
 @media (max-width: 768px) {
-
   .logoDivider,
-  .waitlistLink {
+  .waitlistLink,
+  .getAppButton {
     display: none !important;
   }
 }
-/* MOBILE HEADER LOGIN + DOWNLOAD BUTTONS */
+/* MOBILE HEADER LOGIN BUTTON */
 @media (max-width: 768px) {
   .actions {
     gap: 8px !important;
     margin-left: auto !important;
   }
 
-  .actions > button.loginButton,
-  .actions > a.loginButton {
+  .actions > button.loginButton {
     height: 38px !important;
     min-width: 86px !important;
     padding: 0 16px !important;
@@ -944,16 +943,6 @@
     text-transform: uppercase !important;
     box-shadow: 0 8px 18px rgba(138, 0, 72, 0.22) !important;
     white-space: nowrap !important;
-  }
-
-  .actions > a.loginButton {
-    min-width: 104px !important;
-    gap: 6px !important;
-  }
-
-  .storeIcon {
-    width: 12px !important;
-    height: 12px !important;
   }
 }
 @media (max-width: 768px) {
