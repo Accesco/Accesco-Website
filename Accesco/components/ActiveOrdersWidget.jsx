@@ -75,7 +75,7 @@ export default function ActiveOrdersWidget({ venture } = {}) {
               key={order.id}
               style={{
                 flex: '0 0 auto',
-                width: '300px',
+                width: 'clamp(260px, 80vw, 300px)',
                 background: '#f9f9f9',
                 borderRadius: '20px',
                 padding: '20px',

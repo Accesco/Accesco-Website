@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Plus,
@@ -908,9 +909,11 @@ export default function AddSKUPage() {
                             onClick={() => setSelectedImagePreset(preset.url)}
                           >
                             <div className={styles.presetImageWrapper}>
-                              <img
+                              <Image
                                 src={preset.url}
                                 alt={preset.name}
+                                fill
+                                sizes="(max-width: 768px) 33vw, 200px"
                                 className={styles.presetImg}
                               />
                               {isSelected && (
@@ -937,9 +940,11 @@ export default function AddSKUPage() {
                       />
                       {uploadStatus === "done" && uploadedImageUrl ? (
                         <div className={styles.uploadPreviewWrap}>
-                          <img
+                          <Image
                             src={uploadedImageUrl}
                             alt="Uploaded product"
+                            width={800}
+                            height={200}
                             className={styles.uploadPreviewImg}
                           />
                           <button

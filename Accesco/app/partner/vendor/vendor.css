@@ -16,7 +16,7 @@
 }
 
 .vendor-page {
-  font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: var(--font-dm-sans), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   background: #FFFDF8;
   min-height: 100vh;
   overflow-x: hidden;
@@ -91,7 +91,7 @@
   border: 1px solid rgba(200, 150, 62, 0.25);
   backdrop-filter: blur(12px);
   border-radius: 50px;
-  font-family: 'Sora', sans-serif;
+  font-family: var(--font-sora), sans-serif;
   font-size: 13px;
   font-weight: 700;
   color: var(--ac-gold);
@@ -106,7 +106,7 @@
 }
 
 .vendor-hero-title {
-  font-family: 'Sora', sans-serif;
+  font-family: var(--font-sora), sans-serif;
   font-size: clamp(2.5rem, 6vw, 4.8rem);
   font-weight: 800;
   line-height: 1.08;
@@ -124,13 +124,23 @@
 }
 
 .vendor-hero-subtitle {
-  font-family: 'DM Sans', sans-serif;
+  font-family: var(--font-dm-sans), sans-serif;
   font-size: clamp(1.1rem, 2vw, 1.25rem);
   line-height: 1.7;
   color: rgba(255, 253, 248, 0.72);
   max-width: 720px;
-  margin: 0 auto 48px;
+  margin: 0 auto 24px;
   animation: fadeInUp 0.8s ease-out 0.4s both;
+}
+
+.vendor-hero-description {
+  font-family: var(--font-dm-sans), sans-serif;
+  font-size: 0.95rem;
+  line-height: 1.7;
+  color: rgba(255, 253, 248, 0.6);
+  max-width: 640px;
+  margin: 0 auto 48px;
+  animation: fadeInUp 0.8s ease-out 0.5s both;
 }
 
 .vendor-hero-stats {
@@ -148,7 +158,7 @@
 }
 
 .vendor-stat-value {
-  font-family: 'Sora', sans-serif;
+  font-family: var(--font-sora), sans-serif;
   font-size: 2.8rem;
   font-weight: 800;
   margin-bottom: 6px;
@@ -157,7 +167,7 @@
 }
 
 .vendor-stat-label {
-  font-family: 'DM Sans', sans-serif;
+  font-family: var(--font-dm-sans), sans-serif;
   font-size: 0.9rem;
   color: rgba(255, 253, 248, 0.45);
   text-transform: uppercase;
@@ -189,7 +199,7 @@
   color: var(--vendor-primary);
   border: 1px solid rgba(122, 0, 66, 0.12);
   border-radius: 50px;
-  font-family: 'Sora', sans-serif;
+  font-family: var(--font-sora), sans-serif;
   font-size: 0.8rem;
   font-weight: 700;
   text-transform: uppercase;
@@ -198,7 +208,7 @@
 }
 
 .vendor-section-title {
-  font-family: 'Sora', sans-serif;
+  font-family: var(--font-sora), sans-serif;
   font-size: clamp(2rem, 4vw, 3rem);
   font-weight: 800;
   color: var(--text-dark);
@@ -243,7 +253,7 @@
 }
 
 .vendor-type-card h3 {
-  font-family: 'Sora', sans-serif;
+  font-family: var(--font-sora), sans-serif;
   font-size: 1.45rem;
   font-weight: 700;
   color: var(--text-dark);
@@ -252,7 +262,7 @@
 }
 
 .vendor-type-card p {
-  font-family: 'DM Sans', sans-serif;
+  font-family: var(--font-dm-sans), sans-serif;
   color: var(--text-muted);
   line-height: 1.65;
   margin-bottom: 20px;
@@ -268,7 +278,7 @@
 .vendor-type-features li {
   padding: 8px 0;
   color: var(--text-dark);
-  font-family: 'DM Sans', sans-serif;
+  font-family: var(--font-dm-sans), sans-serif;
   font-size: 0.95rem;
   display: flex;
   align-items: center;
@@ -287,7 +297,7 @@
   color: white;
   border: none;
   border-radius: 12px;
-  font-family: 'Sora', sans-serif;
+  font-family: var(--font-sora), sans-serif;
   font-weight: 700;
   font-size: 1rem;
   cursor: pointer;
@@ -343,14 +353,14 @@
 }
 
 .d2c-platform-header h3 {
-  font-family: 'Sora', sans-serif;
+  font-family: var(--font-sora), sans-serif;
   font-size: 1.8rem;
   font-weight: 800;
   color: var(--text-dark);
 }
 
 .d2c-platform-desc {
-  font-family: 'DM Sans', sans-serif;
+  font-family: var(--font-dm-sans), sans-serif;
   color: var(--text-muted);
   font-size: 1.05rem;
   line-height: 1.7;
@@ -370,7 +380,7 @@
   border: 1px solid rgba(122, 0, 66, 0.12);
   color: var(--vendor-primary);
   border-radius: 20px;
-  font-family: 'Sora', sans-serif;
+  font-family: var(--font-sora), sans-serif;
   font-size: 0.8rem;
   font-weight: 700;
 }
@@ -384,7 +394,7 @@
   color: white;
   border: none;
   border-radius: 12px;
-  font-family: 'Sora', sans-serif;
+  font-family: var(--font-sora), sans-serif;
   font-weight: 700;
   font-size: 1.05rem;
   cursor: pointer;
@@ -407,7 +417,7 @@
 }
 
 .d2c-platforms-banner h3 {
-  font-family: 'Sora', sans-serif;
+  font-family: var(--font-sora), sans-serif;
   font-size: 1.8rem;
   font-weight: 800;
   color: var(--text-dark);
@@ -446,7 +456,7 @@
 
 .d2c-platform-mini strong {
   display: block;
-  font-family: 'Sora', sans-serif;
+  font-family: var(--font-sora), sans-serif;
   font-size: 1.15rem;
   color: var(--text-dark);
   margin-bottom: 4px;
@@ -454,7 +464,7 @@
 }
 
 .d2c-platform-mini p {
-  font-family: 'DM Sans', sans-serif;
+  font-family: var(--font-dm-sans), sans-serif;
   font-size: 0.9rem;
   color: var(--text-muted);
   margin: 0;
@@ -467,7 +477,7 @@
   color: white;
   border: none;
   border-radius: 8px;
-  font-family: 'Sora', sans-serif;
+  font-family: var(--font-sora), sans-serif;
   font-weight: 700;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -488,7 +498,7 @@
   border: 2px solid var(--vendor-primary);
   color: var(--vendor-primary);
   border-radius: 12px;
-  font-family: 'Sora', sans-serif;
+  font-family: var(--font-sora), sans-serif;
   font-weight: 700;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -529,7 +539,7 @@
   color: #ab7a22;
   border: 1px solid rgba(200, 150, 62, 0.15);
   border-radius: 50px;
-  font-family: 'Sora', sans-serif;
+  font-family: var(--font-sora), sans-serif;
   font-size: 0.8rem;
   font-weight: 700;
   text-transform: uppercase;
@@ -538,7 +548,7 @@
 }
 
 .vendor-form-title {
-  font-family: 'Sora', sans-serif;
+  font-family: var(--font-sora), sans-serif;
   font-size: 2.4rem;
   font-weight: 800;
   color: var(--text-dark);
@@ -547,7 +557,7 @@
 }
 
 .vendor-form-subtitle {
-  font-family: 'DM Sans', sans-serif;
+  font-family: var(--font-dm-sans), sans-serif;
   font-size: 1.1rem;
   color: var(--text-muted);
   line-height: 1.6;
@@ -576,7 +586,7 @@
 }
 
 .vendor-form-field label {
-  font-family: 'DM Sans', sans-serif;
+  font-family: var(--font-dm-sans), sans-serif;
   font-size: 0.95rem;
   font-weight: 700;
   color: var(--text-dark);
@@ -589,7 +599,7 @@
   border: 2px solid #F0ECE9;
   border-radius: 14px;
   font-size: 1rem;
-  font-family: 'DM Sans', sans-serif;
+  font-family: var(--font-dm-sans), sans-serif;
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   background: #FFFDF8;
   color: var(--text-dark);
@@ -610,7 +620,7 @@
   gap: 12px;
   padding: 16px 20px;
   border-radius: 12px;
-  font-family: 'DM Sans', sans-serif;
+  font-family: var(--font-dm-sans), sans-serif;
   font-weight: 600;
   font-size: 0.95rem;
 }
@@ -637,7 +647,7 @@
   color: white;
   border: none;
   border-radius: 14px;
-  font-family: 'Sora', sans-serif;
+  font-family: var(--font-sora), sans-serif;
   font-size: 1.1rem;
   font-weight: 700;
   cursor: pointer;
@@ -706,7 +716,7 @@
 }
 
 .vendor-benefit-card h3 {
-  font-family: 'Sora', sans-serif;
+  font-family: var(--font-sora), sans-serif;
   font-size: 1.4rem;
   font-weight: 700;
   color: var(--text-dark);
@@ -715,7 +725,7 @@
 }
 
 .vendor-benefit-card p {
-  font-family: 'DM Sans', sans-serif;
+  font-family: var(--font-dm-sans), sans-serif;
   color: var(--text-muted);
   line-height: 1.65;
   font-size: 0.98rem;

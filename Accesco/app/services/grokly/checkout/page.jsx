@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useGrokly } from '../contexts/GroklyContext';
 import { products } from '../lib/groklyData';
@@ -14,11 +15,12 @@ import AuthModal from '../../../components/AuthModal';
 import { payWithRazorpay } from '@/lib/razorpayService';
 import { 
   ArrowLeft, MapPin, Phone, User, CreditCard, 
-  ShieldCheck, ShoppingBag, Clock, Zap, Sparkles 
+  ShieldCheck, ShoppingBag, Clock, Zap, Sparkles,
+  RefreshCw, Leaf
 } from 'lucide-react';
 
 export default function GroklyCheckout() {
-  const { cart, placeOrder, location, cartHydrated } = useGrokly();
+  const { cart, placeOrder, location, cartHydrated, returnItems, setReturnItems } = useGrokly();
   const router = useRouter();
   const { user, signIn } = useAuth();
   const [isProcessing, setIsProcessing] = useState(false);
@@ -199,6 +201,10 @@ export default function GroklyCheckout() {
         phone: activeUser?.phone || customerDetails.phone,
         customerEmail: activeUser?.email || null,
         userId: activeUser?.uid || activeUser?.id || null,
+        packagingOptIn: returnItems.length > 0,
+        packagingBagsToReturn: returnItems.reduce((s, i) => s + i.quantity, 0),
+        returnItems,
+        returnCredits: returnItems.reduce((s, i) => s + (i.creditsEarned || i.quantity * 10), 0),
         ...getDeliveryCoords(),
       });
 
@@ -383,6 +389,48 @@ export default function GroklyCheckout() {
             </div>
 
             <p className={styles.speedFooter}>Eco saver batches deliveries along similar routes, reducing fuel burn and delivery cost.</p>
+          </section>
+
+          {/* Reverse Commerce: Eco-Return Section */}
+          <section className={styles.section} style={{ background: '#f0fdf4', borderColor: '#86efac', borderWidth: '1.5px', borderStyle: 'solid', padding: '18px', borderRadius: '16px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
+              <RefreshCw size={18} style={{ color: '#15803d' }} />
+              <h2 style={{ color: '#15803d', fontWeight: 800, margin: 0, fontSize: '15px' }}>Reverse Commerce · Eco-Return</h2>
+            </div>
+
+            {returnItems.length === 0 ? (
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 14px', background: '#fff', borderRadius: '12px', border: '1px solid #bbf7d0' }}>
+                <div>
+                  <div style={{ fontSize: '13px', fontWeight: 700, color: '#374151' }}>No return items selected</div>
+                  <div style={{ fontSize: '11px', color: '#6b7280', marginTop: '2px' }}>Go back to cart to select packaging to return</div>
+                </div>
+                <div style={{ fontSize: '13px', fontWeight: 700, color: '#9ca3af' }}>[Empty]</div>
+              </div>
+            ) : (
+              <>
+                <p style={{ fontSize: '12px', color: '#374151', margin: '0 0 10px', lineHeight: '1.5' }}>
+                  Hand over clean packaging to our rider when your order arrives and earn <strong style={{ color: '#15803d' }}>Green Points</strong> instantly!
+                </p>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '10px' }}>
+                  {returnItems.map(item => (
+                    <div key={item.id} style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '10px 12px', background: '#fff', borderRadius: '10px', border: '1px solid #bbf7d0' }}>
+                      {/* eslint-disable-next-line @next/next/no-img-element -- item.image comes from the product catalog's heterogeneous external hosts, not compatible with next/image's static remotePatterns allowlist */}
+                      <img src={item.image} alt={item.name} width={40} height={40} style={{ borderRadius: '8px', objectFit: 'cover', border: '1px solid #d1fae5' }} onError={e => { e.target.src = `https://placehold.co/40x40/e8f5e9/0c831f?text=${item.name[0]}`; }} />
+                      <div style={{ flex: 1 }}>
+                        <div style={{ fontSize: '13px', fontWeight: 700, color: '#111827' }}>{item.name}</div>
+                        <div style={{ fontSize: '11px', color: '#6b7280' }}>×{item.quantity} · Reusable</div>
+                      </div>
+                      <span style={{ fontSize: '12px', fontWeight: 700, color: '#16a34a' }}>+₹{item.creditsEarned || item.quantity * 10}</span>
+                    </div>
+                  ))}
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', background: '#dcfce7', padding: '10px 14px', borderRadius: '10px', color: '#15803d', fontSize: '12px', fontWeight: 700 }}>
+                  <Leaf size={14} style={{ color: '#15803d' }} />
+                  <span>Estimated Green Points: ₹{returnItems.reduce((s, i) => s + (i.creditsEarned || i.quantity * 10), 0)} credited on delivery</span>
+                  <button onClick={() => setReturnItems([])} style={{ marginLeft: 'auto', background: 'none', border: 'none', cursor: 'pointer', fontSize: '12px', color: '#6b7280', textDecoration: 'underline' }}>Clear</button>
+                </div>
+              </>
+            )}
           </section>
           
           <section className={styles.section}>

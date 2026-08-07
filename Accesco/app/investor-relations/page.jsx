@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Navbar from "./components/Navbar";
 import Hero from "./components/Hero";
 import SectionHeader from "./components/SectionHeader";
@@ -20,6 +21,7 @@ const mediaLogos = [
   { name: "Buisnessscope", src: "/logos/BSC.jpeg" },
   { name: "Express_visionary", src: "/logos/Express_visionary.jpeg" },
   { name: "entrepreneurorbit", src: "/logos/orbitent.jpeg" },
+  { name: "new1", src: "/logos/new1.jpeg" },
 ];
 const ecosystemLogos = [
   { name: "AWS Startups", src: "/logos/aws-startups.png" },
@@ -62,6 +64,17 @@ const presentations = [
   {
     title: "Presentation",
     href: "/pdfs/Accesco_deck.pdf",
+    cover: { src: "/images/corporate-deck-cover.png", width: 2880, height: 1620 },
+  },
+  {
+    title: "Accesco Living Private Limited",
+    href: "/pdfs/Accesco-Living-Private-Limited.pdf",
+    cover: { src: "/images/accesco-living-private-limited-cover.png", width: 1191, height: 1685 },
+  },
+  {
+    title: "Annual General Meeting (AGM) 2026-27",
+    href: "/pdfs/AGM-2026-27.pdf",
+    cover: { src: "/images/agm-2026-27-cover.png", width: 1191, height: 1685 },
   },
 ];
 
@@ -136,7 +149,7 @@ export default function HomePage() {
   <div className="media-track">
     {[...mediaLogos, ...mediaLogos].map((logo, index) => (
       <div className="media-logo" key={`${logo.name}-${index}`}>
-        <img src={logo.src} alt={logo.name} />
+        <Image src={logo.src} alt={logo.name} width={200} height={86} />
       </div>
     ))}
   </div>
@@ -148,7 +161,7 @@ export default function HomePage() {
       <div className="logo-track">
         {[...ecosystemLogos, ...ecosystemLogos].map((logo, index) => (
           <div className="floating-logo" key={`${logo.name}-${index}`}>
-            <img src={logo.src} alt={logo.name} />
+            <Image src={logo.src} alt={logo.name} width={200} height={86} />
           </div>
         ))}
       </div>
@@ -160,7 +173,7 @@ export default function HomePage() {
       <div className="certification-grid">
         {certificationLogos.map((cert) => (
           <div className="certification-card" key={cert.name}>
-            <img src={cert.src} alt={cert.name} />
+            <Image src={cert.src} alt={cert.name} width={200} height={86} />
             <strong>{cert.name}</strong>
           </div>
         ))}
@@ -203,6 +216,7 @@ export default function HomePage() {
                 key={item.title}
                 title={item.title}
                 href={item.href}
+                cover={item.cover}
               />
             ))}
           </div>
@@ -245,7 +259,7 @@ export default function HomePage() {
           
           <div className="dpiit-section">
   <div className="dpiit-card unified">
-    <img src="/logos/startup-india.png" alt="Startup India DPIIT" />
+    <Image src="/logos/startup-india.png" alt="Startup India DPIIT" width={120} height={40} />
 
     <div className="dpiit-content">
       <h3>DPIIT-Recognised Startup</h3>

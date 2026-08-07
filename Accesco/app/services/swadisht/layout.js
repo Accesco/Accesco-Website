@@ -1,4 +1,5 @@
 import SwadishttLayoutClient from './layout-client';
+import WaitlistGate from '../../components/WaitlistGate';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
@@ -24,6 +25,14 @@ export const metadata = {
   },
 };
 
+import { caveat, nunito, nunitoSans, playfairDisplay, plusJakartaSans } from '@/app/fonts';
+
 export default function SwadishttLayout({ children }) {
-  return <SwadishttLayoutClient>{children}</SwadishttLayoutClient>;
+  return (
+    <WaitlistGate>
+      <div className={`${caveat.variable} ${nunito.variable} ${nunitoSans.variable} ${playfairDisplay.variable} ${plusJakartaSans.variable}`}>
+        <SwadishttLayoutClient>{children}</SwadishttLayoutClient>
+      </div>
+    </WaitlistGate>
+  );
 }

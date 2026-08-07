@@ -1,9 +1,20 @@
 'use client';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
+import Link from 'next/link';
+import Image from 'next/image';
+import {
+  ChevronDown,
+  Mail,
+  MessageCircle,
+  Phone,
+  Search,
+} from 'lucide-react';
+
 import AccescoHeader from '../../components/AccescoHeader';
-import './faq.css';
 import JsonLd from '../../components/JsonLd';
+import './faq.css';
+
 const faqData = [
   {
     category: "Brand & Concept Understanding",
@@ -367,111 +378,314 @@ const faqData = [
   }
 ];
 
-export default function FAQPage() {
-  const [openCategory, setOpenCategory] = useState(null);
-  const [openQuestion, setOpenQuestion] = useState(null);
+const categoryTabs = [
+  { id: 'all', label: 'All topics' },
+  { id: 'brand', label: 'Brand & Concept' },
+  { id: 'pricing', label: 'Pricing' },
+  { id: 'products', label: 'Product & Services' },
+  { id: 'reverse', label: 'Reverse Commerce' },
+  { id: 'experience', label: 'User Experience' },
+];
 
-  const toggleCategory = (index) => {
-    if (openCategory === index) {
-      setOpenCategory(null);
-      setOpenQuestion(null);
-    } else {
-      setOpenCategory(index);
-      setOpenQuestion(null);
+const orderQuestion = {
+  q: 'How can I place an order on Accesco Living?',
+  a: 'You can place an order by adding items to your cart and proceeding to checkout. Choose your delivery address, select a payment method, and confirm your order. You will receive confirmation once the order is successfully placed.',
+};
+
+function removeDuplicateQuestions(items) {
+  const seen = new Set();
+
+  return items.filter((item) => {
+    const key = item.q.trim().toLowerCase();
+
+    if (seen.has(key)) {
+      return false;
     }
-  };
 
-  const toggleQuestion = (categoryIndex, questionIndex) => {
-    const key = `${categoryIndex}-${questionIndex}`;
-    setOpenQuestion(openQuestion === key ? null : key);
-  };
+    seen.add(key);
+    return true;
+  });
+}
 
-  // FAQ Schema for SEO
-const faqSchema = {
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  mainEntity: faqData.flatMap((category) =>
-    category.questions.map((item) => ({
-      "@type": "Question",
+export default function FAQPage() {
+  const [activeCategory, setActiveCategory] = useState('all');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [openQuestion, setOpenQuestion] = useState(orderQuestion.q);
+
+  const allFaqs = useMemo(
+    () =>
+      removeDuplicateQuestions([
+        orderQuestion,
+        ...faqData.flatMap((category) => category.questions),
+      ]),
+    []
+  );
+
+  const visibleFaqs = useMemo(() => {
+    let selectedQuestions = [];
+
+    switch (activeCategory) {
+      case 'brand':
+        selectedQuestions = faqData[0].questions;
+        break;
+
+      case 'products':
+        selectedQuestions = faqData
+          .slice(1, 5)
+          .flatMap((category) => category.questions);
+        break;
+
+      case 'reverse':
+        selectedQuestions = faqData[5].questions;
+        break;
+
+      case 'pricing':
+        selectedQuestions = faqData[6].questions;
+        break;
+
+      case 'experience':
+        selectedQuestions = faqData[7].questions;
+        break;
+
+      default:
+        selectedQuestions = allFaqs;
+    }
+
+    const uniqueQuestions = removeDuplicateQuestions(selectedQuestions);
+    const search = searchTerm.trim().toLowerCase();
+
+    if (!search) {
+      return uniqueQuestions;
+    }
+
+    return uniqueQuestions.filter(
+      (item) =>
+        item.q.toLowerCase().includes(search) ||
+        item.a.toLowerCase().includes(search)
+    );
+  }, [activeCategory, searchTerm, allFaqs]);
+
+  const faqSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: allFaqs.map((item) => ({
+      '@type': 'Question',
       name: item.q,
       acceptedAnswer: {
-        "@type": "Answer",
+        '@type': 'Answer',
         text: item.a,
       },
-    }))
-  ),
-};
+    })),
+  };
+
+  const selectCategory = (categoryId) => {
+    setActiveCategory(categoryId);
+    setOpenQuestion(null);
+  };
+
+  const toggleQuestion = (question) => {
+    setOpenQuestion((currentQuestion) =>
+      currentQuestion === question ? null : question
+    );
+  };
 
   return (
     <>
-      {/* FAQ Schema for SEO */}
-     <JsonLd data={faqSchema} />
+      <JsonLd data={faqSchema} />
       <AccescoHeader />
-      <main className="faq-page">
-        <section className="faq-section">
-          <div className="faq-container"> 
-            <div className="faq-header">
-              <div className="faq-pretitle">FREQUENTLY ASKED QUESTIONS</div>
-              <h1 className="faq-title">Everything You Need to Know</h1>
-              <p className="faq-subtitle">
-                Find answers to common questions about Accesco Living's services, features, and how we're revolutionizing household commerce in India.
+
+      <main className="faqPage">
+        {/* HERO */}
+
+        <section className="faqHero">
+          <div className="faqShell faqHeroGrid">
+            <div className="faqHeroCopy">
+              <nav className="faqBreadcrumbs" aria-label="Breadcrumb">
+                <Link href="/">Home</Link>
+                <span>›</span>
+                <Link href="/faq">Help Center</Link>
+                <span>›</span>
+                <strong>FAQ</strong>
+              </nav>
+
+              <h1>Frequently Asked Questions</h1>
+
+              <p>
+                Find answers to common questions about Accesco Living and our
+                services.
               </p>
+
+              <label className="faqSearch">
+                <Search size={18} aria-hidden="true" />
+
+                <input
+                  type="search"
+                  value={searchTerm}
+                  onChange={(event) => setSearchTerm(event.target.value)}
+                  placeholder="Search for answers..."
+                  aria-label="Search frequently asked questions"
+                />
+              </label>
             </div>
 
-            <div className="faq-accordion">
-              {faqData.map((category, categoryIndex) => (
-                <div key={categoryIndex} className="faq-category">
-                  <button
-                    className={`faq-category-header ${openCategory === categoryIndex ? 'active' : ''}`}
-                    onClick={() => toggleCategory(categoryIndex)}
-                  >
-                    <span className="faq-category-title">{category.category}</span>
-                    <svg
-                      className="faq-category-icon"
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
-                      <polyline points="6 9 12 15 18 9"></polyline>
-                    </svg>
-                  </button>
+            <div className="faqHeroArtwork">
+  <div className="faqHeroBlob" aria-hidden="true" />
 
-                  <div className={`faq-category-content ${openCategory === categoryIndex ? 'open' : ''}`}>
-                    {category.questions.map((item, questionIndex) => (
-                      <div key={questionIndex} className="faq-item">
+  <div className="faqHeroPrompt" aria-hidden="true">
+    <span className="faqQuestionMark">?</span>
+
+    <span className="faqPromptDots">
+      <i />
+      <i />
+      <i />
+    </span>
+  </div>
+
+  <Image
+    src="/images/faq/faq-hero.png"
+    alt="Accesco Living frequently asked questions"
+    fill
+    style={{ objectFit: 'cover', objectPosition: 'center' }}
+    sizes="(max-width: 768px) 100vw, 800px"
+  />
+</div>
+          </div>
+        </section>
+
+        {/* CATEGORIES AND QUESTIONS */}
+
+        <section className="faqBrowse">
+          <div className="faqShell">
+            <h2>Browse by Category</h2>
+
+            <div
+              className="faqTabs"
+              role="tablist"
+              aria-label="FAQ categories"
+            >
+              {categoryTabs.map((category) => (
+                <button
+                  type="button"
+                  key={category.id}
+                  className={
+                    activeCategory === category.id ? 'active' : undefined
+                  }
+                  onClick={() => selectCategory(category.id)}
+                  role="tab"
+                  aria-selected={activeCategory === category.id}
+                >
+                  {category.label}
+                </button>
+              ))}
+            </div>
+
+            <div className="faqContentGrid">
+              {/* SUPPORT CARD */}
+
+              <aside className="faqSupportCard">
+                <div className="faqSupportBubble">
+                  How can we
+                  <br />
+                  help you?
+                </div>
+
+               <div className="faqHeadphones">
+  <Image
+    src="/images/faq/headphones.png"
+    alt="Accesco customer support"
+    width={175}
+    height={135}
+  />
+</div>
+
+                <p>
+                  Can&apos;t find what you&apos;re looking for?
+                  <br />
+                  Our support team is here to help.
+                </p>
+
+                <Link href="/contact" className="faqSupportButton">
+                  <Mail size={16} />
+                  Contact Support
+                </Link>
+
+                <small>We typically reply within a few hours.</small>
+              </aside>
+
+              {/* ACCORDIONS */}
+
+              <div className="faqQuestionList">
+                {visibleFaqs.length > 0 ? (
+                  visibleFaqs.map((item) => {
+                    const isOpen = openQuestion === item.q;
+
+                    return (
+                      <article
+                        className={`faqItem ${isOpen ? 'open' : ''}`}
+                        key={item.q}
+                      >
                         <button
-                          className={`faq-question ${openQuestion === `${categoryIndex}-${questionIndex}` ? 'active' : ''}`}
-                          onClick={() => toggleQuestion(categoryIndex, questionIndex)}
+                          type="button"
+                          className="faqQuestion"
+                          onClick={() => toggleQuestion(item.q)}
+                          aria-expanded={isOpen}
                         >
                           <span>{item.q}</span>
-                          <svg
-                            className="faq-question-icon"
-                            width="20"
-                            height="20"
-                            viewBox="0 0 20 20"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          >
-                            <line x1="10" y1="5" x2="10" y2="15"></line>
-                            <line x1="5" y1="10" x2="15" y2="10"></line>
-                          </svg>
+
+                          <ChevronDown
+                            className="faqChevron"
+                            size={18}
+                            aria-hidden="true"
+                          />
                         </button>
-                        <div className={`faq-answer ${openQuestion === `${categoryIndex}-${questionIndex}` ? 'open' : ''}`}>
-                          <p>{item.a}</p>
-                        </div>
-                      </div>
-                    ))}
+
+                        {isOpen && (
+                          <div className="faqAnswer">
+                            <p>{item.a}</p>
+                          </div>
+                        )}
+                      </article>
+                    );
+                  })
+                ) : (
+                  <div className="faqEmpty">
+                    <Search size={25} />
+                    <h3>No matching questions found</h3>
+                    <p>Try searching with a different word or phrase.</p>
                   </div>
-                </div>
-              ))}
+                )}
+              </div>
+            </div>
+
+            {/* BOTTOM HELP STRIP */}
+
+            <div className="faqHelpStrip">
+              <div className="faqHelpPhone">
+                <Phone size={31} />
+              </div>
+
+              <div className="faqHelpCopy">
+                <h3>Still need help?</h3>
+
+                <p>
+                  We&apos;re here for you 24/7. Reach out to our support team
+                  and we&apos;ll get back to you as soon as possible.
+                </p>
+              </div>
+
+              <div className="faqHelpActions">
+                <Link href="/contact" aria-label="Chat with support">
+                  <MessageCircle size={21} />
+                </Link>
+
+                <Link href="/contact" aria-label="Email support">
+                  <Mail size={21} />
+                </Link>
+
+                <Link href="/contact" aria-label="Call support">
+                  <Phone size={21} />
+                </Link>
+              </div>
             </div>
           </div>
         </section>

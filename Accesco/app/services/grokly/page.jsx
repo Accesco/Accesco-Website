@@ -1,12 +1,13 @@
 /**
  * Grokly Main Page - Modular Version
  * 11-Minute Grocery Delivery Service
- * @version 2.0.0
+ * @version 2.3.1
  */
 
 'use client';
 
 import { useState, useMemo, useEffect, Suspense } from 'react';
+import Image from 'next/image';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useGrokly } from './contexts/GroklyContext';
 import GroklyHeader from './components/GroklyHeader';
@@ -15,16 +16,20 @@ import CategoryNav from './components/CategoryNav';
 import ProductCard from './components/ProductCard';
 import ProductSkeleton from './components/ProductSkeleton';
 import FilterPanel from './components/FilterPanel';
-import CartDrawer from './components/CartDrawer';
-import LocationModal from './components/LocationModal';
+import dynamic from 'next/dynamic';
+const CartDrawer = dynamic(() => import('./components/CartDrawer'));
+const LocationModal = dynamic(() => import('./components/LocationModal'));
 import FloatingCartBar from './components/FloatingCartBar';
 import BottomNav from './components/BottomNav';
 import { categories, getProductsByCategory, searchProducts } from './lib/groklyData';
-import {useProducts} from './hooks/useProducts';
+import { useProducts } from './hooks/useProducts';
 import './styles/variables.css';
-import './styles/globals.css';
+import './styles/GroklyFooter.css';
+import GroklyFooter from './components/GroklyFooter';
 import JsonLd from '../../../components/JsonLd';
 import { dishes } from './lib/dishesData';
+import GroceryStories from './components/GroceryStories';
+
 const getIngredientImage = (item) => {
   if (!item.image || item.image.includes("grofers.com")) {
     const categoryImages = {
@@ -42,12 +47,12 @@ const getIngredientImage = (item) => {
     const category = item.id.startsWith("veg-")
       ? "vegetables-fruits"
       : item.id.startsWith("dairy-") ||
-          item.id.includes("paneer") ||
-          item.id.includes("yogurt")
+        item.id.includes("paneer") ||
+        item.id.includes("yogurt")
         ? "dairy-breakfast"
         : item.id.startsWith("masala-") ||
-            item.id.includes("ggpaste") ||
-            item.id.includes("marinade")
+          item.id.includes("ggpaste") ||
+          item.id.includes("marinade")
           ? "masala-oil"
           : item.id.startsWith("atta-") || item.id.includes("rice")
             ? "atta-rice-dal"
@@ -70,7 +75,7 @@ function GroklyPageContent() {
   const [selectedDishKey, setSelectedDishKey] = useState("tikka");
   const [currentSlide, setCurrentSlide] = useState(0);
   const { getProductQuantity, addToCart, incrementQuantity, decrementQuantity, openCart } = useGrokly();
-  const {products,isLoading:productsLoading} = useProducts('grokly');
+  const { products, isLoading: productsLoading } = useProducts('grokly');
 
   useEffect(() => {
     setSearchQuery(searchParams.get("search") || "");
@@ -126,7 +131,7 @@ function GroklyPageContent() {
     }
 
     return filtered;
-  }, [activeCategory, searchQuery, activeFilter, sortBy]);
+  }, [activeCategory, searchQuery, activeFilter, sortBy, products]);
 
   const productsByCategory = useMemo(() => {
     if (activeCategory !== "all" || searchQuery.trim()) {
@@ -276,7 +281,7 @@ function GroklyPageContent() {
               maxWidth: "var(--grokly-max-width)",
               margin: "0 auto",
               width: "100%",
-              padding: "16px 20px",
+              padding: "16px 20px 0", // Reduced bottom padding to 0
             }}
           >
             <div
@@ -289,6 +294,7 @@ function GroklyPageContent() {
                 boxShadow: "0 8px 30px rgba(42, 33, 26, 0.12)",
               }}
             >
+              {/* Slide 0: General Info */}
               <div
                 onClick={() => {
                   const mainContent = document.querySelector("main");
@@ -307,15 +313,16 @@ function GroklyPageContent() {
                   transition: "opacity 0.8s ease-in-out",
                 }}
               >
-                <img
+                <Image
                   src="/images/IMG_4614.PNG"
                   alt="Grokly - 11 Minute Grocery Delivery"
+                  fill
+                  sizes="100vw"
                   style={{
-                    width: "100%",
-                    height: "100%",
                     objectFit: "cover",
                     objectPosition: "center top",
                   }}
+                  priority
                 />
                 <div
                   style={{
@@ -411,6 +418,8 @@ function GroklyPageContent() {
                   </div>
                 </div>
               </div>
+
+              {/* Slide 1: Grokly Fresh Groceries Curated Just For You */}
               <div
                 onClick={() => {
                   const mainContent = document.querySelector("main");
@@ -429,18 +438,19 @@ function GroklyPageContent() {
                   transition: "opacity 0.8s ease-in-out",
                 }}
               >
-                <img
-                  src="/images/banners/hero-grokly.jpg"
-                  alt="Grokly Banner"
+                <Image
+                  src="/images/banners/hero-grokly1.jpg.png"
+                  alt="Grokly Fresh Groceries Curated Just For You Banner"
+                  fill
+                  sizes="100vw"
                   style={{
-                    width: "100%",
-                    height: "100%",
                     objectFit: "cover",
                     objectPosition: "center",
                   }}
                 />
               </div>
 
+              {/* Slide Indicators */}
               <div
                 style={{
                   position: "absolute",
@@ -477,10 +487,11 @@ function GroklyPageContent() {
                 ))}
               </div>
 
+              {/* Left Arrow Navigation */}
               <button
                 onClick={(e) => {
                   e.stopPropagation();
-                  setCurrentSlide((prev) => (prev === 0 ? 1 : 0));
+                  setCurrentSlide((prev) => (prev === 0 ? 1 : prev - 1));
                 }}
                 style={{
                   position: "absolute",
@@ -514,10 +525,12 @@ function GroklyPageContent() {
                   style={{ display: "block", margin: "auto" }}
                 ></i>
               </button>
+
+              {/* Right Arrow Navigation */}
               <button
                 onClick={(e) => {
                   e.stopPropagation();
-                  setCurrentSlide((prev) => (prev === 0 ? 1 : 0));
+                  setCurrentSlide((prev) => (prev === 1 ? 0 : prev + 1));
                 }}
                 style={{
                   position: "absolute",
@@ -561,7 +574,7 @@ function GroklyPageContent() {
               maxWidth: "var(--grokly-max-width)",
               margin: "0 auto",
               width: "100%",
-              padding: "24px 20px 0",
+              padding: "0 20px 0", // Reduced top padding to 0
             }}
           >
             <div
@@ -691,6 +704,7 @@ function GroklyPageContent() {
                               e.currentTarget.style.background = "#ffffff";
                           }}
                         >
+                          {/* eslint-disable-next-line @next/next/no-img-element -- dish.image comes from dishesData.js's heterogeneous external hosts, not compatible with next/image's static remotePatterns allowlist */}
                           <img
                             src={dish.image}
                             alt={dish.name}
@@ -802,6 +816,7 @@ function GroklyPageContent() {
                               border: "1px solid #F1EEE6",
                             }}
                           >
+                            {/* eslint-disable-next-line @next/next/no-img-element -- getIngredientImage() can return dishesData.js's heterogeneous external hosts, not compatible with next/image's static remotePatterns allowlist */}
                             <img
                               src={getIngredientImage(ing)}
                               alt={ing.name}
@@ -1212,6 +1227,7 @@ function GroklyPageContent() {
                                 gap: "10px",
                               }}
                             >
+                              {/* eslint-disable-next-line @next/next/no-img-element -- getIngredientImage() can return dishesData.js's heterogeneous external hosts, not compatible with next/image's static remotePatterns allowlist */}
                               <img
                                 src={getIngredientImage(item)}
                                 alt={item.name}
@@ -1459,6 +1475,17 @@ function GroklyPageContent() {
                     if (rail) rail.scrollBy({ left: -500, behavior: "smooth" });
                   }}
                   style={{
+                    position: "absolute",
+                    left: "-4px",
+                    top: "50%",
+                    transform: "translateY(-50%)",
+                    zIndex: 10,
+
+                    width: "32px",
+                    height: "32px",
+                    borderRadius: "50%",
+                    border: "none",
+
                     background: "#000",
                     color: "#fff",
                     fontSize: "24px",
@@ -1531,12 +1558,12 @@ function GroklyPageContent() {
                             justifyContent: "center",
                           }}
                         >
-                          <img
+                          <Image
                             src={cat.image}
                             alt={cat.name}
+                            width={64}
+                            height={64}
                             style={{
-                              width: "100%",
-                              height: "100%",
                               objectFit: "cover",
                             }}
                           />
@@ -1639,7 +1666,9 @@ function GroklyPageContent() {
               />
             </div>
           )}
-
+{activeCategory === "all" && !searchQuery && (
+  <GroceryStories />
+)}
           {/* Curated Product Sections */}
           {activeCategory === "all" && !searchQuery && (
             <div
@@ -1774,19 +1803,31 @@ function GroklyPageContent() {
                   }}
                   className="hide-scrollbar"
                 >
-                  {products
-                    .filter((p) =>
-                      [
-                        "munch-001",
-                        "munch-002",
-                        "munch-003",
-                        "munch-005",
-                        "munch-006",
-                        "drink-001",
-                        "drink-002",
-                        "drink-003",
-                        "drink-004",
-                      ].includes(p.id),
+                
+  {products
+  .filter((p) =>
+    [
+      "munch-001",
+      "munch-002",
+      "munch-003",
+      "munch-005",
+      "munch-006",
+      "munch-011",
+      "munch-012",
+      "munch-013",
+      "munch-014",
+      "munch-016",
+      "drink-001",
+      "drink-003",
+      "drink-004",
+      "drink-005",
+      "drinks-001",
+      "drinks-002",
+      "drinks-003",
+      "drinks-004",
+      "drinks-005",
+      "drinks-006",
+].includes(p.id),
                     )
                     .map((product) => (
                       <div
@@ -1859,6 +1900,15 @@ function GroklyPageContent() {
                         "atta-001",
                         "atta-002",
                         "atta-003",
+                        "atta-011",
+                        "atta-012",
+                        "atta-013",
+                        "atta-014",
+                        "atta-015",
+                        "atta-016",
+                        "atta-017",
+                        "atta-018",
+                        "atta-019",
                         "masala-001",
                         "masala-003",
                       ].includes(p.id),
@@ -1991,7 +2041,7 @@ function GroklyPageContent() {
                           onClick={() => handleCategorySelect(cat.id)}
                           className={`grokly-sidebar-item ${isActive ? "active" : ""}`}
                         >
-                          <img src={cat.image} alt={cat.name} />
+                          <Image src={cat.image} alt={cat.name} width={30} height={30} />
                           <span>{cat.name}</span>
                         </button>
                       );
@@ -2050,7 +2100,7 @@ function GroklyPageContent() {
             )
           )}
         </main>
-
+<GroklyFooter />
         <CartDrawer />
         <LocationModal />
         <FloatingCartBar />
@@ -2061,9 +2111,6 @@ function GroklyPageContent() {
 }
 
 export default function GroklyPage() {
-  // NOTE: GroklyProvider is already supplied by grokly/layout.js (shared across
-  // all grokly routes). Wrapping again here created a second, isolated cart whose
-  // items never reached the checkout route. Use the shared provider only.
   return (
     <Suspense fallback={<div>Loading...</div>}>
       <GroklyPageContent />

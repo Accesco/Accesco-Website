@@ -5,7 +5,8 @@ import './blog-post.css';
 import { fetchBlogs } from '../../../lib/blogService';
 import { HeaderActions, ShareRow } from './PostActions';
 
-export const revalidate = 60;
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 const SITE_URL = 'https://accescoliving.com';
 const HIDDEN_TITLES = ['AccesGo: Moving People, Respecting Lives\n'];
@@ -15,10 +16,14 @@ function isVisible(post) {
 }
 
 async function getPostData(id) {
-  const data = await fetchBlogs();
-  const visible = data.filter(isVisible);
-  const post = visible.find((p) => p.id === id) || null;
-  return { post, visible };
+  try {
+    const data = await fetchBlogs();
+    const visible = (Array.isArray(data) ? data : []).filter(isVisible);
+    const post = visible.find((p) => p.id === id) || null;
+    return { post, visible };
+  } catch (e) {
+    return { post: null, visible: [] };
+  }
 }
 
 function getRelatedPosts(post, allPosts, limit = 3) {
@@ -180,16 +185,41 @@ export default async function BlogPostPage({ params }) {
           </div>
         </header>
 
-        <div className="post-featured-image">
-          <Image
-            src={post.image || '/images/download (2).png'}
-            alt={post.title}
-            width={1200}
-            height={675}
-            unoptimized
-            priority
-          />
-        </div>
+<div
+  className="post-featured-image"
+  style={{
+    width: '100%',
+    maxWidth: '1200px',
+    height: '500px', // change this to whatever height you want
+    margin: '0 auto',
+    overflow: 'hidden',
+    borderRadius: '16px',
+    position: 'relative',
+  }}
+>
+  <Image
+    src={
+      post.title?.includes('What a City Actually Demands of You')
+        ? '/images/blogs/what-a-city-actually-demands.jpg'
+      : post.title?.includes('Dark Stores')
+        ? '/images/blogs/dark-stores.jpg'
+      : post.title?.includes('Sunday Meal Prep')
+        ? '/images/blogs/meal-prep.jpg'
+      : post.title?.includes('All-in-One Smart Lifestyle Ecosystem')
+        ? '/images/blogs/accesco-ecosystem.jpg'
+      : post.title?.includes('Best Grocery Delivery Service')
+        ? '/images/blogs/grocery-delivery.jpg'
+      : post.title?.includes('Accesco Living Launches Public Beta')
+        ? '/images/blogs/launch-date.png'
+      : post.image || '/images/download (2).png'
+    }
+    alt={post.title}
+    fill
+    style={{ objectFit: 'cover' }}
+    unoptimized
+    priority
+  />
+</div>
 
         <div className="post-content">
           {(post.content || '').split('\n\n').map((paragraph, index) => (

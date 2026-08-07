@@ -2,40 +2,52 @@
 
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
+import { Camera, Shield, ArrowRight, Upload, Sparkles, RefreshCw, Download, Check, AlertCircle, X, ChevronRight } from 'lucide-react';
 import { products } from '@/lib/mockData';
 import styles from './virtual-tryon.module.css';
 
 export default function VirtualTryOnPage() {
-  const [isLoading, setIsLoading] = useState(true);
+  // ── Hydration guard ──────────────────────────────────────────────────────
+  // The page uses browser-only APIs (camera, canvas, blob URLs).
+  // Rendering null on the server and switching to client-only after mount
+  // prevents any SSR ↔ client mismatch and the Suspense hydration error.
+  const [mounted, setMounted] = useState(false);
+  const [isReady, setIsReady] = useState(false);
+
   const [isCameraActive, setIsCameraActive] = useState(false);
   const [isStartingCamera, setIsStartingCamera] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [error, setError] = useState(null);
   const [capturedImage, setCapturedImage] = useState(null);
-  const [overlayPose, setOverlayPose] = useState({ x: 50, y: 58, scale: 1 });
-  const [trackingAvailable, setTrackingAvailable] = useState(false);
+  const [uploadedImage, setUploadedImage] = useState(null);
+  const [uploadedPreview, setUploadedPreview] = useState('');
   
+  // ML Pipeline States
+  const [isGeneratingMl, setIsGeneratingMl] = useState(false);
+  const [mlResultImage, setMlResultImage] = useState('');
+  const [mlError, setMlError] = useState('');
+
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const streamRef = useRef(null);
-  const trackingFrameRef = useRef(null);
-  const faceDetectorRef = useRef(null);
-  const trackingLastTickRef = useRef(0);
+  const fileInputRef = useRef(null);
   const [activeCategory, setActiveCategory] = useState('all');
 
-  const tryOnProducts = products.slice(0, 20).map((product) => ({
+  // Load products for preview
+  const tryOnProducts = products.map((product) => ({
     id: product.id,
     name: product.name,
     category: product.category,
     subcategory: product.subcategory,
+    brand: product.brand || 'InstaStyle',
     color: product.colors?.[0]?.hex || '#1a1a1a',
     image: product.images?.[0]?.url || '',
   }));
 
-  const productCategories = ['all', ...new Set(tryOnProducts.map((product) => product.category))];
+  const productCategories = ['all', 'men', 'women', 'kids', 'accessories'];
   const filteredProducts = activeCategory === 'all'
     ? tryOnProducts
-    : tryOnProducts.filter((product) => product.category === activeCategory);
+    : tryOnProducts.filter((product) => product.category.toLowerCase() === activeCategory.toLowerCase());
 
   const waitForVideoElement = () => new Promise((resolve, reject) => {
     let attempts = 0;
@@ -64,16 +76,15 @@ export default function VirtualTryOnPage() {
     const isLocalhost = ['localhost', '127.0.0.1'].includes(window.location.hostname);
     const isSecureContext = window.isSecureContext || isLocalhost;
     const isEmbeddedBrowser = window.top !== window.self;
-    const isVSCodeWebview = typeof navigator?.userAgent === 'string' && /vscode|electron/i.test(navigator.userAgent);
 
     if (errorName === 'NotAllowedError' || errorName === 'PermissionDeniedError') {
       if (!isSecureContext) {
         return 'Camera requires HTTPS or localhost. Open this page on localhost or HTTPS and try again.';
       }
-      if (isEmbeddedBrowser || isVSCodeWebview) {
-        return 'This in-app browser may block camera access. Open this page in Chrome/Edge directly and try again.';
+      if (isEmbeddedBrowser) {
+        return 'This in-app browser may block camera access. Open this page in Chrome/Edge directly.';
       }
-      return 'Camera permission is blocked. Allow camera access in browser settings and retry.';
+      return 'Camera permission was denied. Please allow camera access in your browser settings.';
     }
     if (errorName === 'NotFoundError' || errorName === 'DevicesNotFoundError') {
       return 'No camera detected. Connect a camera or switch to a device with a camera.';
@@ -81,196 +92,26 @@ export default function VirtualTryOnPage() {
     if (errorName === 'NotReadableError' || errorName === 'TrackStartError') {
       return 'Camera is busy in another app. Close other apps using the camera and retry.';
     }
-    if (errorName === 'SecurityError') {
-      return 'Camera access requires a secure context. Open this page on localhost or HTTPS.';
-    }
-    if (errorName === 'AbortError') {
-      return 'Camera startup was interrupted. Please click Start Camera again.';
-    }
-    return 'Camera could not start. Please try again in Chrome or Edge.';
-  };
-
-  const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
-
-  const getGarmentConfig = (product) => {
-    const text = `${product?.name || ''} ${product?.subcategory || ''} ${product?.category || ''}`.toLowerCase();
-
-    const isBottomWear = /(jean|pant|trouser|short|skirt|lower|jogger|track)/.test(text);
-    const isFullWear = /(dress|gown|kurta|jumpsuit|onesie|robe)/.test(text);
-    const isAccessory = /(shoe|cap|hat|bag|watch|belt|wallet|sunglass|jewelry|necklace)/.test(text);
-
-    if (isAccessory) {
-      return {
-        type: 'accessory',
-        widthPct: 26,
-        heightPct: 26,
-        yOffset: 8,
-        minY: 24,
-        maxY: 58,
-        scaleFactor: 2.1,
-        scaleMin: 0.7,
-        scaleMax: 1.25,
-        defaultY: 36,
-        cropTopRatio: 0.08,
-        objectPosY: 58,
-      };
-    }
-
-    if (isBottomWear) {
-      return {
-        type: 'bottom',
-        widthPct: 34,
-        heightPct: 58,
-        yOffset: 74,
-        minY: 56,
-        maxY: 90,
-        scaleFactor: 3.8,
-        scaleMin: 0.72,
-        scaleMax: 1.45,
-        defaultY: 78,
-        cropTopRatio: 0.44,
-        objectPosY: 84,
-      };
-    }
-
-    if (isFullWear) {
-      return {
-        type: 'full',
-        widthPct: 46,
-        heightPct: 78,
-        yOffset: 52,
-        minY: 46,
-        maxY: 88,
-        scaleFactor: 4.5,
-        scaleMin: 0.76,
-        scaleMax: 1.52,
-        defaultY: 62,
-        cropTopRatio: 0.2,
-        objectPosY: 72,
-      };
-    }
-
-    return {
-      type: 'top',
-      widthPct: 44,
-      heightPct: 62,
-      yOffset: 34,
-      minY: 42,
-      maxY: 82,
-      scaleFactor: 4.6,
-      scaleMin: 0.78,
-      scaleMax: 1.5,
-      defaultY: 58,
-      cropTopRatio: 0.3,
-      objectPosY: 80,
-    };
-  };
-
-  const stopTracking = () => {
-    if (trackingFrameRef.current) {
-      cancelAnimationFrame(trackingFrameRef.current);
-      trackingFrameRef.current = null;
-    }
-    trackingLastTickRef.current = 0;
-  };
-
-  const startTracking = () => {
-    stopTracking();
-
-    const hasFaceDetector = typeof window !== 'undefined' && 'FaceDetector' in window;
-    setTrackingAvailable(hasFaceDetector);
-    if (!hasFaceDetector) return;
-
-    const trackLoop = async (timestamp) => {
-      trackingFrameRef.current = requestAnimationFrame(trackLoop);
-
-      const video = videoRef.current;
-      if (!video || video.readyState < 2 || !selectedProduct || !isCameraActive) return;
-
-      if (timestamp - trackingLastTickRef.current < 120) return;
-      trackingLastTickRef.current = timestamp;
-
-      try {
-        const garment = getGarmentConfig(selectedProduct);
-
-        if (!faceDetectorRef.current) {
-          faceDetectorRef.current = new window.FaceDetector({
-            fastMode: true,
-            maxDetectedFaces: 1,
-          });
-        }
-
-        const faces = await faceDetectorRef.current.detect(video);
-        if (!faces?.length) return;
-
-        const face = faces[0];
-        const box = face.boundingBox;
-        if (!box) return;
-
-        const centerX = ((box.x + box.width / 2) / video.videoWidth) * 100;
-        const centerY = ((box.y + box.height / 2) / video.videoHeight) * 100;
-
-        const targetPose = {
-          x: clamp(centerX, 24, 76),
-          y: clamp(centerY + garment.yOffset, garment.minY, garment.maxY),
-          scale: clamp(
-            (box.width / video.videoWidth) * garment.scaleFactor,
-            garment.scaleMin,
-            garment.scaleMax,
-          ),
-        };
-
-        setOverlayPose((prev) => ({
-          x: prev.x + (targetPose.x - prev.x) * 0.22,
-          y: prev.y + (targetPose.y - prev.y) * 0.22,
-          scale: prev.scale + (targetPose.scale - prev.scale) * 0.2,
-        }));
-      } catch {
-        // Ignore transient detector errors while preserving camera stream.
-      }
-    };
-
-    trackingFrameRef.current = requestAnimationFrame(trackLoop);
+    return 'Camera could not start. Please try uploading a photo instead.';
   };
 
   useEffect(() => {
-    const loadPreview = async () => {
-      setIsLoading(true);
-      await new Promise(resolve => setTimeout(resolve, 1200));
-      setIsLoading(false);
-    };
-
-    loadPreview();
+    setMounted(true);
+    const timer = setTimeout(() => {
+      setIsReady(true);
+    }, 600);
 
     return () => {
-      stopTracking();
+      clearTimeout(timer);
       stopCamera();
     };
   }, []);
-
-  useEffect(() => {
-    if (isCameraActive && selectedProduct) {
-      startTracking();
-    } else {
-      stopTracking();
-    }
-
-    return () => {
-      stopTracking();
-    };
-  }, [isCameraActive, selectedProduct]);
-
-  useEffect(() => {
-    if (!selectedProduct) return;
-    const garment = getGarmentConfig(selectedProduct);
-    setOverlayPose((prev) => ({ ...prev, y: garment.defaultY }));
-  }, [selectedProduct]);
 
   const startCamera = async () => {
     if (isStartingCamera) return;
 
     if (!navigator?.mediaDevices?.getUserMedia) {
-      setError('Camera is unavailable in this browser. Use a modern browser on localhost or HTTPS.');
+      setError('Camera is unavailable in this browser. Please upload a photo instead.');
       return;
     }
 
@@ -278,6 +119,9 @@ export default function VirtualTryOnPage() {
       setIsStartingCamera(true);
       setError(null);
       setCapturedImage(null);
+      setUploadedImage(null);
+      setUploadedPreview('');
+      setMlResultImage('');
       stopCamera();
       let stream;
 
@@ -291,28 +135,19 @@ export default function VirtualTryOnPage() {
           audio: false
         });
       } catch {
-        // Fallback for devices that fail strict constraints.
         stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
       }
 
       streamRef.current = stream;
       setIsCameraActive(true);
-      setOverlayPose({ x: 50, y: 58, scale: 1 });
 
       const videoEl = await waitForVideoElement();
       videoEl.srcObject = stream;
       videoEl.muted = true;
       videoEl.setAttribute('playsinline', 'true');
-
-      // Attempt playback but do not fail hard if play() rejects in restricted environments.
       await videoEl.play().catch(() => {});
     } catch (err) {
-      const baseMessage = getCameraErrorMessage(err);
-      const detail = typeof err?.message === 'string' && err.message.trim()
-        ? ` (${err.message.trim()})`
-        : '';
-      setError(`${baseMessage}${detail}`);
-      console.error('Camera error:', err);
+      setError(getCameraErrorMessage(err));
       stopCamera();
     } finally {
       setIsStartingCamera(false);
@@ -320,19 +155,17 @@ export default function VirtualTryOnPage() {
   };
 
   const stopCamera = () => {
-    stopTracking();
     if (streamRef.current) {
       streamRef.current.getTracks().forEach(track => track.stop());
       streamRef.current = null;
     }
     if (videoRef.current) {
       videoRef.current.srcObject = null;
-      videoRef.current.onloadedmetadata = null;
     }
     setIsCameraActive(false);
   };
 
-  const capturePhoto = async () => {
+  const capturePhoto = () => {
     if (canvasRef.current && videoRef.current) {
       const canvas = canvasRef.current;
       const video = videoRef.current;
@@ -342,238 +175,358 @@ export default function VirtualTryOnPage() {
       
       const ctx = canvas.getContext('2d');
       ctx.drawImage(video, 0, 0);
-
-      // Apply selected product image as a visual try-on layer in the captured output.
-      if (selectedProduct) {
-        const garment = getGarmentConfig(selectedProduct);
-        const targetW = canvas.width * (garment.widthPct / 100) * overlayPose.scale;
-        const targetH = canvas.height * (garment.heightPct / 100) * overlayPose.scale;
-        const targetX = clamp((canvas.width * overlayPose.x) / 100 - targetW / 2, 0, canvas.width - targetW);
-        const targetY = clamp((canvas.height * overlayPose.y) / 100 - targetH / 2, 0, canvas.height - targetH);
-
-        if (selectedProduct.image) {
-          await new Promise((resolve) => {
-            const productImg = new window.Image();
-            productImg.crossOrigin = 'anonymous';
-            productImg.onload = () => {
-              const imageRatio = productImg.width / productImg.height;
-              const targetRatio = targetW / targetH;
-
-              let drawW = targetW;
-              let drawH = targetH;
-              if (imageRatio > targetRatio) {
-                drawH = targetW / imageRatio;
-              } else {
-                drawW = targetH * imageRatio;
-              }
-
-              const drawX = targetX + (targetW - drawW) / 2;
-              const drawY = targetY + (targetH - drawH) / 2;
-              const srcY = Math.max(0, Math.floor(productImg.height * garment.cropTopRatio));
-              const srcHeight = Math.max(1, productImg.height - srcY);
-
-              ctx.globalAlpha = 0.62;
-              ctx.drawImage(productImg, 0, srcY, productImg.width, srcHeight, drawX, drawY, drawW, drawH);
-              ctx.globalAlpha = 1;
-              resolve();
-            };
-            productImg.onerror = () => resolve();
-            productImg.src = selectedProduct.image;
-          });
-        }
-
-        ctx.fillStyle = selectedProduct.color + '80'; // Semi-transparent
-        ctx.fillRect(
-          targetX,
-          targetY,
-          targetW,
-          targetH
-        );
-      }
       
-      const imageData = canvas.toDataURL('image/png');
+      const imageData = canvas.toDataURL('image/jpeg');
       setCapturedImage(imageData);
+      stopCamera();
+    }
+  };
+
+  const handleImageUpload = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploadedImage(file);
+    setUploadedPreview(URL.createObjectURL(file));
+    setCapturedImage(null);
+    setMlResultImage('');
+    stopCamera();
+  };
+
+  // ── Helper: convert a data-URL (base64) to a Blob without re-fetching ──
+  const dataUrlToBlob = (dataUrl) => {
+    const [header, base64] = dataUrl.split(',');
+    const mime = header.match(/:(.*?);/)[1];
+    const binary = atob(base64);
+    const bytes = new Uint8Array(binary.length);
+    for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+    return new Blob([bytes], { type: mime });
+  };
+
+  // ── Helper: fetch an image URL to Blob, handling CORS gracefully ──
+  const fetchImageBlob = async (url) => {
+    // First try with CORS
+    try {
+      const res = await fetch(url, { mode: 'cors' });
+      if (res.ok) return await res.blob();
+    } catch { /* CORS blocked — fall through to no-cors */ }
+
+    // Fall back to no-cors (opaque response — read as blob)
+    try {
+      const res = await fetch(url, { mode: 'no-cors' });
+      const blob = await res.blob();
+      if (blob.size > 0) return blob;
+    } catch { /* still failed */ }
+
+    throw new Error(`Could not load image: ${url}. Check network or CORS settings.`);
+  };
+
+  const handleGenerateMlTryOn = async () => {
+    const personSrc = capturedImage || uploadedPreview;
+    if (!personSrc) {
+      setMlError('Please provide a photo (either capture from camera or upload an image).');
+      return;
+    }
+    if (!selectedProduct || !selectedProduct.image) {
+      setMlError('Please select a product to try on.');
+      return;
+    }
+
+    setIsGeneratingMl(true);
+    setMlError('');
+    setMlResultImage('');
+
+    try {
+      const formData = new FormData();
+
+      // ── Person image ──
+      // If it's a captured snapshot (data URL), convert directly — no network fetch needed.
+      // If it's an uploaded file, use the original File object from state directly.
+      let personBlob;
+      if (capturedImage) {
+        // canvas.toDataURL → base64 → Blob (no fetch)
+        personBlob = dataUrlToBlob(capturedImage);
+      } else if (uploadedImage) {
+        // The original File object — no fetch at all
+        personBlob = uploadedImage;
+      } else {
+        // Fallback: blob URL — try fetching it (same-origin, should always succeed)
+        const res = await fetch(uploadedPreview);
+        if (!res.ok) throw new Error('Could not read the uploaded photo.');
+        personBlob = await res.blob();
+      }
+      formData.append('person', personBlob, 'person.jpg');
+
+      // ── Garment image ──
+      // Product images may be on external CDNs → use the CORS-aware helper.
+      let shirtBlob;
+      try {
+        shirtBlob = await fetchImageBlob(selectedProduct.image);
+      } catch (imgErr) {
+        throw new Error(`Could not load the product image: ${imgErr.message}`);
+      }
+      formData.append('shirt', shirtBlob, 'shirt.jpg');
+
+      // ── Call the server-side ML pipeline ──
+      const response = await fetch('/services/instastyle/ai-tryon', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) {
+        let errMsg = 'Virtual try-on generation failed.';
+        try {
+          const errData = await response.json();
+          errMsg = errData.error || errData.message || errMsg;
+        } catch { /* response body not JSON */ }
+        throw new Error(errMsg);
+      }
+
+      // ── Success — display the result ──
+      const blobResult = await response.blob();
+      if (!blobResult || blobResult.size === 0) {
+        throw new Error('The model returned an empty result. Please try again.');
+      }
+      setMlResultImage(URL.createObjectURL(blobResult));
+
+    } catch (err) {
+      console.error('[vto] generate error:', err);
+      setMlError(
+        err.message ||
+        'Generation failed. Make sure the IDM-VTON model space is responding and try again.'
+      );
+    } finally {
+      setIsGeneratingMl(false);
     }
   };
 
   const downloadImage = () => {
-    if (capturedImage) {
+    const linkSrc = mlResultImage || capturedImage || uploadedPreview;
+    if (linkSrc) {
       const link = document.createElement('a');
-      link.download = 'instastyle-tryon.png';
-      link.href = capturedImage;
+      link.download = mlResultImage ? 'ml-tryon-result.jpg' : 'captured-preview.jpg';
+      link.href = linkSrc;
       link.click();
     }
+  };
+
+  const handleRetake = () => {
+    setCapturedImage(null);
+    setUploadedImage(null);
+    setUploadedPreview('');
+    setMlResultImage('');
+    startCamera();
   };
 
   const selectProduct = (product) => {
     setSelectedProduct(product);
   };
 
-  if (isLoading) {
+  if (!mounted) {
+    return null;
+  }
+
+  if (!isReady) {
     return (
       <div className={styles.loadingContainer}>
         <div className={styles.loader}></div>
-        <h2>Preparing Style Preview...</h2>
-        <p>Setting up the fitting-room view and camera</p>
+        <h2>Preparing Fitting Room...</h2>
+        <p>Loading ML templates and virtual assets</p>
       </div>
     );
   }
 
   return (
     <div className={styles.virtualTryOnPage}>
-      <div className={styles.mainContent}>
-        {/* Camera/Preview Section */}
-        <div className={styles.cameraSection}>
-          <div className={styles.cameraContainer}>
-            {!isCameraActive && !capturedImage && (
-              <div className={styles.cameraPlaceholder}>
-                <div className={styles.placeholderIcon}>CAM</div>
-                <h2>Ready for a style preview?</h2>
-                <p>Start your camera to compare looks before you buy</p>
-                <button onClick={startCamera} className={styles.startCameraBtn} disabled={isStartingCamera}>
-                  {isStartingCamera ? 'Starting Camera...' : 'Start Camera'}
-                  
-                </button>
-                {error && <p className={styles.errorMessage}>{error}</p>}
+      <div className={styles.vtoContainer}>
+
+        {/* ── LEFT PANEL ─ title + info cards ── */}
+        <div className={styles.leftPanel}>
+          <span className={styles.subtitle}>Virtual Try-On</span>
+          <h1 className={styles.heading}>Try Before You Buy</h1>
+          <p className={styles.description}>
+            See how it looks on you with our AI-powered virtual try-on.
+          </p>
+
+          <div className={styles.statusCards}>
+            <div className={styles.statusCard}>
+              <div className={styles.statusIcon}>
+                <Camera size={20} className={styles.goldIcon} />
+              </div>
+              <div className={styles.statusText}>
+                <strong>Camera Ready</strong>
+                <span>We can see you clearly</span>
+              </div>
+            </div>
+
+            <div className={styles.statusCard}>
+              <div className={styles.statusIcon}>
+                <Shield size={20} className={styles.goldIcon} />
+              </div>
+              <div className={styles.statusText}>
+                <strong>Secure &amp; Private</strong>
+                <span>Your data is safe with us</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* ── CENTER PANEL ─ camera viewport ── */}
+        <div className={styles.centerPanel}>
+          <div className={styles.viewportWrapper}>
+            {/* Corner markers */}
+            <div className={`${styles.cornerMarker} ${styles.topLeft}`}></div>
+            <div className={`${styles.cornerMarker} ${styles.topRight}`}></div>
+            <div className={`${styles.cornerMarker} ${styles.bottomLeft}`}></div>
+            <div className={`${styles.cornerMarker} ${styles.bottomRight}`}></div>
+
+            {/* Error */}
+            {error && !isCameraActive && (
+              <div className={styles.errorAlert}>
+                <AlertCircle size={24} />
+                <p>{error}</p>
+                <button onClick={() => setError(null)} className={styles.closeAlertBtn}><X size={16} /></button>
               </div>
             )}
 
-            {isCameraActive && !capturedImage && (
+            {/* ML Error */}
+            {mlError && (
+              <div className={styles.errorAlert}>
+                <AlertCircle size={24} />
+                <p>{mlError}</p>
+                <button onClick={() => setMlError('')} className={styles.closeAlertBtn}><X size={16} /></button>
+              </div>
+            )}
+
+            {/* Generating loader */}
+            {isGeneratingMl && (
+              <div className={styles.viewportLoader}>
+                <h3>Running Virtual Try-On</h3>
+                <p>Fitting garment to your look using our visual fitting engine...</p>
+              </div>
+            )}
+
+            {/* STATE 1 — placeholder */}
+            {!isCameraActive && !capturedImage && !uploadedPreview && !mlResultImage && !isGeneratingMl && (
+              <div className={styles.viewportPlaceholder}>
+                <div className={styles.placeholderIconWrap}>
+                  <Camera size={36} />
+                </div>
+                <h2>Camera feed will appear here</h2>
+                <p>Allow camera permissions or upload a high-quality selfie</p>
+
+                <div className={styles.placeholderActions}>
+                  <button onClick={startCamera} className={styles.startCameraBtn} disabled={isStartingCamera}>
+                    <Camera size={18} />
+                    {isStartingCamera ? 'Starting...' : 'Start Camera'}
+                  </button>
+
+                  <button onClick={() => fileInputRef.current?.click()} className={styles.uploadPhotoBtn}>
+                    <Upload size={18} />
+                    Upload Photo
+                  </button>
+                  <input
+                    type="file"
+                    ref={fileInputRef}
+                    onChange={handleImageUpload}
+                    accept="image/*"
+                    style={{ display: 'none' }}
+                  />
+                </div>
+              </div>
+            )}
+
+            {/* STATE 2 — live camera */}
+            {isCameraActive && !capturedImage && !uploadedPreview && !mlResultImage && !isGeneratingMl && (
               <div className={styles.videoWrapper}>
-                <video
-                  ref={videoRef}
-                  autoPlay
-                  playsInline
-                  muted
-                  className={styles.video}
-                />
+                <video ref={videoRef} autoPlay playsInline muted className={styles.video} />
                 <canvas ref={canvasRef} style={{ display: 'none' }} />
-                
-                {/* Overlay UI */}
-                <div className={styles.videoOverlay}>
+
+                <div className={styles.videoHeaderDetails}>
                   {selectedProduct && (
-                    <div className={styles.selectedProductOverlay}>
-                      <div className={styles.productPreview}>
-                        <div 
-                          className={styles.productColorSwatch}
-                          style={{ background: selectedProduct.color }}
-                        />
-                        <span>{selectedProduct.name}</span>
-                      </div>
+                    <div className={styles.selectedProductBanner}>
+                      <div className={styles.colorDot} style={{ background: selectedProduct.color }}></div>
+                      <span>Selected: {selectedProduct.name}</span>
                     </div>
                   )}
                 </div>
 
+                <div className={styles.cameraActionControls}>
+                  <button onClick={stopCamera} className={styles.controlPillBtn}>Cancel</button>
+                  <button
+                    onClick={capturePhoto}
+                    className={styles.snapBtn}
+                    disabled={!selectedProduct}
+                    title={selectedProduct ? 'Take snapshot' : 'Select a product first'}
+                  >
+                    <div className={styles.snapInner}></div>
+                  </button>
+                  <button onClick={() => setSelectedProduct(null)} className={styles.controlPillBtn} disabled={!selectedProduct}>
+                    Clear Product
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* STATE 3 — captured / uploaded preview */}
+            {(capturedImage || uploadedPreview) && !mlResultImage && !isGeneratingMl && (
+              <div className={styles.previewImageWrapper}>
+                <img src={capturedImage || uploadedPreview} alt="User Preview" className={styles.previewImage} />
+
                 {selectedProduct && (
-                  <div className={styles.tryOnLayer} aria-hidden="true">
-                    {(() => {
-                      const garment = getGarmentConfig(selectedProduct);
-                      return (
-                    <div
-                      className={`${styles.tryOnGarment} ${styles[`garment${garment.type[0].toUpperCase()}${garment.type.slice(1)}`]}`}
-                      style={{
-                        left: `${overlayPose.x}%`,
-                        top: `${overlayPose.y}%`,
-                        width: `${garment.widthPct}%`,
-                        height: `${garment.heightPct}%`,
-                        transform: `translate(-50%, -50%) scale(${overlayPose.scale})`,
-                      }}
-                    >
-                      {selectedProduct.image ? (
-                        <img
-                          src={selectedProduct.image}
-                          alt={selectedProduct.name}
-                          className={styles.tryOnGarmentImage}
-                          style={{ objectPosition: `50% ${garment.objectPosY}%` }}
-                        />
-                      ) : (
-                        <div
-                          className={styles.tryOnGarmentFallback}
-                          style={{ background: selectedProduct.color }}
-                        />
-                      )}
-                      <div
-                        className={styles.tryOnTint}
-                        style={{ backgroundColor: selectedProduct.color }}
-                      />
-                    </div>
-                      );
-                    })()}
-                    <div className={styles.trackingBadge}>
-                      {trackingAvailable ? 'Auto Tracking On' : 'Auto Tracking Off'}
-                    </div>
+                  <div className={styles.previewProductOverlay}>
+                    <Sparkles size={16} className={styles.sparkleIcon} />
+                    <span>Selected: {selectedProduct.name}</span>
                   </div>
                 )}
 
-                {/* Camera Controls */}
-                <div className={styles.cameraControls}>
-                  <button onClick={stopCamera} className={styles.controlBtn}>
-                    Stop Camera
+                <div className={styles.previewControls}>
+                  <button onClick={handleRetake} className={styles.actionBtnSecondary}>
+                    <RefreshCw size={16} />
+                    Retake / Change Photo
                   </button>
-                  <button 
-                    onClick={capturePhoto} 
-                    className={styles.captureButton}
-                    disabled={!selectedProduct}
-                  >
-                    <span className={styles.captureCircle}></span>
-                  </button>
-                  <button 
-                    onClick={() => setSelectedProduct(null)} 
-                    className={styles.controlBtn}
-                    disabled={!selectedProduct}
-                  >
-                    Clear
+                  <button onClick={handleGenerateMlTryOn} className={styles.actionBtnPrimary} disabled={!selectedProduct}>
+                    <Sparkles size={16} />
+                    Generate Try-On
                   </button>
                 </div>
               </div>
             )}
 
-            {capturedImage && (
-              <div className={styles.capturedImageWrapper}>
-                <img src={capturedImage} alt="Captured" className={styles.capturedImage} />
-                <div className={styles.capturedControls}>
-                  <button onClick={() => setCapturedImage(null)} className={styles.retakeBtn}>
-                    Retake
-                  </button>
-                  <button onClick={downloadImage} className={styles.downloadBtn}>
-                    Download
-                  </button>
-                  <button 
-                    onClick={() => {
-                      setCapturedImage(null);
-                      startCamera();
-                    }} 
-                    className={styles.tryAnotherBtn}
-                  >
+            {/* STATE 4 — ML result */}
+            {mlResultImage && !isGeneratingMl && (
+              <div className={styles.aiResultWrapper}>
+                <img src={mlResultImage} alt="ML Try-On Result" className={styles.resultImage} />
+
+                <div className={styles.successBadge}>
+                  <Check size={14} />
+                  <span>Try-On Ready</span>
+                </div>
+
+                <div className={styles.resultControls}>
+                  <button onClick={handleRetake} className={styles.actionBtnSecondary}>
+                    <RefreshCw size={16} />
                     Try Another
                   </button>
+                  <button onClick={downloadImage} className={styles.actionBtnDownload}>
+                    <Download size={16} />
+                    Save Look
+                  </button>
                 </div>
               </div>
             )}
-          </div>
-
-
-          <div className={styles.instructions}>
-            <h3>How to Use</h3>
-            <ol>
-              <li>Allow camera access when prompted</li>
-              <li>Position yourself in the frame</li>
-              <li>Select a product from the list</li>
-              <li>Preview the look on screen</li>
-              <li>Capture and save your look</li>
-            </ol>
           </div>
         </div>
 
-        {/* Product Selection Sidebar */}
-        <div className={styles.productSidebar}>
+        {/* ── RIGHT PANEL ─ product selection ── */}
+        <div className={styles.rightPanel}>
           <h2 className={styles.sidebarTitle}>Select Product to Try</h2>
-          
-          <div className={styles.categoryTabs}>
+
+          <div className={styles.categoryFilters}>
             {productCategories.map((category) => (
               <button
                 key={category}
-                className={`${styles.categoryTab} ${activeCategory === category ? styles.active : ''}`}
+                className={`${styles.filterTab} ${activeCategory === category ? styles.activeFilter : ''}`}
                 onClick={() => setActiveCategory(category)}
               >
                 {category === 'all' ? 'All' : category[0].toUpperCase() + category.slice(1)}
@@ -585,62 +538,73 @@ export default function VirtualTryOnPage() {
             {filteredProducts.map((product) => (
               <div
                 key={product.id}
-                className={`${styles.productItem} ${
-                  selectedProduct?.id === product.id ? styles.selected : ''
-                }`}
+                className={`${styles.productCardItem} ${selectedProduct?.id === product.id ? styles.selectedCard : ''}`}
                 onClick={() => selectProduct(product)}
               >
-                <div className={styles.productThumbnail}>
+                <div className={styles.productThumb}>
                   {product.image ? (
-                    <img src={product.image} alt={product.name} className={styles.productThumbImage} />
+                    <img src={product.image} alt={product.name} />
                   ) : (
-                    <div className={styles.productThumbFallback} style={{ background: product.color }} />
+                    <div className={styles.thumbFallback} style={{ background: product.color }} />
                   )}
                 </div>
-                <div className={styles.productInfo}>
+                <div className={styles.productDetails}>
                   <h4>{product.name}</h4>
-                  <p className={styles.productCategory}>{product.subcategory} • {product.category}</p>
+                  <span>{product.subcategory} • {product.brand}</span>
                 </div>
-                {selectedProduct?.id === product.id && (
-                  <span className={styles.selectedBadge}>
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
-                  </span>
-                )}
+                <ChevronRight size={16} className={styles.itemChevron} />
               </div>
             ))}
           </div>
 
-          <div className={styles.sidebarFooter}>
-            <Link href="/services/instastyle/catalog" className={styles.browseMoreBtn}>
-              Browse More Products
-            </Link>
-          </div>
+          <Link href="/services/instastyle/catalog" className={styles.browseCatalogBtn}>
+            <span>Browse More Products</span>
+            <ArrowRight size={16} />
+          </Link>
         </div>
+
       </div>
 
-      {/* Features Section */}
-      <div className={styles.featuresSection}>
-        <h2>Why Use Style Preview?</h2>
-        <div className={styles.featuresGrid}>
-          <div className={styles.featureCard}>
-            <div className={styles.featureIcon}>01</div>
-            <h3>Perfect Fit</h3>
-            <p>See how clothes fit your body before ordering</p>
-          </div>
-          <div className={styles.featureCard}>
-            <div className={styles.featureIcon}>02</div>
-            <h3>Shop Smarter</h3>
-            <p>Choose with more confidence before you add to cart</p>
-          </div>
-          <div className={styles.featureCard}>
-            <div className={styles.featureIcon}>03</div>
-            <h3>Instant Preview</h3>
-            <p>Compare multiple outfits in seconds without changing</p>
-          </div>
-          <div className={styles.featureCard}>
-            <div className={styles.featureIcon}>04</div>
-            <h3>Shop Confidently</h3>
-            <p>Make clearer decisions with a simple fitting-room flow</p>
+      {/* HOW TO USE */}
+      <div className={styles.howToUseSection}>
+        <div className={styles.howToUseContainer}>
+          <h2>How to Use</h2>
+          <div className={styles.stepsGrid}>
+            <div className={styles.stepItem}>
+              <div className={styles.stepNum}>1</div>
+              <div className={styles.stepContent}>
+                <h3>Allow Camera</h3>
+                <p>Enable camera access when prompted</p>
+              </div>
+            </div>
+            <div className={styles.stepItem}>
+              <div className={styles.stepNum}>2</div>
+              <div className={styles.stepContent}>
+                <h3>Position Yourself</h3>
+                <p>Stand in a well-lit area and face the camera</p>
+              </div>
+            </div>
+            <div className={styles.stepItem}>
+              <div className={styles.stepNum}>3</div>
+              <div className={styles.stepContent}>
+                <h3>Select Product</h3>
+                <p>Choose an item from the list</p>
+              </div>
+            </div>
+            <div className={styles.stepItem}>
+              <div className={styles.stepNum}>4</div>
+              <div className={styles.stepContent}>
+                <h3>Preview Look</h3>
+                <p>See how it looks on you instantly</p>
+              </div>
+            </div>
+            <div className={styles.stepItem}>
+              <div className={styles.stepNum}>5</div>
+              <div className={styles.stepContent}>
+                <h3>Capture &amp; Save</h3>
+                <p>Capture your look and save or share</p>
+              </div>
+            </div>
           </div>
         </div>
       </div>

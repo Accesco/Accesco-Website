@@ -8,6 +8,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import SwadishttHeader from '../components/SwadishttHeader';
 import { useSwadishtt } from '../contexts/SwadishttContext';
 import { THALI_RECIPES, getThalisByCategory } from '../lib/thaliData';
@@ -91,9 +92,11 @@ function ThaliCard({ thali }) {
   return (
     <div className={styles.thaliCard}>
       <div className={styles.cardImage}>
-        <img 
-          src={thali.image} 
+        <Image
+          src={thali.image}
           alt={thali.name}
+          fill
+          sizes="(max-width: 768px) 100vw, 400px"
           onError={(e) => {
             e.target.src = `https://placehold.co/400x300/520B24/FFFFFF/png?text=${encodeURIComponent(thali.name)}`;
           }}

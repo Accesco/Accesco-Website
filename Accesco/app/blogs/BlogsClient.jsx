@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import './blogs.css';
-import { addBlog } from '../../lib/blogService';
+import { addBlog, updateBlog, deleteBlog } from '../../lib/blogService';
 import { addBookmark, removeBookmark, getUserBookmarks } from '../../lib/bookmarkService';
 import AccescoHeader from '../../components/AccescoHeader';
 import Footer from '../../components/Footer';
@@ -28,6 +28,8 @@ export default function BlogsClient({ initialPosts }) {
   const [postDate, setPostDate] = useState('');
   const [publishing, setPublishing] = useState(false);
   const [uploadingImage, setUploadingImage] = useState(false);
+  const [editingPostId, setEditingPostId] = useState(null);
+  const [deletingPostId, setDeletingPostId] = useState(null);
 
   useEffect(() => {
     setPostDate(new Date().toISOString().split('T')[0]);
@@ -92,6 +94,19 @@ export default function BlogsClient({ initialPosts }) {
 
   // ── Modal helpers ─────────────────────────────────────────────────────────────
   const openWriter = () => {
+    setEditingPostId(null);
+    setShowWriter(true);
+    document.body.style.overflow = 'hidden';
+  };
+
+  const openEditor = (post) => {
+    setEditingPostId(post.id);
+    setPostTitle(post.title || '');
+    setPostContent(post.content || '');
+    setPostCategory(post.category || 'Business');
+    setPostAuthor(post.author || '');
+    setPostImgUrl(post.image || '');
+    setPostDate(post.date || new Date().toISOString().split('T')[0]);
     setShowWriter(true);
     document.body.style.overflow = 'hidden';
   };
@@ -106,6 +121,7 @@ export default function BlogsClient({ initialPosts }) {
     setPostImgUrl('');
     setPostDate(new Date().toISOString().split('T')[0]);
     setPublishing(false);
+    setEditingPostId(null);
   };
 
   // ── Publish to Firestore ─────────────────────────────────────────────────────
@@ -120,18 +136,7 @@ export default function BlogsClient({ initialPosts }) {
       const finalImage = postImgUrl.trim() || '/images/download (2).png';
       const finalExcerpt = postContent.trim().substring(0, 200) + '...';
 
-      const newId = await addBlog({
-        title:    postTitle.trim(),
-        content:  postContent.trim(),
-        category: postCategory,
-        author:   postAuthor.trim() || 'ACCESCO Editorial Team',
-        image:    finalImage,
-        excerpt:  finalExcerpt,
-        date:     postDate,
-      });
-
-      const newPost = {
-        id:       newId,
+      const postData = {
         title:    postTitle.trim(),
         content:  postContent.trim(),
         category: postCategory,
@@ -141,18 +146,54 @@ export default function BlogsClient({ initialPosts }) {
         date:     postDate,
       };
 
-      setPosts((prev) => {
-        const next = [newPost, ...prev];
-        if (activeCategory === 'All') setFilteredPosts(next);
-        return next;
-      });
-      closeModals();
-      alert('Narrative published successfully!');
+      if (editingPostId) {
+        await updateBlog(editingPostId, postData);
+
+        const updatedPost = { id: editingPostId, ...postData };
+        setPosts((prev) => {
+          const next = prev.map((p) => (p.id === editingPostId ? updatedPost : p));
+          setFilteredPosts((prevFiltered) =>
+            prevFiltered.map((p) => (p.id === editingPostId ? updatedPost : p))
+          );
+          return next;
+        });
+        closeModals();
+        alert('Narrative updated successfully!');
+      } else {
+        const newId = await addBlog(postData);
+        const newPost = { id: newId, ...postData };
+
+        setPosts((prev) => {
+          const next = [newPost, ...prev];
+          if (activeCategory === 'All') setFilteredPosts(next);
+          return next;
+        });
+        closeModals();
+        alert('Narrative published successfully!');
+      }
     } catch (err) {
       console.error('Publish failed:', err);
-      alert('Failed to publish. Check the console for details.');
+      alert(editingPostId ? 'Failed to save changes. Check the console for details.' : 'Failed to publish. Check the console for details.');
     } finally {
       setPublishing(false);
+    }
+  };
+
+  // ── Delete from Firestore ────────────────────────────────────────────────────
+  const deletePost = async (post) => {
+    const confirmed = window.confirm(`Delete "${post.title}"? This cannot be undone.`);
+    if (!confirmed) return;
+
+    setDeletingPostId(post.id);
+    try {
+      await deleteBlog(post.id);
+      setPosts((prev) => prev.filter((p) => p.id !== post.id));
+      setFilteredPosts((prev) => prev.filter((p) => p.id !== post.id));
+    } catch (err) {
+      console.error('Delete failed:', err);
+      alert('Failed to delete the story. Check the console for details.');
+    } finally {
+      setDeletingPostId(null);
     }
   };
 
@@ -287,8 +328,25 @@ export default function BlogsClient({ initialPosts }) {
     <h1>blog.</h1>
 
     <div className="hero-categories">
-      {['All', 'Groceries', 'Food', 'Fashion', 'Company news'].map((cat) => (
-        <button key={cat}>{cat}</button>
+      {[
+        { label: 'All Stories', value: 'All' },
+        { label: 'Business', value: 'Business' },
+        { label: 'Innovation', value: 'Innovation' },
+        { label: 'Lifestyle', value: 'Lifestyle' },
+      ].map(({ label, value }) => (
+        <button
+          key={value}
+          type="button"
+          className={
+            activeCategory === value ||
+            (value === 'Innovation' && activeCategory === 'Technology')
+              ? 'active'
+              : ''
+          }
+          onClick={() => filterArchive(value)}
+        >
+          {label}
+        </button>
       ))}
     </div>
   </div>
@@ -407,6 +465,31 @@ export default function BlogsClient({ initialPosts }) {
   style={{ objectFit: 'cover' }}
   unoptimized
 />
+                  <button
+                    type="button"
+                    className="story-edit-btn"
+                    title="Edit this story"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      openEditor(post);
+                    }}
+                  >
+                    <i className="ri-edit-line"></i>
+                  </button>
+                  <button
+                    type="button"
+                    className="story-delete-btn"
+                    title="Delete this story"
+                    disabled={deletingPostId === post.id}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      deletePost(post);
+                    }}
+                  >
+                    <i className={deletingPostId === post.id ? 'ri-loader-4-line spin-icon' : 'ri-delete-bin-line'}></i>
+                  </button>
                   <div className="story-overlay">
                     <span className="read-time"><i className="ri-time-line"></i> 5 min read</span>
                   </div>
@@ -458,7 +541,7 @@ export default function BlogsClient({ initialPosts }) {
 
             {/* Left Sidebar */}
             <div className="write-sidebar">
-              <h2>Draft Narrative</h2>
+              <h2>{editingPostId ? 'Edit Narrative' : 'Draft Narrative'}</h2>
 
               <div className="sidebar-fields">
 
@@ -532,9 +615,11 @@ export default function BlogsClient({ initialPosts }) {
                         borderRadius: '8px',
                         border: '2px solid rgba(16, 185, 129, 0.3)'
                       }}>
-                        <img
+                        <Image
                           src={postImgUrl}
                           alt="Cover preview"
+                          width={800}
+                          height={200}
                           className="img-preview"
                           style={{
                             width: '100%',
@@ -592,10 +677,12 @@ export default function BlogsClient({ initialPosts }) {
                   onClick={publishPost}
                   disabled={publishing}
                 >
-                  {publishing ? 'Publishing...' : 'Publish Narrative'}
+                  {publishing
+                    ? (editingPostId ? 'Saving...' : 'Publishing...')
+                    : (editingPostId ? 'Save Changes' : 'Publish Narrative')}
                 </button>
                 <button onClick={closeModals} className="cancel-btn">
-                  Cancel Draft
+                  {editingPostId ? 'Cancel Edit' : 'Cancel Draft'}
                 </button>
               </div>
             </div>

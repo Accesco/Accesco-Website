@@ -1,7 +1,7 @@
 'use client';
 
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useRef, useEffect } from 'react';
 import './style.css';
 import AccescoHeader from '@/components/AccescoHeader';
 import VideoCard from '@/components/VideoCard';
@@ -114,6 +114,13 @@ export default function QTCPage() {
   const [currentFilter, setCurrentFilter] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedVideo, setSelectedVideo] = useState(null);
+  const heroVideoRef = useRef(null);
+
+  useEffect(() => {
+    if (heroVideoRef.current) {
+      heroVideoRef.current.play().catch(() => {});
+    }
+  }, []);
 
   const filteredVideos = useMemo(() => {
     let result = videos;
@@ -139,11 +146,14 @@ export default function QTCPage() {
         {/* HERO SECTION */}
         <section className="qtc-hero">
           <video
+            ref={heroVideoRef}
             className="qtc-hero-video"
             autoPlay
             muted
             loop
             playsInline
+            preload="none"
+            fetchPriority="low"
             poster="/images/qtc-mobile-hero.jpg"
           >
             <source src="/images/qtcbackground.mp4" type="video/mp4" />
@@ -160,6 +170,13 @@ export default function QTCPage() {
             </h1>
             <p className="qtc-hero-subtitle">
               Explore our exclusive QTC digital repository. High-definition walkthroughs, internal operations blueprints, and step-by-step masterclasses designed for the Accesco Living community.
+            </p>
+            <p className="qtc-hero-description">
+              QTC — Quick Task Clips — is where new team members and delivery
+              partners learn the systems behind Accesco Living: how a Grokly
+              order moves from dark store to doorstep, how Swadishtt kitchens
+              stay on schedule, and what a rider's day actually looks like.
+              Filter by category or search to jump straight to a session.
             </p>
             <div className="qtc-stats-bar">
               <div className="qtc-stat-item">
@@ -184,7 +201,11 @@ export default function QTCPage() {
         <section className="qtc-header">
           <div>
             <h2>Video Library</h2>
-            <p>Internal QTC resources and workflow sessions.</p>
+            <p>
+              Internal QTC resources and workflow sessions, organized by
+              team — browse "About" for brand and product walkthroughs, or
+              "Riders" for delivery and operations training.
+            </p>
           </div>
 
           <div className="qtc-controls">

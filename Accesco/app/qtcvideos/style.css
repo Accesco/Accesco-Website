@@ -49,7 +49,7 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  font-family: 'Sora', sans-serif;
+  font-family: var(--font-sora), sans-serif;
   font-size: 10px;
   font-weight: 700;
   letter-spacing: 2px;
@@ -74,7 +74,7 @@
 }
 
 .qtc-title {
-  font-family: 'Sora', sans-serif;
+  font-family: var(--font-sora), sans-serif;
   font-size: clamp(2rem, 4vw, 3.2rem);
   font-weight: 800;
   line-height: 1.1;
@@ -91,12 +91,21 @@
 }
 
 .qtc-hero-subtitle {
-  font-family: 'DM Sans', sans-serif;
+  font-family: var(--font-dm-sans), sans-serif;
   font-size: clamp(0.95rem, 1.5vw, 1.1rem);
   line-height: 1.65;
   color: rgba(255, 255, 255, 0.7);
-  margin: 0 0 32px;
+  margin: 0 0 16px;
   max-width: 600px;
+}
+
+.qtc-hero-description {
+  font-family: var(--font-dm-sans), sans-serif;
+  font-size: 0.85rem;
+  line-height: 1.65;
+  color: rgba(255, 255, 255, 0.55);
+  margin: 0 0 32px;
+  max-width: 640px;
 }
 
 .qtc-stats-bar {
@@ -114,7 +123,7 @@
 }
 
 .qtc-stat-num {
-  font-family: 'Sora', sans-serif;
+  font-family: var(--font-sora), sans-serif;
   font-size: 1.5rem;
   font-weight: 800;
   color: #fff;
@@ -122,7 +131,7 @@
 }
 
 .qtc-stat-label {
-  font-family: 'DM Sans', sans-serif;
+  font-family: var(--font-dm-sans), sans-serif;
   font-size: 0.7rem;
   color: rgba(255, 255, 255, 0.4);
   text-transform: uppercase;
@@ -190,7 +199,7 @@
   font-size: 13px;
   color: #050505;
   width: 160px;
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-inter), sans-serif;
 }
 
 .qtc-search-input::placeholder {

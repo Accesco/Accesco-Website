@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useMemo } from 'react';
+import Image from 'next/image';
 import { useParams, useRouter } from 'next/navigation';
 import { useGrokly } from '../../contexts/GroklyContext';
 import GroklyHeader from '../../components/GroklyHeader';
@@ -15,7 +16,7 @@ import FloatingCartBar from '../../components/FloatingCartBar';
 import BottomNav from '../../components/BottomNav';
 import { categories, products, getProductsByCategory, searchProducts } from '../../lib/groklyData';
 import '../../styles/variables.css';
-import '../../styles/globals.css';
+
 import JsonLd from '../../../../../components/JsonLd';
 
 export default function GroklyCategoryPage() {
@@ -132,7 +133,7 @@ export default function GroklyCategoryPage() {
         />
 
         {/* Main Content */}
-        <main style={{ flex: 1, maxWidth: 'var(--grokly-max-width)', margin: '0 auto', width: '100%', padding: '20px', boxSizing: 'border-box' }}>
+        <main className="grokly-content">
           <div className="grokly-category-layout">
             {/* Left Sidebar */}
             <aside className="grokly-category-sidebar">
@@ -144,7 +145,7 @@ export default function GroklyCategoryPage() {
                     onClick={() => handleCategorySelect(cat.id)}
                     className={`grokly-sidebar-item ${isActive ? 'active' : ''}`}
                   >
-                    <img src={cat.image} alt={cat.name} />
+                    <Image src={cat.image} alt={cat.name} width={30} height={30} />
                     <span>{cat.name}</span>
                   </button>
                 );
@@ -155,9 +156,9 @@ export default function GroklyCategoryPage() {
             <div style={{ flex: 1, minWidth: 0 }}>
               <div className="grokly-category-header">
                 <div>
-                  <h2 className="grokly-category-title">
+                  <h1 className="grokly-category-title">
                     {activeCategoryObject ? activeCategoryObject.name : 'Category'}
-                  </h2>
+                  </h1>
                   <p className="grokly-category-count">
                     Showing {filteredProducts.length} {filteredProducts.length === 1 ? 'item' : 'items'}
                   </p>
@@ -171,11 +172,11 @@ export default function GroklyCategoryPage() {
               />
 
               {isLoading ? (
-                <div style={{ display: 'grid', gap: '12px', gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))' }}>
+                <div className="product-grid">
                   <ProductSkeleton count={12} />
                 </div>
               ) : filteredProducts.length > 0 ? (
-                <div style={{ display: 'grid', gap: '12px', gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))' }}>
+                <div className="product-grid">
                   {filteredProducts.map((product) => (
                     <ProductCard 
                       key={product.id} 

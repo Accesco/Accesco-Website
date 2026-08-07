@@ -15,12 +15,6 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 // Accepts digits, spaces, dashes, dots, parentheses, and an optional leading +
 const PHONE_RE = /^\+?[\d\s\-().]{7,20}$/;
 
-// Fallback only for anonymous visitors who join the waitlist without ever
-// logging in (the waitlist form doesn't require an account) -- there's no
-// phone/email to query Firestore with yet, so this is the one case that still
-// has to rely on a local flag rather than a server-side lookup.
-const REGISTERED_STORAGE_KEY = 'accesco_waitlist_registered';
-
 function getLoggedInUser() {
   if (typeof window === 'undefined') return null;
 
@@ -80,27 +74,25 @@ export async function checkWaitlistRegistration({ phone, email } = {}) {
 }
 
 /**
- * Whether the current visitor is on the waitlist. Checks Firestore directly
- * using the logged-in account's phone/email when available (so it's correct
- * across devices/browsers and per-account); falls back to a local flag only
- * for anonymous visitors who joined without logging in.
+ * Whether the current visitor is on the waitlist. Always resolved against
+ * Firestore using the logged-in account's phone/email -- there is no local
+ * flag involved, so it's correct across devices/browsers and per-account.
+ * Visitors with no known phone/email (never logged in) can't be looked up
+ * yet, so they're treated as not registered until they do.
  * @returns {Promise<boolean>}
  */
 export async function isWaitlistRegistered() {
   if (typeof window === 'undefined') return false;
 
   const user = getLoggedInUser();
+  if (!user?.phone && !user?.email) return false;
 
-  if (user?.phone || user?.email) {
-    try {
-      return await checkWaitlistRegistration({ phone: user.phone, email: user.email });
-    } catch (err) {
-      console.error('Waitlist registration check failed:', err);
-      return false;
-    }
+  try {
+    return await checkWaitlistRegistration({ phone: user.phone, email: user.email });
+  } catch (err) {
+    console.error('Waitlist registration check failed:', err);
+    return false;
   }
-
-  return window.localStorage.getItem(REGISTERED_STORAGE_KEY) === '1';
 }
 
 async function parseJsonResponse(response) {
@@ -168,10 +160,6 @@ export async function addWaitlistEntry(data) {
     createdAt: serverTimestamp(),
   });
 
-  if (typeof window !== 'undefined') {
-    window.localStorage.setItem(REGISTERED_STORAGE_KEY, '1');
-  }
-
   // Send confirmation email (non-blocking — don't let a mail failure break signup)
   fetch('/api/waitlist', {
     method: 'POST',
@@ -182,6 +170,13 @@ export async function addWaitlistEntry(data) {
       console.warn('Too many requests');
     }
   }).catch((err) => console.error('Confirmation email failed:', err));
+
+  // If this person was referred, joining the waitlist is the conversion
+  // event pre-launch (ordering itself is gated behind the waitlist, so a
+  // "first order" is unrealistic to wait for). Non-blocking side effect.
+  import('./referralFulfillment').then(({ markWaitlistJoinAndFulfillGifts }) =>
+    markWaitlistJoinAndFulfillGifts({ phone: data.phone }),
+  ).catch((err) => console.error('Referral waitlist conversion failed:', err));
 
   return docRef.id;
 }

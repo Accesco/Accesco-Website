@@ -21,6 +21,7 @@ import {
 } from 'lucide-react';
 import Image from "next/image";
 import './careers.css';
+import Footer from '../../components/Footer';
 
 // Job Listings Data
 const ALL_JOBS = [
@@ -264,7 +265,8 @@ export default function CareersPage() {
     }
   };
 
-  return (
+return (
+  <>
     <div className="careers-page careers-font-inter">
       {/* ==========================================
          HEADER
@@ -345,25 +347,30 @@ export default function CareersPage() {
               <button onClick={() => handleScrollToSection('open-roles')} className="careers-btn-primary" id="hero-view-roles-btn">
                 View Open Positions <ArrowRight size={18} />
               </button>
-              <button onClick={() => handleScrollToSection('why-work-here')} className="careers-btn-secondary" id="hero-life-btn">
+              <a href="/pdfs/Life-at-Accesco.pdf" target="_blank" rel="noopener noreferrer" className="careers-btn-secondary" id="hero-life-btn">
                 Life at Accesco <ArrowRight size={18} />
-              </button>
+              </a>
             </div>
           </div>
 
           {/* Right Column: Custom SVG Team Meeting Illustration */}
           <div className="careers-hero-illustration-wrapper">
-  <div className="careers-hero-cream-bg"></div>
+
 
   <div className="careers-illustration-canvas">
-    <Image
-      src="/images/careers/team-meeting.png"
-      alt="Accesco team meeting"
-      width={700}
-      height={500}
-      className="careers-hero-image"
-      priority
-    />
+  <Image
+  src="/images/careers-smartly-simplified.PNG"
+  alt="Accesco Living — Smartly Simplified for Everyday India"
+  width={1638}
+  height={2048}
+  className="careers-hero-image"
+  style={{
+    width: "100%",
+    height: "auto",
+    objectFit: "contain",
+  }}
+  priority
+/>
   </div>
 </div>
         </div>
@@ -530,31 +537,16 @@ export default function CareersPage() {
 
           <div className="careers-faq-grid">
             {/* Left Graphic Column */}
-            <div className="careers-faq-graphics">
-              <div className="careers-faq-circle">?</div>
-              
-              {/* Animated Typing Dot Bubble */}
-              <div className="careers-faq-bubble">
-                <div className="careers-faq-bubble-dot"></div>
-                <div className="careers-faq-bubble-dot"></div>
-                <div className="careers-faq-bubble-dot"></div>
-              </div>
-
-              {/* Plant Pot vector at the bottom left */}
-              <div className="careers-faq-plant">
-                <svg viewBox="0 0 80 130" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ width: '100%', height: '100%' }}>
-                  {/* Clay Pot */}
-                  <path d="M25 90 L55 90 L51 125 L29 125 Z" fill="#d84315" opacity="0.85" />
-                  <rect x="22" y="84" width="36" height="7" rx="1.5" fill="#bf360c" />
-                  {/* Stem */}
-                  <path d="M40 84 Q38 40 43 20" stroke="#81c784" strokeWidth="3" />
-                  {/* Rich leaves */}
-                  <path d="M40 65 Q60 55 52 42 C45 49 41 58 40 65 Z" fill="#4caf50" />
-                  <path d="M39 52 Q20 42 28 28 C34 35 38 45 39 52 Z" fill="#4caf50" />
-                  <path d="M42 35 Q55 25 48 12 C42 18 41 27 42 35 Z" fill="#2e7d32" />
-                </svg>
-              </div>
-            </div>
+           {/* Left FAQ Image */}
+<div className="careers-faq-graphics careers-faq-image-panel">
+  <Image
+    src="/images/accesco-more-than-delivery.jpeg"
+    alt="Accesco Living is more than just a delivery app"
+    fill
+    className="careers-faq-image"
+    sizes="(max-width: 600px) 90vw, 460px"
+  />
+</div>
 
             {/* Right Accordion Column */}
             <div className="careers-accordion">
@@ -590,52 +582,7 @@ export default function CareersPage() {
       {/* ==========================================
          FOOTER
          ========================================== */}
-      <footer className="careers-footer">
-        <div className="careers-container careers-footer-grid">
-          {/* Brand Col */}
-          <div>
-            <div className="careers-footer-brand">
-              ACCESCO
-              <span className="careers-footer-brand-sub">LIVING</span>
-            </div>
-            <div className="careers-footer-copyright">
-              © 2026 Accesco Living. All rights reserved.
-            </div>
-          </div>
-
-          {/* Col 2 */}
-          <div>
-            <h4 className="careers-footer-col-title">Company</h4>
-            <ul className="careers-footer-links">
-              <li><a href="/about" className="careers-footer-link" onClick={(e) => e.preventDefault()}>About Us</a></li>
-              <li><a href="#" className="careers-footer-link  " onClick={(e) => { e.preventDefault(); handleScrollToSection('careers-header'); }}>Careers</a></li>
-              <li><a href="/blogs" className="careers-footer-link" onClick={(e) => e.preventDefault()}>Blogs</a></li>
-              <li><a href="#" className="careers-footer-link" onClick={(e) => e.preventDefault()}>Contact Us</a></li>
-            </ul>
-          </div>
-
-          {/* Col 3 */}
-          <div>
-            <h4 className="careers-footer-col-title">Our Platforms</h4>
-            <ul className="careers-footer-links">
-              <li><a href="/services/grokly" className="careers-footer-link" onClick={(e) => e.preventDefault()}>Grokly (Grocery)</a></li>
-              <li><a href="/services/swadisht" className="careers-footer-link" onClick={(e) => e.preventDefault()}>Swadishtt (Food)</a></li>
-              <li><a href="/services/instastyle" className="careers-footer-link" onClick={(e) => e.preventDefault()}>Instastyle (Fashion)</a></li>
-            </ul>
-          </div>
-
-          {/* Col 4 */}
-          <div>
-            <h4 className="careers-footer-col-title">Resources</h4>
-            <ul className="careers-footer-links">
-              <li><a href="/contact" className="careers-footer-link" onClick={(e) => e.preventDefault()}>Help Center</a></li>
-              <li><a href="/privacy" className="careers-footer-link" onClick={(e) => e.preventDefault()}>Privacy Policy</a></li>
-              <li><a href="/terms" className="careers-footer-link" onClick={(e) => e.preventDefault()}>Terms & Condition</a></li>
-              <li><a href="/partner" className="careers-footer-link" onClick={(e) => e.preventDefault()}>Partner With Us</a></li>
-            </ul>
-          </div>
-        </div>
-      </footer>
+     
 
       {/* ==========================================
          INTERACTIVE JOB APPLICATION MODAL
@@ -792,5 +739,8 @@ export default function CareersPage() {
         </div>
       )}
     </div>
-  );
+
+    <Footer />
+  </>
+);
 }

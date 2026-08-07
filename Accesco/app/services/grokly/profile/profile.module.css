@@ -4,7 +4,7 @@
   background: #f4f7f4;
   min-height: 100vh;
   padding: 32px 16px;
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-inter), sans-serif;
   display: flex;
   justify-content: center;
   box-sizing: border-box;
@@ -93,7 +93,7 @@
 }
 
 .viewTitle {
-  font-family: 'Sora', sans-serif;
+  font-family: var(--font-sora), sans-serif;
   font-size: 18px;
   font-weight: 800;
   color: #1a1a1a;
@@ -736,7 +736,7 @@
   font-weight: 800;
   cursor: pointer;
   transition: background 0.15s ease, color 0.15s ease;
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-inter), sans-serif;
 }
 
 .wishlistAddBtn:hover {
@@ -1014,7 +1014,7 @@
   font-weight: 800;
   color: #1a1a1a;
   margin: 0 0 20px;
-  font-family: 'Sora', sans-serif;
+  font-family: var(--font-sora), sans-serif;
 }
 
 .paneHeader {
@@ -1047,5 +1047,584 @@
   
   .mobileOnlyOrders {
     display: block !important;
+  }
+}
+
+/* ========================================================================
+   ACCOUNT DASHBOARD — REFERENCE MATCH OVERRIDES
+   ======================================================================== */
+.groklyProfileWrapper { background: #fff; }
+
+.container {
+  max-width: 1120px;
+  padding: 0;
+  border-radius: 0;
+  box-shadow: none;
+  background: transparent;
+}
+
+.navHeader { display: none; }
+
+.dashboardGrid {
+  grid-template-columns: 220px minmax(0, 1fr);
+  gap: 18px;
+  align-items: start;
+}
+
+.leftColumn { gap: 10px; }
+.rightColumn { gap: 14px; min-width: 0; }
+
+.profileCard {
+  display: block;
+  margin: 0;
+  padding: 16px 15px 14px;
+  min-height: 138px;
+  border: 0;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #c4ef58 0%, #aadd43 100%);
+  box-shadow: none;
+}
+
+.profileTopRow {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: 1.5px solid #183c0d;
+  background: rgba(255,255,255,.13);
+  color: #15370b;
+  font-size: 17px;
+  box-shadow: none;
+}
+
+.premiumBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 8px;
+  border-radius: 999px;
+  background: #285d05;
+  color: #fff;
+  font-size: 9px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.userInfo h1 {
+  margin: 0 0 5px;
+  font-size: 14px;
+  line-height: 1.1;
+  font-weight: 800;
+  color: #12230e;
+}
+
+.userInfo p {
+  margin: 2px 0 0;
+  font-size: 9px;
+  line-height: 1.35;
+  color: #24371d;
+}
+
+.zeptoCashCard {
+  margin: 0;
+  padding: 13px 14px;
+  border-radius: 11px;
+  color: #13240e;
+  background: linear-gradient(135deg, #c4ef58 0%, #aadd43 100%);
+  box-shadow: none;
+}
+
+.cashHeader { margin-bottom: 11px; }
+.cashTitleBlock { gap: 6px; }
+.cashTitle { color: #16350d; font-size: 10px; }
+.cashNew { font-size: 7px; padding: 2px 5px; background: #ffb724; color: #633700; }
+.cashTitleBlock svg { color: #1e4b0b !important; }
+.balLabel { color: #36512a; font-size: 8px; }
+.balAmount { color: #13280d; font-size: 18px; }
+.addBalBtn {
+  padding: 7px 11px;
+  border-radius: 7px;
+  background: #285d05;
+  color: #fff;
+  font-size: 9px;
+}
+.addBalBtn:hover { background: #1e4903; }
+
+.desktopNav {
+  gap: 1px;
+  padding: 8px 8px 7px;
+  border-radius: 11px;
+  border: 1px solid #e3e8e1;
+  background: #fff;
+}
+
+.navTab {
+  min-height: 34px;
+  gap: 10px;
+  padding: 8px 9px;
+  border-radius: 7px;
+  color: #30382d;
+  font-size: 10px;
+  font-weight: 500;
+}
+
+.navTab svg { width: 14px; height: 14px; stroke-width: 1.7; }
+.navTab:hover { color: #1d5b14; background: #f0f9ef; }
+.navTab.activeTab { color: #235d18; background: #e5f5e5; font-weight: 600; }
+.navTabLogout {
+  margin-top: 7px;
+  padding-top: 10px;
+  border-top: 1px solid #e9ece8;
+  border-radius: 0 0 7px 7px;
+  color: #e13c45 !important;
+}
+
+.quickGridMobile, .settingsGrid { display: none; }
+
+.welcomeBanner {
+  min-height: 128px;
+  padding: 22px 25px;
+  border: 1px solid #e7ebe5;
+  border-radius: 12px;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  overflow: hidden;
+}
+
+.welcomeBanner h2 {
+  margin: 0 0 9px;
+  font-size: 20px;
+  line-height: 1.05;
+  font-weight: 800;
+  color: #263322;
+}
+.welcomeBanner h2 span { color: #58ac3a; }
+.welcomeBanner p {
+  max-width: 250px;
+  margin: 0;
+  font-size: 10px;
+  line-height: 1.45;
+  color: #697266;
+}
+
+.welcomeArt {
+  position: relative;
+  width: 160px;
+  height: 92px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #72bd3a;
+  background: radial-gradient(circle at 50% 60%, #f3f8ef 0 42%, transparent 43%);
+}
+.welcomeArt::before,
+.welcomeArt::after {
+  content: '';
+  position: absolute;
+  bottom: 8px;
+  width: 33px;
+  height: 27px;
+  border-radius: 3px;
+  background: #d99b3d;
+  box-shadow: inset -6px -4px rgba(125,73,14,.12);
+}
+.welcomeArt::before { left: 18px; transform: rotate(-3deg); }
+.welcomeArt::after { left: 45px; bottom: 3px; background: #bc7a25; }
+.sparkle { position: absolute; top: 7px; left: 24px; color: #99d83d; font-size: 15px; }
+.plant { position: absolute; right: 8px; bottom: 10px; font-size: 35px; color: #65a93c; transform: rotate(-15deg); }
+
+.paneCard {
+  padding: 16px 18px 18px;
+  border: 1px solid #e7ebe5;
+  border-radius: 12px;
+  box-shadow: none;
+  background: #fff;
+}
+.paneTitle {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin: 0 0 13px;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  color: #273226;
+}
+.paneTitle::before { content: '♧'; color: #4b8f34; font-size: 15px; }
+
+.emptyState {
+  min-height: 245px;
+  padding: 34px 20px;
+  border: 1px dashed #e8ede6;
+  border-radius: 9px;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.emptyIllustration {
+  width: 84px;
+  height: 72px;
+  margin-bottom: 8px;
+  border-radius: 24px;
+  display: grid;
+  place-items: center;
+  color: #74bd43;
+  background: #f1fae9;
+}
+.emptyState h3 { margin: 0 0 5px; color: #30382e; font-size: 12px; }
+.emptyState p { max-width: 290px; margin: 0; color: #8a9187; font-size: 9px; line-height: 1.45; }
+.shopBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 15px;
+  padding: 10px 18px;
+  border-radius: 7px;
+  background: #a9de45;
+  color: #17310d;
+  font-size: 10px;
+  font-weight: 800;
+}
+.shopBtn:hover { background: #98d232; }
+
+.benefitsStrip {
+  min-height: 62px;
+  padding: 11px 16px;
+  border: 1px solid #e7ebe5;
+  border-radius: 12px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  background: #fff;
+}
+.benefitsStrip > div { display: flex; align-items: center; gap: 9px; min-width: 0; }
+.benefitsStrip svg { flex: 0 0 auto; padding: 5px; width: 28px; height: 28px; border-radius: 50%; color: #2f7740; background: #edf8ed; }
+.benefitsStrip span { min-width: 0; display: flex; flex-direction: column; }
+.benefitsStrip strong { color: #354034; font-size: 9px; line-height: 1.2; white-space: nowrap; }
+.benefitsStrip small { margin-top: 2px; color: #899087; font-size: 7px; white-space: nowrap; }
+
+.orderCard { border-radius: 10px; padding: 12px; }
+.trackLink { border-radius: 7px; padding: 7px 10px; font-size: 10px; }
+
+.settingRow {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  padding: 15px 0;
+  border-bottom: 1px solid #edf0eb;
+}
+.settingRow:last-child { border-bottom: 0; }
+.settingRow > div { flex: 1; min-width: 0; }
+.settingRow h3 { margin: 0 0 3px; font-size: 12px; color: #263025; }
+.settingRow p { margin: 0; font-size: 10px; color: #7a8277; }
+
+/* Keep the detailed functional views neat inside the new shell. */
+.searchInput, .sortButton { border-radius: 8px; }
+.basketRowCard, .detailItemRow, .paneCardDetail { border-radius: 12px; }
+.basketAddToCartBtn { background: #285d05; box-shadow: none; }
+
+@media (max-width: 768px) {
+  .container { padding: 0; }
+  .dashboardGrid { display: block; }
+  .leftColumn { gap: 10px; }
+  .profileCard { min-height: 145px; border-radius: 12px; }
+  .desktopNav { display: flex !important; }
+  .mobileDashboardHidden { display: none !important; }
+  .rightColumn { width: 100%; }
+  .welcomeBanner, .benefitsStrip { display: none; }
+  .paneCard { border-radius: 10px; padding: 15px; }
+}
+
+@media (max-width: 500px) {
+  .profileCard { padding: 16px; }
+  .premiumBadge { font-size: 8px; }
+  .navTab { font-size: 10px; }
+}
+
+/* ========================================================================
+   DASHBOARD SIZE-UP — larger desktop components
+   ======================================================================== */
+@media (min-width: 769px) {
+  .container {
+    max-width: 1360px;
+  }
+
+  .dashboardGrid {
+    grid-template-columns: 260px minmax(0, 1fr);
+    gap: 24px;
+  }
+
+  .leftColumn {
+    gap: 14px;
+  }
+
+  .rightColumn {
+    gap: 18px;
+  }
+
+  .profileCard {
+    min-height: 165px;
+    padding: 20px 19px 18px;
+    border-radius: 15px;
+  }
+
+  .profileTopRow {
+    margin-bottom: 16px;
+  }
+
+  .avatar {
+    width: 52px;
+    height: 52px;
+    font-size: 21px;
+  }
+
+  .premiumBadge {
+    padding: 6px 10px;
+    font-size: 10px;
+  }
+
+  .userInfo h1 {
+    margin-bottom: 6px;
+    font-size: 17px;
+  }
+
+  .userInfo p {
+    font-size: 11px;
+    line-height: 1.45;
+  }
+
+  .zeptoCashCard {
+    padding: 17px 18px;
+    border-radius: 14px;
+  }
+
+  .cashHeader {
+    margin-bottom: 14px;
+  }
+
+  .cashTitle {
+    font-size: 12px;
+  }
+
+  .cashNew {
+    font-size: 8px;
+    padding: 3px 6px;
+  }
+
+  .balLabel {
+    font-size: 10px;
+  }
+
+  .balAmount {
+    font-size: 23px;
+  }
+
+  .addBalBtn {
+    padding: 9px 14px;
+    border-radius: 9px;
+    font-size: 11px;
+  }
+
+  .desktopNav {
+    padding: 10px;
+    border-radius: 14px;
+  }
+
+  .navTab {
+    min-height: 42px;
+    gap: 12px;
+    padding: 10px 12px;
+    border-radius: 9px;
+    font-size: 12px;
+  }
+
+  .navTab svg {
+    width: 17px;
+    height: 17px;
+  }
+
+  .welcomeBanner {
+    min-height: 160px;
+    padding: 28px 32px;
+    border-radius: 15px;
+  }
+
+  .welcomeBanner h2 {
+    margin-bottom: 11px;
+    font-size: 25px;
+  }
+
+  .welcomeBanner p {
+    max-width: 330px;
+    font-size: 12px;
+  }
+
+  .welcomeArt {
+    width: 205px;
+    height: 112px;
+  }
+
+  .paneCard {
+    padding: 21px 23px 23px;
+    border-radius: 15px;
+  }
+
+  .paneTitle {
+    gap: 8px;
+    margin-bottom: 16px;
+    font-size: 14px;
+  }
+
+  .paneTitle::before {
+    font-size: 18px;
+  }
+
+  .emptyState {
+    min-height: 300px;
+    padding: 42px 24px;
+    border-radius: 12px;
+  }
+
+  .emptyIllustration {
+    width: 104px;
+    height: 88px;
+    margin-bottom: 11px;
+  }
+
+  .emptyState h3 {
+    margin-bottom: 6px;
+    font-size: 15px;
+  }
+
+  .emptyState p {
+    max-width: 360px;
+    font-size: 11px;
+  }
+
+  .shopBtn {
+    margin-top: 18px;
+    padding: 12px 22px;
+    border-radius: 9px;
+    font-size: 12px;
+  }
+
+  .benefitsStrip {
+    min-height: 76px;
+    padding: 14px 20px;
+    border-radius: 15px;
+    gap: 16px;
+  }
+
+  .benefitsStrip > div {
+    gap: 11px;
+  }
+
+  .benefitsStrip svg {
+    width: 34px;
+    height: 34px;
+    padding: 6px;
+  }
+
+  .benefitsStrip strong {
+    font-size: 11px;
+  }
+
+  .benefitsStrip small {
+    font-size: 9px;
+  }
+}
+.featuresStrip {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  align-items: center;
+  gap: 0;
+  margin-top: 28px;
+  background: #fff;
+  border: 1px solid #eceee7;
+  border-radius: 18px;
+  overflow: hidden;
+}
+
+.featureItem {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 18px 22px;
+  min-height: 82px;
+}
+
+.featureItem:not(:last-child) {
+  border-right: 1px solid #edf1eb;
+}
+
+.featureIcon {
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  border-radius: 50%;
+  background: #edf8ef;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #1d7a35;
+}
+
+.featureTitle {
+  font-size: 14px;
+  font-weight: 700;
+  color: #202020;
+  margin-bottom: 2px;
+}
+
+.featureDesc {
+  font-size: 12px;
+  color: #757575;
+  line-height: 1.35;
+}
+
+@media (max-width:768px){
+
+  .featuresStrip{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    border-radius:16px;
+  }
+
+  .featureItem{
+    padding:16px;
+    min-height:74px;
+  }
+
+  .featureItem:nth-child(2n){
+    border-right:none;
+  }
+
+  .featureItem:nth-child(-n+2){
+    border-bottom:1px solid #edf1eb;
+  }
+
+  .featureTitle{
+    font-size:13px;
+  }
+
+  .featureDesc{
+    font-size:11px;
+  }
+
+  .featureIcon{
+    width:40px;
+    height:40px;
+    min-width:40px;
   }
 }

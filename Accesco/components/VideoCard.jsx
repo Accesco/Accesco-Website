@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import Image from 'next/image';
 
 export default function VideoCard({ video, onClick, index }) {
   return (
@@ -11,10 +12,12 @@ export default function VideoCard({ video, onClick, index }) {
     >
       <div className="qtc-video-thumbnail">
         {video.thumbnail ? (
-          <img
+          <Image
             src={video.thumbnail}
             alt={video.title}
-            loading="lazy"
+            fill
+            style={{ objectFit: 'cover' }}
+            sizes="(max-width: 768px) 100vw, 400px"
           />
         ) : (
           <video

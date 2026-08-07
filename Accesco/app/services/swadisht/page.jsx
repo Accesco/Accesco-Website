@@ -6,6 +6,7 @@ import React, {
   useMemo
 } from 'react';
 
+import Image from 'next/image';
 import Link from 'next/link';
 
 import {
@@ -26,12 +27,6 @@ import {
   Sparkles
 } from 'lucide-react';
 
-import {
-  FaInstagram,
-  FaFacebookF,
-  FaXTwitter,
-  FaYoutube
-} from 'react-icons/fa6';
 
 import './swadisht.css';
 import styles from './styles/swadisht-main.module.css';
@@ -39,32 +34,40 @@ import styles from './styles/swadisht-main.module.css';
 
 const featureItems = [
   {
-    id: "swipe-eat",
-    title: "SwipeEats",
-    description: "Swipe to discover your next meal",
-    image: "/images/features/swipe-eats.png",
+    id: 'swipe-eat',
+    title: 'SwipeEats',
+    description: 'Swipe to discover your next meal',
+    image: '/images/features/swipeEats.png',
     link: '/services/swadisht/swipe-eat',
+    tags: ['Food', 'Meals'],
+    rating: '4.8',
   },
   {
-    id: "thali-engine",
-    title: "Thali Engine",
-    description: "Build a festive, family-style thali",
-    image: "/images/features/thali-engine.png",
+    id: 'thali-engine',
+    title: 'Thali Engine',
+    description: 'Build a festive, family-style thali',
+    image: '/images/features/thaliEngine.png',
     link: '/services/swadisht/thali-engine',
+    tags: ['Thali', 'Indian'],
+    rating: '4.8',
   },
   {
-    id: "instant-catering",
-    title: "Instant Catering",
-    description: "Pre-book packs for events & offices",
-    image: "/images/features/instant-catering.png",
+    id: 'instant-catering',
+    title: 'Instant Catering',
+    description: 'Pre-book packs for events & offices',
+    image: '/images/features/instantCatering.png',
     link: '/services/swadisht/instant-catering',
+    tags: ['Catering', 'Events'],
+    rating: '4.8',
   },
   {
-    id: "regional-soul",
-    title: "Regional Soul",
-    description: "Authentic cuisines from across India",
-    image: "/images/features/regional-soul.png",
+    id: 'regional-soul',
+    title: 'Regional Soul',
+    description: 'Authentic cuisines from across India',
+    image: '/images/features/regionalSoul.png',
     link: '/services/swadisht/regional-soul',
+    tags: ['Cuisine', 'India'],
+    rating: '4.8',
   },
 ];
 
@@ -102,7 +105,7 @@ const cravingCategories = [
   {
     id: 'healthy',
     label: 'Healthy',
-    image: '/images/swadisht/categories/salad.png',
+    image: '/images/swadisht/categories/biryani.png',
   },
   {
     id: 'thali',
@@ -122,11 +125,11 @@ const cravingCategories = [
 ];
 
 const storyItems = [
-  { id: 1, title: 'Crispy Butter Masala Dosa', views: '4.2k', image: 'https://images.unsplash.com/photo-1668236543090-82eba5ee5976?w=300&auto=format&fit=crop&q=80' },
-  { id: 2, title: 'Classic Dum Biryani Prep', views: '8.5k', image: 'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=300&auto=format&fit=crop&q=80' },
-  { id: 3, title: 'Making of Tandoori Roti', views: '12.1k', image: 'https://images.unsplash.com/photo-1780907084884-ded9fddbb474?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8dGFuZG9vcmklMjByb3RpfGVufDB8fDB8fHww' },
-  { id: 4, title: 'The Perfect Samosa Fold', views: '3.1k', image: 'https://plus.unsplash.com/premium_photo-1695297516676-04a259917c03?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8c2Ftb3NhfGVufDB8fDB8fHww' },
-  { id: 5, title: 'Chilled Mango Lassi Pour', views: '6.7k', image: 'https://images.unsplash.com/photo-1601493700631-2b16ec4b4716?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8bWFuZ28lMjBsYXNzaXxlbnwwfHwwfHx8MA%3D%3D' }
+  { id: 1, title: 'Crispy Butter Masala Dosa', views: '4.2k', image: 'https://images.unsplash.com/photo-1668236543090-82eba5ee5976?w=400&h=650&fit=crop&q=80' },
+  { id: 2, title: 'Classic Dum Biryani Prep', views: '8.5k', image: 'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=400&h=650&fit=crop&q=80' },
+  { id: 3, title: 'Making of Tandoori Roti', views: '12.1k', image: 'https://images.unsplash.com/photo-1626777552726-4a6b54c97e46?w=400&h=650&fit=crop&q=80' },
+  { id: 4, title: 'The Perfect Samosa Fold', views: '3.1k', image: 'https://images.unsplash.com/photo-1601050690597-df0568f70950?w=400&h=650&fit=crop&q=80' },
+  { id: 5, title: 'Chilled Mango Lassi Pour', views: '6.7k', image: 'https://images.unsplash.com/photo-1601493700631-2b16ec4b4716?w=400&h=650&fit=crop&q=80' }
 ];
 const trendingRestaurants = RESTAURANTS
   .filter((restaurant) => restaurant.rating >= 4.4)
@@ -181,19 +184,107 @@ const testimonials = [
   }
 ];
 
+function RestaurantCard({ rest, idPrefix }) {
+  const primaryOffer = rest.offers?.[0];
+
+  const offerText =
+    primaryOffer?.discount > 0
+      ? `Flat ${primaryOffer.discount}% OFF`
+      : primaryOffer?.title;
+
+  const locationText = [
+    rest.location?.area,
+    rest.location?.city,
+  ]
+    .filter(Boolean)
+    .join(", ");
+
+  const closingText =
+    rest.closingStatus ||
+    (rest.timings?.close
+      ? `Closes at ${rest.timings.close}`
+      : "Closing time unavailable");
+
+  return (
+    <Link
+      href={`/services/swadisht/restaurant/${rest.slug}`}
+      className={styles.referenceRestaurantCard}
+      id={`${idPrefix}-card-${rest.id}`}
+    >
+      <div className={styles.referenceRestaurantMedia}>
+        <img
+          src={rest.coverImage}
+          alt={rest.name}
+          className={styles.referenceRestaurantImage}
+          onError={(event) => {
+            event.currentTarget.src =
+              "https://placehold.co/500x380/f7e8e8/861719?text=Restaurant";
+          }}
+        />
+
+        {primaryOffer && (
+          <div className={styles.referenceOfferTag}>
+            <Percent size={15} />
+            <span>{offerText}</span>
+          </div>
+        )}
+      </div>
+
+      <div className={styles.referenceRestaurantContent}>
+        <div className={styles.referenceRestaurantTop}>
+          <h3 className={styles.referenceRestaurantName}>
+            {rest.name}
+          </h3>
+
+          <div className={styles.referenceRating}>
+            <span>{rest.rating}</span>
+            <Star size={9} fill="currentColor" />
+          </div>
+        </div>
+
+        <div className={styles.referenceRestaurantMeta}>
+          <span className={styles.referenceCuisines}>
+            {rest.cuisines[0]}
+          </span>
+
+          <span className={styles.referencePrice}>
+            ₹{Number(rest.priceForTwo).toLocaleString("en-IN")} for two
+          </span>
+        </div>
+
+        <p className={styles.referenceLocation}>
+          {locationText}
+        </p>
+
+        <div className={styles.referenceStatusRow}>
+          <span className={styles.referenceClosing}>
+            {closingText}
+          </span>
+
+          <span className={styles.referenceDistance}>
+            {rest.distance || "—"}
+          </span>
+        </div>
+      </div>
+    </Link>
+  );
+}
+
 export default function App() {
-  const [activeCraving, setActiveCraving] = useState('all');
+  const [activeCraving, setActiveCraving] = useState("all");
   const [cartCount, setCartCount] = useState(0);
-  const [searchTerm, setSearchTerm] = useState('');
-  
+  const [searchTerm, setSearchTerm] = useState("");
+
   const storiesTrackRef = useRef(null);
 
   const scrollStories = () => {
     if (storiesTrackRef.current) {
-      storiesTrackRef.current.scrollBy({ left: 200, behavior: 'smooth' });
+      storiesTrackRef.current.scrollBy({
+        left: 200,
+        behavior: "smooth",
+      });
     }
   };
-
 
   // Filter restaurants based on active craving and search term
   const filteredTrending = useMemo(() => {
@@ -231,53 +322,90 @@ export default function App() {
       <main className={styles.pageContent} id="main-content">
         
         {/* 1. HERO SECTION */}
-       <section className={styles.heroSection}>
+       <section className={styles.heroSection} id="hero-section">
 
-  <div className={styles.heroBanner}>
-    <img
-      src="/images/swadisht/hero-banner.jpg"
-      alt="Swadishtt Banner"
-      className={styles.heroBannerImage}
-    />
+  <div className={styles.heroInner} id="hero-inner">
+    <div className={styles.heroTextBlock} id="hero-text-block">
+      <h1 className={styles.heroTitle} id="hero-headline">
+        Ghar jaisa khaana,
+        <span className={styles.heroTitleRed}>
+          delivered in 30 minutes.
+        </span>
+      </h1>
+
+      <p className={styles.heroDescription}>
+        Experience premium, authentic regional recipes cooked with love,
+        fresh ingredients, and home-style perfection.
+      </p>
+    </div>
+    
   </div>
-
-  <section className={styles.featureRow}>
-    {featureItems.map((item) => (
-      <a
-        key={item.id}
-        href={item.link}
-        className={styles.featureCard}
-      >
-        <img
+<section className={styles.featureRow} id="feature-row">
+  {featureItems.map((item) => (
+    <Link
+      key={item.id}
+      href={item.link}
+      className={styles.featureCard}
+    >
+      <div className={styles.featureMedia}>
+        <Image
           src={item.image}
           alt={item.title}
+          fill
+          sizes="(max-width: 768px) 100vw, 400px"
           className={styles.featureCardImage}
         />
-      </a>
-    ))}
-  </section>
 
-  <section className={styles.statsBar}>
-  <div className={styles.statItem}>
-    <span className={styles.statValue}>500+</span>
-    <span className={styles.statLabel}>Restaurants</span>
-  </div>
+        <div className={styles.featureImageTop}>
+          <div className={styles.featureTags}>
+            {item.tags.map((tag) => (
+              <div className={styles.featureTag} key={tag}>
+                {tag}
+              </div>
+            ))}
+          </div>
 
-  <div className={styles.statItem}>
-    <span className={styles.statValue}>30 min</span>
-    <span className={styles.statLabel}>Average Delivery</span>
-  </div>
+          <div className={styles.featureRating}>
+            ★ {item.rating}
+          </div>
+        </div>
+      </div>
 
-  <div className={styles.statItem}>
-    <span className={styles.statValue}>100%</span>
-    <span className={styles.statLabel}>Freshly Prepared</span>
-  </div>
+      <div className={styles.featureCardContent}>
+        <h3>{item.title}</h3>
 
-  <div className={styles.statItem}>
-    <span className={styles.statValue}>4.8★</span>
-    <span className={styles.statLabel}>Customer Rating</span>
-  </div>
+        <p>{item.description}</p>
+
+        <div className={styles.featureExplore}>
+          Explore
+        </div>
+      </div>
+    </Link>
+  ))}
 </section>
+ 
+
+  <section className={styles.statsBar} id="stats-bar">
+    <div className={styles.statItem}>
+      <span className={styles.statValue}>11+</span>
+      <span className={styles.statLabel}>Restaurants</span>
+    </div>
+
+    <div className={styles.statItem}>
+      <span className={styles.statValue}>200+</span>
+      <span className={styles.statLabel}>Dishes</span>
+    </div>
+
+    <div className={styles.statItem}>
+      <span className={styles.statValue}>30 min</span>
+      <span className={styles.statLabel}>Avg Delivery</span>
+    </div>
+
+    <div className={styles.statItem}>
+      <span className={styles.statValue}>₹0</span>
+      <span className={styles.statLabel}>Delivery Fee</span>
+    </div>
+  </section>
 
 </section>
         {/* 4. BROWSE BY CRAVINGS */}
@@ -295,9 +423,11 @@ export default function App() {
     className={styles.cravingItem}
   >
     <div className={styles.cravingImageWrapper}>
-      <img
+      <Image
         src={cat.image}
         alt={cat.label}
+        width={110}
+        height={110}
         className={styles.cravingImg}
       />
     </div>
@@ -322,16 +452,24 @@ export default function App() {
               <p className={styles.storiesSubtitle} id="stories-panel-subtitle">
                 Get a behind-the-scenes look at how your favorite dishes are curated, cooked, and packed perfectly.
               </p>
-              <button className={styles.storiesBtn} onClick={scrollStories} id="stories-watch-all-btn">Watch All</button>
+              <Link
+  href="/services/swadisht/food-stories"
+  className={styles.storiesBtn}
+  id="stories-watch-all-btn"
+>
+  Watch All
+</Link>
             </div>
             
             <div className={styles.storiesRight} id="stories-right-panel">
               <div className={styles.storyCardsTrack} ref={storiesTrackRef} id="story-cards-track">
                 {storyItems.map(story => (
                   <div key={story.id} className={styles.storyCard} id={`story-card-${story.id}`}>
-                    <img 
-                      src={story.image} 
-                      alt={story.title} 
+                    <Image
+                      src={story.image}
+                      alt={story.title}
+                      fill
+                      sizes="165px"
                       className={styles.storyImg}
                       id={`story-img-${story.id}`}
                       onError={(e) => {
@@ -367,62 +505,17 @@ export default function App() {
               <h2 className={styles.trendingTitle} id="trending-section-title">Trending now</h2>
               <span className={styles.trendingSubtitle} id="trending-section-subtitle">Highly rated favorites near you</span>
             </div>
-            <a href="#all-trending" className={styles.seeAllLink} id="trending-see-all">
-              <span id="trending-see-all-text">See all</span>
-              <ArrowRight size={14} id="trending-arrow" />
-            </a>
+            
           </div>
           
           <div className={styles.restaurantGrid} id="trending-grid">
   {filteredTrending.map((rest) => (
-    <Link
-      key={rest.id}
-      href={`/services/swadisht/restaurant/${rest.slug}`}
-      className={styles.restaurantCard}
-      id={`trending-card-${rest.id}`}
-    >
-      <div
-        className={styles.cardImageWrapper}
-        id={`trending-img-wrap-${rest.id}`}
-      >
-        <img
-          src={rest.coverImage}
-          alt={rest.name}
-          className={styles.restaurantImage}
-          id={`trending-img-${rest.id}`}
-          onError={(e) => {
-            e.currentTarget.src =
-              'https://placehold.co/400x250/f7e8e8/861719?text=Restaurant';
-          }}
-        />
-
-        <div
-          className={styles.ratingBadge}
-          id={`trending-rating-badge-${rest.id}`}
-        >
-          <Star size={12} fill="currentColor" />
-          <span>{rest.rating}</span>
-        </div>
-
-     
-      </div>
-
-      <div className={styles.cardContent}>
-        <h3 className={styles.restaurantName}>{rest.name}</h3>
-
-        <p className={styles.restaurantSubtitle}>
-          {rest.cuisines.join(' • ')}
-        </p>
-
-        <div className={styles.restaurantDivider}></div>
-
-        <div className={styles.restaurantStatusRow}>
-          <span>{rest.deliveryTime}</span>
-          <span>₹{rest.priceForTwo} for two</span>
-        </div>
-      </div>
-    </Link>
-  ))}
+  <RestaurantCard
+    key={rest.id}
+    rest={rest}
+    idPrefix="trending"
+  />
+))}
 </div>
           </section>
 
@@ -475,65 +568,20 @@ export default function App() {
         <section className={styles.quickBitesSection} id="quick-bites-section">
           <div className={styles.quickBitesHeader} id="quick-bites-header">
             <div>
-              <h2 className={styles.quickBitesTitle} id="quick-bites-title">Quick bites & cafes</h2>
+              <h2 className={styles.quickBitesTitle} id="quick-bites-title">Quick bites & cafes </h2>
               <span className={styles.quickBitesSubtitle} id="quick-bites-subtitle">Grab a fast, satisfying treat or refresh with hot brews</span>
             </div>
-            <a href="#all-quick" className={styles.seeAllLink} id="quick-bites-see-all">
-              <span id="quick-bites-see-all-text">See all</span>
-              <ArrowRight size={14} id="quick-bites-arrow" />
-            </a>
+          
           </div>
           
           <div className={styles.quickBitesGrid} id="quick-bites-grid">
-            {filteredQuickBites.map(rest => (
-              <Link
-  key={rest.id}
-  href={`/services/swadisht/restaurant/${rest.slug}`}
-  className={styles.restaurantCard}
->
-                <div className={styles.cardImageWrapper} id={`quick-img-wrap-${rest.id}`}>
-                  <img 
-                   src={rest.coverImage}  
-                    alt={rest.name} 
-                    className={styles.restaurantImage}
-                    id={`quick-img-${rest.id}`}
-                    onError={(e) => {
-                      e.currentTarget.src = "https://placehold.co/400x250/f7e8e8/861719?text=Cafe";
-                    }}
-                  />
-                  <div className={styles.ratingBadge} id={`quick-rating-badge-${rest.id}`}>
-                    <Star size={12} fill="currentColor" id={`quick-star-${rest.id}`} />
-                    <span id={`quick-rating-val-${rest.id}`}>{rest.rating}</span>
-                  </div>
-                
-                </div>
-                <div className={styles.cardContent} id={`quick-content-${rest.id}`}>
-  <h3 className={styles.restaurantName} id={`quick-name-${rest.id}`}>
-    {rest.name}
-  </h3>
-
-  <p className={styles.restaurantSubtitle} id={`quick-sub-${rest.id}`}>
-    {rest.cuisines.join(' • ')}
-  </p>
-
-  <div
-    className={styles.restaurantDivider}
-    id={`quick-div-${rest.id}`}
-  ></div>
-
-  <div
-    className={styles.restaurantStatusRow}
-    id={`quick-status-${rest.id}`}
-  >
-    <span id={`quick-time-${rest.id}`}>{rest.deliveryTime}</span>
-    <span id={`quick-price-${rest.id}`}>
-      ₹{rest.priceForTwo} for two
-    </span>
-  </div>
-</div>
-
-</Link>
-            ))}
+        {RESTAURANTS.map((rest) => (
+  <RestaurantCard
+    key={rest.id}
+    rest={rest}
+    idPrefix="quick"
+  />
+))}
             {filteredQuickBites.length === 0 && (
               <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '40px 0', color: 'var(--sw-muted)' }} id="no-quick-msg">
                 No cafes match the craving or search filter.
@@ -553,9 +601,11 @@ export default function App() {
                 <h3 className={styles.deliveryCardTitle} id="delivery-card-title-instant">Instant Delivery</h3>
                 <p className={styles.deliveryCardDesc} id="delivery-card-desc-instant">Hot, premium chef bowls prepared fresh and delivered in under 30 minutes straight to your desk or doorstep.</p>
               </div>
-              <img 
+              <Image
                 src="/images/bikerider.png"
-                alt="Delivery Bike" 
+                alt="Delivery Bike"
+                width={90}
+                height={90}
                 className={styles.deliveryCardImg}
                 id="delivery-img-instant"
               />
@@ -566,9 +616,11 @@ export default function App() {
                 <h3 className={styles.deliveryCardTitle} id="delivery-card-title-scheduled">Scheduled Catering</h3>
                 <p className={styles.deliveryCardDesc} id="delivery-card-desc-scheduled">Planning an office team event or a family gathering? Pre-book customized catering setups with hot-case packaging.</p>
               </div>
-              <img 
+              <Image
                 src="/images/calendar.png"
-                alt="Calendar Planner" 
+                alt="Calendar Planner"
+                width={90}
+                height={90}
                 className={styles.deliveryCardImg}
                 id="delivery-img-scheduled"
               />
@@ -647,7 +699,7 @@ export default function App() {
             aria-label="Instagram"
             id="social-inst"
           >
-            <FaInstagram size={16} />
+            <i className="ri-instagram-line" style={{ fontSize: 16 }}></i>
           </a>
 
           <a
@@ -658,7 +710,7 @@ export default function App() {
             aria-label="Facebook"
             id="social-face"
           >
-            <FaFacebookF size={16} />
+            <i className="ri-facebook-fill" style={{ fontSize: 16 }}></i>
           </a>
 
           <a
@@ -669,7 +721,7 @@ export default function App() {
             aria-label="X"
             id="social-twit"
           >
-            <FaXTwitter size={16} />
+            <i className="ri-twitter-x-line" style={{ fontSize: 16 }}></i>
           </a>
 
           <a
@@ -680,7 +732,7 @@ export default function App() {
             aria-label="YouTube"
             id="social-yt"
           >
-            <FaYoutube size={16} />
+            <i className="ri-youtube-fill" style={{ fontSize: 16 }}></i>
           </a>
         </div>
       </div>

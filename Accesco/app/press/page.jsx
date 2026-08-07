@@ -1,11 +1,22 @@
 'use client';
 
 import React from 'react';
+import Image from 'next/image';
 import AccescoHeader from '../../components/AccescoHeader';
 import './press.css';
 
 const pressReleases = [
-
+  {
+    id: 16,
+    title: 'The Future of Quick Commerce Starts Here',
+    date: 'July 17, 2026',
+    category: 'Media Coverage',
+    excerpt: 'How Accesco Living Is Redefining Quick Commerce by Connecting Direct Sourcing, Fast Delivery, and Value Recovery',
+    image: '/images/head2.jpeg',
+    readTime: '6 min read',
+    url: 'https://www.foundora.in/stories/mgueeInKKlWClyLLVHNZ',
+    logo: '/logos/foundora.jpeg',
+  },
   {
     id: 15,
     title: 'The Actual Trap with Quick Commerce and How Accesco Intends to Solve It',
@@ -169,6 +180,7 @@ const pressKitItems = [
       { name: 'Founder 2', url: '/Press/Founder2.jpeg', type: 'IMG' },
       { name: 'Founder 3', url: '/Press/Founder3.PNG', type: 'IMG' },
       { name: 'Founder 4', url: '/Press/Founder4.jpeg', type: 'IMG' },
+      { name: 'Founder 5', url: '/Press/Founder5.jpeg', type: 'IMG' },
     ],
   },
   {
@@ -204,24 +216,36 @@ export default function PressPage() {
       <main className="press-page">
 
         {/* Hero Section */}
-    <section className="press-hero">
-  <div className="press-container press-hero-content">
-    <h1 className="press-hero-title">
-      The Accesco story,<br />ready to tell.
-    </h1>
+        <section className="press-hero">
+          <div className="press-container press-hero-content">
+            <h1 className="press-hero-title">
+              The Accesco story,<br />ready to tell.
+            </h1>
 
-    <p className="press-hero-subtitle">
-      Press releases, brand assets and media coverage — everything
-      <br />
-      journalists and creators need, in one press room.
-    </p>
+            <p className="press-hero-subtitle">
+              Press releases, brand assets and media coverage — everything
+              <br />
+              journalists and creators need, in one press room.
+            </p>
 
-    <div className="press-hero-actions">
-      <button>Download Press Kit</button>
-      <button>Media Enquiries</button>
-    </div>
-  </div>
-</section>
+            <div className="press-hero-actions">
+              <button
+                onClick={() =>
+                  document.getElementById('press-kit')?.scrollIntoView({ behavior: 'smooth' })
+                }
+              >
+                Download Press Kit
+              </button>
+              <button
+                onClick={() =>
+                  document.getElementById('media-contact')?.scrollIntoView({ behavior: 'smooth' })
+                }
+              >
+                Media Enquiries
+              </button>
+            </div>
+          </div>
+        </section>
 
         {/* Press Releases Section */}
         <section className="press-articles-section">
@@ -237,17 +261,19 @@ export default function PressPage() {
               {pressReleases.map((release) => (
                 <article key={release.id} className={`press-card ${release.isFeatured ? 'featured' : ''}`}>
                   <div className="press-card-image-wrap">
-                    <img
+                    <Image
                       src={release.image}
                       alt={release.title}
                       className="press-card-image"
+                      fill
+                      sizes="(max-width: 768px) 100vw, 400px"
                       onError={(e) => {
                         e.currentTarget.src = '/images/banners/hero-main.jpg';
                       }}
                     />
                     {release.logo && (
                       <div className="pioneer-logo-badge">
-                        <img src={release.logo} alt="Publisher Logo" />
+                        <Image src={release.logo} alt="Publisher Logo" fill sizes="48px" />
                       </div>
                     )}
                   </div>
@@ -278,7 +304,7 @@ export default function PressPage() {
         </section>
 
         {/* PRESS KIT Section */}
-        <section className="press-kit-section">
+        <section className="press-kit-section" id="press-kit">
           <div className="press-container">
             <div className="press-kit-header">
               <h2 className="press-kit-heading">Brand Assets & Resources</h2>
@@ -354,7 +380,7 @@ export default function PressPage() {
         )}
 
         {/* Press Contact Section */}
-        <section className="press-contact-section">
+        <section className="press-contact-section" id="media-contact">
           <div className="press-container">
             <div className="press-contact-card">
               <h2>Media & Inquiry Contact</h2>

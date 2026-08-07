@@ -7,6 +7,7 @@
 'use client';
 
 import { memo, useState, useEffect } from 'react';
+import Image from 'next/image';
 import { Zap, Star, Sparkles, Heart } from 'lucide-react';
 import styles from './ProductCard.module.css';
 import { useCart } from '../contexts/GroklyContext';
@@ -235,11 +236,11 @@ function ProductCard({ product }) {
             {product.disc}% OFF
           </div>
         )}
-        <img 
-          className={styles.pimg} 
-          src={imgUrl} 
+        {/* eslint-disable-next-line @next/next/no-img-element -- imgUrl is resolved from a heterogeneous set of external product-image hosts (scraped data), not compatible with next/image's static remotePatterns allowlist */}
+        <img
+          className={styles.pimg}
+          src={imgUrl}
           alt={`${product.name} - ${product.brand}`}
-          loading="lazy"
           draggable="false"
           onDragStart={(e) => e.preventDefault()}
           onError={handleImageError}

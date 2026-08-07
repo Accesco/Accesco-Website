@@ -1,9 +1,46 @@
 import Script from 'next/script';
+import localFont from 'next/font/local';
+import { spaceGrotesk } from '@/app/fonts';
 import './globals.css';
 import { AuthProvider } from './components/AuthProvider';
 import CookieConsent from './components/CookieConsent';
+import ReferralCapture from './components/ReferralCapture';
 import JsonLd from '@/components/JsonLd';
 import BreadcrumbJsonLd from '@/components/BreadcrumbJsonLd';
+import GoogleAnalytics from '@/components/GoogleAnalytics';
+import { GA_MEASUREMENT_ID } from '@/lib/gtag';
+
+// Self-hosted from Google Fonts (public/fonts/) — see app/fonts.js for why.
+const sora = localFont({
+  src: '../public/fonts/sora-variable.woff2',
+  weight: '300 800',
+  display: 'swap',
+  variable: '--font-sora',
+  adjustFontFallback: false,
+});
+
+const dmSans = localFont({
+  src: '../public/fonts/dm-sans-variable.woff2',
+  weight: '400 700',
+  display: 'swap',
+  variable: '--font-dm-sans',
+  adjustFontFallback: false,
+});
+
+const inter = localFont({
+  src: '../public/fonts/inter-variable.woff2',
+  weight: '400 700',
+  display: 'swap',
+  variable: '--font-inter',
+  adjustFontFallback: false,
+});
+
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 5,
+};
+
 export const metadata = {
   metadataBase: new URL('https://accescoliving.com'),
 
@@ -94,65 +131,56 @@ export default function RootLayout({ children }) {
     "url": "https://accescoliving.com",
   };
 
+
+
   return (
-    <html lang="en">
+    <html lang="en" className={`${sora.variable} ${dmSans.variable} ${inter.variable} ${spaceGrotesk.variable}`}>
       <head>
         {/* Structured Data for SEO */}
         <JsonLd data={[organizationSchema, websiteSchema]} />
-
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link rel="preconnect" href="https://cdn.jsdelivr.net" />
-
-        {/* Google Fonts + RemixIcon are loaded async below (Script) so they don't
-            block first paint; noscript keeps them for non-JS clients/crawlers. */}
-        <noscript>
-          <link
-            href="https://fonts.googleapis.com/css2?family=Sora:wght@300..800&family=DM+Sans:wght@400;500;700&family=Inter:wght@400..700&display=swap"
-            rel="stylesheet"
-          />
-          <link
-            rel="stylesheet"
-            href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css"
-          />
-        </noscript>
       </head>
 
       <body>
         <AuthProvider>
           <BreadcrumbJsonLd />
+          <ReferralCapture />
+          
           {children}
           <CookieConsent />
         </AuthProvider>
 
-        <Script id="load-deferred-css" strategy="afterInteractive">
+        {/* RemixIcon loaded lazily — only needed for a few social icons */}
+        <Script id="load-remixicon" strategy="lazyOnload">
           {`
             (function () {
-              function loadCSS(href) {
-                var link = document.createElement('link');
-                link.rel = 'stylesheet';
-                link.href = href;
-                document.head.appendChild(link);
-              }
-              loadCSS('https://fonts.googleapis.com/css2?family=Sora:wght@300..800&family=DM+Sans:wght@400;500;700&family=Inter:wght@400..700&display=swap');
-              loadCSS('https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css');
+              var link = document.createElement('link');
+              link.rel = 'stylesheet';
+              link.href = 'https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css';
+              document.head.appendChild(link);
             })();
           `}
         </Script>
 
-        <Script
-          src="https://www.googletagmanager.com/gtag/js?id=G-SH32KGLK5F"
-          strategy="afterInteractive"
-        />
+        {GA_MEASUREMENT_ID && (
+          <>
+            <Script
+              src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
+              strategy="afterInteractive"
+            />
+            <Script id="google-analytics" strategy="afterInteractive">
+              {`
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', '${GA_MEASUREMENT_ID}', {
+                  page_path: window.location.pathname,
+                });
+              `}
+            </Script>
+          </>
+        )}
 
-        <Script id="google-analytics" strategy="afterInteractive">
-          {`
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', 'G-SH32KGLK5F');
-          `}
-        </Script>
+        <GoogleAnalytics />
 
         <Script
           src="https://www.gstatic.com/dialogflow-console/fast/messenger/bootstrap.js?v=1"
@@ -162,3 +190,4 @@ export default function RootLayout({ children }) {
     </html>
   );
 }
+

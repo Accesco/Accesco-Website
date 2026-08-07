@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
+import Image from 'next/image';
 import styles from './DeliveryHero.module.css';
 
 const DeliveryHero = () => {
@@ -14,9 +15,12 @@ const DeliveryHero = () => {
         transition={{ duration: 3, ease: "easeOut" }}
         className={styles.bgWrapper}
       >
-        <img 
-          src="/instastyle_fashion_hero_1777395647380.png" 
-          alt="Premium Service" 
+        <Image
+          src="/instastyle_fashion_hero_1777395647380.png"
+          alt="Premium Service"
+          fill
+          sizes="100vw"
+          priority
           className={styles.bgImage}
         />
         <div className={styles.overlay}></div>

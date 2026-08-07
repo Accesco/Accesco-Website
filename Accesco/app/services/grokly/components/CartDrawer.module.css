@@ -162,6 +162,7 @@
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
   overscroll-behavior: contain;
+  padding-bottom: 8px;
 }
 
 /* ═══════════════════════════════════════════════
@@ -209,7 +210,7 @@
 ═══════════════════════════════════════════════ */
 
 .items {
-  padding: 8px 0;
+  padding: 8px 0 4px;
 }
 
 .item {
@@ -242,6 +243,7 @@
   align-items: center;
   justify-content: center;
   border: 1px solid var(--grokly-border);
+  position: relative;
 }
 
 .itemImg {
@@ -357,9 +359,11 @@
 
 .bill {
   background: var(--grokly-bg);
-  padding: 16px 20px;
+  padding: 16px;
+  margin: 0 16px 8px;
+  border-radius: 14px;
   flex-shrink: 0;
-  border-top: 1px solid var(--grokly-border);
+  border: 1px solid var(--grokly-border);
 }
 
 .billTitle {
@@ -534,3 +538,164 @@
   color: var(--grokly-success) !important;
   font-weight: 800;
 }
+
+/* ═══════════════════════════════════════════════
+   REVERSE COMMERCE BANNER
+═══════════════════════════════════════════════ */
+
+.reverseCommerceBanner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px;
+  background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+  border: 1.5px solid #86efac;
+  border-radius: 14px;
+  margin: 8px 16px 4px;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  gap: 10px;
+}
+
+.reverseCommerceBanner:hover {
+  background: linear-gradient(135deg, #dcfce7, #bbf7d0);
+  border-color: #4ade80;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(34, 197, 94, 0.18);
+}
+
+.rcBannerLeft {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+  min-width: 0;
+}
+
+.rcBannerIcon {
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.rcBannerText {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.rcBannerText strong {
+  font-size: 13px;
+  font-weight: 700;
+  color: #15803d;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.rcBannerText span {
+  font-size: 11px;
+  color: #16a34a;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.rcBannerArrow {
+  flex-shrink: 0;
+}
+
+.rcBannerAdd {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 700;
+  color: #fff;
+  background: #16a34a;
+  padding: 5px 10px;
+  border-radius: 20px;
+}
+
+.rcBannerEdit {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 600;
+  color: #15803d;
+  background: #bbf7d0;
+  padding: 5px 10px;
+  border-radius: 20px;
+}
+
+/* ── Return Row with Thumbnails ── */
+.rcReturnRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 12px;
+  margin: 0 16px 8px;
+}
+
+.rcReturnLabel {
+  font-size: 11px;
+  color: #15803d;
+  font-weight: 600;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.rcReturnThumbs {
+  display: flex;
+  gap: 6px;
+  flex: 1;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.rcReturnThumbs::-webkit-scrollbar { display: none; }
+
+.rcReturnThumb {
+  position: relative;
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+}
+
+.rcReturnThumbImg {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  object-fit: cover;
+  border: 1.5px solid #86efac;
+}
+
+.rcReturnThumbQty {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background: #0c831f;
+  color: #fff;
+  font-size: 9px;
+  font-weight: 700;
+  border-radius: 20px;
+  padding: 1px 4px;
+  line-height: 1.6;
+}
+
+.rcRemoveReturn {
+  background: #fee2e2;
+  border: none;
+  color: #dc2626;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  font-size: 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background 0.15s;
+}
+.rcRemoveReturn:hover { background: #fca5a5; }
+

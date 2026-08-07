@@ -374,6 +374,7 @@ export default function CheckoutPage() {
         deliverySpeed,
         speedDiscount,
         address: formData,
+        phone: formData.phone,
         customerEmail: formData.email,
         customerName: formData.fullName,
         paymentMethod: formData.paymentMethod,
@@ -679,11 +680,10 @@ export default function CheckoutPage() {
                 {cart.map((item) => (
                   <div key={`${item.id}-${item.selectedSize}-${item.selectedColor}`} className={styles.summaryItem}>
                     <div className={styles.itemImage}>
-                      <Image
+                      {/* eslint-disable-next-line @next/next/no-img-element -- item.image comes from the product catalog's heterogeneous external hosts, not compatible with next/image's static remotePatterns allowlist */}
+                      <img
                         src={item.image}
                         alt={item.name}
-                        fill
-                        sizes="80px"
                         className={styles.image}
                       />
                     </div>

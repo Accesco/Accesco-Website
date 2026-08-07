@@ -1,4 +1,5 @@
 import InstaStyleLayoutClient from './layout-client';
+import WaitlistGate from '../../components/WaitlistGate';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
@@ -25,5 +26,9 @@ export const metadata = {
 };
 
 export default function InstaStyleLayout({ children }) {
-  return <InstaStyleLayoutClient>{children}</InstaStyleLayoutClient>;
+  return (
+    <WaitlistGate>
+      <InstaStyleLayoutClient>{children}</InstaStyleLayoutClient>
+    </WaitlistGate>
+  );
 }

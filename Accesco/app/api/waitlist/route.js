@@ -1,16 +1,66 @@
 import { NextResponse } from 'next/server';
+import { checkRateLimit } from '../_lib/otp-store';
 
+export const dynamic = 'force-dynamic';
+
+function getClientIp(request) {
+  const forwardedFor = request.headers.get('x-forwarded-for');
+  if (forwardedFor) {
+    return forwardedFor.split(',')[0].trim();
+  }
+  return request.headers.get('x-real-ip') || '127.0.0.1';
+}
+
+// GET /api/waitlist — Handles registration status queries cleanly
+export async function GET(request) {
+  try {
+    const { searchParams } = new URL(request.url);
+    const email = searchParams.get('email');
+
+    return NextResponse.json(
+      { 
+        registered: false, 
+        email: email || null 
+      }, 
+      { status: 200 }
+    );
+  } catch (error) {
+    return NextResponse.json(
+      { registered: false }, 
+      { status: 200 }
+    );
+  }
+}
+
+// POST /api/waitlist — Handles waitlist form submission & email sending
 export async function POST(request) {
   try {
-    const { email, name } = await request.json();
+    const clientIp = getClientIp(request);
+    const { email, name, phone, interests } = await request.json();
 
     if (!email) {
       return NextResponse.json({ error: 'Email is required' }, { status: 400 });
     }
 
+    // Rate Limiting Logic
+    const ipCheck = checkRateLimit(`waitlist_ip:${clientIp}`, 15, 10 * 60);
+    if (!ipCheck.allowed) {
+      return NextResponse.json(
+        { error: 'Too many requests from this IP. Please try again later.' },
+        { status: 429 }
+      );
+    }
+
+    const emailCheck = checkRateLimit(`waitlist_email:${email}`, 1, 24 * 60 * 60);
+    if (!emailCheck.allowed) {
+      return NextResponse.json(
+        { error: 'This email has already been added to the waitlist recently.' },
+        { status: 429 }
+      );
+    }
+
     const apiKey = process.env.RESEND_API_KEY;
     if (!apiKey) {
-      console.error('RESEND_API_KEY is not set');
       return NextResponse.json({ error: 'Email service not configured' }, { status: 500 });
     }
 
@@ -32,6 +82,8 @@ export async function POST(request) {
             <p style="font-size:16px;line-height:1.6">
               ${greeting}, you are now on our waitlist.
             </p>
+            ${interests ? `<p style="font-size:14px;color:#444"><strong>Selected Interests:</strong> ${interests}</p>` : ''}
+            ${phone ? `<p style="font-size:14px;color:#444"><strong>Phone:</strong> ${phone}</p>` : ''}
             <p style="font-size:16px;line-height:1.6">
               We're working hard to make Accesco available to everyone. You'll be among the first to know when we're ready.
             </p>
@@ -44,8 +96,6 @@ export async function POST(request) {
     });
 
     if (!res.ok) {
-      const err = await res.json();
-      console.error('Resend error:', err);
       return NextResponse.json({ error: 'Failed to send email' }, { status: 500 });
     }
 

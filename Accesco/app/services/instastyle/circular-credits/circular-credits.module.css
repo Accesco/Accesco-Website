@@ -1,0 +1,716 @@
+/* ── InstaStyle Circular Credits — Premium Designed Sharp Rectangle Aesthetics ── */
+
+.page {
+  background: #FAFAFA;
+  min-height: 100vh;
+  color: #111111;
+  font-family: var(--font-body, 'Inter', sans-serif);
+  padding-bottom: 80px;
+}
+
+/* Header */
+.header {
+  padding: 18px 32px;
+  display: flex;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  background: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(12px);
+  z-index: 10;
+  border-bottom: 1px solid #EAEAEA;
+}
+
+.backBtn {
+  background: #ffffff;
+  border: 1px solid #EAEAEA;
+  color: #111111;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+}
+
+.backBtn:hover {
+  background: #111111;
+  color: #ffffff;
+  border-color: #111111;
+}
+
+.headerTitle {
+  font-size: 18px;
+  font-weight: 700;
+  font-family: var(--font-display, 'Georgia', serif);
+  color: #111111;
+  margin: 0 auto;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+}
+
+.headerSpacer { width: 36px; }
+
+/* Container */
+.container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 32px 24px 80px;
+}
+
+/* Credits Dashboard Box — Sharp Luxury Card */
+.creditsCard {
+  background: #111111;
+  border: 1px solid #222222;
+  border-radius: 4px;
+  padding: 32px;
+  color: #ffffff;
+  margin-bottom: 28px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  position: relative;
+  overflow: hidden;
+}
+
+.creditsCardInner {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.creditsBadge {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 2px;
+  width: 52px;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.creditsMetaLabel {
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.6);
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+.creditsVal {
+  font-size: 52px;
+  font-weight: 800;
+  font-family: var(--font-display, Georgia, serif);
+  margin: 6px 0 10px;
+  line-height: 1;
+  color: #ffffff;
+  letter-spacing: -0.02em;
+}
+
+.creditsDesc {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.72);
+  line-height: 1.55;
+  margin: 0;
+  max-width: 480px;
+}
+
+.creditsActions {
+  display: flex;
+  gap: 10px;
+  margin-top: 24px;
+  flex-wrap: wrap;
+}
+
+.howToEarnBtn {
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  padding: 10px 18px;
+  border-radius: 2px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.howToEarnBtn:hover {
+  background: rgba(255, 255, 255, 0.22);
+}
+
+.redeemCardBtn {
+  background: #ffffff;
+  color: #111111;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 2px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.redeemCardBtn:hover {
+  background: #EAEAEA;
+}
+
+/* Success Toast */
+.successToast {
+  background: #F0FDF4;
+  border: 1px solid #BBF7D0;
+  color: #166534;
+  padding: 14px 18px;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Active Vouchers Section */
+.activeVouchersSection {
+  margin-bottom: 32px;
+}
+
+.activeVouchersList {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 12px;
+}
+
+.activeVoucherCard {
+  padding: 16px;
+  border-radius: 4px;
+  border: 1px solid #EAEAEA;
+  background: #ffffff;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.activeVoucherLabel {
+  font-size: 15px;
+  font-weight: 700;
+  color: #111111;
+}
+
+.activeVoucherDate {
+  font-size: 11px;
+  color: #888888;
+}
+
+.voucherCardTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.secretCodeBox {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #F8F8F8;
+  border: 1.5px dashed #CCCCCC;
+  border-radius: 2px;
+  padding: 8px 12px;
+  margin-top: 6px;
+}
+
+.secretCodeText {
+  font-family: monospace;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #111111;
+}
+
+.copyCodeBtn {
+  background: #111111;
+  color: #ffffff;
+  border: none;
+  padding: 5px 12px;
+  border-radius: 2px;
+  font-size: 10px;
+  font-weight: 700;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  transition: background 0.15s;
+}
+.copyCodeBtn:hover {
+  background: #333333;
+}
+
+/* Section Title */
+.sectionTitle {
+  font-size: 11px;
+  font-weight: 700;
+  color: #888888;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+
+/* Activity Header */
+.activityHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #EAEAEA;
+}
+
+.activityTitle {
+  font-size: 11px;
+  font-weight: 700;
+  color: #888888;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.viewAllLink {
+  font-size: 11px;
+  font-weight: 700;
+  color: #111111;
+  cursor: pointer;
+  background: none;
+  border: none;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.viewAllLink:hover {
+  color: #555555;
+}
+
+/* Filter Tabs */
+.filterTabs {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 18px;
+}
+
+.filterTab {
+  padding: 7px 16px;
+  border-radius: 2px;
+  border: 1px solid #EAEAEA;
+  background: #ffffff;
+  font-size: 11px;
+  font-weight: 700;
+  color: #666666;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.filterTabActive {
+  background: #111111;
+  border-color: #111111;
+  color: #ffffff;
+}
+
+/* Designed Box for Activities */
+.activityCardGroup {
+  background: #ffffff;
+  border: 1px solid #EAEAEA;
+  border-radius: 4px;
+  padding: 4px 20px;
+  margin-bottom: 28px;
+}
+
+.allActivityList {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.activityRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 0;
+  border-bottom: 1px solid #F5F5F5;
+}
+
+.activityRow:last-child { border-bottom: none; }
+
+.actLeft {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.actDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.actTitle {
+  font-size: 13px;
+  font-weight: 700;
+  color: #111111;
+}
+
+.actSub {
+  font-size: 11px;
+  color: #777777;
+  margin-top: 2px;
+}
+
+.actRight {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+}
+
+.actAmt {
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.actDate {
+  font-size: 10px;
+  color: #888888;
+}
+
+.emptyActivity {
+  padding: 32px 0;
+  text-align: center;
+  color: #888888;
+  font-size: 13px;
+}
+
+/* Bottom Redeem CTA */
+.redeemBtn {
+  width: 100%;
+  background: #111111;
+  border: 1px solid #111111;
+  color: #ffffff;
+  padding: 16px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.redeemBtn:hover {
+  background: #333333;
+  border-color: #333333;
+}
+
+/* ──────────────── MODALS ──────────────── */
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.modal {
+  background: #ffffff;
+  border-radius: 4px;
+  padding: 28px;
+  width: 100%;
+  max-width: 620px;
+  max-height: 85vh;
+  overflow-y: auto;
+  border: 1px solid #EAEAEA;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
+}
+
+.modalHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.modalTitle {
+  font-size: 18px;
+  font-weight: 700;
+  color: #111111;
+  font-family: var(--font-display, Georgia, serif);
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+}
+
+.modalClose {
+  background: #F5F5F5;
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 2px;
+  font-size: 14px;
+  cursor: pointer;
+  color: #555555;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+}
+.modalClose:hover {
+  background: #111111;
+  color: #ffffff;
+}
+
+.modalSubtitle {
+  font-size: 13px;
+  color: #777777;
+  margin-bottom: 20px;
+}
+
+/* Earn Steps Designed Box */
+.earnSteps {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+
+.earnStep {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: #ffffff;
+  border: 1px solid #EAEAEA;
+  border-radius: 4px;
+  padding: 14px 18px;
+  transition: all 0.15s ease;
+}
+.earnStep:hover {
+  border-color: #111111;
+  background: #FAFAFA;
+}
+
+.earnStepIconWrap {
+  width: 40px;
+  height: 40px;
+  border-radius: 2px;
+  background: #F5F5F5;
+  border: 1px solid #EAEAEA;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.earnStepContent { flex: 1; }
+
+.earnStepTitle { font-size: 13px; font-weight: 700; color: #111111; }
+
+.earnStepDesc { font-size: 12px; color: #777777; margin-top: 2px; }
+
+.earnStepPts {
+  font-size: 12px;
+  font-weight: 700;
+  color: #166534;
+  letter-spacing: 0.05em;
+}
+
+/* Modal Buttons */
+.modalActions { display: flex; gap: 10px; }
+
+.modalPrimaryBtn {
+  flex: 1;
+  background: #111111;
+  color: #ffffff;
+  border: none;
+  padding: 14px;
+  border-radius: 2px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.modalPrimaryBtn:hover { background: #333333; }
+
+.modalSecondaryBtn {
+  width: 100%;
+  background: #F5F5F5;
+  color: #111111;
+  border: 1px solid #EAEAEA;
+  padding: 14px;
+  border-radius: 2px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: all 0.15s ease;
+}
+.modalSecondaryBtn:hover { background: #EAEAEA; }
+
+/* Redeem Balance */
+.redeemBalance {
+  background: #F8F8F8;
+  border: 1px solid #EAEAEA;
+  border-radius: 4px;
+  padding: 14px 18px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.redeemBalanceLabel {
+  font-size: 10px;
+  color: #777777;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.redeemBalanceVal {
+  font-size: 20px;
+  font-weight: 800;
+  color: #111111;
+  font-family: var(--font-display, Georgia, serif);
+}
+
+/* Voucher Grid */
+.voucherGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+@media (max-width: 600px) {
+  .voucherGrid { grid-template-columns: 1fr; }
+}
+
+.voucherCard {
+  background: #ffffff;
+  border-radius: 4px;
+  border: 1px solid #EAEAEA;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition: all 0.15s ease;
+}
+.voucherCard:hover:not(.voucherCardDisabled) {
+  border-color: #111111;
+  background: #FAFAFA;
+}
+
+.voucherCardDisabled { opacity: 0.45; }
+
+.voucherBadge {
+  font-size: 9px;
+  font-weight: 700;
+  color: #ffffff;
+  background: #111111;
+  padding: 3px 8px;
+  border-radius: 2px;
+  display: inline-block;
+  align-self: flex-start;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.voucherLabel {
+  font-size: 18px;
+  font-weight: 700;
+  font-family: var(--font-display, Georgia, serif);
+  color: #111111;
+}
+
+.voucherDesc { font-size: 12px; color: #777777; line-height: 1.45; }
+
+.voucherCost { font-size: 12px; font-weight: 700; color: #111111; }
+
+/* Revealed secret code card */
+.revealedCodeCard {
+  background: #F0FDF4;
+  border: 1px solid #BBF7D0;
+  border-radius: 4px;
+  padding: 16px 18px;
+  margin-bottom: 18px;
+}
+
+.revealedCodeHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #166534;
+  margin-bottom: 4px;
+}
+
+.revealedCodeTitle {
+  font-size: 12px;
+  color: #555555;
+  margin-bottom: 8px;
+}
+
+.secretCodeDisplayRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+
+.secretCodeTextBig {
+  font-family: monospace;
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  background: #ffffff;
+  padding: 6px 14px;
+  border-radius: 2px;
+  border: 1.5px dashed #166534;
+  color: #111111;
+}
+
+.copyCodeBtnBig {
+  background: #111111;
+  color: #ffffff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 2px;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.revealedCodeNote {
+  font-size: 11px;
+  color: #777777;
+  margin: 0;
+}

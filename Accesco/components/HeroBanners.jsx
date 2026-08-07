@@ -92,9 +92,12 @@ export function GroklyHero() {
 
       {/* Image */}
       <div className="hero-inner-grokly">
-        <img 
+        <Image 
           src="/images/banners/hero-grokly.jpg" 
           alt="Grokly fresh groceries" 
+          width={1200}
+          height={600}
+          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
         />
       </div>
 
@@ -394,7 +397,7 @@ useEffect(() => {
         }}
       >
         <div className="hero-inner-sw">
-          <img src={activeBanner.image} alt="Swadishtt hero banner" />
+          <Image src={activeBanner.image} alt="Swadishtt hero banner" width={1850} height={720} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
         </div>
 
         <div
@@ -565,9 +568,11 @@ export function AccescoHero() {
           srcSet="/images/banners/join-mobile.jpg"
         />
 
-        <img
+        <Image
           src="/images/banners/join-desktop.jpg"
           alt="Accesco Living"
+          width={1920}
+          height={650}
           style={{
             position: 'absolute',
             inset: 0,

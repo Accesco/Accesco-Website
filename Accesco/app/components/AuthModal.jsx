@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useCallback } from 'react'
 import { db, auth } from '../../lib/firebase'
 import {
   doc,
@@ -13,13 +13,20 @@ import {
   signInWithPhoneNumber,
   signInWithPopup,
   GoogleAuthProvider,
-  OAuthProvider,
   signOut,
 } from 'firebase/auth'
 import {
   sendOtpEmailVerification,
   verifyOtpEmailCode,
 } from '../../lib/waitlistService'
+import {
+  initializeReferralProfile,
+  getPendingReferral,
+  markReferralVisitConsumed,
+  isValidReferralCodeFormat,
+  normalizeReferralCode,
+  validateReferralCode,
+} from '../../lib/referralService'
 
 function GoogleIcon() {
   return (
@@ -49,47 +56,130 @@ function GoogleIcon() {
   )
 }
 
-function AppleIcon() {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      width="17"
-      height="17"
-      fill="currentColor"
-      aria-hidden="true"
-    >
-      <path d="M18.7 12.6c0-3.1 2.5-4.6 2.6-4.7a5.54 5.54 0 0 0-4.36-2.36c-1.84-.19-3.62 1.1-4.56 1.1-.96 0-2.4-1.08-3.96-1.05a5.8 5.8 0 0 0-4.88 2.97c-2.12 3.67-.54 9.06 1.49 12.02 1.01 1.45 2.18 3.06 3.74 3 1.52-.06 2.09-.96 3.93-.96 1.82 0 2.36.96 3.95.92 1.64-.03 2.67-1.45 3.65-2.91a12.1 12.1 0 0 0 1.67-3.4 5.25 5.25 0 0 1-3.27-4.66ZM15.74 3.6A5.35 5.35 0 0 0 16.96 0a5.44 5.44 0 0 0-3.5 1.71 5.06 5.06 0 0 0-1.25 3.48 4.5 4.5 0 0 0 3.53-1.59Z" />
-    </svg>
-  )
-}
-
 export default function AuthModal({
   isOpen,
   onClose,
   onSuccess,
+  mandatory = false,
+}) {
+  if (!isOpen) return null
+
+  return (
+    <AuthModalContent
+      isOpen={isOpen}
+      onClose={onClose}
+      onSuccess={onSuccess}
+      mandatory={mandatory}
+    />
+  )
+}
+
+function AuthModalContent({
+  isOpen,
+  onClose,
+  onSuccess,
+  mandatory,
 }) {
   const [name, setName] = useState('')
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
   const [phone, setPhone] = useState('')
   const [email, setEmail] = useState('')
+  
+  const [referralCode, setReferralCode] = useState('')
+  const [referralPrefilled, setReferralPrefilled] = useState(false)
+  const [referralVisitUid, setReferralVisitUid] = useState(null)
+  const [referralStatus, setReferralStatus] = useState({ state: 'idle' })
+
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
   const [focused, setFocused] = useState('')
 
-  // OTP flow: 'details' collects info, 'verify' does phone (mandatory) + email (optional) OTP
   const [step, setStep] = useState('details')
   const [otpCode, setOtpCode] = useState('')
-  const [phoneCodeSent, setPhoneCodeSent] =
-    useState(false)
-  const [confirmationResult, setConfirmationResult] =
-    useState(null)
-  // Seconds left before "Resend OTP" is clickable again
+  const [phoneCodeSent, setPhoneCodeSent] = useState(false)
+  const [confirmationResult, setConfirmationResult] = useState(null)
   const [resendCooldown, setResendCooldown] = useState(0)
 
   const recaptchaVerifierRef = useRef(null)
+  const recaptchaHostRef = useRef(null)
+  const recaptchaContainerIdRef = useRef(`am-recaptcha-${Date.now()}`)
 
+  // Keyboard accessibility: Close on Escape key
+  useEffect(() => {
+    if (mandatory) return
+
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        handleClose()
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [mandatory])
+
+  // Load referral from `?ref=CODE` link visit
+  useEffect(() => {
+    let cancelled = false
+
+    getPendingReferral().then((pending) => {
+      if (cancelled || !pending) return
+
+      setReferralCode(pending.code)
+      setReferralPrefilled(true)
+      setReferralVisitUid(pending.visitUid)
+    })
+
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
+  // Live validation of typed referral code
+  useEffect(() => {
+    const code = referralCode.trim()
+
+    if (!code) {
+      setReferralStatus({ state: 'idle' })
+      return undefined
+    }
+
+    if (!isValidReferralCodeFormat(code)) {
+      setReferralStatus({ state: 'invalid' })
+      return undefined
+    }
+
+    setReferralStatus({ state: 'checking' })
+
+    let cancelled = false
+
+    const timeout = setTimeout(async () => {
+      const result = await validateReferralCode(code)
+      if (cancelled) return
+
+      if (result.valid === null) {
+        setReferralStatus({ state: 'unknown' })
+      } else if (result.valid) {
+        setReferralStatus({
+          state: 'valid',
+          referrerName: result.isMarketing
+            ? null
+            : result.referrerName || null,
+        })
+      } else {
+        setReferralStatus({ state: 'invalid' })
+      }
+    }, 450)
+
+    return () => {
+      cancelled = true
+      clearTimeout(timeout)
+    }
+  }, [referralCode])
+
+  // Timer cooldown
   useEffect(() => {
     if (resendCooldown <= 0) return undefined
 
@@ -101,28 +191,46 @@ export default function AuthModal({
     return () => clearTimeout(timeout)
   }, [resendCooldown])
 
-  // Social sign-in (Google / Apple via Firebase popup)
+  // Social sign-in
   const [googleLoading, setGoogleLoading] = useState(false)
-  const [appleLoading, setAppleLoading] = useState(false)
-  // Set once a social provider returns a user who still needs phone verification
-  // (i.e. no prior account, or an existing account with phoneVerified !== true)
   const [pendingSocialUser, setPendingSocialUser] = useState(null)
 
   // Optional email verification state
   const [emailCode, setEmailCode] = useState('')
-  const [emailCodeSent, setEmailCodeSent] =
-    useState(false)
-  const [emailVerified, setEmailVerified] =
-    useState(false)
-  const [emailLoading, setEmailLoading] =
-    useState(false)
+  const [emailCodeSent, setEmailCodeSent] = useState(false)
+  const [emailVerified, setEmailVerified] = useState(false)
+  const [emailLoading, setEmailLoading] = useState(false)
 
-  const reset = () => {
+  const clearRecaptcha = useCallback(() => {
+    if (recaptchaVerifierRef.current) {
+      try {
+        recaptchaVerifierRef.current.clear()
+      } catch (err) {
+        console.error('reCAPTCHA clear failed:', err)
+      }
+      recaptchaVerifierRef.current = null
+    }
+
+    if (recaptchaHostRef.current) {
+      recaptchaHostRef.current.innerHTML = ''
+      const newId = `am-recaptcha-${Date.now()}`
+      const fresh = document.createElement('div')
+      fresh.id = newId
+      recaptchaHostRef.current.appendChild(fresh)
+      recaptchaContainerIdRef.current = newId
+    }
+  }, [])
+
+  const reset = useCallback(() => {
     setName('')
     setFirstName('')
     setLastName('')
     setPhone('')
     setEmail('')
+    setReferralCode('')
+    setReferralPrefilled(false)
+    setReferralVisitUid(null)
+    setReferralStatus({ state: 'idle' })
 
     setError('')
     setSuccess(false)
@@ -139,19 +247,15 @@ export default function AuthModal({
     setEmailVerified(false)
 
     setGoogleLoading(false)
-    setAppleLoading(false)
     setPendingSocialUser(null)
 
-    if (recaptchaVerifierRef.current) {
-      recaptchaVerifierRef.current.clear()
-      recaptchaVerifierRef.current = null
-    }
-  }
+    clearRecaptcha()
+  }, [clearRecaptcha])
 
-  const handleClose = () => {
+  const handleClose = useCallback(() => {
     reset()
     onClose()
-  }
+  }, [reset, onClose])
 
   const handleFirstNameChange = (value) => {
     setFirstName(value)
@@ -163,78 +267,59 @@ export default function AuthModal({
     setName(`${firstName} ${value}`.trim())
   }
 
-  // Converts user-entered phone to E.164 format required by Firebase
   const normalizePhone = (p) => {
     const stripped = p.replace(/[\s\-().]/g, '')
-
     if (stripped.startsWith('+')) {
       return stripped
     }
-
     return '+91' + stripped.replace(/\D/g, '')
   }
 
-  // Step 1 → validate details, then send phone OTP and move to verify step
-  const handleDetailsSubmit = async (e) => {
-    e.preventDefault()
-    setError('')
+  const validateReferralBeforeSubmit = async () => {
+    const code = referralCode.trim().toUpperCase()
 
-    const n = name.trim()
-    const p = phone.trim()
-    const em = email.trim()
+    if (!code) return null
 
-    if (!n) {
-      return setError('Please enter your full name')
+    if (!isValidReferralCodeFormat(code)) {
+      return 'Referral code should be 4-20 letters or numbers, e.g. ACCLAUNCH'
     }
 
-    if (!p) {
-      return setError('Please enter your phone number')
+    if (referralStatus.state === 'valid') return null
+
+    const result = await validateReferralCode(code)
+
+    if (result.valid === null) {
+      setReferralStatus({ state: 'unknown' })
+      return null
     }
 
-    if (!/^[+\d\s\-()]{7,20}$/.test(p)) {
-      return setError(
-        'Enter a valid phone number with country code',
-      )
+    if (!result.valid) {
+      setReferralStatus({ state: 'invalid' })
+      return `You're using a wrong referral code — "${code}" doesn't exist. Please check it, or leave the field blank.`
     }
 
-    const docId = p.replace(/[^\d]/g, '')
+    setReferralStatus({
+      state: 'valid',
+      referrerName: result.isMarketing
+        ? null
+        : result.referrerName || null,
+    })
 
-    if (docId.length < 7) {
-      return setError(
-        'Enter a valid phone number including digits',
-      )
-    }
-
-    if (
-      em &&
-      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)
-    ) {
-      return setError('Enter a valid email address')
-    }
-
-    setStep('verify')
-
-    if (!phoneCodeSent) {
-      sendPhoneOtp()
-    }
+    return null
   }
 
   const sendPhoneOtp = async () => {
-    // Prevent a second reCAPTCHA widget from being created while one is still loading
     if (loading) return
 
     setLoading(true)
     setError('')
 
     try {
-      if (recaptchaVerifierRef.current) {
-        recaptchaVerifierRef.current.clear()
-        recaptchaVerifierRef.current = null
-      }
+      clearRecaptcha()
 
       const verifier = new RecaptchaVerifier(
         auth,
-        'am-recaptcha-container',
+        recaptchaContainerIdRef.current,
         {
           size: 'invisible',
         },
@@ -253,7 +338,7 @@ export default function AuthModal({
       setResendCooldown(45)
     } catch (err) {
       console.error('Phone OTP send failed:', err)
-
+      clearRecaptcha()
       setError(
         err.message ||
           'Failed to send OTP. Check your phone number and try again.',
@@ -263,11 +348,48 @@ export default function AuthModal({
     }
   }
 
-  // Completes sign-in for a social user whose phone was already verified on
-  // a prior visit — no OTP needed again, just restore the app session.
-  const completeVerifiedSocialUser = async (existing, firebaseUser) => {
-    await signOut(auth)
+  const handleDetailsSubmit = async (e) => {
+    e.preventDefault()
+    setError('')
 
+    const n = name.trim()
+    const p = phone.trim()
+    const em = email.trim()
+
+    if (!n) {
+      return setError('Please enter your full name')
+    }
+
+    if (!p) {
+      return setError('Please enter your phone number')
+    }
+
+    if (!/^[+\d\s\-()]{7,20}$/.test(p)) {
+      return setError('Enter a valid phone number with country code')
+    }
+
+    const docId = p.replace(/[^\d]/g, '')
+    if (docId.length < 7) {
+      return setError('Enter a valid phone number including digits')
+    }
+
+    if (em && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)) {
+      return setError('Enter a valid email address')
+    }
+
+    const referralError = await validateReferralBeforeSubmit()
+    if (referralError) {
+      return setError(referralError)
+    }
+
+    setStep('verify')
+
+    if (!phoneCodeSent) {
+      sendPhoneOtp()
+    }
+  }
+
+  const completeVerifiedSocialUser = async (existing, firebaseUser) => {
     const user = {
       name: existing.name || firebaseUser.displayName || 'Accesco User',
       phone: existing.phone || firebaseUser.phoneNumber || null,
@@ -286,10 +408,6 @@ export default function AuthModal({
     }, 1300)
   }
 
-  // After a Google/Apple popup succeeds: if that account already has a
-  // verified phone on file, sign the user straight in. Otherwise stash the
-  // provider profile and route to the phone-verification step — phone is
-  // mandatory for every account regardless of how it was created.
   const handleSocialAuthResult = async (firebaseUser, provider) => {
     const snap = await getDoc(doc(db, 'users', firebaseUser.uid))
     const existing = snap.exists() ? snap.data() : null
@@ -320,7 +438,7 @@ export default function AuthModal({
     err.code === 'auth/cancelled-popup-request'
 
   const handleGoogleSignIn = async () => {
-    if (googleLoading || appleLoading) return
+    if (googleLoading) return
 
     setGoogleLoading(true)
     setError('')
@@ -328,74 +446,36 @@ export default function AuthModal({
     try {
       const provider = new GoogleAuthProvider()
       const result = await signInWithPopup(auth, provider)
-
       await handleSocialAuthResult(result.user, 'google')
     } catch (err) {
       console.error('Google sign-in failed:', err)
-
       if (!isPopupDismissed(err)) {
-        setError(
-          err.message ||
-            'Google sign-in failed. Please try again.',
-        )
+        setError(err.message || 'Google sign-in failed. Please try again.')
       }
     } finally {
       setGoogleLoading(false)
     }
   }
 
-  const handleAppleSignIn = async () => {
-    if (googleLoading || appleLoading) return
-
-    setAppleLoading(true)
-    setError('')
-
-    try {
-      const provider = new OAuthProvider('apple.com')
-      provider.addScope('email')
-      provider.addScope('name')
-
-      const result = await signInWithPopup(auth, provider)
-
-      await handleSocialAuthResult(result.user, 'apple')
-    } catch (err) {
-      console.error('Apple sign-in failed:', err)
-
-      if (!isPopupDismissed(err)) {
-        setError(
-          err.message ||
-            'Apple sign-in failed. Please try again.',
-        )
-      }
-    } finally {
-      setAppleLoading(false)
-    }
-  }
-
-  // Phone step for social sign-in: same phone rules as the details form,
-  // then reuse the normal OTP-send flow.
   const handleSocialPhoneSubmit = async (e) => {
     e.preventDefault()
     setError('')
 
     const p = phone.trim()
-
-    if (!p) {
-      return setError('Please enter your phone number')
-    }
+    if (!p) return setError('Please enter your phone number')
 
     if (!/^[+\d\s\-()]{7,20}$/.test(p)) {
-      return setError(
-        'Enter a valid phone number with country code',
-      )
+      return setError('Enter a valid phone number with country code')
     }
 
     const docId = p.replace(/[^\d]/g, '')
-
     if (docId.length < 7) {
-      return setError(
-        'Enter a valid phone number including digits',
-      )
+      return setError('Enter a valid phone number including digits')
+    }
+
+    const referralError = await validateReferralBeforeSubmit()
+    if (referralError) {
+      return setError(referralError)
     }
 
     setStep('verify')
@@ -405,7 +485,6 @@ export default function AuthModal({
     }
   }
 
-  // Optional: send an email verification code
   const sendEmailOtp = async () => {
     if (!email.trim()) {
       setError('Please add an email first')
@@ -417,26 +496,19 @@ export default function AuthModal({
 
     try {
       await sendOtpEmailVerification(email.trim())
-
       setEmailCodeSent(true)
       setEmailVerified(false)
     } catch (err) {
       console.error('Email OTP send failed:', err)
-
-      setError(
-        err.message || 'Failed to send email code',
-      )
+      setError(err.message || 'Failed to send email code')
     } finally {
       setEmailLoading(false)
     }
   }
 
-  // Optional: verify the email code
   const verifyEmailOtp = async () => {
     if (!/^\d{6}$/.test(emailCode.trim())) {
-      setError(
-        'Please enter a valid 6-digit email code.',
-      )
+      setError('Please enter a valid 6-digit email code.')
       return
     }
 
@@ -444,32 +516,22 @@ export default function AuthModal({
     setError('')
 
     try {
-      await verifyOtpEmailCode(
-        email.trim(),
-        emailCode.trim(),
-      )
-
+      await verifyOtpEmailCode(email.trim(), emailCode.trim())
       setEmailVerified(true)
     } catch (err) {
       console.error('Email OTP verify failed:', err)
-
-      setError(
-        err.message || 'Email verification failed',
-      )
+      setError(err.message || 'Email verification failed')
     } finally {
       setEmailLoading(false)
     }
   }
 
-  // Step 2 → verify phone OTP (mandatory), then save the user
   const handleVerifySubmit = async (e) => {
     e.preventDefault()
     setError('')
 
     if (!confirmationResult) {
-      setError(
-        'Code is still being sent. Please wait a moment.',
-      )
+      setError('Code is still being sent. Please wait a moment.')
       return
     }
 
@@ -481,19 +543,15 @@ export default function AuthModal({
     setLoading(true)
 
     try {
-      await confirmationResult.confirm(
-        otpCode.trim(),
-      )
+      await confirmationResult.confirm(otpCode.trim())
 
       const p = phone.trim()
-      const n =
-        pendingSocialUser
-          ? pendingSocialUser.name || name.trim() || 'Accesco User'
-          : name.trim()
-      const em =
-        pendingSocialUser
-          ? pendingSocialUser.email || email.trim()
-          : email.trim()
+      const n = pendingSocialUser
+        ? pendingSocialUser.name || name.trim() || 'Accesco User'
+        : name.trim()
+      const em = pendingSocialUser
+        ? pendingSocialUser.email || email.trim()
+        : email.trim()
       const docId = pendingSocialUser
         ? pendingSocialUser.uid
         : p.replace(/[^\d]/g, '')
@@ -511,13 +569,19 @@ export default function AuthModal({
           createdAt: serverTimestamp(),
           updatedAt: serverTimestamp(),
         },
-        {
-          merge: true,
-        },
+        { merge: true },
       )
 
-      // Sign out of Firebase Auth after the write — we only needed phone verification
-      await signOut(auth)
+      try {
+        const appliedCode = normalizeReferralCode(referralCode)
+        await initializeReferralProfile(p, n, appliedCode)
+
+        if (appliedCode && referralVisitUid) {
+          await markReferralVisitConsumed(referralVisitUid, p)
+        }
+      } catch (err) {
+        console.error('Referral profile init failed:', err)
+      }
 
       const user = {
         name: n,
@@ -527,11 +591,7 @@ export default function AuthModal({
         uid: docId,
       }
 
-      localStorage.setItem(
-        'accesco_user',
-        JSON.stringify(user),
-      )
-
+      localStorage.setItem('accesco_user', JSON.stringify(user))
       setSuccess(true)
 
       setTimeout(() => {
@@ -540,24 +600,12 @@ export default function AuthModal({
       }, 1300)
     } catch (err) {
       console.error(err)
-
-      if (
-        err.code ===
-        'auth/invalid-verification-code'
-      ) {
-        setError(
-          'Invalid OTP. Please check the code and try again.',
-        )
-      } else if (
-        err.code === 'auth/code-expired'
-      ) {
-        setError(
-          'OTP has expired. Please request a new one.',
-        )
+      if (err.code === 'auth/invalid-verification-code') {
+        setError('Invalid OTP. Please check the code and try again.')
+      } else if (err.code === 'auth/code-expired') {
+        setError('OTP has expired. Please request a new one.')
       } else {
-        setError(
-          'Something went wrong. Please try again.',
-        )
+        setError('Something went wrong. Please try again.')
       }
     } finally {
       setLoading(false)
@@ -571,56 +619,107 @@ export default function AuthModal({
       .toString()
       .padStart(2, '0')}`
 
-  const inputStyle = (field) => ({
+  const getInputStyle = (field) => ({
     width: '100%',
     height: 35,
     boxSizing: 'border-box',
-
     padding: '0 11px',
-
-    border:
-      focused === field
-        ? '1px solid #c50062'
-        : '1px solid #2d2d2d',
-
+    border: focused === field ? '1px solid #c50062' : '1px solid #d8d8d8',
     borderRadius: 5,
     outline: 'none',
-
-    background:
-      focused === field
-        ? '#242424'
-        : '#202020',
-
-    color: '#ffffff',
-
+    background: focused === field ? '#ffffff' : '#f7f7f7',
+    color: '#1a1a1a',
     fontFamily: 'inherit',
     fontSize: 10,
     fontWeight: 400,
-
-    boxShadow:
-      focused === field
-        ? '0 0 0 2px rgba(197,0,98,0.12)'
-        : 'none',
-
+    boxShadow: focused === field ? '0 0 0 2px rgba(197,0,98,0.12)' : 'none',
     transition: '150ms ease',
   })
 
-  if (!isOpen) return null
+  const referralInputStyle = () => {
+    const base = {
+      ...getInputStyle('referralCode'),
+      textTransform: 'uppercase',
+    }
+
+    if (referralStatus.state === 'invalid') {
+      return {
+        ...base,
+        border: '1px solid #c50062',
+        background: 'rgba(197,0,98,0.05)',
+      }
+    }
+
+    if (referralStatus.state === 'valid') {
+      return { ...base, border: '1px solid #16a34a' }
+    }
+
+    return base
+  }
+
+  const renderReferralNote = () => {
+    if (referralStatus.state === 'checking') {
+      return <span style={styles.referralNoteMuted}>Checking code…</span>
+    }
+
+    if (referralStatus.state === 'invalid') {
+      return (
+        <span style={styles.referralNoteError}>
+          Wrong referral code — check it, or leave this blank
+        </span>
+      )
+    }
+
+    if (referralStatus.state === 'valid') {
+      return (
+        <span style={styles.referralNoteValid}>
+          {referralStatus.referrerName
+            ? `Valid code — invited by ${referralStatus.referrerName} ✓`
+            : 'Referral code applied ✓'}
+        </span>
+      )
+    }
+
+    if (referralStatus.state === 'unknown') {
+      return (
+        <span style={styles.referralNoteMuted}>
+          Could not verify right now — you can continue
+        </span>
+      )
+    }
+
+    if (referralPrefilled) {
+      return <span style={styles.referralNote}>Applied from your invite link</span>
+    }
+
+    return null
+  }
 
   return (
     <div
       style={styles.backdrop}
-      onClick={handleClose}
+      onClick={mandatory ? undefined : handleClose}
+      role="dialog"
+      aria-modal="true"
+      aria-label="Account Authentication"
     >
       <div
         className="auth-modal-shell"
         style={styles.shell}
         onClick={(e) => e.stopPropagation()}
       >
-        <section
-          className="auth-modal-left"
-          style={styles.left}
-        >
+        {!mandatory && (
+          <button
+            type="button"
+            onClick={handleClose}
+            aria-label="Close authentication modal"
+            style={styles.closeButton}
+          >
+            ✕
+          </button>
+        )}
+
+        <section className="auth-modal-left" style={styles.left}>
           <div style={styles.leftLight} />
           <div style={styles.leftShade} />
 
@@ -632,9 +731,8 @@ export default function AuthModal({
                   <br />
                   With Accesco Living
                 </h2>
-
                 <p style={styles.heroSub}>
-                  One Ecosystem.Endless Possibilities.
+                  One Ecosystem. Endless Possibilities.
                   <br />
                   Join Accesco Living and Experience
                   <br />a smarter way to live and shop
@@ -647,7 +745,6 @@ export default function AuthModal({
                   <br />
                   Phone Number
                 </h2>
-
                 <p style={styles.heroSub}>
                   Add Your Mobile Number to
                   <br />
@@ -661,7 +758,6 @@ export default function AuthModal({
                   <br />
                   Account
                 </h2>
-
                 <p style={styles.heroSub}>
                   Enter the 6-Digit OTP Sent to your
                   <br />
@@ -672,120 +768,62 @@ export default function AuthModal({
           </div>
         </section>
 
-        <section
-          className="auth-modal-right"
-          style={styles.right}
-        >
+        <section className="auth-modal-right" style={styles.right}>
           {success ? (
             <div style={styles.success}>
-              <div style={styles.successCircle}>
-                ✓
-              </div>
-
-              <h3 style={styles.successTitle}>
-                You&apos;re in!
-              </h3>
-
+              <div style={styles.successCircle}>✓</div>
+              <h3 style={styles.successTitle}>You&apos;re in!</h3>
               <p style={styles.successText}>
-                Welcome to Accesco,{' '}
-                {name.split(' ')[0]}.
+                Welcome to Accesco, {name.split(' ')[0]}.
               </p>
             </div>
           ) : (
             <>
-              {/* Invisible reCAPTCHA container required by Firebase Phone Auth */}
-              <div id="am-recaptcha-container" />
+              {/* React Ref Managed Host for Invisible reCAPTCHA */}
+              <div ref={recaptchaHostRef} id="am-recaptcha-host" />
 
               {step === 'details' ? (
                 <div style={styles.detailsScreen}>
                   <header style={styles.signupHeader}>
-                    <h2 style={styles.signupTitle}>
-                      Sign Up Account
-                    </h2>
-
+                    <h2 style={styles.signupTitle}>Sign Up Account</h2>
                     <p style={styles.signupSubtitle}>
-                      Enter Your Personal Data to
-                      Create your Account
+                      Enter Your Personal Data to Create your Account
                     </p>
                   </header>
 
                   <div style={styles.socialRow}>
                     <button
                       type="button"
-                      style={styles.socialButton}
+                      style={styles.socialButtonFull}
                       onClick={handleGoogleSignIn}
-                      disabled={
-                        googleLoading ||
-                        appleLoading ||
-                        loading
-                      }
+                      disabled={googleLoading || loading}
                     >
                       <GoogleIcon />
                       <span>
-                        {googleLoading
-                          ? 'Signing in…'
-                          : 'Google'}
-                      </span>
-                    </button>
-
-                    <button
-                      type="button"
-                      style={styles.socialButton}
-                      onClick={handleAppleSignIn}
-                      disabled={
-                        googleLoading ||
-                        appleLoading ||
-                        loading
-                      }
-                    >
-                      <AppleIcon />
-                      <span>
-                        {appleLoading
-                          ? 'Signing in…'
-                          : 'Apple'}
+                        {googleLoading ? 'Signing in…' : 'Continue with Google'}
                       </span>
                     </button>
                   </div>
 
                   <div style={styles.divider}>
                     <span style={styles.dividerLine} />
-
-                    <span style={styles.dividerText}>
-                      Or
-                    </span>
-
+                    <span style={styles.dividerText}>Or</span>
                     <span style={styles.dividerLine} />
                   </div>
 
-                  {error && (
-                    <div style={styles.error}>
-                      {error}
-                    </div>
-                  )}
+                  {error && <div style={styles.error}>{error}</div>}
 
-                  <form
-                    onSubmit={handleDetailsSubmit}
-                    style={styles.detailsForm}
-                  >
+                  <form onSubmit={handleDetailsSubmit} style={styles.detailsForm}>
                     <div style={styles.nameGrid}>
                       <div style={styles.field}>
-                        <label style={styles.label}>
-                          First Name
-                        </label>
-
+                        <label style={styles.label}>First Name</label>
                         <input
-                          style={inputStyle('firstName')}
+                          style={getInputStyle('firstName')}
                           type="text"
                           placeholder="John"
                           value={firstName}
-                          onChange={(e) =>
-                            handleFirstNameChange(
-                              e.target.value,
-                            )
-                          }
-                          onFocus={() =>
-                            setFocused('firstName')
-                          }
+                          onChange={(e) => handleFirstNameChange(e.target.value)}
+                          onFocus={() => setFocused('firstName')}
                           onBlur={() => setFocused('')}
                           disabled={loading}
                           autoFocus
@@ -793,23 +831,14 @@ export default function AuthModal({
                       </div>
 
                       <div style={styles.field}>
-                        <label style={styles.label}>
-                          Last Name
-                        </label>
-
+                        <label style={styles.label}>Last Name</label>
                         <input
-                          style={inputStyle('lastName')}
+                          style={getInputStyle('lastName')}
                           type="text"
                           placeholder="Francisco"
                           value={lastName}
-                          onChange={(e) =>
-                            handleLastNameChange(
-                              e.target.value,
-                            )
-                          }
-                          onFocus={() =>
-                            setFocused('lastName')
-                          }
+                          onChange={(e) => handleLastNameChange(e.target.value)}
+                          onFocus={() => setFocused('lastName')}
                           onBlur={() => setFocused('')}
                           disabled={loading}
                         />
@@ -817,21 +846,14 @@ export default function AuthModal({
                     </div>
 
                     <div style={styles.field}>
-                      <label style={styles.label}>
-                        Mobile Number
-                      </label>
-
+                      <label style={styles.label}>Mobile Number</label>
                       <input
-                        style={inputStyle('phone')}
+                        style={getInputStyle('phone')}
                         type="tel"
                         placeholder="eg. 98765 43210"
                         value={phone}
-                        onChange={(e) =>
-                          setPhone(e.target.value)
-                        }
-                        onFocus={() =>
-                          setFocused('phone')
-                        }
+                        onChange={(e) => setPhone(e.target.value)}
+                        onFocus={() => setFocused('phone')}
                         onBlur={() => setFocused('')}
                         disabled={loading}
                       />
@@ -839,26 +861,39 @@ export default function AuthModal({
 
                     <div style={styles.field}>
                       <label style={styles.label}>
-                        Email{' '}
-                        <em style={styles.optional}>
-                          (Optional)
-                        </em>
+                        Email <em style={styles.optional}>(Optional)</em>
                       </label>
-
                       <input
-                        style={inputStyle('email')}
+                        style={getInputStyle('email')}
                         type="email"
                         placeholder="eg.Johnfranc@gmail.com"
                         value={email}
-                        onChange={(e) =>
-                          setEmail(e.target.value)
-                        }
-                        onFocus={() =>
-                          setFocused('email')
-                        }
+                        onChange={(e) => setEmail(e.target.value)}
+                        onFocus={() => setFocused('email')}
                         onBlur={() => setFocused('')}
                         disabled={loading}
                       />
+                    </div>
+
+                    <div style={styles.field}>
+                      <label style={styles.label}>
+                        Referral Code <em style={styles.optional}>(Optional)</em>
+                      </label>
+                      <input
+                        style={referralInputStyle()}
+                        type="text"
+                        placeholder="eg. ACCLAUNCH"
+                        value={referralCode}
+                        onChange={(e) =>
+                          setReferralCode(e.target.value.toUpperCase())
+                        }
+                        onFocus={() => setFocused('referralCode')}
+                        onBlur={() => setFocused('')}
+                        maxLength={20}
+                        disabled={loading}
+                        autoComplete="off"
+                      />
+                      {renderReferralNote()}
                     </div>
 
                     <button
@@ -866,68 +901,60 @@ export default function AuthModal({
                       style={styles.submit}
                       disabled={loading}
                     >
-                      {loading
-                        ? 'Sending OTP...'
-                        : 'Send OTP'}
-
-                      {!loading && (
-                        <span style={styles.arrow}>
-                          →
-                        </span>
-                      )}
+                      {loading ? 'Sending OTP...' : 'Send OTP'}
+                      {!loading && <span style={styles.arrow}>→</span>}
                     </button>
                   </form>
                 </div>
               ) : step === 'social-phone' ? (
                 <div style={styles.detailsScreen}>
                   <header style={styles.signupHeader}>
-                    <h2 style={styles.signupTitle}>
-                      Verify Your Phone
-                    </h2>
-
+                    <h2 style={styles.signupTitle}>Verify Your Phone</h2>
                     <p style={styles.signupSubtitle}>
                       {pendingSocialUser?.name
-                        ? `Hi ${
-                            pendingSocialUser.name.split(
-                              ' ',
-                            )[0]
-                          }, add`
+                        ? `Hi ${pendingSocialUser.name.split(' ')[0]}, add`
                         : 'Add'}{' '}
-                      your mobile number to finish
-                      setting up your account
+                      your mobile number to finish setting up your account
                     </p>
                   </header>
 
-                  {error && (
-                    <div style={styles.error}>
-                      {error}
-                    </div>
-                  )}
+                  {error && <div style={styles.error}>{error}</div>}
 
-                  <form
-                    onSubmit={handleSocialPhoneSubmit}
-                    style={styles.detailsForm}
-                  >
+                  <form onSubmit={handleSocialPhoneSubmit} style={styles.detailsForm}>
                     <div style={styles.field}>
-                      <label style={styles.label}>
-                        Mobile Number
-                      </label>
-
+                      <label style={styles.label}>Mobile Number</label>
                       <input
-                        style={inputStyle('phone')}
+                        style={getInputStyle('phone')}
                         type="tel"
                         placeholder="eg. 98765 43210"
                         value={phone}
-                        onChange={(e) =>
-                          setPhone(e.target.value)
-                        }
-                        onFocus={() =>
-                          setFocused('phone')
-                        }
+                        onChange={(e) => setPhone(e.target.value)}
+                        onFocus={() => setFocused('phone')}
                         onBlur={() => setFocused('')}
                         disabled={loading}
                         autoFocus
                       />
+                    </div>
+
+                    <div style={styles.field}>
+                      <label style={styles.label}>
+                        Referral Code <em style={styles.optional}>(Optional)</em>
+                      </label>
+                      <input
+                        style={referralInputStyle()}
+                        type="text"
+                        placeholder="eg. ACCLAUNCH"
+                        value={referralCode}
+                        onChange={(e) =>
+                          setReferralCode(e.target.value.toUpperCase())
+                        }
+                        onFocus={() => setFocused('referralCode')}
+                        onBlur={() => setFocused('')}
+                        maxLength={20}
+                        disabled={loading}
+                        autoComplete="off"
+                      />
+                      {renderReferralNote()}
                     </div>
 
                     <button
@@ -935,45 +962,27 @@ export default function AuthModal({
                       style={styles.submit}
                       disabled={loading}
                     >
-                      {loading
-                        ? 'Sending OTP...'
-                        : 'Send OTP'}
-
-                      {!loading && (
-                        <span style={styles.arrow}>
-                          →
-                        </span>
-                      )}
+                      {loading ? 'Sending OTP...' : 'Send OTP'}
+                      {!loading && <span style={styles.arrow}>→</span>}
                     </button>
                   </form>
                 </div>
               ) : (
-                <form
-                  onSubmit={handleVerifySubmit}
-                  style={styles.verifyForm}
-                >
+                <form onSubmit={handleVerifySubmit} style={styles.verifyForm}>
                   <div>
                     <header style={styles.verifyHeader}>
-                      <h2 style={styles.verifyTitle}>
-                        OTP Authentication
-                      </h2>
-
+                      <h2 style={styles.verifyTitle}>OTP Authentication</h2>
                       <p style={styles.verifySubtitle}>
                         We have Sent a 6 digit OTP to
                       </p>
 
                       <div style={styles.phoneRow}>
-                        <span style={styles.phoneText}>
-                          {phone}
-                        </span>
-
+                        <span style={styles.phoneText}>{phone}</span>
                         <button
                           type="button"
                           onClick={() => {
                             setStep(
-                              pendingSocialUser
-                                ? 'social-phone'
-                                : 'details',
+                              pendingSocialUser ? 'social-phone' : 'details',
                             )
                             setError('')
                           }}
@@ -985,31 +994,17 @@ export default function AuthModal({
                       </div>
                     </header>
 
-                    {error && (
-                      <div style={styles.verifyError}>
-                        {error}
-                      </div>
-                    )}
+                    {error && <div style={styles.verifyError}>{error}</div>}
 
                     <div style={styles.otpInputArea}>
-                      <div
-                        style={styles.otpBoxes}
-                        aria-hidden="true"
-                      >
-                        {Array.from({
-                          length: 6,
-                        }).map((_, index) => (
+                      <div style={styles.otpBoxes} aria-hidden="true">
+                        {Array.from({ length: 6 }).map((_, index) => (
                           <span
                             key={index}
                             style={{
                               ...styles.otpBox,
-
                               ...(focused === 'otp' &&
-                              index ===
-                                Math.min(
-                                  otpCode.length,
-                                  5,
-                                )
+                              index === Math.min(otpCode.length, 5)
                                 ? styles.otpBoxActive
                                 : {}),
                             }}
@@ -1023,14 +1018,10 @@ export default function AuthModal({
                         style={styles.otpRealInput}
                         type="text"
                         inputMode="numeric"
-                        aria-label="Enter 6-digit OTP"
+                        aria-label="Enter 6-digit OTP code"
                         value={otpCode}
-                        onChange={(e) =>
-                          setOtpCode(e.target.value)
-                        }
-                        onFocus={() =>
-                          setFocused('otp')
-                        }
+                        onChange={(e) => setOtpCode(e.target.value)}
+                        onFocus={() => setFocused('otp')}
                         onBlur={() => setFocused('')}
                         maxLength={6}
                         disabled={loading}
@@ -1040,110 +1031,13 @@ export default function AuthModal({
 
                     {resendCooldown > 0 && (
                       <div style={styles.resendTimer}>
-                        <span style={styles.clockIcon}>
-                          ◷
-                        </span>
-
-                        <span style={styles.resendText}>
-                          Resend OTP in
-                        </span>
-
+                        <span style={styles.clockIcon}>◷</span>
+                        <span style={styles.resendText}>Resend OTP in</span>
                         <span style={styles.timerValue}>
                           {formatCooldown(resendCooldown)}
                         </span>
                       </div>
                     )}
-
-                    {/* Optional email verification is retained but hidden to match the supplied design */}
-                    <div
-                      style={
-                        styles.hiddenEmailVerification
-                      }
-                    >
-                      <label style={styles.label}>
-                        Verify Email{' '}
-                        <em style={styles.optional}>
-                          optional
-                        </em>
-                      </label>
-
-                      {emailVerified ? (
-                        <p style={styles.successNote}>
-                          Email verified ✓
-                        </p>
-                      ) : !email.trim() ? (
-                        <p style={styles.mutedNote}>
-                          Add an email in the previous
-                          step to verify it.
-                        </p>
-                      ) : !emailCodeSent ? (
-                        <button
-                          type="button"
-                          onClick={sendEmailOtp}
-                          disabled={emailLoading}
-                          style={
-                            styles.secondaryButton
-                          }
-                        >
-                          {emailLoading
-                            ? 'Sending…'
-                            : 'Send email code'}
-                        </button>
-                      ) : (
-                        <>
-                          <input
-                            style={inputStyle(
-                              'emailCode',
-                            )}
-                            type="text"
-                            inputMode="numeric"
-                            placeholder="Email 6-digit code"
-                            value={emailCode}
-                            onChange={(e) =>
-                              setEmailCode(
-                                e.target.value,
-                              )
-                            }
-                            onFocus={() =>
-                              setFocused(
-                                'emailCode',
-                              )
-                            }
-                            onBlur={() =>
-                              setFocused('')
-                            }
-                            maxLength={6}
-                            disabled={emailLoading}
-                          />
-
-                          <div style={styles.buttonRow}>
-                            <button
-                              type="button"
-                              onClick={sendEmailOtp}
-                              disabled={emailLoading}
-                              style={
-                                styles.miniButtonMuted
-                              }
-                            >
-                              Resend
-                            </button>
-
-                            <button
-                              type="button"
-                              onClick={
-                                verifyEmailOtp
-                              }
-                              disabled={emailLoading}
-                              style={styles.miniButton}
-                            >
-                              {emailLoading
-                                ? 'Verifying…'
-                                : 'Verify email'}
-                            </button>
-                          </div>
-                        </>
-                      )}
-                    </div>
                   </div>
 
                   <div style={styles.verifyBottom}>
@@ -1157,39 +1051,23 @@ export default function AuthModal({
                       ) : (
                         <>
                           Verify &amp; Continue
-
-                          <span style={styles.arrow}>
-                            →
-                          </span>
+                          <span style={styles.arrow}>→</span>
                         </>
                       )}
                     </button>
 
-                    <div
-                      style={styles.bottomResendRow}
-                    >
-                      <span
-                        style={
-                          styles.bottomResendText
-                        }
-                      >
+                    <div style={styles.bottomResendRow}>
+                      <span style={styles.bottomResendText}>
                         Dont Receive Code ?
                       </span>
-
                       <button
                         type="button"
                         onClick={sendPhoneOtp}
-                        disabled={
-                          loading || resendCooldown > 0
-                        }
-                        style={
-                          styles.bottomResendButton
-                        }
+                        disabled={loading || resendCooldown > 0}
+                        style={styles.bottomResendButton}
                       >
                         {resendCooldown > 0
-                          ? `Resend OTP (${formatCooldown(
-                              resendCooldown,
-                            )})`
+                          ? `Resend OTP (${formatCooldown(resendCooldown)})`
                           : 'Resend OTP'}
                       </button>
                     </div>
@@ -1212,16 +1090,10 @@ export default function AuthModal({
 
           @media (max-width: 760px) {
             .auth-modal-shell {
-              width: min(
-                430px,
-                calc(100vw - 20px)
-              ) !important;
-
+              width: min(430px, calc(100vw - 20px)) !important;
               height: auto !important;
               min-height: 531px !important;
-
               grid-template-columns: 1fr !important;
-
               padding: 0 !important;
             }
 
@@ -1231,7 +1103,6 @@ export default function AuthModal({
 
             .auth-modal-right {
               min-height: 531px !important;
-
               padding: 34px 32px 28px !important;
             }
           }
@@ -1248,101 +1119,95 @@ export default function AuthModal({
 }
 
 const styles = {
-backdrop: {
-  position: 'fixed',
-  inset: 0,
-  zIndex: 10000,
+  backdrop: {
+    position: 'fixed',
+    inset: 0,
+    zIndex: 10000,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 16,
+    background: 'rgba(255, 255, 255, 0.72)',
+    backdropFilter: 'blur(10px)',
+    WebkitBackdropFilter: 'blur(10px)',
+  },
 
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
+  shell: {
+    position: 'relative',
+    width: 'min(820px, calc(100vw - 32px))',
+    height: 531,
+    maxHeight: 'calc(100vh - 32px)',
+    transform: 'scale(1.07)',
+    transformOrigin: 'center',
+    display: 'grid',
+    gridTemplateColumns: '424px minmax(0, 1fr)',
+    columnGap: 32,
+    boxSizing: 'border-box',
+    padding: 34,
+    overflow: 'hidden',
+    background: '#000000',
+    boxShadow: '0 30px 85px rgba(0,0,0,0.68)',
+    fontFamily: 'Arial, Helvetica, sans-serif',
+  },
 
-  padding: 16,
-
-  background: 'rgba(255, 255, 255, 0.72)',
-  backdropFilter: 'blur(10px)',
-  WebkitBackdropFilter: 'blur(10px)',
-},
-
-shell: {
-  position: 'relative',
-
-  width: 'min(820px, calc(100vw - 32px))',
-  height: 531,
-  maxHeight: 'calc(100vh - 32px)',
-
-  transform: 'scale(1.07)',
-  transformOrigin: 'center',
-
-  display: 'grid',
-  gridTemplateColumns: '424px minmax(0, 1fr)',
-  columnGap: 32,
-
-  boxSizing: 'border-box',
-  padding: 34,
-
-  overflow: 'hidden',
-
-  background: '#000000',
-
-  boxShadow:
-    '0 30px 85px rgba(0,0,0,0.68)',
-
-  fontFamily:
-    'Arial, Helvetica, sans-serif',
-},
+  closeButton: {
+    position: 'absolute',
+    top: 14,
+    left: 14,
+    zIndex: 10,
+    width: 28,
+    height: 28,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 0,
+    border: '1px solid rgba(255,255,255,0.25)',
+    borderRadius: '50%',
+    background: 'rgba(0,0,0,0.35)',
+    color: '#ffffff',
+    fontSize: 13,
+    lineHeight: 1,
+    cursor: 'pointer',
+  },
 
   left: {
     position: 'relative',
-
     display: 'flex',
     alignItems: 'center',
-
     overflow: 'hidden',
-
     boxSizing: 'border-box',
     padding: '34px 29px',
-
     background:
       'radial-gradient(circle at 5% 5%, rgba(235,0,107,0.96) 0%, rgba(194,0,87,0.83) 27%, rgba(111,0,53,0.5) 56%, transparent 78%), linear-gradient(135deg, #af0052 0%, #76003a 46%, #3d001f 75%, #17000c 100%)',
-
     color: '#ffffff',
   },
 
   leftLight: {
     position: 'absolute',
     inset: 0,
-
     background:
       'linear-gradient(108deg, rgba(255,255,255,0.025), transparent 37%)',
-
     pointerEvents: 'none',
   },
 
   leftShade: {
     position: 'absolute',
     inset: 0,
-
     background:
       'radial-gradient(circle at 91% 53%, transparent 0%, rgba(0,0,0,0.1) 45%, rgba(0,0,0,0.42) 100%)',
-
     pointerEvents: 'none',
   },
 
   leftContent: {
     position: 'relative',
     zIndex: 2,
-
     width: '100%',
-
     transform: 'translateY(20px)',
   },
 
   heroTitle: {
     margin: '0 0 18px',
-
     color: '#ffffff',
-
     fontSize: 34,
     lineHeight: 1.04,
     fontWeight: 700,
@@ -1351,9 +1216,7 @@ shell: {
 
   heroSub: {
     margin: 0,
-
     color: 'rgba(255,255,255,0.96)',
-
     fontSize: 12,
     lineHeight: 1.45,
     fontWeight: 600,
@@ -1363,15 +1226,11 @@ shell: {
   right: {
     position: 'relative',
     minWidth: 0,
-
     boxSizing: 'border-box',
-    padding: '27px 6px 8px 0',
-
+    padding: '27px 24px 8px 24px',
     overflowY: 'auto',
-
-    background: '#000000',
-    color: '#ffffff',
-
+    background: '#ffffff',
+    color: '#1a1a1a',
     scrollbarWidth: 'none',
   },
 
@@ -1386,9 +1245,7 @@ shell: {
 
   signupTitle: {
     margin: 0,
-
-    color: '#ffffff',
-
+    color: '#1a1a1a',
     fontSize: 25,
     lineHeight: 1.12,
     fontWeight: 700,
@@ -1397,9 +1254,7 @@ shell: {
 
   signupSubtitle: {
     margin: '8px 0 0',
-
-    color: 'rgba(255,255,255,0.88)',
-
+    color: 'rgba(26,26,26,0.72)',
     fontSize: 10,
     lineHeight: 1.35,
     fontWeight: 500,
@@ -1407,60 +1262,48 @@ shell: {
 
   socialRow: {
     display: 'grid',
-    gridTemplateColumns: '1fr 1fr',
-
+    gridTemplateColumns: '1fr',
     gap: 18,
-
     marginTop: 27,
   },
 
-socialButton: {
-  height: 37,
-
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-
-  gap: 10,
-  padding: 0,
-
-  boxSizing: 'border-box',
-
-  border: '1px solid #2b2b2b',
-  borderRadius: 5,
-
-  background: '#202020',
-  color: '#eeeeee',
-
-  fontFamily: 'Arial, Helvetica, sans-serif',
-  fontSize: 11,
-  fontWeight: 500,
-  lineHeight: 1,
-  letterSpacing: 0,
-  textTransform: 'none',
-
-  cursor: 'pointer',
-},
+  socialButtonFull: {
+    width: '100%',
+    height: 37,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 10,
+    padding: 0,
+    boxSizing: 'border-box',
+    border: '1px solid #d8d8d8',
+    borderRadius: 5,
+    background: '#ffffff',
+    color: '#1a1a1a',
+    fontFamily: 'Arial, Helvetica, sans-serif',
+    fontSize: 11,
+    fontWeight: 500,
+    lineHeight: 1,
+    letterSpacing: 0,
+    textTransform: 'none',
+    cursor: 'pointer',
+  },
 
   divider: {
     display: 'grid',
     gridTemplateColumns: '1fr auto 1fr',
     alignItems: 'center',
-
     gap: 9,
-
     margin: '20px 0 17px',
   },
 
   dividerLine: {
     height: 1,
-
-    background: '#292929',
+    background: '#e2e2e2',
   },
 
   dividerText: {
-    color: 'rgba(255,255,255,0.58)',
-
+    color: 'rgba(26,26,26,0.5)',
     fontSize: 7,
     lineHeight: 1,
   },
@@ -1468,13 +1311,10 @@ socialButton: {
   error: {
     margin: '0 0 10px',
     padding: '6px 8px',
-
     border: '1px solid rgba(197,0,98,0.3)',
     borderRadius: 4,
-
-    background: 'rgba(197,0,98,0.1)',
-    color: '#ff65a1',
-
+    background: 'rgba(197,0,98,0.08)',
+    color: '#c50062',
     fontSize: 9,
     lineHeight: 1.3,
     textAlign: 'center',
@@ -1483,83 +1323,94 @@ socialButton: {
   detailsForm: {
     display: 'flex',
     flexDirection: 'column',
-
     gap: 12,
-
     width: '100%',
   },
 
   nameGrid: {
     display: 'grid',
     gridTemplateColumns: '1fr 1fr',
-
     gap: 16,
   },
 
   field: {
     display: 'flex',
     flexDirection: 'column',
-
     gap: 6,
-
     width: '100%',
   },
 
   label: {
-    color: 'rgba(255,255,255,0.92)',
-
+    color: 'rgba(26,26,26,0.85)',
     fontSize: 9,
     lineHeight: 1,
     fontWeight: 500,
   },
 
   optional: {
-    color: 'rgba(255,255,255,0.56)',
-
+    color: 'rgba(26,26,26,0.45)',
     fontSize: 8,
     fontStyle: 'normal',
     fontWeight: 400,
   },
 
+  referralNote: {
+    color: '#cf0066',
+    fontSize: 8,
+    lineHeight: 1.2,
+    fontWeight: 500,
+  },
+
+  referralNoteMuted: {
+    color: 'rgba(26,26,26,0.5)',
+    fontSize: 8,
+    lineHeight: 1.2,
+    fontWeight: 500,
+  },
+
+  referralNoteError: {
+    color: '#c50062',
+    fontSize: 8,
+    lineHeight: 1.2,
+    fontWeight: 600,
+  },
+
+  referralNoteValid: {
+    color: '#16a34a',
+    fontSize: 8,
+    lineHeight: 1.2,
+    fontWeight: 600,
+  },
+
   submit: {
     width: '100%',
     height: 38,
-
     marginTop: 2,
-
     display: 'inline-flex',
     alignItems: 'center',
     justifyContent: 'center',
-
     gap: 10,
-
     boxSizing: 'border-box',
     padding: 0,
-
     border: '1px solid #c50062',
     borderRadius: 5,
-
     background: '#c50062',
     color: '#ffffff',
-
     fontFamily: 'inherit',
     fontSize: 11,
     lineHeight: 1,
     fontWeight: 700,
-
     cursor: 'pointer',
   },
 
   arrow: {
     fontSize: 18,
     lineHeight: 1,
-
     transform: 'translateY(-1px)',
   },
 
   verifyForm: {
     minHeight: '100%',
-
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'space-between',
@@ -1571,9 +1422,7 @@ socialButton: {
 
   verifyTitle: {
     margin: 0,
-
-    color: '#ffffff',
-
+    color: '#1a1a1a',
     fontSize: 26,
     lineHeight: 1.1,
     fontWeight: 700,
@@ -1582,9 +1431,7 @@ socialButton: {
 
   verifySubtitle: {
     margin: '13px 0 0',
-
-    color: 'rgba(255,255,255,0.58)',
-
+    color: 'rgba(26,26,26,0.6)',
     fontSize: 9,
     lineHeight: 1.4,
   },
@@ -1592,42 +1439,32 @@ socialButton: {
   phoneRow: {
     display: 'flex',
     alignItems: 'center',
-
     gap: 8,
-
     marginTop: 6,
   },
 
   phoneText: {
     color: '#cf0066',
-
     fontSize: 10,
     fontWeight: 600,
   },
 
   changeButton: {
     padding: 0,
-
     border: 0,
-
     background: 'transparent',
     color: '#cf0066',
-
     fontSize: 9,
-
     cursor: 'pointer',
   },
 
   verifyError: {
     margin: '14px 0 -42px',
     padding: '6px 8px',
-
     border: '1px solid rgba(197,0,98,0.3)',
     borderRadius: 4,
-
-    background: 'rgba(197,0,98,0.1)',
-    color: '#ff65a1',
-
+    background: 'rgba(197,0,98,0.08)',
+    color: '#c50062',
     fontSize: 9,
     lineHeight: 1.3,
     textAlign: 'center',
@@ -1635,96 +1472,72 @@ socialButton: {
 
   otpInputArea: {
     position: 'relative',
-
     marginTop: 69,
   },
 
   otpBoxes: {
     display: 'grid',
-    gridTemplateColumns:
-      'repeat(6, minmax(0, 1fr))',
-
+    gridTemplateColumns: 'repeat(6, minmax(0, 1fr))',
     gap: 8,
   },
 
   otpBox: {
     minWidth: 0,
     height: 50,
-
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-
     boxSizing: 'border-box',
-
-    border: '1px solid #2c2c2c',
+    border: '1px solid #d8d8d8',
     borderRadius: 5,
-
-    background: '#202020',
-    color: '#ffffff',
-
+    background: '#f7f7f7',
+    color: '#1a1a1a',
     fontSize: 18,
     fontWeight: 600,
   },
 
   otpBoxActive: {
     borderColor: '#cf0066',
-
     boxShadow: '0 0 0 1px #cf0066',
   },
 
   otpRealInput: {
     position: 'absolute',
     inset: 0,
-
     width: '100%',
     height: '100%',
-
     padding: 0,
-
     border: 0,
     outline: 0,
-
     background: 'transparent',
     color: 'transparent',
     caretColor: 'transparent',
-
     opacity: 0.01,
-
     cursor: 'text',
   },
 
   resendTimer: {
     display: 'flex',
     alignItems: 'center',
-
     gap: 4,
-
     marginTop: 58,
     marginLeft: 8,
-
     fontSize: 9,
   },
 
   clockIcon: {
     color: '#cf0066',
-
     fontSize: 12,
     lineHeight: 1,
   },
 
   resendText: {
-    color: 'rgba(255,255,255,0.54)',
+    color: 'rgba(26,26,26,0.55)',
   },
 
   timerValue: {
     color: '#cf0066',
-
     fontWeight: 600,
-  },
-
-  hiddenEmailVerification: {
-    display: 'none',
   },
 
   verifyBottom: {
@@ -1734,27 +1547,20 @@ socialButton: {
   verifySubmit: {
     width: '100%',
     height: 38,
-
     display: 'inline-flex',
     alignItems: 'center',
     justifyContent: 'center',
-
     gap: 20,
-
     boxSizing: 'border-box',
     padding: 0,
-
     border: '1px solid #c50062',
     borderRadius: 5,
-
     background: '#c50062',
     color: '#ffffff',
-
     fontFamily: 'inherit',
     fontSize: 11,
     lineHeight: 1,
     fontWeight: 700,
-
     cursor: 'pointer',
   },
 
@@ -1762,150 +1568,58 @@ socialButton: {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-
     gap: 5,
-
     marginTop: 12,
   },
 
   bottomResendText: {
-    color: 'rgba(255,255,255,0.54)',
-
+    color: 'rgba(26,26,26,0.55)',
     fontSize: 9,
   },
 
   bottomResendButton: {
     padding: 0,
-
     border: 0,
-
     background: 'transparent',
     color: '#cf0066',
-
     fontSize: 9,
-
     cursor: 'pointer',
   },
 
   success: {
     minHeight: '100%',
-
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
-
     textAlign: 'center',
   },
 
   successCircle: {
     width: 64,
     height: 64,
-
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-
     marginBottom: 16,
-
     borderRadius: '50%',
-
     background: '#c50062',
     color: '#ffffff',
-
     fontSize: 30,
     fontWeight: 800,
-
-    boxShadow:
-      '0 16px 38px rgba(197,0,98,0.3)',
+    boxShadow: '0 16px 38px rgba(197,0,98,0.3)',
   },
 
   successTitle: {
     margin: '0 0 7px',
-
-    color: '#ffffff',
-
+    color: '#1a1a1a',
     fontSize: 25,
     fontWeight: 700,
   },
 
   successText: {
     margin: 0,
-
-    color: 'rgba(255,255,255,0.66)',
-
+    color: 'rgba(26,26,26,0.68)',
     fontSize: 11,
-  },
-
-  successNote: {
-    margin: 0,
-
-    color: '#4ade80',
-
-    fontSize: 11,
-    fontWeight: 650,
-  },
-
-  mutedNote: {
-    margin: 0,
-
-    color: 'rgba(255,255,255,0.5)',
-
-    fontSize: 11,
-  },
-
-  secondaryButton: {
-    width: '100%',
-    height: 36,
-
-    border: '1px solid #333333',
-    borderRadius: 5,
-
-    background: '#202020',
-    color: '#ffffff',
-
-    fontSize: 10,
-    fontWeight: 600,
-
-    cursor: 'pointer',
-  },
-
-  buttonRow: {
-    display: 'grid',
-    gridTemplateColumns: '1fr 1fr',
-
-    gap: 8,
-
-    marginTop: 8,
-  },
-
-  miniButton: {
-    height: 35,
-
-    border: '1px solid #c50062',
-    borderRadius: 5,
-
-    background: '#c50062',
-    color: '#ffffff',
-
-    fontSize: 10,
-    fontWeight: 600,
-
-    cursor: 'pointer',
-  },
-
-  miniButtonMuted: {
-    height: 35,
-
-    border: '1px solid #333333',
-    borderRadius: 5,
-
-    background: '#202020',
-    color: 'rgba(255,255,255,0.7)',
-
-    fontSize: 10,
-    fontWeight: 600,
-
-    cursor: 'pointer',
   },
 }

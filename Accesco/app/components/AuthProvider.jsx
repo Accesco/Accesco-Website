@@ -1,6 +1,8 @@
 'use client'
 
 import { createContext, useContext, useEffect, useState } from 'react'
+import { auth } from '../../lib/firebase'
+import { onAuthStateChanged, signOut as firebaseSignOut } from 'firebase/auth'
 
 const AuthContext = createContext(null)
 
@@ -12,6 +14,7 @@ export const useAuth = () => {
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null)
+  const [firebaseUser, setFirebaseUser] = useState(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -21,11 +24,35 @@ export function AuthProvider({ children }) {
       if (saved) setUser(JSON.parse(saved))
     } catch (_) {}
     setLoading(false)
+
+    // Listen to Firebase Auth state changes
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setFirebaseUser(currentUser)
+    })
+
+    return () => unsubscribe()
   }, [])
 
-  const signOut = () => {
+  const getIdToken = async () => {
+    if (firebaseUser) {
+      try {
+        return await firebaseUser.getIdToken()
+      } catch (e) {
+        console.error('Error getting Firebase ID token:', e)
+        return null
+      }
+    }
+    return null
+  }
+
+  const signOut = async () => {
     localStorage.removeItem('accesco_user')
     setUser(null)
+    try {
+      await firebaseSignOut(auth)
+    } catch (e) {
+      console.error('Error signing out of Firebase:', e)
+    }
   }
 
   // Called after successful login; keep localStorage in sync with React state
@@ -37,7 +64,7 @@ export function AuthProvider({ children }) {
   }
 
   return (
-    <AuthContext.Provider value={{ user, loading, signOut, signIn }}>
+    <AuthContext.Provider value={{ user, loading, signOut, signIn, getIdToken }}>
       {children}
     </AuthContext.Provider>
   )

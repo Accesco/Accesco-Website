@@ -77,11 +77,17 @@ background-position: center -15px;
   max-width: 620px;
   margin: 0 auto 34px;
 
-  font-family: "Inter", sans-serif;
+  font-family: var(--font-inter), sans-serif;
   font-size: 16px;
   font-weight: 500;
   line-height: 1.6;
   color: rgba(255,255,255,.82);
+}
+.lib-hero-subtext {
+  max-width: 680px !important;
+  font-size: 14px !important;
+  font-weight: 400 !important;
+  color: rgba(255,255,255,.65) !important;
 }
 .lib-search-bar {
   width: min(620px, 100%);
@@ -113,7 +119,7 @@ background-position: center -15px;
 
   color: #fff;
   font-size: 15px;
-  font-family: "Inter", sans-serif;
+  font-family: var(--font-inter), sans-serif;
 }
 
 .lib-search-bar input::placeholder {
@@ -247,7 +253,7 @@ padding: 0;
   padding: 18px 24px;
   border: none;
   background: none;
-  font-family: 'Sora', sans-serif;
+  font-family: var(--font-sora), sans-serif;
   font-size: 0.85rem;
   font-weight: 700;
   color: #6b7280;
@@ -284,7 +290,7 @@ padding: 0;
 }
 
 .lib-segment-header h2 {
-  font-family: 'Sora', sans-serif;
+  font-family: var(--font-sora), sans-serif;
   font-size: 2rem;
   font-weight: 900;
   color: #050505;
@@ -314,7 +320,7 @@ padding: 0;
 }
 
 .lib-segment-inner h2 {
-  font-family: 'Sora', sans-serif;
+  font-family: var(--font-sora), sans-serif;
   font-size: 2rem;
   font-weight: 900;
   color: #050505;
@@ -354,7 +360,7 @@ padding: 0;
   font-size: 13px;
   color: #050505;
   width: 160px;
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-inter), sans-serif;
 }
 
 .lib-search-input::placeholder { color: #8b8b8b; }
@@ -417,7 +423,7 @@ padding: 0;
 }
 
 .lib-coming-soon h3 {
-  font-family: 'Sora', sans-serif;
+  font-family: var(--font-sora), sans-serif;
   font-size: 1.5rem;
   font-weight: 800;
   color: #1A0A0F;
@@ -425,7 +431,7 @@ padding: 0;
 }
 
 .lib-coming-soon p {
-  font-family: 'DM Sans', sans-serif;
+  font-family: var(--font-dm-sans), sans-serif;
   font-size: 1rem;
   color: #6B5B65;
   margin: 0;

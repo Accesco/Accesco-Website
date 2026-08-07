@@ -5,7 +5,7 @@
   top: 0;
   left: 0;
   right: 0;
-  background: rgba(255,255,255,0.8);
+  background: #ffffff;
   backdrop-filter: blur(20px) saturate(180%);
   -webkit-backdrop-filter: blur(20px) saturate(180%);
   border-bottom: 1px solid rgba(0,0,0,0.06);
@@ -14,21 +14,25 @@
 }
 
 .header.scrolled {
-  background: rgba(255,255,255,0.95);
+  background: #ffffff;
   box-shadow: 0 1px 3px rgba(0,0,0,0.08);
 }
 
 .container {
-  max-width: 1400px;
+  width: 100%;
+  max-width: none;
   margin: 0 auto;
   padding: 0 24px;
+  box-sizing: border-box;
 }
 
 .headerContent {
   display: flex;
   align-items: center;
-  gap: 22px;
-  height: 74px;
+  justify-content: flex-start;
+  gap: 14px;
+  height: 72px;
+  width: 100%;
 }
 
 /* Logo */
@@ -36,8 +40,11 @@
   display: flex;
   align-items: center;
   gap: 12px;
+  width: auto;
+  height: 36px;
   text-decoration: none;
   transition: opacity 0.2s ease;
+  flex: 0 0 auto;
 }
 
 .logo:hover {
@@ -47,20 +54,27 @@
 .logoImage {
   width: 36px;
   height: 36px;
+  /* margin-right: 0px; */
   object-fit: contain;
   border-radius: 8px;
+  flex-shrink: 0;
 }
 
 .brandName {
+  /* margin-left:0px; */
   font-size: 22px;
   font-weight: 700;
+  margin-right: 16px;
   color: #6B1D3A;
   letter-spacing: -0.02em;
+
 }
 
 /* Location Selector */
 .locationWrapper {
   position: relative;
+  flex: 0 0 auto;
+  margin-left: 20px;
 }
 
 .locationButton {
@@ -71,14 +85,15 @@
   border: 1px solid #E5E7EB;
   border-radius: 14px;
   padding: 0 18px;
-  height: 52px;
+  width: 200px;
+  height: 47.89px;
   cursor: pointer;
   transition: all 0.2s ease;
-  min-width: 200px;
+  min-width: 0;
 }
 
 .locationButton:hover {
-  background: #F3F4F6;
+  background: #ECEFF3;
   border-color: #D1D5DB;
 }
 
@@ -226,10 +241,11 @@
 /* Search Bar */
 /* Search Bar */
 .searchForm {
-  flex: 1;
-  max-width: 600px;
+  flex: 0 0 auto;
+  width: 440px;
+  background: #F3F4F6;
   position: relative;
-  height: 44px;
+  height: 45px;
   border-radius: 16px;
   display: flex;
   align-items: center;
@@ -248,7 +264,7 @@
 
 .searchInput {
   width: 100%;
-  height: 52px;
+  height: 45px;
   background: #F8F9FA;
   border: 1px solid #E5E7EB;
   border-radius: 14px;
@@ -275,6 +291,7 @@
   align-items: center;
   gap: 8px;
   margin-left: auto;
+  flex-shrink: 0;
 }
 
 .navLink {
@@ -307,51 +324,127 @@
 }
 
 .cartButton {
-  background: #6B1D3A;
+  display: flex;
+  background: #C42030;
   color: #ffffff;
-  padding: 0 18px;
-  height: 52px;
+  width: 100.64px;
+  height: 44px;
+  box-sizing: border-box;
+  padding: 0;
+  font-size: 13px;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  margin-left:10px;
 }
 
 .cartButton:hover {
-  background: #542030;
+  background: #a81b28;
   color: #ffffff;
 }
 
 .cartBadge {
   position: absolute;
-  top: 4px;
-  right: 4px;
+  top: 3px;
+  right: 3px;
   background: #D4A017;
   color: #111827;
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 700;
-  padding: 2px 6px;
-  border-radius: 10px;
-  min-width: 18px;
+  padding: 2px 5px;
+  border-radius: 9px;
+  min-width: 16px;
   text-align: center;
   line-height: 1;
+  
+}
+
+@media (min-width: 1025px) {
+  .header {
+    height: 72px;
+  }
+
+  .headerContent {
+    height: 72px;
+    gap: 14px;
+  }
+
+  .logo {
+    width: 135.2px;
+    height: 36px;
+  }
+
+  .locationButton {
+    width: 246.34px;
+    height: 47.89px;
+  }
+
+  .searchForm {
+    width: 440px;
+    height: 45px;
+  }
+
+  .searchInput {
+    height: 45px;
+  }
+
+  .nav {
+    margin-left: auto;
+    gap: 14px;
+  }
+
+  .navLink:first-child {
+    width:auto;
+    height: 18px;
+    padding: 0;
+    gap: 4px;
+    overflow: visible;
+  }
+
+  .navLink:first-child .navIcon {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+  }
+
+  .navLink:first-child .navText {
+    font-size: 12px;
+    line-height: 18px;
+    white-space: nowrap;
+  }
+
+  .cartButton {
+    display: flex;
+    width: 100.64px;
+    height: 44px;
+    padding: 0;
+    background: #C42030;
+    justify-content: center;
+    align-items: center;
+  }
 }
 
 /* Responsive Design */
 @media (max-width: 1024px) {
   .headerContent {
-    gap: 16px;
+    gap: 12px;
   }
-  
+
   .searchForm {
-    max-width: 350px;
+    width: 280px;
+    max-width: 280px;
   }
-  
+
   .locationButton {
-    min-width: 160px;
-    padding: 8px 12px;
+    width: 200px;
+    max-width: 200px;
+    padding: 0 14px;
   }
-  
+
   .locationLabel {
     font-size: 10px;
   }
-  
+
   .locationArea {
     font-size: 13px;
   }
@@ -359,144 +452,112 @@
 
 @media (max-width: 768px) {
   .header {
-    
     min-height: 112px;
   }
-  
+
   .container {
     padding: 0 12px;
   }
-  
-.headerContent {
-  height: auto;
-  min-height: 58px;
-  gap: 8px;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  padding: 8px 0;
-}
-  
-  /* Logo */
+
+  .headerContent {
+    height: auto;
+    min-height: 58px;
+    gap: 6px;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    padding: 8px 0;
+  }
+
   .logo {
     gap: 8px;
   }
-  
-.logoImage {
-  width: 24px;
-  height: 24px;
-}
-  
- .brandName {
-  font-size: 16px;
-  color: #6B1D3A;
-  max-width: none;
-}
-  /* Location - Compact */
-  .locationButton {
-    width: 200px;
-  min-width: 200px;
-  height: 40px;
-  padding: 0 8px;
+
+  .logoImage {
+    width: 24px;
+    height: 24px;
   }
-  
+
+  .brandName {
+    font-size: 16px;
+    color: #6B1D3A;
+    max-width: none;
+  }
+
+  .locationButton {
+    width: 164px;
+    min-width: 164px;
+    height: 40px;
+    padding: 0 8px;
+  }
+
   .locationIcon {
     width: 18px;
     height: 18px;
   }
-  
+
   .locationLabel {
     display: none;
   }
-  
 
- .locationText {
-  flex: 1;
-  min-width: 0;
-  max-width: none;
-}
+  .locationText {
+    flex: 1;
+    min-width: 0;
+    max-width: none;
+  }
 
-.locationArea {
-  font-size: 12px;
-  max-width: none !important;
-  width: 100%;
-}
-  
+  .locationArea {
+    font-size: 12px;
+    max-width: none !important;
+    width: 100%;
+  }
+
   .dropdownIcon {
     width: 14px;
     height: 14px;
   }
-  .navLink {
-  padding: 0;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  justify-content: center;
-}
 
-.navText {
-  display: none;
-}
-
-.navIcon {
-  width: 20px;
-  height: 20px;
-  color:#6B1D3A;
-}
-  
-  /* Search - Full width on mobile */
- .searchForm {
-  flex: 0 0 100%;
-  max-width: 100%;
-  width: 100%;
-  order: 10;
-  height: 44px;
-}
- .searchInput {
-  height: 30px;
-  font-size: 13px;
-  padding: 8px 12px 8px 38px;
-}
-  
-  .searchIcon {
-    left: 12px;
-  }
-  
-  /* Navigation - Icons only */
   .nav {
     gap: 4px;
     margin-left: auto;
   }
-  
+
   .navLink {
-    padding: 8px;
-    min-width: auto;
+    padding: 0;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    justify-content: center;
   }
-  
+
   .navText {
     display: none;
   }
-  
+
   .navIcon {
     width: 22px;
     height: 22px;
+    color: #6B1D3A;
   }
-  
- .cartButton {
-  padding: 0;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  justify-content: center;
-  background: #6B1D3A;
-  color: #ffffff;
-}
-.cartButton .navIcon {
-  color: #ffffff !important;
-  fill: currentColor !important;
-  stroke: currentColor !important;
-  opacity: 1 !important;
-}
-  
+
+  .cartButton {
+    padding: 0;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    justify-content: center;
+    background: #6B1D3A;
+    color: #ffffff;
+  }
+
+  .cartButton .navIcon {
+    width: 18px;
+    height: 18px;
+    color: #ffffff !important;
+    fill: currentColor !important;
+    stroke: currentColor !important;
+    opacity: 1 !important;
+  }
+
   .cartBadge {
     top: 2px;
     right: 2px;
@@ -504,8 +565,25 @@
     padding: 2px 5px;
     min-width: 16px;
   }
-  
-  /* Location Dropdown - Full width */
+
+  .searchForm {
+    flex: 0 0 100%;
+    max-width: 100%;
+    width: 100%;
+    order: 10;
+    height: 44px;
+  }
+
+  .searchInput {
+    height: 30px;
+    font-size: 13px;
+    padding: 8px 12px 8px 38px;
+  }
+
+  .searchIcon {
+    left: 12px;
+  }
+
   .locationDropdown {
     left: 0;
     right: 0;
@@ -514,28 +592,28 @@
     border-radius: 0;
     top: calc(100% + 1px);
   }
-  
+
   .dropdownHeader {
     padding: 14px 16px;
   }
-  
+
   .dropdownHeader h3 {
     font-size: 15px;
   }
-  
+
   .locationList {
     padding: 6px;
     max-height: 60vh;
   }
-  
+
   .locationItem {
     padding: 12px;
   }
-  
+
   .locationItemArea {
     font-size: 14px;
   }
-  
+
   .locationItemCity {
     font-size: 12px;
   }
@@ -545,288 +623,34 @@
   .headerContent {
     height: 56px;
   }
-  
+
   .brandName {
-    display:none;
+    display: none;
   }
-  
+
   .logoImage {
     width: 24px;
     height: 24px;
   }
-  
+
   .locationButton {
     padding: 5px 8px;
   }
-  
+
   .locationArea {
     font-size: 11px;
     max-width: 60px;
   }
-  
-  
-  
+
   .navIcon {
     width: 20px;
     height: 20px;
   }
-  
+
   .navLink {
     padding: 6px;
   }
 }
-.backBtn {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  text-decoration: none;
-  color: inherit;
-  font-size: 14px;
-  font-weight: 600;
-  letter-spacing: -0.01em;
-  transition: opacity 0.2s ease;
-  flex-shrink: 0;
-}
-
-.backBtn:hover {
-  opacity: 0.65;
-}
-
-.backDesktop {
-  display: inline;
-}
-
-.backMobile {
-  display: none;
-}
-
-@media (max-width: 768px) {
-  .backDesktop {
-    display: none !important;
-  }
-
-  .backMobile {
-    display: inline !important;
-    font-size: 20px;
-    font-weight: 700;
-  }
-
-  .backBtn {
-    padding: 0 !important;
-    min-width: auto;
-  }
-}
-/* ================================
-   Mobile Header Polish
-   Clean 2-row mobile layout
-================================ */
-
-@media (max-width: 768px) {
-  .header {
-    min-height: 0;
-    background: rgba(255, 255, 255, 0.96);
-    backdrop-filter: blur(18px) saturate(180%);
-    -webkit-backdrop-filter: blur(18px) saturate(180%);
-  }
-
-  .container {
-    padding: 0 14px;
-  }
-
-  .headerContent {
-    display: grid;
-    grid-template-columns: auto auto minmax(0, 1fr) auto;
-    grid-template-areas:
-      "back logo location nav"
-      "search search search search";
-    align-items: center;
-
-    height: auto;
-    min-height: 0;
-    padding: 10px 0 12px;
-    gap: 10px;
-  }
-
-  .backBtn {
-    grid-area: back;
-    width: 34px;
-    height: 42px;
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    padding: 0 !important;
-    flex-shrink: 0;
-  }
-
-  .backDesktop {
-    display: none !important;
-  }
-
-  .backMobile {
-    display: inline !important;
-    font-size: 24px;
-    line-height: 1;
-    font-weight: 500;
-    color: #111827;
-  }
-
-  .logo {
-    grid-area: logo;
-    gap: 8px;
-    min-width: 0;
-    flex-shrink: 0;
-  }
-
-  .logoImage {
-    width: 30px;
-    height: 30px;
-    border-radius: 8px;
-  }
-
-  .brandName {
-    display: inline;
-    font-size: 18px;
-    font-weight: 700;
-    color: #6B1D3A;
-    white-space: nowrap;
-  }
-
-  .locationWrapper {
-    grid-area: location;
-    min-width: 0;
-    width: 100%;
-  }
-
-  .locationButton {
-    width: 100%;
-    min-width: 0;
-    height: 44px;
-    padding: 0 12px;
-    border-radius: 16px;
-    gap: 8px;
-  }
-
-  .locationIcon {
-    width: 18px;
-    height: 18px;
-    flex-shrink: 0;
-  }
-
-  .locationLabel {
-    display: none;
-  }
-
-  .locationText {
-    min-width: 0;
-    flex: 1;
-  }
-
-  .locationArea {
-    font-size: 12.5px;
-    font-weight: 700;
-    max-width: 100% !important;
-    width: 100%;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  .dropdownIcon {
-    width: 14px;
-    height: 14px;
-    flex-shrink: 0;
-  }
-
-  .nav {
-    grid-area: nav;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-left: 0;
-    flex-shrink: 0;
-  }
-
-  .navLink {
-    width: 42px;
-    height: 42px;
-    min-width: 42px;
-    padding: 0;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .navText {
-    display: none;
-  }
-
-  .navIcon {
-    width: 21px;
-    height: 21px;
-    color: #6B1D3A;
-  }
-
-  .cartButton {
-    width: 46px;
-    height: 46px;
-    min-width: 46px;
-    padding: 0;
-    border-radius: 50%;
-    background: #6B1D3A;
-    color: #ffffff;
-  }
-
-  .cartButton .navIcon {
-    color: #ffffff !important;
-    fill: currentColor !important;
-  }
-
-  .cartBadge {
-    top: 0;
-    right: 0;
-    font-size: 10px;
-    min-width: 16px;
-    height: 16px;
-    padding: 2px 5px;
-    line-height: 12px;
-  }
-
-  .searchForm {
-    grid-area: search;
-    width: 100%;
-    max-width: none;
-    height: 46px;
-    order: unset;
-    flex: unset;
-  }
-
-  .searchInput {
-    height: 46px;
-    font-size: 14px;
-    border-radius: 18px;
-    padding: 0 14px 0 44px;
-    background: #F8F9FA;
-  }
-
-  .searchIcon {
-    left: 15px;
-    width: 20px;
-    height: 20px;
-  }
-
-  .locationDropdown {
-    position: fixed;
-    top: 112px;
-    left: 12px;
-    right: 12px;
-    min-width: 0;
-    max-width: none;
-    width: auto;
-    border-radius: 18px;
-  }
-}
-/* Extra small phones */
 
 @media (max-width: 480px) {
   .container {
@@ -834,8 +658,7 @@
   }
 
   .headerContent {
-    grid-template-columns: auto auto minmax(0, 1fr) auto;
-    gap: 8px;
+    gap: 6px;
     padding: 10px 0 12px;
   }
 
@@ -858,9 +681,11 @@
   }
 
   .locationButton {
-    height: 42px;
+    height: 40px;
     padding: 0 10px;
     border-radius: 15px;
+    width: 164px;
+    max-width: 164px;
   }
 
   .locationArea {
@@ -868,7 +693,7 @@
   }
 
   .nav {
-    gap: 7px;
+    gap: 5px;
   }
 
   .navLink {
@@ -878,9 +703,9 @@
   }
 
   .cartButton {
-    width: 44px;
-    height: 44px;
-    min-width: 44px;
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
   }
 
   .searchForm {
@@ -895,10 +720,5 @@
 
   .locationDropdown {
     top: 110px;
-  }
-}
-@media (max-width: 768px) {
-  .page {
-    padding-top: 122px;
   }
 }
