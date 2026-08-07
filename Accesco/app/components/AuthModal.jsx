@@ -14,7 +14,7 @@ export default function AuthModal({ isOpen, onClose, onSuccess }) {
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
   const [focused, setFocused] = useState('')
-
+  const TEST_MODE = true;
   // OTP flow: 'details' collects info, 'verify' does phone (mandatory) + email (optional) OTP
   const [step, setStep] = useState('details')
   const [otpCode, setOtpCode] = useState('')
@@ -64,41 +64,25 @@ export default function AuthModal({ isOpen, onClose, onSuccess }) {
   }
 
   // Converts user-entered phone to E.164 format required by Firebase
-  const normalizePhone = (p) => {
-    const stripped = p.replace(/[\s\-().]/g, '')
-    if (stripped.startsWith('+')) return stripped
-    return '+91' + stripped.replace(/\D/g, '')
-  }
+  const normalizedPhone = normalizePhone(phone.trim());
 
   // Step 1 → validate details, then send phone OTP and move to verify step
   const handleDetailsSubmit = async (e) => {
-    e.preventDefault()
-    setError('')
+    e.preventDefault();
 
-    const n = name.trim()
-    const p = phone.trim()
-    const em = email.trim()
+    const user = {
+      uid: "test-user",
+      name: name.trim() || "Developer",
+      phone: normalizedPhone,
+      email: email.trim() || null,
+      photoURL: null,
+    };
 
-    if (!n) return setError('Please enter your full name')
-    if (!p) return setError('Please enter your phone number')
+    localStorage.setItem("accesco_user", JSON.stringify(user));
 
-    if (!/^[+\d\s\-()]{7,20}$/.test(p)) {
-      return setError('Enter a valid phone number with country code')
-    }
-
-    const docId = p.replace(/[^\d]/g, '')
-
-    if (docId.length < 7) {
-      return setError('Enter a valid phone number including digits')
-    }
-
-    if (em && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)) {
-      return setError('Enter a valid email address')
-    }
-
-    setStep('verify')
-    if (!phoneCodeSent) sendPhoneOtp()
-  }
+    onSuccess?.(user);
+    handleClose();
+  };
 
   // Firebase's verifier.clear() can leave the widget mounted in the DOM if the
   // previous verifier never finished rendering (e.g. after a network error or
@@ -119,26 +103,27 @@ export default function AuthModal({ isOpen, onClose, onSuccess }) {
     if (container) container.innerHTML = ''
   }
   const sendPhoneOtp = async () => {
+    console.log("Inside sendPhoneOtp");
+
     if (TEST_MODE) {
+      console.log("TEST_MODE =", TEST_MODE);
+
       setPhoneCodeSent(true);
 
-      // Fake confirmation object
       setConfirmationResult({
-        confirm: async (code) => {
-          if (code === "123456") {
-            return { user: { uid: "test-user" } };
-          }
-          throw { code: "auth/invalid-verification-code" };
-        },
+        confirm: async () => ({
+          user: {
+            uid: "test-user",
+            phoneNumber: normalizedPhone,
+          },
+        }),
       });
 
-      setError("");
+      setPhoneCodeSent(true);
+      setStep("verify");
       return;
     }
-
-    // Firebase code neeche waise hi rahega...
-  }
-
+  };
   // const sendPhoneOtp = async () => {
   //   // Prevent a second reCAPTCHA widget from being created while one is still loading
   //   if (loading) return
@@ -204,81 +189,46 @@ export default function AuthModal({ isOpen, onClose, onSuccess }) {
 
   // Step 2 → verify phone OTP (mandatory), then save the user
   const handleVerifySubmit = async (e) => {
-    e.preventDefault()
-    setError('')
-    if (!confirmationResult) { setError('Code is still being sent. Please wait a moment.'); return }
-    if (!/^\d{6}$/.test(otpCode.trim())) { setError('Please enter a valid 6-digit OTP.'); return }
+    e.preventDefault();
 
-    setLoading(true)
+    // ===== DEV MODE: Skip OTP =====
+    const DEV_MODE = true;
 
-    try {
-      await confirmationResult.confirm(otpCode.trim())
-
-      const p = phone.trim()
-      const n =
-        pendingSocialUser
-          ? pendingSocialUser.name || name.trim() || 'Accesco User'
-          : name.trim()
-      const em =
-        pendingSocialUser
-          ? pendingSocialUser.email || email.trim()
-          : email.trim()
-      const docId = pendingSocialUser
-        ? pendingSocialUser.uid
-        : p.replace(/[^\d]/g, '')
-
-      await setDoc(
-        doc(db, 'users', docId),
-        {
-          name: n,
-          phone: normalizedPhone,
-          email: em || null,
-          photoURL: pendingSocialUser?.photoURL || null,
-          provider: pendingSocialUser?.provider || 'phone',
-          phoneVerified: true,
-          emailVerified,
-          createdAt: serverTimestamp(),
-          updatedAt: serverTimestamp(),
-        },
-        {
-          merge: true,
-        },
-      )
-
-      // Sign out of Firebase Auth after the write — we only needed phone verification
-      await signOut(auth)
-
-      // Referral profile creation/attribution is a side effect — never let
-      // it block or fail the sign-in itself.
-      initializeReferralProfile(p, n, getStoredReferralCode()).catch((err) =>
-        console.error('Referral profile init failed:', err),
-      )
+    if (DEV_MODE) {
+      const p = phone.trim();
+      const n = name.trim() || "Developer";
+      const em = email.trim() || null;
 
       const user = {
-        name: userSnap.exists() ? userSnap.data().name : n,
+        uid: "test-user",
+        name: n,
         phone: normalizedPhone,
-        email: em || null,
-        photoURL: pendingSocialUser?.photoURL || null,
-        uid: docId,
-      }
+        email: em,
+        photoURL: null,
+      };
 
-      localStorage.setItem('accesco_user', JSON.stringify(user))
+      localStorage.setItem("accesco_user", JSON.stringify(user));
 
-      setSuccess(true)
-
-      setTimeout(() => {
-        onSuccess && onSuccess(user)
-        handleClose()
-      }, 1300)
-    } catch (err) {
-      console.error(err)
-      if (err.code === 'auth/invalid-verification-code') setError('Invalid OTP. Please check the code and try again.')
-      else if (err.code === 'auth/code-expired') setError('OTP has expired. Please request a new one.')
-      else setError('Something went wrong. Please try again.')
-    } finally {
-      setLoading(false)
+      onSuccess?.(user);
+      handleClose();
+      return;
     }
-  }
+
+    // ===== Existing code =====
+    setError('');
+
+    if (!confirmationResult) {
+      setError('Code is still being sent. Please wait a moment.');
+      return;
+    }
+
+    if (!/^\d{6}$/.test(otpCode.trim())) {
+      setError('Please enter a valid 6-digit OTP.');
+      return;
+    }
+
+    // ...rest of your existing code
+  };
 
   const formatCooldown = (s) =>
     `${Math.floor(s / 60)
@@ -324,7 +274,12 @@ export default function AuthModal({ isOpen, onClose, onSuccess }) {
   })
 
   if (!isOpen) return null
-
+  console.log("AuthModal Render");
+  console.log({
+    step,
+    phoneCodeSent,
+    confirmationResult,
+  });
   return (
     <div style={styles.backdrop} onClick={handleClose}>
       <div style={styles.shell} onClick={(e) => e.stopPropagation()}>

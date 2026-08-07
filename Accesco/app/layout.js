@@ -131,24 +131,26 @@ export default function RootLayout({ children }) {
 
       <body>
         <AuthProvider>
-  <BreadcrumbJsonLd />
-  <ReferralCapture />
+          <BreadcrumbJsonLd />
+          <ReferralCapture />
 
-  {children}
-  <CookieConsent />
+          <AuthGate>
+            {children}
+          </AuthGate>
 
-</AuthProvider>
+          <CookieConsent />
+        </AuthProvider>
 
         {/* RemixIcon loaded lazily — only needed for a few social icons */}
         <Script id="load-remixicon" strategy="lazyOnload">
           {`
-            (function () {
-              var link = document.createElement('link');
-              link.rel = 'stylesheet';
-              link.href = 'https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css';
-              document.head.appendChild(link);
-            })();
-          `}
+      (function () {
+        var link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.href = 'https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css';
+        document.head.appendChild(link);
+      })();
+    `}
         </Script>
 
         <Script
@@ -158,11 +160,11 @@ export default function RootLayout({ children }) {
 
         <Script id="google-analytics" strategy="afterInteractive">
           {`
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', 'G-SH32KGLK5F');
-          `}
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-SH32KGLK5F');
+    `}
         </Script>
 
         <Script

@@ -83,7 +83,16 @@ export async function POST(request) {
       return NextResponse.json({ error: 'Order data is required.' }, { status: 400 });
     }
 
-    // Persist to Firestore
+    const isCod = (order.paymentMethod || '').toLowerCase() === 'cod';
+    const paymentMethod = isCod ? 'COD' : 'ONLINE';
+    const paymentStatus = order.paymentStatus
+      ? order.paymentStatus.toUpperCase()
+      : (isCod ? 'PENDING' : 'PAID');
+    const status = order.status
+      ? order.status.toUpperCase()
+      : (isCod ? 'PLACED' : 'CONFIRMED');
+
+    // Persist to Firestore `grokly_orders`
     try {
       const { db } = await import('@/lib/firebase');
       const { collection, doc, setDoc, serverTimestamp } = await import('firebase/firestore');
@@ -91,7 +100,11 @@ export async function POST(request) {
         ...order,
         customerEmail: customerEmail || order.customerEmail || null,
         userId: order.userId || null,
-        createdAt: serverTimestamp(),
+        paymentMethod,
+        paymentStatus,
+        status,
+        updatedAt: serverTimestamp(),
+        createdAt: order.createdAt || serverTimestamp(),
       });
     } catch (dbErr) {
       console.error('[grokly/orders] Firestore write failed:', dbErr);
@@ -125,13 +138,16 @@ export async function POST(request) {
             html: buildGroklyOrderEmailHtml({
               ...order,
               orderId: order.id,
+              paymentMethod,
+              paymentStatus,
+              status,
             }),
           }),
         }).catch((err) => console.error('[grokly/orders] Email failed:', err));
       }
     }
 
-    return NextResponse.json({ success: true, orderId: order.id }, { status: 200 });
+    return NextResponse.json({ success: true, orderId: order.id, paymentMethod, paymentStatus, status }, { status: 200 });
   } catch (error) {
     console.error('[grokly/orders] Unexpected error:', error);
     return NextResponse.json({ error: 'Internal server error.' }, { status: 500 });
@@ -141,19 +157,23 @@ export async function POST(request) {
 export async function PATCH(request) {
   try {
     const body = await request.json();
-    const { orderId, status } = body;
+    const { orderId, status, paymentStatus } = body;
 
-    if (!orderId || !status) {
-      return NextResponse.json({ error: 'orderId and status are required.' }, { status: 400 });
+    if (!orderId || (!status && !paymentStatus)) {
+      return NextResponse.json({ error: 'orderId and either status or paymentStatus are required.' }, { status: 400 });
     }
 
     const { db } = await import('@/lib/firebase');
-    const { doc, setDoc } = await import('firebase/firestore');
+    const { doc, setDoc, serverTimestamp } = await import('firebase/firestore');
+
+    const updateData = { updatedAt: serverTimestamp() };
+    if (status) updateData.status = status.toUpperCase();
+    if (paymentStatus) updateData.paymentStatus = paymentStatus.toUpperCase();
 
     const orderRef = doc(db, 'grokly_orders', orderId);
-    await setDoc(orderRef, { status }, { merge: true });
+    await setDoc(orderRef, updateData, { merge: true });
 
-    return NextResponse.json({ success: true, orderId, status }, { status: 200 });
+    return NextResponse.json({ success: true, orderId, ...updateData }, { status: 200 });
   } catch (error) {
     console.error('[grokly/orders] PATCH error:', error);
     return NextResponse.json({ error: 'Internal server error.' }, { status: 500 });

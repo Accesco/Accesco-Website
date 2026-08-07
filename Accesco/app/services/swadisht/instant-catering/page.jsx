@@ -1,9 +1,11 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
+import { useRouter } from 'next/navigation';
 import SwadishttHeader from '../components/SwadishttHeader';
 import Image from 'next/image';
 import styles from './instant-catering.module.css';
+import { payWithRazorpay } from '@/lib/razorpayService';
 
 // ── Catering Packages Initial Data ──
 const CATERING_PACKAGES = [
@@ -178,7 +180,7 @@ function PackageCard({ pkg, onBook }) {
   const isDarkCard = pkg.popular; // Birthday Card is styled as the dark bento block
 
   return (
-    <article 
+    <article
       className={`${styles.packageCard} ${isDarkCard ? styles.darkCard : ''}`}
       id={`pkg-${pkg.id}`}
     >
@@ -199,7 +201,7 @@ function PackageCard({ pkg, onBook }) {
       <div className={styles.cardBody}>
         <span className={styles.categoryLabel}>{pkg.categoryLabel}</span>
         <h3 className={styles.pkgName}>{pkg.name}</h3>
-        
+
         <p className={styles.pkgServes}>
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
             <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
@@ -296,6 +298,9 @@ function PackageCard({ pkg, onBook }) {
 
 // ── Interactive Multi-Step Booking Modal Component ──
 function BookingModal({ pkg, onClose, onSuccess }) {
+  const minimumAdvance = Math.ceil(pkg.price * 0.70);
+
+  const [advanceAmount, setAdvanceAmount] = useState(minimumAdvance);
   const [step, setStep] = useState(1);
   const [date, setDate] = useState('');
   const [time, setTime] = useState('');
@@ -308,12 +313,12 @@ function BookingModal({ pkg, onClose, onSuccess }) {
   const [submitting, setSubmitting] = useState(false);
   const [apiError, setApiError] = useState('');
 
+  const router = useRouter();
   const modalRef = useRef(null);
-
   // Lock scrolling & keyboard event listener
   useEffect(() => {
     document.body.style.overflow = 'hidden';
-    
+
     // Focus first element
     if (modalRef.current) {
       const focusable = modalRef.current.querySelectorAll('button, input, textarea');
@@ -367,7 +372,7 @@ function BookingModal({ pkg, onClose, onSuccess }) {
     const trimmedAddress = address.trim();
 
     if (!trimmedName) errs.name = 'Please enter your name';
-    
+
     // Indian 10-digit phone format validation
     if (!trimmedPhone) {
       errs.phone = 'Please enter your phone number';
@@ -398,64 +403,143 @@ function BookingModal({ pkg, onClose, onSuccess }) {
     setSubmitting(true);
     setApiError('');
     const bookingId = `CAT-${Date.now().toString(36).toUpperCase()}`;
+    // Validate advance amount before opening Razorpay
+    if (advanceAmount < minimumAdvance) {
+      setApiError(
+        `Minimum advance payment is ₹${minimumAdvance.toLocaleString()}`
+      );
+      setSubmitting(false);
+      return;
+    }
 
-    // Persist details to localStorage for future use
+    if (advanceAmount > pkg.price) {
+      setApiError(
+        `Advance payment cannot exceed ₹${pkg.price.toLocaleString()}`
+      );
+      setSubmitting(false);
+      return;
+    }
+    // Persist details to localStorage for future prefill use
     try {
       localStorage.setItem('accesco_user', JSON.stringify({ name, phone, email }));
-    } catch (e) {}
+    } catch (e) { }
 
     try {
-      const response = await fetch('/api/swadishtt/orders/update-status', {
+      // 1. Open Razorpay checkout popup and verify HMAC signature server-side
+      const paymentRes = await payWithRazorpay({
+        amount: advanceAmount,
+        receipt: bookingId,
+        name: 'Swadishtt Catering',
+        description: `${pkg.name} Catering Package`,
+        prefill: {
+          name,
+          email,
+          contact: phone,
+        },
+        theme: { color: pkg.accentColor || '#7A0042' },
+      });
+
+      // 2. Persist order details to Firestore collection `swadishtt_orders` & send confirmation email
+      const response = await fetch('/api/swadishtt/orders', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           orderId: bookingId,
-          newStatus: 'CONFIRMED',
-          customerEmail: email,
+          paymentId: paymentRes.paymentId,
+          razorpayOrderId: paymentRes.orderId,
           customerName: name,
-          orderData: {
+          customerEmail: email,
+          phone,
+          address,
+          advancePaid: advanceAmount,
+
+          remainingAmount: pkg.price - advanceAmount,
+          packageId: pkg.id,
+          packageName: pkg.name,
+          packagePrice: pkg.price,
+          dietary: pkg.selectedDietary || 'Standard (No preferences)',
+          cuisine: pkg.selectedCuisine || 'Standard (Pre-selected)',
+          eventDate: date,
+          eventTime: time,
+          notes,
+          paymentMethod: 'ONLINE',
+          paymentStatus: advanceAmount === pkg.price
+            ? 'PAID'
+            : 'PARTIALLY_PAID',
+          status: 'CONFIRMED',
+          timestamp: new Date().toISOString(),
+        }),
+      });
+
+      const resData = await response.json();
+      if (!response.ok || !resData.success) {
+        throw new Error(resData?.error || 'Failed to save catering order after payment.');
+      }
+
+      // Also persist locally for fast offline tracking fallback
+      try {
+        const existing = JSON.parse(localStorage.getItem('swadishtt-orders') || '[]');
+        const updated = [
+          {
             id: bookingId,
-            type: 'catering',
+            orderId: bookingId,
             package: pkg.name,
             serves: pkg.serves,
             price: pkg.price,
+
+            advancePaid: advanceAmount,
+            remainingAmount: pkg.price - advanceAmount,
             date,
             time,
             delivery: { address, name, phone, email },
             notes,
-            dietary: pkg.selectedDietary || 'Standard (No preferences)',
-            cuisine: pkg.selectedCuisine || 'Standard (Pre-selected)',
+            dietary: pkg.selectedDietary || 'Standard',
+            cuisine: pkg.selectedCuisine || 'Standard',
             placedAt: new Date().toISOString(),
-            totals: { total: pkg.price },
+            status: 'CONFIRMED',
+            paymentStatus:
+              advanceAmount === pkg.price
+                ? "PAID"
+                : "PARTIALLY_PAID",
+            paymentMethod: 'ONLINE',
+            totals: {
+              total: pkg.price,
+              advancePaid: advanceAmount,
+              remainingAmount: pkg.price - advanceAmount,
+            },
           },
-        }),
-      });
+          ...existing,
+        ];
+        localStorage.setItem('swadishtt-orders', JSON.stringify(updated));
+      } catch (e) { }
 
-      if (!response.ok) {
-        throw new Error('Server responded with an error during booking.');
-      }
-
-      // Success logic
       onSuccess();
       onClose();
+
+      // 3. Redirect customer to existing Swadishtt tracking page
+      router.push(`/services/swadisht/order-tracking?id=${bookingId}`);
     } catch (err) {
-      console.error('Booking API call failed:', err);
-      setApiError('Something went wrong while securing your order. Please check your network and try again.');
+      console.error('Catering booking error:', err);
+      if (err.message !== 'Payment cancelled') {
+        setApiError(err.message || 'Something went wrong while processing your payment. Please try again.');
+      } else {
+        setApiError('Payment was cancelled. You have not been charged.');
+      }
     } finally {
       setSubmitting(false);
     }
   };
 
   return (
-    <div 
-      className={styles.modalOverlay} 
+    <div
+      className={styles.modalOverlay}
       onClick={onClose}
       role="dialog"
       aria-modal="true"
       aria-labelledby="modal-title"
     >
-      <div 
-        className={styles.modal} 
+      <div
+        className={styles.modal}
         onClick={(e) => e.stopPropagation()}
         ref={modalRef}
       >
@@ -465,9 +549,9 @@ function BookingModal({ pkg, onClose, onSuccess }) {
             <h2 id="modal-title">Book {pkg.name}</h2>
             <p>Serves {pkg.serves} · ₹{pkg.price.toLocaleString()}</p>
           </div>
-          <button 
-            type="button" 
-            className={styles.modalClose} 
+          <button
+            type="button"
+            className={styles.modalClose}
             onClick={onClose}
             aria-label="Close modal"
           >
@@ -498,7 +582,7 @@ function BookingModal({ pkg, onClose, onSuccess }) {
         {step === 1 && (
           <div className={styles.stepContent}>
             <h3 className={styles.stepTitle}>When is your event?</h3>
-            
+
             <div className={styles.formRow}>
               <label className={styles.formLabel} htmlFor="event-date">Event Date *</label>
               <input
@@ -529,9 +613,9 @@ function BookingModal({ pkg, onClose, onSuccess }) {
             </div>
 
             <div className={styles.stepBtns}>
-              <button 
-                type="button" 
-                className={styles.backBtn} 
+              <button
+                type="button"
+                className={styles.backBtn}
                 onClick={onClose}
               >
                 Cancel
@@ -625,9 +709,9 @@ function BookingModal({ pkg, onClose, onSuccess }) {
             </div>
 
             <div className={styles.stepBtns}>
-              <button 
-                type="button" 
-                className={styles.backBtn} 
+              <button
+                type="button"
+                className={styles.backBtn}
                 onClick={() => setStep(1)}
               >
                 Back
@@ -656,7 +740,7 @@ function BookingModal({ pkg, onClose, onSuccess }) {
                 <span>Serves:</span>
                 <span className={styles.summaryVal}>{pkg.serves}</span>
               </div>
-              
+
               {pkg.selectedDietary && (
                 <div className={styles.summaryRow}>
                   <span>Dietary Preference:</span>
@@ -693,9 +777,59 @@ function BookingModal({ pkg, onClose, onSuccess }) {
                 </div>
               )}
 
+              <div className={styles.summaryRow}>
+                <span>Total Package Price:</span>
+                <span className={styles.summaryVal}>₹{pkg.price.toLocaleString()}</span>
+              </div>
+
+              <div className={styles.summaryRow}>
+                <span>Minimum Advance (70%):</span>
+                <span className={styles.summaryVal}>
+                  ₹{minimumAdvance.toLocaleString()}
+                </span>
+              </div>
+
+              <div className={styles.formRow}>
+                <label className={styles.formLabel}>
+                  Advance Amount to Pay
+                </label>
+
+                <input
+                  type="number"
+                  value={advanceAmount}
+                  min={0}
+                  max={pkg.price}
+                  onChange={(e) => {
+                    const value = Number(e.target.value);
+                    setAdvanceAmount(value);
+                    setApiError('');
+                  }}
+                  className={`${styles.formInput} ${advanceAmount < minimumAdvance
+                    ? styles.inputError
+                    : styles.inputSuccess
+                    }`}
+                />
+                <p
+                  style={{
+                    color:
+                      advanceAmount < minimumAdvance
+                        ? "#dc2626"
+                        : "#16a34a",
+                    fontWeight: 600,
+                    marginTop: 6
+                  }}
+                >
+                  {advanceAmount < minimumAdvance
+                    ? `Minimum advance is ₹${minimumAdvance}`
+                    : `Remaining amount after payment: ₹${pkg.price - advanceAmount}`}
+                </p>
+              </div>
+
               <div className={`${styles.summaryRow} ${styles.summaryTotal}`}>
-                <span>Grand Total:</span>
-                <span className={styles.summaryPrice}>₹{pkg.price.toLocaleString()}</span>
+                <span>Remaining Amount:</span>
+                <span className={styles.summaryPrice}>
+                  ₹{(pkg.price - advanceAmount).toLocaleString()}
+                </span>
               </div>
             </div>
 
@@ -706,11 +840,14 @@ function BookingModal({ pkg, onClose, onSuccess }) {
             {apiError && <div style={{ color: '#dc2626', fontSize: '13px', fontWeight: '600', marginBottom: '16px' }}>{apiError}</div>}
 
             <div className={styles.stepBtns}>
-              <button 
-                type="button" 
-                className={styles.backBtn} 
+              <button
+                type="button"
+                className={styles.backBtn}
                 onClick={() => setStep(2)}
-                disabled={submitting}
+                disabled={submitting ||
+                  advanceAmount < minimumAdvance ||
+                  advanceAmount > pkg.price
+                }
               >
                 Back
               </button>
@@ -801,8 +938,8 @@ export default function InstantCateringPage() {
             </div>
 
             <div className={styles.heroButtons}>
-              <button 
-                type="button" 
+              <button
+                type="button"
                 className={styles.primaryHeroBtn}
                 onClick={() => triggerScroll(packagesRef)}
               >
@@ -811,8 +948,8 @@ export default function InstantCateringPage() {
                   <line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" />
                 </svg>
               </button>
-              <button 
-                type="button" 
+              <button
+                type="button"
                 className={styles.secondaryHeroBtn}
                 onClick={() => triggerScroll(packagesRef)}
               >
@@ -821,17 +958,17 @@ export default function InstantCateringPage() {
             </div>
           </div>
 
-       <div className={styles.heroRight}>
-  <div className={styles.heroImageContainer}>
-    <Image
-      src="/images/food-dishes.png"
-      alt="Swadishtt Catering"
-      fill
-      priority
-      className={styles.heroFoodImage}
-    />
-  </div>
-</div>
+          <div className={styles.heroRight}>
+            <div className={styles.heroImageContainer}>
+              <Image
+                src="/images/food-dishes.png"
+                alt="Swadishtt Catering"
+                fill
+                priority
+                className={styles.heroFoodImage}
+              />
+            </div>
+          </div>
         </div>
       </section>
 
@@ -855,37 +992,37 @@ export default function InstantCateringPage() {
             <span className={styles.statLabel}>Guests supported</span>
           </div>
         </div>
-        </section>   
-<section className={styles.packagesSection}>
-  <div className={styles.container}>
+      </section>
+      <section className={styles.packagesSection}>
+        <div className={styles.container}>
 
-    <section
-      id="packages"
-      ref={packagesRef}
-      style={{ scrollMarginTop: '80px', marginBottom: '80px' }}
-    >
-      <div className={styles.sectionHeader}>
-        <h2>Choose your package</h2>
-        <p>
-          All packages include delivery, hygienic packaging, fresh preparation,
-          and a dedicated catering support contact.
-        </p>
-      </div>
+          <section
+            id="packages"
+            ref={packagesRef}
+            style={{ scrollMarginTop: '80px', marginBottom: '80px' }}
+          >
+            <div className={styles.sectionHeader}>
+              <h2>Choose your package</h2>
+              <p>
+                All packages include delivery, hygienic packaging, fresh preparation,
+                and a dedicated catering support contact.
+              </p>
+            </div>
 
-      <div className={styles.packagesGrid}>
-        {CATERING_PACKAGES.map((pkg) => (
-          <PackageCard
-            key={pkg.id}
-            pkg={pkg}
-            onBook={setSelectedPkg}
-          />
-        ))}
-      </div>
-    </section>
+            <div className={styles.packagesGrid}>
+              {CATERING_PACKAGES.map((pkg) => (
+                <PackageCard
+                  key={pkg.id}
+                  pkg={pkg}
+                  onBook={setSelectedPkg}
+                />
+              ))}
+            </div>
+          </section>
 
-  </div>
-</section>
-      
+        </div>
+      </section>
+
 
       {/* How It Works Section */}
       <section id="how-it-works" ref={howItWorksRef} style={{ scrollMarginTop: '80px' }} className={styles.howItWorksBg}>
@@ -916,17 +1053,17 @@ export default function InstantCateringPage() {
       <section id="stories" ref={storiesRef} style={{ scrollMarginTop: '80px' }} className={styles.testimonialsBg}>
         <div className={styles.container}>
           <div className={styles.testimonialsLayout}>
-           
-<div className={styles.chiliDecor}>
-  <Image
-    src="/images/ic3.png"
-    alt=""
-    width={260}
-    height={420}
-    className={styles.chiliImage}
-    aria-hidden="true"
-  />
-</div>
+
+            <div className={styles.chiliDecor}>
+              <Image
+                src="/images/ic3.png"
+                alt=""
+                width={260}
+                height={420}
+                className={styles.chiliImage}
+                aria-hidden="true"
+              />
+            </div>
             <div>
               <div className={styles.sectionHeader} style={{ textAlign: 'left', margin: '0 0 36px 0', maxWidth: '100%' }}>
                 <h2>What our customers say</h2>
@@ -966,8 +1103,8 @@ export default function InstantCateringPage() {
         <div className={styles.ctaContainer}>
           <h2 className={styles.ctaTitle}>Ready to plan your next event?</h2>
           <p className={styles.ctaSub}>Pick a pre-curated package and get your premium catering locked-in in under 2 minutes.</p>
-          <button 
-            type="button" 
+          <button
+            type="button"
             className={styles.ctaMainBtn}
             onClick={() => triggerScroll(packagesRef)}
           >
@@ -994,9 +1131,9 @@ export default function InstantCateringPage() {
       {toastVisible && (
         <div className={styles.successToast} role="alert">
           <span>{toastMessage}</span>
-          <button 
-            type="button" 
-            className={styles.toastCloseBtn} 
+          <button
+            type="button"
+            className={styles.toastCloseBtn}
             onClick={() => setToastVisible(false)}
             aria-label="Dismiss message"
           >

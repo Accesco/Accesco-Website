@@ -359,13 +359,9 @@ export default function AppShowcase() {
           <Image
             src="/images/xpense-banner.jpg"
             alt="Accesco Living - Wanna Skip The Line?"
+            fill
+            sizes="(max-width:768px) 100vw, 50vw"
             className={styles.posterImage}
-            onError={(e) => {
-              e.currentTarget.src = "/images/accesco_original.png";
-              e.currentTarget.style.padding = "40px";
-              e.currentTarget.style.background =
-                "linear-gradient(135deg, #7A0042, #1A0A0F)";
-            }}
           />
         </div>
 

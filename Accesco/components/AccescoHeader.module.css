@@ -10,17 +10,21 @@
   left: 50%;
   transform: translateX(-50%);
 
- width: min(92%, 1320px);   /* was 92%, 1320px */
-  height: 68px;              /* was 78px */
+  width: min(92%, 1320px);
+  /* was 92%, 1320px */
+  height: 68px;
+  /* was 78px */
 
   z-index: 1000;
 
-  background: rgba(255, 255, 255, 0.95); /* slightly more opaque */
+  background: rgba(255, 255, 255, 0.95);
+  /* slightly more opaque */
   backdrop-filter: blur(30px);
   -webkit-backdrop-filter: blur(18px);
 
-  border-radius: 16px;       /* was 24px */
-  box-shadow: 0 12px 40px rgba(0,0,0,0.12);
+  border-radius: 16px;
+  /* was 24px */
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
 
   display: flex;
   align-items: center;
@@ -250,14 +254,14 @@
   gap: 6px;
   padding: 8px 14px;
   border-radius: 9999px;
-  border: 1.5px solid  #7A0042;
+  border: 1.5px solid #7A0042;
   background: none;
   cursor: pointer;
   font-family: 'Sora', sans-serif;
   font-size: 0.78rem;
   font-weight: 500;
- color: #7A0042;
-  border-color:  #7A0042;
+  color: #7A0042;
+  border-color: #7A0042;
   transition: all 0.3s;
   white-space: nowrap;
 }
@@ -861,6 +865,55 @@
   margin-right: -8px;
 }
 
+.cartButton {
+  width: 48px;
+  height: 48px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: #fff;
+
+  border: none;
+  border-radius: 12px;
+
+  cursor: pointer;
+
+  transition: .25s ease;
+  position: relative;
+}
+
+.cartBadge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+
+  width: 20px;
+  height: 20px;
+
+  border-radius: 50%;
+
+  background: #ff3b30;
+  color: #fff;
+
+  font-size: 12px;
+  font-weight: 700;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cartButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, .12);
+}
+
+.cartButton img {
+  object-fit: contain;
+}
+
 .waitlistLink {
   font-family: 'Sora', sans-serif;
   font-size: 0.92rem;
@@ -900,14 +953,15 @@
 }
 
 @media (max-width: 1250px) {
-  .actions > button.loginButton {
+  .actions>button.loginButton {
     display: inline-flex !important;
   }
 
-  .actions > a.loginButton {
+  .actions>a.loginButton {
     display: inline-flex !important;
   }
 }
+
 @media (max-width: 1250px) {
 
   .nav,
@@ -924,6 +978,7 @@
     display: none !important;
   }
 }
+
 /* MOBILE HEADER LOGIN + DOWNLOAD BUTTONS */
 @media (max-width: 768px) {
   .actions {
@@ -931,8 +986,8 @@
     margin-left: auto !important;
   }
 
-  .actions > button.loginButton,
-  .actions > a.loginButton {
+  .actions>button.loginButton,
+  .actions>a.loginButton {
     height: 38px !important;
     min-width: 86px !important;
     padding: 0 16px !important;
@@ -947,7 +1002,7 @@
     white-space: nowrap !important;
   }
 
-  .actions > a.loginButton {
+  .actions>a.loginButton {
     min-width: 104px !important;
     gap: 6px !important;
   }
@@ -957,9 +1012,11 @@
     height: 12px !important;
   }
 }
+
 @media (max-width: 768px) {
-  .actions > button.loginButton,
-  .actions > a.loginButton {
+
+  .actions>button.loginButton,
+  .actions>a.loginButton {
     font-family: 'Sora', sans-serif !important;
     font-size: 12px !important;
     font-weight: 700 !important;
@@ -971,7 +1028,7 @@
 
 /* FIX MOBILE LOGIN BUTTON SIZE */
 @media (max-width: 768px) {
-  .actions > button.loginButton {
+  .actions>button.loginButton {
     height: 34px !important;
     min-width: 72px !important;
     padding: 0 14px !important;

@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useAuth } from '../app/components/AuthProvider';
 import dynamic from 'next/dynamic';
 const AuthModal = dynamic(() => import('../app/components/AuthModal'), { ssr: false });
@@ -14,11 +14,12 @@ import LocationModal from './LocationModal';
 
 export default function AccescoHeader() {
   const pathname = usePathname();
+  const router = useRouter();
   const { user, signOut, signIn } = useAuth();
-  
+
   // Hydration state to fix the Server vs Client mismatch - Jabez
   const [isMounted, setIsMounted] = useState(false);
-  
+  const [cartCount, setCartCount] = useState(0);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isAuthOpen, setIsAuthOpen] = useState(false);
@@ -184,7 +185,15 @@ export default function AccescoHeader() {
     signOut();
     setIsMobileMenuOpen(false);
   }, [signOut]);
+  const handleCartClick = () => {
+    if (!user) {
+      setIsAuthOpen(true);
+      return;
+    }
 
+    // Change this route if your cart page is elsewhere
+    router.push("/services/swadisht/cart");
+  };
   const handleMouseEnter = () => {
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
     setIsServicesOpen(true);
@@ -231,7 +240,7 @@ export default function AccescoHeader() {
 
     try {
       const parsedLocation = JSON.parse(locationStr);
-      
+
       if (parsedLocation && typeof parsedLocation === 'object') {
         if (parsedLocation.area && parsedLocation.city) {
           return `${parsedLocation.area}, ${parsedLocation.city}`;
@@ -244,7 +253,7 @@ export default function AccescoHeader() {
         return parts[0] || locationStr;
       }
     }
-    
+
     return "Select Location";
   };
 
@@ -276,13 +285,13 @@ export default function AccescoHeader() {
           </Link>
 
           {pathname.startsWith('/partner') && (
-            <div 
+            <div
               className={styles.servicesDropdown}
               ref={partnersDropdownRef}
               onMouseEnter={handlePartnersMouseEnter}
               onMouseLeave={handlePartnersMouseLeave}
             >
-              <button 
+              <button
                 className={styles.waitlistLink}
                 onClick={() => setIsPartnersOpen(!isPartnersOpen)}
                 style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '4px', textTransform: 'uppercase', padding: 0 }}
@@ -316,35 +325,35 @@ export default function AccescoHeader() {
 
           <div className={styles.actions}>
             {/* Location Selector */}
-            <div 
+            <div
               className={styles.locationSelector}
               ref={locationDropdownRef}
             >
-              <button 
+              <button
                 className={styles.locationButton}
                 onClick={() => setIsLocationOpen(!isLocationOpen)}
                 aria-expanded={isLocationOpen}
               >
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                  <path d="M8 1C5.24 1 3 3.24 3 6C3 9.5 8 15 8 15C8 15 13 9.5 13 6C13 3.24 10.76 1 8 1ZM8 7.5C7.17 7.5 6.5 6.83 6.5 6C6.5 5.17 7.17 4.5 8 4.5C8.83 4.5 9.5 5.17 9.5 6C9.5 6.83 8.83 7.5 8 7.5Z" fill="currentColor"/>
+                  <path d="M8 1C5.24 1 3 3.24 3 6C3 9.5 8 15 8 15C8 15 13 9.5 13 6C13 3.24 10.76 1 8 1ZM8 7.5C7.17 7.5 6.5 6.83 6.5 6C6.5 5.17 7.17 4.5 8 4.5C8.83 4.5 9.5 5.17 9.5 6C9.5 6.83 8.83 7.5 8 7.5Z" fill="currentColor" />
                 </svg>
 
                 <span className={styles.locationText}>
                   {getDisplayLocation(selectedLocation)}
                 </span>
 
-                <svg 
-                  width="12" 
-                  height="12" 
-                  viewBox="0 0 12 12" 
+                <svg
+                  width="12"
+                  height="12"
+                  viewBox="0 0 12 12"
                   fill="none"
                   className={`${styles.locationIcon} ${isLocationOpen ? styles.locationIconOpen : ''}`}
                 >
-                  <path 
-                    d="M3 4.5L6 7.5L9 4.5" 
-                    stroke="currentColor" 
-                    strokeWidth="1.5" 
-                    strokeLinecap="round" 
+                  <path
+                    d="M3 4.5L6 7.5L9 4.5"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
                     strokeLinejoin="round"
                   />
                 </svg>
@@ -355,8 +364,8 @@ export default function AccescoHeader() {
                   <div className={styles.locationDropdownHeader}>
                     <h4>Select Your Location</h4>
                   </div>
-                  
-                  <button 
+
+                  <button
                     type="button"
                     className={styles.detectLocationBtn}
                     onClick={() => {
@@ -371,9 +380,8 @@ export default function AccescoHeader() {
                     {locations.map((location) => (
                       <button
                         key={location}
-                        className={`${styles.locationItem} ${
-                          getDisplayLocation(selectedLocation) === location ? styles.selectedLocation : ''
-                        }`}
+                        className={`${styles.locationItem} ${getDisplayLocation(selectedLocation) === location ? styles.selectedLocation : ''
+                          }`}
                         onClick={() => {
                           const parts = location.split(', ');
                           const locationObject = {
@@ -382,7 +390,7 @@ export default function AccescoHeader() {
                             displayAddress: location,
                             fullAddress: location
                           };
-                          
+
                           const locationStr = JSON.stringify(locationObject);
                           setSelectedLocation(locationStr);
                           localStorage.setItem('userLocation', locationStr);
@@ -396,6 +404,27 @@ export default function AccescoHeader() {
                 </div>
               )}
             </div>
+            {/* Cart Button */}
+
+            <button
+              className={styles.cartButton}
+              onClick={handleCartClick}
+            >
+              <Image
+                src="/images/swadisht/categories/cart-green.png"
+                alt="Cart"
+                width={42}
+                height={42}
+                priority
+              />
+
+              {cartCount > 0 && (
+                <span className={styles.cartBadge}>
+                  {cartCount}
+                </span>
+              )}
+            </button>
+
 
             {/* NEW: Hydration-safe logic for the User/Login button */}
             {!isMounted ? (
@@ -437,18 +466,18 @@ export default function AccescoHeader() {
       </header>
 
       {/* Maintained dynamic conditional render without && */}
-      <AuthModal 
-        isOpen={isAuthOpen} 
-        onClose={() => setIsAuthOpen(false)} 
-        onSuccess={handleAuthSuccess} 
+      <AuthModal
+        isOpen={isAuthOpen}
+        onClose={() => setIsAuthOpen(false)}
+        onSuccess={handleAuthSuccess}
       />
 
-      <LocationModal 
-        isOpen={isLocationModalOpen} 
+      <LocationModal
+        isOpen={isLocationModalOpen}
         onClose={() => setIsLocationModalOpen(false)}
         onLocationSelect={(locationData) => {
-          const { fullAddress, lat, lng } = locationData; 
-          
+          const { fullAddress, lat, lng } = locationData;
+
           const parts = fullAddress.split(',');
           const resolvedArea = parts[0]?.trim() || fullAddress;
           const resolvedCity = parts[1]?.trim() || '';

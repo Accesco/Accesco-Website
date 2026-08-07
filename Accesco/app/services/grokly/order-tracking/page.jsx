@@ -651,7 +651,7 @@ function GroklyTrackingContent() {
           </Link>
         </div>
 
-        {/* Right Card: Pay ₹21 */}
+        {/* Right Card: Payment Info & Action */}
         <div className={styles.paymentCard}>
           <div className={styles.paymentBody}>
             <div className={styles.forgotHeader}>
@@ -659,16 +659,20 @@ function GroklyTrackingContent() {
                 <CardIcon className={styles.productionVectorIcon} />
               </div>
               <div className={styles.paymentText}>
-                <h2>Pay ₹{order.total}</h2>
-                <p>Pay before or on delivery</p>
+                <h2>{(order.paymentMethod || '').toUpperCase() === 'COD' ? 'Cash on Delivery (COD)' : `Pay ₹${order.total}`}</h2>
+                <p>{(order.paymentMethod || '').toUpperCase() === 'COD' ? 'Pay cash or UPI to rider upon delivery' : 'Pay before or on delivery'}</p>
               </div>
             </div>
           </div>
           <div className={styles.payActionRow}>
-            {isPaid ? (
+            {isPaid || (order.paymentStatus || '').toUpperCase() === 'PAID' ? (
               <span className={styles.paySuccessState}>
                 <CheckIcon className={styles.inlineCheck} />
                 Paid Online
+              </span>
+            ) : (order.paymentMethod || '').toUpperCase() === 'COD' ? (
+              <span className={styles.paySuccessState} style={{ background: '#fef3c7', color: '#92400e', borderColor: '#fde68a' }}>
+                Pending (COD)
               </span>
             ) : (
               <button 
@@ -798,11 +802,13 @@ function GroklyTrackingContent() {
             </div>
             
             <div className={styles.summaryTotalPaidRow}>
-              <span className={styles.totalPaidTextLabel}>Total Paid</span>
+              <span className={styles.totalPaidTextLabel}>
+                {(order.paymentMethod || '').toUpperCase() === 'COD' && (order.paymentStatus || '').toUpperCase() !== 'PAID' ? 'Total Payable on Delivery' : 'Total Paid'}
+              </span>
               <div className={styles.totalPaidBadgeWrapper}>
                 <strong className={styles.totalAmountValue}>₹{order.total}</strong>
                 <span className={styles.paidCheckBadge} style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-                  PAID <CheckIcon />
+                  {(order.paymentStatus || '').toUpperCase() === 'PAID' || isPaid ? 'PAID' : (order.paymentMethod || '').toUpperCase() === 'COD' ? 'PENDING' : 'PENDING'} <CheckIcon />
                 </span>
               </div>
             </div>
@@ -830,10 +836,12 @@ function GroklyTrackingContent() {
           <CardIcon className={styles.blueCardIcon} />
         </div>
         <div className={styles.metaCardContent}>
-          <strong>{order.paymentMethod || 'UPI'}</strong>
-          <p className={styles.metaSubtext}>TXN{order.id.split('-')[1] || '1781081083395'}</p>
+          <strong>{(order.paymentMethod || '').toUpperCase() === 'COD' ? 'Cash On Delivery' : (order.paymentMethod || 'Online Payment').toUpperCase()}</strong>
+          <p className={styles.metaSubtext}>TXN{order.id.split('-')[1] || order.id || '1781081083395'}</p>
         </div>
-        <span className={styles.successBadge}>SUCCESS</span>
+        <span className={styles.successBadge} style={{ background: (order.paymentStatus || '').toUpperCase() === 'PENDING' && (order.paymentMethod || '').toUpperCase() === 'COD' ? '#fef3c7' : undefined, color: (order.paymentStatus || '').toUpperCase() === 'PENDING' && (order.paymentMethod || '').toUpperCase() === 'COD' ? '#92400e' : undefined }}>
+          {(order.paymentStatus || '').toUpperCase() === 'PAID' || isPaid ? 'PAID' : (order.paymentMethod || '').toUpperCase() === 'COD' ? 'PENDING' : 'SUCCESS'}
+        </span>
       </div>
 
       {/* 8. Bottom Action Buttons (Matching input_file_8.png) */}

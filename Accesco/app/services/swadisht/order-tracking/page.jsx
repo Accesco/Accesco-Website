@@ -19,11 +19,11 @@ const LiveTrackingMap = dynamic(() => import('../components/Map/LiveTrackingMap'
 const PIPELINE = ['PENDING', 'CONFIRMED', 'PROCESSING', 'DISPATCHED', 'DELIVERED'];
 
 const STATUS_META = {
-  PENDING:    { label: 'Pending',    desc: 'Order received, awaiting confirmation.' },
-  CONFIRMED:  { label: 'Confirmed',  desc: 'Kitchen has accepted your order.' },
-  PROCESSING: { label: 'Preparing',  desc: 'Your meal is being freshly prepared.' },
+  PENDING: { label: 'Pending', desc: 'Order received, awaiting confirmation.' },
+  CONFIRMED: { label: 'Confirmed', desc: 'Kitchen has accepted your order.' },
+  PROCESSING: { label: 'Preparing', desc: 'Your meal is being freshly prepared.' },
   DISPATCHED: { label: 'On the Way', desc: 'Delivery partner is heading to you.' },
-  DELIVERED:  { label: 'Delivered',  desc: 'Order delivered successfully.' },
+  DELIVERED: { label: 'Delivered', desc: 'Order delivered successfully.' },
 };
 
 export default function SwadishttTrackingPage() {
@@ -37,7 +37,7 @@ export default function SwadishttTrackingPage() {
     if (typeof window === 'undefined') return;
     const storedUser = localStorage.getItem('accesco_user');
     if (storedUser) {
-      try { setCurrentUser(JSON.parse(storedUser)); } catch {}
+      try { setCurrentUser(JSON.parse(storedUser)); } catch { }
     }
     const storedOrders = JSON.parse(localStorage.getItem('swadishtt-orders') || '[]');
     const found = storedOrders.find((o) => o.id === orderId);
@@ -48,7 +48,36 @@ export default function SwadishttTrackingPage() {
   useEffect(() => {
     if (!orderId) return;
 
-    // 1. Listen to orders/{orderId}
+    // 1. Listen to swadishtt_orders/{orderId}
+    const swadishttDocRef = doc(db, 'swadishtt_orders', orderId);
+    const unsubSwadishtt = onSnapshot(swadishttDocRef, (snap) => {
+      if (snap.exists()) {
+        const firestoreData = snap.data();
+        setOrder((prev) => ({
+          ...(prev || {}),
+          ...firestoreData,
+          id: orderId,
+          package: firestoreData.packageName || firestoreData.package || prev?.package,
+          price: firestoreData.packagePrice || firestoreData.price || prev?.price,
+          delivery: {
+            name: firestoreData.customerName || prev?.delivery?.name || 'Customer',
+            phone: firestoreData.phone || prev?.delivery?.phone || '',
+            address: firestoreData.address || prev?.delivery?.address || '',
+            city: firestoreData.city || prev?.delivery?.city || '',
+            pincode: firestoreData.pincode || prev?.delivery?.pincode || '',
+          },
+          totals: {
+            total: firestoreData.packagePrice || firestoreData.totals?.total || prev?.totals?.total || 0,
+            subtotal: firestoreData.packagePrice || firestoreData.totals?.subtotal || prev?.totals?.subtotal || 0,
+            deliveryFee: firestoreData.totals?.deliveryFee || 0,
+            platformFee: firestoreData.totals?.platformFee || 0,
+            gst: firestoreData.totals?.gst || 0,
+          },
+        }));
+      }
+    });
+
+    // 2. Listen to orders/{orderId} as fallback
     const orderDocRef = doc(db, 'orders', orderId);
     const unsubOrder = onSnapshot(orderDocRef, (snap) => {
       if (snap.exists()) {
@@ -93,6 +122,7 @@ export default function SwadishttTrackingPage() {
     });
 
     return () => {
+      unsubSwadishtt();
       unsubOrder();
       unsubRider();
     };
@@ -120,16 +150,24 @@ export default function SwadishttTrackingPage() {
   }
 
   /* ── Derived values ── */
-  const statusKey    = (order.status || 'PENDING').toUpperCase();
-  const stepIndex    = PIPELINE.indexOf(statusKey);
-  const isDelivered  = statusKey === 'DELIVERED';
-  const totalItems   = order.items?.reduce((acc, item) => acc + item.quantity, 0) ?? 0;
-  const userName     = currentUser?.name || order.delivery?.name || 'Customer';
-  const initials     = userName.substring(0, 2).toUpperCase();
-  const driverName   = order.deliveryPartner?.name || 'Delivery partner';
-  const driverDist   = order.deliveryPartner?.distanceKm || 1.8;
-  const driverEta    = order.deliveryPartner?.etaMinutes || 10;
-  const orderDate    = order.placedAt ? new Date(order.placedAt) : new Date();
+  const statusKey = (order.status || 'PENDING').toUpperCase();
+  const stepIndex = PIPELINE.indexOf(statusKey);
+  const isDelivered = statusKey === 'DELIVERED';
+  const displayItems = (order.items && order.items.length > 0)
+    ? order.items
+    : [{
+      name: order.packageName || order.package || 'Swadishtt Catering Pack',
+      quantity: 1,
+      price: order.packagePrice || order.price || order.totals?.total || 0,
+      restaurant: 'Swadishtt Catering',
+    }];
+  const totalItems = displayItems.reduce((acc, item) => acc + item.quantity, 0);
+  const userName = currentUser?.name || order.delivery?.name || 'Customer';
+  const initials = userName.substring(0, 2).toUpperCase();
+  const driverName = order.deliveryPartner?.name || 'Delivery partner';
+  const driverDist = order.deliveryPartner?.distanceKm || 1.8;
+  const driverEta = order.deliveryPartner?.etaMinutes || 10;
+  const orderDate = order.placedAt ? new Date(order.placedAt) : new Date();
   const formattedDate = orderDate.toLocaleDateString('en-GB', {
     day: 'numeric', month: 'short', year: 'numeric',
     hour: '2-digit', minute: '2-digit',
@@ -164,16 +202,16 @@ export default function SwadishttTrackingPage() {
           <h2 className={styles.cardTitle}>Order Progress</h2>
           <div className={styles.stepper}>
             {PIPELINE.map((step, i) => {
-              const done    = i < stepIndex;
-              const active  = i === stepIndex;
-              const meta    = STATUS_META[step];
+              const done = i < stepIndex;
+              const active = i === stepIndex;
+              const meta = STATUS_META[step];
               return (
                 <div key={step} className={`${styles.stepItem} ${done ? styles.stepDone : ''} ${active ? styles.stepActive : ''}`}>
                   <div className={styles.stepConnector} />
                   <div className={styles.stepCircle}>
                     {done ? (
                       <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                        <path d="M2.5 7L5.5 10L11.5 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                        <path d="M2.5 7L5.5 10L11.5 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                       </svg>
                     ) : (
                       <span className={styles.stepNum}>{i + 1}</span>
@@ -203,7 +241,7 @@ export default function SwadishttTrackingPage() {
           <div className={styles.driverNotice}>
             <div className={styles.driverNoticeIcon}>
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                <rect x="1" y="3" width="15" height="13" rx="2"/><path d="M16 8h4l3 5v4h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/>
+                <rect x="1" y="3" width="15" height="13" rx="2" /><path d="M16 8h4l3 5v4h-7V8z" /><circle cx="5.5" cy="18.5" r="2.5" /><circle cx="18.5" cy="18.5" r="2.5" />
               </svg>
             </div>
             <div className={styles.driverNoticeContent}>
@@ -228,7 +266,7 @@ export default function SwadishttTrackingPage() {
                     {initials}
                     <div className={styles.verifiedBadge}>
                       <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
-                        <path d="M2 5l2 2 4-4" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                        <path d="M2 5l2 2 4-4" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                       </svg>
                     </div>
                   </div>
@@ -262,7 +300,7 @@ export default function SwadishttTrackingPage() {
                     </tr>
                   </thead>
                   <tbody>
-                    {order.items?.map((item, idx) => (
+                    {displayItems.map((item, idx) => (
                       <tr key={idx} className={styles.tableRowHover}>
                         <td>
                           <div className={styles.itemCell}>
@@ -315,7 +353,7 @@ export default function SwadishttTrackingPage() {
               <div className={styles.addressBox}>
                 <div className={styles.iconCircle}>
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M12 21C12 21 5 13.5 5 8.5a7 7 0 1114 0C19 13.5 12 21 12 21z"/><circle cx="12" cy="8.5" r="2.5"/>
+                    <path d="M12 21C12 21 5 13.5 5 8.5a7 7 0 1114 0C19 13.5 12 21 12 21z" /><circle cx="12" cy="8.5" r="2.5" />
                   </svg>
                 </div>
                 <div>
@@ -328,7 +366,7 @@ export default function SwadishttTrackingPage() {
                 <div className={styles.paymentMiniHeader}>
                   <span className={styles.paymentCheck}>
                     <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                      <path d="M2.5 7L5.5 10L11.5 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      <path d="M2.5 7L5.5 10L11.5 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
                   </span>
                   <span className={styles.paymentAmount}>&#8377;{order.totals?.total}</span>

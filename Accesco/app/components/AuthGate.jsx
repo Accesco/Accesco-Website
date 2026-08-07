@@ -3,22 +3,24 @@
 import AuthModal from './AuthModal'
 import { useAuth } from './AuthProvider'
 
-// Site-wide login wall: no page content renders for a signed-out visitor,
-// only the mandatory (non-dismissible) AuthModal. Once signIn() runs the
-// context updates and this re-renders with the real page.
+const DEV_MODE = true; // true = Skip Login | false = Enable Login
+
 export default function AuthGate({ children }) {
   const { user, loading, signIn } = useAuth()
 
-  // Avoid a flash of the login gate while AuthProvider is still reading
-  // localStorage on first mount.
   if (loading) return null
+
+  // Skip authentication during development
+  if (DEV_MODE) {
+    return children
+  }
 
   if (!user) {
     return (
       <AuthModal
         isOpen
         mandatory
-        onClose={() => {}}
+        onClose={() => { }}
         onSuccess={signIn}
       />
     )

@@ -165,14 +165,16 @@ export default function GroklyCheckout() {
 
   const [paymentMethod, setPaymentMethod] = useState('upi');
 
-  // Places the order for a specific logged-in user, after payment succeeds.
+  // Places the order for a specific logged-in user, after payment succeeds or for COD.
   const submitOrder = async (activeUser) => {
     setIsProcessing(true);
     setPaymentError('');
 
     try {
       let payment = {};
-      if (paymentMethod === 'upi') {
+      const isCod = paymentMethod === 'cod';
+
+      if (!isCod) {
         payment = await payWithRazorpay({
           amount: total,
           receipt: `grokly_${Date.now()}`,
@@ -197,8 +199,9 @@ export default function GroklyCheckout() {
         eta: resolvedEta,
         items: cartItems.map(i => ({ id: i.product.id, name: i.product.name, price: i.product.price, quantity: i.quantity, sku: i.product.sku || '' })),
         totals: { subtotal, deliveryFee, discount, total },
-        paymentMethod: paymentMethod === 'cod' ? 'cod' : 'upi',
-        paymentStatus: paymentMethod === 'cod' ? 'PENDING' : 'PAID',
+        paymentMethod: isCod ? 'COD' : 'ONLINE',
+        paymentStatus: isCod ? 'PENDING' : 'PAID',
+        status: isCod ? 'PLACED' : 'CONFIRMED',
         razorpayOrderId: payment.orderId || null,
         razorpayPaymentId: payment.paymentId || null,
         address: customerDetails.address,
@@ -213,13 +216,23 @@ export default function GroklyCheckout() {
         ...getDeliveryCoords(),
       });
 
-      // Sync order & payment directly to Firebase Firestore
+      // Sync order to Firestore & send confirmation email
       try {
+        await fetch('/api/grokly/orders', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            order,
+            customerEmail: activeUser?.email || null,
+          }),
+        });
+
         await syncOrderToFirebase({
           ...order,
           venture: 'grokly',
           userId: activeUser?.uid || activeUser?.id || null,
-          paymentStatus: paymentMethod === 'cod' ? 'PENDING' : 'PAID',
+          paymentStatus: isCod ? 'PENDING' : 'PAID',
+          status: isCod ? 'PLACED' : 'CONFIRMED',
           eta: resolvedEta,
         });
 
@@ -236,8 +249,12 @@ export default function GroklyCheckout() {
 
       router.push(`/services/grokly/order-tracking?id=${order.id}&eta=${resolvedEta}`);
     } catch (err) {
-      console.error('Payment failed:', err);
-      setPaymentError(err.message || 'Payment failed. Please try again.');
+      console.error('Order placement failed:', err);
+      if (err.message !== 'Payment cancelled') {
+        setPaymentError(err.message || 'Order placement failed. Please try again.');
+      } else {
+        setPaymentError('Payment was cancelled. You have not been charged.');
+      }
       setIsProcessing(false);
     }
   };
