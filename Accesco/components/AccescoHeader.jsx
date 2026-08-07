@@ -8,6 +8,7 @@ import { useAuth } from '../app/components/AuthProvider';
 import dynamic from 'next/dynamic';
 import styles from './AccescoHeader.module.css';
 import { getPersonCity } from '../lib/locationService';
+import { getUnifiedCartCount } from '../lib/unifiedCart';
 
 // Lazy load heavy modals so their JS bundles are downloaded only when needed
 const AuthModal = dynamic(() => import('../app/components/AuthModal'), { ssr: false });
@@ -25,6 +26,7 @@ export default function AccescoHeader() {
   const [isPartnersOpen, setIsPartnersOpen] = useState(false);
   const [selectedLocation, setSelectedLocation] = useState('{"city":"Bengaluru, Karnataka"}');
   const [isLocationModalOpen, setIsLocationModalOpen] = useState(false);
+  const [cartCount, setCartCount] = useState(0);
 
   const dropdownRef = useRef(null);
   const partnersDropdownRef = useRef(null);
@@ -33,6 +35,7 @@ export default function AccescoHeader() {
 
   useEffect(() => {
     setIsMounted(true);
+    setCartCount(getUnifiedCartCount());
   }, []);
 
   useEffect(() => {
@@ -281,6 +284,16 @@ export default function AccescoHeader() {
           )}
 
           <div className={styles.actions}>
+            {/* Cart — routes straight to the Accesco Living Cart Page. Not to be reused by Grokly/Swadishtt/InstaStyle, which each own a separate, isolated cart. */}
+            <Link href="/cart" className={styles.cartButton} aria-label={`Cart${cartCount > 0 ? `, ${cartCount} items` : ''}`}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                <path d="M3 3H5L5.4 5M5.4 5H21L18 13H7M5.4 5L7 13M7 13L5.6 15.6C5.2 16.4 5.8 17.5 6.7 17.5H18M18 17.5C17 17.5 16.2 18.3 16.2 19.3C16.2 20.3 17 21 18 21C19 21 19.8 20.2 19.8 19.2C19.8 18.2 19 17.5 18 17.5ZM8.5 19.3C8.5 20.3 7.7 21 6.7 21C5.7 21 5 20.2 5 19.2C5 18.2 5.8 17.5 6.8 17.5C7.8 17.5 8.5 18.3 8.5 19.3Z" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+              {cartCount > 0 && (
+                <span className={styles.cartBadge}>{cartCount > 99 ? '99+' : cartCount}</span>
+              )}
+            </Link>
+
             {/* Location Selector */}
             <div className={styles.locationSelector}>
               <button 

@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import './blogs.css';
-import { addBlog, updateBlog } from '../../lib/blogService';
+import { addBlog, updateBlog, deleteBlog } from '../../lib/blogService';
 import { addBookmark, removeBookmark, getUserBookmarks } from '../../lib/bookmarkService';
 import AccescoHeader from '../../components/AccescoHeader';
 import Footer from '../../components/Footer';
@@ -29,6 +29,7 @@ export default function BlogsClient({ initialPosts }) {
   const [publishing, setPublishing] = useState(false);
   const [uploadingImage, setUploadingImage] = useState(false);
   const [editingPostId, setEditingPostId] = useState(null);
+  const [deletingPostId, setDeletingPostId] = useState(null);
 
   useEffect(() => {
     setPostDate(new Date().toISOString().split('T')[0]);
@@ -178,6 +179,24 @@ export default function BlogsClient({ initialPosts }) {
     }
   };
 
+  // ── Delete from Firestore ────────────────────────────────────────────────────
+  const deletePost = async (post) => {
+    const confirmed = window.confirm(`Delete "${post.title}"? This cannot be undone.`);
+    if (!confirmed) return;
+
+    setDeletingPostId(post.id);
+    try {
+      await deleteBlog(post.id);
+      setPosts((prev) => prev.filter((p) => p.id !== post.id));
+      setFilteredPosts((prev) => prev.filter((p) => p.id !== post.id));
+    } catch (err) {
+      console.error('Delete failed:', err);
+      alert('Failed to delete the story. Check the console for details.');
+    } finally {
+      setDeletingPostId(null);
+    }
+  };
+
   // ── Handle Image Upload ──────────────────────────────────────────────────────
   const handleImageUpload = async (e) => {
     const file = e.target.files?.[0];
@@ -309,8 +328,25 @@ export default function BlogsClient({ initialPosts }) {
     <h1>blog.</h1>
 
     <div className="hero-categories">
-      {['All', 'Groceries', 'Food', 'Fashion', 'Company news'].map((cat) => (
-        <button key={cat}>{cat}</button>
+      {[
+        { label: 'All Stories', value: 'All' },
+        { label: 'Business', value: 'Business' },
+        { label: 'Innovation', value: 'Innovation' },
+        { label: 'Lifestyle', value: 'Lifestyle' },
+      ].map(({ label, value }) => (
+        <button
+          key={value}
+          type="button"
+          className={
+            activeCategory === value ||
+            (value === 'Innovation' && activeCategory === 'Technology')
+              ? 'active'
+              : ''
+          }
+          onClick={() => filterArchive(value)}
+        >
+          {label}
+        </button>
       ))}
     </div>
   </div>
@@ -440,6 +476,19 @@ export default function BlogsClient({ initialPosts }) {
                     }}
                   >
                     <i className="ri-edit-line"></i>
+                  </button>
+                  <button
+                    type="button"
+                    className="story-delete-btn"
+                    title="Delete this story"
+                    disabled={deletingPostId === post.id}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      deletePost(post);
+                    }}
+                  >
+                    <i className={deletingPostId === post.id ? 'ri-loader-4-line spin-icon' : 'ri-delete-bin-line'}></i>
                   </button>
                   <div className="story-overlay">
                     <span className="read-time"><i className="ri-time-line"></i> 5 min read</span>

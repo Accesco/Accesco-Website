@@ -24,8 +24,52 @@ function getDeviceId() {
   return deviceId;
 }
 
+// Calls the authenticated InstaStyle cart backend (app/api/instastyle/cart/**).
+// Returns null (instead of throwing) when there is no live Firebase session,
+// so callers can fall back to local-only behaviour exactly like the rest of
+// this file already does for cloud sync.
+async function cartFetch(getIdToken, uid, path, options = {}) {
+  const token = await getIdToken();
+  if (!token) return null;
+
+  const res = await fetch(`/api/instastyle/cart${path}`, {
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+      'x-user-id': uid,
+      ...(options.headers || {}),
+    },
+  });
+
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) {
+    throw new Error(data.error || 'Cart request failed');
+  }
+  return data;
+}
+
+// Maps a backend cart item back into this file's existing cart item shape,
+// so every other component that reads `item.id`/`selectedSize`/`price` etc.
+// keeps working unmodified.
+function backendItemToCartEntry(item) {
+  return {
+    id: item.productId,
+    itemId: item.itemId,
+    name: item.name,
+    brand: item.brand,
+    price: item.unitPrice,
+    discountedPrice: null,
+    image: item.image,
+    selectedSize: item.size,
+    selectedColor: item.color,
+    quantity: item.quantity,
+    slug: item.slug,
+  };
+}
+
 export function CartProvider({ children }) {
-  const { user } = useAuth();
+  const { user, getIdToken } = useAuth();
   const [cart, setCart] = useState([]);
   const [wishlist, setWishlist] = useState([]);
   const [orders, setOrders] = useState([]);
@@ -80,9 +124,26 @@ export function CartProvider({ children }) {
       loadData(ORDERS_STORAGE_KEY, setOrders);
     };
 
-    // Hydrate cart from Firestore
+    // Hydrate cart — authenticated users read from the validated backend cart;
+    // guests keep the existing localStorage/Firestore-by-device behaviour.
     const hydrateCartFromCloud = async () => {
-      const identifier = user?.uid || user?.email || getDeviceId();
+      if (user?.uid) {
+        try {
+          const data = await cartFetch(getIdToken, user.uid, '', { method: 'GET' });
+          if (data) {
+            setCart(data.items.map(backendItemToCartEntry));
+            isHydrated.current = true;
+            return;
+          }
+        } catch (error) {
+          console.warn('Cart backend read fallback to local only:', error?.message || error);
+        }
+        loadData(CART_STORAGE_KEY, setCart);
+        isHydrated.current = true;
+        return;
+      }
+
+      const identifier = user?.email || getDeviceId();
       if (!identifier) return;
       try {
         const snapshot = await getDoc(doc(db, 'instastyle_carts', identifier));
@@ -97,7 +158,7 @@ export function CartProvider({ children }) {
       } catch (error) {
         console.warn('Cart cloud read fallback to local only:', error);
       }
-      
+
       // Fallback
       loadData(CART_STORAGE_KEY, setCart);
       isHydrated.current = true;
@@ -123,16 +184,20 @@ export function CartProvider({ children }) {
     hydrateCartFromCloud();
     hydrateWishlistFromCloud();
     fetchOrdersFromCloud();
-  }, [user]);
+  }, [user, getIdToken]);
 
-  // Save cart to localStorage and Firestore whenever it changes
+  // Save cart to localStorage always. Authenticated users' carts are kept in
+  // sync with the backend via the granular add/remove/update calls below, so
+  // the raw Firestore mirror here is only needed as a guest fallback.
   useEffect(() => {
     if (!isHydrated.current) return;
 
     localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cart));
 
+    if (user?.uid) return;
+
     const syncCart = async () => {
-      const identifier = user?.uid || user?.email || getDeviceId();
+      const identifier = user?.email || getDeviceId();
       if (!identifier) return;
       try {
         await setDoc(doc(db, 'instastyle_carts', identifier), {
@@ -259,19 +324,21 @@ export function CartProvider({ children }) {
 
   const itemCount = cart.reduce((sum, item) => sum + item.quantity, 0);
 
-  // Add item to cart
+  // Add item to cart (optimistic local update; validated against the backend
+  // in the background for authenticated users — reverted if the server
+  // rejects it, e.g. out of stock).
   const addToCart = (product, size, color, quantity = 1) => {
     setCart(prev => {
       const existingIndex = prev.findIndex(
-        item => item.id === product.id && 
-                item.selectedSize === size && 
+        item => item.id === product.id &&
+                item.selectedSize === size &&
                 item.selectedColor === color
       );
 
       if (existingIndex > -1) {
         // Update quantity if item exists
         const updated = [...prev];
-        updated[existingIndex].quantity += quantity;
+        updated[existingIndex] = { ...updated[existingIndex], quantity: updated[existingIndex].quantity + quantity };
         return updated;
       }
 
@@ -290,17 +357,53 @@ export function CartProvider({ children }) {
       }];
     });
 
+    if (user?.uid) {
+      cartFetch(getIdToken, user.uid, '/items', {
+        method: 'POST',
+        body: JSON.stringify({ productId: product.id, size, color, quantity }),
+      })
+        .then((data) => {
+          if (!data) return; // no live session — local optimistic state stands
+          setCart(prev => prev.map(item =>
+            item.id === product.id && item.selectedSize === size && item.selectedColor === color
+              ? backendItemToCartEntry(data.item)
+              : item
+          ));
+        })
+        .catch((error) => {
+          console.error('[CartContext] Backend add-to-cart rejected, reverting:', error?.message || error);
+          setCart(prev => {
+            const idx = prev.findIndex(item => item.id === product.id && item.selectedSize === size && item.selectedColor === color);
+            if (idx === -1) return prev;
+            const revertedQty = prev[idx].quantity - quantity;
+            if (revertedQty <= 0) return prev.filter((_, i) => i !== idx);
+            const updated = [...prev];
+            updated[idx] = { ...updated[idx], quantity: revertedQty };
+            return updated;
+          });
+        });
+    }
+
     // Show success feedback
     return true;
   };
 
   // Remove item from cart
   const removeFromCart = (productId, size, color) => {
+    const removedItem = cart.find(
+      item => item.id === productId && item.selectedSize === size && item.selectedColor === color
+    );
+
     setCart(prev => prev.filter(
-      item => !(item.id === productId && 
-                item.selectedSize === size && 
+      item => !(item.id === productId &&
+                item.selectedSize === size &&
                 item.selectedColor === color)
     ));
+
+    if (user?.uid && removedItem?.itemId) {
+      cartFetch(getIdToken, user.uid, `/items/${removedItem.itemId}`, { method: 'DELETE' })
+        .catch((error) => console.error('[CartContext] Backend remove-from-cart failed:', error?.message || error));
+    }
   };
 
   // Update item quantity
@@ -310,18 +413,44 @@ export function CartProvider({ children }) {
       return;
     }
 
+    const targetItem = cart.find(
+      item => item.id === productId && item.selectedSize === size && item.selectedColor === color
+    );
+
     setCart(prev => prev.map(item =>
-      item.id === productId && 
-      item.selectedSize === size && 
+      item.id === productId &&
+      item.selectedSize === size &&
       item.selectedColor === color
         ? { ...item, quantity: newQuantity }
         : item
     ));
+
+    if (user?.uid && targetItem?.itemId) {
+      cartFetch(getIdToken, user.uid, `/items/${targetItem.itemId}`, {
+        method: 'PATCH',
+        body: JSON.stringify({ quantity: newQuantity }),
+      })
+        .then((data) => {
+          if (!data) return;
+          setCart(prev => prev.map(item => item.itemId === targetItem.itemId ? backendItemToCartEntry(data.item) : item));
+        })
+        .catch((error) => {
+          console.error('[CartContext] Backend quantity update rejected, reverting:', error?.message || error);
+          setCart(prev => prev.map(item =>
+            item.itemId === targetItem.itemId ? { ...item, quantity: targetItem.quantity } : item
+          ));
+        });
+    }
   };
 
   // Clear entire cart
   const clearCart = () => {
     setCart([]);
+
+    if (user?.uid) {
+      cartFetch(getIdToken, user.uid, '', { method: 'DELETE' })
+        .catch((error) => console.error('[CartContext] Backend clear-cart failed:', error?.message || error));
+    }
   };
 
   // Re-add every item from a past order back into the cart ("Order Again").

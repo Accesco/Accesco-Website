@@ -4790,7 +4790,7 @@ opacity:0.5;
 .bengaluru-launch-section {
   width: 100%;
   padding: 40px 20px;
-  background: #fff2eb;
+  background: #ffffff;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -4807,7 +4807,7 @@ opacity:0.5;
 
 .bengaluru-launch-card {
   position: relative;
-  width: auto;
+  width: 100%;
   max-width: 100%;
   border-radius: 20px;
   overflow: hidden;
@@ -4819,10 +4819,9 @@ opacity:0.5;
 }
 
 .bengaluru-launch-img {
-  width: auto;
+  width: 100%;
   height: auto;
   max-width: 100%;
-  max-height: 85vh;
   display: block;
   object-fit: contain;
   border-radius: 20px;
@@ -4835,10 +4834,6 @@ opacity:0.5;
 @media (max-width: 768px) {
   .bengaluru-launch-section {
     padding: 24px 14px;
-  }
-
-  .bengaluru-launch-img {
-    max-height: 70vh;
   }
 
   .bengaluru-launch-card,

@@ -4,6 +4,8 @@ import { FieldValue } from 'firebase-admin/firestore';
 import { verifyAuthToken } from '../../_lib/auth';
 import { isValidPincode } from '../../_lib/validators';
 
+export const dynamic = 'force-dynamic';
+
 // PUT /api/profile/address — update the user's delivery address
 export async function PUT(request) {
   try {

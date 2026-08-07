@@ -445,9 +445,7 @@
   pointer-events: none;
 }
 
-.grokly-cat-card:hover .grokly-cat-img {
-  /* no scale – hover kept subtle */
-}
+/* .grokly-cat-card:hover .grokly-cat-img — no scale, hover kept subtle */
 
 .grokly-cat-title {
   font-size: 13px;
