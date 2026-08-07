@@ -28,30 +28,48 @@ const categories = [
     id: 'grocery',
     title: 'Grocery',
     amount: '₹5,200',
-    budget: '₹8,000',
+    spent: 5200,
     percent: '42%',
-    used: '65%',
     color: '#3478ff',
   },
   {
     id: 'food',
     title: 'Food',
     amount: '₹4,150',
-    budget: '₹6,000',
+    spent: 4150,
     percent: '33%',
-    used: '69%',
     color: '#f28a3d',
   },
   {
     id: 'fashion',
     title: 'Fashion',
     amount: '₹3,100',
-    budget: '₹4,000',
+    spent: 3100,
     percent: '25%',
-    used: '78%',
     color: '#8f52d8',
   },
 ];
+
+const DEFAULT_BUDGETS = { grocery: 8000, food: 6000, fashion: 4000 };
+
+// ---- Budget persistence helpers ----
+const BUDGET_STORAGE_KEY = 'xpenseMeterBudgets';
+
+function loadSavedBudgets() {
+  if (typeof window === 'undefined') return DEFAULT_BUDGETS;
+  try {
+    const raw = localStorage.getItem(BUDGET_STORAGE_KEY);
+    if (!raw) return DEFAULT_BUDGETS;
+    const parsed = JSON.parse(raw);
+    return {
+      grocery: Number(parsed.grocery) || DEFAULT_BUDGETS.grocery,
+      food: Number(parsed.food) || DEFAULT_BUDGETS.food,
+      fashion: Number(parsed.fashion) || DEFAULT_BUDGETS.fashion,
+    };
+  } catch {
+    return DEFAULT_BUDGETS;
+  }
+}
 
 const orders = [
   {
@@ -3929,8 +3947,37 @@ function XpenseMobileFlow() {
 export default function XpenseMeterPage() {
   const [screen, setScreen] = useState('launch');
   const [userName, setUserName] = useState('User');
+  const [budgets, setBudgets] = useState(DEFAULT_BUDGETS);
+  const [budgetSaved, setBudgetSaved] = useState(false);
+
+  const totalBudget = useMemo(
+    () => budgets.grocery + budgets.food + budgets.fashion,
+    [budgets],
+  );
+  const totalSpent = useMemo(
+    () => categories.reduce((sum, cat) => sum + cat.spent, 0),
+    [],
+  );
+
+  const updateBudget = (key, value) => {
+    setBudgets((prev) => ({ ...prev, [key]: Number(value) }));
+  };
+
+  const saveBudgets = () => {
+    try {
+      localStorage.setItem(BUDGET_STORAGE_KEY, JSON.stringify(budgets));
+      setBudgetSaved(true);
+    } catch {
+      // localStorage unavailable — fail silently, budgets still work in-session
+    }
+  };
+
+  const usedPercent = Math.round((totalSpent / totalBudget) * 100);
 
   useEffect(() => {
+    // Load any previously saved budget so it survives refresh/navigation
+    setBudgets(loadSavedBudgets());
+
     const possibleKeys = [
       'user',
       'currentUser',
@@ -3981,6 +4028,13 @@ export default function XpenseMeterPage() {
       setUserName(foundName.split(' ')[0]);
     }
   }, []);
+
+  // Auto-hide the "Budget saved" confirmation after a couple seconds
+  useEffect(() => {
+    if (!budgetSaved) return;
+    const t = setTimeout(() => setBudgetSaved(false), 2500);
+    return () => clearTimeout(t);
+  }, [budgetSaved]);
 
   return (
     <main className="xp-page">
@@ -4144,9 +4198,9 @@ export default function XpenseMeterPage() {
     <div className="xp-main-donut-fixed">
       <div className="xp-main-donut-center">
         <span>This Month Spend</span>
-        <strong>₹12,450</strong>
-        <small>of ₹18,000 budget</small>
-        <b>68% Used</b>
+        <strong>{rupee(totalSpent)}</strong>
+        <small>of {rupee(totalBudget)} budget</small>
+        <b>{usedPercent}% Used</b>
       </div>
     </div>
 
@@ -4263,15 +4317,15 @@ export default function XpenseMeterPage() {
               <div className="xp-meter-grid">
                 <div className="xp-spend-box">
                   <small>You have spent</small>
-                  <strong>₹12,450</strong>
+                  <strong>{rupee(totalSpent)}</strong>
                   <span>this month</span>
 
                   <div className="xp-progress">
-                    <i style={{ width: '68%' }} />
+                    <i style={{ width: `${Math.min(usedPercent, 100)}%` }} />
                   </div>
 
                   <div className="xp-budget-row">
-  <p>₹5,500 remaining of ₹18,000</p>
+  <p>{rupee(totalBudget - totalSpent)} remaining of {rupee(totalBudget)}</p>
 
   <button type="button" onClick={() => setScreen('budget')}>
     <span className="xp-pencil">✎</span>
@@ -4362,28 +4416,30 @@ export default function XpenseMeterPage() {
               </div>
             </header>
 
+            {budgetSaved && <div className="xp-save-toast">Budget saved ✓</div>}
+
             <div className="xp-dash-grid">
               <div className="xp-stat">
                 <span>Total Doorstep Spend</span>
-                <strong>₹12,450</strong>
-                <small>of ₹18,000 budget</small>
+                <strong>{rupee(totalSpent)}</strong>
+                <small>of {rupee(totalBudget)} budget</small>
                 <div className="xp-small-progress">
-                  <i style={{ width: '68%' }} />
+                  <i style={{ width: `${Math.min(usedPercent, 100)}%` }} />
                 </div>
               </div>
 
               <div className="xp-stat">
                 <span>Budget Used</span>
-                <strong>68%</strong>
-                <small>On track</small>
+                <strong>{usedPercent}%</strong>
+                <small>{usedPercent <= 100 ? 'On track' : 'Over budget'}</small>
                 <div className="xp-small-progress">
-                  <i style={{ width: '68%' }} />
+                  <i style={{ width: `${Math.min(usedPercent, 100)}%` }} />
                 </div>
               </div>
 
               <div className="xp-stat">
                 <span>Amount Left</span>
-                <strong>₹5,550</strong>
+                <strong>{rupee(totalBudget - totalSpent)}</strong>
                 <small>until your monthly budget</small>
               </div>
 
@@ -4411,10 +4467,10 @@ export default function XpenseMeterPage() {
                   <div className="xp-budget-line" key={cat.id}>
                     <div>
                       <strong>{cat.title}</strong>
-                      <span>{cat.amount}/{cat.budget}</span>
+                      <span>{cat.amount}/{rupee(budgets[cat.id])}</span>
                     </div>
                     <div className="xp-small-progress">
-                      <i style={{ width: cat.used }} />
+                      <i style={{ width: `${Math.min(Math.round((cat.spent / budgets[cat.id]) * 100), 100)}%` }} />
                     </div>
                   </div>
                 ))}
@@ -4541,34 +4597,35 @@ export default function XpenseMeterPage() {
 
                 <div className="xp-money">
                   <span>₹</span>
-                  <input value="18000" readOnly />
+                  <input value={totalBudget.toLocaleString('en-IN')} readOnly />
                 </div>
 
                 {categories.map((cat) => (
                   <div className="xp-range" key={cat.id}>
                     <div>
                       <strong>{cat.title}</strong>
-                      <span>{cat.budget}</span>
+                      <span>{rupee(budgets[cat.id])}</span>
                     </div>
 
                     <input
                       type="range"
                       min="1000"
                       max="10000"
-                      value={
-                        cat.id === 'grocery'
-                          ? 8000
-                          : cat.id === 'food'
-                            ? 6000
-                            : 4000
-                      }
-                      readOnly
+                      step="100"
+                      value={budgets[cat.id]}
+                      onChange={(e) => updateBudget(cat.id, e.target.value)}
                     />
                   </div>
                 ))}
 
                 <div className="xp-actions">
-                  <button type="button" onClick={() => setScreen('dashboard')}>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      saveBudgets();
+                      setScreen('dashboard');
+                    }}
+                  >
                     Save Budget
                   </button>
                   <button type="button" onClick={() => setScreen('launch')}>
@@ -5344,6 +5401,18 @@ export default function XpenseMeterPage() {
           cursor: pointer;
         }
 
+        .xp-save-toast {
+          margin: 0 0 10px;
+          padding: 8px 14px;
+          border-radius: 6px;
+          background: #eafff2;
+          border: 1px solid #10b76b;
+          color: #0a7a45;
+          font-size: 12px;
+          font-weight: 700;
+          width: fit-content;
+        }
+
         .xp-dash-grid {
           display: grid;
           grid-template-columns: repeat(12, 1fr);
@@ -5940,36 +6009,6 @@ export default function XpenseMeterPage() {
   background: #f3d9e7;
   color: #980053;
   font-size: 11px;
-  font-weight: 800;
-}
-
-.xp-main-donut-fixed span {
-  display: block;
-  font-size: 15px;
-  margin-bottom: 7px;
-}
-
-.xp-main-donut-fixed strong {
-  display: block;
-  font-size: 23px;
-  font-weight: 800;
-  margin-bottom: 6px;
-}
-
-.xp-main-donut-fixed small {
-  display: block;
-  font-size: 12px;
-  margin-bottom: 8px;
-}
-
-.xp-main-donut-fixed b {
-  display: block;
-  width: fit-content;
-  padding: 3px 10px;
-  border-radius: 999px;
-  background: #f2d3e3;
-  color: #8a0048;
-  font-size: 12px;
   font-weight: 800;
 }
 
