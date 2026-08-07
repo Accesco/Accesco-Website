@@ -1,7 +1,11 @@
 'use client';
 
-import styles from "./checkout.module.css";
+// Force dynamic rendering to prevent prerendering
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 import { useEffect, useState } from 'react';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useSwadishtt } from '../contexts/SwadishttContext';
 import SwadishttHeader from '../components/SwadishttHeader';
@@ -786,6 +790,8 @@ function CheckoutContent() {
                     <img
                       src={item.image}
                       alt={item.name}
+                      width={52}
+                      height={52}
                       className={styles.orderItemImage}
                       onError={(e) => {
                         e.target.src = `https://placehold.co/60x50/262626/FAF9F6/png?text=${encodeURIComponent(item.name)}`;

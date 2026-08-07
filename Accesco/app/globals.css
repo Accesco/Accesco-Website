@@ -329,10 +329,9 @@ img { max-width: 100%; display: block; }
     gap: 28px !important;
     text-align: center;
     padding: 0 4px !important;
-
-    width: 100vw !important;
-max-width: 100vw !important;
-    margin-left: calc(50% - 50vw) !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin-left: 0 !important;
   }
 
   .xpense-grid > div:first-child {
@@ -342,32 +341,24 @@ max-width: 100vw !important;
   }
 
   .xpense-visual-wrap {
-    width: 100vw !important;
-max-width: 100vw !important;
-
+    width: 100% !important;
+    max-width: 100% !important;
     display: flex !important;
-
     justify-content: center !important;
-
-    overflow: visible !important;
+    overflow: hidden !important;
     margin-top: 10px !important;
-
-    margin-left: calc(50% - 50vw) !important;
+    margin-left: 0 !important;
     padding-left: 0 !important;
     padding-right: 0 !important;
   }
 
 .xpense-card {
-  width: 94vw !important;
-  max-width: 94vw !important;
-
+  width: 100% !important;
+  max-width: 100% !important;
   margin: 0 auto !important;
-
-  padding: 28px !important;
-  border-radius: 28px !important;
-
-  transform: scaleX(1.08);
-  transform-origin: center center;
+  padding: 24px 16px !important;
+  border-radius: 20px !important;
+  transform: none !important;
 }
 .xpense-card > * {
   width: 100% !important;

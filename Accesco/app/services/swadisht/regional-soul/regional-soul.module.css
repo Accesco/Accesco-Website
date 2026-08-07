@@ -847,6 +847,7 @@
 }
 
 .storySmallImage {
+  position: relative;
   border-radius: 10px;
   overflow: hidden;
   aspect-ratio: 4 / 5;

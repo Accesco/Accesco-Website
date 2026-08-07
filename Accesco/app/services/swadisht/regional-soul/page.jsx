@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import { useSwadishtt } from '../contexts/SwadishttContext';
 import SwadishttHeader from '../components/SwadishttHeader';
 import { STATES } from './statesData';
@@ -140,10 +141,12 @@ export default function RegionalSoulPage() {
                   onClick={() => handleSelectState(state)}
                   className={styles.stateCard}
                 >
-                  <img 
-                    src={state.heroImage} 
-                    alt={state.name} 
-                    className={styles.stateCardImg} 
+                  <Image
+                    src={state.heroImage}
+                    alt={state.name}
+                    fill
+                    sizes="(max-width: 768px) 100vw, 400px"
+                    className={styles.stateCardImg}
                     onError={(e) => { e.target.src = "https://images.unsplash.com/photo-1546833998-877b37c2e5c6?w=600&h=400&fit=crop"; }}
                   />
                   <div className={styles.stateCardCover} />
@@ -206,9 +209,11 @@ export default function RegionalSoulPage() {
               <div className={styles.storyImagesTop}>
                 {selectedState.traditionalImages.map((img, index) => (
                   <div key={index} className={styles.storySmallImage}>
-                    <img 
-                      src={img} 
-                      alt={`${selectedState.name} tradition ${index + 1}`} 
+                    <Image
+                      src={img}
+                      alt={`${selectedState.name} tradition ${index + 1}`}
+                      fill
+                      sizes="(max-width: 768px) 50vw, 250px"
                       onError={(e) => { e.target.src = index === 0 ? "https://images.unsplash.com/photo-1524492412937-b28074a5d7da?w=500&fit=crop" : "https://images.unsplash.com/photo-1477587458883-47145ed94245?w=500&fit=crop"; }}
                     />
                   </div>
@@ -216,9 +221,11 @@ export default function RegionalSoulPage() {
               </div>
 
               <div className={styles.storyMainImage}>
-                <img
+                <Image
                   src={selectedState.specialDishImage || selectedState.heroImage}
                   alt={selectedState.culinaryAlchemistTitle}
+                  fill
+                  sizes="(max-width: 768px) 100vw, 500px"
                   onError={(e) => { e.target.src = "https://images.unsplash.com/photo-1626777552726-4a6b54c97e46?w=600&fit=crop"; }}
                 />
                 <div className={styles.storyImageTag}>

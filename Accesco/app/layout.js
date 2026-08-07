@@ -1,34 +1,45 @@
 import Script from 'next/script';
-import { Sora, DM_Sans, Inter } from 'next/font/google';
-import { spaceGrotesk, jetbrainsMono } from '@/app/fonts';
+import localFont from 'next/font/local';
+import { spaceGrotesk } from '@/app/fonts';
 import './globals.css';
 import { AuthProvider } from './components/AuthProvider';
-import AuthGate from './components/AuthGate';
 import CookieConsent from './components/CookieConsent';
 import ReferralCapture from './components/ReferralCapture';
 import JsonLd from '@/components/JsonLd';
 import BreadcrumbJsonLd from '@/components/BreadcrumbJsonLd';
+import GoogleAnalytics from '@/components/GoogleAnalytics';
+import { GA_MEASUREMENT_ID } from '@/lib/gtag';
 
-const sora = Sora({
-  subsets: ['latin'],
-  weight: ['300', '400', '500', '600', '700', '800'],
+// Self-hosted from Google Fonts (public/fonts/) — see app/fonts.js for why.
+const sora = localFont({
+  src: '../public/fonts/sora-variable.woff2',
+  weight: '300 800',
   display: 'swap',
   variable: '--font-sora',
+  adjustFontFallback: false,
 });
 
-const dmSans = DM_Sans({
-  subsets: ['latin'],
-  weight: ['400', '500', '700'],
+const dmSans = localFont({
+  src: '../public/fonts/dm-sans-variable.woff2',
+  weight: '400 700',
   display: 'swap',
   variable: '--font-dm-sans',
+  adjustFontFallback: false,
 });
 
-const inter = Inter({
-  subsets: ['latin'],
-  weight: ['400', '500', '600', '700'],
+const inter = localFont({
+  src: '../public/fonts/inter-variable.woff2',
+  weight: '400 700',
   display: 'swap',
   variable: '--font-inter',
+  adjustFontFallback: false,
 });
+
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 5,
+};
 
 export const metadata = {
   metadataBase: new URL('https://accescoliving.com'),
@@ -123,7 +134,7 @@ export default function RootLayout({ children }) {
 
 
   return (
-    <html lang="en" className={`${sora.variable} ${dmSans.variable} ${inter.variable} ${spaceGrotesk.variable} ${jetbrainsMono.variable}`}>
+    <html lang="en" className={`${sora.variable} ${dmSans.variable} ${inter.variable} ${spaceGrotesk.variable}`}>
       <head>
         {/* Structured Data for SEO */}
         <JsonLd data={[organizationSchema, websiteSchema]} />
@@ -133,11 +144,16 @@ export default function RootLayout({ children }) {
         <AuthProvider>
           <BreadcrumbJsonLd />
           <ReferralCapture />
+<<<<<<< HEAD
 
           <AuthGate>
             {children}
           </AuthGate>
 
+=======
+          
+          {children}
+>>>>>>> origin/main
           <CookieConsent />
         </AuthProvider>
 
@@ -153,11 +169,26 @@ export default function RootLayout({ children }) {
     `}
         </Script>
 
-        <Script
-          src="https://www.googletagmanager.com/gtag/js?id=G-SH32KGLK5F"
-          strategy="afterInteractive"
-        />
+        {GA_MEASUREMENT_ID && (
+          <>
+            <Script
+              src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
+              strategy="afterInteractive"
+            />
+            <Script id="google-analytics" strategy="afterInteractive">
+              {`
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', '${GA_MEASUREMENT_ID}', {
+                  page_path: window.location.pathname,
+                });
+              `}
+            </Script>
+          </>
+        )}
 
+<<<<<<< HEAD
         <Script id="google-analytics" strategy="afterInteractive">
           {`
       window.dataLayer = window.dataLayer || [];
@@ -166,6 +197,9 @@ export default function RootLayout({ children }) {
       gtag('config', 'G-SH32KGLK5F');
     `}
         </Script>
+=======
+        <GoogleAnalytics />
+>>>>>>> origin/main
 
         <Script
           src="https://www.gstatic.com/dialogflow-console/fast/messenger/bootstrap.js?v=1"

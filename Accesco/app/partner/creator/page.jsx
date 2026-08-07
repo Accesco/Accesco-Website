@@ -38,26 +38,12 @@ export default function PartnerAsCreator() {
     setSubmitStatus(null);
 
     try {
-      const response = await fetch('https://formspree.io/f/mdaojdag', {
+      const response = await fetch('/api/partner/creator', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          'Form Type': 'Creator Partnership',
-          'Full Name': formData.fullName,
-          '_replyto': formData.email,
-          'Phone': formData.phone,
-          'Instagram': formData.instagram,
-          'YouTube': formData.youtube,
-          'Category': formData.category,
-          'Followers': formData.followers,
-          'City': formData.city,
-          'Content Type': formData.contentType.join(', '),
-          'Experience': formData.experience,
-          'Portfolio': formData.portfolio,
-          '_subject': 'New Creator Partnership Application!'
-        }),
+        body: JSON.stringify(formData),
       });
 
       if (response.ok) {

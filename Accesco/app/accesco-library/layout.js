@@ -3,6 +3,7 @@ import { Baloo_Bhai_2 } from "next/font/google";
 const baloo = Baloo_Bhai_2({
   subsets: ["latin"],
   weight: ["800"],
+  adjustFontFallback: false,
 });
 
 export const metadata = {

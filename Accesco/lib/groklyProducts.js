@@ -658,6 +658,120 @@ export const products = [
     image: 'https://th.bing.com/th/id/R.3b102efd936764b818d22db6fa418c75?rik=4X4rHtxNgGAa1w&riu=http%3a%2f%2fyummybazaar.com%2fcdn%2fshop%2fproducts%2feb871dc996c311b484-10df-429c-b81f-57ed0a90d709.jpg%3fv%3d1667857255&ehk=TXv6EQZEMtQ2%2fRbgfMbD6LAE2mF6ThiJUfH4Ov9OCZA%3d&risl=&pid=ImgRaw&r=0',
     inStock: true, tags: ['New Arrival'], rating: 4.5, reviews: 65
   },
+  {
+    id: 'grok-new-056', name: 'Masala Dosa Batter Pack', brand: 'Dosa Point', category: 'dairy-breakfast',
+    price: 54, mrp: 69, discount: 22, unit: '1 kg', deliveryTime: '12 MINS',
+    image: 'https://images.pexels.com/photos/1640770/pexels-photo-1640770.jpeg?w=300',
+    inStock: true, tags: ['Bestseller'], rating: 4.7, reviews: 156
+  },
+  {
+    id: 'grok-new-057', name: 'Paneer Butter Masala Meal Kit', brand: 'Swadishtt Kitchen', category: 'atta-rice-dal',
+    price: 89, mrp: 109, discount: 18, unit: '700 g', deliveryTime: '15 MINS',
+    image: 'https://images.pexels.com/photos/1640781/pexels-photo-1640781.jpeg?w=300',
+    inStock: true, tags: ['Premium'], rating: 4.5, reviews: 98
+  },
+  {
+    id: 'grok-new-058', name: 'Hakka Noodles Bowl', brand: 'China Wok Express', category: 'international-foods',
+    price: 76, mrp: 89, discount: 15, unit: '450 g', deliveryTime: '11 MINS',
+    image: 'https://images.pexels.com/photos/1640769/pexels-photo-1640769.jpeg?w=300',
+    inStock: true, tags: ['Bestseller'], rating: 4.6, reviews: 214
+  },
+  {
+    id: 'grok-new-059', name: 'Hyderabadi Chicken Dum Biryani', brand: 'Biryani House', category: 'atta-rice-dal',
+    price: 149, mrp: 179, discount: 17, unit: '900 g', deliveryTime: '15 MINS',
+    image: 'https://images.pexels.com/photos/4518672/pexels-photo-4518672.jpeg?w=300',
+    inStock: true, tags: ['Premium'], rating: 4.8, reviews: 305
+  },
+  {
+    id: 'grok-new-060', name: 'Margherita Pizza Base', brand: 'Pizza Corner', category: 'frozen-snacks',
+    price: 115, mrp: 135, discount: 15, unit: '2 pcs', deliveryTime: '12 MINS',
+    image: 'https://images.pexels.com/photos/699953/pexels-photo-699953.jpeg?w=300',
+    inStock: true, tags: ['New Arrival'], rating: 4.3, reviews: 76
+  },
+  {
+    id: 'grok-new-061', name: 'Cold Brew Concentrate', brand: 'Cafe Mocha', category: 'tea-coffee',
+    price: 129, mrp: 149, discount: 13, unit: '250 ml', deliveryTime: '10 MINS',
+    image: 'https://images.pexels.com/photos/1640772/pexels-photo-1640772.jpeg?w=300',
+    inStock: true, tags: ['Premium'], rating: 4.4, reviews: 84
+  },
+  {
+    id: 'grok-new-062', name: 'Mango Lime Cooler', brand: 'Juice Junction', category: 'cold-drinks',
+    price: 39, mrp: 49, discount: 20, unit: '500 mL', deliveryTime: '10 MINS',
+    image: 'https://images.pexels.com/photos/1055272/pexels-photo-1055272.jpeg?w=300',
+    inStock: true, tags: ['New Arrival'], rating: 4.5, reviews: 64
+  },
+  {
+    id: 'grok-new-063', name: 'Tandoori Chicken Marinade', brand: 'Royal Grill', category: 'masala-oil',
+    price: 69, mrp: 89, discount: 22, unit: '200 g', deliveryTime: '11 MINS',
+    image: 'https://images.pexels.com/photos/1441419/pexels-photo-1441419.jpeg?w=300',
+    inStock: true, tags: ['Bestseller'], rating: 4.6, reviews: 142
+  },
+  {
+    id: 'grok-new-064', name: 'Chicken Shawarma Wrap Kit', brand: 'Shawarma Hub', category: 'frozen-snacks',
+    price: 119, mrp: 145, discount: 18, unit: '4 pcs', deliveryTime: '12 MINS',
+    image: 'https://images.pexels.com/photos/4239098/pexels-photo-4239098.jpeg?w=300',
+    inStock: true, tags: ['Premium'], rating: 4.7, reviews: 188
+  },
+  {
+    id: 'grok-new-065', name: 'Butter Croissant Box', brand: 'BakeFresh', category: 'bakery-biscuits',
+    price: 159, mrp: 189, discount: 16, unit: '6 pcs', deliveryTime: '11 MINS',
+    image: 'https://images.pexels.com/photos/4234218/pexels-photo-4234218.jpeg?w=300',
+    inStock: true, tags: ['Bestseller'], rating: 4.3, reviews: 91
+  },
+  {
+    id: 'grok-new-066', name: 'Gulab Jamun Mini Pack', brand: 'Sweet Treats', category: 'sweet-tooth',
+    price: 72, mrp: 89, discount: 19, unit: '12 pcs', deliveryTime: '11 MINS',
+    image: 'https://images.pexels.com/photos/1640778/pexels-photo-1640778.jpeg?w=300',
+    inStock: true, tags: ['Bestseller'], rating: 4.6, reviews: 203
+  },
+  {
+    id: 'grok-new-067', name: 'Quinoa Crunch Salad Bowl', brand: 'Green Leaf', category: 'organic-healthy',
+    price: 98, mrp: 119, discount: 18, unit: '350 g', deliveryTime: '11 MINS',
+    image: 'https://images.pexels.com/photos/1093038/pexels-photo-1093038.jpeg?w=300',
+    inStock: true, tags: ['New Arrival'], rating: 4.8, reviews: 73
+  },
+  {
+    id: 'grok-new-068', name: 'Veg Spring Roll Party Pack', brand: 'Noodle Bar Asia', category: 'frozen-snacks',
+    price: 84, mrp: 99, discount: 15, unit: '8 pcs', deliveryTime: '12 MINS',
+    image: 'https://images.pexels.com/photos/4518672/pexels-photo-4518672.jpeg?w=300',
+    inStock: true, tags: ['Premium'], rating: 4.4, reviews: 117
+  },
+  {
+    id: 'grok-new-069', name: 'Paneer Tikka Kathi Roll Kit', brand: 'Kathi Room', category: 'international-foods',
+    price: 109, mrp: 129, discount: 16, unit: '4 pcs', deliveryTime: '15 MINS',
+    image: 'https://images.pexels.com/photos/1640781/pexels-photo-1640781.jpeg?w=300',
+    inStock: true, tags: ['Bestseller'], rating: 4.5, reviews: 129
+  },
+  {
+    id: 'grok-new-070', name: 'Masala Crunch Sticks', brand: 'Crunchy Bites', category: 'munchies',
+    price: 42, mrp: 49, discount: 14, unit: '180 g', deliveryTime: '11 MINS',
+    image: 'https://tse4.mm.bing.net/th/id/OIP.hucttx8dwducqW-WlcULIwHaHg?r=0&rs=1&pid=ImgDetMain&o=7&rm=3',
+    inStock: true, tags: ['Bestseller'], rating: 4.4, reviews: 138
+  },
+  {
+    id: 'grok-new-071', name: 'Roasted Peanut Mix', brand: 'Crunchy Bites', category: 'munchies',
+    price: 36, mrp: 42, discount: 14, unit: '200 g', deliveryTime: '11 MINS',
+    image: 'https://tse3.mm.bing.net/th/id/OIP.z9XrTcSZORj5DN86dASGuwHaHa?r=0&rs=1&pid=ImgDetMain&o=7&rm=3',
+    inStock: true, tags: ['New Arrival'], rating: 4.5, reviews: 96
+  },
+  {
+    id: 'grok-new-072', name: 'Everyday Cooking Oil', brand: 'Saffola', category: 'masala-oil',
+    price: 179, mrp: 219, discount: 18, unit: '1 L', deliveryTime: '11 MINS',
+    image: 'https://images.pexels.com/photos/1435706/pexels-photo-1435706.jpeg?w=300',
+    inStock: true, tags: ['Bestseller'], rating: 4.6, reviews: 412
+  },
+  {
+    id: 'grok-new-073', name: 'Tomato Puree Pack', brand: 'Kissan', category: 'sauces-spreads',
+    price: 54, mrp: 65, discount: 17, unit: '450 g', deliveryTime: '11 MINS',
+    image: 'https://images.pexels.com/photos/4198015/pexels-photo-4198015.jpeg?w=300',
+    inStock: true, tags: ['New Arrival'], rating: 4.4, reviews: 84
+  },
+  {
+    id: 'grok-new-074', name: 'Premium Basmati Rice', brand: 'Fortune', category: 'atta-rice-dal',
+    price: 145, mrp: 175, discount: 17, unit: '1 kg', deliveryTime: '11 MINS',
+    image: 'https://encrypted-tbn0.gstatic.com/shopping?q=tbn:ANd9GcQFiaJ6u7ozQNTDPxkQe2FDSe2d04XKsVyHnmDfQfoOlKGRHkZvOVbfl5XbEdvZYsRnJ9D3pCO6sZxvvshlrBVIEJpC6J4N5Ct9Y7o06pivBytr_NXFqKU8FQ',
+    inStock: true, tags: ['Bestseller'], rating: 4.7, reviews: 256
+  },
 
 
   // ========== VEGETABLES & FRUITS ==========
@@ -937,7 +1051,68 @@ export const products = [
     image: 'https://m.media-amazon.com/images/I/513-4QwNjSL.jpg',
     inStock: true, rating: 4.3, reviews: 1230
   },
-
+  {
+  id: 'drink-006',
+  name: 'Real Orange Fruit Juice',
+  brand: 'Real',
+  category: 'cold-drinks',
+  price: 105,
+  mrp: 120,
+  discount: 13,
+  unit: '1 l',
+  deliveryTime: '11 MINS',
+  image: 'https://images.pexels.com/photos/96974/pexels-photo-96974.jpeg?w=300',
+  inStock: true,
+  tags: ['Healthy'],
+  rating: 4.6,
+  reviews: 1960
+},
+{
+  id: 'drink-007',
+  name: 'Minute Maid Pulpy Orange',
+  brand: 'Minute Maid',
+  category: 'cold-drinks',
+  price: 95,
+  mrp: 110,
+  discount: 14,
+  unit: '1 l',
+  deliveryTime: '11 MINS',
+  image: 'https://images.pexels.com/photos/96974/pexels-photo-96974.jpeg?w=300',
+  inStock: true,
+  rating: 4.5,
+  reviews: 1725
+},
+{
+  id: 'drink-008',
+  name: 'Paper Boat Aamras Drink',
+  brand: 'Paper Boat',
+  category: 'cold-drinks',
+  price: 65,
+  mrp: 75,
+  discount: 13,
+  unit: '600 ml',
+  deliveryTime: '11 MINS',
+  image:  'https://images.pexels.com/photos/96974/pexels-photo-96974.jpeg?w=300',
+  inStock: true,
+  tags: ['New'],
+  rating: 4.7,
+  reviews: 1480
+},
+{
+  id: 'drink-009',
+  name: 'Bisleri Soda Club',
+  brand: 'Bisleri',
+  category: 'cold-drinks',
+  price: 35,
+  mrp: 40,
+  discount: 12,
+  unit: '750 ml',
+  deliveryTime: '11 MINS',
+  image: 'https://images.pexels.com/photos/96974/pexels-photo-96974.jpeg?w=300',
+  inStock: true,
+  rating: 4.3,
+  reviews: 1320
+},
   // ========== INSTANT & FROZEN FOOD ==========
   {
     id: 'instant-001', name: 'Maggi 2-Minute Masala Noodles', brand: 'Maggi', category: 'instant-frozen',
@@ -1313,6 +1488,68 @@ export const products = [
   { id: 'atta-013', name: 'Tata Sampann Masoor Dal', brand: 'Tata Sampann', category: 'atta-rice-dal', price: 85, mrp: 105, discount: 19, unit: '500 g', deliveryTime: '11 MINS', image: 'https://images.pexels.com/photos/1640772/pexels-photo-1640772.jpeg?w=300', inStock: true, rating: 4.4, reviews: 960 },
   { id: 'atta-014', name: 'Chana Dal - Tata Sampann', brand: 'Tata Sampann', category: 'atta-rice-dal', price: 95, mrp: 120, discount: 21, unit: '500 g', deliveryTime: '11 MINS', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRCCJkOxmcTl7Jwfg0YZ5BYm90Z6BEnRbsKQCo3Q5yqPA&s=10', inStock: true, rating: 4.3, reviews: 720 },
   { id: 'atta-015', name: 'Dawat Biryani Basmati Rice', brand: 'Dawat', category: 'atta-rice-dal', price: 190, mrp: 240, discount: 21, unit: '1 kg', deliveryTime: '11 MINS', image: 'https://encrypted-tbn0.gstatic.com/shopping?q=tbn:ANd9GcTN4l56WY3zdzmOlJVRoR-Wy89FUipYfm0JOLrs6hHD3dJKXeGMgpIL9pUCDkS3dExQitoLL7r486xtvvIpu_0feCIOzbMvIA', inStock: true, tags: ['Bestseller'], rating: 4.7, reviews: 4100 },
+  {
+  id: 'atta-016',
+  name: 'Fortune Chakki Fresh Atta',
+  brand: 'Fortune',
+  category: 'atta-rice-dal',
+  price: 275,
+  mrp: 320,
+  discount: 14,
+  unit: '5 kg',
+  deliveryTime: '11 MINS',
+  image: '\images\swadisht\restaurants\Fortune Chakki Fresh Atta.jfif',
+  inStock: true,
+  tags: ['Bestseller'],
+  rating: 4.6,
+  reviews: 3850
+},
+{
+  id: 'atta-017',
+  name: 'India Gate Classic Basmati Rice',
+  brand: 'India Gate',
+  category: 'atta-rice-dal',
+  price: 215,
+  mrp: 260,
+  discount: 17,
+  unit: '1 kg',
+  deliveryTime: '11 MINS',
+  image: '\images\swadisht\restaurants\India Gate Classic Basmati Rice.jfif',
+  inStock: true,
+  rating: 4.7,
+  reviews: 2980
+},
+{
+  id: 'atta-018',
+  name: 'Moong Dal Premium',
+  brand: '24 Mantra',
+  category: 'atta-rice-dal',
+  price: 145,
+  mrp: 170,
+  discount: 15,
+  unit: '1 kg',
+  deliveryTime: '11 MINS',
+  image: '\images\swadisht\restaurants\Moong Dal Premium.jfif',
+  inStock: true,
+  rating: 4.5,
+  reviews: 1640
+},
+{
+  id: 'atta-019',
+  name: 'Fortune Basmati Rice',
+  brand: 'Fortune',
+  category: 'atta-rice-dal',
+  price: 399,
+  mrp: 460,
+  discount: 13,
+  unit: '5 kg',
+  deliveryTime: '11 MINS',
+  image: '\images\swadisht\restaurants\Fortune Basmati Rice.jfif',
+  inStock: true,
+  tags: ['Bestseller'],
+  rating: 4.8,
+  reviews: 4520
+},
 
   // ── Masala & Oil (5 new) ──
   { id: 'masala-011', name: 'Everest Rajwadi Garam Masala', brand: 'Everest', category: 'masala-oil', price: 55, mrp: 70, discount: 21, unit: '50 g', deliveryTime: '11 MINS', image: 'https://images.pexels.com/photos/6996072/pexels-photo-6996072.jpeg?w=300', inStock: true, tags: ['Bestseller'], rating: 4.6, reviews: 2800 },

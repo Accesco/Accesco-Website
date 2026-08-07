@@ -154,6 +154,15 @@ export default function AccescoLibraryPage() {
       collected in one intelligent library.
     </p>
 
+    <p className="lib-hero-subtext">
+      The Accesco Library is our home for brand films, behind-the-scenes
+      operations videos, and rider and partner training content — from how
+      our Grokly dark stores fulfil a 10-minute order, to how Swadishtt
+      kitchens plate a meal, to what it's like riding for Accesco Living
+      across Bengaluru. Search, filter by category, or browse the full
+      collection below.
+    </p>
+
    <div className="lib-search-bar">
   <input
     type="text"
@@ -191,7 +200,11 @@ export default function AccescoLibraryPage() {
               <div className="lib-segment-inner">
                 <div>
                   <h2>Explore &amp; Videos Library</h2>
-                  <p>Internal QTC resources and video workflow sessions.</p>
+                  <p>
+                    Internal QTC resources and video workflow sessions covering
+                    our brand story, delivery riders, and how each Accesco
+                    Living venture works day to day.
+                  </p>
                 </div>
 
                 <div className="lib-controls">

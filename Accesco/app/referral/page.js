@@ -5,8 +5,6 @@ import Link from 'next/link';
 import { useAuth } from '../components/AuthProvider';
 import AuthModal from '../components/AuthModal';
 import {
-  getLeaderboard,
-  getUserReferralStats,
   subscribeToReferralStats,
   claimMilestoneGift,
 } from '../../lib/referralService';
@@ -16,6 +14,54 @@ import {
   getGiftChoicesForMilestone,
 } from '../../lib/giftCatalog';
 import './referral.css';
+
+/* ---------- Inline line icons (24x24, stroke: currentColor) ---------- */
+
+function IconUsers(props) {
+  return (
+    <svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}>
+      <path d="M17 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2" />
+      <circle cx="10" cy="7" r="4" />
+      <path d="M21 21v-2a4 4 0 0 0-3-3.87" />
+      <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+    </svg>
+  );
+}
+
+function IconBag(props) {
+  return (
+    <svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}>
+      <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z" />
+      <path d="M3 6h18" />
+      <path d="M16 10a4 4 0 0 1-8 0" />
+    </svg>
+  );
+}
+
+function IconGift(props) {
+  return (
+    <svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}>
+      <rect x="3" y="8" width="18" height="4" rx="1" />
+      <path d="M12 8v13" />
+      <path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7" />
+      <path d="M7.5 8a2.5 2.5 0 0 1 0-5C11 3 12 8 12 8s1-5 4.5-5a2.5 2.5 0 0 1 0 5" />
+    </svg>
+  );
+}
+
+function IconFile(props) {
+  return (
+    <svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}>
+      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z" />
+      <path d="M14 2v6h6" />
+      <path d="M16 13H8" />
+      <path d="M16 17H8" />
+      <path d="M10 9H8" />
+    </svg>
+  );
+}
+
+/* --------------------------------------------------------------------- */
 
 const milestones = [
   { referrals: 1 },
@@ -29,7 +75,7 @@ const milestones = [
 
 const rewardTiers = REFERRAL_MILESTONES.map((tier) => ({
   id: tier.id,
-  range: `${tier.minReferrals} – ${tier.maxReferrals}`,
+  range: `${tier.minReferrals} - ${tier.maxReferrals}`,
   minimum: tier.minReferrals,
   coins: tier.minReferrals * COINS_PER_REFERRAL,
   description: `${tier.choiceCount} gift choices under ₹${tier.priceCap.toLocaleString('en-IN')}`,
@@ -93,7 +139,7 @@ function RewardCard({ tier, referralCount, claim, user, onClaim, onRequireLogin 
             onChange={(e) => setSelectedGift(e.target.value)}
             style={{ width: '100%', minWidth: 0, height: 46, padding: '0 10px', border: '1px solid #e7dbd5', borderRadius: 10, font: 'inherit', fontSize: 11 }}
           >
-            <option value="">Choose…</option>
+            <option value="">Choose...</option>
             {choices.map((g) => (
               <option key={g.id} value={g.id}>
                 {g.name} (₹{g.price})
@@ -101,7 +147,7 @@ function RewardCard({ tier, referralCount, claim, user, onClaim, onRequireLogin 
             ))}
           </select>
           <button type="button" onClick={handleConfirm} disabled={!selectedGift || claiming}>
-            {claiming ? '…' : 'Confirm'}
+            {claiming ? '...' : 'Confirm'}
           </button>
         </div>
       ) : (
@@ -116,30 +162,20 @@ function RewardCard({ tier, referralCount, claim, user, onClaim, onRequireLogin 
 
 export default function ReferralPage() {
   const { user, signIn } = useAuth();
-  const [leaderboard, setLeaderboard] = useState([]);
-  const [phoneLookup, setPhoneLookup] = useState('');
-  const [inviteEmail, setInviteEmail] = useState('');
   const [stats, setStats] = useState(null);
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [copied, setCopied] = useState(false);
   const [isAuthOpen, setIsAuthOpen] = useState(false);
+  const [showMilestones, setShowMilestones] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    async function loadLeaderboard() {
-      try {
-        const users = await getLeaderboard();
-        setLeaderboard(users.slice(0, 3));
-      } catch (err) {
-        console.error('Unable to load leaderboard:', err);
-      }
-    }
-
-    loadLeaderboard();
+    setMounted(true);
   }, []);
 
-  // Logged-in users get their live referral profile automatically —
-  // no manual lookup needed, and it updates in real time as referrals/claims happen.
+  const safeUser = mounted ? user : null;
+  const safeStats = mounted ? stats : null;
+
   useEffect(() => {
     if (!user?.phone) return undefined;
 
@@ -147,13 +183,14 @@ export default function ReferralPage() {
     return unsubscribe;
   }, [user?.phone]);
 
-  const referralCount = Number(stats?.referralCount || 0);
-  const coins = Number(stats?.coins || 0);
+  const referralCount = Number(safeStats?.referralCount || 0);
+  const coins = Number(safeStats?.coins || 0);
+  const historyRows = safeStats?.referredUsers || safeStats?.referrals || [];
 
-  const referralLink = stats?.referralCode
-    ? `https://accescoliving.com/?ref=${stats.referralCode}`
-    : user
-    ? 'Setting up your referral link…'
+  const referralLink = safeStats?.referralCode
+    ? `https://accescoliving.com/?ref=${safeStats.referralCode}`
+    : safeUser
+    ? 'Setting up your referral link...'
     : 'Log in to get your referral link';
 
   const progress = useMemo(() => {
@@ -161,34 +198,14 @@ export default function ReferralPage() {
     return Math.min((referralCount / maximum) * 100, 100);
   }, [referralCount]);
 
-  // Manual lookup — only needed for logged-out visitors checking a phone number
-  async function handleCheckStats(event) {
-    event.preventDefault();
-
-    if (!phoneLookup.trim()) return;
-
-    setLoading(true);
-    setError('');
-
-    try {
-      const result = await getUserReferralStats(phoneLookup);
-
-      if (!result) {
-        setStats(null);
-        setError(
-          'No referral profile was found for this phone number. Please sign up first.'
-        );
-        return;
-      }
-
-      setStats(result);
-    } catch (err) {
-      console.error(err);
-      setError('We could not load your referral details. Please try again.');
-    } finally {
-      setLoading(false);
+  const handleInviteClick = () => {
+    if (!user) {
+      setIsAuthOpen(true);
+      return;
     }
-  }
+
+    handleShareCode();
+  };
 
   async function handleClaim(tierId, giftId) {
     if (!user?.phone) return;
@@ -212,19 +229,6 @@ export default function ReferralPage() {
     }, 1800);
   }
 
-  function sendInvite(event) {
-    event.preventDefault();
-
-    if (!inviteEmail.trim() || !stats?.referralCode) return;
-
-    const subject = encodeURIComponent('Join me on Accesco Living');
-    const body = encodeURIComponent(
-      `Join Accesco Living using my referral link:\n\n${referralLink}`
-    );
-
-    window.location.href = `mailto:${inviteEmail}?subject=${subject}&body=${body}`;
-  }
-
   function shareTo(platform) {
     if (!stats?.referralCode) return;
 
@@ -242,12 +246,67 @@ export default function ReferralPage() {
     window.open(links[platform], '_blank', 'noopener,noreferrer');
   }
 
+  async function handleShareCode() {
+    if (!stats?.referralCode) return;
+
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: 'Join me on Accesco Living',
+          text: 'Join me on Accesco Living and unlock exclusive rewards.',
+          url: referralLink,
+        });
+        return;
+      } catch (err) {
+        if (err.name === 'AbortError') return;
+      }
+    }
+
+    shareTo('x');
+  }
+
+  const renderHistoryRows = () => {
+    const rows = safeUser && historyRows.length > 0 ? historyRows : [{}, {}];
+
+    return rows.slice(0, 4).map((entry, index) => {
+      const completed =
+        entry.status === 'completed' ||
+        entry.status === 'complete' ||
+        entry.firstOrderPlaced ||
+        entry.hasFirstOrder;
+      const friend = entry.name || entry.friendName || entry.phone || entry.email || '—';
+
+      return (
+        <tr key={`${friend}-${index}`}>
+          <td>{friend}</td>
+          <td>
+            {entry.name || entry.friendName || entry.phone || entry.email ? (
+              <span className={completed ? 'pillCompleted' : 'pillPending'}>
+                {completed ? 'Completed' : 'Pending'}
+              </span>
+            ) : (
+              '—'
+            )}
+          </td>
+          <td className="rewardValue">{completed ? '₹100' : '—'}</td>
+        </tr>
+      );
+    });
+  };
+
   return (
     <div className="referralPage">
       <header className="referralHeader">
         <Link href="/" className="referralBrand" aria-label="Accesco home">
-          <span className="referralLogo">A</span>
-          <span>JOIN WAITLIST</span>
+          <img
+            src="/images/referral/AL-logo.png"
+            alt="Accesco Living"
+            className="referralLogo"
+          />
+          <span className="brandText">
+            Accesco
+            <small>Living</small>
+          </span>
         </Link>
 
         <nav className="referralNavigation">
@@ -255,9 +314,9 @@ export default function ReferralPage() {
             Home
           </Link>
 
-          {user ? (
+          {safeUser ? (
             <Link href="/profile" className="loginButton">
-              {user.name?.split(' ')[0] || 'Account'}
+              {safeUser.name?.split(' ')[0] || 'Account'}
             </Link>
           ) : (
             <a
@@ -279,330 +338,323 @@ export default function ReferralPage() {
       </header>
 
       <main className="referralMain">
-        <section className="referralHero">
-          <div>
-            <h1>
-              Earn Together.
+        <section className="heroBanner">
+          <div className="heroCopy">
+            <span className="heroBadge">
+              <IconUsers />
+              Referral Program
+            </span>
+            <h1 className="heroTitle">
+              Invite Friends.
               <br />
-              Unlock Exclusive <span>Rewards.</span>
+              Earn Rewards.
             </h1>
-
-            <p>
-              Invite your friends, climb the leaderboard,
-              <br />
-              and unlock exclusive mega gifts.
+            <p className="heroSub">
+              Share Accesco Living with your friends. When they place their first order,
+              you both receive exciting rewards.
             </p>
-
-            <div className="quickStats">
-              <div className="quickStat">
-                <span className="quickIcon">♟</span>
-                <div>
-                  <strong>{referralCount}</strong>
-                  <small>Referrals</small>
-                </div>
-              </div>
-
-              <div className="quickStat">
-                <span className="quickIcon coinIcon">₹</span>
-                <div>
-                  <strong>{coins}</strong>
-                  <small>Coins Earned</small>
-                </div>
-              </div>
-
-              <div className="quickStat">
-                <span className="quickIcon">▥</span>
-                <div>
-                  <strong>
-                    {stats?.rank ? `#${stats.rank}` : '—'}
-                  </strong>
-                  <small>Your Rank</small>
-                </div>
-              </div>
-            </div>
+            <button type="button" className="heroCta" onClick={handleInviteClick}>
+              Invite Now →
+            </button>
           </div>
-
-          {!user && (
-            <form className="statsLookup" onSubmit={handleCheckStats}>
-              <label htmlFor="referral-phone">
-                Check your referral progress
-              </label>
-
-              <div>
-                <input
-                  id="referral-phone"
-                  type="tel"
-                  value={phoneLookup}
-                  onChange={(event) => setPhoneLookup(event.target.value)}
-                  placeholder="Your phone number"
-                  required
-                />
-
-                <button type="submit" disabled={loading}>
-                  {loading ? 'Checking...' : 'Check Stats'}
-                </button>
-              </div>
-
-              {error && <p className="errorMessage">{error}</p>}
-            </form>
-          )}
+          <div className="heroArt" aria-hidden="true">
+            <img
+              src="/images/referral/referral-logo.png"
+              alt=""
+              className="heroArtImg"
+            />
+          </div>
         </section>
 
-        <div className="referralLayout">
-          <section className="referralDashboard">
-            <div className="sectionHeading">
-              <span className="headingIcon">🎁</span>
+        <section className="statsRow">
+          <article className="earnedCard">
+            <img
+              src="/images/referral/wallet.png"
+              alt=""
+              className="earnedImg"
+            />
+            <div className="earnedInfo">
+              <p>You've Earned</p>
+              <strong className="earnedAmount">{safeUser && safeStats ? `₹${coins}` : '₹—'}</strong>
+              <small>Available Rewards</small>
+              <button type="button" disabled={!safeUser}>
+                Redeem Now →
+              </button>
+            </div>
+          </article>
 
-              <div>
-                <h2>Your Referral Progress</h2>
-                <p>Invite more friends and unlock bigger rewards.</p>
-              </div>
+          <article className="codeCard">
+            <p>Your Referral Code</p>
+            <div className="codeBox">{safeStats?.referralCode || '— — — —'}</div>
+            <div className="codeActions">
+              <button
+                type="button"
+                className="copyBtn"
+                onClick={copyReferralLink}
+                disabled={!safeStats?.referralCode}
+              >
+                {copied ? 'Copied!' : '⧉ Copy Code'}
+              </button>
+              <button
+                type="button"
+                className="shareBtn"
+                onClick={handleShareCode}
+                disabled={!safeStats?.referralCode}
+              >
+                ⤴ Share
+              </button>
+            </div>
+          </article>
+        </section>
+
+        <section className="howSection">
+          <h2>How It Works</h2>
+          <div className="howCard">
+            <div className="howSteps">
+              <article className="howStep">
+                <div className="howIcon">
+                  <IconUsers />
+                  <span>1</span>
+                </div>
+                <h3>Invite Friends</h3>
+                <p>Share your referral link with your friends.</p>
+              </article>
+              <span className="stepArrow">→</span>
+              <article className="howStep">
+                <div className="howIcon">
+                  <IconBag />
+                  <span>2</span>
+                </div>
+                <h3>Friend Places First Order</h3>
+                <p>They place their first order on Accesco Living.</p>
+              </article>
+              <span className="stepArrow">→</span>
+              <article className="howStep">
+                <div className="howIcon">
+                  <IconGift />
+                  <span>3</span>
+                </div>
+                <h3>Both Get Rewards</h3>
+                <p>You both get rewards in the form of cashback or wallet credits.</p>
+              </article>
+            </div>
+          </div>
+        </section>
+
+        <section className="progressRow">
+          <article className="progressCard">
+            <div className="cardHeading">
+              <span>
+                <IconUsers />
+              </span>
+              <h2>Your Referral Progress</h2>
             </div>
 
-            <div className="meterScroller">
-              <div className="meter">
-                <div className="meterTrack">
-                  <div
-                    className="meterFill"
-                    style={{ width: `${progress}%` }}
-                  />
-                </div>
-
-                <div className="meterMilestones">
-                  {milestones.map((milestone) => {
-                    const reached = referralCount >= milestone.referrals;
-
-                    return (
-                      <div
-                        className={`milestone ${
-                          reached ? 'reached' : ''
-                        }`}
-                        key={milestone.referrals}
-                      >
-                        <span className="milestoneDot">
-                          {reached ? '✓' : ''}
-                        </span>
-
-                        <strong>{milestone.referrals}</strong>
-
-                        <small>
-                          {milestone.referrals === 1
-                            ? 'Referral'
-                            : 'Referrals'}
-                        </small>
-
-                        <b>{milestone.coins}</b>
-                        <small>Coins</small>
-
-                        {milestone.bonus && (
-                          <em>{milestone.bonus}</em>
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            </div>
-
-            <div className="currentProgress">
-              <span>♟</span>
-              <p>
-                You have <strong>{referralCount} referrals</strong> and{' '}
-                <strong>{coins} coins</strong>
-              </p>
-            </div>
-
-            <div className="rewardsSection">
-              <div className="sectionHeading compactHeading">
-                <span className="headingIcon">🎁</span>
-
-                <div>
-                  <h2>Choose Your Reward</h2>
-                  <p>
-                    Reach a milestone and choose one gift from the available
-                    options.
-                  </p>
-                </div>
-              </div>
-
-              {error && user && <p className="errorMessage">{error}</p>}
-
-              <div className="rewardGrid">
-                {rewardTiers.map((tier) => (
-                  <RewardCard
-                    key={tier.id}
-                    tier={tier}
-                    referralCount={referralCount}
-                    claim={stats?.milestoneClaims?.[tier.id] || null}
-                    user={user}
-                    onClaim={handleClaim}
-                    onRequireLogin={() => setIsAuthOpen(true)}
+            <div className="segmentSummary">
+              <div className="segmentBar" aria-label="Referral progress out of 10">
+                {Array.from({ length: 10 }).map((_, index) => (
+                  <span
+                    key={index}
+                    className={safeUser && index < Math.min(referralCount, 10) ? 'filled' : ''}
                   />
                 ))}
               </div>
+              <strong>{safeUser ? `${Math.min(referralCount, 10)}/10` : '—/10'}</strong>
             </div>
 
-            <section className="shareSection">
-              <div className="referralLinkBlock">
-                <label>Your Referral Link</label>
-                <p>Share your unique link anywhere.</p>
+            <p className="bonusCaption">
+              {Math.max(10 - referralCount, 0)} more invites to unlock{' '}
+              <strong>₹1000 Bonus</strong>
+            </p>
 
-                <div className="shareInputRow">
-                  <input value={referralLink} readOnly />
+            <button
+              type="button"
+              className="milestoneToggle"
+              onClick={() => setShowMilestones((value) => !value)}
+            >
+              View Milestones
+            </button>
 
-                  <button
-                    type="button"
-                    onClick={copyReferralLink}
-                    disabled={!stats?.referralCode}
-                  >
-                    {copied ? 'Copied!' : '▣  Copy Link'}
-                  </button>
-                </div>
-              </div>
-
-              <div className="shareBottom">
-                <form onSubmit={sendInvite}>
-                  <label>Invite by Email</label>
-                  <p>Send invites to your friends directly.</p>
-
-                  <div className="shareInputRow">
-                    <input
-                      type="email"
-                      value={inviteEmail}
-                      onChange={(event) =>
-                        setInviteEmail(event.target.value)
-                      }
-                      placeholder="friend@email.com"
-                      required
-                    />
-
-                    <button
-                      type="submit"
-                      disabled={!stats?.referralCode}
-                    >
-                      ➤ Send Invite
-                    </button>
-                  </div>
-                </form>
-
-                <div className="socialSharing">
-                  <label>Share on Social</label>
-                  <p>Share your link on social platforms.</p>
-
-                  <div>
-                    <button
-                      type="button"
-                      onClick={() => shareTo('x')}
-                      disabled={!stats?.referralCode}
-                      aria-label="Share on X"
-                    >
-                      X
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={() => shareTo('linkedin')}
-                      disabled={!stats?.referralCode}
-                      aria-label="Share on LinkedIn"
-                    >
-                      in
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={() => shareTo('facebook')}
-                      disabled={!stats?.referralCode}
-                      aria-label="Share on Facebook"
-                    >
-                      f
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </section>
-
-            <div className="referralNotes">
-              <div>
-                <span>🎁</span>
-                <p>
-                  Gifts can be redeemed as soon as we start operations.
-                </p>
-              </div>
-
-              <div>
-                <span>♟</span>
-                <p>
-                  Your referral count updates as soon as a person signs up
-                  with your link.
-                </p>
-              </div>
-
-              <div>
-                <span>🚚</span>
-                <p>
-                  Selected gifts will be delivered together with your first
-                  order.
-                </p>
-              </div>
-            </div>
-          </section>
-
-          <aside className="leaderboardCard">
-            <div className="sectionHeading">
-              <span className="headingIcon trophyIcon">🏆</span>
-
-              <div>
-                <h2>Top Referrers</h2>
-                <p>Leaderboard</p>
-              </div>
-            </div>
-
-            <div className="leaderboardList">
-              {leaderboard.length === 0 ? (
-                <div className="emptyLeaderboard">
-                  No referrers yet. Be the first!
-                </div>
-              ) : (
-                leaderboard.map((entry, index) => (
-                  <article className="leaderboardRow" key={`${entry.name}-${index}`}>
-                    <span className={`rankBadge rank${index + 1}`}>
-                      {index + 1}
-                    </span>
-
-                    <span className={`avatar avatar${index + 1}`}>
-                      {(entry.name || 'A')
-                        .split(' ')
-                        .map((part) => part[0])
-                        .join('')
-                        .slice(0, 2)
-                        .toUpperCase()}
-                    </span>
-
-                    <div className="leaderboardUser">
-                      <strong>{entry.name || 'Anonymous'}</strong>
-                      <small>{entry.referralCount || 0} referrals</small>
+            {showMilestones && (
+              <div className="milestonePanel">
+                <div className="meterScroller">
+                  <div className="meter">
+                    <div className="meterTrack">
+                      <div
+                        className="meterFill"
+                        style={{ width: `${progress}%` }}
+                      />
                     </div>
 
-                    <div className="leaderboardCoins">
-                      <strong>{entry.coins || 0}</strong>
-                      <small>Coins</small>
+                    <div className="meterMilestones">
+                      {milestones.map((milestone) => {
+                        const reached = referralCount >= milestone.referrals;
+
+                        return (
+                          <div
+                            className={`milestone ${
+                              reached ? 'reached' : ''
+                            }`}
+                            key={milestone.referrals}
+                          >
+                            <span className="milestoneDot">
+                              {reached ? '✓' : ''}
+                            </span>
+
+                            <strong>{milestone.referrals}</strong>
+
+                            <small>
+                              {milestone.referrals === 1
+                                ? 'Referral'
+                                : 'Referrals'}
+                            </small>
+
+                            <b>{milestone.coins}</b>
+                            <small>Coins</small>
+
+                            {milestone.bonus && (
+                              <em>{milestone.bonus}</em>
+                            )}
+                          </div>
+                        );
+                      })}
                     </div>
-                  </article>
-                ))
-              )}
+                  </div>
+                </div>
+
+                <div className="currentProgress">
+                  <span>
+                    <IconUsers />
+                  </span>
+                  <p>
+                    You have <strong>{referralCount} referrals</strong> and{' '}
+                    <strong>{coins} coins</strong>
+                  </p>
+                </div>
+
+                <div className="rewardsSection">
+                  <div className="sectionHeading compactHeading">
+                    <span className="headingIcon">
+                      <IconGift />
+                    </span>
+
+                    <div>
+                      <h2>Choose Your Reward</h2>
+                      <p>
+                        Reach a milestone and choose one gift from the available
+                        options.
+                      </p>
+                    </div>
+                  </div>
+
+                  {error && safeUser && <p className="errorMessage">{error}</p>}
+
+                  <div className="rewardGrid">
+                    {rewardTiers.map((tier) => (
+                      <RewardCard
+                        key={tier.id}
+                        tier={tier}
+                        referralCount={referralCount}
+                        claim={safeStats?.milestoneClaims?.[tier.id] || null}
+                        user={safeUser}
+                        onClaim={handleClaim}
+                        onRequireLogin={() => setIsAuthOpen(true)}
+                      />
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+          </article>
+
+          <article className="historyCard">
+            <div className="historyHeading">
+              <div className="cardHeading">
+                <span>
+                  <IconFile />
+                </span>
+                <h2>Referral History</h2>
+              </div>
+              <a href="#">View All →</a>
             </div>
-          </aside>
-        </div>
+
+            <table className="historyTable">
+              <thead>
+                <tr>
+                  <th>Friend</th>
+                  <th>Status</th>
+                  <th>Rewards</th>
+                </tr>
+              </thead>
+              <tbody>{renderHistoryRows()}</tbody>
+            </table>
+          </article>
+        </section>
+
+        <section className="ctaBanner">
+          <div>
+            <span className="ctaIcon">
+              <IconUsers />
+            </span>
+            <div>
+              <h2>Invite Friends & Earn Exciting Rewards!</h2>
+              <p>The more you invite, the more you earn.</p>
+            </div>
+          </div>
+          <button type="button" onClick={handleInviteClick}>
+            Invite Friends →
+          </button>
+        </section>
+
       </main>
 
-      <AuthModal
-        isOpen={isAuthOpen}
-        onClose={() => setIsAuthOpen(false)}
-        onSuccess={(userData) => {
-          signIn(userData);
-          setIsAuthOpen(false);
-        }}
-      />
+      <footer className="referralFooter">
+        <div>
+          <Link href="/" className="footerBrand">
+            ACCESCO <strong>LIVING</strong>
+          </Link>
+          <p>
+            Building experiences that simplify everyday living through technology and
+            innovation.
+          </p>
+          <small>© 2026 Accesco Living. All rights reserved.</small>
+        </div>
+
+        <nav>
+          <h3>Company</h3>
+          <Link href="/#about">About Us</Link>
+          <Link href="/#careers">Careers</Link>
+          <Link href="/#newsroom">Newsroom</Link>
+          <Link href="/#contact">Contact Us</Link>
+        </nav>
+
+        <nav>
+          <h3>Our Platforms</h3>
+          <a href="#">Lifecart</a>
+          <a href="#">Grokly (Grocery)</a>
+          <a href="#">Swadishtt (Food)</a>
+          <a href="#">Instastyle (Fashion)</a>
+        </nav>
+
+        <nav>
+          <h3>Resources</h3>
+          <Link href="/#help">Help Center</Link>
+          <Link href="/#privacy">Privacy Policy</Link>
+          <Link href="/#terms">Terms & Condition</Link>
+          <Link href="/#partner">Partner With Us</Link>
+        </nav>
+      </footer>
+
+      {mounted && (
+        <AuthModal
+          isOpen={isAuthOpen}
+          onClose={() => setIsAuthOpen(false)}
+          onSuccess={(userData) => {
+            signIn(userData);
+            setIsAuthOpen(false);
+          }}
+        />
+      )}
     </div>
   );
 }

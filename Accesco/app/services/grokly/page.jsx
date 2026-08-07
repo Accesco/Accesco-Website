@@ -24,7 +24,8 @@ import BottomNav from './components/BottomNav';
 import { categories, getProductsByCategory, searchProducts } from './lib/groklyData';
 import { useProducts } from './hooks/useProducts';
 import './styles/variables.css';
-
+import './styles/GroklyFooter.css';
+import GroklyFooter from './components/GroklyFooter';
 import JsonLd from '../../../components/JsonLd';
 import { dishes } from './lib/dishesData';
 import GroceryStories from './components/GroceryStories';
@@ -130,7 +131,7 @@ function GroklyPageContent() {
     }
 
     return filtered;
-  }, [activeCategory, searchQuery, activeFilter, sortBy]);
+  }, [activeCategory, searchQuery, activeFilter, sortBy, products]);
 
   const productsByCategory = useMemo(() => {
     if (activeCategory !== "all" || searchQuery.trim()) {
@@ -437,12 +438,12 @@ function GroklyPageContent() {
                   transition: "opacity 0.8s ease-in-out",
                 }}
               >
-                <img
+                <Image
                   src="/images/banners/hero-grokly1.jpg.png"
                   alt="Grokly Fresh Groceries Curated Just For You Banner"
+                  fill
+                  sizes="100vw"
                   style={{
-                    width: "100%",
-                    height: "100%",
                     objectFit: "cover",
                     objectPosition: "center",
                   }}
@@ -703,6 +704,7 @@ function GroklyPageContent() {
                               e.currentTarget.style.background = "#ffffff";
                           }}
                         >
+                          {/* eslint-disable-next-line @next/next/no-img-element -- dish.image comes from dishesData.js's heterogeneous external hosts, not compatible with next/image's static remotePatterns allowlist */}
                           <img
                             src={dish.image}
                             alt={dish.name}
@@ -814,6 +816,7 @@ function GroklyPageContent() {
                               border: "1px solid #F1EEE6",
                             }}
                           >
+                            {/* eslint-disable-next-line @next/next/no-img-element -- getIngredientImage() can return dishesData.js's heterogeneous external hosts, not compatible with next/image's static remotePatterns allowlist */}
                             <img
                               src={getIngredientImage(ing)}
                               alt={ing.name}
@@ -1224,6 +1227,7 @@ function GroklyPageContent() {
                                 gap: "10px",
                               }}
                             >
+                              {/* eslint-disable-next-line @next/next/no-img-element -- getIngredientImage() can return dishesData.js's heterogeneous external hosts, not compatible with next/image's static remotePatterns allowlist */}
                               <img
                                 src={getIngredientImage(item)}
                                 alt={item.name}
@@ -1554,12 +1558,12 @@ function GroklyPageContent() {
                             justifyContent: "center",
                           }}
                         >
-                          <img
+                          <Image
                             src={cat.image}
                             alt={cat.name}
+                            width={64}
+                            height={64}
                             style={{
-                              width: "100%",
-                              height: "100%",
                               objectFit: "cover",
                             }}
                           />
@@ -1799,19 +1803,31 @@ function GroklyPageContent() {
                   }}
                   className="hide-scrollbar"
                 >
-                  {products
-                    .filter((p) =>
-                      [
-                        "munch-001",
-                        "munch-002",
-                        "munch-003",
-                        "munch-005",
-                        "munch-006",
-                        "drink-001",
-                        "drink-002",
-                        "drink-003",
-                        "drink-004",
-                      ].includes(p.id),
+                
+  {products
+  .filter((p) =>
+    [
+      "munch-001",
+      "munch-002",
+      "munch-003",
+      "munch-005",
+      "munch-006",
+      "munch-011",
+      "munch-012",
+      "munch-013",
+      "munch-014",
+      "munch-016",
+      "drink-001",
+      "drink-003",
+      "drink-004",
+      "drink-005",
+      "drinks-001",
+      "drinks-002",
+      "drinks-003",
+      "drinks-004",
+      "drinks-005",
+      "drinks-006",
+].includes(p.id),
                     )
                     .map((product) => (
                       <div
@@ -1884,6 +1900,15 @@ function GroklyPageContent() {
                         "atta-001",
                         "atta-002",
                         "atta-003",
+                        "atta-011",
+                        "atta-012",
+                        "atta-013",
+                        "atta-014",
+                        "atta-015",
+                        "atta-016",
+                        "atta-017",
+                        "atta-018",
+                        "atta-019",
                         "masala-001",
                         "masala-003",
                       ].includes(p.id),
@@ -2016,7 +2041,7 @@ function GroklyPageContent() {
                           onClick={() => handleCategorySelect(cat.id)}
                           className={`grokly-sidebar-item ${isActive ? "active" : ""}`}
                         >
-                          <img src={cat.image} alt={cat.name} />
+                          <Image src={cat.image} alt={cat.name} width={30} height={30} />
                           <span>{cat.name}</span>
                         </button>
                       );
@@ -2075,7 +2100,7 @@ function GroklyPageContent() {
             )
           )}
         </main>
-
+<GroklyFooter />
         <CartDrawer />
         <LocationModal />
         <FloatingCartBar />

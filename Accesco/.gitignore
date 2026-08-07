@@ -38,3 +38,8 @@ tmp/
 .vercel
 *.tsbuildinfo
 next-env.d.ts
+
+# Firebase Service Account Credentials
+serviceAccount*.json
+firebase-service-account*.json
+*-firebase-adminsdk-*.json

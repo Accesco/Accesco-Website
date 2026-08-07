@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
+import Image from 'next/image';
 import styles from './thrift.module.css';
 
 const THRIFT_PRODUCTS = [
@@ -186,6 +187,21 @@ export default function ThriftMarketplace() {
     <div className={styles.page}>
       <header className={styles.hero}>
         <div className={styles.heroOverlay} aria-hidden="true" />
+        <div className={styles.heroContent}>
+          <span className={styles.heroBadge}>
+            <span className={styles.heroBadgeDot} />
+            Pre-Loved Luxury
+          </span>
+          <h1 className={styles.heroTitle}>InstaStyle Thrift Marketplace</h1>
+          <p className={styles.heroSubtitle}>
+            Authenticated pre-owned fashion from top brands, at a fraction of the price —
+            plus an easy way to sell your own pre-loved pieces.
+          </p>
+          <div className={styles.heroActions}>
+            <a href="#collection" className={styles.heroBtn}>Shop Thrift</a>
+            <a href="#sell" className={styles.heroBtnSecondary}>Sell Your Clothes</a>
+          </div>
+        </div>
       </header>
 
       <section id="sell" className={styles.sellSection}>
@@ -251,6 +267,7 @@ export default function ThriftMarketplace() {
             >
               <Link href={`/services/instastyle/products/${product.id}`} className={styles.productCard}>
                 <div className={styles.imageWrapper}>
+                  {/* eslint-disable-next-line @next/next/no-img-element -- product.image may be a user-submitted or Firestore-seeded URL from an arbitrary external host, not compatible with next/image's static remotePatterns allowlist */}
                   <img src={product.image} alt={product.name} className={styles.image} />
                 </div>
                 <div className={styles.info}>

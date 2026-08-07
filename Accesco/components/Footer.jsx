@@ -15,7 +15,13 @@ export default function Footer() {
           {/* Left Brand Column */}
           <div className="footer-brand-col">
             <Link href="/" className="logo-component">
-              <Image src="/images/ac-logo.png" alt="AC" className="logo-component-icon" width={60} height={60} />
+              <Image 
+                src="/images/ac-logo.png" 
+                alt="Accesco Living Logo" 
+                className="logo-component-icon" 
+                width={60} 
+                height={60} 
+              />
               <span className="logo-wordmark">Accesco Living</span>
             </Link>
             
@@ -23,22 +29,104 @@ export default function Footer() {
               India's first intelligent circular commerce ecosystem. Delivering Groceries, Food, and Fashion under one unified platform.
             </p>
             
+            {/* Social Links with WCAG Discernible Name Labels */}
             <div className="social-row">
-              <a href="https://x.com/accesco_living?s=11" target="_blank" rel="noopener noreferrer" className="social-icon"><i className="ri-twitter-x-line"></i></a>
-              <a href="https://www.instagram.com/accescostore?utm_source=qr" target="_blank" rel="noopener noreferrer" className="social-icon"><i className="ri-instagram-line"></i></a>
-              <a href="https://www.linkedin.com/company/accesco-living/" target="_blank" rel="noopener noreferrer" className="social-icon"><i className="ri-linkedin-fill"></i></a>
-              <a href="https://www.facebook.com/share/1BMyjWcU1B/" target="_blank" rel="noopener noreferrer" className="social-icon"><i className="ri-facebook-fill"></i></a>
-              <a href="https://youtube.com/@accescoliving?si=Xzk9m4vzZqW6-lje" target="_blank" rel="noopener noreferrer" className="social-icon"><i className="ri-youtube-fill"></i></a>
-              <a href="https://pin.it/77fE8R0rC" target="_blank" rel="noopener noreferrer" className="social-icon"><i className="ri-pinterest-fill"></i></a>
-              <a href="mailto:support@accescoliving.com" className="social-icon"><i className="ri-mail-send-line"></i></a>
+              <a 
+                href="https://x.com/accesco_living?s=11" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="social-icon"
+                aria-label="Follow Accesco Living on X (Twitter)"
+              >
+                <i className="ri-twitter-x-line" aria-hidden="true"></i>
+              </a>
+
+              <a 
+                href="https://www.instagram.com/accescostore?utm_source=qr" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="social-icon"
+                aria-label="Follow Accesco Living on Instagram"
+              >
+                <i className="ri-instagram-line" aria-hidden="true"></i>
+              </a>
+
+              <a 
+                href="https://www.linkedin.com/company/accesco-living/" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="social-icon"
+                aria-label="Follow Accesco Living on LinkedIn"
+              >
+                <i className="ri-linkedin-fill" aria-hidden="true"></i>
+              </a>
+
+              <a 
+                href="https://www.facebook.com/share/1BMyjWcU1B/" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="social-icon"
+                aria-label="Follow Accesco Living on Facebook"
+              >
+                <i className="ri-facebook-fill" aria-hidden="true"></i>
+              </a>
+
+              <a 
+                href="https://youtube.com/@accescoliving?si=Xzk9m4vzZqW6-lje" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="social-icon"
+                aria-label="Subscribe to Accesco Living on YouTube"
+              >
+                <i className="ri-youtube-fill" aria-hidden="true"></i>
+              </a>
+
+              <a 
+                href="https://pin.it/77fE8R0rC" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="social-icon"
+                aria-label="Follow Accesco Living on Pinterest"
+              >
+                <i className="ri-pinterest-fill" aria-hidden="true"></i>
+              </a>
+
+              <a 
+                href="mailto:support@accescoliving.com" 
+                className="social-icon"
+                aria-label="Send email to Accesco Support"
+              >
+                <i className="ri-mail-send-line" aria-hidden="true"></i>
+              </a>
             </div>
             
             <div className="app-badges">
-              <a href="#" className="download-badge">
-                <Image src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg" alt="Google Play" className="badge-img" width={135} height={40} />
+              <a 
+                href="#" 
+                className="download-badge"
+                aria-label="Download Accesco Living app on Google Play Store"
+              >
+                <Image 
+                  src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg" 
+                  alt="Google Play Store" 
+                  className="badge-img" 
+                  width={135} 
+                  height={40} 
+                />
               </a>
-              <a href="#" className="download-badge">
-                <Image src="https://upload.wikimedia.org/wikipedia/commons/3/3c/Download_on_the_App_Store_Badge.svg" alt="App Store" className="badge-img" width={135} height={40} />
+
+              <a 
+                href="#" 
+                className="download-badge"
+                aria-label="Download Accesco Living app on Apple App Store"
+              >
+                <Image 
+                  src="https://upload.wikimedia.org/wikipedia/commons/3/3c/Download_on_the_App_Store_Badge.svg" 
+                  alt="Apple App Store" 
+                  className="badge-img" 
+                  width={135} 
+                  height={40} 
+                />
               </a>
             </div>
           </div>
@@ -69,7 +157,7 @@ export default function Footer() {
               <Link href="/faq" className="link-item">FAQ</Link>
               <Link href="/referral" className="link-item">Referral Program</Link>
               <Link href="/investor-relations" className="link-item">Investor Relations</Link>
-               <Link href="/careers" className="link-item">Careers</Link>
+              <Link href="/careers" className="link-item">Careers</Link>
             </div>
 
             <div className="link-group">
@@ -79,22 +167,23 @@ export default function Footer() {
             </div>
           </div>
         </div>
+
         <div className="footer-watermark">
-  accesco
-</div>
+          accesco
+        </div>
 
         <div className="footer-divider-faint"></div>
 
-       <div className="bottom-bar">
-  <span className="copyright-text">
-    © {currentYear} Accesco Living. All rights reserved.
-  </span>
+        <div className="bottom-bar">
+          <span className="copyright-text">
+            © {currentYear} Accesco Living. All rights reserved.
+          </span>
 
-  <span className="copyright-text">
-    Bengaluru, Karnataka • India
-  </span>
-</div>
-        
+          <span className="copyright-text">
+            Bengaluru, Karnataka • India
+          </span>
+        </div>
+
       </div>
     </footer>
   );

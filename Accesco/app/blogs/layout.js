@@ -4,6 +4,7 @@ const baloo = Baloo_2({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700", "800"],
   variable: "--font-baloo",
+  adjustFontFallback: false,
 });
 
 export const metadata = {

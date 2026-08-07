@@ -142,6 +142,8 @@
 .itemImgWrap {
   position: relative;
   flex-shrink: 0;
+  width: 60px;
+  height: 60px;
 }
 
 .itemImg {

@@ -40,27 +40,12 @@ export default function PartnerAsVendor() {
     setSubmitStatus(null);
 
     try {
-      const response = await fetch('https://formspree.io/f/mdaojdag', {
+      const response = await fetch('/api/partner/vendor', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          'Form Type': 'Vendor Partnership',
-          'Business Name': formData.businessName,
-          'Owner Name': formData.ownerName,
-          '_replyto': formData.email,
-          'Phone': formData.phone,
-          'Business Type': formData.businessType,
-          'Address': formData.address,
-          'City': formData.city,
-          'Pincode': formData.pincode,
-          'GST Number': formData.gst,
-          'FSSAI License': formData.fssai,
-          'Experience': formData.experience,
-          'Description': formData.description,
-          '_subject': 'New Vendor Partnership Application!'
-        }),
+        body: JSON.stringify(formData),
       });
 
       if (response.ok) {
@@ -108,6 +93,12 @@ export default function PartnerAsVendor() {
             </h1>
             <p className="vendor-hero-subtitle">
               Join India's fastest-growing lifestyle platform. Reach millions of customers and scale your business effortlessly.
+            </p>
+            <p className="vendor-hero-description">
+              Accesco Living connects dark stores, restaurants, and D2C brands directly
+              with households across Bengaluru through Grokly, Swadishtt, and InstaStyle.
+              Fill out the application below and our partnerships team will review your
+              business and get back to you within 2–3 business days.
             </p>
             
           </div>
@@ -417,28 +408,42 @@ export default function PartnerAsVendor() {
                 <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg>
               </div>
               <h3>Increase Revenue</h3>
-              <p>Access millions of customers and boost your sales by up to 3x</p>
+              <p>
+                Access millions of customers and boost your sales by up to 3x by listing
+                your business in front of shoppers already ordering daily on Grokly,
+                Swadishtt, and InstaStyle.
+              </p>
             </div>
             <div className="vendor-benefit-card">
               <div className="vendor-benefit-icon">
                 <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle><circle cx="12" cy="12" r="2"></circle></svg>
               </div>
               <h3>Marketing Support</h3>
-              <p>Featured listings, promotional campaigns, and targeted advertising</p>
+              <p>
+                Featured listings, promotional campaigns, and targeted advertising help
+                new partners get discovered fast, without having to run their own
+                acquisition marketing.
+              </p>
             </div>
             <div className="vendor-benefit-card">
               <div className="vendor-benefit-icon">
                 <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
               </div>
               <h3>Quick Settlements</h3>
-              <p>Fast and transparent payment processing with weekly payouts</p>
+              <p>
+                Fast and transparent payment processing with weekly payouts, so cash
+                flow never becomes a bottleneck for growing your operation.
+              </p>
             </div>
             <div className="vendor-benefit-card">
               <div className="vendor-benefit-icon">
                 <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
               </div>
               <h3>Business Analytics</h3>
-              <p>Real-time insights and performance tracking dashboard</p>
+              <p>
+                A real-time insights and performance tracking dashboard shows order
+                volume, customer ratings, and revenue trends as they happen.
+              </p>
             </div>
           </div>
         </section>

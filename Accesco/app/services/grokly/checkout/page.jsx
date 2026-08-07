@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useGrokly } from '../contexts/GroklyContext';
 import { products } from '../lib/groklyData';
@@ -457,7 +458,8 @@ export default function GroklyCheckout() {
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '10px' }}>
                   {returnItems.map(item => (
                     <div key={item.id} style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '10px 12px', background: '#fff', borderRadius: '10px', border: '1px solid #bbf7d0' }}>
-                      <img src={item.image} alt={item.name} style={{ width: '40px', height: '40px', borderRadius: '8px', objectFit: 'cover', border: '1px solid #d1fae5' }} onError={e => { e.target.src = `https://placehold.co/40x40/e8f5e9/0c831f?text=${item.name[0]}`; }} />
+                      {/* eslint-disable-next-line @next/next/no-img-element -- item.image comes from the product catalog's heterogeneous external hosts, not compatible with next/image's static remotePatterns allowlist */}
+                      <img src={item.image} alt={item.name} width={40} height={40} style={{ borderRadius: '8px', objectFit: 'cover', border: '1px solid #d1fae5' }} onError={e => { e.target.src = `https://placehold.co/40x40/e8f5e9/0c831f?text=${item.name[0]}`; }} />
                       <div style={{ flex: 1 }}>
                         <div style={{ fontSize: '13px', fontWeight: 700, color: '#111827' }}>{item.name}</div>
                         <div style={{ fontSize: '11px', color: '#6b7280' }}>×{item.quantity} · Reusable</div>

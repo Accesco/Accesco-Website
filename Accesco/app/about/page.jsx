@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import AccescoHeader from '../../components/AccescoHeader';
 
 import { AccescoHero } from '../../components/HeroBanners';
@@ -18,9 +19,9 @@ export default function AboutPage() {
         <section className="about-mission-section">
           <div className="about-container">
             <div className="mission-content">
-              <h2 className="mission-title">
+              <h1 className="mission-title">
                 Making everyday commerce transparent, intelligent, and circular
-              </h2>
+              </h1>
               <p className="mission-description">
                 For the household, the local producer, and the planet — simultaneously.
               </p>
@@ -28,7 +29,7 @@ export default function AboutPage() {
             
             {/* Mission Image */}
             <div className="mission-image">
-              <img src="/images/about-mission.PNG" alt="Our Mission - Transparent and Circular Commerce" />
+              <Image src="/images/about-mission.PNG" alt="Our Mission - Transparent and Circular Commerce" width={1920} height={1080} />
             </div>
           </div>
         </section>
@@ -56,7 +57,7 @@ export default function AboutPage() {
                   
                   {/* Problem Illustration */}
                   <div className="content-image">
-                    <img src="/images/about-problem.jpeg" alt="The Problem We're Solving" />
+                    <Image src="/images/about-problem.jpeg" alt="The Problem We're Solving" width={1080} height={1350} />
                   </div>
                   
                   <p>
@@ -215,9 +216,11 @@ export default function AboutPage() {
               boxShadow: '0 24px 72px rgba(122,0,66,0.15)',
               position: 'relative',
             }}>
-              <img
+              <Image
                 src="/images/foundersteam.jpg"
                 alt="Accesco Living founding team"
+                width={1920}
+                height={1080}
                 style={{
                   width: '100%',
                   height: 'auto',

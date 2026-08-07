@@ -2449,12 +2449,16 @@ opacity:0.5;
   .intelligenceImage {
     width: 100%;
     max-width: none;
+    height: auto;
     border-radius: 0;
     box-shadow: none;
     display: block;
-    object-fit: cover;
-    mix-blend-mode: multiply;
-    filter: contrast(1.08) saturate(1.05);
+    object-fit: contain;
+
+    /* Must stay normal/none: the artwork has a transparent background, and
+       `multiply` composites it against the section as pure black. */
+    mix-blend-mode: normal;
+    filter: none;
   }
 }
 
@@ -4781,3 +4785,60 @@ opacity:0.5;
         }
 
         /* xpense-card hover interactions removed */
+
+/* ── Bengaluru Launch Banner Section ── */
+.bengaluru-launch-section {
+  width: 100%;
+  padding: 40px 20px;
+  background: #ffffff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+.bengaluru-launch-wrapper {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+}
+
+.bengaluru-launch-card {
+  position: relative;
+  width: 100%;
+  max-width: 100%;
+  border-radius: 20px;
+  overflow: hidden;
+  background: transparent;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+.bengaluru-launch-img {
+  width: 100%;
+  height: auto;
+  max-width: 100%;
+  display: block;
+  object-fit: contain;
+  border-radius: 20px;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-user-drag: none;
+}
+
+@media (max-width: 768px) {
+  .bengaluru-launch-section {
+    padding: 24px 14px;
+  }
+
+  .bengaluru-launch-card,
+  .bengaluru-launch-img {
+    border-radius: 12px;
+  }
+}
+

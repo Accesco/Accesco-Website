@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useMemo, useEffect, Suspense } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useGrokly } from '../contexts/GroklyContext';
@@ -10,7 +11,8 @@ import {
   Trash2, Copy, Edit3, Share2, ShoppingBag, 
   Info, CheckCircle2, ChevronRight, User, 
   MapPin, CreditCard, Heart, ShoppingCart, LogOut,
-  Leaf, RefreshCw, Truck
+  Leaf, RefreshCw, Truck, Bell, Settings, TicketPercent,
+  ShieldCheck, Headphones, Award, Crown, PackageCheck
 } from 'lucide-react';
 import styles from './profile.module.css';
 import { useAuth } from '../../../components/AuthProvider';
@@ -138,7 +140,8 @@ function ReverseCommerceView({ orders, walletBalance, ecoHistory, formatDate, sh
               </div>
               {ret.items.map(item => (
                 <div key={item.id} style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                  <img src={item.image} alt={item.name} style={{ width: '36px', height: '36px', borderRadius: '8px', objectFit: 'cover', border: '1px solid #e5e7eb' }} onError={e => { e.target.src = `https://placehold.co/36x36/e8f5e9/0c831f?text=${item.name[0]}`; }} />
+                  {/* eslint-disable-next-line @next/next/no-img-element -- item.image comes from the product catalog's heterogeneous external hosts, not compatible with next/image's static remotePatterns allowlist */}
+                  <img src={item.image} alt={item.name} width={36} height={36} style={{ borderRadius: '8px', objectFit: 'cover', border: '1px solid #e5e7eb' }} onError={e => { e.target.src = `https://placehold.co/36x36/e8f5e9/0c831f?text=${item.name[0]}`; }} />
                   <div>
                     <p style={{ margin: 0, fontSize: '13px', fontWeight: 600, color: '#374151' }}>{item.name}</p>
                     <p style={{ margin: 0, fontSize: '11px', color: '#9ca3af' }}>{item.quantity} unit{item.quantity > 1 ? 's' : ''}</p>
@@ -162,7 +165,8 @@ function ReverseCommerceView({ orders, walletBalance, ecoHistory, formatDate, sh
                   </div>
                   {ret.items.map(item => (
                     <div key={item.id} style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                      <img src={item.image} alt={item.name} style={{ width: '36px', height: '36px', borderRadius: '8px', objectFit: 'cover', border: '1px solid #e5e7eb' }} onError={e => { e.target.src = `https://placehold.co/36x36/e8f5e9/0c831f?text=${item.name[0]}`; }} />
+                      {/* eslint-disable-next-line @next/next/no-img-element -- item.image comes from the product catalog's heterogeneous external hosts, not compatible with next/image's static remotePatterns allowlist */}
+                  <img src={item.image} alt={item.name} width={36} height={36} style={{ borderRadius: '8px', objectFit: 'cover', border: '1px solid #e5e7eb' }} onError={e => { e.target.src = `https://placehold.co/36x36/e8f5e9/0c831f?text=${item.name[0]}`; }} />
                       <div style={{ flex: 1 }}>
                         <p style={{ margin: 0, fontSize: '13px', fontWeight: 600, color: '#374151' }}>{item.name}</p>
                         <p style={{ margin: 0, fontSize: '11px', color: '#9ca3af' }}>{item.quantity} unit{item.quantity > 1 ? 's' : ''}</p>
@@ -270,7 +274,7 @@ function GroklyProfileInner() {
 
   useEffect(() => {
     const view = searchParams.get('view');
-    if (view && ['profile', 'baskets', 'wishlist'].includes(view)) {
+    if (view && ['profile', 'baskets', 'wishlist', 'reverse-commerce', 'address', 'coupons', 'notifications', 'settings'].includes(view)) {
       setCurrentView(view);
     }
   }, [searchParams]);
@@ -577,12 +581,14 @@ function GroklyProfileInner() {
             {/* LEFT COLUMN: User Card, Cash, Settings, Navigation */}
             <div className={`${styles.leftColumn} ${currentView !== 'profile' ? styles.mobileHidden : ''}`}>
               <div className={styles.profileCard}>
-                <div className={styles.avatar}>
-                  {profile.name.charAt(0)}
+                <div className={styles.profileTopRow}>
+                  <div className={styles.avatar}>{profile.name.charAt(0)}</div>
+                  <span className={styles.premiumBadge}><Crown size={12} /> Premium Member</span>
                 </div>
                 <div className={styles.userInfo}>
                   <h1>{profile.name}</h1>
-                  <p>{profile.phone} · {profile.email}</p>
+                  <p>{profile.phone || '9000000000'}</p>
+                  <p>{profile.email || 'sample@gmail.com'}</p>
                 </div>
               </div>
 
@@ -628,8 +634,8 @@ function GroklyProfileInner() {
                 </div>
                 <div className={styles.cashBody}>
                   <div className={styles.balanceInfo}>
-                    <span className={styles.balLabel}>Balance</span>
-                    <span className={styles.balAmount}>₹{walletBalance}</span>
+                    <span className={styles.balLabel}>Available Balance</span>
+                    <span className={styles.balAmount}>{walletBalance ? `₹${walletBalance}` : "₹XXXX"}</span>
                   </div>
                   <button className={styles.addBalBtn} onClick={() => showToast('Payment Gateway coming soon!', 'info')}>
                     Add Cash
@@ -637,78 +643,64 @@ function GroklyProfileInner() {
                 </div>
               </div>
 
-              {/* Desktop Navigation Tabs */}
+              {/* Dashboard Navigation */}
               <div className={styles.desktopNav}>
-                <button 
-                  className={`${styles.navTab} ${currentView === 'profile' ? styles.activeTab : ''}`}
-                  onClick={() => setCurrentView('profile')}
-                >
-                  <ShoppingBag size={18} />
-                  <span>Order History</span>
+                <button className={`${styles.navTab} ${currentView === 'profile' ? styles.activeTab : ''}`} onClick={() => setCurrentView('profile')}>
+                  <ShoppingBag size={17} /><span>Order History</span>
                 </button>
-                <button 
-                  className={`${styles.navTab} ${currentView === 'baskets' || currentView === 'basket-detail' ? styles.activeTab : ''}`}
-                  onClick={() => setCurrentView('baskets')}
-                >
-                  <ShoppingCart size={18} />
-                  <span>Saved Baskets</span>
+                <button className={`${styles.navTab} ${currentView === 'baskets' || currentView === 'basket-detail' ? styles.activeTab : ''}`} onClick={() => setCurrentView('baskets')}>
+                  <ShoppingCart size={17} /><span>Saved Baskets</span>
                 </button>
-                <button 
-                  className={`${styles.navTab} ${currentView === 'wishlist' ? styles.activeTab : ''}`}
-                  onClick={() => setCurrentView('wishlist')}
-                >
-                  <Heart size={18} />
-                  <span>Wishlist</span>
+                <button className={`${styles.navTab} ${currentView === 'wishlist' ? styles.activeTab : ''}`} onClick={() => setCurrentView('wishlist')}>
+                  <Heart size={17} /><span>Wishlist</span>
                 </button>
-                <button 
-                  className={`${styles.navTab} ${currentView === 'reverse-commerce' ? styles.activeTab : ''}`}
-                  onClick={() => setCurrentView('reverse-commerce')}
-                >
-                  <RefreshCw size={18} style={{ marginRight: '6px' }} />
-                  <span>Eco-Return (Reuse)</span>
+                <button className={`${styles.navTab} ${currentView === 'reverse-commerce' ? styles.activeTab : ''}`} onClick={() => setCurrentView('reverse-commerce')}>
+                  <RefreshCw size={17} /><span>Eco-Return (Reuse)</span>
                 </button>
-                <button 
-                  className={`${styles.navTab} ${styles.navTabLogout}`}
-                  onClick={handleLogout}
-                >
-                  <LogOut size={18} />
-                  <span>Logout</span>
+                <button className={`${styles.navTab} ${currentView === 'address' ? styles.activeTab : ''}`} onClick={() => setCurrentView('address')}>
+                  <MapPin size={17} /><span>Delivery Address</span>
                 </button>
-              </div>
-
-              {/* Info Settings */}
-              <div className={styles.settingsGrid}>
-                <div className={styles.settingsCard}>
-                  <div className={styles.settingsHeader}>
-                    <div className={styles.settingsIconTitle}>
-                      <MapPin size={18} style={{ color: '#0c831f', marginRight: 8 }} />
-                      <h3>Delivery Address</h3>
-                    </div>
-                  </div>
-                  <p>{location}</p>
-                  <button className={styles.editBtn} onClick={() => {
-                    const newAddr = prompt('Update your delivery address:', location);
-                    if (newAddr && newAddr.trim()) {
-                      updateLocation(newAddr.trim());
-                      localStorage.setItem('userLocation', JSON.stringify({ displayAddress: newAddr.trim(), fullAddress: newAddr.trim() }));
-                      showToast('Address updated!');
-                    }
-                  }}>Edit Address</button>
-                </div>
+                <button className={`${styles.navTab} ${currentView === 'coupons' ? styles.activeTab : ''}`} onClick={() => setCurrentView('coupons')}>
+                  <TicketPercent size={17} /><span>My Coupons</span>
+                </button>
+                <button className={`${styles.navTab} ${currentView === 'notifications' ? styles.activeTab : ''}`} onClick={() => setCurrentView('notifications')}>
+                  <Bell size={17} /><span>Notifications</span>
+                </button>
+                <button className={`${styles.navTab} ${currentView === 'settings' ? styles.activeTab : ''}`} onClick={() => setCurrentView('settings')}>
+                  <Settings size={17} /><span>Account Settings</span>
+                </button>
+                <button className={`${styles.navTab} ${styles.navTabLogout}`} onClick={handleLogout}>
+                  <LogOut size={17} /><span>Logout</span>
+                </button>
               </div>
             </div>
 
             {/* RIGHT COLUMN: Dynamic views */}
-            <div className={`${styles.rightColumn} ${currentView === 'profile' ? styles.mobileOnlyOrders : ''} ${currentView !== 'profile' && currentView !== 'baskets' && currentView !== 'basket-detail' && currentView !== 'wishlist' ? styles.mobileHidden : ''}`}>
-              
+            <div className={`${styles.rightColumn} ${currentView === 'profile' ? styles.mobileDashboardHidden : ''}`}>
+              {currentView === 'profile' && (
+                <section className={styles.welcomeBanner}>
+                  <div>
+                    <h2>Welcome back,<br /><span>{profile.name.split(' ')[0]}!</span></h2>
+                    <p>Manage your orders, wallet & more all in one place.</p>
+                  </div>
+                  <div className={styles.welcomeArt} aria-hidden="true">
+                    <span className={styles.sparkle}>✦</span>
+                    <ShoppingBag size={76} strokeWidth={1.4} />
+                    <span className={styles.plant}>♨</span>
+                  </div>
+                </section>
+              )}
+
               {/* View 1: Order History */}
               {currentView === 'profile' && (
                 <div className={styles.paneCard}>
                   <h2 className={styles.paneTitle}>Order History ({orders.length})</h2>
                   {orders.length === 0 ? (
                     <div className={styles.emptyState}>
-                      <p>No orders yet</p>
-                      <Link href="/services/grokly" className={styles.shopBtn}>Start Shopping</Link>
+                      <div className={styles.emptyIllustration}><PackageCheck size={58} strokeWidth={1.4} /></div>
+                      <h3>No orders yet</h3>
+                      <p>Looks like you haven't placed any orders. Start shopping to see your orders here.</p>
+                      <Link href="/services/grokly" className={styles.shopBtn}>Start Shopping <ChevronRight size={15} /></Link>
                     </div>
                   ) : (
                     <div className={styles.orderList}>
@@ -791,7 +783,7 @@ function GroklyProfileInner() {
                                 const prod = getProductInfo(item.id);
                                 return (
                                   <div key={`${item.id}-${idx}`} className={styles.tinyThumbnailFrame}>
-                                    <img src={prod.image} alt={prod.name} />
+                                    <Image src={prod.image} alt={prod.name} width={28} height={28} />
                                   </div>
                                 );
                               })}
@@ -853,9 +845,11 @@ function GroklyProfileInner() {
                       return (
                         <div key={item.id} className={styles.detailItemRow}>
                           <div className={styles.detailItemThumb}>
-                            <img 
-                              src={prod.image} 
-                              alt={prod.name} 
+                            <Image
+                              src={prod.image}
+                              alt={prod.name}
+                              width={48}
+                              height={48}
                               onError={(e) => {
                                 e.target.src = 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=100&h=100&fit=crop';
                               }}
@@ -935,7 +929,7 @@ function GroklyProfileInner() {
                         return (
                           <div key={item.id} className={styles.detailItemRow}>
                             <div className={styles.detailItemThumb}>
-                              <img src={prod.image} alt={prod.name} />
+                              <Image src={prod.image} alt={prod.name} width={48} height={48} />
                             </div>
                             <div className={styles.detailItemInfo}>
                               <h4 className={styles.detailItemName}>{prod.name}</h4>
@@ -1020,6 +1014,45 @@ function GroklyProfileInner() {
                   )}
                 </div>
               )}
+              {currentView === 'address' && (
+                <div className={styles.paneCard}>
+                  <h2 className={styles.paneTitle}>Delivery Address</h2>
+                  <div className={styles.settingRow}>
+                    <MapPin size={22} /><div><h3>Current address</h3><p>{location}</p></div>
+                    <button className={styles.editBtn} onClick={() => {
+                      const newAddr = prompt('Update your delivery address:', location);
+                      if (newAddr && newAddr.trim()) {
+                        updateLocation(newAddr.trim());
+                        localStorage.setItem('userLocation', JSON.stringify({ displayAddress: newAddr.trim(), fullAddress: newAddr.trim() }));
+                        showToast('Address updated!');
+                      }
+                    }}>Edit</button>
+                  </div>
+                </div>
+              )}
+
+              {currentView === 'coupons' && (
+                <div className={styles.paneCard}>
+                  <h2 className={styles.paneTitle}>My Coupons</h2>
+                  <div className={styles.emptyState}><TicketPercent size={52} /><h3>No coupons available</h3><p>Your available offers and coupon codes will appear here.</p></div>
+                </div>
+              )}
+
+              {currentView === 'notifications' && (
+                <div className={styles.paneCard}>
+                  <h2 className={styles.paneTitle}>Notifications</h2>
+                  <div className={styles.emptyState}><Bell size={52} /><h3>You're all caught up</h3><p>Order, wallet and offer updates will appear here.</p></div>
+                </div>
+              )}
+
+              {currentView === 'settings' && (
+                <div className={styles.paneCard}>
+                  <h2 className={styles.paneTitle}>Account Settings</h2>
+                  <div className={styles.settingRow}><User size={22} /><div><h3>Profile information</h3><p>{profile.name} · {profile.email || 'No email added'}</p></div><button className={styles.editBtn} onClick={() => showToast('Profile editor coming soon!', 'info')}>Edit</button></div>
+                  <div className={styles.settingRow}><ShieldCheck size={22} /><div><h3>Privacy & security</h3><p>Manage your password and account protection.</p></div><ChevronRight size={18} /></div>
+                </div>
+              )}
+
               {/* View 5: Reverse Commerce — Return History + Green Points */}
               {currentView === 'reverse-commerce' && (
                 <div className={styles.paneCard}>
@@ -1032,6 +1065,50 @@ function GroklyProfileInner() {
                   />
                 </div>
               )}
+
+             {currentView === 'profile' && (
+  <div className={styles.featuresStrip}>
+    <div className={styles.featureItem}>
+      <div className={styles.featureIcon}>
+        <ShieldCheck size={20} />
+      </div>
+      <div>
+        <div className={styles.featureTitle}>Secure Payments</div>
+        <div className={styles.featureDesc}>100% safe & secure</div>
+      </div>
+    </div>
+
+    <div className={styles.featureItem}>
+      <div className={styles.featureIcon}>
+        <Truck size={20} />
+      </div>
+      <div>
+        <div className={styles.featureTitle}>Super Fast Delivery</div>
+        <div className={styles.featureDesc}>Get it in XX minutes</div>
+      </div>
+    </div>
+
+    <div className={styles.featureItem}>
+      <div className={styles.featureIcon}>
+        <Award size={20} />
+      </div>
+      <div>
+        <div className={styles.featureTitle}>Best Quality</div>
+        <div className={styles.featureDesc}>Handpicked products</div>
+      </div>
+    </div>
+
+    <div className={styles.featureItem}>
+      <div className={styles.featureIcon}>
+        <Headphones size={20} />
+      </div>
+      <div>
+        <div className={styles.featureTitle}>24/7 Support</div>
+        <div className={styles.featureDesc}>We're here to help</div>
+      </div>
+    </div>
+  </div>
+)}
             </div>
           </div>
         </div>

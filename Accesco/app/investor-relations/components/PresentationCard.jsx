@@ -11,7 +11,13 @@
     </article>
   );
 }*/
-export default function PresentationCard({ title, href }) {
+import Image from 'next/image';
+
+export default function PresentationCard({ title, href, cover }) {
+  const coverSrc = cover?.src || '/images/corporate-deck-cover.png';
+  const coverWidth = cover?.width || 1742;
+  const coverHeight = cover?.height || 931;
+
   return (
     <article className="presentation-card deck-card">
       <a
@@ -21,10 +27,12 @@ export default function PresentationCard({ title, href }) {
         className="deck-link"
       >
         <div className="deck-preview-wrapper">
-          <img
-            src="/images/corporate-deck-cover.png"
+          <Image
+            src={coverSrc}
             alt={`${title} preview`}
             className="deck-cover"
+            width={coverWidth}
+            height={coverHeight}
           />
 
           <div className="deck-overlay">

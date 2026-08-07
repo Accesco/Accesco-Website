@@ -44,6 +44,7 @@
   border: 3px solid transparent;
   transition: border-color var(--grokly-transition-fast);
   background: var(--grokly-bg);
+  position: relative;
 }
 
 .catItem.active .catImageWrapper {
