@@ -134,13 +134,13 @@ export default function RootLayout({ children }) {
 
 
   return (
-    <html lang="en" className={`${sora.variable} ${dmSans.variable} ${inter.variable} ${spaceGrotesk.variable}`}>
+    <html lang="en" suppressHydrationWarning className={`${sora.variable} ${dmSans.variable} ${inter.variable} ${spaceGrotesk.variable}`}>
       <head>
         {/* Structured Data for SEO */}
         <JsonLd data={[organizationSchema, websiteSchema]} />
       </head>
 
-      <body>
+      <body suppressHydrationWarning>
         <AuthProvider>
           <BreadcrumbJsonLd />
           <ReferralCapture />
