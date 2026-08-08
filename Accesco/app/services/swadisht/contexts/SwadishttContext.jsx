@@ -7,10 +7,10 @@
 'use client';
 
 import { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react';
+import { useAuth } from '../../../components/AuthProvider';
+import { getSwadishttCart, setSwadishttCart } from '@/lib/unifiedCart';
 
 const SwadishttContext = createContext(undefined);
-
-const CART_STORAGE_KEY = 'swadishtt-cart';
 
 const TARGET_ACCURACY_METERS = 50;
 const ACCEPTABLE_ACCURACY_METERS = 100;
@@ -274,6 +274,8 @@ function buildUserLocationStoragePayload({
 }
 
 export function SwadishttProvider({ children }) {
+  const { user: authUser } = useAuth();
+
   // Cart State
   const [cart, setCart] = useState([]);
   const [cartOpen, setCartOpen] = useState(false);
@@ -536,39 +538,37 @@ export function SwadishttProvider({ children }) {
   // Search State
   const [searchQuery, setSearchQuery] = useState('');
 
-  // Load cart from localStorage
+  // Load cart from Firestore. Keyed by the signed-in user's uid, or a
+  // per-browser device id for guests (see getSwadishttCart in unifiedCart.js)
+  // — re-runs when auth resolves/changes so the right cart gets loaded.
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
-    // Edited Jabez: hydrate cart before any save writes to prevent overwriting storage.
-    try {
-      const savedCart = localStorage.getItem(CART_STORAGE_KEY);
-      if (savedCart) {
-        const parsed = JSON.parse(savedCart);
-        if (Array.isArray(parsed)) {
-          setCart(parsed);
-        } else {
-          localStorage.removeItem(CART_STORAGE_KEY);
-        }
-      }
-    } catch (error) {
-      console.error('Error loading cart:', error);
-    } finally {
-      setCartHydrated(true);
-    }
-  }, []);
+    let cancelled = false;
+    setCartHydrated(false);
 
-  // Save cart to localStorage
+    (async () => {
+      try {
+        const remoteCart = await getSwadishttCart(authUser);
+        if (!cancelled) setCart(remoteCart);
+      } catch (error) {
+        console.error('Error loading cart:', error);
+      } finally {
+        if (!cancelled) setCartHydrated(true);
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [authUser]);
+
+  // Save cart to Firestore whenever it changes, once hydration has completed.
   useEffect(() => {
     if (!cartHydrated || typeof window === 'undefined') return;
 
-    // Edited Jabez: skip initial save until hydration completes to keep cart intact.
-    try {
-      localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cart));
-    } catch (error) {
-      console.error('Error saving cart:', error);
-    }
-  }, [cart, cartHydrated]);
+    setSwadishttCart(authUser, cart);
+  }, [cart, cartHydrated, authUser]);
 
   // Cart Functions
   const addToCart = (item, customizations = {}) => {
