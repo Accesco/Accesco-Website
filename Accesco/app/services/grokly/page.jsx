@@ -1450,7 +1450,7 @@ function GroklyPageContent() {
             padding: "8px 20px",
           }}
         >
-          {/* Category Carousel - Zepto style */}
+          {/* Category Grid Section */}
           {activeCategory === "all" && !searchQuery && (
             <div style={{ margin: "0 0 32px" }}>
               <h3
@@ -1465,210 +1465,38 @@ function GroklyPageContent() {
                 Browse by Categories
               </h3>
 
-              <div style={{ position: "relative" }}>
-                <button
-                  type="button"
-                  onClick={() => {
-                    const rail = document.getElementById(
-                      "grokly-home-category-rail",
-                    );
-                    if (rail) rail.scrollBy({ left: -500, behavior: "smooth" });
-                  }}
-                  style={{
-                    position: "absolute",
-                    left: "-4px",
-                    top: "50%",
-                    transform: "translateY(-50%)",
-                    zIndex: 10,
-
-                    width: "32px",
-                    height: "32px",
-                    borderRadius: "50%",
-                    border: "none",
-
-                    background: "#000",
-                    color: "#fff",
-                    fontSize: "24px",
-                    fontWeight: 900,
-                    lineHeight: "1",
-                    padding: 0,
-                    paddingBottom: "3px",
-
-                    cursor: "pointer",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-
-                    boxShadow: "0 4px 12px rgba(0,0,0,0.22)",
-                  }}
-                >
-                  ‹
-                </button>
-
-                <div
-                  id="grokly-home-category-rail"
-                  className="hide-scrollbar"
-                  style={{
-                    display: "flex",
-                    gap: "16px",
-                    overflowX: "auto",
-                    overflowY: "hidden",
-                    scrollBehavior: "smooth",
-                    scrollSnapType: "x mandatory",
-                    padding: "4px 8px 14px",
-                    scrollbarWidth: "none",
-                    msOverflowStyle: "none",
-                    WebkitOverflowScrolling: "touch",
-                  }}
-                >
-                  {categories
-                    .filter((c) => c.id !== "all")
-                    .map((cat) => (
-                      <button
-                        key={cat.id}
-                        onClick={() => handleCategorySelect(cat.id)}
-                        style={{
-                          flex: "0 0 128px",
-                          width: "128px",
-                          minHeight: "118px",
-                          background: "#fff",
-                          border: "1px solid #f2f4f6",
-                          borderRadius: "12px",
-                          padding: "12px 8px",
-                          display: "flex",
-                          flexDirection: "column",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          cursor: "pointer",
-                          textAlign: "center",
-                          gap: "8px",
-                          boxShadow: "0 1px 3px rgba(0,0,0,0.02)",
-                          scrollSnapAlign: "start",
-                        }}
-                      >
-                        <div
-                          style={{
-                            width: "64px",
-                            height: "64px",
-                            borderRadius: "8px",
-                            background: "#f8fafc",
-                            overflow: "hidden",
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                          }}
-                        >
-                          <Image
-                            src={cat.image}
-                            alt={cat.name}
-                            width={64}
-                            height={64}
-                            style={{
-                              objectFit: "cover",
-                            }}
-                          />
-                        </div>
-
-                        <span
-                          style={{
-                            fontSize: "12px",
-                            fontWeight: 700,
-                            color: "#1a1a1a",
-                            fontFamily: "var(--grokly-font-primary)",
-                            lineHeight: "1.2",
-                            textTransform: "uppercase",
-                          }}
-                        >
-                          {cat.name}
-                        </span>
-                      </button>
-                    ))}
-                </div>
-
-                <button
-                  type="button"
-                  onClick={() => {
-                    const rail = document.getElementById(
-                      "grokly-home-category-rail",
-                    );
-                    if (rail) rail.scrollBy({ left: 500, behavior: "smooth" });
-                  }}
-                  style={{
-                    position: "absolute",
-                    right: "-4px",
-                    top: "50%",
-                    transform: "translateY(-50%)",
-                    zIndex: 10,
-
-                    width: "32px",
-                    height: "32px",
-                    borderRadius: "50%",
-                    border: "none",
-
-                    background: "#000",
-                    color: "#fff",
-                    fontSize: "24px",
-                    fontWeight: 900,
-                    lineHeight: "1",
-                    padding: 0,
-                    paddingBottom: "3px",
-
-                    cursor: "pointer",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-
-                    boxShadow: "0 4px 12px rgba(0,0,0,0.22)",
-                  }}
-                >
-                  ›
-                </button>
+              <div className="grokly-category-grid">
+                {categories
+                  .filter((c) => c.id !== "all")
+                  .map((cat) => (
+                    <button
+                      key={cat.id}
+                      onClick={() => handleCategorySelect(cat.id)}
+                      className="grokly-cat-card"
+                    >
+                      <div className="grokly-cat-img-wrapper">
+                        <Image
+                          src={cat.image}
+                          alt={cat.name}
+                          width={110}
+                          height={110}
+                          className="grokly-cat-img"
+                          draggable={false}
+                          onContextMenu={(e) => e.preventDefault()}
+                        />
+                      </div>
+                      <span className="grokly-cat-title">
+                        {cat.name}
+                      </span>
+                    </button>
+                  ))}
               </div>
-
-              <style
-                dangerouslySetInnerHTML={{
-                  __html: `
-        #grokly-home-category-rail::-webkit-scrollbar {
-          display: none;
-        }
-
-        @media (max-width: 768px) {
-          #grokly-home-category-rail {
-            gap: 14px !important;
-            padding: 2px 4px 12px !important;
-          }
-
-          #grokly-home-category-rail button {
-            flex: 0 0 112px !important;
-            width: 112px !important;
-            min-height: 128px !important;
-            padding: 12px 8px !important;
-            border-radius: 14px !important;
-          }
-
-          #grokly-home-category-rail button > div {
-            width: 76px !important;
-            height: 76px !important;
-            border-radius: 13px !important;
-          }
-
-          #grokly-home-category-rail span {
-            font-size: 11px !important;
-          }
-
-          #grokly-home-category-rail + button,
-          div:has(> #grokly-home-category-rail) > button {
-            display: none !important;
-          }
-        }
-      `,
-                }}
-              />
             </div>
           )}
-{activeCategory === "all" && !searchQuery && (
-  <GroceryStories />
-)}
+
+          {activeCategory === "all" && !searchQuery && (
+            <GroceryStories />
+          )}
           {/* Curated Product Sections */}
           {activeCategory === "all" && !searchQuery && (
             <div

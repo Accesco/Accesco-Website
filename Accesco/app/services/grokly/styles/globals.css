@@ -394,25 +394,95 @@
 /* ─── GROKLY BROWSE BY CATEGORY GRID ────────────────────────────────── */
 .grokly-category-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
-  gap: 12px;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 16px;
+  width: 100%;
+  margin: 16px 0 32px;
 }
 
-@media (min-width: 769px) {
+.grokly-cat-card {
+  background: #ffffff;
+  border: 1px solid #f0f2f5;
+  border-radius: 16px;
+  padding: 16px 12px 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  text-align: center;
+  gap: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+  transition: transform 0.25s cubic-bezier(0.165, 0.84, 0.44, 1), box-shadow 0.25s ease, border-color 0.25s ease;
+  aspect-ratio: 1 / 1.12;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.grokly-cat-card:hover {
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.07);
+  border-color: #e2e8f0;
+}
+
+.grokly-cat-img-wrapper {
+  width: 100%;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.grokly-cat-img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: contain !important;
+  transition: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-user-drag: none;
+  pointer-events: none;
+}
+
+/* .grokly-cat-card:hover .grokly-cat-img — no scale, hover kept subtle */
+
+.grokly-cat-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #222222;
+  font-family: var(--grokly-font-primary), sans-serif;
+  line-height: 1.25;
+  text-align: center;
+}
+
+@media (max-width: 1024px) {
   .grokly-category-grid {
-    grid-template-columns: repeat(9, 1fr) !important;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
   }
 }
 
 @media (max-width: 768px) {
   .grokly-category-grid {
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+  }
+  
+  .grokly-cat-card {
+    padding: 12px 8px 10px;
+    border-radius: 14px;
+  }
+
+  .grokly-cat-title {
+    font-size: 11px;
   }
 }
 
 @media (max-width: 480px) {
   .grokly-category-grid {
     grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
   }
 }
 

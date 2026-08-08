@@ -347,9 +347,9 @@ return (
               <button onClick={() => handleScrollToSection('open-roles')} className="careers-btn-primary" id="hero-view-roles-btn">
                 View Open Positions <ArrowRight size={18} />
               </button>
-              <a href="/pdfs/Life-at-Accesco.pdf" target="_blank" rel="noopener noreferrer" className="careers-btn-secondary" id="hero-life-btn">
-                Life at Accesco <ArrowRight size={18} />
-              </a>
+              <button onClick={() => window.open('/pdfs/Accesco_deck.pdf', '_blank')} className="careers-btn-secondary" id="hero-life-btn">
+                Apply for Project <ArrowRight size={18} />
+              </button>
             </div>
           </div>
 

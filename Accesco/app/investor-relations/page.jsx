@@ -62,7 +62,7 @@ const reports = [
 
 const presentations = [
   {
-    title: "Presentation",
+    title: "CoE-FPO",
     href: "/pdfs/Accesco_deck.pdf",
     cover: { src: "/images/corporate-deck-cover.png", width: 2880, height: 1620 },
   },

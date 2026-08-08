@@ -281,7 +281,7 @@ function AuthModalContent({
     if (!code) return null
 
     if (!isValidReferralCodeFormat(code)) {
-      return 'Referral code should be 4-20 letters or numbers, e.g. ACCLAUNCH'
+      return 'Referral code should be 4-20 letters or numbers, Eg. XYZ'
     }
 
     if (referralStatus.state === 'valid') return null
@@ -882,7 +882,7 @@ function AuthModalContent({
                       <input
                         style={referralInputStyle()}
                         type="text"
-                        placeholder="eg. ACCLAUNCH"
+                        placeholder="Eg. XYZ"
                         value={referralCode}
                         onChange={(e) =>
                           setReferralCode(e.target.value.toUpperCase())
@@ -943,7 +943,7 @@ function AuthModalContent({
                       <input
                         style={referralInputStyle()}
                         type="text"
-                        placeholder="eg. ACCLAUNCH"
+                        placeholder="Eg. XYZ"
                         value={referralCode}
                         onChange={(e) =>
                           setReferralCode(e.target.value.toUpperCase())
