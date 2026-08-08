@@ -12,6 +12,7 @@ import {
   getInstaStyleCart,
   setInstaStyleCart,
 } from '@/lib/unifiedCart';
+import { useAuth } from '@/app/components/AuthProvider';
 import styles from './cart.module.css';
 
 const STORE_THEME_HEX = {
@@ -193,17 +194,18 @@ function StoreSection({ store, collapsed, onToggle, onQtyChange, onRemove }) {
 
 export default function CartPage() {
   const router = useRouter();
+  const { user } = useAuth();
   const [stores, setStores] = useState([]);
   const [isMounted, setIsMounted] = useState(false);
   const [collapsedMap, setCollapsedMap] = useState({});
   const [search, setSearch] = useState('');
 
-  const refresh = () => setStores(buildUnifiedStores());
+  const refresh = async () => setStores(await buildUnifiedStores(user));
 
   useEffect(() => {
     refresh();
     setIsMounted(true);
-  }, []);
+  }, [user]);
 
   const activeStores = useMemo(() => stores.filter((s) => s.items.length > 0), [stores]);
 
@@ -223,13 +225,13 @@ export default function CartPage() {
 
   const toggleStore = (key) => setCollapsedMap((prev) => ({ ...prev, [key]: !prev[key] }));
 
-  const updateQuantity = (storeKey, item, nextQty) => {
+  const updateQuantity = async (storeKey, item, nextQty) => {
     if (storeKey === 'swadishtt') {
-      const cart = getSwadishttCart();
+      const cart = await getSwadishttCart(user);
       const next = nextQty <= 0
         ? cart.filter((c) => c.id !== item.id)
         : cart.map((c) => (c.id === item.id ? { ...c, quantity: nextQty } : c));
-      setSwadishttCart(next);
+      await setSwadishttCart(user, next);
     } else if (storeKey === 'grokly') {
       const cart = getGroklyCart();
       const next = { ...cart };
@@ -244,7 +246,7 @@ export default function CartPage() {
         : cart.map((c) => (matches(c) ? { ...c, quantity: nextQty } : c));
       setInstaStyleCart(next);
     }
-    refresh();
+    await refresh();
   };
 
   const removeItem = (storeKey, item) => updateQuantity(storeKey, item, 0);

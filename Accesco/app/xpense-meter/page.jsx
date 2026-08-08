@@ -2,13 +2,176 @@
 
 import dynamic from "next/dynamic";
 import Image from "next/image";
-import { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useAuth } from "@/app/components/AuthProvider";
+import { fetchXpenseSummary, saveXpenseBudget } from "@/lib/xpenseMeterService";
 
 const XpenseMobileFlow = dynamic(() => import("./XpenseMobileFlow"), {
   ssr: false,
 });
+const AuthModal = dynamic(() => import("@/app/components/AuthModal"), {
+  ssr: false,
+});
 
-const rupee = (n) => `₹${Number(n).toLocaleString("en-IN")}`;
+const rupee = (n) => `₹${Number(n || 0).toLocaleString("en-IN")}`;
+
+function currentMonthKey() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+}
+
+function formatMonthLabelFallback(monthKey) {
+  const [year, month] = monthKey.split("-").map(Number);
+  return new Date(year, month - 1, 1).toLocaleDateString("en-IN", {
+    month: "long",
+    year: "numeric",
+  });
+}
+
+function buildMonthOptions(count = 12) {
+  const now = new Date();
+  const options = [];
+  for (let i = 0; i < count; i += 1) {
+    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+    options.push({ key, label: d.toLocaleDateString("en-IN", { month: "long", year: "numeric" }) });
+  }
+  return options;
+}
+
+function MonthDropdown({ value, label, options, onChange, size }) {
+  const [open, setOpen] = useState(false);
+  const wrapRef = useRef(null);
+
+  useEffect(() => {
+    if (!open) return undefined;
+    const handleClick = (e) => {
+      if (wrapRef.current && !wrapRef.current.contains(e.target)) setOpen(false);
+    };
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, [open]);
+
+  return (
+    <div className={`xd-month-wrap${size === "sm" ? " sm" : ""}`} ref={wrapRef}>
+      <button type="button" className="xd-month-trigger" onClick={() => setOpen((v) => !v)}>
+        {label} <span>⌄</span>
+      </button>
+      {open && (
+        <div className="xd-month-menu">
+          {options.map((opt) => (
+            <button
+              key={opt.key}
+              type="button"
+              className={opt.key === value ? "active" : ""}
+              onClick={() => {
+                onChange(opt.key);
+                setOpen(false);
+              }}
+            >
+              {opt.label}
+            </button>
+          ))}
+        </div>
+      )}
+
+      <style jsx>{`
+        .xd-month-wrap {
+          position: relative;
+          display: inline-flex;
+        }
+
+        .xd-month-trigger {
+          height: 34px;
+          padding: 0 14px;
+          border-radius: 999px;
+          border: 1px solid rgba(255, 255, 255, 0.16);
+          background: rgba(255, 255, 255, 0.03);
+          color: #f4f4f6;
+          font-size: 12px;
+          font-weight: 600;
+          cursor: pointer;
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+        }
+
+        .xd-month-trigger span {
+          opacity: 0.7;
+        }
+
+        .xd-month-wrap.sm .xd-month-trigger {
+          height: 32px;
+          font-size: 12px;
+        }
+
+        .xd-month-menu {
+          position: absolute;
+          top: calc(100% + 6px);
+          left: 0;
+          z-index: 30;
+          min-width: 170px;
+          max-height: 260px;
+          overflow-y: auto;
+          padding: 6px;
+          border-radius: 12px;
+          border: 1px solid rgba(255, 255, 255, 0.14);
+          background: #17171a;
+          box-shadow: 0 24px 60px rgba(0, 0, 0, 0.55);
+          display: flex;
+          flex-direction: column;
+          gap: 2px;
+        }
+
+        .xd-month-menu button {
+          text-align: left;
+          border: 0;
+          background: transparent;
+          color: #f4f4f6;
+          font-size: 12px;
+          font-weight: 500;
+          padding: 8px 10px;
+          border-radius: 8px;
+          cursor: pointer;
+        }
+
+        .xd-month-menu button:hover {
+          background: rgba(255, 255, 255, 0.08);
+        }
+
+        .xd-month-menu button.active {
+          background: rgba(245, 41, 107, 0.18);
+          color: #ff8ab4;
+          font-weight: 700;
+        }
+      `}</style>
+    </div>
+  );
+}
+
+function formatK(value) {
+  if (!value) return "0";
+  if (value >= 1000) {
+    const k = value / 1000;
+    return `${Number.isInteger(k) ? k : k.toFixed(1)}K`;
+  }
+  return String(value);
+}
+
+function buildDonutGradient(breakdown) {
+  if (!breakdown || !breakdown.length) {
+    return "conic-gradient(rgba(255,255,255,0.12) 0 100%)";
+  }
+  let cursor = 0;
+  const stops = breakdown.map((b) => {
+    const start = cursor;
+    cursor += b.pct;
+    return `${b.dot} ${start}% ${cursor}%`;
+  });
+  if (cursor < 100) stops.push(`rgba(255,255,255,0.12) ${cursor}% 100%`);
+  return `conic-gradient(from -90deg, ${stops.join(", ")})`;
+}
 
 /* --------------------------------------------------------------- helpers */
 
@@ -265,24 +428,6 @@ function PencilIcon() {
 
 const ACCOUNT_NUMBER = "3948 5521 0783 45";
 
-const platforms = [
-  { id: "grocery", name: "Grokly", spent: 5000, budget: 6000 },
-  { id: "food", name: "Swadishtt", spent: 3000, budget: 4000 },
-  { id: "fashion", name: "InstaStyle", spent: 4450, budget: 8000 },
-];
-
-const breakdown = [
-  { name: "Grokly", amount: 5200, pct: 42, dot: "#ffffff" },
-  { name: "Swadishtt", amount: 4500, pct: 38, dot: "#f5296b" },
-  { name: "Instastyle", amount: 3100, pct: 20, dot: "#ffa8c6" },
-];
-
-const spendRows = [
-  { id: "grocery", name: "Grokly", amount: 5200, pct: 42 },
-  { id: "food", name: "Swadishtt", amount: 3600, pct: 32 },
-  { id: "fashion", name: "InstaStyle", amount: 1790, pct: 27 },
-];
-
 const allocations = [
   { key: "grokly", id: "grocery", name: "Grokly" },
   { key: "swadishtt", id: "food", name: "Swadishtt" },
@@ -290,32 +435,123 @@ const allocations = [
 ];
 
 const ALLOC_MIN = 1000;
-const ALLOC_MAX = 18000;
 
-const CHART_MAX = 4000;
-const trend = [
-  { day: "Mon", value: 2400 },
-  { day: "Tue", value: 3000 },
-  { day: "Wed", value: 2820 },
-  { day: "Thu", value: 1120 },
-  { day: "Fri", value: 2100 },
-  { day: "Sat", value: 2260 },
-  { day: "Sun", value: 2040 },
-];
-const gridLines = [4000, 3000, 2000, 1000, 0];
+const ID_BY_KEY = { grokly: "grocery", swadishtt: "food", instastyle: "fashion" };
 
 /* ------------------------------------------------------------- component */
 
 export default function XpenseMeterPage() {
+  const { user, loading: authLoading, getIdToken, signIn } = useAuth();
   const [userName, setUserName] = useState("User");
   const [modal, setModal] = useState(null); // null | 'budget' | 'viewspend'
   const [showAccount, setShowAccount] = useState(false);
+  const [isAuthOpen, setIsAuthOpen] = useState(false);
+
+  const [monthKey, setMonthKey] = useState(() => currentMonthKey());
+  const monthOptions = useMemo(() => buildMonthOptions(12), []);
+
+  const [summary, setSummary] = useState(null);
+  const [summaryLoading, setSummaryLoading] = useState(true);
+
   const [totalBudget, setTotalBudget] = useState(18000);
   const [budgets, setBudgets] = useState({
     grokly: 6000,
     swadishtt: 4000,
     instastyle: 8000,
   });
+  const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState("");
+
+  const loadSummary = useCallback(async () => {
+    if (!user?.uid) {
+      setSummary(null);
+      setSummaryLoading(false);
+      return;
+    }
+    setSummaryLoading(true);
+    const { summary: data } = await fetchXpenseSummary(getIdToken, user.uid, monthKey);
+    if (data) {
+      setSummary(data);
+      setTotalBudget(data.totalBudget);
+      setBudgets(data.budgets);
+    }
+    setSummaryLoading(false);
+  }, [user, monthKey, getIdToken]);
+
+  useEffect(() => {
+    loadSummary();
+  }, [loadSummary]);
+
+  const requireLogin = () => {
+    setIsAuthOpen(true);
+  };
+
+  const openBudgetModal = () => {
+    if (!user) return requireLogin();
+    if (summary) {
+      setTotalBudget(summary.totalBudget);
+      setBudgets(summary.budgets);
+    }
+    setSaveError("");
+    setModal("budget");
+  };
+
+  const openViewSpend = () => {
+    if (!user) return requireLogin();
+    setModal("viewspend");
+  };
+
+  const persistBudget = useCallback(
+    async (nextTotalBudget, nextBudgets) => {
+      if (!user?.uid) {
+        requireLogin();
+        return { success: false, error: "Not authenticated" };
+      }
+      try {
+        await saveXpenseBudget(getIdToken, user.uid, { month: monthKey, totalBudget: nextTotalBudget, budgets: nextBudgets });
+        await loadSummary();
+        return { success: true };
+      } catch (err) {
+        return { success: false, error: err.message || "Failed to save budget" };
+      }
+    },
+    [user, getIdToken, monthKey, loadSummary],
+  );
+
+  const handleSaveBudget = async () => {
+    setSaving(true);
+    setSaveError("");
+    const result = await persistBudget(totalBudget, budgets);
+    if (result.success) {
+      setModal(null);
+    } else if (result.error) {
+      setSaveError(result.error);
+    }
+    setSaving(false);
+  };
+
+  const platforms = summary?.platforms || [];
+  const breakdown = summary?.breakdown || [];
+  const trend = summary?.trend || [];
+  const totalSpend = summary?.totalSpend || 0;
+  const remainingBudget = summary?.remaining ?? totalBudget;
+  const remainingPct = summary?.totalBudget ? Math.max(0, Math.round((remainingBudget / summary.totalBudget) * 100)) : 0;
+  const spendRows = breakdown.map((b) => ({ id: ID_BY_KEY[b.key] || "grocery", name: b.name, amount: b.amount, pct: b.pct }));
+
+  const chartMax = useMemo(() => {
+    const maxVal = Math.max(1000, ...trend.map((t) => t.value));
+    return Math.ceil(maxVal / 1000) * 1000;
+  }, [trend]);
+
+  const gridLines = useMemo(() => {
+    const step = chartMax / 4;
+    return [4, 3, 2, 1, 0].map((i) => Math.round(step * i));
+  }, [chartMax]);
+
+  const allocMax = useMemo(
+    () => Math.max(18000, totalBudget, budgets.grokly, budgets.swadishtt, budgets.instastyle),
+    [totalBudget, budgets],
+  );
 
   useEffect(() => {
     setUserName(getSavedUserName());
@@ -335,18 +571,33 @@ export default function XpenseMeterPage() {
     () =>
       trend.map((point, index) => ({
         ...point,
-        x: (index / (trend.length - 1)) * 100,
-        y: 100 - (point.value / CHART_MAX) * 100,
+        x: trend.length > 1 ? (index / (trend.length - 1)) * 100 : 0,
+        y: 100 - (point.value / chartMax) * 100,
       })),
-    [],
+    [trend, chartMax],
   );
 
   const linePath = useMemo(() => smoothPath(chartPoints), [chartPoints]);
-  const areaPath = `${linePath} L100,100 L0,100 Z`;
+  const areaPath = chartPoints.length ? `${linePath} L100,100 L0,100 Z` : "";
 
   return (
     <main className="xd-root">
-      <XpenseMobileFlow />
+      <XpenseMobileFlow
+        user={user}
+        summary={summary}
+        summaryLoading={summaryLoading}
+        monthKey={monthKey}
+        monthLabel={summary?.monthLabel || formatMonthLabelFallback(monthKey)}
+        onSaveBudget={persistBudget}
+        onRequestLogin={requireLogin}
+      />
+
+      {!authLoading && !user && (
+        <div className="xd-login-banner">
+          <span>Log in to see your real spend across Grokly, Swadishtt &amp; InstaStyle.</span>
+          <button type="button" onClick={requireLogin}>Log in</button>
+        </div>
+      )}
 
       <div className="xd-dashboard">
         {/* ---- header ---- */}
@@ -357,13 +608,16 @@ export default function XpenseMeterPage() {
           </div>
 
           <div className="xd-head-right">
-            <button type="button" className="xd-month">
-              May 2026 <span>⌄</span>
-            </button>
+            <MonthDropdown
+              value={monthKey}
+              label={summary?.monthLabel || formatMonthLabelFallback(monthKey)}
+              options={monthOptions}
+              onChange={setMonthKey}
+            />
             <button
               type="button"
               className="xd-ghost"
-              onClick={() => setModal("budget")}
+              onClick={openBudgetModal}
             >
               Set Budget
             </button>
@@ -422,14 +676,18 @@ export default function XpenseMeterPage() {
                 <div className="xd-hero-bottom">
                   <div className="xd-hero-left">
                     <span className="xd-muted">This Month Spend</span>
-                    <strong className="xd-amount">₹12,450</strong>
-                    <small className="xd-muted">of ₹18,000 Budget</small>
-                    <div className="xd-trend up">↑ 8% From Last Month</div>
+                    <strong className="xd-amount">{rupee(totalSpend)}</strong>
+                    <small className="xd-muted">of {rupee(summary?.totalBudget || totalBudget)} Budget</small>
+                    {summary?.monthOverMonthChangePct != null && (
+                      <div className={`xd-trend ${summary.monthOverMonthChangePct >= 0 ? "up" : "down"}`}>
+                        {summary.monthOverMonthChangePct >= 0 ? "↑" : "↓"} {Math.abs(summary.monthOverMonthChangePct)}% From Last Month
+                      </div>
+                    )}
                   </div>
 
-                  <button type="button" className="xd-accounts">
+                  <Link href="/profile?section=payment-methods" className="xd-accounts">
                     My Accounts
-                  </button>
+                  </Link>
                 </div>
               </article>
             </div>
@@ -441,15 +699,21 @@ export default function XpenseMeterPage() {
                 <button
                   type="button"
                   className="xd-link"
-                  onClick={() => setModal("viewspend")}
+                  onClick={openViewSpend}
                 >
                   View my Spend
                 </button>
               </div>
 
               <div className="xd-plat-list">
+                {!user && !authLoading && (
+                  <p className="xd-muted" style={{ fontSize: 13 }}>Log in to see budget usage per platform.</p>
+                )}
+                {user && !summaryLoading && platforms.length === 0 && (
+                  <p className="xd-muted" style={{ fontSize: 13 }}>No spend yet this month.</p>
+                )}
                 {platforms.map((p) => (
-                  <div className="xd-plat" key={p.name}>
+                  <div className="xd-plat" key={p.key}>
                     <span className="xd-plat-icon">
                       <CategoryIcon type={p.id} />
                     </span>
@@ -461,7 +725,7 @@ export default function XpenseMeterPage() {
                         </span>
                       </div>
                       <div className="xd-bar">
-                        <i style={{ width: `${(p.spent / p.budget) * 100}%` }} />
+                        <i style={{ width: `${p.budget ? Math.min(100, (p.spent / p.budget) * 100) : 0}%` }} />
                       </div>
                     </div>
                   </div>
@@ -477,8 +741,15 @@ export default function XpenseMeterPage() {
 
               <div className="xd-break-row">
                 <ul className="xd-legend">
+                  {breakdown.length === 0 && (
+                    <li>
+                      <span className="xd-legend-name xd-muted">
+                        {user ? "No spend yet this month." : "Log in to see your spend breakdown."}
+                      </span>
+                    </li>
+                  )}
                   {breakdown.map((b) => (
-                    <li key={b.name}>
+                    <li key={b.key}>
                       <span
                         className="xd-legend-dot"
                         style={{ background: b.dot }}
@@ -491,8 +762,8 @@ export default function XpenseMeterPage() {
                   ))}
                 </ul>
 
-                <div className="xd-break-donut">
-                  <b>₹12,450</b>
+                <div className="xd-break-donut" style={{ background: buildDonutGradient(breakdown) }}>
+                  <b>{rupee(totalSpend)}</b>
                 </div>
               </div>
             </article>
@@ -507,47 +778,55 @@ export default function XpenseMeterPage() {
                   <StatIcon type="wallet" />
                 </span>
                 <span>Budget Left</span>
-                <strong className="xd-amount">₹5200</strong>
-                <small className="xd-muted">31% Remaining</small>
+                <strong className="xd-amount">{rupee(remainingBudget)}</strong>
+                <small className="xd-muted">{remainingPct}% Remaining</small>
               </article>
               <article className="xd-stat">
                 <span className="xd-stat-icon">
                   <StatIcon type="avg" />
                 </span>
                 <span>Daily Avg.Spend</span>
-                <strong className="xd-amount">₹450</strong>
-                <small className="xd-muted">Keep It Up !</small>
+                <strong className="xd-amount">{rupee(summary?.dailyAvgSpend)}</strong>
+                <small className="xd-muted">{summary?.onTrack === false ? "Watch your spend" : "Keep It Up !"}</small>
               </article>
               <article className="xd-stat">
                 <span className="xd-stat-icon">
                   <StatIcon type="calendar" />
                 </span>
                 <span>Top Spent Day</span>
-                <strong className="xd-amount">₹4000</strong>
-                <small className="xd-muted">On 28 May</small>
+                <strong className="xd-amount">{rupee(summary?.highestSpendDay?.amount)}</strong>
+                <small className="xd-muted">{summary?.highestSpendDay ? `On ${summary.highestSpendDay.label}` : "No spend yet"}</small>
               </article>
             </div>
 
             {/* trend chart */}
             <article className="xd-card xd-trend-card">
               <div className="xd-card-head">
-                <button type="button" className="xd-month sm">
-                  May 2026 <span>⌄</span>
-                </button>
+                <MonthDropdown
+                  value={monthKey}
+                  label={summary?.monthLabel || formatMonthLabelFallback(monthKey)}
+                  options={monthOptions}
+                  onChange={setMonthKey}
+                  size="sm"
+                />
               </div>
 
               <span className="xd-muted xd-trend-label">
                 This Month Spend Trend
               </span>
               <div className="xd-trend-amount">
-                <strong className="xd-amount">₹12,450</strong>
-                <span className="xd-trend up">↑8% From Last Month</span>
+                <strong className="xd-amount">{rupee(totalSpend)}</strong>
+                {summary?.monthOverMonthChangePct != null && (
+                  <span className={`xd-trend ${summary.monthOverMonthChangePct >= 0 ? "up" : "down"}`}>
+                    {summary.monthOverMonthChangePct >= 0 ? "↑" : "↓"}{Math.abs(summary.monthOverMonthChangePct)}% From Last Month
+                  </span>
+                )}
               </div>
 
               <div className="xd-chart">
                 <div className="xd-chart-y">
                   {gridLines.map((value) => (
-                    <span key={value}>{value ? `${value / 1000}K` : "0"}</span>
+                    <span key={value}>{formatK(value)}</span>
                   ))}
                 </div>
 
@@ -583,7 +862,7 @@ export default function XpenseMeterPage() {
 
                   {chartPoints.map((point) => (
                     <span
-                      key={point.day}
+                      key={point.date}
                       className="xd-dot"
                       style={{ left: `${point.x}%`, top: `${point.y}%` }}
                     />
@@ -592,7 +871,7 @@ export default function XpenseMeterPage() {
 
                 <div className="xd-chart-x">
                   {trend.map((point) => (
-                    <span key={point.day}>{point.day}</span>
+                    <span key={point.date}>{point.label}</span>
                   ))}
                 </div>
               </div>
@@ -603,7 +882,8 @@ export default function XpenseMeterPage() {
                   <div>
                     <strong>Highest Spend Day</strong>
                     <p>
-                      28 May <b>₹4,000</b>
+                      {summary?.highestSpendDay ? summary.highestSpendDay.label : "—"}{" "}
+                      <b>{rupee(summary?.highestSpendDay?.amount)}</b>
                     </p>
                   </div>
                 </div>
@@ -612,7 +892,8 @@ export default function XpenseMeterPage() {
                   <div>
                     <strong>Least Spend Day</strong>
                     <p>
-                      10 May <b>₹2,000</b>
+                      {summary?.lowestSpendDay ? summary.lowestSpendDay.label : "—"}{" "}
+                      <b>{rupee(summary?.lowestSpendDay?.amount)}</b>
                     </p>
                   </div>
                 </div>
@@ -622,9 +903,15 @@ export default function XpenseMeterPage() {
 
           {/* on track */}
           <div className="xd-ontrack">
-            <span className="xd-ontrack-badge">↗</span>
-            <strong>YOU&apos;RE ON TRACK</strong>
-            <span className="xd-ontrack-note">Keep it up You&apos;re Doing Great</span>
+            <span className="xd-ontrack-badge">{summary?.onTrack === false ? "!" : "↗"}</span>
+            <strong>{!user ? "TRACK YOUR SPEND" : summary?.onTrack === false ? "OVER PACE" : "YOU'RE ON TRACK"}</strong>
+            <span className="xd-ontrack-note">
+              {!user
+                ? "Log in to track your budget across all platforms."
+                : summary?.onTrack === false
+                  ? "You're spending faster than your budget pace."
+                  : "Keep it up You're Doing Great"}
+            </span>
           </div>
         </div>
       </div>
@@ -659,9 +946,13 @@ export default function XpenseMeterPage() {
                 <div className="xd-month-row">
                   <span className="xd-field-label">Month</span>
                   <button type="button" className="xd-month pill">
-                    May 2026 <span>⌄</span>
+                    {summary?.monthLabel || formatMonthLabelFallback(monthKey)} <span>⌄</span>
                   </button>
                 </div>
+
+                {summary?.isBudgetDefault && (
+                  <p className="xd-hint">Suggested based on your past orders. Adjust and save to make it official.</p>
+                )}
 
                 <label className="xd-field-label indent" htmlFor="xd-total">
                   Total Monthly Budget
@@ -705,13 +996,13 @@ export default function XpenseMeterPage() {
                       <input
                         type="range"
                         min={ALLOC_MIN}
-                        max={ALLOC_MAX}
+                        max={allocMax}
                         step="500"
                         value={budgets[row.key]}
                         onChange={(e) => updateBudget(row.key, e.target.value)}
                         aria-label={`${row.name} budget`}
                       />
-                      <small>{rupee(ALLOC_MAX)}</small>
+                      <small>{rupee(allocMax)}</small>
                     </div>
                   </div>
                 ))}
@@ -744,8 +1035,10 @@ export default function XpenseMeterPage() {
                   </p>
                 </div>
 
-                <button type="button" className="xd-primary" onClick={closeModal}>
-                  Save Budget <span>→</span>
+                {saveError && <p className="xd-hint" style={{ color: "#ff5a7a" }}>{saveError}</p>}
+
+                <button type="button" className="xd-primary" onClick={handleSaveBudget} disabled={saving}>
+                  {saving ? "Saving…" : "Save Budget"} <span>→</span>
                 </button>
               </>
             )}
@@ -764,19 +1057,26 @@ export default function XpenseMeterPage() {
                 <div className="xd-month-row">
                   <span className="xd-field-label">Month</span>
                   <button type="button" className="xd-month pill">
-                    May 2026 <span>⌄</span>
+                    {summary?.monthLabel || formatMonthLabelFallback(monthKey)} <span>⌄</span>
                   </button>
                 </div>
 
                 <span className="xd-field-label indent">Total Monthly Spend</span>
                 <div className="xd-spend-total">
-                  <strong className="xd-amount">₹12,450</strong>
-                  <span className="xd-trend up">↑8% From Last Month</span>
+                  <strong className="xd-amount">{rupee(totalSpend)}</strong>
+                  {summary?.monthOverMonthChangePct != null && (
+                    <span className={`xd-trend ${summary.monthOverMonthChangePct >= 0 ? "up" : "down"}`}>
+                      {summary.monthOverMonthChangePct >= 0 ? "↑" : "↓"}{Math.abs(summary.monthOverMonthChangePct)}% From Last Month
+                    </span>
+                  )}
                 </div>
 
                 <div className="xd-spend-list">
+                  {spendRows.length === 0 && (
+                    <p className="xd-muted" style={{ fontSize: 13 }}>No spend recorded yet this month.</p>
+                  )}
                   {spendRows.map((r) => (
-                    <div className="xd-spend-row" key={r.name}>
+                    <div className="xd-spend-row" key={r.id}>
                       <span className="xd-plat-icon">
                         <CategoryIcon type={r.id} />
                       </span>
@@ -795,13 +1095,22 @@ export default function XpenseMeterPage() {
                 </div>
 
                 <button type="button" className="xd-primary" onClick={closeModal}>
-                  Download Report <span>↓</span>
+                  Close
                 </button>
               </>
             )}
           </div>
         </div>
       )}
+
+      <AuthModal
+        isOpen={isAuthOpen}
+        onClose={() => setIsAuthOpen(false)}
+        onSuccess={(userData) => {
+          signIn(userData);
+          setIsAuthOpen(false);
+        }}
+      />
 
       <style jsx>{`
         .xd-root {
@@ -848,6 +1157,34 @@ export default function XpenseMeterPage() {
           border-radius: 24px;
           padding: 22px;
           box-shadow: 0 50px 130px rgba(0, 0, 0, 0.6);
+        }
+
+        .xd-login-banner {
+          max-width: 1200px;
+          margin: 0 auto 16px;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 14px;
+          padding: 12px 18px;
+          border-radius: 14px;
+          border: 1px solid rgba(245, 41, 107, 0.35);
+          background: rgba(245, 41, 107, 0.12);
+          color: #f4f4f6;
+          font-size: 13px;
+        }
+
+        .xd-login-banner button {
+          flex-shrink: 0;
+          height: 32px;
+          padding: 0 16px;
+          border: 0;
+          border-radius: 999px;
+          background: var(--xd-accent);
+          color: #fff;
+          font-size: 12px;
+          font-weight: 700;
+          cursor: pointer;
         }
 
         /* header */
@@ -1151,21 +1488,8 @@ export default function XpenseMeterPage() {
           color: #16c784;
         }
 
-        .xd-accounts {
-          height: 30px;
-          padding: 0 14px;
-          border-radius: 6px;
-          border: 1px solid rgba(255, 255, 255, 0.35);
-          background: rgba(20, 20, 22, 0.85);
-          color: #fff;
-          font-size: 12px;
-          font-weight: 500;
-          cursor: pointer;
-          white-space: nowrap;
-        }
-
-        .xd-accounts:hover {
-          background: rgba(255, 255, 255, 0.14);
+        .xd-trend.down {
+          color: #ff8ab4;
         }
 
         /* platform rows */
@@ -1906,6 +2230,32 @@ export default function XpenseMeterPage() {
             padding-left: 0;
             flex-basis: 100%;
           }
+        }
+      `}</style>
+
+      {/* Scoped styled-jsx never applies to custom components like next/link's
+          <Link>, since the compiler only auto-scopes plain host elements —
+          so this one rule has to live in an (ancestor-qualified) global block. */}
+      <style jsx global>{`
+        .xd-hero-bottom .xd-accounts {
+          height: 30px;
+          padding: 0 14px;
+          border-radius: 6px;
+          border: 1px solid rgba(255, 255, 255, 0.35);
+          background: rgba(20, 20, 22, 0.85);
+          color: #fff;
+          font-size: 12px;
+          font-weight: 500;
+          cursor: pointer;
+          white-space: nowrap;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          text-decoration: none;
+        }
+
+        .xd-hero-bottom .xd-accounts:hover {
+          background: rgba(255, 255, 255, 0.14);
         }
       `}</style>
     </main>

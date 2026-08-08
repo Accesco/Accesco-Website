@@ -146,13 +146,14 @@ async function placeInstaStyleOrder({ items, subtotal, address, unifiedOrderId, 
   };
 }
 
-async function placeSwadishttOrder({ items, subtotal, address, unifiedOrderId, payment }) {
+async function placeSwadishttOrder({ items, subtotal, address, unifiedOrderId, payment, user }) {
   const orderId = `SW${Date.now().toString(36).toUpperCase()}`;
   const order = {
     id: orderId,
     status: 'CONFIRMED',
     placedAt: new Date().toISOString(),
     unifiedOrderId,
+    userId: user?.uid || null,
     paymentMethod: 'razorpay',
     customerEmail: address.email,
     customerName: address.name,
@@ -190,6 +191,16 @@ async function placeSwadishttOrder({ items, subtotal, address, unifiedOrderId, p
     localStorage.setItem('swadishtt-orders', JSON.stringify([order, ...(Array.isArray(existing) ? existing : [])]));
   } catch (err) {
     console.error('[unified checkout] Failed to save Swadishtt order locally:', err);
+  }
+
+  try {
+    await fetch('/api/swadishtt/orders', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ order, customerEmail: address.email }),
+    });
+  } catch (err) {
+    console.error('[unified checkout] Swadishtt Firestore sync failed:', err);
   }
 
   try {
@@ -247,9 +258,18 @@ export default function UnifiedCheckoutPage() {
   const [placedOrders, setPlacedOrders] = useState([]);
 
   useEffect(() => {
-    setStores(buildUnifiedStores());
-    setIsMounted(true);
-  }, []);
+    let cancelled = false;
+    (async () => {
+      const built = await buildUnifiedStores(user);
+      if (!cancelled) {
+        setStores(built);
+        setIsMounted(true);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [user]);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -358,6 +378,41 @@ export default function UnifiedCheckoutPage() {
           })
         )
       );
+
+      try {
+        await fetch('/api/orders', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            order: {
+              id: unifiedOrderId,
+              status: 'PLACED',
+              placedAt: new Date().toISOString(),
+              userId: user?.uid || null,
+              customerEmail: deliveryAddress.email,
+              customerName: deliveryAddress.name,
+              address: deliveryAddress,
+              paymentMethod: 'razorpay',
+              razorpayOrderId: payment.orderId,
+              razorpayPaymentId: payment.paymentId,
+              subtotal: subTotal,
+              platformFee,
+              grandTotal,
+              itemCount: totalItems,
+              stores: results.map((r) => ({
+                key: r.key,
+                name: r.name,
+                orderId: r.id,
+                itemCount: r.itemCount,
+                subtotal: r.subtotal,
+                trackingPath: r.trackingPath,
+              })),
+            },
+          }),
+        });
+      } catch (err) {
+        console.error('[unified checkout] Unified order record failed:', err);
+      }
 
       await clearAllBrandCarts({ user, getIdToken });
 

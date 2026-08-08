@@ -6,9 +6,8 @@
  */
 import { getProductById } from '@/lib/groklyProducts';
 import { db } from '@/lib/firebase';
-import { doc, setDoc } from 'firebase/firestore';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
 
-const SWADISHTT_KEY = 'swadishtt-cart';
 const GROKLY_KEY = 'grokly_cart';
 const INSTASTYLE_KEY = 'instastyle_cart';
 
@@ -29,11 +28,6 @@ function writeJSON(key, value) {
   localStorage.setItem(key, JSON.stringify(value));
 }
 
-export function getSwadishttCart() {
-  const parsed = readJSON(SWADISHTT_KEY, []);
-  return Array.isArray(parsed) ? parsed : [];
-}
-
 export function getGroklyCart() {
   const parsed = readJSON(GROKLY_KEY, {});
   return parsed && typeof parsed === 'object' && !Array.isArray(parsed) ? parsed : {};
@@ -42,10 +36,6 @@ export function getGroklyCart() {
 export function getInstaStyleCart() {
   const parsed = readJSON(INSTASTYLE_KEY, []);
   return Array.isArray(parsed) ? parsed : [];
-}
-
-export function setSwadishttCart(items) {
-  writeJSON(SWADISHTT_KEY, items);
 }
 
 export function setGroklyCart(cartMap) {
@@ -68,18 +58,66 @@ function getGroklyDeviceId() {
   return deviceId;
 }
 
+// Swadishtt's cart has no localStorage mirror at all — Firestore is read on
+// every access. `swadishtt_device_id` is not cart *data*, just an opaque
+// per-browser key so guests (no Firebase auth) get a stable Firestore doc to
+// read/write across reloads; there's no anonymous Firebase auth in this app
+// to derive one from instead.
+const SWADISHTT_DEVICE_ID_KEY = 'swadishtt_device_id';
+
+function getSwadishttDeviceId() {
+  if (typeof window === 'undefined') return null;
+  let deviceId = localStorage.getItem(SWADISHTT_DEVICE_ID_KEY);
+  if (!deviceId) {
+    deviceId = `device_${Math.random().toString(36).slice(2, 10)}_${Date.now()}`;
+    localStorage.setItem(SWADISHTT_DEVICE_ID_KEY, deviceId);
+  }
+  return deviceId;
+}
+
+function getSwadishttIdentifier(user) {
+  return user?.uid || user?.email || getSwadishttDeviceId();
+}
+
+/** Reads the Swadishtt cart straight from Firestore (`swadishtt_carts/{identifier}`). */
+export async function getSwadishttCart(user) {
+  const identifier = getSwadishttIdentifier(user);
+  if (!identifier) return [];
+  try {
+    const snap = await getDoc(doc(db, 'swadishtt_carts', identifier));
+    if (!snap.exists()) return [];
+    const cart = snap.data()?.cart;
+    return Array.isArray(cart) ? cart : [];
+  } catch (err) {
+    console.error('[unifiedCart] Failed to load Swadishtt cart from Firestore:', err);
+    return [];
+  }
+}
+
+/** Writes the Swadishtt cart straight to Firestore (`swadishtt_carts/{identifier}`). */
+export async function setSwadishttCart(user, items) {
+  const identifier = getSwadishttIdentifier(user);
+  if (!identifier) return;
+  try {
+    await setDoc(doc(db, 'swadishtt_carts', identifier), { cart: items, updatedAt: Date.now() });
+  } catch (err) {
+    console.error('[unifiedCart] Failed to save Swadishtt cart to Firestore:', err);
+  }
+}
+
 /**
  * Clears all three brand carts after a successful unified checkout.
  * Called from a page that sits outside every brand's own cart context/provider,
  * so it has to reach into each brand's storage directly instead of calling
- * their `clearCart()` — localStorage is cleared synchronously; the Firestore
- * mirror (Grokly) and authenticated backend cart (InstaStyle) are best-effort
- * so a slow/failed network call never blocks checkout from completing.
+ * their `clearCart()`. Swadishtt (Firestore-only) and the Grokly Firestore
+ * mirror / authenticated InstaStyle backend cart are all best-effort so a
+ * slow/failed network call never blocks checkout from completing.
  */
 export async function clearAllBrandCarts({ user, getIdToken } = {}) {
-  setSwadishttCart([]);
   setGroklyCart({});
   setInstaStyleCart([]);
+
+  await setSwadishttCart(user, []);
 
   try {
     const identifier = user?.uid || user?.email || getGroklyDeviceId();
@@ -107,8 +145,9 @@ export async function clearAllBrandCarts({ user, getIdToken } = {}) {
 }
 
 /** Total item count across all three brand carts — used for the header badge. */
-export function getUnifiedCartCount() {
-  const swadishttCount = getSwadishttCart().reduce((sum, item) => sum + (item.quantity || 1), 0);
+export async function getUnifiedCartCount(user) {
+  const swadishttCart = await getSwadishttCart(user);
+  const swadishttCount = swadishttCart.reduce((sum, item) => sum + (item.quantity || 1), 0);
   const groklyCount = Object.values(getGroklyCart()).reduce((sum, qty) => sum + (qty || 0), 0);
   const instastyleCount = getInstaStyleCart().reduce((sum, item) => sum + (item.quantity || 1), 0);
   return swadishttCount + groklyCount + instastyleCount;
@@ -125,8 +164,9 @@ function withTotals(store) {
 }
 
 /** Builds the normalized { key, name, theme, items[], subtotal, savings, itemCount }[] for the Cart Page. */
-export function buildUnifiedStores() {
-  const swadishttItems = getSwadishttCart().map((item, idx) => ({
+export async function buildUnifiedStores(user) {
+  const swadishttCart = await getSwadishttCart(user);
+  const swadishttItems = swadishttCart.map((item, idx) => ({
     key: `swadishtt-${item.id}-${idx}`,
     id: item.id,
     name: item.name,

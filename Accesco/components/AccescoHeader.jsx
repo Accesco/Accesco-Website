@@ -35,8 +35,14 @@ export default function AccescoHeader() {
 
   useEffect(() => {
     setIsMounted(true);
-    setCartCount(getUnifiedCartCount());
-  }, []);
+    let cancelled = false;
+    getUnifiedCartCount(user).then((count) => {
+      if (!cancelled) setCartCount(count);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [user]);
 
   useEffect(() => {
     if (pathname !== '/') return;
