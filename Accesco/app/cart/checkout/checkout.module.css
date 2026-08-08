@@ -1,0 +1,493 @@
+/* ================================================================
+   ACCESCO LIVING — UNIFIED CHECKOUT PAGE
+   One address + one payment across Swadishtt / Grokly / Insta Style
+   ================================================================ */
+
+.page {
+  min-height: 100vh;
+  background: #F7F7F9;
+}
+
+.topBar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: #FFFFFF;
+  border-bottom: 1px solid #EFEFF2;
+  padding: 16px 20px;
+}
+
+.backBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 9999px;
+  border: none;
+  background: none;
+  color: #111111;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.2s;
+}
+
+.backBtn:hover {
+  background: rgba(0, 0, 0, 0.06);
+}
+
+.title {
+  font-family: 'Sora', sans-serif;
+  font-weight: 800;
+  font-size: 1.25rem;
+  color: #111111;
+  line-height: 1.2;
+}
+
+.subtitle {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.8rem;
+  color: #8A8A93;
+  margin-top: 2px;
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 16px;
+  max-width: 1120px;
+  margin: 0 auto;
+}
+
+.mainColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+}
+
+.section {
+  background: #FFFFFF;
+  border: 1px solid #EFEFF2;
+  border-radius: 16px;
+  padding: 20px;
+}
+
+.sectionTitle {
+  font-family: 'Sora', sans-serif;
+  font-weight: 700;
+  font-size: 1rem;
+  color: #111111;
+  margin-bottom: 16px;
+}
+
+.formRow {
+  display: flex;
+  gap: 12px;
+}
+
+.formGroup {
+  flex: 1;
+  margin-bottom: 14px;
+  min-width: 0;
+}
+
+.formLabel {
+  display: block;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #55555F;
+  margin-bottom: 6px;
+}
+
+.formInput,
+.formTextarea {
+  width: 100%;
+  padding: 11px 13px;
+  border: 1.5px solid #E2E2E7;
+  border-radius: 10px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.9rem;
+  color: #111111;
+  background: #FAFAFC;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.formInput:focus,
+.formTextarea:focus {
+  border-color: #7A0042;
+  background: #FFFFFF;
+}
+
+.formTextarea {
+  resize: vertical;
+  min-height: 64px;
+}
+
+.inputError {
+  border-color: #E14615;
+}
+
+.fieldError {
+  display: block;
+  margin-top: 5px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.74rem;
+  color: #E14615;
+}
+
+.continueBtn {
+  width: 100%;
+  padding: 13px;
+  border: none;
+  border-radius: 9999px;
+  background: #7A0042;
+  color: #FFFDF8;
+  font-family: 'Sora', sans-serif;
+  font-weight: 700;
+  font-size: 0.92rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.continueBtn:hover {
+  background: #5C0031;
+}
+
+.continueBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ── Order summary (per-store groups) ── */
+.theme-swadishtt { --accent: #E14615; --tint: #FDECE4; --tint-border: #F6CDB8; }
+.theme-grokly { --accent: #2F9E44; --tint: #E9F7EA; --tint-border: #C3E6C5; }
+.theme-instastyle { --accent: #8A5A2B; --tint: #FBEEE1; --tint-border: #EFD7BA; }
+
+.storeGroup {
+  border: 1px solid var(--tint-border);
+  border-radius: 14px;
+  overflow: hidden;
+  margin-bottom: 12px;
+}
+
+.storeGroup:last-child {
+  margin-bottom: 0;
+}
+
+.storeGroupHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  background: var(--tint);
+  font-family: 'Sora', sans-serif;
+  font-weight: 700;
+  font-size: 0.88rem;
+  color: var(--accent);
+}
+
+.storeGroupItems {
+  padding: 4px 14px;
+}
+
+.summaryItemRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 9px 0;
+  border-bottom: 1px solid #F1F1F4;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.84rem;
+  color: #333333;
+}
+
+.summaryItemRow:last-child {
+  border-bottom: none;
+}
+
+.summaryItemName {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.summaryItemQty {
+  color: #9A9AA3;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.summaryItemPrice {
+  margin-left: auto;
+  font-weight: 700;
+  color: #111111;
+  flex-shrink: 0;
+}
+
+/* ── Bill panel ── */
+.billPanel {
+  background: #FFFFFF;
+  border: 1px solid #EFEFF2;
+  border-radius: 18px;
+  padding: 22px;
+}
+
+.billLine {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.88rem;
+  color: #55555F;
+  margin-bottom: 10px;
+}
+
+.freeTag {
+  color: #2F9E44;
+  font-weight: 700;
+}
+
+.billDivider {
+  height: 1px;
+  background: #EFEFF2;
+  margin: 14px 0;
+}
+
+.grandTotalLine {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-family: 'Sora', sans-serif;
+  font-weight: 800;
+  font-size: 1.1rem;
+  color: #111111;
+}
+
+.grandTotalLine span:last-child {
+  color: #7A0042;
+}
+
+.payBtn {
+  width: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 18px;
+  padding: 14px;
+  border: none;
+  border-radius: 9999px;
+  background: #7A0042;
+  color: #FFFDF8;
+  font-family: 'Sora', sans-serif;
+  font-weight: 700;
+  font-size: 0.94rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.payBtn:hover {
+  background: #5C0031;
+}
+
+.payBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.backToAddressBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: none;
+  color: #7A0042;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 600;
+  font-size: 0.84rem;
+  cursor: pointer;
+  padding: 0;
+  margin-bottom: 16px;
+}
+
+.errorBox {
+  background: #FDECE4;
+  border: 1px solid #F6CDB8;
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.82rem;
+  color: #B23A11;
+  margin-bottom: 14px;
+}
+
+.secureNote {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 14px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.76rem;
+  color: #8A8A93;
+  justify-content: center;
+}
+
+/* ── Empty / loading state ── */
+.emptyState {
+  background: #FFFFFF;
+  border: 1px solid #EFEFF2;
+  border-radius: 16px;
+  padding: 48px 24px;
+  text-align: center;
+  color: #6B6B75;
+  font-family: 'DM Sans', sans-serif;
+}
+
+/* ── Confirmation screen ── */
+.confirmWrap {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 40px 16px 60px;
+}
+
+.confirmCard {
+  background: #FFFFFF;
+  border: 1px solid #EFEFF2;
+  border-radius: 20px;
+  padding: 32px 26px;
+  text-align: center;
+}
+
+.confirmTick {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: #E9F7EA;
+  color: #2F9E44;
+  font-size: 1.6rem;
+  font-weight: 800;
+  margin-bottom: 16px;
+}
+
+.confirmTitle {
+  font-family: 'Sora', sans-serif;
+  font-weight: 800;
+  font-size: 1.3rem;
+  color: #111111;
+  margin-bottom: 8px;
+}
+
+.confirmDesc {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.9rem;
+  color: #6B6B75;
+  margin-bottom: 24px;
+}
+
+.confirmOrdersList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  text-align: left;
+  margin-bottom: 24px;
+}
+
+.confirmOrderRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border: 1px solid var(--tint-border);
+  background: var(--tint);
+  border-radius: 14px;
+  text-decoration: none;
+}
+
+.confirmOrderInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.confirmOrderStore {
+  font-family: 'Sora', sans-serif;
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: var(--accent);
+}
+
+.confirmOrderMeta {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.76rem;
+  color: #6B6B75;
+  margin-top: 2px;
+}
+
+.confirmOrderAmount {
+  font-family: 'Sora', sans-serif;
+  font-weight: 800;
+  font-size: 0.94rem;
+  color: #111111;
+  flex-shrink: 0;
+}
+
+.confirmTotalRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 0;
+  border-top: 1px solid #EFEFF2;
+  font-family: 'Sora', sans-serif;
+  font-weight: 800;
+  font-size: 1.05rem;
+  color: #111111;
+  margin-bottom: 20px;
+}
+
+.confirmBackBtn {
+  display: inline-flex;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  padding: 13px;
+  border: none;
+  border-radius: 9999px;
+  background: #7A0042;
+  color: #FFFDF8;
+  font-family: 'Sora', sans-serif;
+  font-weight: 700;
+  font-size: 0.9rem;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+/* ── Desktop layout ── */
+@media (min-width: 960px) {
+  .body {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 28px;
+    padding: 28px 32px;
+  }
+
+  .mainColumn {
+    flex: 1;
+  }
+
+  .summaryColumn {
+    width: 380px;
+    flex-shrink: 0;
+    position: sticky;
+    top: 88px;
+  }
+}

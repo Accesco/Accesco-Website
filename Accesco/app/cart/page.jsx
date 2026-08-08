@@ -14,12 +14,6 @@ import {
 } from '@/lib/unifiedCart';
 import styles from './cart.module.css';
 
-const STORE_CHECKOUT_PATHS = {
-  swadishtt: '/services/swadisht/checkout',
-  grokly: '/services/grokly/checkout',
-  instastyle: '/services/instastyle/checkout',
-};
-
 const STORE_THEME_HEX = {
   swadishtt: 'e14615',
   grokly: '2f9e44',
@@ -203,7 +197,6 @@ export default function CartPage() {
   const [isMounted, setIsMounted] = useState(false);
   const [collapsedMap, setCollapsedMap] = useState({});
   const [search, setSearch] = useState('');
-  const [checkoutHint, setCheckoutHint] = useState('');
 
   const refresh = () => setStores(buildUnifiedStores());
 
@@ -257,11 +250,7 @@ export default function CartPage() {
   const removeItem = (storeKey, item) => updateQuantity(storeKey, item, 0);
 
   const handleCheckout = () => {
-    if (activeStores.length === 1) {
-      router.push(STORE_CHECKOUT_PATHS[activeStores[0].key]);
-      return;
-    }
-    setCheckoutHint('You have items from multiple stores — tap into a store to check out its order individually.');
+    router.push('/cart/checkout');
   };
 
   const storeCountLabel = `${activeStores.length} Store${activeStores.length === 1 ? '' : 's'}`;
@@ -418,8 +407,6 @@ export default function CartPage() {
               <button className={styles.saveForLaterBtn}>
                 <HeartIcon /> Save for Later
               </button>
-
-              {checkoutHint && <p className={styles.checkoutHint}>{checkoutHint}</p>}
             </div>
           </div>
         )}
@@ -437,7 +424,6 @@ export default function CartPage() {
           </button>
         </div>
       )}
-      {checkoutHint && <p className={styles.checkoutHintMobile}>{checkoutHint}</p>}
     </div>
   );
 }
