@@ -5,6 +5,8 @@
  * unified Cart Page without touching each brand's own cart logic.
  */
 import { getProductById } from '@/lib/groklyProducts';
+import { db } from '@/lib/firebase';
+import { doc, setDoc } from 'firebase/firestore';
 
 const SWADISHTT_KEY = 'swadishtt-cart';
 const GROKLY_KEY = 'grokly_cart';
@@ -52,6 +54,56 @@ export function setGroklyCart(cartMap) {
 
 export function setInstaStyleCart(items) {
   writeJSON(INSTASTYLE_KEY, items);
+}
+
+const GROKLY_DEVICE_ID_KEY = 'grokly_device_id';
+
+function getGroklyDeviceId() {
+  if (typeof window === 'undefined') return null;
+  let deviceId = localStorage.getItem(GROKLY_DEVICE_ID_KEY);
+  if (!deviceId) {
+    deviceId = `device_${Math.random().toString(36).slice(2, 10)}_${Date.now()}`;
+    localStorage.setItem(GROKLY_DEVICE_ID_KEY, deviceId);
+  }
+  return deviceId;
+}
+
+/**
+ * Clears all three brand carts after a successful unified checkout.
+ * Called from a page that sits outside every brand's own cart context/provider,
+ * so it has to reach into each brand's storage directly instead of calling
+ * their `clearCart()` — localStorage is cleared synchronously; the Firestore
+ * mirror (Grokly) and authenticated backend cart (InstaStyle) are best-effort
+ * so a slow/failed network call never blocks checkout from completing.
+ */
+export async function clearAllBrandCarts({ user, getIdToken } = {}) {
+  setSwadishttCart([]);
+  setGroklyCart({});
+  setInstaStyleCart([]);
+
+  try {
+    const identifier = user?.uid || user?.email || getGroklyDeviceId();
+    if (identifier) {
+      await setDoc(doc(db, 'grokly_carts', identifier), { cart: {}, updatedAt: Date.now() });
+    }
+  } catch (err) {
+    console.error('[unifiedCart] Failed to clear Grokly Firestore cart:', err);
+  }
+
+  try {
+    const token = typeof getIdToken === 'function' ? await getIdToken() : null;
+    if (token && user?.uid) {
+      await fetch('/api/instastyle/cart', {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'x-user-id': user.uid,
+        },
+      });
+    }
+  } catch (err) {
+    console.error('[unifiedCart] Failed to clear InstaStyle backend cart:', err);
+  }
 }
 
 /** Total item count across all three brand carts — used for the header badge. */
