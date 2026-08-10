@@ -187,7 +187,7 @@ function Heading({ icon, title, children }) {
 }
 
 export default function SwadishttProfilePage() {
-  const { user, getIdToken, signOut } = useAuth();
+  const { user, getIdToken, signOut, signIn } = useAuth();
   const [profile, setProfile] = useState({
     name: 'Sample',
     phone: '9000000000',
@@ -212,23 +212,22 @@ export default function SwadishttProfilePage() {
   const [basketNotice, setBasketNotice] = useState('');
   const [avatarUploading, setAvatarUploading] = useState(false);
 
+  // Seed from the Firebase-backed auth user while the fuller backend
+  // profile below is still loading.
   useEffect(() => {
-    try {
-      const cachedUser = JSON.parse(
-        localStorage.getItem('accesco_user') || '{}'
-      );
-      const loadedProfile = {
-        name: cachedUser.name || 'Sample',
-        phone: cachedUser.phone || '9000000000',
-        email: cachedUser.email || 'sample@gmail.com',
-        photoURL: cachedUser.photoURL || null,
-      };
-      setProfile(loadedProfile);
-      setProfileForm(loadedProfile);
-    } catch (error) {
-      console.error(error);
-    }
+    if (!user) return;
 
+    const loadedProfile = {
+      name: user.name || 'Sample',
+      phone: user.phone || '9000000000',
+      email: user.email || 'sample@gmail.com',
+      photoURL: user.photoURL || null,
+    };
+    setProfile(loadedProfile);
+    setProfileForm(loadedProfile);
+  }, [user]);
+
+  useEffect(() => {
     try {
       const location = JSON.parse(
         localStorage.getItem('userLocation') || '{}'
@@ -258,7 +257,7 @@ export default function SwadishttProfilePage() {
   }, []);
 
   // Once signed in, the backend profile is the source of truth — overwrite the
-  // localStorage-seeded state above with the synced record.
+  // auth-context-seeded state above with the synced record.
   useEffect(() => {
     if (!user?.uid) return;
 
@@ -384,11 +383,7 @@ export default function SwadishttProfilePage() {
     }
 
     const mergedProfile = { ...profile, ...nextProfile };
-    const cachedUser = JSON.parse(localStorage.getItem('accesco_user') || '{}');
-    localStorage.setItem(
-      'accesco_user',
-      JSON.stringify({ ...cachedUser, ...nextProfile })
-    );
+    if (user) signIn({ ...user, ...nextProfile });
 
     setProfile(mergedProfile);
     setProfileForm(mergedProfile);
@@ -461,8 +456,7 @@ export default function SwadishttProfilePage() {
       const { photoURL } = await uploadProfileImage(getIdToken, user.uid, file);
       setProfile((current) => ({ ...current, photoURL }));
       setProfileForm((current) => ({ ...current, photoURL }));
-      const cachedUser = JSON.parse(localStorage.getItem('accesco_user') || '{}');
-      localStorage.setItem('accesco_user', JSON.stringify({ ...cachedUser, photoURL }));
+      signIn({ ...user, photoURL });
       showMessage('Profile photo updated successfully');
     } catch (error) {
       console.error('handleAvatarChange error:', error);
@@ -484,9 +478,7 @@ export default function SwadishttProfilePage() {
       await deleteProfileImage(getIdToken, user.uid);
       setProfile((current) => ({ ...current, photoURL: null }));
       setProfileForm((current) => ({ ...current, photoURL: null }));
-      const cachedUser = JSON.parse(localStorage.getItem('accesco_user') || '{}');
-      delete cachedUser.photoURL;
-      localStorage.setItem('accesco_user', JSON.stringify(cachedUser));
+      signIn({ ...user, photoURL: null });
       showMessage('Profile photo removed');
     } catch (error) {
       console.error('handleAvatarRemove error:', error);

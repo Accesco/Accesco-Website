@@ -6,6 +6,7 @@ import SwadishttHeader from '../components/SwadishttHeader';
 import styles from './tracking.module.css';
 import dynamic from 'next/dynamic';
 import { advanceOrderStatus, updateOrderStatusLocal, ORDER_STATUSES } from '@/lib/mailService';
+import { useAuth } from '../../../components/AuthProvider';
 
 const LiveTrackingMap = dynamic(() => import('../components/Map/LiveTrackingMap'), {
   ssr: false,
@@ -26,15 +27,11 @@ export default function SwadishttTrackingPage() {
   const searchParams = useSearchParams();
   const orderId = searchParams.get('id');
 
+  const { user: currentUser } = useAuth();
   const [order, setOrder] = useState(null);
-  const [currentUser, setCurrentUser] = useState(null);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
-    const storedUser = localStorage.getItem('accesco_user');
-    if (storedUser) {
-      try { setCurrentUser(JSON.parse(storedUser)); } catch {}
-    }
     const storedOrders = JSON.parse(localStorage.getItem('swadishtt-orders') || '[]');
     const found = storedOrders.find((o) => o.id === orderId);
     if (found) setOrder(found);

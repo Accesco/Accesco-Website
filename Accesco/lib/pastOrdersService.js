@@ -13,25 +13,11 @@ const ORDERS_ENDPOINT = {
 };
 
 /**
- * Read the logged-in user from localStorage (set by AuthProvider on login).
- * @returns {{ uid?: string, email?: string, phone?: string } | null}
- */
-export function getCurrentUser() {
-  if (typeof window === 'undefined') return null;
-  try {
-    const raw = localStorage.getItem('accesco_user');
-    return raw ? JSON.parse(raw) : null;
-  } catch {
-    return null;
-  }
-}
-
-/**
  * Fetch past orders for a service.
  * @param {object} params
  * @param {'grokly'|'instastyle'|'swadisht'} params.service
- * @param {string} [params.userId] - falls back to the logged-in user's uid
- * @param {string} [params.email] - falls back to the logged-in user's email
+ * @param {string} [params.userId] - the logged-in user's uid, e.g. from useAuth()
+ * @param {string} [params.email] - the logged-in user's email, e.g. from useAuth()
  * @param {number} [params.limit=20] - max orders to return
  * @returns {Promise<Array>} orders (most recent first)
  */
@@ -39,19 +25,14 @@ export async function fetchPastOrders({ service, userId, email, limit = 20 } = {
   const endpoint = ORDERS_ENDPOINT[service];
   if (!endpoint) throw new Error(`Unknown service: ${service}`);
 
-  // Resolve identity from the logged-in user when not explicitly provided
-  const user = getCurrentUser();
-  const uid = userId || user?.uid;
-  const mail = email || user?.email;
-
-  if (!uid && !mail) {
+  if (!userId && !email) {
     // Not logged in / no identifier — nothing to fetch
     return [];
   }
 
   const params = new URLSearchParams();
-  if (uid) params.set('userId', uid);
-  else if (mail) params.set('email', mail);
+  if (userId) params.set('userId', userId);
+  else if (email) params.set('email', email);
 
   const res = await fetch(`${endpoint}?${params.toString()}`, {
     method: 'GET',

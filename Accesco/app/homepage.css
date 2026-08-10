@@ -4807,7 +4807,7 @@ opacity:0.5;
 
 .bengaluru-launch-card {
   position: relative;
-  width: 100%;
+  width: auto;
   max-width: 100%;
   border-radius: 20px;
   overflow: hidden;
@@ -4816,12 +4816,15 @@ opacity:0.5;
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
+  display: flex;
+  justify-content: center;
 }
 
 .bengaluru-launch-img {
-  width: 100%;
+  width: auto;
   height: auto;
   max-width: 100%;
+  max-height: min(70vh, 700px);
   display: block;
   object-fit: contain;
   border-radius: 20px;

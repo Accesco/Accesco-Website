@@ -52,10 +52,7 @@ export default function AccescoHeader() {
     }
 
     const timer = setTimeout(() => {
-      const localUser = localStorage.getItem('accesco_user');
-      const isLoggedOut = !localUser || localUser === 'null' || localUser === 'undefined' || localUser === '{}';
-
-      if (isLoggedOut && !user) {
+      if (!user) {
         setIsAuthOpen(true);
       }
     }, 1200);

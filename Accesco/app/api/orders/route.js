@@ -13,8 +13,9 @@ export async function POST(request) {
     const body = await request.json();
     const { order } = body;
 
-    if (!order || !order.id || !order.razorpayPaymentId) {
-      return NextResponse.json({ error: 'Order data with a payment id is required.' }, { status: 400 });
+    const hasValidPayment = order?.paymentMethod === 'cod' || order?.razorpayPaymentId;
+    if (!order || !order.id || !hasValidPayment) {
+      return NextResponse.json({ error: 'Order data with a payment id (or COD) is required.' }, { status: 400 });
     }
 
     try {

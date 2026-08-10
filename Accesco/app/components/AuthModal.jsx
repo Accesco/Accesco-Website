@@ -13,6 +13,8 @@ import {
   signInWithPhoneNumber,
   signInWithPopup,
   GoogleAuthProvider,
+  PhoneAuthProvider,
+  linkWithCredential,
   signOut,
 } from 'firebase/auth'
 import {
@@ -398,7 +400,6 @@ function AuthModalContent({
       uid: firebaseUser.uid,
     }
 
-    localStorage.setItem('accesco_user', JSON.stringify(user))
     setName(user.name)
     setSuccess(true)
 
@@ -543,7 +544,18 @@ function AuthModalContent({
     setLoading(true)
 
     try {
-      await confirmationResult.confirm(otpCode.trim())
+      if (pendingSocialUser) {
+        // Attach the phone credential to the already signed-in Google
+        // account instead of confirming a fresh sign-in, which would
+        // create a second, disconnected Firebase Auth user.
+        const credential = PhoneAuthProvider.credential(
+          confirmationResult.verificationId,
+          otpCode.trim(),
+        )
+        await linkWithCredential(auth.currentUser, credential)
+      } else {
+        await confirmationResult.confirm(otpCode.trim())
+      }
 
       const p = phone.trim()
       const n = pendingSocialUser
@@ -591,7 +603,6 @@ function AuthModalContent({
         uid: docId,
       }
 
-      localStorage.setItem('accesco_user', JSON.stringify(user))
       setSuccess(true)
 
       setTimeout(() => {
@@ -604,6 +615,12 @@ function AuthModalContent({
         setError('Invalid OTP. Please check the code and try again.')
       } else if (err.code === 'auth/code-expired') {
         setError('OTP has expired. Please request a new one.')
+      } else if (err.code === 'auth/credential-already-in-use') {
+        setError(
+          'This phone number is already linked to another account. Please use a different number or sign in with that account.',
+        )
+      } else if (err.code === 'auth/provider-already-linked') {
+        setError('This account already has a phone number linked.')
       } else {
         setError('Something went wrong. Please try again.')
       }
