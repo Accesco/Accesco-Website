@@ -13,28 +13,46 @@ export const useAuth = () => {
   return context
 }
 
+async function getUserDoc(docId) {
+  try {
+    const snap = await getDoc(doc(db, 'users', docId))
+    return snap.exists() ? snap.data() : null
+  } catch (e) {
+    console.error('Error loading user profile from Firestore:', e)
+    return null
+  }
+}
+
 // Mirrors the docId convention used in AuthModal: accounts that signed in
 // via Google (with or without a linked phone) are keyed by their Firebase
-// Auth uid, while phone-only accounts are keyed by their phone digits.
-function resolveUserDocId(firebaseUser) {
+// Auth uid. Phone-only accounts are keyed by whatever digits the user typed
+// at signup (AuthModal doesn't normalize before deriving the docId), which
+// is usually a bare 10-digit number rather than Firebase's E.164
+// phoneNumber (which always includes the +91 country code) — so both forms
+// are tried before giving up.
+async function loadUserProfile(firebaseUser) {
   const isGoogleLinked = firebaseUser.providerData.some(
     (p) => p.providerId === 'google.com',
   )
 
-  if (isGoogleLinked) return firebaseUser.uid
-  if (firebaseUser.phoneNumber) return firebaseUser.phoneNumber.replace(/\D/g, '')
-  return firebaseUser.uid
-}
-
-async function loadUserProfile(firebaseUser) {
-  const docId = resolveUserDocId(firebaseUser)
-
+  let docId = firebaseUser.uid
   let profile = null
-  try {
-    const snap = await getDoc(doc(db, 'users', docId))
-    profile = snap.exists() ? snap.data() : null
-  } catch (e) {
-    console.error('Error loading user profile from Firestore:', e)
+
+  if (isGoogleLinked) {
+    profile = await getUserDoc(docId)
+  } else if (firebaseUser.phoneNumber) {
+    const fullDigits = firebaseUser.phoneNumber.replace(/\D/g, '')
+    const last10 = fullDigits.slice(-10)
+
+    docId = fullDigits
+    profile = await getUserDoc(fullDigits)
+
+    if (!profile && last10 !== fullDigits) {
+      profile = await getUserDoc(last10)
+      if (profile) docId = last10
+    }
+  } else {
+    profile = await getUserDoc(docId)
   }
 
   return {
