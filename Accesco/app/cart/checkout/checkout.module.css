@@ -275,6 +275,72 @@
   color: #7A0042;
 }
 
+/* ── Payment method ── */
+.paymentOptions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.paymentOption {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border: 1.5px solid #EFEFF2;
+  border-radius: 14px;
+  background: #FFFFFF;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.paymentOption.selected {
+  border-color: #7A0042;
+  background: #FCEEF4;
+}
+
+.paymentRadio {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  border: 1.5px solid #C9C9D1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.paymentOption.selected .paymentRadio {
+  border-color: #7A0042;
+}
+
+.radioSelected {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #7A0042;
+}
+
+.paymentInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.paymentTitle {
+  font-family: 'Sora', sans-serif;
+  font-weight: 700;
+  font-size: 0.86rem;
+  color: #111111;
+}
+
+.paymentDesc {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.76rem;
+  color: #8A8A93;
+}
+
 .payBtn {
   width: 100%;
   display: inline-flex;

@@ -7,6 +7,7 @@ import { useCart } from '@/contexts/CartContext';
 import { products } from '@/lib/mockData';
 import ActiveOrdersWidget from '@/components/ActiveOrdersWidget';
 import Select from '@/components/instastyle/Select';
+import { useAuth } from '../../../components/AuthProvider';
 
 const PROFILE_STORAGE_KEY = 'instastyle_profile';
 
@@ -51,6 +52,7 @@ const accountMoments = [
 
 export default function ProfilePage() {
   const { cart, wishlist } = useCart();
+  const { user } = useAuth();
   const [profile, setProfile] = useState(initialProfile);
   const [saveStatus, setSaveStatus] = useState('idle');
   const [circularCredits, setCircularCredits] = useState(120);
@@ -74,16 +76,6 @@ export default function ProfilePage() {
         const parsed = JSON.parse(raw);
         next = { ...next, ...parsed };
       }
-      const rawUser = localStorage.getItem('accesco_user');
-      if (rawUser) {
-        const u = JSON.parse(rawUser);
-        const name = typeof u.name === 'string' ? u.name.trim() : '';
-        const phone = typeof u.phone === 'string' ? u.phone.trim() : '';
-        const email = typeof u.email === 'string' ? u.email.trim() : '';
-        if (name) next.fullName = name;
-        if (phone) next.phone = phone;
-        if (email) next.email = email;
-      }
       setProfile(next);
 
       // Read circular credits
@@ -93,6 +85,17 @@ export default function ProfilePage() {
       console.warn('Profile storage read failed:', error);
     }
   }, []);
+
+  // Overlay the Firebase-backed auth identity once it's available.
+  useEffect(() => {
+    if (!user) return;
+    setProfile((prev) => ({
+      ...prev,
+      fullName: user.name?.trim() || prev.fullName,
+      phone: user.phone?.trim() || prev.phone,
+      email: user.email?.trim() || prev.email,
+    }));
+  }, [user]);
 
   const updateField = (field, value) => {
     setProfile((prev) => ({ ...prev, [field]: value }));

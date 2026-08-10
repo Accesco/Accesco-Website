@@ -12,7 +12,7 @@ const ORDERS_STORAGE_KEY = 'swadishtt-orders';
 
 function CheckoutContent() {
   const router = useRouter();
-  const { cart, cartHydrated, clearCart } = useSwadishtt();
+  const { cart, cartHydrated, clearCart, user } = useSwadishtt();
   const [step, setStep] = useState(1);
   const [deliveryAddress, setDeliveryAddress] = useState({
     name: '',
@@ -46,15 +46,7 @@ function CheckoutContent() {
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
-    let storedUser = null;
     let storedLocation = null;
-
-    try {
-      const rawUser = localStorage.getItem('accesco_user');
-      if (rawUser) storedUser = JSON.parse(rawUser);
-    } catch (error) {
-      console.error('Error reading accesco_user from localStorage:', error);
-    }
 
     try {
       const rawLocation = localStorage.getItem('userLocation');
@@ -62,11 +54,11 @@ function CheckoutContent() {
     } catch (error) {
       console.error('Error reading userLocation from localStorage:', error);
     }
-    
-    const resolvedName = typeof storedUser?.name === 'string' ? storedUser.name : '';
-    const resolvedPhone = typeof storedUser?.phone === 'string' ? storedUser.phone : '';
-    const resolvedEmail = typeof storedUser?.email === 'string' ? storedUser.email : '';
-    
+
+    const resolvedName = typeof user?.name === 'string' ? user.name : '';
+    const resolvedPhone = typeof user?.phone === 'string' ? user.phone : '';
+    const resolvedEmail = typeof user?.email === 'string' ? user.email : '';
+
     const resolvedCity =
       (typeof storedLocation?.city === 'string' && storedLocation.city) ||
       (typeof storedLocation?.state === 'string' && storedLocation.state) ||
@@ -102,7 +94,7 @@ function CheckoutContent() {
       city: prev.city || resolvedCity,
       pincode: prev.pincode || resolvedPincode,
     }));
-  }, []);
+  }, [user]);
 
   const subtotal = cart.reduce((sum, item) => sum + (item.price * (item.quantity || 1)), 0);
   const deliveryFee = subtotal >= 300 ? 0 : 40;

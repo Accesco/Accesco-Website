@@ -4,6 +4,7 @@ import { useEffect, useState, useRef } from 'react';
 import Image from 'next/image';
 
 const CHATBOT_LOGO = '/logo.png';
+const CHATBOT_API_URL = process.env.NEXT_PUBLIC_CHATBOT_URL || 'http://localhost:8000';
 
 function getChatTime() {
   return new Date().toLocaleTimeString([], {
@@ -73,12 +74,12 @@ const [typing, setTyping] = useState(false)
     setInput('');
     setTyping(true);
 
-    // TEMPORARY TEST: call FastAPI ML server; fall back to rule-based reply if server is down
+    // Call FastAPI ML server; fall back to rule-based reply if server is down
     let botText;
     let botCards = null;
     let botActions = null;
     try {
-      const res = await fetch('http://localhost:8000/chat', {
+      const res = await fetch(`${CHATBOT_API_URL}/chat`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ text: value, top_k: 3 }),

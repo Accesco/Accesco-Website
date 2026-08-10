@@ -15,17 +15,6 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 // Accepts digits, spaces, dashes, dots, parentheses, and an optional leading +
 const PHONE_RE = /^\+?[\d\s\-().]{7,20}$/;
 
-function getLoggedInUser() {
-  if (typeof window === 'undefined') return null;
-
-  try {
-    const stored = window.localStorage.getItem('accesco_user');
-    return stored ? JSON.parse(stored) : null;
-  } catch {
-    return null;
-  }
-}
-
 // waitlistUsers.phone is stored exactly as the visitor typed it (see
 // addWaitlistEntry below), so an exact-match query can miss entries typed
 // with different spacing/country-code formatting. Querying a handful of
@@ -74,21 +63,21 @@ export async function checkWaitlistRegistration({ phone, email } = {}) {
 }
 
 /**
- * Whether the current visitor is on the waitlist. Always resolved against
+ * Whether the given account is on the waitlist. Always resolved against
  * Firestore using the logged-in account's phone/email -- there is no local
  * flag involved, so it's correct across devices/browsers and per-account.
  * Visitors with no known phone/email (never logged in) can't be looked up
  * yet, so they're treated as not registered until they do.
+ * @param {{ phone?: string|null; email?: string|null }} identity - the
+ *   signed-in user's identity, e.g. from useAuth()'s `user`.
  * @returns {Promise<boolean>}
  */
-export async function isWaitlistRegistered() {
+export async function isWaitlistRegistered({ phone, email } = {}) {
   if (typeof window === 'undefined') return false;
-
-  const user = getLoggedInUser();
-  if (!user?.phone && !user?.email) return false;
+  if (!phone && !email) return false;
 
   try {
-    return await checkWaitlistRegistration({ phone: user.phone, email: user.email });
+    return await checkWaitlistRegistration({ phone, email });
   } catch (err) {
     console.error('Waitlist registration check failed:', err);
     return false;

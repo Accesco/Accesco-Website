@@ -498,18 +498,14 @@ export function SwadishttProvider({ children }) {
     [fetchLocationDetails, updateLocation]
   );
 
+  // Mirror the Firebase-backed auth user from AuthProvider
+  useEffect(() => {
+    setUser(authUser);
+  }, [authUser]);
+
   // Hydrate from shared localStorage + auto-detect once if missing
   useEffect(() => {
     if (typeof window === 'undefined') return;
-
-    try {
-      const storedUser = localStorage.getItem('accesco_user');
-      if (storedUser) {
-        setUser(JSON.parse(storedUser));
-      }
-    } catch (e) {
-      console.error('Error reading accesco_user:', e);
-    }
 
     try {
       const stored = localStorage.getItem('userLocation');

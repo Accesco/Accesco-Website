@@ -26,6 +26,7 @@ export default function GroklyCheckout() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [showAuth, setShowAuth] = useState(false);
   const [paymentError, setPaymentError] = useState('');
+  const [paymentMethod, setPaymentMethod] = useState('razorpay');
   const [isLoadingLocation, setIsLoadingLocation] = useState(false);
   const [customerDetails, setCustomerDetails] = useState({
     name: 'Accesco Customer',
@@ -164,24 +165,36 @@ export default function GroklyCheckout() {
     return {};
   };
 
-  // Places the order for a specific logged-in user, after payment succeeds.
+  // Places the order for a specific logged-in user. Cash on Delivery skips
+  // the payment gateway entirely; every other method collects payment via
+  // Razorpay first.
   const submitOrder = async (activeUser) => {
     setIsProcessing(true);
     setPaymentError('');
 
     try {
-      const payment = await payWithRazorpay({
-        amount: total,
-        receipt: `grokly_${Date.now()}`,
-        name: 'Grokly',
-        description: `Grokly order · ${cartItems.length} item(s)`,
-        prefill: {
-          name: activeUser?.name || customerDetails.name,
-          email: activeUser?.email || '',
-          contact: activeUser?.phone || customerDetails.phone,
-        },
-        theme: { color: '#0c831f' },
-      });
+      let paymentDetails = { paymentMethod: 'cod' };
+
+      if (paymentMethod !== 'cod') {
+        const payment = await payWithRazorpay({
+          amount: total,
+          receipt: `grokly_${Date.now()}`,
+          name: 'Grokly',
+          description: `Grokly order · ${cartItems.length} item(s)`,
+          prefill: {
+            name: activeUser?.name || customerDetails.name,
+            email: activeUser?.email || '',
+            contact: activeUser?.phone || customerDetails.phone,
+          },
+          theme: { color: '#0c831f' },
+        });
+
+        paymentDetails = {
+          paymentMethod: 'razorpay',
+          razorpayOrderId: payment.orderId,
+          razorpayPaymentId: payment.paymentId,
+        };
+      }
 
       const resolvedEta = deliverySpeed === 'batched' ? (eta ? eta + 15 : 25) : eta;
       const order = placeOrder({
@@ -193,9 +206,7 @@ export default function GroklyCheckout() {
         eta: resolvedEta,
         items: cartItems.map(i => ({ id: i.product.id, name: i.product.name, price: i.product.price, quantity: i.quantity, sku: i.product.sku || '' })),
         totals: { subtotal, deliveryFee, discount, total },
-        paymentMethod: 'razorpay',
-        razorpayOrderId: payment.orderId,
-        razorpayPaymentId: payment.paymentId,
+        ...paymentDetails,
         address: customerDetails.address,
         customerName: activeUser?.name || customerDetails.name,
         phone: activeUser?.phone || customerDetails.phone,
@@ -438,16 +449,35 @@ export default function GroklyCheckout() {
               <CreditCard size={18} className={styles.sectionHeaderIcon} />
               <h2>Payment Method</h2>
             </div>
-            <div className={styles.paymentOption}>
-              <input type="radio" checked readOnly id="upi-radio" />
+            <div
+              className={styles.paymentOption}
+              style={paymentMethod !== 'razorpay' ? { opacity: 0.6, background: '#f8fafc', borderColor: '#e2e8f0' } : undefined}
+              onClick={() => setPaymentMethod('razorpay')}
+            >
+              <input type="radio" checked={paymentMethod === 'razorpay'} onChange={() => setPaymentMethod('razorpay')} id="upi-radio" />
               <label htmlFor="upi-radio" className={styles.paymentInfo}>
-                <strong>UPI (PhonePe / Google Pay / BHIM)</strong>
+                <strong>Pay Online (UPI / Card / Netbanking)</strong>
                 <p>Instant digital transfer through secure verification</p>
               </label>
               <div className={styles.shieldBadge}>
                 <ShieldCheck size={14} />
                 <span>Secure</span>
               </div>
+            </div>
+
+            <div
+              className={styles.paymentOption}
+              style={{
+                marginTop: '10px',
+                ...(paymentMethod !== 'cod' ? { opacity: 0.6, background: '#f8fafc', borderColor: '#e2e8f0' } : {}),
+              }}
+              onClick={() => setPaymentMethod('cod')}
+            >
+              <input type="radio" checked={paymentMethod === 'cod'} onChange={() => setPaymentMethod('cod')} id="cod-radio" />
+              <label htmlFor="cod-radio" className={styles.paymentInfo}>
+                <strong>Cash on Delivery</strong>
+                <p>Pay in cash when your order arrives</p>
+              </label>
             </div>
           </section>
         </div>
@@ -520,10 +550,12 @@ export default function GroklyCheckout() {
             disabled={isProcessing}
           >
             {isProcessing
-              ? 'Processing Payment...'
+              ? (paymentMethod === 'cod' ? 'Placing Order...' : 'Processing Payment...')
               : !user
                 ? `Login & Place Order · ₹${total}`
-                : `Pay & Place Order · ₹${total}`}
+                : paymentMethod === 'cod'
+                  ? `Place Order (COD) · ₹${total}`
+                  : `Pay & Place Order · ₹${total}`}
           </button>
         </div>
       </div>

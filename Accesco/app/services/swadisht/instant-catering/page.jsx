@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import SwadishttHeader from '../components/SwadishttHeader';
 import Image from 'next/image';
 import styles from './instant-catering.module.css';
+import { useAuth } from '../../../components/AuthProvider';
 
 // ── Catering Packages Initial Data ──
 const CATERING_PACKAGES = [
@@ -296,6 +297,7 @@ function PackageCard({ pkg, onBook }) {
 
 // ── Interactive Multi-Step Booking Modal Component ──
 function BookingModal({ pkg, onClose, onSuccess }) {
+  const { user } = useAuth();
   const [step, setStep] = useState(1);
   const [date, setDate] = useState('');
   const [time, setTime] = useState('');
@@ -333,17 +335,16 @@ function BookingModal({ pkg, onClose, onSuccess }) {
     };
   }, [onClose]);
 
-  // Autofill details from localStorage
+  // Autofill details from the signed-in account
   useEffect(() => {
-    try {
-      const storedUser = JSON.parse(localStorage.getItem('accesco_user') || '{}');
-      if (storedUser.name) setName(storedUser.name);
-      if (storedUser.phone) setPhone(storedUser.phone);
-      if (storedUser.email) setEmail(storedUser.email);
-    } catch (e) {
-      console.warn('Storage read error', e);
-    }
+    if (!user) return;
+    if (user.name) setName(user.name);
+    if (user.phone) setPhone(user.phone);
+    if (user.email) setEmail(user.email);
+  }, [user]);
 
+  // Autofill delivery address from localStorage
+  useEffect(() => {
     try {
       const storedLoc = JSON.parse(localStorage.getItem('userLocation') || '{}');
       const formatted =
@@ -398,11 +399,6 @@ function BookingModal({ pkg, onClose, onSuccess }) {
     setSubmitting(true);
     setApiError('');
     const bookingId = `CAT-${Date.now().toString(36).toUpperCase()}`;
-
-    // Persist details to localStorage for future use
-    try {
-      localStorage.setItem('accesco_user', JSON.stringify({ name, phone, email }));
-    } catch (e) {}
 
     try {
       const response = await fetch('/api/swadishtt/orders/update-status', {

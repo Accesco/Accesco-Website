@@ -47,7 +47,7 @@ function ArrowRightIcon() {
 // existing order-storage mechanism, so its "My Orders"/tracking pages keep
 // working unmodified. Best-effort: the payment already succeeded, so a
 // failed sync call here must never block the user's confirmation screen.
-async function placeGroklyOrder({ items, subtotal, address, unifiedOrderId, payment, user }) {
+async function placeGroklyOrder({ items, subtotal, address, unifiedOrderId, payment, paymentMethod, user }) {
   const orderId = `GRK-${Date.now()}`;
   const order = {
     id: orderId,
@@ -65,9 +65,9 @@ async function placeGroklyOrder({ items, subtotal, address, unifiedOrderId, paym
     discount: 0,
     total: subtotal,
     totals: { subtotal, deliveryFee: 0, discount: 0, total: subtotal },
-    paymentMethod: 'razorpay',
-    razorpayOrderId: payment.orderId,
-    razorpayPaymentId: payment.paymentId,
+    ...(paymentMethod === 'cod'
+      ? { paymentMethod: 'cod' }
+      : { paymentMethod: 'razorpay', razorpayOrderId: payment.orderId, razorpayPaymentId: payment.paymentId }),
     address: address.address,
     phone: address.phone,
   };
@@ -93,7 +93,7 @@ async function placeGroklyOrder({ items, subtotal, address, unifiedOrderId, paym
   };
 }
 
-async function placeInstaStyleOrder({ items, subtotal, address, unifiedOrderId, payment, user }) {
+async function placeInstaStyleOrder({ items, subtotal, address, unifiedOrderId, payment, paymentMethod, user }) {
   const orderId = `INS-${Date.now()}`;
   const order = {
     id: orderId,
@@ -120,9 +120,9 @@ async function placeInstaStyleOrder({ items, subtotal, address, unifiedOrderId, 
       pincode: address.pincode,
     },
     phone: address.phone,
-    paymentMethod: 'razorpay',
-    razorpayOrderId: payment.orderId,
-    razorpayPaymentId: payment.paymentId,
+    ...(paymentMethod === 'cod'
+      ? { paymentMethod: 'cod' }
+      : { paymentMethod: 'razorpay', razorpayOrderId: payment.orderId, razorpayPaymentId: payment.paymentId }),
   };
 
   try {
@@ -146,7 +146,7 @@ async function placeInstaStyleOrder({ items, subtotal, address, unifiedOrderId, 
   };
 }
 
-async function placeSwadishttOrder({ items, subtotal, address, unifiedOrderId, payment, user }) {
+async function placeSwadishttOrder({ items, subtotal, address, unifiedOrderId, payment, paymentMethod, user }) {
   const orderId = `SW${Date.now().toString(36).toUpperCase()}`;
   const order = {
     id: orderId,
@@ -154,11 +154,11 @@ async function placeSwadishttOrder({ items, subtotal, address, unifiedOrderId, p
     placedAt: new Date().toISOString(),
     unifiedOrderId,
     userId: user?.uid || null,
-    paymentMethod: 'razorpay',
     customerEmail: address.email,
     customerName: address.name,
-    razorpayOrderId: payment.orderId,
-    razorpayPaymentId: payment.paymentId,
+    ...(paymentMethod === 'cod'
+      ? { paymentMethod: 'cod' }
+      : { paymentMethod: 'razorpay', razorpayOrderId: payment.orderId, razorpayPaymentId: payment.paymentId }),
     delivery: {
       name: address.name,
       phone: address.phone,
@@ -254,6 +254,7 @@ export default function UnifiedCheckoutPage() {
   const [addressErrors, setAddressErrors] = useState({});
   const [isProcessing, setIsProcessing] = useState(false);
   const [paymentError, setPaymentError] = useState('');
+  const [paymentMethod, setPaymentMethod] = useState('razorpay');
   const [orderPlaced, setOrderPlaced] = useState(false);
   const [placedOrders, setPlacedOrders] = useState([]);
 
@@ -274,14 +275,7 @@ export default function UnifiedCheckoutPage() {
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
-    let storedUser = null;
     let storedLocation = null;
-    try {
-      const rawUser = localStorage.getItem('accesco_user');
-      if (rawUser) storedUser = JSON.parse(rawUser);
-    } catch {
-      // ignore malformed storage
-    }
     try {
       const rawLocation = localStorage.getItem('userLocation');
       if (rawLocation) storedLocation = JSON.parse(rawLocation);
@@ -305,14 +299,14 @@ export default function UnifiedCheckoutPage() {
 
     setDeliveryAddress((prev) => ({
       ...prev,
-      name: prev.name || (typeof storedUser?.name === 'string' ? storedUser.name : ''),
-      phone: prev.phone || (typeof storedUser?.phone === 'string' ? storedUser.phone : ''),
-      email: prev.email || (typeof storedUser?.email === 'string' ? storedUser.email : ''),
+      name: prev.name || (typeof user?.name === 'string' ? user.name : ''),
+      phone: prev.phone || (typeof user?.phone === 'string' ? user.phone : ''),
+      email: prev.email || (typeof user?.email === 'string' ? user.email : ''),
       address: prev.address || resolvedAddress,
       city: prev.city || resolvedCity,
       pincode: prev.pincode || resolvedPincode,
     }));
-  }, []);
+  }, [user]);
 
   const activeStores = useMemo(() => stores.filter((s) => s.items.length > 0), [stores]);
   const totalItems = activeStores.reduce((sum, s) => sum + s.itemCount, 0);
@@ -352,18 +346,21 @@ export default function UnifiedCheckoutPage() {
     setPaymentError('');
 
     try {
-      const payment = await payWithRazorpay({
-        amount: grandTotal,
-        receipt: `unified_${Date.now()}`,
-        name: 'Accesco Living',
-        description: `Order across ${activeStores.length} store(s) · ${totalItems} item(s)`,
-        prefill: {
-          name: deliveryAddress.name,
-          email: deliveryAddress.email,
-          contact: deliveryAddress.phone,
-        },
-        theme: { color: '#7A0042' },
-      });
+      // Cash on Delivery skips the payment gateway entirely.
+      const payment = paymentMethod === 'cod'
+        ? null
+        : await payWithRazorpay({
+            amount: grandTotal,
+            receipt: `unified_${Date.now()}`,
+            name: 'Accesco Living',
+            description: `Order across ${activeStores.length} store(s) · ${totalItems} item(s)`,
+            prefill: {
+              name: deliveryAddress.name,
+              email: deliveryAddress.email,
+              contact: deliveryAddress.phone,
+            },
+            theme: { color: '#7A0042' },
+          });
 
       const unifiedOrderId = `UNI-${Date.now()}`;
       const results = await Promise.all(
@@ -374,6 +371,7 @@ export default function UnifiedCheckoutPage() {
             address: deliveryAddress,
             unifiedOrderId,
             payment,
+            paymentMethod,
             user,
           })
         )
@@ -392,9 +390,9 @@ export default function UnifiedCheckoutPage() {
               customerEmail: deliveryAddress.email,
               customerName: deliveryAddress.name,
               address: deliveryAddress,
-              paymentMethod: 'razorpay',
-              razorpayOrderId: payment.orderId,
-              razorpayPaymentId: payment.paymentId,
+              ...(paymentMethod === 'cod'
+                ? { paymentMethod: 'cod' }
+                : { paymentMethod: 'razorpay', razorpayOrderId: payment.orderId, razorpayPaymentId: payment.paymentId }),
               subtotal: subTotal,
               platformFee,
               grandTotal,
@@ -435,7 +433,9 @@ export default function UnifiedCheckoutPage() {
             <div className={styles.confirmTick}>✓</div>
             <h1 className={styles.confirmTitle}>Order placed!</h1>
             <p className={styles.confirmDesc}>
-              One payment of {formatINR(paidTotal)} booked {totalItems} item{totalItems === 1 ? '' : 's'} across {placedOrders.length} store{placedOrders.length === 1 ? '' : 's'}.
+              {paymentMethod === 'cod'
+                ? `Cash on Delivery order of ${formatINR(paidTotal)} booked`
+                : `One payment of ${formatINR(paidTotal)} booked`} {totalItems} item{totalItems === 1 ? '' : 's'} across {placedOrders.length} store{placedOrders.length === 1 ? '' : 's'}.
             </p>
 
             <div className={styles.confirmOrdersList}>
@@ -455,7 +455,7 @@ export default function UnifiedCheckoutPage() {
             </div>
 
             <div className={styles.confirmTotalRow}>
-              <span>Total paid</span>
+              <span>{paymentMethod === 'cod' ? 'Total due on delivery' : 'Total paid'}</span>
               <span>{formatINR(paidTotal)}</span>
             </div>
 
@@ -599,12 +599,47 @@ export default function UnifiedCheckoutPage() {
                 </div>
               ))}
 
+              <h2 className={styles.sectionTitle}>Payment Method</h2>
+              <div className={styles.paymentOptions}>
+                <div
+                  className={`${styles.paymentOption} ${paymentMethod === 'razorpay' ? styles.selected : ''}`}
+                  onClick={() => setPaymentMethod('razorpay')}
+                >
+                  <div className={styles.paymentRadio}>
+                    {paymentMethod === 'razorpay' && <div className={styles.radioSelected} />}
+                  </div>
+                  <div className={styles.paymentInfo}>
+                    <span className={styles.paymentTitle}>Pay Online</span>
+                    <span className={styles.paymentDesc}>UPI, Card, Netbanking &mdash; via Razorpay</span>
+                  </div>
+                </div>
+
+                <div
+                  className={`${styles.paymentOption} ${paymentMethod === 'cod' ? styles.selected : ''}`}
+                  onClick={() => setPaymentMethod('cod')}
+                >
+                  <div className={styles.paymentRadio}>
+                    {paymentMethod === 'cod' && <div className={styles.radioSelected} />}
+                  </div>
+                  <div className={styles.paymentInfo}>
+                    <span className={styles.paymentTitle}>Cash on Delivery</span>
+                    <span className={styles.paymentDesc}>Pay when your order arrives</span>
+                  </div>
+                </div>
+              </div>
+
               {paymentError && <div className={styles.errorBox}>{paymentError}</div>}
 
               <button className={styles.payBtn} onClick={handlePay} disabled={isProcessing}>
-                {isProcessing ? 'Processing…' : `Pay ${formatINR(grandTotal)}`} <ArrowRightIcon />
+                {isProcessing
+                  ? 'Processing…'
+                  : paymentMethod === 'cod'
+                    ? `Place Order (COD) · ${formatINR(grandTotal)}`
+                    : `Pay ${formatINR(grandTotal)}`} <ArrowRightIcon />
               </button>
-              <p className={styles.secureNote}><LockIcon /> Secured by Razorpay &mdash; one payment, all stores</p>
+              <p className={styles.secureNote}>
+                <LockIcon /> {paymentMethod === 'cod' ? 'One order, all stores' : 'Secured by Razorpay — one payment, all stores'}
+              </p>
             </div>
           )}
         </div>

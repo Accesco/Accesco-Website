@@ -7,9 +7,11 @@ import { useCart } from '@/contexts/CartContext';
 import styles from './checkout.module.css';
 import Select from '@/components/instastyle/Select';
 import { payWithRazorpay } from '@/lib/razorpayService';
+import { useAuth } from '../../../components/AuthProvider';
 
 export default function CheckoutPage() {
   const router = useRouter();
+  const { user } = useAuth();
   const { cart, subtotal, deliveryFee, tax, total, clearCart, placeOrder } = useCart();
 
   const [formData, setFormData] = useState({
@@ -88,40 +90,32 @@ export default function CheckoutPage() {
   };
 
   useEffect(() => {
-    if (typeof window === 'undefined') return;
+    if (!user) return;
 
-    try {
-      const storedUser = localStorage.getItem('accesco_user');
-      if (!storedUser) return;
+    const name = typeof user.name === 'string' ? user.name.trim() : '';
+    const email = typeof user.email === 'string' ? user.email.trim() : '';
 
-      const parsed = JSON.parse(storedUser);
-      const name = typeof parsed?.name === 'string' ? parsed.name.trim() : '';
-      const email = typeof parsed?.email === 'string' ? parsed.email.trim() : '';
+    let phoneRaw =
+      typeof user.phone === 'string' || typeof user.phone === 'number'
+        ? String(user.phone)
+        : '';
+    let digitsOnly = phoneRaw.replace(/\D/g, '');
+    if (digitsOnly.length > 10) digitsOnly = digitsOnly.slice(-10);
 
-      let phoneRaw =
-        typeof parsed?.phone === 'string' || typeof parsed?.phone === 'number'
-          ? String(parsed.phone)
-          : '';
-      let digitsOnly = phoneRaw.replace(/\D/g, '');
-      if (digitsOnly.length > 10) digitsOnly = digitsOnly.slice(-10);
+    setFormData((prev) => ({
+      ...prev,
+      fullName: prev.fullName || name,
+      phone: prev.phone || digitsOnly,
+      email: prev.email || email,
+    }));
 
-      setFormData((prev) => ({
-        ...prev,
-        fullName: prev.fullName || name,
-        phone: prev.phone || digitsOnly,
-        email: prev.email || email,
-      }));
-
-      setErrors((prev) => ({
-        ...prev,
-        fullName: '',
-        phone: '',
-        email: '',
-      }));
-    } catch {
-      // ignore malformed storage
-    }
-  }, []);
+    setErrors((prev) => ({
+      ...prev,
+      fullName: '',
+      phone: '',
+      email: '',
+    }));
+  }, [user]);
 
   useEffect(() => {
     if (cart.length === 0) {
