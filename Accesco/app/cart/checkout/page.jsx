@@ -3,7 +3,16 @@
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { buildUnifiedStores, clearAllBrandCarts } from '@/lib/unifiedCart';
+import {
+  buildUnifiedStores,
+  clearAllBrandCarts,
+  getGroklyCart,
+  setGroklyCart,
+  getSwadishttCart,
+  setSwadishttCart,
+  getInstaStyleCart,
+  setInstaStyleCart,
+} from '@/lib/unifiedCart';
 import { payWithRazorpay } from '@/lib/razorpayService';
 import { useAuth } from '@/app/components/AuthProvider';
 import styles from './checkout.module.css';
@@ -257,6 +266,9 @@ export default function UnifiedCheckoutPage() {
   const [paymentMethod, setPaymentMethod] = useState('razorpay');
   const [orderPlaced, setOrderPlaced] = useState(false);
   const [placedOrders, setPlacedOrders] = useState([]);
+  // Whether the address fields were prefilled from the location already
+  // selected on the homepage (cleared once the user edits the address).
+  const [usedSavedLocation, setUsedSavedLocation] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -297,6 +309,10 @@ export default function UnifiedCheckoutPage() {
       (typeof storedLocation?.postalCode === 'string' && storedLocation.postalCode) ||
       '';
 
+    if (!deliveryAddress.address && (resolvedAddress || resolvedCity || resolvedPincode)) {
+      setUsedSavedLocation(true);
+    }
+
     setDeliveryAddress((prev) => ({
       ...prev,
       name: prev.name || (typeof user?.name === 'string' ? user.name : ''),
@@ -306,6 +322,7 @@ export default function UnifiedCheckoutPage() {
       city: prev.city || resolvedCity,
       pincode: prev.pincode || resolvedPincode,
     }));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
   const activeStores = useMemo(() => stores.filter((s) => s.items.length > 0), [stores]);
@@ -318,6 +335,26 @@ export default function UnifiedCheckoutPage() {
     if (!isMounted || orderPlaced) return;
     if (activeStores.length === 0) router.replace('/cart');
   }, [isMounted, orderPlaced, activeStores.length, router]);
+
+  // Lets the user drop an item right from checkout, without bouncing back to
+  // /cart — same per-brand storage each cart already reads/writes, see
+  // lib/unifiedCart.js.
+  const removeItem = async (storeKey, item) => {
+    if (storeKey === 'swadishtt') {
+      const cart = await getSwadishttCart(user);
+      await setSwadishttCart(user, cart.filter((c) => c.id !== item.id));
+    } else if (storeKey === 'grokly') {
+      const cart = getGroklyCart();
+      const next = { ...cart };
+      delete next[item.id];
+      setGroklyCart(next);
+    } else if (storeKey === 'instastyle') {
+      const cart = getInstaStyleCart();
+      const matches = (c) => c.id === item.id && c.selectedSize === item.selectedSize && c.selectedColor === item.selectedColor;
+      setInstaStyleCart(cart.filter((c) => !matches(c)));
+    }
+    setStores(await buildUnifiedStores(user));
+  };
 
   const validateAddress = () => {
     const errors = {};
@@ -485,7 +522,7 @@ export default function UnifiedCheckoutPage() {
       <header className={styles.topBar}>
         <button
           className={styles.backBtn}
-          onClick={() => (step === 2 ? setStep(1) : router.push('/cart'))}
+          onClick={() => (step === 2 ? setStep(1) : router.back())}
           aria-label="Go back"
         >
           <BackIcon />
@@ -502,6 +539,7 @@ export default function UnifiedCheckoutPage() {
             <div className={styles.section}>
               <h2 className={styles.sectionTitle}>Delivery Address</h2>
               <form onSubmit={handleAddressSubmit}>
+                <h3 className={styles.formSubheading}>Contact Details</h3>
                 <div className={styles.formRow}>
                   <div className={styles.formGroup}>
                     <label className={styles.formLabel}>Full Name *</label>
@@ -535,13 +573,23 @@ export default function UnifiedCheckoutPage() {
                   {addressErrors.email && <span className={styles.fieldError}>{addressErrors.email}</span>}
                 </div>
 
+                <h3 className={styles.formSubheading}>Delivery Address</h3>
+
                 <div className={styles.formGroup}>
-                  <label className={styles.formLabel}>Complete Address *</label>
+                  <div className={styles.addressLabelRow}>
+                    <label className={styles.formLabel}>Complete Address *</label>
+                    {usedSavedLocation && (
+                      <span className={styles.autoFilledBadge}>📍 From your saved location</span>
+                    )}
+                  </div>
                   <textarea
                     className={`${styles.formTextarea} ${addressErrors.address ? styles.inputError : ''}`}
                     rows={3}
                     value={deliveryAddress.address}
-                    onChange={(e) => setDeliveryAddress({ ...deliveryAddress, address: e.target.value })}
+                    onChange={(e) => {
+                      setUsedSavedLocation(false);
+                      setDeliveryAddress({ ...deliveryAddress, address: e.target.value });
+                    }}
                   />
                   {addressErrors.address && <span className={styles.fieldError}>{addressErrors.address}</span>}
                 </div>
@@ -593,6 +641,14 @@ export default function UnifiedCheckoutPage() {
                         <span className={styles.summaryItemName}>{item.name}</span>
                         <span className={styles.summaryItemQty}>x{item.quantity}</span>
                         <span className={styles.summaryItemPrice}>{formatINR(item.price * item.quantity)}</span>
+                        <button
+                          type="button"
+                          className={styles.summaryItemRemove}
+                          onClick={() => removeItem(store.key, item)}
+                          aria-label={`Remove ${item.name}`}
+                        >
+                          ✕
+                        </button>
                       </div>
                     ))}
                   </div>
@@ -648,9 +704,32 @@ export default function UnifiedCheckoutPage() {
           <div className={styles.billPanel}>
             <h2 className={styles.sectionTitle}>Bill Summary</h2>
             {activeStores.map((store) => (
-              <div className={styles.billLine} key={store.key}>
-                <span>{store.name}</span>
-                <span>{formatINR(store.subtotal)}</span>
+              <div className={styles.billStoreBlock} key={store.key}>
+                <div className={styles.billLine}>
+                  <span className={styles.billStoreLabel}>{store.name}</span>
+                  <span>{formatINR(store.subtotal)}</span>
+                </div>
+                <div className={styles.billItemList}>
+                  {store.items.map((item) => (
+                    <div className={styles.billItemLine} key={item.key}>
+                      <span>
+                        {item.name}
+                        {item.variant ? ` (${item.variant})` : ''} × {item.quantity}
+                      </span>
+                      <span className={styles.billItemRight}>
+                        {formatINR(item.price * item.quantity)}
+                        <button
+                          type="button"
+                          className={styles.billItemRemove}
+                          onClick={() => removeItem(store.key, item)}
+                          aria-label={`Remove ${item.name}`}
+                        >
+                          ✕
+                        </button>
+                      </span>
+                    </div>
+                  ))}
+                </div>
               </div>
             ))}
             <div className={styles.billDivider} />

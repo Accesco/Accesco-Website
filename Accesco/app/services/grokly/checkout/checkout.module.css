@@ -104,6 +104,28 @@
   letter-spacing: 0.5px;
 }
 
+.addressLabelRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.autoFilledBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: rgba(12, 131, 31, 0.08);
+  color: #0C831F;
+  font-size: 10.5px;
+  font-weight: 700;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
 .inputWrapper {
   position: relative;
   display: flex;

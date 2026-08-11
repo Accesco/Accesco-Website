@@ -34,6 +34,10 @@ function CheckoutContent() {
   // Validation error states
   const [addressErrors, setAddressErrors] = useState({});
   const [isPlacingOrder, setIsPlacingOrder] = useState(false);
+  // Whether the address fields below were prefilled from the location
+  // already selected on the homepage (shown as a small badge, cleared the
+  // moment the user edits the address themselves).
+  const [usedSavedLocation, setUsedSavedLocation] = useState(false);
 
   useEffect(() => {
     if (!cartHydrated) return;
@@ -85,6 +89,10 @@ function CheckoutContent() {
       (typeof storedLocation?.postalCode === 'number' && String(storedLocation.postalCode)) ||
       '';
     
+    if (!deliveryAddress.address && (resolvedAddress || resolvedCity || resolvedPincode)) {
+      setUsedSavedLocation(true);
+    }
+
     setDeliveryAddress((prev) => ({
       ...prev,
       name: prev.name || resolvedName,
@@ -94,6 +102,7 @@ function CheckoutContent() {
       city: prev.city || resolvedCity,
       pincode: prev.pincode || resolvedPincode,
     }));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
   const subtotal = cart.reduce((sum, item) => sum + (item.price * (item.quantity || 1)), 0);
@@ -500,6 +509,7 @@ function CheckoutContent() {
               <div className={styles.stepContent}>
                 <h2 className={styles.stepTitle}>Delivery Address</h2>
                 <form onSubmit={handleAddressSubmit} className={styles.addressForm}>
+                  <h3 className={styles.formSubheading}>Contact Details</h3>
                   <div className={styles.formRow}>
                     <div className={styles.formGroup}>
                       <label className={styles.formLabel}>Full Name *</label>
@@ -544,12 +554,20 @@ function CheckoutContent() {
                     {addressErrors.email && <span className={styles.fieldError}>{addressErrors.email}</span>}
                   </div>
 
+                  <h3 className={styles.formSubheading}>Delivery Address</h3>
+
                   <div className={styles.formGroup}>
-                    <label className={styles.formLabel}>Complete Address *</label>
+                    <div className={styles.addressLabelRow}>
+                      <label className={styles.formLabel}>Complete Address *</label>
+                      {usedSavedLocation && (
+                        <span className={styles.autoFilledBadge}>📍 From your saved location</span>
+                      )}
+                    </div>
                     <textarea
                       className={`${styles.formTextarea} ${addressErrors.address ? styles.inputError : ''}`}
                       value={deliveryAddress.address}
                       onChange={(e) => {
+                        setUsedSavedLocation(false);
                         setDeliveryAddress({...deliveryAddress, address: e.target.value});
                         setAddressErrors({...addressErrors, address: ''});
                       }}
