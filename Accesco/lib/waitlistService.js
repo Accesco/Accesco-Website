@@ -128,7 +128,7 @@ export function validateWaitlistEntry(data) {
  * WARNING: This client-side write cannot be rate-limited.
  * Move this to the backend /api/waitlist route for actual security.
  *
- * @param {{ name?: string; email: string; phone: string }} data
+ * @param {{ name?: string; email: string; phone: string; interests?: string }} data
  * @returns {Promise<string>} New document id
  * @throws {Error} if validation fails
  */
@@ -140,12 +140,15 @@ export async function addWaitlistEntry(data) {
 
   const email = data.email.trim().toLowerCase();
   const name = data.name?.trim() || '';
+  const phone = data.phone.trim();
+  const interests = data.interests?.trim() || '';
 
   // VULNERABILITY: Direct client-side write. Attackers can spam this without hitting API rate limits.
   const docRef = await addDoc(collection(db, COLLECTION), {
     name,
     email,
-    phone: data.phone.trim(),
+    phone,
+    interests,
     createdAt: serverTimestamp(),
   });
 
@@ -153,18 +156,18 @@ export async function addWaitlistEntry(data) {
   fetch('/api/waitlist', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email, name }),
+    body: JSON.stringify({ email, name, phone, interests }),
   }).then(async (res) => {
     if (res.status === 429) {
       console.warn('Too many requests');
     }
   }).catch((err) => console.error('Confirmation email failed:', err));
 
-  // If this person was referred, joining the waitlist is the conversion
-  // event pre-launch (ordering itself is gated behind the waitlist, so a
-  // "first order" is unrealistic to wait for). Non-blocking side effect.
+  // If this person was referred, joining the waitlist is what confirms the
+  // referral (not a first order — ordering is itself gated behind the
+  // waitlist, so it would never be the earlier event). Non-blocking side effect.
   import('./referralFulfillment').then(({ markWaitlistJoinAndFulfillGifts }) =>
-    markWaitlistJoinAndFulfillGifts({ phone: data.phone }),
+    markWaitlistJoinAndFulfillGifts({ phone }),
   ).catch((err) => console.error('Referral waitlist conversion failed:', err));
 
   return docRef.id;
