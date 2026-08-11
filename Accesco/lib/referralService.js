@@ -246,8 +246,10 @@ export async function initializeReferralProfile(phone, name, referredByCode = nu
       referredByProcessed: false,
       referralCount: 0,
       coins: 0,
-      milestoneClaims: {},
-      hasOrderedAt: null,
+      tierClaims: {},
+      badges: [],
+      freeDeliveryUntil: null,
+      waitlistJoinedAt: null,
       createdAt: new Date().toISOString(),
     });
 
@@ -295,27 +297,6 @@ export function subscribeToReferralStats(phone, onUpdate) {
   return onSnapshot(profileRef, (snap) => {
     onUpdate(snap.exists() ? snap.data() : null);
   });
-}
-
-/**
- * Claims a gift for a reached-but-unclaimed milestone. Server-validates the
- * referral count, tier, and gift choice — see app/api/referral/claim-gift.
- */
-export async function claimMilestoneGift(phone, tierId, giftId) {
-  const digits = normalizePhoneDigits(phone);
-
-  const response = await fetch('/api/referral/claim-gift', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ phone: digits, tierId, giftId }),
-  });
-
-  const payload = await response.json().catch(() => null);
-  if (!response.ok) {
-    throw new Error(payload?.error || 'Failed to claim gift');
-  }
-
-  return payload;
 }
 
 /**

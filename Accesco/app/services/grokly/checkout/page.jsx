@@ -33,15 +33,14 @@ export default function GroklyCheckout() {
     address: location || 'Bengaluru',
     phone: '+91 9022217637'
   });
+  // Tracks whether the address field still reflects the location picked on
+  // the homepage vs. something the user has since typed themselves.
+  const [addressAutoFilled, setAddressAutoFilled] = useState(true);
 
   useEffect(() => {
-    if (location) {
-      setCustomerDetails(prev => ({
-        ...prev,
-        address: location
-      }));
-    }
-  }, [location]);
+    if (!location || !addressAutoFilled) return; // user has typed their own address — never overwrite it
+    setCustomerDetails(prev => ({ ...prev, address: location }));
+  }, [location, addressAutoFilled]);
 
   const [eta , setEta] = useState(0);
   const [deliverySpeed, setDeliverySpeed] = useState('instant');
@@ -350,10 +349,20 @@ export default function GroklyCheckout() {
             </div>
 
             <div className={styles.formGroup}>
-              <label>Delivery Address {isLoadingLocation && '(Detecting...)'}</label>
-              <textarea 
+              <div className={styles.addressLabelRow}>
+                <label>Delivery Address {isLoadingLocation && '(Detecting...)'}</label>
+                {addressAutoFilled && !isLoadingLocation && (
+                  <span className={styles.autoFilledBadge}>
+                    <MapPin size={11} /> From your saved location
+                  </span>
+                )}
+              </div>
+              <textarea
                 value={customerDetails.address}
-                onChange={(e) => setCustomerDetails({...customerDetails, address: e.target.value})}
+                onChange={(e) => {
+                  setAddressAutoFilled(false);
+                  setCustomerDetails({...customerDetails, address: e.target.value});
+                }}
                 placeholder={isLoadingLocation ? 'Fetching your location...' : 'Enter your delivery address'}
                 disabled={isLoadingLocation}
                 rows={3}

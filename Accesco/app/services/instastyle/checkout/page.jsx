@@ -8,6 +8,7 @@ import styles from './checkout.module.css';
 import Select from '@/components/instastyle/Select';
 import { payWithRazorpay } from '@/lib/razorpayService';
 import { useAuth } from '../../../components/AuthProvider';
+import { getDeliveryLocation } from '@/lib/locationService';
 
 export default function CheckoutPage() {
   const router = useRouter();
@@ -42,6 +43,10 @@ export default function CheckoutPage() {
 
   // Dynamic ETA state
   const [deliveryETA, setDeliveryETA] = useState(null);
+
+  // Whether the address fields were prefilled from the location already
+  // selected on the homepage (cleared once the user edits/detects their own).
+  const [usedSavedLocation, setUsedSavedLocation] = useState(false);
 
   const deliverySpeed = 'instant';
   const speedDiscount = 0;
@@ -123,6 +128,30 @@ export default function CheckoutPage() {
     }
   }, [cart, router]);
 
+  // One-time prefill from the location already selected on the homepage
+  // (lib/locationService.js reads the same 'userLocation' localStorage key
+  // AccescoHeader's location picker writes to). Never overwrites anything
+  // the user has already typed or detected.
+  useEffect(() => {
+    if (formData.addressLine1) return;
+
+    const loc = getDeliveryLocation();
+    if (!loc) return;
+
+    const primaryLine = loc.streetAddress || loc.fullAddress || '';
+    if (!primaryLine && !loc.city && !loc.postalCode) return;
+
+    setFormData((prev) => ({
+      ...prev,
+      addressLine1: prev.addressLine1 || primaryLine,
+      city: prev.city || loc.city || '',
+      state: prev.state || coerceStateForSelect(loc.state),
+      pincode: prev.pincode || loc.postalCode || '',
+    }));
+    setUsedSavedLocation(true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const validateForm = () => {
     const newErrors = {};
 
@@ -153,6 +182,7 @@ export default function CheckoutPage() {
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
+    if (name === 'addressLine1') setUsedSavedLocation(false);
     if (errors[name]) {
       setErrors(prev => ({ ...prev, [name]: '' }));
     }
@@ -224,6 +254,7 @@ export default function CheckoutPage() {
             state,
             pincode,
           }));
+          setUsedSavedLocation(false);
 
           setErrors((prev) => ({
             ...prev,
@@ -333,6 +364,7 @@ export default function CheckoutPage() {
         state: coerceStateForSelect(locationData?.state), // unchanged — still restricted to 7 states
         pincode: locationData?.postalCode || '',
       }));
+      setUsedSavedLocation(false);
 
       setErrors((prev) => ({
         ...prev,
@@ -488,48 +520,48 @@ export default function CheckoutPage() {
               </section>
 
               <section className={styles.section}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+                <div className={styles.addressSectionHeader}>
                   <h2 className={styles.sectionTitle} style={{ margin: 0 }}>Delivery Address</h2>
-                  <button 
-                    type="button" 
-                    onClick={handleDetectLocation} 
+                  <button
+                    type="button"
+                    onClick={handleDetectLocation}
                     disabled={isLocating}
-                    style={{ padding: '8px 16px', cursor: 'pointer', backgroundColor: '#000', color: '#fff', border: 'none', borderRadius: '4px' }}
+                    className={styles.detectLocationBtn}
                   >
                     {isLocating ? 'Locating & Calculating ETA...' : 'Detect My Location'}
                   </button>
                 </div>
-                
+
+                {usedSavedLocation && (
+                  <span className={styles.autoFilledBadge}>📍 From your saved location</span>
+                )}
+
                 {locationError && (
-                  <div style={{ color: 'red', marginBottom: '1rem', fontSize: '0.875rem' }}>
+                  <div className={styles.locationErrorBanner}>
                     {locationError}
                   </div>
                 )}
 
                 {/* Manual address search (new) */}
-                <div style={{ position: 'relative', marginBottom: '1rem' }}>
+                <div className={styles.addressSearchWrap}>
                   <input
                     type="text"
                     placeholder="Or search your address manually..."
                     value={addressSearch}
                     onChange={(e) => handleAddressSearch(e.target.value)}
                     onFocus={() => addressSuggestions.length && setShowSuggestions(true)}
-                    style={{ width: '100%', padding: '10px 12px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '14px' }}
+                    className={styles.addressSearchInput}
                   />
                   {showSuggestions && addressSuggestions.length > 0 && (
-                    <ul style={{
-                      position: 'absolute', top: '100%', left: 0, right: 0, zIndex: 20,
-                      background: '#fff', border: '1px solid #ddd', borderRadius: 6,
-                      maxHeight: 200, overflowY: 'auto', listStyle: 'none', margin: 0, padding: 0,
-                    }}>
+                    <ul className={styles.addressSuggestions}>
                       {addressSuggestions.map((s, i) => (
                         <li
                           key={i}
                           onClick={() => handleSuggestionSelect(s)}
-                          style={{ padding: '10px 12px', cursor: 'pointer', borderBottom: '1px solid #f0f0f0' }}
+                          className={styles.addressSuggestionItem}
                         >
-                          <div style={{ fontWeight: 600, fontSize: 14 }}>{s.label}</div>
-                          <div style={{ fontSize: 12, color: '#777' }}>{s.fullAddress}</div>
+                          <div className={styles.suggestionLabel}>{s.label}</div>
+                          <div className={styles.suggestionAddress}>{s.fullAddress}</div>
                         </li>
                       ))}
                     </ul>

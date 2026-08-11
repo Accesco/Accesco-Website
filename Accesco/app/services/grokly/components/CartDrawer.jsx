@@ -9,13 +9,15 @@
 import { useMemo, useState } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { RefreshCw } from 'lucide-react';
+import { RefreshCw, Trash2 } from 'lucide-react';
 import styles from './CartDrawer.module.css';
 import { useGrokly } from '../contexts/GroklyContext';
 import { products } from '../lib/groklyData';
 import { dishIngredients } from '../lib/dishesData';
 import CouponSection from './CouponSection';
 import ReverseCommerceModal from './ReverseCommerceModal';
+import { useAuth } from '../../../components/AuthProvider';
+import { useOtherStoreItems } from '@/lib/unifiedCart';
 
 // Combined lookup: regular products + dish ingredients (which have their own IDs)
 const allPurchasable = [...products, ...dishIngredients];
@@ -47,6 +49,9 @@ export default function CartDrawer() {
 
   const [appliedCoupon, setAppliedCoupon] = useState(null);
   const [showReturnModal, setShowReturnModal] = useState(false);
+
+  const { user } = useAuth();
+  const { otherStores, updateQuantity: updateOtherQuantity, removeItem: removeOtherItem } = useOtherStoreItems(user, 'grokly');
 
   // Calculate cart items with product details
   const cartItems = useMemo(() => {
@@ -90,7 +95,7 @@ export default function CartDrawer() {
 
   const handleCheckout = () => {
     closeCart();
-    router.push('/services/grokly/checkout');
+    router.push('/cart/checkout');
   };
 
   /**
@@ -259,6 +264,48 @@ export default function CartDrawer() {
                 ))}
               </div>
 
+              {/* Also in your cart — items added in other Accesco services */}
+              {otherStores.length > 0 && (
+                <div className={styles.otherStores}>
+                  <h3 className={styles.otherStoresTitle}>Also in your cart</h3>
+                  {otherStores.map((store) => (
+                    <div key={store.key} className={styles.otherStoreBlock}>
+                      <div className={styles.otherStoreHeader}>
+                        <span>{store.name}</span>
+                        <span>₹{store.subtotal}</span>
+                      </div>
+                      {store.items.map((item) => (
+                        <div key={item.key} className={styles.otherStoreItem}>
+                          {/* eslint-disable-next-line @next/next/no-img-element -- heterogeneous external hosts */}
+                          <img
+                            className={styles.otherStoreItemImg}
+                            src={item.image || `https://placehold.co/60x60/f5f0f0/7A0042?text=${encodeURIComponent(item.name[0])}`}
+                            alt={item.name}
+                            onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = `https://placehold.co/60x60/f5f0f0/7A0042?text=${encodeURIComponent(item.name[0])}`; }}
+                          />
+                          <div className={styles.otherStoreItemInfo}>
+                            <span className={styles.otherStoreItemName}>{item.name}</span>
+                            {item.variant && <span className={styles.otherStoreItemVariant}>{item.variant}</span>}
+                          </div>
+                          <div className={styles.otherStoreItemQty}>
+                            <button onClick={() => updateOtherQuantity(store.key, item, item.quantity - 1)} aria-label={`Decrease ${item.name} quantity`}>−</button>
+                            <span>{item.quantity}</span>
+                            <button onClick={() => updateOtherQuantity(store.key, item, item.quantity + 1)} aria-label={`Increase ${item.name} quantity`}>+</button>
+                          </div>
+                          <button
+                            className={styles.otherStoreItemRemove}
+                            onClick={() => removeOtherItem(store.key, item)}
+                            aria-label={`Remove ${item.name}`}
+                          >
+                            <Trash2 size={14} />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  ))}
+                </div>
+              )}
+
               {/* Reverse Commerce Banner */}
               {cartReturnableItems.length > 0 && (
                 <div
@@ -403,7 +450,12 @@ export default function CartDrawer() {
         {/* Checkout Button (only show if cart has items) */}
         {cartCount > 0 && (
           <div className={styles.checkoutWrap}>
-            <button 
+            {otherStores.length > 0 && (
+              <p className={styles.otherStoresNote}>
+                Other services&rsquo; items are included — final total shown at checkout
+              </p>
+            )}
+            <button
               className={styles.checkoutBtn}
               onClick={handleCheckout}
               aria-label="Proceed to checkout"

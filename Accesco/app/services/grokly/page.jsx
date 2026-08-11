@@ -1478,8 +1478,8 @@ function GroklyPageContent() {
                         <Image
                           src={cat.image}
                           alt={cat.name}
-                          width={110}
-                          height={110}
+                          width={56}
+                          height={56}
                           className="grokly-cat-img"
                           draggable={false}
                           onContextMenu={(e) => e.preventDefault()}

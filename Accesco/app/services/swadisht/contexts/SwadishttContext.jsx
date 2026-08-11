@@ -274,7 +274,7 @@ function buildUserLocationStoragePayload({
 }
 
 export function SwadishttProvider({ children }) {
-  const { user: authUser } = useAuth();
+  const { user: authUser, loading: authLoading } = useAuth();
 
   // Cart State
   const [cart, setCart] = useState([]);
@@ -537,15 +537,33 @@ export function SwadishttProvider({ children }) {
   // Load cart from Firestore. Keyed by the signed-in user's uid, or a
   // per-browser device id for guests (see getSwadishttCart in unifiedCart.js)
   // — re-runs when auth resolves/changes so the right cart gets loaded.
+  //
+  // Waits for auth to finish resolving (authLoading) before fetching at all —
+  // Firebase auth starts as null and resolves asynchronously, so fetching
+  // eagerly means a guest fetch (by device id) immediately followed by a
+  // second fetch once login resolves (by uid), which used to silently wipe
+  // the cart for anyone who had added items as a guest before their
+  // persisted session kicked in. If login resolves to an identity with no
+  // cart of its own yet, any items sitting under the guest device id are
+  // carried over instead of being discarded.
   useEffect(() => {
-    if (typeof window === 'undefined') return;
+    if (typeof window === 'undefined' || authLoading) return;
 
     let cancelled = false;
     setCartHydrated(false);
 
     (async () => {
       try {
-        const remoteCart = await getSwadishttCart(authUser);
+        let remoteCart = await getSwadishttCart(authUser);
+
+        if (authUser && remoteCart.length === 0) {
+          const guestCart = await getSwadishttCart(null);
+          if (guestCart.length > 0) {
+            remoteCart = guestCart;
+            await setSwadishttCart(authUser, guestCart);
+          }
+        }
+
         if (!cancelled) setCart(remoteCart);
       } catch (error) {
         console.error('Error loading cart:', error);
@@ -557,7 +575,7 @@ export function SwadishttProvider({ children }) {
     return () => {
       cancelled = true;
     };
-  }, [authUser]);
+  }, [authUser, authLoading]);
 
   // Save cart to Firestore whenever it changes, once hydration has completed.
   useEffect(() => {

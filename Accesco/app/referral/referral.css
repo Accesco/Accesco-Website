@@ -668,7 +668,7 @@ button:disabled {
 }
 
 .meter {
-  min-width: 710px;
+  min-width: 910px;
   padding: 0 10px;
 }
 
@@ -692,7 +692,7 @@ button:disabled {
   position: relative;
   margin-top: -14px;
   display: grid;
-  grid-template-columns: repeat(7, 1fr);
+  grid-template-columns: repeat(9, 1fr);
 }
 
 .milestone {
