@@ -4,6 +4,7 @@
  * and item shape; this module normalizes them for the main site's
  * unified Cart Page without touching each brand's own cart logic.
  */
+import { useCallback, useEffect, useState } from 'react';
 import { getProductById } from '@/lib/groklyProducts';
 import { db } from '@/lib/firebase';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
@@ -212,4 +213,61 @@ export async function buildUnifiedStores(user) {
     { key: 'grokly', name: 'Grokly', theme: 'grokly', items: groklyItems },
     { key: 'instastyle', name: 'Insta Style', theme: 'instastyle', items: instastyleItems },
   ].map(withTotals);
+}
+
+/**
+ * For a vertical's own cart drawer/page: everything the user has added in
+ * the *other* two verticals, so their own cart isn't the only thing visible
+ * before they head to the combined checkout. `excludeKey` is that vertical's
+ * own store key ('grokly' | 'swadishtt' | 'instastyle') — dropped from the
+ * result alongside any store with no items.
+ *
+ * `updateQuantity`/`removeItem` reuse the same per-brand read/write calls as
+ * app/cart/page.jsx's own quantity control, so edits made here are visible
+ * there (and vice versa) — there's only one underlying cart per brand.
+ */
+export function useOtherStoreItems(user, excludeKey) {
+  const [stores, setStores] = useState([]);
+
+  const refresh = useCallback(async () => {
+    const built = await buildUnifiedStores(user);
+    setStores(built);
+  }, [user]);
+
+  useEffect(() => {
+    refresh();
+  }, [refresh]);
+
+  const updateQuantity = useCallback(async (storeKey, item, nextQty) => {
+    if (storeKey === 'swadishtt') {
+      const cart = await getSwadishttCart(user);
+      const next = nextQty <= 0
+        ? cart.filter((c) => c.id !== item.id)
+        : cart.map((c) => (c.id === item.id ? { ...c, quantity: nextQty } : c));
+      await setSwadishttCart(user, next);
+    } else if (storeKey === 'grokly') {
+      const cart = getGroklyCart();
+      const next = { ...cart };
+      if (nextQty <= 0) delete next[item.id];
+      else next[item.id] = nextQty;
+      setGroklyCart(next);
+    } else if (storeKey === 'instastyle') {
+      const cart = getInstaStyleCart();
+      const matches = (c) => c.id === item.id && c.selectedSize === item.selectedSize && c.selectedColor === item.selectedColor;
+      const next = nextQty <= 0
+        ? cart.filter((c) => !matches(c))
+        : cart.map((c) => (matches(c) ? { ...c, quantity: nextQty } : c));
+      setInstaStyleCart(next);
+    }
+    await refresh();
+  }, [user, refresh]);
+
+  const removeItem = useCallback(
+    (storeKey, item) => updateQuantity(storeKey, item, 0),
+    [updateQuantity],
+  );
+
+  const otherStores = stores.filter((s) => s.key !== excludeKey && s.items.length > 0);
+
+  return { otherStores, updateQuantity, removeItem };
 }
