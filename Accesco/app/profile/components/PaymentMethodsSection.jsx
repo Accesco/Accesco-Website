@@ -1,4 +1,4 @@
-'use client';
+import TransactionHistorySection from './TransactionHistorySection';
 
 export default function PaymentMethodsSection({
   walletBalance,
@@ -14,6 +14,7 @@ export default function PaymentMethodsSection({
   setNewUpi,
   handleAddUpi,
   cardsList = [],
+  transactions = [],
 }) {
   return (
     <div className="settings-card profile-panel-card">
@@ -112,6 +113,8 @@ export default function PaymentMethodsSection({
           </div>
         )}
       </div>
+
+      <TransactionHistorySection transactions={transactions} />
     </div>
   );
 }
