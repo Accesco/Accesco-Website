@@ -76,8 +76,10 @@ async function seedCode({ code, label, channel }) {
     referredByProcessed: true, // marketing codes are never themselves referred
     referralCount: 0,
     coins: 0,
-    milestoneClaims: {},
-    hasOrderedAt: null,
+    tierClaims: {},
+    badges: [],
+    freeDeliveryUntil: null,
+    waitlistJoinedAt: null,
     createdAt: new Date().toISOString(),
 
     // Marketing-only fields
