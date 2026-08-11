@@ -112,6 +112,9 @@ export default function ProfileContent() {
   // Redeem code state
   const [promoInput, setPromoInput] = useState('');
   const [promoMessage, setPromoMessage] = useState({ type: '', text: '' });
+  const [redeemedCoupons, setRedeemedCoupons] = useState([]);
+  const [walletTransactions, setWalletTransactions] = useState([]);
+  const [hasFreeDelivery, setHasFreeDelivery] = useState(false);
 
   // Bookmarks state
   const [bookmarks, setBookmarks] = useState([]);
@@ -225,6 +228,26 @@ export default function ProfileContent() {
     if (savedLang) setSelectedLang(savedLang);
     const savedCurr = localStorage.getItem(`accesco_currency_${userKey}`);
     if (savedCurr) setSelectedCurrency(savedCurr);
+
+    // 7. Real Redeemed Coupons
+    const savedRedeemed = localStorage.getItem(`accesco_redeemed_coupons_${userKey}`);
+    if (savedRedeemed) {
+      try { setRedeemedCoupons(JSON.parse(savedRedeemed)); } catch (e) {}
+    } else {
+      setRedeemedCoupons([]);
+    }
+
+    // 8. Real Wallet Transactions
+    const savedTx = localStorage.getItem(`accesco_wallet_transactions_${userKey}`);
+    if (savedTx) {
+      try { setWalletTransactions(JSON.parse(savedTx)); } catch (e) {}
+    } else {
+      setWalletTransactions([]);
+    }
+
+    // 9. Real Free Delivery Pass
+    const savedFreeDel = localStorage.getItem(`accesco_free_delivery_${userKey}`);
+    setHasFreeDelivery(savedFreeDel === 'true');
   }, [user]);
 
   const displayName = user?.name || 'Accesco User';
@@ -351,10 +374,33 @@ export default function ProfileContent() {
     e.preventDefault();
     const val = parseFloat(addAmount);
     if (!val || val <= 0) return;
-    const newBal = walletBalance + val;
+    const currentBal = typeof walletBalance === 'number' ? walletBalance : parseFloat(walletBalance) || 0;
+    const newBal = currentBal + val;
     setWalletBalance(newBal);
     localStorage.setItem(`accesco_wallet_balance_${userKey}`, newBal.toString());
     localStorage.setItem('grokly_wallet_balance', newBal.toString());
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new Event('storage'));
+    }
+
+    const newTx = {
+      id: `tx_${Date.now()}`,
+      title: `Wallet Top-Up`,
+      type: 'credit',
+      amount: val,
+      date: new Date().toLocaleString('en-IN', {
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: true,
+      }),
+    };
+    const updatedTx = [newTx, ...walletTransactions];
+    setWalletTransactions(updatedTx);
+    localStorage.setItem(`accesco_wallet_transactions_${userKey}`, JSON.stringify(updatedTx));
+
     setAddAmount('');
     setShowAddMoney(false);
   };
@@ -370,18 +416,98 @@ export default function ProfileContent() {
   };
 
   // Coupon handler
-  const handleRedeem = (e) => {
-    e.preventDefault();
-    if (!promoInput.trim()) return;
-    const code = promoInput.trim().toUpperCase();
-    if (code === 'ACCESCO20' || code === 'WELCOME50' || code === 'FREEDEL') {
-      const reward = code === 'WELCOME50' ? 50 : 20;
-      const newBal = walletBalance + reward;
-      setWalletBalance(newBal);
-      localStorage.setItem(`accesco_wallet_balance_${userKey}`, newBal.toString());
-      setPromoMessage({ type: 'success', text: `🎉 Coupon code '${code}' successfully redeemed! ₹${reward} added to your wallet.` });
+  const handleRedeem = (e, codeToRedeem = null) => {
+    if (e && e.preventDefault) e.preventDefault();
+    const targetCode = (codeToRedeem || promoInput).trim().toUpperCase();
+    if (!targetCode) return;
+
+    if (redeemedCoupons.includes(targetCode)) {
+      setPromoMessage({
+        type: 'error',
+        text: `❌ Coupon code '${targetCode}' has already been redeemed!`,
+      });
+      return;
+    }
+
+    const foundCoupon = AVAILABLE_COUPONS.find((c) => c.code === targetCode);
+    const validCodes = ['ACCESCO20', 'SWADISHT50', 'FREEDEL', 'WELCOME50'];
+
+    if (foundCoupon || validCodes.includes(targetCode)) {
+      const updatedRedeemed = [...redeemedCoupons, targetCode];
+      setRedeemedCoupons(updatedRedeemed);
+      localStorage.setItem(`accesco_redeemed_coupons_${userKey}`, JSON.stringify(updatedRedeemed));
+
+      if (targetCode === 'FREEDEL') {
+        setHasFreeDelivery(true);
+        localStorage.setItem(`accesco_free_delivery_${userKey}`, 'true');
+        localStorage.setItem('grokly_free_delivery', 'true');
+        localStorage.setItem('swadishtt_free_delivery', 'true');
+
+        const newTx = {
+          id: `tx_${Date.now()}`,
+          title: `Free Delivery Pass Activated (FREEDEL)`,
+          type: 'credit',
+          amount: 'Free Delivery',
+          date: new Date().toLocaleString('en-IN', {
+            day: '2-digit',
+            month: 'short',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: true,
+          }),
+        };
+        const updatedTx = [newTx, ...walletTransactions];
+        setWalletTransactions(updatedTx);
+        localStorage.setItem(`accesco_wallet_transactions_${userKey}`, JSON.stringify(updatedTx));
+
+        setPromoInput('');
+        setPromoMessage({
+          type: 'success',
+          text: `🚚 Coupon code 'FREEDEL' successfully applied! Free Delivery Pass activated across all services.`,
+        });
+      } else {
+        let reward = 20;
+        if (targetCode === 'SWADISHT50' || targetCode === 'WELCOME50') reward = 50;
+
+        const currentBal = typeof walletBalance === 'number' ? walletBalance : parseFloat(walletBalance) || 0;
+        const newBal = currentBal + reward;
+        setWalletBalance(newBal);
+        localStorage.setItem(`accesco_wallet_balance_${userKey}`, newBal.toString());
+        localStorage.setItem('grokly_wallet_balance', newBal.toString());
+        if (typeof window !== 'undefined') {
+          window.dispatchEvent(new Event('storage'));
+        }
+
+        const newTx = {
+          id: `tx_${Date.now()}`,
+          title: `Coupon Redeemed (${targetCode})`,
+          type: 'credit',
+          amount: reward,
+          date: new Date().toLocaleString('en-IN', {
+            day: '2-digit',
+            month: 'short',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: true,
+          }),
+        };
+        const updatedTx = [newTx, ...walletTransactions];
+        setWalletTransactions(updatedTx);
+        localStorage.setItem(`accesco_wallet_transactions_${userKey}`, JSON.stringify(updatedTx));
+
+        setPromoInput('');
+        setPromoMessage({
+          type: 'success',
+          text: `🎉 Coupon code '${targetCode}' successfully applied! ₹${reward} added to your wallet balance. New Balance: ₹${newBal}.`,
+        });
+      }
     } else {
-      setPromoMessage({ type: 'error', text: `❌ Invalid or expired coupon code '${code}'.` });
+      setPromoMessage({
+        type: 'error',
+        text: `❌ Invalid or expired coupon code '${targetCode}'.`,
+      });
     }
   };
 
@@ -623,6 +749,7 @@ export default function ProfileContent() {
                         setNewUpi={setNewUpi}
                         handleAddUpi={handleAddUpi}
                         cardsList={cardsList}
+                        transactions={walletTransactions}
                       />
                     )}
 
@@ -633,7 +760,10 @@ export default function ProfileContent() {
                         promoMessage={promoMessage}
                         setPromoMessage={setPromoMessage}
                         handleRedeem={handleRedeem}
-                        coupons={AVAILABLE_COUPONS}
+                        coupons={AVAILABLE_COUPONS.filter((c) => !redeemedCoupons.includes(c.code))}
+                        walletBalance={walletBalance}
+                        transactions={walletTransactions}
+                        hasFreeDelivery={hasFreeDelivery}
                       />
                     )}
 
