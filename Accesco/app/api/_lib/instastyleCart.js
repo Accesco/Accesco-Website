@@ -2,6 +2,7 @@
 // Keeps product resolution, stock validation and response shaping in one
 // place so the route handlers stay thin and consistent.
 import { adminDb } from '@/lib/firebaseAdmin';
+import { getProductById } from '@/lib/mockData';
 
 export const PRODUCTS_COLLECTION = 'instastyle_products';
 
@@ -40,6 +41,35 @@ export async function resolveProductRef(productId) {
     .get();
 
   return query.empty ? null : query.docs[0].ref;
+}
+
+// Most of the InstaStyle catalog is the bundled static list in lib/mockData.js
+// (only seller-added SKUs from the "add-sku" flow live in Firestore), so cart
+// writes must resolve products from either source. Returns { ref, data } where
+// `ref` is null for a static-catalog product (nothing to transactionally read/
+// write in Firestore for it — the static data is immutable), or null overall
+// if the product doesn't exist in either place.
+export async function resolveProduct(productId) {
+  const ref = await resolveProductRef(productId);
+  if (ref) {
+    const snap = await ref.get();
+    if (snap.exists) return { ref, data: snap.data() };
+  }
+
+  const staticProduct = getProductById(productId);
+  if (staticProduct) return { ref: null, data: staticProduct };
+
+  return null;
+}
+
+// Same fallback as resolveProduct, but for re-reading a product a cart item
+// already points at (productDocId is null for static-catalog items).
+export async function resolveProductForItem(data) {
+  if (data.productDocId) {
+    const snap = await adminDb.collection(PRODUCTS_COLLECTION).doc(data.productDocId).get();
+    if (snap.exists) return snap.data();
+  }
+  return getProductById(data.productId) || null;
 }
 
 // Product must exist, not be soft-deleted, and be in stock. Returns null when ok.

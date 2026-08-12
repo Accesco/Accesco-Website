@@ -4,7 +4,7 @@ import { FieldValue } from 'firebase-admin/firestore';
 import { verifyAuthToken } from '@/app/api/_lib/auth';
 import { isPositiveInteger } from '@/app/api/_lib/validators';
 import {
-  resolveProductRef,
+  resolveProduct,
   getCartCollection,
   buildCartItemId,
   getProductAvailabilityError,
@@ -39,8 +39,8 @@ export async function POST(request) {
       return NextResponse.json({ error: 'quantity must be a positive integer' }, { status: 400 });
     }
 
-    const productRef = await resolveProductRef(productId);
-    if (!productRef) {
+    const resolved = await resolveProduct(productId);
+    if (!resolved) {
       return NextResponse.json({ error: 'Product not found' }, { status: 404 });
     }
 
@@ -51,12 +51,19 @@ export async function POST(request) {
     const itemRef = getCartCollection(uid).doc(itemId);
 
     const result = await adminDb.runTransaction(async (tx) => {
-      const [productSnap, itemSnap] = await Promise.all([tx.get(productRef), tx.get(itemRef)]);
+      // Static-catalog products (resolved.ref === null) have nothing live in
+      // Firestore to re-read for transactional consistency — resolved.data is
+      // used as-is. Firestore-backed products (seller-added SKUs) still get a
+      // fresh in-transaction read so concurrent stock changes are respected.
+      const [productSnap, itemSnap] = await Promise.all([
+        resolved.ref ? tx.get(resolved.ref) : Promise.resolve(null),
+        tx.get(itemRef),
+      ]);
 
-      if (!productSnap.exists) {
+      if (resolved.ref && !productSnap.exists) {
         return { error: 'Product not found', status: 404 };
       }
-      const product = productSnap.data();
+      const product = resolved.ref ? productSnap.data() : resolved.data;
 
       const availabilityError = getProductAvailabilityError(product);
       if (availabilityError) return availabilityError;
@@ -84,7 +91,7 @@ export async function POST(request) {
       const unitPrice = Number(product.discountedPrice || product.price || 0);
       const itemData = {
         productId,
-        productDocId: productRef.id,
+        productDocId: resolved.ref ? resolved.ref.id : null,
         name: product.name || '',
         brand: product.brand || '',
         image: product.images?.[0]?.url || '',

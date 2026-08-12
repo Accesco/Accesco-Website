@@ -4184,6 +4184,18 @@ opacity:0.5;
   }
 }
 
+/* Phone — below this width the fixed min-height forces the box taller than
+   the image's natural 1200:800 aspect ratio, so object-fit: cover was
+   zooming in and cropping the banner's text off both edges. Drop the
+   min-height floor and switch to contain so the whole image (and its text)
+   stays visible; the section's dark background fills any letterboxing. */
+@media (max-width: 700px) {
+  .about-accesco-image {
+    min-height: 0;
+    object-fit: contain;
+  }
+}
+
 /* Mobile */
 
 /* ===== COMPACT XPENSE METER — MOBILE ONLY ===== */

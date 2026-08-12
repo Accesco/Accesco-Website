@@ -95,7 +95,7 @@ export default function CartDrawer() {
 
   const handleCheckout = () => {
     closeCart();
-    router.push('/cart/checkout');
+    router.push('/services/grokly/checkout');
   };
 
   /**
@@ -450,11 +450,6 @@ export default function CartDrawer() {
         {/* Checkout Button (only show if cart has items) */}
         {cartCount > 0 && (
           <div className={styles.checkoutWrap}>
-            {otherStores.length > 0 && (
-              <p className={styles.otherStoresNote}>
-                Other services&rsquo; items are included — final total shown at checkout
-              </p>
-            )}
             <button
               className={styles.checkoutBtn}
               onClick={handleCheckout}
