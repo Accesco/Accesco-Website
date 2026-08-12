@@ -1011,6 +1011,11 @@
     gap: 4px !important;
   }
 
+  /* Download button (Get App / Download) is desktop-only */
+  .actions > a.getAppButton {
+    display: none !important;
+  }
+
   .userButton span {
     max-width: 60px !important;
     font-size: 11px !important;
@@ -1019,6 +1024,53 @@
   .avatar {
     width: 24px !important;
     height: 24px !important;
+  }
+}
+
+/* Narrow phones — the "Download" button (text + 2 store badges) plus the
+   location pill, cart and login button no longer fit the header's width,
+   so the button was spilling out past the right edge (header has
+   overflow: visible). Drop the store badges and tighten the location pill
+   so everything fits within the viewport. */
+@media (max-width: 420px) {
+  .storeIcon {
+    display: none !important;
+  }
+
+  .actions > a.getAppButton {
+    gap: 0 !important;
+  }
+
+  .locationText {
+    max-width: 40px !important;
+  }
+
+  .actions {
+    gap: 4px !important;
+  }
+
+  .actions > button.loginButton,
+  .actions > a.userButton,
+  .actions > a.getAppButton {
+    padding: 0 8px !important;
+  }
+
+  .container {
+    gap: 8px !important;
+  }
+}
+
+/* Very narrow phones (iPhone SE and similar, ~320-360px) — still not enough
+   room even with the store badges gone. Drop the location pill down to just
+   its pin icon (tapping it still opens the same location picker). */
+@media (max-width: 360px) {
+  .locationText {
+    display: none !important;
+  }
+
+  .locationButton {
+    padding: 0 6px !important;
+    gap: 2px !important;
   }
 }
 
