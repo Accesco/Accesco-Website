@@ -251,13 +251,8 @@ export default function CartDrawer() {
             </div>
 
             {/* Checkout Button */}
-            {otherStores.length > 0 && (
-              <p className={styles.otherStoresNote}>
-                Other services&rsquo; items are included — final total shown at checkout
-              </p>
-            )}
             <Link
-              href="/cart/checkout"
+              href="/services/instastyle/checkout"
               className={styles.checkoutButton}
               onClick={closeCart}
             >

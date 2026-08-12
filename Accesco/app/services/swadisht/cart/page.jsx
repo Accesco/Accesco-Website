@@ -136,7 +136,7 @@ function CartContent() {
 
   const handleCheckout = () => {
     if (cart.length === 0) return;
-    router.push('/cart/checkout');
+    router.push('/services/swadisht/checkout');
   };
 
   if (cart.length === 0) {
@@ -442,12 +442,6 @@ function CartContent() {
                   <span>₹{total}</span>
                 </div>
               </div>
-
-              {otherStores.length > 0 && (
-                <p className={styles.otherStoresNote}>
-                  Other services&rsquo; items are included — final total shown at checkout
-                </p>
-              )}
 
               <button className={styles.checkoutBtn} onClick={handleCheckout}>
                 Proceed to Checkout
