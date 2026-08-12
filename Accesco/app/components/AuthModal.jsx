@@ -1102,7 +1102,7 @@ function AuthModalContent({
             }
 
             .auth-modal-right {
-              min-height: 531px !important;
+              min-height: 0 !important;
               padding: 34px 32px 28px !important;
             }
           }
@@ -1135,7 +1135,8 @@ const styles = {
   shell: {
     position: 'relative',
     width: 'min(820px, calc(100vw - 32px))',
-    height: 531,
+    height: 'auto',
+    minHeight: 580,
     maxHeight: 'calc(100vh - 32px)',
     transform: 'scale(1.07)',
     transformOrigin: 'center',
@@ -1144,8 +1145,10 @@ const styles = {
     columnGap: 32,
     boxSizing: 'border-box',
     padding: 34,
-    overflow: 'hidden',
-    background: '#000000',
+    overflow: 'visible',
+    border: '2px solid #fff',
+    borderRadius: 16,
+    background: '#ffffff',
     boxShadow: '0 30px 85px rgba(0,0,0,0.68)',
     fontFamily: 'Arial, Helvetica, sans-serif',
   },
@@ -1177,6 +1180,7 @@ const styles = {
     overflow: 'hidden',
     boxSizing: 'border-box',
     padding: '34px 29px',
+    border: '2px solid #fff',
     background:
       'radial-gradient(circle at 5% 5%, rgba(235,0,107,0.96) 0%, rgba(194,0,87,0.83) 27%, rgba(111,0,53,0.5) 56%, transparent 78%), linear-gradient(135deg, #af0052 0%, #76003a 46%, #3d001f 75%, #17000c 100%)',
     color: '#ffffff',
@@ -1227,8 +1231,9 @@ const styles = {
     position: 'relative',
     minWidth: 0,
     boxSizing: 'border-box',
-    padding: '27px 24px 8px 24px',
-    overflowY: 'auto',
+    padding: '27px 24px 0px 24px',
+    border: '2px solid #fff',
+    overflowY: 'visible',
     background: '#ffffff',
     color: '#1a1a1a',
     scrollbarWidth: 'none',
