@@ -240,7 +240,23 @@ export default function ProfileContent() {
     // 8. Real Wallet Transactions
     const savedTx = localStorage.getItem(`accesco_wallet_transactions_${userKey}`);
     if (savedTx) {
-      try { setWalletTransactions(JSON.parse(savedTx)); } catch (e) {}
+      try {
+        const parsedTx = JSON.parse(savedTx);
+        const cleanedTx = parsedTx.map((tx) => {
+          if (tx.title?.includes('FREEDEL') || tx.code === 'FREEDEL' || String(tx.title).toLowerCase().includes('freedel')) {
+            return {
+              ...tx,
+              title: 'Free Delivery Pass Activated (FREEDEL)',
+              amount: 'Free Delivery Pass',
+            };
+          }
+          return tx;
+        });
+        setWalletTransactions(cleanedTx);
+        localStorage.setItem(`accesco_wallet_transactions_${userKey}`, JSON.stringify(cleanedTx));
+      } catch (e) {
+        setWalletTransactions([]);
+      }
     } else {
       setWalletTransactions([]);
     }
@@ -447,7 +463,7 @@ export default function ProfileContent() {
           id: `tx_${Date.now()}`,
           title: `Free Delivery Pass Activated (FREEDEL)`,
           type: 'credit',
-          amount: 'Free Delivery',
+          amount: 'Free Delivery Pass',
           date: new Date().toLocaleString('en-IN', {
             day: '2-digit',
             month: 'short',
