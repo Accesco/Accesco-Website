@@ -55,6 +55,13 @@ async function loadUserProfile(firebaseUser) {
     profile = await getUserDoc(docId)
   }
 
+  // Phone verification is mandatory. If the Firestore profile doesn't exist
+  // yet, or exists but phoneVerified is not true, treat the Firebase Auth
+  // session as incomplete — AuthModal will handle the phone+OTP step.
+  if (!profile?.phoneVerified) {
+    return null
+  }
+
   return {
     uid: docId,
     name: profile?.name || firebaseUser.displayName || 'Accesco User',
@@ -82,6 +89,9 @@ export function AuthProvider({ children }) {
       }
 
       const profile = await loadUserProfile(currentUser)
+      // profile is null when phone verification is not yet complete.
+      // Keep user=null so AuthGate stays open and AuthModal handles the
+      // phone+OTP step. setLoading(false) still runs so the modal renders.
       setUser(profile)
       setLoading(false)
     })
