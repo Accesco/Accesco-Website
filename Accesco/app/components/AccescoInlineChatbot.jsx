@@ -991,7 +991,7 @@ const [typing, setTyping] = useState(false)
         @media (max-width: 900px) {
           .ac-ai-window {
             right: 18px;
-            left: 18px;
+            left: auto;
             bottom: 92px;
             width: auto;
             height: min(760px, calc(100vh - 116px));
@@ -1057,6 +1057,7 @@ const [typing, setTyping] = useState(false)
           .ac-ai-floating-close,
           .ac-ai-launcher {
             right: 24px;
+            left: auto;
             bottom: 22px;
           }
         }
@@ -1215,7 +1216,7 @@ const [typing, setTyping] = useState(false)
 @media (max-width: 700px) {
   .ac-ai-window {
     right: 14px !important;
-    left: 14px !important;
+    left: auto !important;
     bottom: 84px !important;
     width: auto !important;
     height: min(560px, calc(100vh - 105px)) !important;
@@ -1615,9 +1616,10 @@ const [typing, setTyping] = useState(false)
 @media (max-width: 700px) {
   .ac-ai-preview-wrap {
     right: 12px;
-    left: 12px;
+    left: auto;
     bottom: 14px;
     gap: 10px;
+    justify-content: flex-end;
   }
 
   .ac-ai-preview-card {
@@ -1657,9 +1659,10 @@ const [typing, setTyping] = useState(false)
 @media (max-width: 700px) {
   .ac-ai-preview-wrap {
     right: 12px;
-    left: 12px;
+    left: auto;
     bottom: 16px;
     gap: 10px;
+    justify-content: flex-end;
   }
 
   .ac-ai-preview-card {
