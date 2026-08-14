@@ -25,11 +25,11 @@ async function getUserDoc(docId) {
 
 // Mirrors the docId convention used in AuthModal: accounts that signed in
 // via Google (with or without a linked phone) are keyed by their Firebase
-// Auth uid. Phone-only accounts are keyed by whatever digits the user typed
-// at signup (AuthModal doesn't normalize before deriving the docId), which
-// is usually a bare 10-digit number rather than Firebase's E.164
-// phoneNumber (which always includes the +91 country code) — so both forms
-// are tried before giving up.
+// Auth uid. Phone-only accounts are keyed by their normalized E.164 digits,
+// but accounts created before AuthModal normalized the docId are keyed on the
+// bare digits typed at signup — usually 10, without the +91 country code — so
+// both forms are tried before giving up. api/_lib/auth.js accepts either form
+// as the x-user-id header for the same reason.
 async function loadUserProfile(firebaseUser) {
   const isGoogleLinked = firebaseUser.providerData.some(
     (p) => p.providerId === 'google.com',

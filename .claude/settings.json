@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(sed 's/\\\\$$/[EOL]/')",
+      "Bash(git check-ignore *)",
+      "Bash(node -e \"require.resolve\\('dotenv'\\); console.log\\('dotenv available'\\)\")",
+      "Bash(cp app/api/_lib/auth.js __TRACKED_VAR__/auth-check.mjs)",
+      "Bash(node --check __TRACKED_VAR__/auth-check.mjs)",
+      "Bash(git --no-pager diff --stat)",
+      "Bash(git --no-pager diff)"
+    ]
+  }
+}
