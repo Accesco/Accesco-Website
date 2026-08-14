@@ -399,20 +399,17 @@
   overflow-y: hidden;
   gap: 14px;
   width: 100%;
-  margin: 16px 0 32px;
-  padding-bottom: 8px;
+  margin: 12px 0 24px;
+  padding: 4px 4px 8px;
   scroll-snap-type: x proximity;
   -webkit-overflow-scrolling: touch;
-  scrollbar-width: thin;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  scroll-behavior: smooth;
 }
 
 .grokly-category-grid::-webkit-scrollbar {
-  height: 6px;
-}
-
-.grokly-category-grid::-webkit-scrollbar-thumb {
-  background: #e2e8f0;
-  border-radius: 999px;
+  display: none;
 }
 
 .grokly-cat-card {
