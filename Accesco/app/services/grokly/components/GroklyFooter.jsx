@@ -1,15 +1,16 @@
 import Image from "next/image";
+import Link from "next/link";
 
 const footerSections = [
   {
     title: "Shop",
     links: [
-      { label: "Fruits & Vegetables", href: "#" },
-      { label: "Dairy & Eggs", href: "#" },
-      { label: "Grains & Pulses", href: "#" },
-      { label: "Oils & Masalas", href: "#" },
-      { label: "Snacks & Beverages", href: "#" },
-      { label: "Recipes & Bundles", href: "#" },
+      { label: "Fruits & Vegetables", href: "/services/grokly/category/vegetables-fruits" },
+      { label: "Dairy & Eggs", href: "/services/grokly/category/dairy-breakfast" },
+      { label: "Grains & Pulses", href: "/services/grokly/category/atta-rice-dal" },
+      { label: "Oils & Masalas", href: "/services/grokly/category/masala-oil" },
+      { label: "Snacks & Beverages", href: "/services/grokly/category/bakery-biscuits" },
+      { label: "Frozen & Ready-to-Eat", href: "/services/grokly/category/instant-frozen" },
     ],
   },
   {
