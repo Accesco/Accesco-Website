@@ -10,16 +10,16 @@
   left: 50%;
   transform: translateX(-50%);
 
- width: min(92%, 1320px);   /* was 92%, 1320px */
-  height: 68px;              /* was 78px */
+  width: min(92%, 1320px);
+  height: 68px;
 
   z-index: 1000;
 
-  background: rgba(255, 255, 255, 0.95); /* slightly more opaque */
+  background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(30px);
   -webkit-backdrop-filter: blur(18px);
 
-  border-radius: 16px;       /* was 24px */
+  border-radius: 16px;
   box-shadow: 0 12px 40px rgba(0,0,0,0.12);
 
   display: flex;
@@ -260,6 +260,7 @@
   background: rgba(122, 0, 66, 0.08);
 }
 
+/* WCAG 4.5:1 High Contrast Fix for Cart Badge */
 .cartBadge {
   position: absolute;
   top: -6px;
@@ -268,8 +269,8 @@
   height: 18px;
   padding: 0 4px;
   border-radius: 9999px;
-  background: #C8963E;
-  color: #FFFDF8;
+  background: #8a0048 !important; /* Fixed contrast: High contrast brand maroon */
+  color: #ffffff !important; /* Fixed contrast: Pure white text */
   font-family: 'Sora', sans-serif;
   font-size: 0.65rem;
   font-weight: 700;
@@ -297,7 +298,7 @@
   font-family: 'Sora', sans-serif;
   font-size: 0.78rem;
   font-weight: 500;
- color: #7A0042;
+  color: #7A0042;
   border-color:  #7A0042;
   transition: all 0.3s;
   white-space: nowrap;
@@ -579,7 +580,6 @@
   height: 100%;
 }
 
-/* Mobile drawer header */
 .mobileMenuHeader {
   display: flex;
   align-items: center;
@@ -613,7 +613,6 @@
   background: rgba(122, 0, 66, 0.06);
 }
 
-/* Mobile Nav */
 .mobileNav {
   padding: 16px 16px 40px;
   display: flex;
@@ -639,7 +638,6 @@
   color: #7A0042;
 }
 
-/* Mobile Accordion (Services/Partner) */
 .mobileServicesDropdown {
   margin-bottom: 4px;
 }
@@ -712,14 +710,12 @@
   margin-top: 2px;
 }
 
-/* Mobile divider */
 .mobileDivider {
   height: 1px;
   background: rgba(122, 0, 66, 0.1);
   margin: 12px 0;
 }
 
-/* Mobile location row */
 .mobileLocationRow {
   display: flex;
   align-items: center;
@@ -763,7 +759,6 @@
   font-weight: 600;
 }
 
-/* Mobile login button */
 .mobileLoginButton {
   display: flex;
   align-items: center;
@@ -787,7 +782,6 @@
   background: #5A0031;
 }
 
-/* Mobile user card */
 .mobileUserCard {
   display: flex;
   align-items: center;
@@ -839,7 +833,6 @@
   background: rgba(122, 0, 66, 0.06);
 }
 
-/* ── Overlay backdrop ── */
 .overlay {
   position: fixed;
   inset: 0;
@@ -943,7 +936,6 @@
     display: none !important;
   }
 
-  /* Location Selector & Icon Visible on Mobile */
   .locationSelector {
     display: flex;
     align-items: center;
@@ -977,7 +969,6 @@
     height: 12px !important;
   }
 
-  /* Mobile Actions Layout & Uniform Height (34px) */
   .actions {
     display: flex !important;
     align-items: center !important;
@@ -1009,10 +1000,6 @@
     background: #8a0048 !important;
     color: #ffffff !important;
     gap: 4px !important;
-  }
-
-  /* Download button (Get App / Download) is desktop-only */
-  .actions > a.getAppButton {
     display: none !important;
   }
 
@@ -1027,11 +1014,6 @@
   }
 }
 
-/* Narrow phones — the "Download" button (text + 2 store badges) plus the
-   location pill, cart and login button no longer fit the header's width,
-   so the button was spilling out past the right edge (header has
-   overflow: visible). Drop the store badges and tighten the location pill
-   so everything fits within the viewport. */
 @media (max-width: 420px) {
   .storeIcon {
     display: none !important;
@@ -1060,9 +1042,6 @@
   }
 }
 
-/* Very narrow phones (iPhone SE and similar, ~320-360px) — still not enough
-   room even with the store badges gone. Drop the location pill down to just
-   its pin icon (tapping it still opens the same location picker). */
 @media (max-width: 360px) {
   .locationText {
     display: none !important;
@@ -1074,7 +1053,6 @@
   }
 }
 
-/* Display uploaded profile image in the header */
 .avatar {
   overflow: hidden;
 }
