@@ -1818,6 +1818,11 @@
   color: #991b1b;
 }
 
+.tx-icon.discount {
+  background-color: #e0e7ff;
+  color: #4338ca;
+}
+
 .tx-details {
   display: flex;
   flex-direction: column;
@@ -1845,6 +1850,10 @@
 
 .tx-amount.debit {
   color: #dc2626;
+}
+
+.tx-amount.discount {
+  color: #4338ca;
 }
 
 
