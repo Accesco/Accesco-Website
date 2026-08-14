@@ -239,19 +239,48 @@ export default function ProfileContent() {
 
     // 8. Real Wallet Transactions
     const savedTx = localStorage.getItem(`accesco_wallet_transactions_${userKey}`);
+    let initialBalance = savedWallet ? parseFloat(savedWallet) : 0;
     if (savedTx) {
       try {
         const parsedTx = JSON.parse(savedTx);
+        let walletDeductionNeeded = 0;
+
         const cleanedTx = parsedTx.map((tx) => {
           if (tx.title?.includes('FREEDEL') || tx.code === 'FREEDEL' || String(tx.title).toLowerCase().includes('freedel')) {
             return {
               ...tx,
               title: 'Free Delivery Pass Activated (FREEDEL)',
+              code: 'FREEDEL',
+              type: 'perk',
+              benefitType: 'free_delivery',
               amount: 'Free Delivery Pass',
+            };
+          }
+          if (tx.title?.includes('SWADISHT50') || tx.code === 'SWADISHT50' || String(tx.title).toLowerCase().includes('swadisht50')) {
+            if (tx.type === 'credit' && typeof tx.amount === 'number' && tx.amount === 50) {
+              walletDeductionNeeded += 50;
+            }
+            return {
+              ...tx,
+              title: 'Coupon Redeemed (SWADISHT50)',
+              code: 'SWADISHT50',
+              type: 'discount',
+              benefitType: 'food_discount',
+              discountAmount: 50,
+              walletCredit: 0,
+              amount: 'Food Delivery Discount: ₹50',
             };
           }
           return tx;
         });
+
+        if (walletDeductionNeeded > 0) {
+          const correctedBal = Math.max(0, initialBalance - walletDeductionNeeded);
+          setWalletBalance(correctedBal);
+          localStorage.setItem(`accesco_wallet_balance_${userKey}`, correctedBal.toString());
+          localStorage.setItem('grokly_wallet_balance', correctedBal.toString());
+        }
+
         setWalletTransactions(cleanedTx);
         localStorage.setItem(`accesco_wallet_transactions_${userKey}`, JSON.stringify(cleanedTx));
       } catch (e) {
@@ -446,7 +475,7 @@ export default function ProfileContent() {
     }
 
     const foundCoupon = AVAILABLE_COUPONS.find((c) => c.code === targetCode);
-    const validCodes = ['ACCESCO20', 'SWADISHT50', 'FREEDEL', 'WELCOME50'];
+    const validCodes = ['ACCESCO20', 'SWADISHT50', 'FREEDEL', 'WELCOME50', 'CASHBACK50', 'WALLET50'];
 
     if (foundCoupon || validCodes.includes(targetCode)) {
       const updatedRedeemed = [...redeemedCoupons, targetCode];
@@ -462,7 +491,11 @@ export default function ProfileContent() {
         const newTx = {
           id: `tx_${Date.now()}`,
           title: `Free Delivery Pass Activated (FREEDEL)`,
-          type: 'credit',
+          code: 'FREEDEL',
+          type: 'perk',
+          benefitType: 'free_delivery',
+          walletCredit: 0,
+          discountAmount: 0,
           amount: 'Free Delivery Pass',
           date: new Date().toLocaleString('en-IN', {
             day: '2-digit',
@@ -482,9 +515,69 @@ export default function ProfileContent() {
           type: 'success',
           text: `🚚 Coupon code 'FREEDEL' successfully applied! Free Delivery Pass activated across all services.`,
         });
+      } else if (targetCode === 'SWADISHT50') {
+        localStorage.setItem(`accesco_swadisht_discount_${userKey}`, '50');
+        localStorage.setItem('swadishtt_coupon_50', 'true');
+
+        const newTx = {
+          id: `tx_${Date.now()}`,
+          title: `Coupon Redeemed (SWADISHT50)`,
+          code: 'SWADISHT50',
+          type: 'discount',
+          benefitType: 'food_discount',
+          discountAmount: 50,
+          walletCredit: 0,
+          amount: 'Food Delivery Discount: ₹50',
+          date: new Date().toLocaleString('en-IN', {
+            day: '2-digit',
+            month: 'short',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: true,
+          }),
+        };
+        const updatedTx = [newTx, ...walletTransactions];
+        setWalletTransactions(updatedTx);
+        localStorage.setItem(`accesco_wallet_transactions_${userKey}`, JSON.stringify(updatedTx));
+
+        setPromoInput('');
+        setPromoMessage({
+          type: 'success',
+          text: `🎉 Coupon code 'SWADISHT50' successfully applied! ₹50 food delivery discount is now active for your Swadishtt orders.`,
+        });
+      } else if (targetCode === 'ACCESCO20') {
+        localStorage.setItem(`accesco_grokly_discount_${userKey}`, '20%');
+
+        const newTx = {
+          id: `tx_${Date.now()}`,
+          title: `Coupon Redeemed (ACCESCO20)`,
+          code: 'ACCESCO20',
+          type: 'discount',
+          benefitType: 'grocery_discount',
+          discountAmount: '20%',
+          walletCredit: 0,
+          amount: 'Grocery Discount: 20%',
+          date: new Date().toLocaleString('en-IN', {
+            day: '2-digit',
+            month: 'short',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: true,
+          }),
+        };
+        const updatedTx = [newTx, ...walletTransactions];
+        setWalletTransactions(updatedTx);
+        localStorage.setItem(`accesco_wallet_transactions_${userKey}`, JSON.stringify(updatedTx));
+
+        setPromoInput('');
+        setPromoMessage({
+          type: 'success',
+          text: `🎉 Coupon code 'ACCESCO20' successfully applied! 20% grocery discount activated for Grokly orders.`,
+        });
       } else {
-        let reward = 20;
-        if (targetCode === 'SWADISHT50' || targetCode === 'WELCOME50') reward = 50;
+        let reward = 50;
 
         const currentBal = typeof walletBalance === 'number' ? walletBalance : parseFloat(walletBalance) || 0;
         const newBal = currentBal + reward;
@@ -498,7 +591,11 @@ export default function ProfileContent() {
         const newTx = {
           id: `tx_${Date.now()}`,
           title: `Coupon Redeemed (${targetCode})`,
+          code: targetCode,
           type: 'credit',
+          benefitType: 'wallet_credit',
+          walletCredit: reward,
+          discountAmount: 0,
           amount: reward,
           date: new Date().toLocaleString('en-IN', {
             day: '2-digit',

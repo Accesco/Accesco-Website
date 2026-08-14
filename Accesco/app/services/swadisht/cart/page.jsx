@@ -77,6 +77,7 @@ function CartContent() {
   const [returnScheduled, setReturnScheduled] = useState(false);
 
   const PROMO_CODES = {
+    'SWADISHT50': { discount: 50, type: 'flat', description: 'Flat ₹50 off on Food Delivery' },
     'FIRST50': { discount: 50, type: 'flat', description: 'Flat ₹50 off on first order' },
     'SAVE20': { discount: 20, type: 'percent', description: '20% off on orders above ₹500' },
     'SWADISHT100': { discount: 100, type: 'flat', description: 'Flat ₹100 off' },
