@@ -2,20 +2,21 @@
    ACCESCO LIVING - FOOTER
    ========================================== */
 
-:root, .accesco-footer-root {
+:root,
+.accesco-footer-root {
   --footer-bg-base: #5A0031;
   --footer-maroon: #7A0042;
   --footer-maroon-mid: #9E1054;
   --footer-pink-accent: #FF2E74;
   --footer-gold: #D4A017;
   --footer-text-primary: #FFFFFF;
-  --footer-text-secondary: rgba(255,255,255,0.60);
-  --footer-text-muted: rgba(255,255,255,0.30);
-  --footer-border-subtle: rgba(255,255,255,0.12);
-  --footer-border-faint: rgba(255,255,255,0.06);
-  --footer-surface-card: rgba(255,255,255,0.06);
-  --footer-surface-hover: rgba(255,255,255,0.12);
-  --footer-social-bg: rgba(255,255,255,0.06);
+  --footer-text-secondary: rgba(255, 255, 255, 0.60);
+  --footer-text-muted: rgba(255, 255, 255, 0.30);
+  --footer-border-subtle: rgba(255, 255, 255, 0.12);
+  --footer-border-faint: rgba(255, 255, 255, 0.06);
+  --footer-surface-card: rgba(255, 255, 255, 0.06);
+  --footer-surface-hover: rgba(255, 255, 255, 0.12);
+  --footer-social-bg: rgba(255, 255, 255, 0.06);
 
   --footer-padding-x: 64px;
   --footer-padding-x-md: 24px;
@@ -75,16 +76,11 @@
 }
 
 .bg-gradient-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: 
-    radial-gradient(80% 80% at 50% 0%, rgba(107,29,58,0.6) 0%, transparent 100%),
-    radial-gradient(40% 40% at 0% 100%, rgba(224,53,106,0.08) 0%, transparent 100%);
-  z-index: 1;
+  background:
+    radial-gradient(80% 80% at 50% 0%, rgba(62, 33, 27, 0.6) 0%, transparent 100%),
+    radial-gradient(40% 40% at 0% 100%, rgba(124, 74, 45, 0.1) 0%, transparent 100%);
 }
+
 
 .ventures-ticker {
   position: relative;
@@ -169,7 +165,7 @@
   font-family: 'Montserrat', sans-serif;
   font-size: 15px;
   font-weight: 400;
-  color: rgba(255,255,255,.82);
+  color: rgba(255, 255, 255, .82);
   line-height: 1.75;
   margin-bottom: 22px;
   max-width: 260px;
@@ -237,7 +233,7 @@
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 2px;
-  color: rgba(255,255,255,.55);
+  color: rgba(255, 255, 255, .55);
   margin-bottom: 18px;
 }
 
@@ -245,7 +241,7 @@
   font-family: 'Montserrat', sans-serif;
   font-size: 14px;
   font-weight: 600;
-  color: rgba(255,255,255,.95);
+  color: rgba(255, 255, 255, .95);
   text-decoration: none;
   line-height: 2;
 }
@@ -257,7 +253,7 @@
 .footer-divider-faint {
   width: 100%;
   height: 1px;
-  background: rgba(255,255,255,.18);
+  background: rgba(255, 255, 255, .18);
   margin-bottom: 20px;
 }
 
@@ -266,7 +262,7 @@
   justify-content: space-between;
   align-items: center;
   font-size: 13px;
-  color: rgba(255,255,255,.55);
+  color: rgba(255, 255, 255, .55);
 }
 
 .copyright-text {
@@ -339,3 +335,33 @@ footer.accesco-footer-root {
   margin-top: 0 !important;
   padding-top: 0 !important;
 }
+
+/* ==========================================
+   INSTASTYLE SPECIFIC FOOTER - BROWN THEME WITH WAVES
+   ========================================== */
+.accesco-footer-root.instastyle-footer-root {
+  --footer-bg-base: #351B13;
+  --footer-maroon: #5A2C18;
+  --footer-maroon-mid: #7C4A2D;
+  --footer-pink-accent: #C8956A;
+
+  background: #351B13 url("/images/brown-waves.png") center/cover no-repeat !important;
+  opacity: 1 !important;
+}
+
+.accesco-footer-root.instastyle-footer-root .bg-gradient-overlay {
+  background: 
+    radial-gradient(80% 80% at 50% 0%, rgba(124, 74, 45, 0.25) 0%, transparent 100%),
+    radial-gradient(40% 40% at 0% 100%, rgba(200, 149, 106, 0.08) 0%, transparent 100%) !important;
+}
+
+@media (max-width: 767px) {
+  .accesco-footer-root.instastyle-footer-root {
+    background-color: #351B13 !important;
+    background-image: url("/images/brown-waves.png") !important;
+    background-position: center !important;
+    background-size: cover !important;
+    background-repeat: no-repeat !important;
+  }
+}
+
