@@ -1,16 +1,6 @@
 // lib/blogService.js
 import { db } from './firebase';
-import {
-  collection,
-  addDoc,
-  doc,
-  updateDoc,
-  deleteDoc,
-  getDocs,
-  query,
-  orderBy,
-  serverTimestamp,
-} from 'firebase/firestore';
+import { collection, getDocs, query } from 'firebase/firestore';
 
 const COLLECTION = 'blogs';
 
@@ -31,6 +21,8 @@ export async function fetchBlogs() {
         author:   data.Author   || data.author   || 'ACCESCO Editorial Team',
         image:    data.img_url  || data.Image    || data.image  || '/images/download (2).png',
         excerpt:  data.Excerpt  || data.excerpt  || '',
+        localArea:   data.localArea   || '',
+        backlinkUrl: data.backlinkUrl || '',
         date:     data.Date?.toDate?.().toISOString().split('T')[0]
                   ?? data.date?.toDate?.().toISOString().split('T')[0]
                   ?? '',
@@ -42,49 +34,6 @@ export async function fetchBlogs() {
   }
 }
 
-// Save a new blog post to Firestore
-export async function addBlog(postData) {
-  try {
-    const docRef = await addDoc(collection(db, COLLECTION), {
-      title:    postData.title,
-      Content:  postData.content,
-      Category: postData.category,
-      Author:   postData.author,
-      img_url:  postData.image,
-      Excerpt:  postData.excerpt,
-      Date:     serverTimestamp(),
-      Published: true,
-    });
-    return docRef.id;
-  } catch (err) {
-    console.error('Failed to add blog:', err);
-    throw err;
-  }
-}
-
-// Update an existing blog post in Firestore
-export async function updateBlog(id, postData) {
-  try {
-    await updateDoc(doc(db, COLLECTION, id), {
-      title:    postData.title,
-      Content:  postData.content,
-      Category: postData.category,
-      Author:   postData.author,
-      img_url:  postData.image,
-      Excerpt:  postData.excerpt,
-    });
-  } catch (err) {
-    console.error('Failed to update blog:', err);
-    throw err;
-  }
-}
-
-// Delete a blog post from Firestore
-export async function deleteBlog(id) {
-  try {
-    await deleteDoc(doc(db, COLLECTION, id));
-  } catch (err) {
-    console.error('Failed to delete blog:', err);
-    throw err;
-  }
-}
+// Writes (add/update/delete) go through /api/blog-admin/blogs, gated behind the
+// marketing admin password — see app/admin/blogs. There is no client-side write
+// path into this collection.

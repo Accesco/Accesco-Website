@@ -88,6 +88,10 @@ function ArticleSchema({ post, id }) {
     },
     datePublished: post.date || undefined,
     dateModified: post.date || undefined,
+    contentLocation: post.localArea
+      ? { '@type': 'Place', name: post.localArea }
+      : undefined,
+    citation: post.backlinkUrl || undefined,
   };
 
   return (
@@ -187,7 +191,7 @@ export default async function BlogPostPage({ params }) {
             <div className="post-author-row">
               <div className="author-info">
                 <div className="author-avatar">
-                  {post.title?.includes('Accesco Living Launches Public Beta') ? (
+                  {post.author?.toLowerCase().includes('argha') ? (
                     <Image
                       src="/images/blogs/founder.png"
                       alt={post.author || 'Author'}
@@ -202,7 +206,9 @@ export default async function BlogPostPage({ params }) {
                 <div className="author-details">
                   <p className="author-name">{post.author || 'ACCESCO Editorial Team'}</p>
                   <p className="author-meta">
-                    Founder & CEO, Accesco Living
+                    {post.author?.toLowerCase().includes('argha')
+                      ? 'Founder & CEO, Accesco Living'
+                      : 'Accesco Living'}
                   </p>
                 </div>
               </div>
