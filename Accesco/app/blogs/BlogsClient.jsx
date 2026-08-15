@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import './blogs.css';
-import { addBlog, updateBlog, deleteBlog } from '../../lib/blogService';
 import { addBookmark, removeBookmark, getUserBookmarks } from '../../lib/bookmarkService';
 import AccescoHeader from '../../components/AccescoHeader';
 import Footer from '../../components/Footer';
@@ -15,24 +14,10 @@ export default function BlogsClient({ initialPosts }) {
   const [posts, setPosts] = useState(initialPosts);
   const [filteredPosts, setFilteredPosts] = useState(initialPosts);
   const [activeCategory, setActiveCategory] = useState('All');
-  const [showWriter, setShowWriter] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [bookmarkedPosts, setBookmarkedPosts] = useState([]);
 
-  // Form states — matches Firestore field structure
-  const [postTitle, setPostTitle] = useState('');
-  const [postContent, setPostContent] = useState('');
-  const [postCategory, setPostCategory] = useState('Business');
-  const [postAuthor, setPostAuthor] = useState('');
-  const [postImgUrl, setPostImgUrl] = useState('');
-  const [postDate, setPostDate] = useState('');
-  const [publishing, setPublishing] = useState(false);
-  const [uploadingImage, setUploadingImage] = useState(false);
-  const [editingPostId, setEditingPostId] = useState(null);
-  const [deletingPostId, setDeletingPostId] = useState(null);
-
   useEffect(() => {
-    setPostDate(new Date().toISOString().split('T')[0]);
     loadBookmarks();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
@@ -90,153 +75,6 @@ export default function BlogsClient({ initialPosts }) {
         post.author?.toLowerCase().includes(searchLower)
     );
     setFilteredPosts(filtered);
-  };
-
-  // ── Modal helpers ─────────────────────────────────────────────────────────────
-  const openWriter = () => {
-    setEditingPostId(null);
-    setShowWriter(true);
-    document.body.style.overflow = 'hidden';
-  };
-
-  const openEditor = (post) => {
-    setEditingPostId(post.id);
-    setPostTitle(post.title || '');
-    setPostContent(post.content || '');
-    setPostCategory(post.category || 'Business');
-    setPostAuthor(post.author || '');
-    setPostImgUrl(post.image || '');
-    setPostDate(post.date || new Date().toISOString().split('T')[0]);
-    setShowWriter(true);
-    document.body.style.overflow = 'hidden';
-  };
-
-  const closeModals = () => {
-    setShowWriter(false);
-    document.body.style.overflow = 'auto';
-    setPostTitle('');
-    setPostContent('');
-    setPostCategory('Business');
-    setPostAuthor('');
-    setPostImgUrl('');
-    setPostDate(new Date().toISOString().split('T')[0]);
-    setPublishing(false);
-    setEditingPostId(null);
-  };
-
-  // ── Publish to Firestore ─────────────────────────────────────────────────────
-  const publishPost = async () => {
-    if (!postTitle.trim() || !postContent.trim()) {
-      alert('Please fill in at least the Title and Content.');
-      return;
-    }
-
-    setPublishing(true);
-    try {
-      const finalImage = postImgUrl.trim() || '/images/download (2).png';
-      const finalExcerpt = postContent.trim().substring(0, 200) + '...';
-
-      const postData = {
-        title:    postTitle.trim(),
-        content:  postContent.trim(),
-        category: postCategory,
-        author:   postAuthor.trim() || 'ACCESCO Editorial Team',
-        image:    finalImage,
-        excerpt:  finalExcerpt,
-        date:     postDate,
-      };
-
-      if (editingPostId) {
-        await updateBlog(editingPostId, postData);
-
-        const updatedPost = { id: editingPostId, ...postData };
-        setPosts((prev) => {
-          const next = prev.map((p) => (p.id === editingPostId ? updatedPost : p));
-          setFilteredPosts((prevFiltered) =>
-            prevFiltered.map((p) => (p.id === editingPostId ? updatedPost : p))
-          );
-          return next;
-        });
-        closeModals();
-        alert('Narrative updated successfully!');
-      } else {
-        const newId = await addBlog(postData);
-        const newPost = { id: newId, ...postData };
-
-        setPosts((prev) => {
-          const next = [newPost, ...prev];
-          if (activeCategory === 'All') setFilteredPosts(next);
-          return next;
-        });
-        closeModals();
-        alert('Narrative published successfully!');
-      }
-    } catch (err) {
-      console.error('Publish failed:', err);
-      alert(editingPostId ? 'Failed to save changes. Check the console for details.' : 'Failed to publish. Check the console for details.');
-    } finally {
-      setPublishing(false);
-    }
-  };
-
-  // ── Delete from Firestore ────────────────────────────────────────────────────
-  const deletePost = async (post) => {
-    const confirmed = window.confirm(`Delete "${post.title}"? This cannot be undone.`);
-    if (!confirmed) return;
-
-    setDeletingPostId(post.id);
-    try {
-      await deleteBlog(post.id);
-      setPosts((prev) => prev.filter((p) => p.id !== post.id));
-      setFilteredPosts((prev) => prev.filter((p) => p.id !== post.id));
-    } catch (err) {
-      console.error('Delete failed:', err);
-      alert('Failed to delete the story. Check the console for details.');
-    } finally {
-      setDeletingPostId(null);
-    }
-  };
-
-  // ── Handle Image Upload ──────────────────────────────────────────────────────
-  const handleImageUpload = async (e) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    // Validate file type
-    if (!file.type.startsWith('image/')) {
-      alert('Please upload an image file');
-      return;
-    }
-
-    // Validate file size (max 10MB)
-    if (file.size > 10 * 1024 * 1024) {
-      alert('Image size should be less than 10MB');
-      return;
-    }
-
-    setUploadingImage(true);
-    try {
-      const formData = new FormData();
-      formData.append('file', file);
-
-      const response = await fetch('/api/upload-image', {
-        method: 'POST',
-        body: formData,
-      });
-
-      const data = await response.json();
-
-      if (data.success) {
-        setPostImgUrl(data.url);
-      } else {
-        alert('Failed to upload image: ' + (data.error || 'Unknown error'));
-      }
-    } catch (err) {
-      console.error('Upload error:', err);
-      alert('Failed to upload image. Please try again.');
-    } finally {
-      setUploadingImage(false);
-    }
   };
 
   // ── Share Functions ──────────────────────────────────────────────────────────
@@ -406,10 +244,6 @@ export default function BlogsClient({ initialPosts }) {
                   className="search-input"
                 />
               </div>
-              <button className="btn-pill" onClick={openWriter}>
-                <i className="ri-quill-pen-fill"></i>
-                <span>Write</span>
-              </button>
             </div>
           </nav>
         </div>
@@ -442,7 +276,7 @@ export default function BlogsClient({ initialPosts }) {
           <div id="storyContainer" className="story-grid">
             {filteredPosts.map((post, index) => (
               <article key={post.id} className="story-card" style={{ animationDelay: `${index * 0.05}s` }}>
-                <div className="story-visual">
+                <Link href={`/blogs/${post.id}`} className="story-visual">
 
 <Image
   src={
@@ -465,41 +299,16 @@ export default function BlogsClient({ initialPosts }) {
   style={{ objectFit: 'cover' }}
   unoptimized
 />
-                  <button
-                    type="button"
-                    className="story-edit-btn"
-                    title="Edit this story"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      openEditor(post);
-                    }}
-                  >
-                    <i className="ri-edit-line"></i>
-                  </button>
-                  <button
-                    type="button"
-                    className="story-delete-btn"
-                    title="Delete this story"
-                    disabled={deletingPostId === post.id}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      deletePost(post);
-                    }}
-                  >
-                    <i className={deletingPostId === post.id ? 'ri-loader-4-line spin-icon' : 'ri-delete-bin-line'}></i>
-                  </button>
                   <div className="story-overlay">
                     <span className="read-time"><i className="ri-time-line"></i> 5 min read</span>
                   </div>
-                </div>
-                <div className="story-content">
+                </Link>
+                <Link href={`/blogs/${post.id}`} className="story-content">
                   <div className="story-meta">
                     <span className="story-date">{new Date(post.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
                   </div>
                   <h3 className="story-headline">
-                    <Link href={`/blogs/${post.id}`}>{post.title}</Link>
+                    {post.title}
                   </h3>
                   <p className="story-summary">{post.excerpt}</p>
                   <div className="story-footer">
@@ -507,11 +316,11 @@ export default function BlogsClient({ initialPosts }) {
                       <i className="ri-user-line"></i>
                       {post.author || 'ACCESCO Editorial'}
                     </span>
-                    <Link href={`/blogs/${post.id}`} className="read-more">
+                    <span className="read-more">
                       Read more <i className="ri-arrow-right-line"></i>
-                    </Link>
+                    </span>
                   </div>
-                </div>
+                </Link>
               </article>
             ))}
           </div>
@@ -529,184 +338,7 @@ export default function BlogsClient({ initialPosts }) {
         <div className={`mobile-nav-item ${activeCategory === 'Innovation' ? 'active' : ''}`} onClick={() => filterArchive('Innovation')}>
           <i className="ri-cpu-line"></i><span>Tech</span>
         </div>
-        <div className="mobile-nav-item" style={{ color: 'var(--accent)' }} onClick={openWriter}>
-          <i className="ri-add-circle-fill"></i><span>Write</span>
-        </div>
       </div>
-
-      {/* ── Writer Modal ── */}
-      {showWriter && (
-        <div className="modal-overlay" onClick={closeModals}>
-          <div className="modal-container write-modal" onClick={(e) => e.stopPropagation()}>
-
-            {/* Left Sidebar */}
-            <div className="write-sidebar">
-              <h2>{editingPostId ? 'Edit Narrative' : 'Draft Narrative'}</h2>
-
-              <div className="sidebar-fields">
-
-                {/* Collection */}
-                <div className="field-group">
-                  <label className="form-label">Collection</label>
-                  <select value={postCategory} onChange={(e) => setPostCategory(e.target.value)} className="form-select">
-                    <option>Business</option>
-                    <option>Innovation</option>
-                    <option>Lifestyle</option>
-                    <option>Finance</option>
-                    <option>Design</option>
-                    <option>Culture</option>
-                    <option>Opinion</option>
-                  </select>
-                </div>
-
-                {/* Author */}
-                <div className="field-group">
-                  <label className="form-label">Author Name</label>
-                  <input
-                    type="text"
-                    value={postAuthor}
-                    onChange={(e) => setPostAuthor(e.target.value)}
-                    placeholder="e.g. Argha Sengupta"
-                    className="form-select"
-                  />
-                </div>
-
-                {/* Date */}
-                <div className="field-group">
-                  <label className="form-label">Publish Date</label>
-                  <input
-                    type="date"
-                    value={postDate}
-                    onChange={(e) => setPostDate(e.target.value)}
-                    className="form-select"
-                  />
-                </div>
-
-                {/* Image Upload */}
-                <div className="field-group">
-                  <label className="form-label">Cover Image</label>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={handleImageUpload}
-                      className="form-select"
-                      style={{ padding: '8px' }}
-                      disabled={uploadingImage}
-                      id="imageUploadInput"
-                    />
-                    {uploadingImage && (
-                      <div style={{
-                        padding: '12px',
-                        background: 'rgba(122, 0, 66, 0.1)',
-                        borderRadius: '8px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '8px'
-                      }}>
-                        <i className="ri-loader-4-line" style={{ animation: 'spin 1s linear infinite', color: '#7A0042' }}></i>
-                        <span style={{ color: '#7A0042', fontSize: '0.9rem' }}>Uploading to Cloudinary...</span>
-                      </div>
-                    )}
-                    {postImgUrl && !uploadingImage && (
-                      <div style={{
-                        padding: '12px',
-                        background: 'rgba(16, 185, 129, 0.1)',
-                        borderRadius: '8px',
-                        border: '2px solid rgba(16, 185, 129, 0.3)'
-                      }}>
-                        <Image
-                          src={postImgUrl}
-                          alt="Cover preview"
-                          width={800}
-                          height={200}
-                          className="img-preview"
-                          style={{
-                            width: '100%',
-                            maxHeight: '200px',
-                            objectFit: 'cover',
-                            borderRadius: '6px',
-                            marginBottom: '8px'
-                          }}
-                          onError={(e) => {
-                            console.error('Image failed to load:', postImgUrl);
-                            e.target.style.display = 'none';
-                          }}
-                        />
-                        <p style={{
-                          color: '#10b981',
-                          fontSize: '0.85rem',
-                          margin: 0,
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '6px'
-                        }}>
-                          <i className="ri-check-line"></i> Image uploaded successfully
-                        </p>
-                        <button
-                          type="button"
-                          onClick={() => setPostImgUrl('')}
-                          style={{
-                            marginTop: '8px',
-                            padding: '6px 12px',
-                            background: 'transparent',
-                            border: '1px solid #ef4444',
-                            color: '#ef4444',
-                            borderRadius: '6px',
-                            cursor: 'pointer',
-                            fontSize: '0.85rem',
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '4px'
-                          }}
-                        >
-                          <i className="ri-delete-bin-line"></i> Remove Image
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                  <p className="field-hint">Upload an image (max 10MB). Auto-optimized and stored on Cloudinary CDN.</p>
-                </div>
-
-              </div>{/* end sidebar-fields */}
-
-              {/* Buttons — always visible at bottom */}
-              <div className="sidebar-actions">
-                <button
-                  className="btn-pill publish-btn"
-                  onClick={publishPost}
-                  disabled={publishing}
-                >
-                  {publishing
-                    ? (editingPostId ? 'Saving...' : 'Publishing...')
-                    : (editingPostId ? 'Save Changes' : 'Publish Narrative')}
-                </button>
-                <button onClick={closeModals} className="cancel-btn">
-                  {editingPostId ? 'Cancel Edit' : 'Cancel Draft'}
-                </button>
-              </div>
-            </div>
-
-            {/* Right — Title + Content */}
-            <div className="write-main">
-              <input
-                type="text"
-                value={postTitle}
-                onChange={(e) => setPostTitle(e.target.value)}
-                placeholder="Headline..."
-                className="post-title-input"
-              />
-              <textarea
-                value={postContent}
-                onChange={(e) => setPostContent(e.target.value)}
-                placeholder="Deep dive into your thoughts..."
-                className="post-content-textarea"
-              />
-            </div>
-
-          </div>
-        </div>
-      )}
 
       {/* Common Website Footer */}
       <Footer />
