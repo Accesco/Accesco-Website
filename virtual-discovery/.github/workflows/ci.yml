@@ -13,7 +13,11 @@ on:
 
 env:
   PYTHON_VERSION: "3.11"
-  # Dummy values for CI — tests mock all external services
+  # ── CI-only dummy values ──────────────────────────────────────────────
+  # MONGO_URI points to the ephemeral MongoDB service container defined
+  # in the "services" block below — it is NOT a real/production database.
+  # All secrets here are throwaway test values used only during CI runs.
+  # ─────────────────────────────────────────────────────────────────────
   MONGO_URI: "mongodb://localhost:27017/test_accesco"
   MONGO_DB_NAME: "test_accesco"
   MONGO_TLS_INSECURE: "1"
