@@ -4,18 +4,19 @@ import { collection, doc, getDocs, query, runTransaction, serverTimestamp, where
 const COLLECTION = 'referralProfiles'
 
 /**
- * Shared conversion logic: marks a referral profile as "converted" and
- * bundles delivery of any gifts claimed but not yet received. Pre-launch,
- * real orders are rare (ordering is itself gated behind the waitlist), so
- * a waitlist join counts as the conversion event just as much as an order
- * does — see markWaitlistJoinAndFulfillGifts below.
+ * Marks a referral profile as "converted" and bundles delivery of any gifts
+ * claimed but not yet received. Waitlist registration is the confirming
+ * event for a referral — not a first order — since ordering itself is gated
+ * behind the waitlist, so it would never fire first anyway.
  *
  * No-ops silently if the phone has no referral profile, or if it has
- * already converted (hasOrderedAt already set).
+ * already converted (waitlistJoinedAt already set).
  *
- * @param {{ phone: string, orderId?: string, vertical?: string, source: 'order'|'waitlist' }} params
+ * @param {{ phone: string }} params
  */
-async function markConversionAndFulfillGifts({ phone, orderId = null, vertical = null, source }) {
+export async function markWaitlistJoinAndFulfillGifts({ phone }) {
+  if (!phone) return
+
   const digits = String(phone).replace(/[^\d]/g, '')
   if (digits.length < 7) return
 
@@ -28,19 +29,18 @@ async function markConversionAndFulfillGifts({ phone, orderId = null, vertical =
       if (!snap.exists()) return // no referral profile for this phone — nothing to do
 
       const data = snap.data()
-      if (data.hasOrderedAt) return // already converted — already handled
+      if (data.waitlistJoinedAt) return // already converted — already handled
 
       referredByCode = data.referredBy || null
 
-      const claims = { ...(data.milestoneClaims || {}) }
+      const claims = { ...(data.tierClaims || {}) }
       let claimsChanged = false
 
       for (const tierId of Object.keys(claims)) {
-        if (claims[tierId]?.status === 'pending_first_order') {
+        if (claims[tierId]?.status === 'pending_conversion') {
           claims[tierId] = {
             ...claims[tierId],
-            status: 'fulfilled_with_order',
-            fulfilledOrderId: orderId,
+            status: 'fulfilled_pending_dispatch',
             fulfilledAt: serverTimestamp(),
           }
           claimsChanged = true
@@ -48,11 +48,8 @@ async function markConversionAndFulfillGifts({ phone, orderId = null, vertical =
       }
 
       transaction.update(profileRef, {
-        hasOrderedAt: serverTimestamp(),
-        firstOrderId: orderId,
-        firstOrderVertical: vertical || null,
-        conversionSource: source,
-        ...(claimsChanged ? { milestoneClaims: claims } : {}),
+        waitlistJoinedAt: serverTimestamp(),
+        ...(claimsChanged ? { tierClaims: claims } : {}),
       })
     })
 
@@ -63,29 +60,9 @@ async function markConversionAndFulfillGifts({ phone, orderId = null, vertical =
     }
   } catch (err) {
     // Referral bundling is a side effect of conversion — never let it
-    // break the order/waitlist flow itself.
+    // break the waitlist signup flow itself.
     console.error('[referralFulfillment] Failed to mark conversion:', err)
   }
-}
-
-/**
- * Call this whenever an order is placed in ANY vertical (Grokly, InstaStyle,
- * Swadisht).
- * @param {{ phone: string, orderId: string, vertical: string }} params
- */
-export async function markFirstOrderAndFulfillGifts({ phone, orderId, vertical }) {
-  if (!phone || !orderId) return
-  return markConversionAndFulfillGifts({ phone, orderId, vertical, source: 'order' })
-}
-
-/**
- * Call this whenever a user joins the waitlist. Pre-launch, this is the
- * realistic "the referral paid off" moment — see markConversionAndFulfillGifts.
- * @param {{ phone: string }} params
- */
-export async function markWaitlistJoinAndFulfillGifts({ phone }) {
-  if (!phone) return
-  return markConversionAndFulfillGifts({ phone, source: 'waitlist' })
 }
 
 async function markReferrerHistoryCompleted(referredByCode, refereeDigits) {

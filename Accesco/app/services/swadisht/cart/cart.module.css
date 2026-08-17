@@ -1325,3 +1325,113 @@ gap: 6px;
   .cartLayout { grid-template-columns: 1fr; }
   .rightPane { position: static; }
 }
+
+/* ─── Also in your cart (other Accesco services) ─────────────────────── */
+.otherStores {
+  background: #fff;
+  border: 1px solid #EAD9C8;
+  border-radius: 14px;
+  padding: 20px 24px;
+  box-shadow: 0 2px 8px rgba(107,29,58,0.05);
+}
+
+.otherStoresTitle {
+  font-size: 13px;
+  font-weight: 800;
+  color: #9B7E6A;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 0 0 12px;
+}
+
+.otherStoreBlock + .otherStoreBlock {
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px dashed #EAD9C8;
+}
+
+.otherStoreHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 14px;
+  font-weight: 700;
+  color: #1C1C1C;
+  margin-bottom: 8px;
+}
+
+.otherStoreItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 0;
+}
+
+.otherStoreItemImg {
+  width: 42px;
+  height: 42px;
+  border-radius: 8px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.otherStoreItemInfo {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.otherStoreItemName {
+  font-size: 13px;
+  font-weight: 600;
+  color: #1C1C1C;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.otherStoreItemVariant {
+  font-size: 11px;
+  color: #9B7E6A;
+}
+
+.otherStoreItemQty {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #1C1C1C;
+  flex-shrink: 0;
+}
+
+.otherStoreItemQty button {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 1px solid #EAD9C8;
+  background: #fff;
+  cursor: pointer;
+}
+
+.otherStoreItemRemove {
+  background: none;
+  border: none;
+  color: #9B7E6A;
+  cursor: pointer;
+  font-size: 13px;
+  flex-shrink: 0;
+  padding: 4px;
+}
+
+.otherStoreItemRemove:hover {
+  color: #C0392B;
+}
+
+.otherStoresNote {
+  margin: 0 0 4px;
+  font-size: 11px;
+  color: #9B7E6A;
+  text-align: center;
+}

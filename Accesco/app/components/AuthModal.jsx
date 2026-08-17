@@ -13,8 +13,7 @@ import {
   signInWithPhoneNumber,
   signInWithPopup,
   GoogleAuthProvider,
-  PhoneAuthProvider,
-  linkWithCredential,
+  linkWithPhoneNumber,
   signOut,
 } from 'firebase/auth'
 import {
@@ -311,40 +310,79 @@ function AuthModalContent({
   }
 
   const sendPhoneOtp = async () => {
-    if (loading) return
+    if(loading) return 
 
     setLoading(true)
-    setError('')
+    setError("")
 
     try {
       clearRecaptcha()
 
       const verifier = new RecaptchaVerifier(
-        auth,
-        recaptchaContainerIdRef.current,
+        auth, 
+        recaptchaContainerIdRef.current, 
         {
-          size: 'invisible',
-        },
+          size: 'invisible'
+        }
       )
 
       recaptchaVerifierRef.current = verifier
 
-      const result = await signInWithPhoneNumber(
-        auth,
-        normalizePhone(phone.trim()),
-        verifier,
-      )
+      const phoneNumber = normalizePhone(phone.trim())
+      
+      let result
+
+      if(pendingSocialUser) {
+        const currentUser = auth.currentUser
+
+        if(!currentUser) {
+          throw new Error(
+            'Your Google session is expired. Please sign in again with Google'
+          )
+        }
+
+        result = await linkWithPhoneNumber(
+          currentUser,
+          phoneNumber,
+          verifier
+        )
+      } else {
+        result = await signInWithPhoneNumber(
+          auth, 
+          phoneNumber,
+          verifier
+        )
+      }
 
       setConfirmationResult(result)
       setPhoneCodeSent(true)
-      setResendCooldown(45)
-    } catch (err) {
-      console.error('Phone OTP send failed:', err)
+      setResendCooldown(60)
+    } catch(err){
+      console.error("Phone OTP sent failed : ", err)
       clearRecaptcha()
-      setError(
-        err.message ||
-          'Failed to send OTP. Check your phone number and try again.',
-      )
+
+      if(err.code === 'auth/provider-already-linked') {
+        setError(
+          'A phone number is already linked to this account'
+        )
+      } else if (err.code === 'auth/credential-already-in-use') {
+        setError(
+          "This phone number is already associated with another account. Use 'Sign In' instead."
+        )
+      } else if (err.code === 'auth/invalid-phone-number') {
+        setError(
+          'Please enter a valid phone number'
+        )
+      } else if (err.code === 'auth/too-many-requests') {
+        setError(
+          'Too many attempts. Try again later'
+        )
+      } else {
+        setError(
+          err.message || 
+                "Failed to send OTP. Check your phone number and try again"
+        )
+      }
     } finally {
       setLoading(false)
     }
@@ -413,16 +451,35 @@ function AuthModalContent({
     const snap = await getDoc(doc(db, 'users', firebaseUser.uid))
     const existing = snap.exists() ? snap.data() : null
 
+    const firebasePhoneLinked = !!firebaseUser.phoneNumber
+
+    // If the user already verified a phone (in Firestore) OR has a phone linked
+    // directly on the Firebase Auth account, let them straight in — no OTP needed.
     if (existing?.phoneVerified) {
       await completeVerifiedSocialUser(existing, firebaseUser)
       return
     }
 
+    if (firebasePhoneLinked) {
+      // Phone is linked on Firebase Auth but Firestore record is missing the flag — sync it.
+      await setDoc(
+        doc(db, 'users', firebaseUser.uid),
+        {
+          phone: firebaseUser.phoneNumber,
+          phoneVerified: true,
+          updatedAt: serverTimestamp(),
+        },
+        { merge: true }
+      )
+      await completeVerifiedSocialUser(existing || {}, firebaseUser)
+      return
+    }
+
     setPendingSocialUser({
       uid: firebaseUser.uid,
-      name: firebaseUser.displayName || '',
-      email: firebaseUser.email || '',
-      photoURL: firebaseUser.photoURL || null,
+      name: firebaseUser.displayName || "",
+      email: firebaseUser.email || "",
+      photoURL: firebaseUser.photoURL || "",
       provider,
     })
 
@@ -482,7 +539,9 @@ function AuthModalContent({
     setStep('verify')
 
     if (!phoneCodeSent) {
-      sendPhoneOtp()
+      // Yield to React's render so the recaptcha container div is
+      // mounted in the DOM before RecaptchaVerifier tries to find it.
+      setTimeout(() => sendPhoneOtp(), 50)
     }
   }
 
@@ -529,10 +588,10 @@ function AuthModalContent({
 
   const handleVerifySubmit = async (e) => {
     e.preventDefault()
-    setError('')
+    setError("")
 
     if (!confirmationResult) {
-      setError('Code is still being sent. Please wait a moment.')
+      setError('Code is still being sent. Please wait a moment')
       return
     }
 
@@ -544,63 +603,72 @@ function AuthModalContent({
     setLoading(true)
 
     try {
-      if (pendingSocialUser) {
-        // Attach the phone credential to the already signed-in Google
-        // account instead of confirming a fresh sign-in, which would
-        // create a second, disconnected Firebase Auth user.
-        const credential = PhoneAuthProvider.credential(
-          confirmationResult.verificationId,
-          otpCode.trim(),
-        )
-        await linkWithCredential(auth.currentUser, credential)
-      } else {
-        await confirmationResult.confirm(otpCode.trim())
+      await confirmationResult.confirm(otpCode.trim())
+
+      // After confirm(), auth.currentUser is the canonical merged user.
+      // For Google+Phone this is the Google account with the phone now linked.
+      // For phone-only sign-in this is the phone user.
+      const verifiedFirebaseUser = auth.currentUser
+
+      if (!verifiedFirebaseUser) {
+        throw new Error('Session lost after OTP confirmation. Please try again.')
       }
 
-      const p = phone.trim()
-      const n = pendingSocialUser
+      // Use different variable names to avoid shadowing the state variables
+      // `phone`, `name`, and `email` which would cause a ReferenceError.
+      const phoneNum = normalizePhone(phone.trim())
+
+      const resolvedName = pendingSocialUser
         ? pendingSocialUser.name || name.trim() || 'Accesco User'
-        : name.trim()
-      const em = pendingSocialUser
+        : name.trim();
+
+      const resolvedEmail = pendingSocialUser
         ? pendingSocialUser.email || email.trim()
-        : email.trim()
+        : email.trim();
+
       const docId = pendingSocialUser
-        ? pendingSocialUser.uid
-        : p.replace(/[^\d]/g, '')
+        ? verifiedFirebaseUser.uid
+        : phoneNum.replace(/[^\d]/g, '');
 
       await setDoc(
         doc(db, 'users', docId),
         {
-          name: n,
-          phone: p,
-          email: em || null,
-          photoURL: pendingSocialUser?.photoURL || null,
+          name: resolvedName,
+          phone: phoneNum,
+          email: resolvedEmail || null,
+          photoURL: pendingSocialUser?.photoURL || verifiedFirebaseUser.photoURL || null,
           provider: pendingSocialUser?.provider || 'phone',
           phoneVerified: true,
           emailVerified,
-          createdAt: serverTimestamp(),
           updatedAt: serverTimestamp(),
+          // Always write createdAt — merge:true means it won't overwrite existing docs.
+          createdAt: serverTimestamp(),
         },
-        { merge: true },
+        { merge: true }
       )
 
       try {
         const appliedCode = normalizeReferralCode(referralCode)
-        await initializeReferralProfile(p, n, appliedCode)
+
+        await initializeReferralProfile(
+          phoneNum,
+          resolvedName,
+          appliedCode || null
+        )
 
         if (appliedCode && referralVisitUid) {
-          await markReferralVisitConsumed(referralVisitUid, p)
+          await markReferralVisitConsumed(referralVisitUid, phoneNum)
         }
       } catch (err) {
         console.error('Referral profile init failed:', err)
       }
 
       const user = {
-        name: n,
-        phone: p,
-        email: em || null,
-        photoURL: pendingSocialUser?.photoURL || null,
-        uid: docId,
+        name: resolvedName,
+        phone: phoneNum,
+        email: resolvedEmail || null,
+        photoURL: pendingSocialUser?.photoURL || verifiedFirebaseUser?.photoURL || null,
+        uid: verifiedFirebaseUser.uid,
       }
 
       setSuccess(true)
@@ -609,20 +677,19 @@ function AuthModalContent({
         onSuccess && onSuccess(user)
         handleClose()
       }, 1300)
-    } catch (err) {
-      console.error(err)
-      if (err.code === 'auth/invalid-verification-code') {
+    } catch (error) {
+      console.error('OTP verification failed:', error)
+
+      if (error.code === 'auth/invalid-verification-code') {
         setError('Invalid OTP. Please check the code and try again.')
-      } else if (err.code === 'auth/code-expired') {
+      } else if (error.code === 'auth/code-expired') {
         setError('OTP has expired. Please request a new one.')
-      } else if (err.code === 'auth/credential-already-in-use') {
-        setError(
-          'This phone number is already linked to another account. Please use a different number or sign in with that account.',
-        )
-      } else if (err.code === 'auth/provider-already-linked') {
-        setError('This account already has a phone number linked.')
+      } else if (error.code === 'auth/credential-already-in-use') {
+        setError('This phone number is already associated with another account.')
+      } else if (error.code === 'auth/provider-already-linked') {
+        setError('A phone number is already linked to this account.')
       } else {
-        setError('Something went wrong. Please try again.')
+        setError(error.message || 'Something went wrong while verifying the OTP.')
       }
     } finally {
       setLoading(false)
@@ -1119,7 +1186,7 @@ function AuthModalContent({
             }
 
             .auth-modal-right {
-              min-height: 531px !important;
+              min-height: 0 !important;
               padding: 34px 32px 28px !important;
             }
           }
@@ -1152,7 +1219,8 @@ const styles = {
   shell: {
     position: 'relative',
     width: 'min(820px, calc(100vw - 32px))',
-    height: 531,
+    height: 'auto',
+    minHeight: 580,
     maxHeight: 'calc(100vh - 32px)',
     transform: 'scale(1.07)',
     transformOrigin: 'center',
@@ -1161,8 +1229,10 @@ const styles = {
     columnGap: 32,
     boxSizing: 'border-box',
     padding: 34,
-    overflow: 'hidden',
-    background: '#000000',
+    overflow: 'visible',
+    border: '2px solid #fff',
+    borderRadius: 16,
+    background: '#ffffff',
     boxShadow: '0 30px 85px rgba(0,0,0,0.68)',
     fontFamily: 'Arial, Helvetica, sans-serif',
   },
@@ -1194,6 +1264,7 @@ const styles = {
     overflow: 'hidden',
     boxSizing: 'border-box',
     padding: '34px 29px',
+    border: '2px solid #fff',
     background:
       'radial-gradient(circle at 5% 5%, rgba(235,0,107,0.96) 0%, rgba(194,0,87,0.83) 27%, rgba(111,0,53,0.5) 56%, transparent 78%), linear-gradient(135deg, #af0052 0%, #76003a 46%, #3d001f 75%, #17000c 100%)',
     color: '#ffffff',
@@ -1244,8 +1315,9 @@ const styles = {
     position: 'relative',
     minWidth: 0,
     boxSizing: 'border-box',
-    padding: '27px 24px 8px 24px',
-    overflowY: 'auto',
+    padding: '27px 24px 0px 24px',
+    border: '2px solid #fff',
+    overflowY: 'visible',
     background: '#ffffff',
     color: '#1a1a1a',
     scrollbarWidth: 'none',

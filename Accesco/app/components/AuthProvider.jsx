@@ -24,6 +24,13 @@ async function getUserDoc(docId) {
   }
 }
 
+// Mirrors the docId convention used in AuthModal: accounts that signed in
+// via Google (with or without a linked phone) are keyed by their Firebase
+// Auth uid. Phone-only accounts are keyed by their normalized E.164 digits,
+// but accounts created before AuthModal normalized the docId are keyed on the
+// bare digits typed at signup — usually 10, without the +91 country code — so
+// both forms are tried before giving up. api/_lib/auth.js accepts either form
+// as the x-user-id header for the same reason.
 async function loadUserProfile(firebaseUser) {
   const isGoogleLinked = firebaseUser.providerData.some(
     (p) => p.providerId === 'google.com',
@@ -47,6 +54,13 @@ async function loadUserProfile(firebaseUser) {
     }
   } else {
     profile = await getUserDoc(docId)
+  }
+
+  // Phone verification is mandatory. If the Firestore profile doesn't exist
+  // yet, or exists but phoneVerified is not true, treat the Firebase Auth
+  // session as incomplete — AuthModal will handle the phone+OTP step.
+  if (!profile?.phoneVerified) {
+    return null
   }
 
   return {
@@ -87,6 +101,9 @@ export function AuthProvider({ children }) {
       }
 
       const profile = await loadUserProfile(currentUser)
+      // profile is null when phone verification is not yet complete.
+      // Keep user=null so AuthGate stays open and AuthModal handles the
+      // phone+OTP step. setLoading(false) still runs so the modal renders.
       setUser(profile)
 
       if (profile?.uid) {

@@ -25,14 +25,6 @@ export async function POST(request) {
       console.error('[instastyle/orders] Firestore write failed:', dbErr);
     }
 
-    // If this is the user's first order, bundle in any pending referral gifts
-    if (order.phone) {
-      const { markFirstOrderAndFulfillGifts } = await import('@/lib/referralFulfillment');
-      markFirstOrderAndFulfillGifts({ phone: order.phone, orderId: order.id, vertical: 'instastyle' }).catch(
-        (err) => console.error('[instastyle/orders] Referral fulfillment failed:', err),
-      );
-    }
-
     // Send confirmation email using the rich template from mailService
     const emailTo = customerEmail || order.customerEmail;
     if (emailTo) {

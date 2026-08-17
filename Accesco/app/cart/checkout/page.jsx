@@ -3,16 +3,20 @@
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { buildUnifiedStores, clearAllBrandCarts } from '@/lib/unifiedCart';
+import {
+  buildUnifiedStores,
+  clearAllBrandCarts,
+  getGroklyCart,
+  setGroklyCart,
+  getSwadishttCart,
+  setSwadishttCart,
+  getInstaStyleCart,
+  setInstaStyleCart,
+} from '@/lib/unifiedCart';
+import { STORE_PLACERS, postUnifiedOrderRecord } from '@/lib/unifiedCheckoutOrders';
 import { payWithRazorpay } from '@/lib/razorpayService';
 import { useAuth } from '@/app/components/AuthProvider';
 import styles from './checkout.module.css';
-
-const STORE_NAMES = {
-  swadishtt: 'Swadishtt',
-  grokly: 'Grokly',
-  instastyle: 'Insta Style',
-};
 
 function formatINR(amount) {
   return `₹${Math.round(amount).toLocaleString('en-IN')}`;
@@ -43,199 +47,6 @@ function ArrowRightIcon() {
   );
 }
 
-// Persists one brand's slice of the unified order using that brand's own
-// existing order-storage mechanism, so its "My Orders"/tracking pages keep
-// working unmodified. Best-effort: the payment already succeeded, so a
-// failed sync call here must never block the user's confirmation screen.
-async function placeGroklyOrder({ items, subtotal, address, unifiedOrderId, payment, paymentMethod, user }) {
-  const orderId = `GRK-${Date.now()}`;
-  const order = {
-    id: orderId,
-    status: 'PLACED',
-    timestamp: new Date().toISOString(),
-    venture: 'Grokly',
-    unifiedOrderId,
-    userId: user?.uid || null,
-    customerEmail: address.email,
-    customerName: address.name,
-    deviceId: typeof window !== 'undefined' ? localStorage.getItem('grokly_device_id') : null,
-    items: items.map((i) => ({ id: i.id, name: i.name, price: i.price, quantity: i.quantity })),
-    subtotal,
-    deliveryFee: 0,
-    discount: 0,
-    total: subtotal,
-    totals: { subtotal, deliveryFee: 0, discount: 0, total: subtotal },
-    ...(paymentMethod === 'cod'
-      ? { paymentMethod: 'cod' }
-      : { paymentMethod: 'razorpay', razorpayOrderId: payment.orderId, razorpayPaymentId: payment.paymentId }),
-    address: address.address,
-    phone: address.phone,
-  };
-
-  try {
-    await fetch('/api/grokly/orders', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ order, customerEmail: address.email }),
-    });
-  } catch (err) {
-    console.error('[unified checkout] Grokly order sync failed:', err);
-  }
-
-  return {
-    key: 'grokly',
-    name: STORE_NAMES.grokly,
-    theme: 'grokly',
-    id: orderId,
-    itemCount: items.reduce((s, i) => s + i.quantity, 0),
-    subtotal,
-    trackingPath: `/services/grokly/order-tracking?id=${orderId}`,
-  };
-}
-
-async function placeInstaStyleOrder({ items, subtotal, address, unifiedOrderId, payment, paymentMethod, user }) {
-  const orderId = `INS-${Date.now()}`;
-  const order = {
-    id: orderId,
-    status: 'PLACED',
-    timestamp: new Date().toISOString(),
-    venture: 'InstaStyle',
-    unifiedOrderId,
-    userId: user?.uid || null,
-    customerEmail: address.email,
-    customerName: address.name,
-    items: items.map((i) => ({
-      id: i.id,
-      name: i.name,
-      price: i.price,
-      quantity: i.quantity,
-      image: i.image,
-      selectedSize: i.selectedSize,
-      selectedColor: i.selectedColor,
-    })),
-    totals: { subtotal, deliveryFee: 0, shippingFee: 0, gst: 0, discount: 0, total: subtotal },
-    address: {
-      addressLine1: address.address,
-      city: address.city,
-      pincode: address.pincode,
-    },
-    phone: address.phone,
-    ...(paymentMethod === 'cod'
-      ? { paymentMethod: 'cod' }
-      : { paymentMethod: 'razorpay', razorpayOrderId: payment.orderId, razorpayPaymentId: payment.paymentId }),
-  };
-
-  try {
-    await fetch('/api/instastyle/orders', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ order, customerEmail: address.email }),
-    });
-  } catch (err) {
-    console.error('[unified checkout] InstaStyle order sync failed:', err);
-  }
-
-  return {
-    key: 'instastyle',
-    name: STORE_NAMES.instastyle,
-    theme: 'instastyle',
-    id: orderId,
-    itemCount: items.reduce((s, i) => s + i.quantity, 0),
-    subtotal,
-    trackingPath: `/services/instastyle/order-tracking?id=${orderId}`,
-  };
-}
-
-async function placeSwadishttOrder({ items, subtotal, address, unifiedOrderId, payment, paymentMethod, user }) {
-  const orderId = `SW${Date.now().toString(36).toUpperCase()}`;
-  const order = {
-    id: orderId,
-    status: 'CONFIRMED',
-    placedAt: new Date().toISOString(),
-    unifiedOrderId,
-    userId: user?.uid || null,
-    customerEmail: address.email,
-    customerName: address.name,
-    ...(paymentMethod === 'cod'
-      ? { paymentMethod: 'cod' }
-      : { paymentMethod: 'razorpay', razorpayOrderId: payment.orderId, razorpayPaymentId: payment.paymentId }),
-    delivery: {
-      name: address.name,
-      phone: address.phone,
-      email: address.email,
-      address: address.address,
-      city: address.city,
-      pincode: address.pincode,
-    },
-    deliveryPartner: {
-      name: 'Ravi Kumar',
-      distanceKm: 1.8,
-      etaMinutes: 10,
-      statusText: 'Delivery partner is heading to the restaurant',
-    },
-    totals: { subtotal, deliveryFee: 0, platformFee: 0, gst: 0, total: subtotal },
-    items: items.map((i) => ({
-      id: i.id,
-      name: i.name,
-      price: i.price,
-      quantity: i.quantity,
-      image: i.image,
-      restaurant: i.variant || 'Regular',
-      sku: `SWD-GEN-${String(i.id).replace(/[^0-9]/g, '') || '00'}`,
-    })),
-  };
-
-  try {
-    const raw = localStorage.getItem('swadishtt-orders');
-    const existing = raw ? JSON.parse(raw) : [];
-    localStorage.setItem('swadishtt-orders', JSON.stringify([order, ...(Array.isArray(existing) ? existing : [])]));
-  } catch (err) {
-    console.error('[unified checkout] Failed to save Swadishtt order locally:', err);
-  }
-
-  try {
-    await fetch('/api/swadishtt/orders', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ order, customerEmail: address.email }),
-    });
-  } catch (err) {
-    console.error('[unified checkout] Swadishtt Firestore sync failed:', err);
-  }
-
-  try {
-    await fetch('/api/swadishtt/orders/update-status', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        orderId,
-        newStatus: 'CONFIRMED',
-        customerEmail: address.email,
-        customerName: address.name,
-        orderData: order,
-      }),
-    });
-  } catch (err) {
-    console.error('[unified checkout] Swadishtt confirmation email failed:', err);
-  }
-
-  return {
-    key: 'swadishtt',
-    name: STORE_NAMES.swadishtt,
-    theme: 'swadishtt',
-    id: orderId,
-    itemCount: items.reduce((s, i) => s + i.quantity, 0),
-    subtotal,
-    trackingPath: `/services/swadisht/order-tracking?id=${orderId}`,
-  };
-}
-
-const STORE_PLACERS = {
-  grokly: placeGroklyOrder,
-  instastyle: placeInstaStyleOrder,
-  swadishtt: placeSwadishttOrder,
-};
-
 export default function UnifiedCheckoutPage() {
   const router = useRouter();
   const { user, getIdToken } = useAuth();
@@ -257,6 +68,9 @@ export default function UnifiedCheckoutPage() {
   const [paymentMethod, setPaymentMethod] = useState('razorpay');
   const [orderPlaced, setOrderPlaced] = useState(false);
   const [placedOrders, setPlacedOrders] = useState([]);
+  // Whether the address fields were prefilled from the location already
+  // selected on the homepage (cleared once the user edits the address).
+  const [usedSavedLocation, setUsedSavedLocation] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -291,6 +105,10 @@ export default function UnifiedCheckoutPage() {
       (typeof storedLocation?.postalCode === 'string' && storedLocation.postalCode) ||
       '';
 
+    if (!deliveryAddress.address && (resolvedAddress || resolvedCity || resolvedPincode)) {
+      setUsedSavedLocation(true);
+    }
+
     setDeliveryAddress((prev) => ({
       ...prev,
       name: prev.name || (typeof user?.name === 'string' ? user.name : ''),
@@ -312,6 +130,26 @@ export default function UnifiedCheckoutPage() {
     if (!isMounted || orderPlaced) return;
     if (activeStores.length === 0) router.replace('/cart');
   }, [isMounted, orderPlaced, activeStores.length, router]);
+
+  // Lets the user drop an item right from checkout, without bouncing back to
+  // /cart — same per-brand storage each cart already reads/writes, see
+  // lib/unifiedCart.js.
+  const removeItem = async (storeKey, item) => {
+    if (storeKey === 'swadishtt') {
+      const cart = await getSwadishttCart(user);
+      await setSwadishttCart(user, cart.filter((c) => c.id !== item.id));
+    } else if (storeKey === 'grokly') {
+      const cart = getGroklyCart();
+      const next = { ...cart };
+      delete next[item.id];
+      setGroklyCart(next);
+    } else if (storeKey === 'instastyle') {
+      const cart = getInstaStyleCart();
+      const matches = (c) => c.id === item.id && c.selectedSize === item.selectedSize && c.selectedColor === item.selectedColor;
+      setInstaStyleCart(cart.filter((c) => !matches(c)));
+    }
+    setStores(await buildUnifiedStores(user));
+  };
 
   const validateAddress = () => {
     const errors = {};
@@ -371,40 +209,18 @@ export default function UnifiedCheckoutPage() {
         )
       );
 
-      try {
-        await fetch('/api/orders', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            order: {
-              id: unifiedOrderId,
-              status: 'PLACED',
-              placedAt: new Date().toISOString(),
-              userId: user?.uid || null,
-              customerEmail: deliveryAddress.email,
-              customerName: deliveryAddress.name,
-              address: deliveryAddress,
-              ...(paymentMethod === 'cod'
-                ? { paymentMethod: 'cod' }
-                : { paymentMethod: 'razorpay', razorpayOrderId: payment.orderId, razorpayPaymentId: payment.paymentId }),
-              subtotal: subTotal,
-              platformFee,
-              grandTotal,
-              itemCount: totalItems,
-              stores: results.map((r) => ({
-                key: r.key,
-                name: r.name,
-                orderId: r.id,
-                itemCount: r.itemCount,
-                subtotal: r.subtotal,
-                trackingPath: r.trackingPath,
-              })),
-            },
-          }),
-        });
-      } catch (err) {
-        console.error('[unified checkout] Unified order record failed:', err);
-      }
+      await postUnifiedOrderRecord({
+        unifiedOrderId,
+        user,
+        address: deliveryAddress,
+        paymentMethod,
+        payment,
+        subtotal: subTotal,
+        platformFee,
+        grandTotal,
+        itemCount: totalItems,
+        results,
+      });
 
       await clearAllBrandCarts({ user, getIdToken });
 
@@ -479,7 +295,7 @@ export default function UnifiedCheckoutPage() {
       <header className={styles.topBar}>
         <button
           className={styles.backBtn}
-          onClick={() => (step === 2 ? setStep(1) : router.push('/cart'))}
+          onClick={() => (step === 2 ? setStep(1) : router.back())}
           aria-label="Go back"
         >
           <BackIcon />
@@ -496,6 +312,7 @@ export default function UnifiedCheckoutPage() {
             <div className={styles.section}>
               <h2 className={styles.sectionTitle}>Delivery Address</h2>
               <form onSubmit={handleAddressSubmit}>
+                <h3 className={styles.formSubheading}>Contact Details</h3>
                 <div className={styles.formRow}>
                   <div className={styles.formGroup}>
                     <label className={styles.formLabel}>Full Name *</label>
@@ -529,13 +346,23 @@ export default function UnifiedCheckoutPage() {
                   {addressErrors.email && <span className={styles.fieldError}>{addressErrors.email}</span>}
                 </div>
 
+                <h3 className={styles.formSubheading}>Delivery Address</h3>
+
                 <div className={styles.formGroup}>
-                  <label className={styles.formLabel}>Complete Address *</label>
+                  <div className={styles.addressLabelRow}>
+                    <label className={styles.formLabel}>Complete Address *</label>
+                    {usedSavedLocation && (
+                      <span className={styles.autoFilledBadge}>📍 From your saved location</span>
+                    )}
+                  </div>
                   <textarea
                     className={`${styles.formTextarea} ${addressErrors.address ? styles.inputError : ''}`}
                     rows={3}
                     value={deliveryAddress.address}
-                    onChange={(e) => setDeliveryAddress({ ...deliveryAddress, address: e.target.value })}
+                    onChange={(e) => {
+                      setUsedSavedLocation(false);
+                      setDeliveryAddress({ ...deliveryAddress, address: e.target.value });
+                    }}
                   />
                   {addressErrors.address && <span className={styles.fieldError}>{addressErrors.address}</span>}
                 </div>
@@ -587,6 +414,14 @@ export default function UnifiedCheckoutPage() {
                         <span className={styles.summaryItemName}>{item.name}</span>
                         <span className={styles.summaryItemQty}>x{item.quantity}</span>
                         <span className={styles.summaryItemPrice}>{formatINR(item.price * item.quantity)}</span>
+                        <button
+                          type="button"
+                          className={styles.summaryItemRemove}
+                          onClick={() => removeItem(store.key, item)}
+                          aria-label={`Remove ${item.name}`}
+                        >
+                          ✕
+                        </button>
                       </div>
                     ))}
                   </div>
@@ -642,9 +477,32 @@ export default function UnifiedCheckoutPage() {
           <div className={styles.billPanel}>
             <h2 className={styles.sectionTitle}>Bill Summary</h2>
             {activeStores.map((store) => (
-              <div className={styles.billLine} key={store.key}>
-                <span>{store.name}</span>
-                <span>{formatINR(store.subtotal)}</span>
+              <div className={styles.billStoreBlock} key={store.key}>
+                <div className={styles.billLine}>
+                  <span className={styles.billStoreLabel}>{store.name}</span>
+                  <span>{formatINR(store.subtotal)}</span>
+                </div>
+                <div className={styles.billItemList}>
+                  {store.items.map((item) => (
+                    <div className={styles.billItemLine} key={item.key}>
+                      <span>
+                        {item.name}
+                        {item.variant ? ` (${item.variant})` : ''} × {item.quantity}
+                      </span>
+                      <span className={styles.billItemRight}>
+                        {formatINR(item.price * item.quantity)}
+                        <button
+                          type="button"
+                          className={styles.billItemRemove}
+                          onClick={() => removeItem(store.key, item)}
+                          aria-label={`Remove ${item.name}`}
+                        >
+                          ✕
+                        </button>
+                      </span>
+                    </div>
+                  ))}
+                </div>
               </div>
             ))}
             <div className={styles.billDivider} />

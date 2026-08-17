@@ -96,17 +96,53 @@ export function HeaderActions({ post }) {
 
   return (
     <div className="post-actions">
-      <button className="action-btn" title="Share" onClick={() => sharePost(post, 'native')}>
-        <i className="ri-share-line"></i>
-      </button>
-      <button
-        className={`action-btn ${isBookmarked ? 'bookmarked' : ''}`}
-        title={isBookmarked ? 'Remove bookmark' : 'Bookmark'}
-        onClick={toggleBookmark}
-      >
-        <i className={isBookmarked ? 'ri-bookmark-fill' : 'ri-bookmark-line'}></i>
-      </button>
-    </div>
+
+  {/* Save / Bookmark */}
+  <button
+    className={`action-btn ${isBookmarked ? "bookmarked" : ""}`}
+    title={isBookmarked ? "Remove bookmark" : "Bookmark"}
+    onClick={toggleBookmark}
+  >
+    <i
+      className={
+        isBookmarked
+          ? "ri-bookmark-fill"
+          : "ri-bookmark-line"
+      }
+    ></i>
+
+    <span>Save</span>
+  </button>
+
+  {/* Share */}
+  <button
+    className="action-btn"
+    title="Share"
+    onClick={() => sharePost(post, "native")}
+  >
+    <i className="ri-share-line"></i>
+    <span>Share</span>
+  </button>
+
+  {/* Like */}
+  <button
+    className="action-btn"
+    title="Like"
+  >
+    <i className="ri-heart-line"></i>
+    <span>Like</span>
+  </button>
+
+  {/* Comment */}
+  <button
+    className="action-btn"
+    title="Comment"
+  >
+    <i className="ri-chat-3-line"></i>
+    <span>Comment</span>
+  </button>
+
+</div>
   );
 }
 

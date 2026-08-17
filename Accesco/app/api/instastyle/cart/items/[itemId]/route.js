@@ -8,6 +8,7 @@ import {
   getProductAvailabilityError,
   getAvailableStock,
   toCartItemResponse,
+  resolveProductForItem,
   PRODUCTS_COLLECTION,
 } from '@/app/api/_lib/instastyleCart';
 
@@ -40,9 +41,12 @@ export async function PATCH(request, { params }) {
       }
       const data = itemSnap.data();
 
-      const productRef = adminDb.collection(PRODUCTS_COLLECTION).doc(data.productDocId);
-      const productSnap = await tx.get(productRef);
-      const product = productSnap.exists ? productSnap.data() : null;
+      // Static-catalog items (no productDocId) have nothing live in Firestore
+      // to re-read — fall back to the bundled catalog, same as resolveProduct
+      // in instastyleCart.js does for the initial add.
+      const product = data.productDocId
+        ? (await tx.get(adminDb.collection(PRODUCTS_COLLECTION).doc(data.productDocId))).data() ?? null
+        : await resolveProductForItem(data);
 
       const availabilityError = getProductAvailabilityError(product);
       if (availabilityError) return availabilityError;

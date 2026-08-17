@@ -1,27 +1,49 @@
-'use client';
+"use client";
 
-import { useEffect, useMemo, useRef, useState } from 'react';
-import Image from 'next/image';
-import { useParams } from 'next/navigation';
-import Link from 'next/link';
-import SwadishttHeader from '../../components/SwadishttHeader';
-import { useSwadishtt } from '../../contexts/SwadishttContext';
-import { RESTAURANTS } from '../../lib/swadishttData';
-import styles from './restaurant.module.css';
+import { useEffect, useMemo, useRef, useState } from "react";
+import Image from "next/image";
+import { useParams } from "next/navigation";
+import Link from "next/link";
+import SwadishttHeader from "../../components/SwadishttHeader";
+import { useSwadishtt } from "../../contexts/SwadishttContext";
+import { RESTAURANTS } from "../../lib/swadishttData";
+import styles from "./restaurant.module.css";
 
+const HERO_FALLBACK_IMAGE = "/images/swadisht/Swadishtt-kitchen-bg.png";
+const RESTAURANT_LOGO = "/images/swadisht/swadisht_logo.JPG";
+
+/* ============ DISH DETAILS MODAL ============
+   Extends the existing dish modal in place (same trigger: clicking a dish
+   card). Adds quantity selection, dietary badges, and a dynamic total.
+   Only renders fields that actually exist on the dish object — nothing is
+   invented. Pass a `key={dish.id}` at the call site so quantity resets
+   whenever a different dish is opened. */
 function DishModal({ dish, onClose, onAdd }) {
+  const [qty, setQty] = useState(1);
+
   if (!dish) return null;
+
+  const total = (dish.price || 0) * qty;
+
+  const dietaryBadges = [
+    dish.isVeg ? "Pure Veg" : "Non-Veg",
+    dish.isVegan && "Vegan",
+    dish.isGlutenFree && "Gluten Free",
+    dish.spiceLevel && `${dish.spiceLevel} Spice`,
+  ].filter(Boolean);
+
+  const handleAdd = () => {
+    onAdd(dish, qty);
+    onClose();
+  };
 
   return (
     <div className={styles.modalBackdrop} onClick={onClose}>
-      <article
-        className={styles.modal}
-        onClick={(event) => event.stopPropagation()}
-      >
+      <article className={styles.modal} onClick={(e) => e.stopPropagation()}>
         <button
           className={styles.modalClose}
           type="button"
-          aria-label="Close dish details"
+          aria-label="Close"
           onClick={onClose}
         >
           ×
@@ -36,20 +58,68 @@ function DishModal({ dish, onClose, onAdd }) {
         />
 
         <div className={styles.modalContent}>
-          <span
-            className={
-              dish.isVeg ? styles.vegMark : styles.nonVegMark
-            }
-          />
-
           <h2>{dish.name}</h2>
-          <p>{dish.description}</p>
+          {dish.description && <p>{dish.description}</p>}
+
+          <div className={styles.modalBadgeRow}>
+            {dietaryBadges.map((label) => (
+              <span
+                key={label}
+                className={
+                  label === "Pure Veg" || label === "Vegan"
+                    ? styles.modalBadgeVeg
+                    : label === "Non-Veg"
+                      ? styles.modalBadgeNonVeg
+                      : styles.modalBadgeNeutral
+                }
+              >
+                {label}
+              </span>
+            ))}
+          </div>
+
+          {(dish.calories > 0 || dish.serves) && (
+            <div className={styles.modalMetaRow}>
+              {dish.calories > 0 && <span>🔥 {dish.calories} kcal</span>}
+              {dish.serves && <span>🍽 Serves {dish.serves}</span>}
+            </div>
+          )}
+
+          {dish.allergens?.length > 0 && (
+            <p className={styles.modalAllergens}>
+              Contains: {dish.allergens.join(", ")}
+            </p>
+          )}
+
+          {dish.ingredients?.length > 0 && (
+            <p className={styles.modalIngredients}>
+              <strong>Ingredients:</strong> {dish.ingredients.join(", ")}
+            </p>
+          )}
+
+          <div className={styles.modalQtyRow}>
+            <span className={styles.modalQtyLabel}>Quantity</span>
+            <div className={styles.quantityControl}>
+              <button
+                type="button"
+                onClick={() => setQty((q) => Math.max(1, q - 1))}
+              >
+                −
+              </button>
+              <span>{qty}</span>
+              <button type="button" onClick={() => setQty((q) => q + 1)}>
+                +
+              </button>
+            </div>
+          </div>
 
           <div className={styles.modalFooter}>
-            <strong>₹{dish.price}</strong>
-
-            <button type="button" onClick={() => onAdd(dish)}>
-              + Add
+            <div>
+              <div className={styles.modalTotalLabel}>Total</div>
+              <strong className={styles.modalTotalPrice}>₹{total}</strong>
+            </div>
+            <button type="button" onClick={handleAdd}>
+              Add to Cart
             </button>
           </div>
         </div>
@@ -60,54 +130,26 @@ function DishModal({ dish, onClose, onAdd }) {
 
 export default function RestaurantDetailPage() {
   const params = useParams();
-
-  const {
-    addToCart,
-    cart = [],
-    updateQuantity,
-  } = useSwadishtt();
-
-  const [activeFilter, setActiveFilter] =
-    useState('popular');
-
-  const [selectedDish, setSelectedDish] =
-    useState(null);
-
+  const { addToCart, cart = [], updateQuantity } = useSwadishtt();
+  const [activeFilter, setActiveFilter] = useState("popular");
+  const [selectedDish, setSelectedDish] = useState(null);
   const heroVideoRef = useRef(null);
 
   useEffect(() => {
-    if (heroVideoRef.current) {
-      heroVideoRef.current.play().catch(() => {});
-    }
+    heroVideoRef.current?.play().catch(() => {});
   }, []);
 
-  const slug = Array.isArray(params?.slug)
-    ? params.slug[0]
-    : params?.slug;
-
+  const slug = Array.isArray(params?.slug) ? params.slug[0] : params?.slug;
   const restaurant = useMemo(
-    () =>
-      RESTAURANTS.find(
-        (item) => item.slug === slug
-      ),
-    [slug]
+    () => RESTAURANTS.find((r) => r.slug === slug),
+    [slug],
   );
 
   const visibleMenu = useMemo(() => {
     if (!restaurant) return [];
-
-    if (activeFilter === 'veg') {
-      return restaurant.menu.filter(
-        (dish) => dish.isVeg
-      );
-    }
-
-    if (activeFilter === 'non-veg') {
-      return restaurant.menu.filter(
-        (dish) => !dish.isVeg
-      );
-    }
-
+    if (activeFilter === "veg") return restaurant.menu.filter((d) => d.isVeg);
+    if (activeFilter === "non-veg")
+      return restaurant.menu.filter((d) => !d.isVeg);
     return restaurant.menu;
   }, [activeFilter, restaurant]);
 
@@ -123,362 +165,288 @@ export default function RestaurantDetailPage() {
     );
   }
 
-  const location = [
-    restaurant.location?.area,
-    restaurant.location?.city,
-  ]
+  const location = [restaurant.location?.area, restaurant.location?.city]
     .filter(Boolean)
-    .join(' · ');
-
+    .join(", ");
   const description =
     restaurant.description ||
-    `Hand-prepared favourites with bright, authentic ${
-      restaurant.cuisines?.[0] || 'regional'
-    } flavours, cooked fresh and delivered warm.`;
+    `Hand-prepared favourites with bright, authentic ${restaurant.cuisines?.[0] || "regional"} flavours, cooked fresh and delivered warm.`;
 
-  const quantityFor = (dishId) =>
-    cart.find((item) => item.id === dishId)
-      ?.quantity || 0;
+  const quantityFor = (id) => cart.find((i) => i.id === id)?.quantity || 0;
 
-  const addDish = (dish) => {
-    addToCart({
-      id: dish.id,
-      name: dish.name,
-      price: dish.price,
-      image: dish.image,
-      restaurant: restaurant.name,
-      calories: dish.calories || 0,
-      protein: dish.protein || 0,
-      carbs: dish.carbs || 0,
-      fats: dish.fats || 0,
-    });
+  /* addDish now accepts an optional quantity (defaults to 1, matching the
+     existing "+ Add" button behaviour). It calls addToCart once per unit,
+     relying on the existing context to increment quantity for an id already
+     in the cart — the same assumption the existing "+" control already
+     depends on. No context/cart logic was changed. */
+  const addDish = (dish, qty = 1) => {
+    for (let i = 0; i < qty; i += 1) {
+      addToCart({
+        id: dish.id,
+        name: dish.name,
+        price: dish.price,
+        image: dish.image,
+        restaurant: restaurant.name,
+        calories: dish.calories || 0,
+        protein: dish.protein || 0,
+        carbs: dish.carbs || 0,
+        fats: dish.fats || 0,
+      });
+    }
   };
 
-  const cartCount = cart.reduce(
-    (total, item) =>
-      total + item.quantity,
-    0
-  );
-
-  const cartTotal = cart.reduce(
-    (total, item) =>
-      total + item.price * item.quantity,
-    0
-  );
+  const cartCount = cart.reduce((t, i) => t + i.quantity, 0);
+  const cartTotal = cart.reduce((t, i) => t + i.price * i.quantity, 0);
 
   return (
     <div className={styles.page}>
       <SwadishttHeader />
 
-      {/* HERO VIDEO/IMAGE ONLY */}
-      <section className={styles.hero}>
-        <div className={styles.heroMedia}>
-          {restaurant.video ? (
-            <video
-              ref={heroVideoRef}
-              className={styles.heroVideo}
-              autoPlay
-              muted
-              loop
-              playsInline
-              preload="none"
-              fetchPriority="low"
-              poster={restaurant.coverImage}
-            >
-              <source
-                src={restaurant.video}
-                type="video/mp4"
+      {/* HERO WRAPPER — plain relative box; the badge lives here (outside
+          .hero's overflow:hidden) so its circle never gets clipped */}
+      <div style={{ position: "relative" }}>
+        <section className={styles.hero}>
+          <div className={styles.heroMedia}>
+            {restaurant.video ? (
+              <video
+                ref={heroVideoRef}
+                className={styles.heroVideo}
+                autoPlay
+                muted
+                loop
+                playsInline
+                preload="none"
+                fetchPriority="low"
+                poster={restaurant.coverImage || HERO_FALLBACK_IMAGE}
+              >
+                <source src={restaurant.video} type="video/mp4" />
+              </video>
+            ) : (
+              <Image
+                className={styles.heroVideo}
+                src={restaurant.coverImage || HERO_FALLBACK_IMAGE}
+                alt={restaurant.name}
+                fill
+                sizes="100vw"
+                priority
               />
-            </video>
-          ) : (
-            <Image
-              className={styles.heroVideo}
-              src={restaurant.coverImage}
-              alt={restaurant.name}
-              fill
-              sizes="100vw"
-              priority
-            />
-          )}
+            )}
+            <div className={styles.heroShade} />
+          </div>
 
-          <div className={styles.heroShade} />
-        </div>
-      </section>
-
-      {/* CARD AND MENU */}
-      <section className={styles.menuSection}>
-        <div className={styles.menuShell}>
-          {/* RESTAURANT CARD IS NOW IN NORMAL FLOW */}
-          <article
-            className={styles.restaurantCard}
+          <div
+            className={styles.heroContent}
             style={{
-              position: 'relative',
-              inset: 'auto',
-              top: 'auto',
-              right: 'auto',
-              bottom: 'auto',
-              left: 'auto',
-              display: 'block',
-              visibility: 'visible',
-              opacity: 1,
-              transform: 'none',
-              margin: '0 auto 38px',
-              zIndex: 10,
+              position: "absolute",
+              inset: 0,
+              zIndex: 5,
+              padding: "40px 40px 60px",
+              color: "#fff",
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              gap: "18px",
             }}
           >
             <div className={styles.eyebrowRow}>
-              <span>
-                {location || 'Bengaluru'}
+              <span className={styles.locationPill}>
+                📍 {(location || "Bengaluru").toUpperCase()}
               </span>
-
-              <span className={styles.hotBadge}>
-                ♨ Hot &amp; Popular
-              </span>
+              <span className={styles.hotBadge}>♨ Hot &amp; Popular</span>
             </div>
 
-            <h1>{restaurant.name}</h1>
-
+            <h1
+              style={{
+                margin: 0,
+                fontWeight: 900,
+                fontSize: "clamp(46px, 5.6vw, 68px)",
+                lineHeight: 1,
+                color: "#fff",
+                textShadow: "0 2px 12px rgba(0,0,0,0.65)",
+              }}
+            >
+              {restaurant.name}
+            </h1>
             <p
-              className={
-                styles.restaurantDescription
-              }
+              className={styles.restaurantDescription}
+              style={{
+                margin: 0,
+                maxWidth: "560px",
+                fontSize: "17px",
+                lineHeight: 1.55,
+                color: "rgba(255,255,255,0.95)",
+                textShadow: "0 1px 5px rgba(0,0,0,0.6)",
+              }}
             >
               {description}
             </p>
 
             <div
-              className={
-                styles.restaurantMeta
-              }
+              className={styles.restaurantMeta}
+              style={{
+                margin: 0,
+                display: "flex",
+                flexWrap: "wrap",
+                gap: "12px 24px",
+                fontSize: "15px",
+                color: "#fff",
+                textShadow: "0 1px 4px rgba(0,0,0,0.6)",
+              }}
             >
-              <span className={styles.rating}>
-                ★ {restaurant.rating}
-              </span>
-
-              <span>
-                {restaurant.ratingCount || 100}
-                + ratings
-              </span>
-
-              <span>
-                ◷ {restaurant.deliveryTime}
-              </span>
+              <span className={styles.rating}>★ {restaurant.rating}</span>
+              <span>{restaurant.ratingCount || 100}+ ratings</span>
+              <span>◷ {restaurant.deliveryTime}</span>
+              <span>🛵 Fast and Reliable</span>
             </div>
 
-            <div
-              className={styles.cardDivider}
-            />
+            <div className={styles.cardDivider} style={{ margin: "6px 0" }} />
 
-            <div
-              className={styles.cuisineBlock}
-            >
-              <span
-                className={styles.cuisineLabel}
-              >
-                Cuisine
-              </span>
-
-              <div
-                className={styles.cuisineChips}
-              >
-                {restaurant.cuisines.map(
-                  (cuisine) => (
-                    <span key={cuisine}>
-                      {cuisine}
-                    </span>
-                  )
-                )}
+            <div className={styles.cuisineBlock}>
+              <span className={styles.cuisineLabel}>Cuisine</span>
+              <div className={styles.cuisineChips}>
+                {restaurant.cuisines.map((c) => (
+                  <span key={c}>{c}</span>
+                ))}
               </div>
             </div>
-          </article>
-
-          {/* FILTERS */}
-          <div
-            className={styles.filterTabs}
-            role="tablist"
-            aria-label="Menu filters"
-          >
-            {[
-              ['popular', 'Popular'],
-              ['veg', 'Veg'],
-              ['non-veg', 'Non-Veg'],
-            ].map(([value, label]) => (
-              <button
-                key={value}
-                type="button"
-                role="tab"
-                aria-selected={
-                  activeFilter === value
-                }
-                className={
-                  activeFilter === value
-                    ? styles.activeTab
-                    : ''
-                }
-                onClick={() =>
-                  setActiveFilter(value)
-                }
-              >
-                {label}
-              </button>
-            ))}
           </div>
+        </section>
 
-          <div className={styles.menuHeading}>
-            <h2>Featured Items</h2>
+        {/* Logo badge — sits outside .hero, straddling the wrapper's bottom
+            edge, so it renders as a full circle instead of a clipped half */}
+        <div
+          className={styles.heroBadge}
+          style={{
+            position: "absolute",
+            left: "50%",
+            bottom: 0,
+            zIndex: 6,
+            transform: "translate(-50%, 50%)",
+          }}
+        >
+          <Image src={RESTAURANT_LOGO} alt="Swadishtt" width={44} height={44} />
+        </div>
+      </div>
 
-            <span>
-              {visibleMenu.length} dishes
-            </span>
+      {/* MENU — fixed grid, no horizontal scroll */}
+      <section className={styles.menuSection}>
+        <div className={styles.menuShell}>
+          <div className={styles.menuHeaderRow}>
+            <div>
+              <div className={styles.menuHeading}>
+                <h2>⭐ Featured Items</h2>
+              </div>
+              <p className={styles.menuSubtext}>
+                Some of our most loved dishes, just for you!
+              </p>
+            </div>
+
+            <div
+              className={styles.filterTabs}
+              role="tablist"
+              aria-label="Menu filters"
+            >
+              {[
+                ["popular", "★ Popular"],
+                ["veg", "🌿 Veg"],
+                ["non-veg", "🔥 Non-Veg"],
+              ].map(([value, label]) => (
+                <button
+                  key={value}
+                  type="button"
+                  role="tab"
+                  aria-selected={activeFilter === value}
+                  className={activeFilter === value ? styles.activeTab : ""}
+                  onClick={() => setActiveFilter(value)}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+
+            <div className={styles.filterMeta}>
+              <span className={styles.dishCount}>
+                {visibleMenu.length} dishes
+              </span>
+              <span className={styles.viewAllLink}>View All Dishes ›</span>
+            </div>
           </div>
 
           <div className={styles.menuList}>
             {visibleMenu.map((dish) => {
-              const quantity =
-                quantityFor(dish.id);
-
+              const quantity = quantityFor(dish.id);
               return (
                 <article
                   key={dish.id}
                   className={styles.dishCard}
-                  onClick={() =>
-                    setSelectedDish(dish)
-                  }
+                  onClick={() => setSelectedDish(dish)}
                 >
-                  <div
-                    className={
-                      styles.dishImageWrap
-                    }
-                  >
+                  <div className={styles.dishImageWrap}>
                     <Image
                       src={dish.image}
                       alt={dish.name}
                       fill
-                      sizes="(max-width: 768px) 50vw, 200px"
-                      onError={(event) => {
-                        event.currentTarget.onerror =
-                          null;
-
-                        event.currentTarget.src =
-                          restaurant.coverImage;
+                      sizes="(max-width: 720px) 45vw, 33vw"
+                      onError={(e) => {
+                        e.currentTarget.onerror = null;
+                        e.currentTarget.src = restaurant.coverImage;
                       }}
                     />
-
-                    {dish.isBestseller && (
+                    <span className={styles.dishVegBadge}>
                       <span
                         className={
-                          styles.bestseller
-                        }
-                      >
-                        Bestseller
-                      </span>
-                    )}
-                  </div>
-
-                  <div
-                    className={
-                      styles.dishDetails
-                    }
-                  >
-                    <div
-                      className={
-                        styles.dishTitleRow
-                      }
-                    >
-                      <h3>{dish.name}</h3>
-
-                      <span
-                        className={
-                          dish.isVeg
-                            ? styles.vegMark
-                            : styles.nonVegMark
+                          dish.isVeg ? styles.vegMark : styles.nonVegMark
                         }
                       />
-                    </div>
-
-                    <p>{dish.description}</p>
-
-                    <div
-                      className={
-                        styles.dishTags
-                      }
-                    >
-                      <span>
-                        {dish.isVeg
-                          ? 'Pure Veg'
-                          : 'Non-Veg'}
-                      </span>
-
-                      {dish.isBestseller && (
-                        <span>
-                          Most loved
-                        </span>
-                      )}
-
-                      <span>
-                        Freshly made
-                      </span>
-                    </div>
-
-                    <strong
-                      className={
-                        styles.dishPrice
-                      }
-                    >
-                      ₹{dish.price}
-                    </strong>
+                    </span>
+                    {dish.isBestseller && (
+                      <span className={styles.bestseller}>Bestseller</span>
+                    )}
                   </div>
 
-                  <div
-                    className={
-                      styles.dishAction
-                    }
-                    onClick={(event) =>
-                      event.stopPropagation()
-                    }
-                  >
-                    {quantity === 0 ? (
-                      <button
-                        type="button"
-                        className={
-                          styles.addButton
-                        }
-                        onClick={() =>
-                          addDish(dish)
-                        }
-                      >
-                        + Add
-                      </button>
-                    ) : (
-                      <div
-                        className={
-                          styles.quantityControl
-                        }
-                      >
-                        <button
-                          type="button"
-                          onClick={() =>
-                            updateQuantity(
-                              dish.id,
-                              quantity - 1
-                            )
-                          }
-                        >
-                          −
-                        </button>
-
-                        <span>{quantity}</span>
-
-                        <button
-                          type="button"
-                          onClick={() =>
-                            addDish(dish)
-                          }
-                        >
-                          +
-                        </button>
+                  <div className={styles.dishDetails}>
+                    <div className={styles.dishTitleRow}>
+                      <h3>{dish.name}</h3>
+                      <div className={styles.dishTags}>
+                        <span>Freshly made</span>
+                        <span>{dish.isVeg ? "Pure Veg" : "Non-Veg"}</span>
                       </div>
-                    )}
+                    </div>
+
+                    <div className={styles.dishFooter}>
+                      <strong className={styles.dishPrice}>
+                        ₹{dish.price}
+                      </strong>
+                      <div
+                        className={styles.dishAction}
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        {quantity === 0 ? (
+                          <button
+                            type="button"
+                            className={styles.addButton}
+                            onClick={() => addDish(dish)}
+                          >
+                            + Add
+                          </button>
+                        ) : (
+                          <div className={styles.quantityControl}>
+                            <button
+                              type="button"
+                              onClick={() =>
+                                updateQuantity(dish.id, quantity - 1)
+                              }
+                            >
+                              −
+                            </button>
+                            <span>{quantity}</span>
+                            <button type="button" onClick={() => addDish(dish)}>
+                              +
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    </div>
                   </div>
                 </article>
               );
@@ -488,22 +456,17 @@ export default function RestaurantDetailPage() {
       </section>
 
       <DishModal
+        key={selectedDish?.id || "none"}
         dish={selectedDish}
-        onClose={() =>
-          setSelectedDish(null)
-        }
+        onClose={() => setSelectedDish(null)}
         onAdd={addDish}
       />
 
       {cartCount > 0 && (
-        <Link
-          href="/services/swadisht/cart"
-          className={styles.cartBar}
-        >
+        <Link href="/services/swadisht/cart" className={styles.cartBar}>
           <span>
             {cartCount} items · ₹{cartTotal}
           </span>
-
           <strong>View Cart →</strong>
         </Link>
       )}

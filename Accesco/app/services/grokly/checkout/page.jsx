@@ -14,16 +14,19 @@ import { useAuth } from '../../../components/AuthProvider';
 import { updateUserFieldsInFirebase } from '@/lib/userService';
 import AuthModal from '../../../components/AuthModal';
 import { payWithRazorpay } from '@/lib/razorpayService';
-import { 
-  ArrowLeft, MapPin, Phone, User, CreditCard, 
+import { useOtherStoreItems, clearAllBrandCarts } from '@/lib/unifiedCart';
+import { STORE_PLACERS, postUnifiedOrderRecord } from '@/lib/unifiedCheckoutOrders';
+import {
+  ArrowLeft, MapPin, Phone, User, CreditCard,
   ShieldCheck, ShoppingBag, Clock, Zap, Sparkles,
-  RefreshCw, Leaf
+  RefreshCw, Leaf, Trash2
 } from 'lucide-react';
 
 export default function GroklyCheckout() {
   const { cart, placeOrder, location, cartHydrated, returnItems, setReturnItems } = useGrokly();
   const router = useRouter();
-  const { user, userData, signIn } = useAuth();
+  const { user, userData, signIn, getIdToken } = useAuth();
+  const { otherStores, removeItem: removeOtherItem } = useOtherStoreItems(user, 'grokly');
   const [isProcessing, setIsProcessing] = useState(false);
   const [showAuth, setShowAuth] = useState(false);
   const [paymentError, setPaymentError] = useState('');
@@ -34,15 +37,14 @@ export default function GroklyCheckout() {
     address: location || 'Bengaluru',
     phone: '+91 9022217637'
   });
+  // Tracks whether the address field still reflects the location picked on
+  // the homepage vs. something the user has since typed themselves.
+  const [addressAutoFilled, setAddressAutoFilled] = useState(true);
 
   useEffect(() => {
-    if (location) {
-      setCustomerDetails(prev => ({
-        ...prev,
-        address: location
-      }));
-    }
-  }, [location]);
+    if (!location || !addressAutoFilled) return; // user has typed their own address — never overwrite it
+    setCustomerDetails(prev => ({ ...prev, address: location }));
+  }, [location, addressAutoFilled]);
 
   const [eta , setEta] = useState(0);
   const [deliverySpeed, setDeliverySpeed] = useState('instant');
@@ -91,6 +93,13 @@ export default function GroklyCheckout() {
   const discount = deliverySpeed === 'batched' ? 20 : 0;
   const total = Math.max(0, subtotal + deliveryFee + 2 - discount);
 
+  // Items added in Swadishtt/InstaStyle ride along on this same payment —
+  // one combined charge covers Grokly's own total plus every other store's
+  // subtotal and a flat platform fee for that portion.
+  const otherStoresSubtotal = otherStores.reduce((sum, store) => sum + store.subtotal, 0);
+  const otherStoresPlatformFee = otherStoresSubtotal > 0 ? 18 : 0;
+  const grandTotal = total + otherStoresSubtotal + otherStoresPlatformFee;
+
   // Reads the customer's real delivery coordinates from user profile / location state
   const getDeliveryCoords = () => {
     try {
@@ -115,13 +124,16 @@ export default function GroklyCheckout() {
 
     try {
       let paymentDetails = { paymentMethod: 'cod' };
+      let payment = null;
 
       if (paymentMethod !== 'cod') {
-        const payment = await payWithRazorpay({
-          amount: total,
+        payment = await payWithRazorpay({
+          amount: grandTotal,
           receipt: `grokly_${Date.now()}`,
           name: 'Grokly',
-          description: `Grokly order · ${cartItems.length} item(s)`,
+          description: otherStores.length > 0
+            ? `Order across ${1 + otherStores.length} store(s) · ${cartItems.length + otherStores.reduce((s, st) => s + st.itemCount, 0)} item(s)`
+            : `Grokly order · ${cartItems.length} item(s)`,
           prefill: {
             name: activeUser?.name || customerDetails.name,
             email: activeUser?.email || '',
@@ -159,6 +171,52 @@ export default function GroklyCheckout() {
         returnCredits: returnItems.reduce((s, i) => s + (i.creditsEarned || i.quantity * 10), 0),
         ...getDeliveryCoords(),
       });
+
+      // The same payment also covers whatever's in the other two services'
+      // carts — place their orders too and fold them into one unified record.
+      if (otherStores.length > 0) {
+        const unifiedOrderId = `UNI-${Date.now()}`;
+        const otherAddress = {
+          name: activeUser?.name || customerDetails.name,
+          phone: activeUser?.phone || customerDetails.phone,
+          email: activeUser?.email || '',
+          address: customerDetails.address,
+          city: '',
+          pincode: '',
+        };
+
+        const otherResults = await Promise.all(
+          otherStores.map((store) =>
+            STORE_PLACERS[store.key]({
+              items: store.items,
+              subtotal: store.subtotal,
+              address: otherAddress,
+              unifiedOrderId,
+              payment,
+              paymentMethod,
+              user: activeUser,
+            })
+          )
+        );
+
+        await postUnifiedOrderRecord({
+          unifiedOrderId,
+          user: activeUser,
+          address: otherAddress,
+          paymentMethod,
+          payment,
+          subtotal: subtotal + otherStoresSubtotal,
+          platformFee: otherStoresPlatformFee,
+          grandTotal,
+          itemCount: cartItems.length + otherStores.reduce((s, st) => s + st.itemCount, 0),
+          results: [
+            { key: 'grokly', name: 'Grokly', theme: 'grokly', id: order.id, itemCount: cartItems.length, subtotal, trackingPath: `/services/grokly/order-tracking?id=${order.id}` },
+            ...otherResults,
+          ],
+        });
+
+        await clearAllBrandCarts({ user: activeUser, getIdToken });
+      }
 
       router.push(`/services/grokly/order-tracking?id=${order.id}&eta=${resolvedEta}`);
     } catch (err) {
@@ -283,10 +341,20 @@ export default function GroklyCheckout() {
             </div>
 
             <div className={styles.formGroup}>
-              <label>Delivery Address {isLoadingLocation && '(Detecting...)'}</label>
-              <textarea 
+              <div className={styles.addressLabelRow}>
+                <label>Delivery Address {isLoadingLocation && '(Detecting...)'}</label>
+                {addressAutoFilled && !isLoadingLocation && (
+                  <span className={styles.autoFilledBadge}>
+                    <MapPin size={11} /> From your saved location
+                  </span>
+                )}
+              </div>
+              <textarea
                 value={customerDetails.address}
-                onChange={(e) => setCustomerDetails({...customerDetails, address: e.target.value})}
+                onChange={(e) => {
+                  setAddressAutoFilled(false);
+                  setCustomerDetails({...customerDetails, address: e.target.value});
+                }}
                 placeholder={isLoadingLocation ? 'Fetching your location...' : 'Enter your delivery address'}
                 disabled={isLoadingLocation}
                 rows={3}
@@ -442,9 +510,37 @@ export default function GroklyCheckout() {
               </div>
             ))}
           </div>
-          
+
+          {otherStores.length > 0 && (
+            <div style={{ margin: '14px 0', padding: '12px 14px', background: '#f8fafc', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
+              <div style={{ fontSize: '13px', fontWeight: 800, color: '#374151', marginBottom: '8px' }}>Also in your cart — paid in this order</div>
+              {otherStores.map((store) => (
+                <div key={store.key} style={{ marginBottom: '8px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', fontWeight: 700, color: '#6b7280', marginBottom: '4px' }}>
+                    <span>{store.name}</span>
+                    <span>₹{store.subtotal}</span>
+                  </div>
+                  {store.items.map((item) => (
+                    <div key={item.key} style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', color: '#374151', padding: '3px 0' }}>
+                      <span style={{ flex: 1 }}>{item.name} <span style={{ color: '#9ca3af' }}>x {item.quantity}</span></span>
+                      <span>₹{item.price * item.quantity}</span>
+                      <button
+                        type="button"
+                        onClick={() => removeOtherItem(store.key, item)}
+                        aria-label={`Remove ${item.name}`}
+                        style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#9ca3af', padding: '2px' }}
+                      >
+                        <Trash2 size={12} />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              ))}
+            </div>
+          )}
+
           <div className={styles.divider} />
-          
+
           <div className={styles.row}>
             <span>Item Subtotal</span>
             <span>₹{subtotal}</span>
@@ -465,12 +561,24 @@ export default function GroklyCheckout() {
               <span>-₹20</span>
             </div>
           )}
-          
+          {otherStores.length > 0 && (
+            <>
+              <div className={styles.row}>
+                <span>Other Services&rsquo; Items</span>
+                <span>₹{otherStoresSubtotal}</span>
+              </div>
+              <div className={styles.row}>
+                <span>Platform Fee</span>
+                <span>₹{otherStoresPlatformFee}</span>
+              </div>
+            </>
+          )}
+
           <div className={styles.divider} />
-          
+
           <div className={`${styles.row} ${styles.total}`}>
             <span>To Pay</span>
-            <span>₹{total}</span>
+            <span>₹{grandTotal}</span>
           </div>
           {paymentError && (
             <div style={{ color: '#dc2626', fontSize: '13px', fontWeight: 600, marginBottom: '10px' }}>
@@ -485,10 +593,10 @@ export default function GroklyCheckout() {
             {isProcessing
               ? (paymentMethod === 'cod' ? 'Placing Order...' : 'Processing Payment...')
               : !user
-                ? `Login & Place Order · ₹${total}`
+                ? `Login & Place Order · ₹${grandTotal}`
                 : paymentMethod === 'cod'
-                  ? `Place Order (COD) · ₹${total}`
-                  : `Pay & Place Order · ₹${total}`}
+                  ? `Place Order (COD) · ₹${grandTotal}`
+                  : `Pay & Place Order · ₹${grandTotal}`}
           </button>
         </div>
       </div>

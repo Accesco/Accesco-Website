@@ -29,15 +29,6 @@ export async function POST(request) {
       // Don't fail the request — the order was already confirmed/paid.
     }
 
-    // If this is the user's first order, bundle in any pending referral gifts
-    const phone = order.delivery?.phone || order.phone;
-    if (phone) {
-      const { markFirstOrderAndFulfillGifts } = await import('@/lib/referralFulfillment');
-      markFirstOrderAndFulfillGifts({ phone, orderId: order.id, vertical: 'swadisht' }).catch(
-        (err) => console.error('[swadishtt/orders] Referral fulfillment failed:', err),
-      );
-    }
-
     return NextResponse.json({ success: true, orderId: order.id }, { status: 200 });
   } catch (error) {
     console.error('[swadishtt/orders] Unexpected error:', error);

@@ -7,6 +7,7 @@ import {
   buildCartSummary,
   PRODUCTS_COLLECTION,
 } from '@/app/api/_lib/instastyleCart';
+import { getProductById } from '@/lib/mockData';
 
 export const dynamic = 'force-dynamic';
 
@@ -23,7 +24,10 @@ export async function GET(request) {
       return NextResponse.json({ items: [], summary: buildCartSummary([]) }, { status: 200 });
     }
 
-    // Batch-fetch every referenced product in one round trip instead of N+1 reads.
+    // Batch-fetch every referenced Firestore-backed product in one round trip
+    // instead of N+1 reads. Items without a productDocId came from the
+    // bundled static catalog (see resolveProduct in instastyleCart.js) and
+    // are resolved from lib/mockData.js below instead.
     const productDocIds = [...new Set(snapshot.docs.map((d) => d.data().productDocId).filter(Boolean))];
     const productSnaps = productDocIds.length
       ? await adminDb.getAll(...productDocIds.map((id) => adminDb.collection(PRODUCTS_COLLECTION).doc(id)))
@@ -32,7 +36,9 @@ export async function GET(request) {
 
     const items = snapshot.docs.map((docSnap) => {
       const data = docSnap.data();
-      const product = productsById.get(data.productDocId) || null;
+      const product = data.productDocId
+        ? productsById.get(data.productDocId) || null
+        : getProductById(data.productId) || null;
       return toCartItemResponse({ itemId: docSnap.id, data, product });
     });
 

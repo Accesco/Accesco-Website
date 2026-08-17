@@ -8,6 +8,7 @@ import { useSwadishtt } from '../contexts/SwadishttContext';
 import { useAuth } from '@/app/components/AuthProvider';
 import SwadishttHeader from '../components/SwadishttHeader';
 import styles from './cart.module.css';
+import { useOtherStoreItems } from '@/lib/unifiedCart';
 
 const FOOD_ISSUE_TYPES = [
   {
@@ -61,8 +62,9 @@ const FOOD_ISSUE_TYPES = [
 
 function CartContent() {
   const router = useRouter();
-  const { cart, removeFromCart, updateCartQuantity, clearCart } = useSwadishtt();
+  const { cart, removeFromCart, updateCartQuantity, clearCart, user } = useSwadishtt();
   const { userData } = useAuth();
+  const { otherStores, updateQuantity: updateOtherQuantity, removeItem: removeOtherItem } = useOtherStoreItems(user, 'swadishtt');
   const [promoCode, setPromoCode] = useState('');
   const [appliedPromo, setAppliedPromo] = useState(null);
   const [promoError, setPromoError] = useState('');
@@ -276,6 +278,48 @@ function CartContent() {
                 </div>
               </div>
             </div>
+
+            {/* Also in your cart — items added in other Accesco services */}
+            {otherStores.length > 0 && (
+              <div className={styles.otherStores}>
+                <h3 className={styles.otherStoresTitle}>Also in your cart</h3>
+                {otherStores.map((store) => (
+                  <div key={store.key} className={styles.otherStoreBlock}>
+                    <div className={styles.otherStoreHeader}>
+                      <span>{store.name}</span>
+                      <span>₹{store.subtotal}</span>
+                    </div>
+                    {store.items.map((item) => (
+                      <div key={item.key} className={styles.otherStoreItem}>
+                        {/* eslint-disable-next-line @next/next/no-img-element -- heterogeneous external hosts */}
+                        <img
+                          className={styles.otherStoreItemImg}
+                          src={item.image || `https://placehold.co/60x60/262626/FAF9F6?text=${encodeURIComponent(item.name[0])}`}
+                          alt={item.name}
+                          onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = `https://placehold.co/60x60/262626/FAF9F6?text=${encodeURIComponent(item.name[0])}`; }}
+                        />
+                        <div className={styles.otherStoreItemInfo}>
+                          <span className={styles.otherStoreItemName}>{item.name}</span>
+                          {item.variant && <span className={styles.otherStoreItemVariant}>{item.variant}</span>}
+                        </div>
+                        <div className={styles.otherStoreItemQty}>
+                          <button onClick={() => updateOtherQuantity(store.key, item, item.quantity - 1)} aria-label={`Decrease ${item.name} quantity`}>−</button>
+                          <span>{item.quantity}</span>
+                          <button onClick={() => updateOtherQuantity(store.key, item, item.quantity + 1)} aria-label={`Increase ${item.name} quantity`}>+</button>
+                        </div>
+                        <button
+                          className={styles.otherStoreItemRemove}
+                          onClick={() => removeOtherItem(store.key, item)}
+                          aria-label={`Remove ${item.name}`}
+                        >
+                          ✕
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* ── Reusable Container Card ── */}

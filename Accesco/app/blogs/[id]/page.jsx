@@ -4,6 +4,8 @@ import { notFound } from 'next/navigation';
 import './blog-post.css';
 import { fetchBlogs } from '../../../lib/blogService';
 import { HeaderActions, ShareRow } from './PostActions';
+import WaitlistCard from '../blogwaitlistcard';
+import BlogsNavbar from '../blog-navabar.jsx';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
@@ -86,6 +88,10 @@ function ArticleSchema({ post, id }) {
     },
     datePublished: post.date || undefined,
     dateModified: post.date || undefined,
+    contentLocation: post.localArea
+      ? { '@type': 'Place', name: post.localArea }
+      : undefined,
+    citation: post.backlinkUrl || undefined,
   };
 
   return (
@@ -101,11 +107,14 @@ function RelatedPosts({ posts }) {
 
   return (
     <section className="related-posts">
-      <h2 className="related-posts-title">Related Stories</h2>
-      <div className="related-posts-grid">
+      <div className="related-posts-header ">
+        <h2 className="related-posts-title">Related Articles</h2>
+        <span className="related-posts-more">View More</span>
+      </div>
+      <div className="related-posts-list">
         {posts.map((post) => (
           <Link key={post.id} href={`/blogs/${post.id}`} className="related-post-card">
-            <div className="related-post-visual">
+            <div className="related-post-image">
               <Image
                 src={post.image || '/images/download (2).png'}
                 alt={post.title}
@@ -116,10 +125,13 @@ function RelatedPosts({ posts }) {
             </div>
             <div className="related-post-body">
               <span className="related-post-category">{post.category}</span>
-              <h3>{post.title}</h3>
+              <h3 className="related-post-title">{post.title}</h3>
             </div>
           </Link>
         ))}
+      </div>
+      <div>
+        <span className="related-articles-more">View Articles More</span>
       </div>
     </section>
   );
@@ -136,108 +148,156 @@ export default async function BlogPostPage({ params }) {
 
   return (
     <article className="blog-post-page">
+      <BlogsNavbar />
       <ArticleSchema post={post} id={params.id} />
       <div className="blog-post-container">
-        <header className="post-header">
-          <Link href="/blogs" className="back-button">
-            <i className="ri-arrow-left-line"></i>
-            <span>Back to Stories</span>
-          </Link>
 
-          <div className="post-meta-row">
-            <span className="post-category">{post.category}</span>
-            <span className="post-date">
-              {new Date(post.date).toLocaleDateString('en-US', {
-                month: 'long',
-                day: 'numeric',
-                year: 'numeric',
-              })}
-            </span>
-          </div>
+        { /*  left content */}
+        <main className="blog-post-main">
+          <header className="post-header">
 
-          <h1 className="post-title">{post.title}</h1>
+            <h1 className="post-title">{post.title}</h1>
 
-          <div className="post-author-row">
-            <div className="author-info">
-            <div className="author-avatar">
-  {post.title?.includes('Accesco Living Launches Public Beta') ? (
-    <Image
-      src="/images/blogs/founder.png"
-      alt={post.author || 'Author'}
-      width={40}
-      height={40}
-      className="author-avatar-image"
-    />
-  ) : (
-    <i className="ri-user-fill"></i>
-  )}
-</div>
-              <div>
-                <p className="author-name">{post.author || 'ACCESCO Editorial Team'}</p>
-                <p className="author-meta">
-                  5 min read •{' '}
-                  {new Date(post.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-                </p>
+          </header>
+
+          <div
+            className="post-featured-image"
+          >
+            <Image
+              src={
+                post.title?.includes('What a City Actually Demands of You')
+                  ? '/images/blogs/what-a-city-actually-demands.jpg'
+                  : post.title?.includes('Dark Stores')
+                    ? '/images/blogs/dark-stores.jpg'
+                    : post.title?.includes('Sunday Meal Prep')
+                      ? '/images/blogs/meal-prep.jpg'
+                      : post.title?.includes('All-in-One Smart Lifestyle Ecosystem')
+                        ? '/images/blogs/accesco-ecosystem.jpg'
+                        : post.title?.includes('Best Grocery Delivery Service')
+                          ? '/images/blogs/grocery-delivery.jpg'
+                          : post.title?.includes('Accesco Living Launches Public Beta')
+                            ? '/images/blogs/launch-date.png'
+                            : post.image || '/images/download (2).png'
+              }
+              alt={post.title}
+              fill
+              style={{ objectFit: 'cover' }}
+              unoptimized
+              priority
+            />
+
+            { /*  author info */}
+
+            <div className="post-author-row">
+              <div className="author-info">
+                <div className="author-avatar">
+                  {post.author?.toLowerCase().includes('argha') ? (
+                    <Image
+                      src="/images/blogs/founder.png"
+                      alt={post.author || 'Author'}
+                      width={40}
+                      height={40}
+                      className="author-avatar-image"
+                    />
+                  ) : (
+                    <i className="ri-user-fill"></i>
+                  )}
+                </div>
+                <div className="author-details">
+                  <p className="author-name">{post.author || 'ACCESCO Editorial Team'}</p>
+                  <p className="author-meta">
+                    {post.author?.toLowerCase().includes('argha')
+                      ? 'Founder & CEO, Accesco Living'
+                      : 'Accesco Living'}
+                  </p>
+                </div>
               </div>
             </div>
 
-            <HeaderActions post={post} />
-          </div>
-        </header>
+            { /*  action buttons */}
+            <div className="desktop-image-actions">
+              <HeaderActions post={post} />
+            </div>
 
-<div
-  className="post-featured-image"
-  style={{
-    width: '100%',
-    maxWidth: '1200px',
-    height: '500px', // change this to whatever height you want
-    margin: '0 auto',
-    overflow: 'hidden',
-    borderRadius: '16px',
-    position: 'relative',
-  }}
->
-  <Image
-    src={
-      post.title?.includes('What a City Actually Demands of You')
-        ? '/images/blogs/what-a-city-actually-demands.jpg'
-      : post.title?.includes('Dark Stores')
-        ? '/images/blogs/dark-stores.jpg'
-      : post.title?.includes('Sunday Meal Prep')
-        ? '/images/blogs/meal-prep.jpg'
-      : post.title?.includes('All-in-One Smart Lifestyle Ecosystem')
-        ? '/images/blogs/accesco-ecosystem.jpg'
-      : post.title?.includes('Best Grocery Delivery Service')
-        ? '/images/blogs/grocery-delivery.jpg'
-      : post.title?.includes('Accesco Living Launches Public Beta')
-        ? '/images/blogs/launch-date.png'
-      : post.image || '/images/download (2).png'
-    }
-    alt={post.title}
-    fill
-    style={{ objectFit: 'cover' }}
-    unoptimized
-    priority
-  />
-</div>
+            { /*  category */}
 
-        <div className="post-content">
-          {(post.content || '').split('\n\n').map((paragraph, index) => (
-            <p key={index}>{paragraph}</p>
-          ))}
-        </div>
+            <div className="post-category-wrapper">
+              <span className="post-category">{post.category}</span>
+            </div>
 
-        <footer className="post-footer">
-          <div className="post-tags">
-            <span className="tag-item">{post.category}</span>
-            <span className="tag-item">Featured</span>
-            <span className="tag-item">Editor's Pick</span>
+            { /*  date */}
+
+            <div className="post-meta-row desktop-image-date">
+              <span className="post-date">
+                {new Date(post.date).toLocaleDateString('en-US', {
+                  month: 'long',
+                  day: 'numeric',
+                  year: 'numeric',
+                })}
+              </span>
+            </div>
           </div>
 
-          <ShareRow post={post} />
-        </footer>
 
-        <RelatedPosts posts={relatedPosts} />
+          { /*  mobile */}
+          <div className="mobile-post-info">
+            { /*  date */}
+
+            <div className="mobile-post-date">
+              <span className="post-date">
+                {new Date(post.date).toLocaleDateString('en-US', {
+                  month: 'long',
+                  day: 'numeric',
+                  year: 'numeric',
+                })}
+              </span>
+            </div>
+
+            { /*  action buttons mobile */}
+            <div className="mobile-post-actions">
+              <HeaderActions post={post} />
+            </div>
+
+          </div>
+
+          <div className="post-content">
+            {(post.content || '').split('\n\n').map((paragraph, index) => (
+              <p key={index}>{paragraph}</p>
+            ))}
+          </div>
+
+          <div className="post-share-row">
+            <WaitlistCard />
+          </div>
+        </main>
+
+
+        { /*  right content */}
+
+        <aside className="blog-post-sidebar">
+
+          {/*  about author */}
+          <section className="about-author">
+            
+
+            <div className="about-author-card">
+              <h3 className="about-author-title">About the Author</h3>
+              <p className="about-author-description">
+                Accesco Living is focused on building innovative solutions that make
+                everyday living simpler, smarter, and more connected.
+              </p>
+
+              <a href="/blogs" className="view-all-posts">
+                View All Posts
+              </a>
+            </div>
+          </section>
+
+          { /*  related posts */}
+          <section className="related-posts-section">
+            <RelatedPosts posts={relatedPosts} />
+          </section>
+        </aside>
       </div>
     </article>
   );
