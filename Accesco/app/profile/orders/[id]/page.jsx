@@ -18,22 +18,28 @@ export default function OrderDetailPage() {
   const venture = searchParams.get('venture');
 
   useEffect(() => {
-    const loadOrder = () => {
+    const loadOrder = async () => {
       setIsLoading(true);
       try {
-        let storageKey = '';
-        if (venture === 'Grokly') storageKey = 'grokly_orders';
-        else if (venture === 'Swadishtt') storageKey = 'swadishtt-orders';
-        else if (venture === 'InstaStyle') storageKey = 'instastyle_orders';
+        if (!orderId) return;
 
-        const raw = localStorage.getItem(storageKey);
-        if (raw) {
-          const orders = JSON.parse(raw);
-          const found = orders.find(o => o.id === orderId);
-          setOrder(found);
+        // Fetch from Grokly order endpoint or generic API
+        let endpoint = '/api/grokly/orders';
+        if (venture === 'Swadishtt') endpoint = '/api/swadishtt/orders';
+        else if (venture === 'InstaStyle') endpoint = '/api/instastyle/orders';
+
+        const res = await fetch(`${endpoint}?orderId=${encodeURIComponent(orderId)}`);
+        if (res.ok) {
+          const data = await res.json();
+          if (data.order) {
+            setOrder(data.order);
+          } else if (Array.isArray(data.orders)) {
+            const found = data.orders.find(o => o.id === orderId);
+            if (found) setOrder(found);
+          }
         }
       } catch (error) {
-        console.error('Error loading order details:', error);
+        console.error('Error loading order details from Firestore:', error);
       } finally {
         setIsLoading(false);
       }

@@ -9,6 +9,7 @@ import dynamic from 'next/dynamic';
 import styles from './AccescoHeader.module.css';
 import { getPersonCity } from '../lib/locationService';
 import { getUnifiedCartCount } from '../lib/unifiedCart';
+import { updateUserFieldsInFirebase } from '@/lib/userService';
 
 // Lazy load heavy modals so their JS bundles are downloaded only when needed
 const AuthModal = dynamic(() => import('../app/components/AuthModal'), { ssr: false });
@@ -61,10 +62,8 @@ export default function AccescoHeader() {
   }, [pathname, user]);
 
   useEffect(() => {
-    const savedLocation = localStorage.getItem('userLocation');
-
-    if (savedLocation) {
-      setSelectedLocation(savedLocation);
+    if (user?.selectedLocation) {
+      setSelectedLocation(typeof user.selectedLocation === 'string' ? user.selectedLocation : JSON.stringify(user.selectedLocation));
       return;
     }
 
@@ -79,7 +78,9 @@ export default function AccescoHeader() {
           };
           const locationStr = JSON.stringify(locationObject);
           setSelectedLocation(locationStr);
-          localStorage.setItem('userLocation', locationStr);
+          if (user?.uid) {
+            updateUserFieldsInFirebase(user.uid, { selectedLocation: locationObject });
+          }
         })
         .catch((err) => {
           console.error("Error:", err);
@@ -121,7 +122,9 @@ export default function AccescoHeader() {
 
           const locationStr = JSON.stringify(locationObject);
           setSelectedLocation(locationStr);
-          localStorage.setItem('userLocation', locationStr);
+          if (user?.uid) {
+            updateUserFieldsInFirebase(user.uid, { selectedLocation: locationObject });
+          }
         } catch (err) {
           console.error('Auto location detection failed:', err);
           applyDefaultLocation();
@@ -415,7 +418,9 @@ export default function AccescoHeader() {
 
             const locationStr = JSON.stringify(locationObject);
             setSelectedLocation(locationStr);
-            localStorage.setItem('userLocation', locationStr);
+            if (user?.uid) {
+              updateUserFieldsInFirebase(user.uid, { selectedLocation: locationObject });
+            }
           }}
         />
       )}

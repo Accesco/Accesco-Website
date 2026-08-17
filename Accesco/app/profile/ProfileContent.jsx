@@ -7,6 +7,11 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import AccescoHeader from '../../components/AccescoHeader';
 import AuthModal from '../components/AuthModal';
 import { useAuth } from '../components/AuthProvider';
+import {
+  updateWalletBalanceInFirebase,
+  updateUserFieldsInFirebase,
+  redeemCouponInFirebase,
+} from '../../lib/userService';
 import './profile.css';
 
 // Import modular section components
@@ -78,7 +83,7 @@ const AVAILABLE_COUPONS = [
 ];
 
 export default function ProfileContent() {
-  const { user, loading, signOut, signIn } = useAuth();
+  const { user, userData, loading, signOut, signIn, refreshUserData } = useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
   const sectionParam = searchParams?.get('section');
@@ -157,14 +162,9 @@ export default function ProfileContent() {
     }
   }, [sectionParam]);
 
-  // Load REAL data for the logged-in user
+  // Load REAL data for the logged-in user directly from Firebase (userData)
   useEffect(() => {
-    const grokly = JSON.parse(localStorage.getItem('grokly_orders') || '[]');
-    const swadishtt = JSON.parse(localStorage.getItem('swadishtt-orders') || '[]');
-    const instastyle = JSON.parse(localStorage.getItem('instastyle_orders') || '[]');
-    setTotalOrders(grokly.length + swadishtt.length + instastyle.length);
-
-    const savedLocation = localStorage.getItem('userLocation');
+    const savedLocation = typeof window !== 'undefined' ? localStorage.getItem('userLocation') : null;
     if (savedLocation) {
       try {
         const parsedLocation = JSON.parse(savedLocation);
@@ -174,126 +174,23 @@ export default function ProfileContent() {
       }
     }
 
-    const userKey = user?.uid || user?.phone || 'guest';
-
-    // 1. Real Addresses
-    const savedAddresses = localStorage.getItem(`accesco_saved_addresses_${userKey}`) || localStorage.getItem('accesco_saved_addresses');
-    if (savedAddresses) {
-      try { setAddresses(JSON.parse(savedAddresses)); } catch (e) {}
-    } else {
-      setAddresses([]);
-    }
-
-    // 2. Real Wallet Balance & UPI
-    const savedWallet = localStorage.getItem(`accesco_wallet_balance_${userKey}`) || localStorage.getItem('grokly_wallet_balance');
-    setWalletBalance(savedWallet ? parseFloat(savedWallet) : 0);
-
-    const savedUpi = localStorage.getItem(`accesco_upi_list_${userKey}`);
-    if (savedUpi) {
-      try { setUpiList(JSON.parse(savedUpi)); } catch (e) {}
-    } else {
-      setUpiList([]);
-    }
-
-    const savedCards = localStorage.getItem(`accesco_saved_cards_${userKey}`);
-    if (savedCards) {
-      try { setCardsList(JSON.parse(savedCards)); } catch (e) {}
-    } else {
-      setCardsList([]);
-    }
-
-    // 3. Real Wishlist / Bookmarks
-    const groklyWish = JSON.parse(localStorage.getItem('grokly_wishlist') || '[]');
-    const swadishttWish = JSON.parse(localStorage.getItem('swadishtt_wishlist') || '[]');
-    const instastyleWish = JSON.parse(localStorage.getItem('instastyle_wishlist') || '[]');
-    const accescoWish = JSON.parse(localStorage.getItem(`accesco_bookmarks_${userKey}`) || '[]');
-    setBookmarks([...groklyWish, ...swadishttWish, ...instastyleWish, ...accescoWish]);
-
-    // 4. Real Subscriptions
-    const savedSubs = localStorage.getItem(`accesco_subscriptions_${userKey}`);
-    if (savedSubs) {
-      try { setSubscriptions(JSON.parse(savedSubs)); } catch (e) {}
-    } else {
-      setSubscriptions([]);
-    }
-
-    // 5. Real Notification preferences
-    const savedNotif = localStorage.getItem(`accesco_notif_settings_${userKey}`);
-    if (savedNotif) {
-      try { setNotifSettings(JSON.parse(savedNotif)); } catch (e) {}
-    }
-
-    // 6. Real Language & Currency
-    const savedLang = localStorage.getItem(`accesco_lang_${userKey}`);
-    if (savedLang) setSelectedLang(savedLang);
-    const savedCurr = localStorage.getItem(`accesco_currency_${userKey}`);
-    if (savedCurr) setSelectedCurrency(savedCurr);
-
-    // 7. Real Redeemed Coupons
-    const savedRedeemed = localStorage.getItem(`accesco_redeemed_coupons_${userKey}`);
-    if (savedRedeemed) {
-      try { setRedeemedCoupons(JSON.parse(savedRedeemed)); } catch (e) {}
-    } else {
-      setRedeemedCoupons([]);
-    }
-
-    // 8. Real Wallet Transactions
-    const savedTx = localStorage.getItem(`accesco_wallet_transactions_${userKey}`);
-    let initialBalance = savedWallet ? parseFloat(savedWallet) : 0;
-    if (savedTx) {
-      try {
-        const parsedTx = JSON.parse(savedTx);
-        let walletDeductionNeeded = 0;
-
-        const cleanedTx = parsedTx.map((tx) => {
-          if (tx.title?.includes('FREEDEL') || tx.code === 'FREEDEL' || String(tx.title).toLowerCase().includes('freedel')) {
-            return {
-              ...tx,
-              title: 'Free Delivery Pass Activated (FREEDEL)',
-              code: 'FREEDEL',
-              type: 'perk',
-              benefitType: 'free_delivery',
-              amount: 'Free Delivery Pass',
-            };
-          }
-          if (tx.title?.includes('SWADISHT50') || tx.code === 'SWADISHT50' || String(tx.title).toLowerCase().includes('swadisht50')) {
-            if (tx.type === 'credit' && typeof tx.amount === 'number' && tx.amount === 50) {
-              walletDeductionNeeded += 50;
-            }
-            return {
-              ...tx,
-              title: 'Coupon Redeemed (SWADISHT50)',
-              code: 'SWADISHT50',
-              type: 'discount',
-              benefitType: 'food_discount',
-              discountAmount: 50,
-              walletCredit: 0,
-              amount: 'Food Delivery Discount: ₹50',
-            };
-          }
-          return tx;
-        });
-
-        if (walletDeductionNeeded > 0) {
-          const correctedBal = Math.max(0, initialBalance - walletDeductionNeeded);
-          setWalletBalance(correctedBal);
-          localStorage.setItem(`accesco_wallet_balance_${userKey}`, correctedBal.toString());
-          localStorage.setItem('grokly_wallet_balance', correctedBal.toString());
-        }
-
-        setWalletTransactions(cleanedTx);
-        localStorage.setItem(`accesco_wallet_transactions_${userKey}`, JSON.stringify(cleanedTx));
-      } catch (e) {
-        setWalletTransactions([]);
+    if (userData) {
+      setWalletBalance(userData.walletBalance ?? 0);
+      setRedeemedCoupons(userData.redeemedCoupons ?? []);
+      setHasFreeDelivery(Boolean(userData.hasFreeDelivery));
+      setWalletTransactions(userData.transactions ?? []);
+      setAddresses(userData.savedAddresses ?? []);
+      setUpiList(userData.upiList ?? []);
+      setCardsList(userData.savedCards ?? []);
+      setSubscriptions(userData.subscriptions ?? []);
+      if (userData.notificationSettings) {
+        setNotifSettings(userData.notificationSettings);
       }
-    } else {
-      setWalletTransactions([]);
+      if (userData.language) setSelectedLang(userData.language);
+      if (userData.currency) setSelectedCurrency(userData.currency);
+      setBookmarks(userData.bookmarks ?? []);
     }
-
-    // 9. Real Free Delivery Pass
-    const savedFreeDel = localStorage.getItem(`accesco_free_delivery_${userKey}`);
-    setHasFreeDelivery(savedFreeDel === 'true');
-  }, [user]);
+  }, [user, userData]);
 
   const displayName = user?.name || 'Accesco User';
   const phone = user?.phone || 'Not added';
@@ -377,7 +274,7 @@ export default function ProfileContent() {
   };
 
   // Address handlers
-  const handleAddAddress = (e) => {
+  const handleAddAddress = async (e) => {
     e.preventDefault();
     if (!newAddr.flat || !newAddr.street || !newAddr.pincode) return;
     const added = {
@@ -394,39 +291,39 @@ export default function ProfileContent() {
     };
     const updated = [...addresses, added];
     setAddresses(updated);
-    localStorage.setItem(`accesco_saved_addresses_${userKey}`, JSON.stringify(updated));
-    localStorage.setItem('accesco_saved_addresses', JSON.stringify(updated));
+    if (user?.uid) {
+      await updateUserFieldsInFirebase(user.uid, { savedAddresses: updated });
+      refreshUserData(user.uid);
+    }
     setNewAddr({ tag: 'Home', flat: '', street: '', city: 'Bengaluru', pincode: '' });
     setShowAddressForm(false);
   };
 
-  const setDefaultAddress = (id) => {
+  const setDefaultAddress = async (id) => {
     const updated = addresses.map((a) => ({ ...a, isDefault: a.id === id }));
     setAddresses(updated);
-    localStorage.setItem(`accesco_saved_addresses_${userKey}`, JSON.stringify(updated));
-    localStorage.setItem('accesco_saved_addresses', JSON.stringify(updated));
+    if (user?.uid) {
+      await updateUserFieldsInFirebase(user.uid, { savedAddresses: updated });
+      refreshUserData(user.uid);
+    }
   };
 
-  const deleteAddress = (id) => {
+  const deleteAddress = async (id) => {
     const updated = addresses.filter((a) => a.id !== id);
     setAddresses(updated);
-    localStorage.setItem(`accesco_saved_addresses_${userKey}`, JSON.stringify(updated));
-    localStorage.setItem('accesco_saved_addresses', JSON.stringify(updated));
+    if (user?.uid) {
+      await updateUserFieldsInFirebase(user.uid, { savedAddresses: updated });
+      refreshUserData(user.uid);
+    }
   };
 
   // Wallet handler
-  const handleAddMoney = (e) => {
+  const handleAddMoney = async (e) => {
     e.preventDefault();
     const val = parseFloat(addAmount);
     if (!val || val <= 0) return;
     const currentBal = typeof walletBalance === 'number' ? walletBalance : parseFloat(walletBalance) || 0;
     const newBal = currentBal + val;
-    setWalletBalance(newBal);
-    localStorage.setItem(`accesco_wallet_balance_${userKey}`, newBal.toString());
-    localStorage.setItem('grokly_wallet_balance', newBal.toString());
-    if (typeof window !== 'undefined') {
-      window.dispatchEvent(new Event('storage'));
-    }
 
     const newTx = {
       id: `tx_${Date.now()}`,
@@ -442,193 +339,69 @@ export default function ProfileContent() {
         hour12: true,
       }),
     };
-    const updatedTx = [newTx, ...walletTransactions];
-    setWalletTransactions(updatedTx);
-    localStorage.setItem(`accesco_wallet_transactions_${userKey}`, JSON.stringify(updatedTx));
+    setWalletBalance(newBal);
+    setWalletTransactions([newTx, ...walletTransactions]);
+
+    if (user?.uid) {
+      await updateWalletBalanceInFirebase(user.uid, newBal, newTx);
+      refreshUserData(user.uid);
+    }
 
     setAddAmount('');
     setShowAddMoney(false);
   };
 
-  const handleAddUpi = (e) => {
+  const handleAddUpi = async (e) => {
     e.preventDefault();
     if (!newUpi || !newUpi.includes('@')) return;
     const updated = [...upiList, newUpi.trim()];
     setUpiList(updated);
-    localStorage.setItem(`accesco_upi_list_${userKey}`, JSON.stringify(updated));
+    if (user?.uid) {
+      await updateUserFieldsInFirebase(user.uid, { upiList: updated });
+      refreshUserData(user.uid);
+    }
     setNewUpi('');
     setShowAddUpi(false);
   };
 
   // Coupon handler
-  const handleRedeem = (e, codeToRedeem = null) => {
+  const handleRedeem = async (e, codeToRedeem = null) => {
     if (e && e.preventDefault) e.preventDefault();
     const targetCode = (codeToRedeem || promoInput).trim().toUpperCase();
     if (!targetCode) return;
 
-    if (redeemedCoupons.includes(targetCode)) {
+    if (!user?.uid) {
       setPromoMessage({
         type: 'error',
-        text: `❌ Coupon code '${targetCode}' has already been redeemed!`,
+        text: '❌ Please sign in to redeem coupon codes.',
       });
       return;
     }
 
-    const foundCoupon = AVAILABLE_COUPONS.find((c) => c.code === targetCode);
-    const validCodes = ['ACCESCO20', 'SWADISHT50', 'FREEDEL', 'WELCOME50', 'CASHBACK50', 'WALLET50'];
-
-    if (foundCoupon || validCodes.includes(targetCode)) {
-      const updatedRedeemed = [...redeemedCoupons, targetCode];
-      setRedeemedCoupons(updatedRedeemed);
-      localStorage.setItem(`accesco_redeemed_coupons_${userKey}`, JSON.stringify(updatedRedeemed));
-
-      if (targetCode === 'FREEDEL') {
-        setHasFreeDelivery(true);
-        localStorage.setItem(`accesco_free_delivery_${userKey}`, 'true');
-        localStorage.setItem('grokly_free_delivery', 'true');
-        localStorage.setItem('swadishtt_free_delivery', 'true');
-
-        const newTx = {
-          id: `tx_${Date.now()}`,
-          title: `Free Delivery Pass Activated (FREEDEL)`,
-          code: 'FREEDEL',
-          type: 'perk',
-          benefitType: 'free_delivery',
-          walletCredit: 0,
-          discountAmount: 0,
-          amount: 'Free Delivery Pass',
-          date: new Date().toLocaleString('en-IN', {
-            day: '2-digit',
-            month: 'short',
-            year: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit',
-            hour12: true,
-          }),
-        };
-        const updatedTx = [newTx, ...walletTransactions];
-        setWalletTransactions(updatedTx);
-        localStorage.setItem(`accesco_wallet_transactions_${userKey}`, JSON.stringify(updatedTx));
-
-        setPromoInput('');
-        setPromoMessage({
-          type: 'success',
-          text: `🚚 Coupon code 'FREEDEL' successfully applied! Free Delivery Pass activated across all services.`,
-        });
-      } else if (targetCode === 'SWADISHT50') {
-        localStorage.setItem(`accesco_swadisht_discount_${userKey}`, '50');
-        localStorage.setItem('swadishtt_coupon_50', 'true');
-
-        const newTx = {
-          id: `tx_${Date.now()}`,
-          title: `Coupon Redeemed (SWADISHT50)`,
-          code: 'SWADISHT50',
-          type: 'discount',
-          benefitType: 'food_discount',
-          discountAmount: 50,
-          walletCredit: 0,
-          amount: 'Food Delivery Discount: ₹50',
-          date: new Date().toLocaleString('en-IN', {
-            day: '2-digit',
-            month: 'short',
-            year: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit',
-            hour12: true,
-          }),
-        };
-        const updatedTx = [newTx, ...walletTransactions];
-        setWalletTransactions(updatedTx);
-        localStorage.setItem(`accesco_wallet_transactions_${userKey}`, JSON.stringify(updatedTx));
-
-        setPromoInput('');
-        setPromoMessage({
-          type: 'success',
-          text: `🎉 Coupon code 'SWADISHT50' successfully applied! ₹50 food delivery discount is now active for your Swadishtt orders.`,
-        });
-      } else if (targetCode === 'ACCESCO20') {
-        localStorage.setItem(`accesco_grokly_discount_${userKey}`, '20%');
-
-        const newTx = {
-          id: `tx_${Date.now()}`,
-          title: `Coupon Redeemed (ACCESCO20)`,
-          code: 'ACCESCO20',
-          type: 'discount',
-          benefitType: 'grocery_discount',
-          discountAmount: '20%',
-          walletCredit: 0,
-          amount: 'Grocery Discount: 20%',
-          date: new Date().toLocaleString('en-IN', {
-            day: '2-digit',
-            month: 'short',
-            year: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit',
-            hour12: true,
-          }),
-        };
-        const updatedTx = [newTx, ...walletTransactions];
-        setWalletTransactions(updatedTx);
-        localStorage.setItem(`accesco_wallet_transactions_${userKey}`, JSON.stringify(updatedTx));
-
-        setPromoInput('');
-        setPromoMessage({
-          type: 'success',
-          text: `🎉 Coupon code 'ACCESCO20' successfully applied! 20% grocery discount activated for Grokly orders.`,
-        });
-      } else {
-        let reward = 50;
-
-        const currentBal = typeof walletBalance === 'number' ? walletBalance : parseFloat(walletBalance) || 0;
-        const newBal = currentBal + reward;
-        setWalletBalance(newBal);
-        localStorage.setItem(`accesco_wallet_balance_${userKey}`, newBal.toString());
-        localStorage.setItem('grokly_wallet_balance', newBal.toString());
-        if (typeof window !== 'undefined') {
-          window.dispatchEvent(new Event('storage'));
-        }
-
-        const newTx = {
-          id: `tx_${Date.now()}`,
-          title: `Coupon Redeemed (${targetCode})`,
-          code: targetCode,
-          type: 'credit',
-          benefitType: 'wallet_credit',
-          walletCredit: reward,
-          discountAmount: 0,
-          amount: reward,
-          date: new Date().toLocaleString('en-IN', {
-            day: '2-digit',
-            month: 'short',
-            year: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit',
-            hour12: true,
-          }),
-        };
-        const updatedTx = [newTx, ...walletTransactions];
-        setWalletTransactions(updatedTx);
-        localStorage.setItem(`accesco_wallet_transactions_${userKey}`, JSON.stringify(updatedTx));
-
-        setPromoInput('');
-        setPromoMessage({
-          type: 'success',
-          text: `🎉 Coupon code '${targetCode}' successfully applied! ₹${reward} added to your wallet balance. New Balance: ₹${newBal}.`,
-        });
-      }
+    const result = await redeemCouponInFirebase(user.uid, targetCode, walletBalance, redeemedCoupons);
+    if (result.success) {
+      setPromoInput('');
+      setPromoMessage({
+        type: 'success',
+        text: result.message,
+      });
+      await refreshUserData(user.uid);
     } else {
       setPromoMessage({
         type: 'error',
-        text: `❌ Invalid or expired coupon code '${targetCode}'.`,
+        text: result.error,
       });
     }
   };
 
   // Subscription toggle
-  const toggleSub = (id) => {
+  const toggleSub = async (id) => {
     const updated = subscriptions.map((s) => (s.id === id ? { ...s, status: s.status === 'Active' ? 'Paused' : 'Active' } : s));
     setSubscriptions(updated);
-    localStorage.setItem(`accesco_subscriptions_${userKey}`, JSON.stringify(updated));
+    if (user?.uid) {
+      await updateUserFieldsInFirebase(user.uid, { subscriptions: updated });
+      refreshUserData(user.uid);
+    }
   };
 
   // Password update

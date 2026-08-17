@@ -5,6 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useSwadishtt } from '../contexts/SwadishttContext';
+import { useAuth } from '@/app/components/AuthProvider';
 import SwadishttHeader from '../components/SwadishttHeader';
 import styles from './cart.module.css';
 import { useOtherStoreItems } from '@/lib/unifiedCart';
@@ -62,6 +63,7 @@ const FOOD_ISSUE_TYPES = [
 function CartContent() {
   const router = useRouter();
   const { cart, removeFromCart, updateCartQuantity, clearCart, user } = useSwadishtt();
+  const { userData } = useAuth();
   const { otherStores, updateQuantity: updateOtherQuantity, removeItem: removeOtherItem } = useOtherStoreItems(user, 'swadishtt');
   const [promoCode, setPromoCode] = useState('');
   const [appliedPromo, setAppliedPromo] = useState(null);
@@ -113,23 +115,17 @@ function CartContent() {
       return;
     }
 
-    // Check redeemed secret codes from Circular Credits in localStorage
-    try {
-      const rawVouchers = localStorage.getItem('instastyle_vouchers') || localStorage.getItem('accesco_user_vouchers');
-      if (rawVouchers) {
-        const vouchers = JSON.parse(rawVouchers);
-        const matched = vouchers.find(v => (v.secretCode || '').toUpperCase() === inputCode);
-        if (matched) {
-          setAppliedPromo({
-            discount: matched.discount || 200,
-            type: matched.type || 'flat',
-            description: `Secret Voucher Applied: ${matched.label} (${matched.secretCode})`,
-          });
-          return;
-        }
+    // Check redeemed secret codes from Firebase userVouchers
+    if (userData && Array.isArray(userData.userVouchers)) {
+      const matched = userData.userVouchers.find(v => (v.secretCode || '').toUpperCase() === inputCode);
+      if (matched) {
+        setAppliedPromo({
+          discount: matched.discount || 200,
+          type: matched.type || 'flat',
+          description: `Secret Voucher Applied: ${matched.label} (${matched.secretCode})`,
+        });
+        return;
       }
-    } catch (e) {
-      console.error(e);
     }
 
     setPromoError('Invalid or expired promo code');

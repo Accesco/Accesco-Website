@@ -11,6 +11,7 @@ import styles from './checkout.module.css';
 // Combined lookup: regular products + dish ingredients (which have their own IDs)
 const allPurchasable = [...products, ...dishIngredients];
 import { useAuth } from '../../../components/AuthProvider';
+import { updateUserFieldsInFirebase } from '@/lib/userService';
 import AuthModal from '../../../components/AuthModal';
 import { payWithRazorpay } from '@/lib/razorpayService';
 import { useOtherStoreItems, clearAllBrandCarts } from '@/lib/unifiedCart';
@@ -24,7 +25,7 @@ import {
 export default function GroklyCheckout() {
   const { cart, placeOrder, location, cartHydrated, returnItems, setReturnItems } = useGrokly();
   const router = useRouter();
-  const { user, signIn, getIdToken } = useAuth();
+  const { user, userData, signIn, getIdToken } = useAuth();
   const { otherStores, removeItem: removeOtherItem } = useOtherStoreItems(user, 'grokly');
   const [isProcessing, setIsProcessing] = useState(false);
   const [showAuth, setShowAuth] = useState(false);
@@ -65,71 +66,12 @@ export default function GroklyCheckout() {
     .map(([id, qty]) => ({ product: allPurchasable.find(p => p.id === id), quantity: qty }))
     .filter(item => item.product);
 
-  const handleCreateBasket = () => {
+  const handleCreateBasket = async () => {
     if (cartItems.length === 0) return;
     const basketName = prompt('Enter a name for your new basket:', 'My Saved Basket');
     if (!basketName || !basketName.trim()) return;
 
-    let savedBaskets = [];
-    try {
-      const stored = localStorage.getItem('grokly_baskets');
-      if (stored) {
-        savedBaskets = JSON.parse(stored);
-      } else {
-        savedBaskets = [
-          {
-            id: 'basket-weekly',
-            name: 'Weekly Groceries',
-            itemCount: 9,
-            lastOrdered: '12th May',
-            items: [
-              { id: 'veg-001', quantity: 2 },
-              { id: 'veg-002', quantity: 2 },
-              { id: 'veg-003', quantity: 1 },
-              { id: 'dairy-001', quantity: 3 },
-              { id: 'dairy-007', quantity: 1 },
-              { id: 'dairy-004', quantity: 1 },
-              { id: 'clean-001', quantity: 1 },
-              { id: 'clean-002', quantity: 1 },
-              { id: 'munch-001', quantity: 4 }
-            ]
-          },
-          {
-            id: 'basket-breakfast',
-            name: 'Breakfast',
-            itemCount: 7,
-            lastOrdered: '11th May',
-            items: [
-              { id: 'dairy-001', quantity: 4 },
-              { id: 'dairy-007', quantity: 2 },
-              { id: 'tea-002', quantity: 1 },
-              { id: 'tea-001', quantity: 1 },
-              { id: 'fruit-001', quantity: 2 },
-              { id: 'dairy-004', quantity: 1 },
-              { id: 'dairy-003', quantity: 2 }
-            ]
-          },
-          {
-            id: 'basket-gym',
-            name: 'Gym & Protein',
-            itemCount: 8,
-            lastOrdered: '2nd May',
-            items: [
-              { id: 'gym-001', quantity: 1 },
-              { id: 'gym-002', quantity: 1 },
-              { id: 'gym-003', quantity: 1 },
-              { id: 'gym-004', quantity: 1 },
-              { id: 'gym-005', quantity: 1 },
-              { id: 'gym-006', quantity: 1 },
-              { id: 'gym-007', quantity: 1 },
-              { id: 'gym-008', quantity: 1 }
-            ]
-          }
-        ];
-      }
-    } catch (e) {
-      console.error(e);
-    }
+    let savedBaskets = Array.isArray(userData?.savedBaskets) ? [...userData.savedBaskets] : [];
 
     const newBasket = {
       id: `basket-${Date.now()}`,
@@ -140,7 +82,9 @@ export default function GroklyCheckout() {
     };
 
     savedBaskets.push(newBasket);
-    localStorage.setItem('grokly_baskets', JSON.stringify(savedBaskets));
+    if (user?.uid) {
+      await updateUserFieldsInFirebase(user.uid, { savedBaskets });
+    }
     alert(`Basket "${basketName.trim()}" created successfully! Access it under Profile -> Your Baskets.`);
   };
 
@@ -156,13 +100,10 @@ export default function GroklyCheckout() {
   const otherStoresPlatformFee = otherStoresSubtotal > 0 ? 18 : 0;
   const grandTotal = total + otherStoresSubtotal + otherStoresPlatformFee;
 
-  // Reads the customer's real delivery coordinates from the detected/selected
-  // location so the tracking map can show the actual "Your door" position.
+  // Reads the customer's real delivery coordinates from user profile / location state
   const getDeliveryCoords = () => {
     try {
-      const raw = localStorage.getItem('userLocation');
-      if (!raw) return {};
-      const loc = JSON.parse(raw);
+      const loc = userData?.selectedLocation || {};
       const lat = parseFloat(loc.latitude ?? loc.lat);
       const lng = parseFloat(loc.longitude ?? loc.lng ?? loc.lon);
       if (!Number.isNaN(lat) && !Number.isNaN(lng)) {
@@ -302,15 +243,7 @@ export default function GroklyCheckout() {
   useEffect(() => {
     const fetchEta = async () => {
       try {
-        const storedLocation = localStorage.getItem("userLocation");
-        let parsedLocation = null;
-        if (storedLocation) {
-          try {
-            parsedLocation = JSON.parse(storedLocation);
-          } catch (e) {
-            console.error("Failed to parse userLocation:", e);
-          }
-        }
+        const parsedLocation = userData?.selectedLocation || null;
 
         // Coordinates check with fallback
         const lat = parsedLocation?.latitude ?? parsedLocation?.lat ?? 12.9716;
