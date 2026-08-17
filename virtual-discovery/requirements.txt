@@ -1,0 +1,63 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# Accesco Living – Virtual Discovery  |  Python dependencies
+# Install with:  pip install -r requirements.txt
+# ─────────────────────────────────────────────────────────────────────────────
+
+Flask>=3.0.3,<4.0.0          # Web framework
+pymongo>=4.7.2,<5.0.0        # MongoDB driver
+python-dotenv>=1.0.1,<2.0.0  # .env file loader
+Werkzeug>=3.0.3,<4.0.0       # Utilities (included with Flask, pinned for clarity)
+PyJWT>=2.8.0,<3.0.0          # JWT Bearer token verification (pip install PyJWT)
+
+# ── AI / ML inference (Hugging Face) ──────────────────────────────────────────
+# CI-3: Upper bounds pinned to prevent breaking upgrades
+transformers>=4.41.0,<5.0.0   # Hugging Face model hub & pipeline API
+torch>=2.3.0,<3.0.0           # PyTorch backend for transformers
+Pillow>=10.3.0,<11.0.0        # Image loading for NSFW / CLIP pipelines
+
+# ── File-type security (magic-number inspection) ──────────────────────────────
+# python-magic wraps libmagic and reads actual file-header bytes to identify
+# file types, regardless of extension or browser-reported MIME type.
+#
+# Platform-specific install:
+#   Windows  →  python-magic-bin bundles the libmagic DLL automatically.
+#               Run:  pip install python-magic-bin
+#
+#   Linux / macOS  →  python-magic requires libmagic to be installed at the OS
+#               level first, then the Python binding:
+#               Ubuntu/Debian:  sudo apt-get install libmagic1
+#               macOS:          brew install libmagic
+#               Then:           pip install python-magic
+#
+# The app degrades gracefully to an ISO BMFF header byte-check if neither
+# package is installed, but python-magic is strongly recommended for production.
+#
+# Uncomment the line that matches your platform before running:
+python-magic-bin>=0.4.14,<0.5.0 ; sys_platform == 'win32'
+python-magic>=0.4.27,<0.5.0 ; sys_platform != 'win32'
+
+# ── Async & Resilience ───────────────────────────────────────────────────────
+aiohttp>=3.11.11,<4.0.0           # Async HTTP client
+tenacity>=9.0.0,<10.0.0            # Retries for resilient microservice calls
+
+# ── Language detection (for MuRIL multilingual routing) ───────────────────
+langdetect>=1.0.9,<2.0.0  # Google's language detection library
+
+# ── HTTP client (for TorchServe microservice calls) ───────────────────────
+requests>=2.31.0,<3.0.0   # HTTP client for TorchServe inference endpoint
+
+# ── Security & Production Hardening ──────────────────────────────────────
+flask-cors>=4.0.0,<5.0.0   # CORS headers for frontend API access
+flask-limiter>=3.5.0,<4.0.0 # Rate limiting to protect against abuse
+bleach>=6.0.0,<7.0.0        # SEC-3: HTML/script injection sanitization
+
+# ── Observability & Monitoring ───────────────────────────────────────────
+python-json-logger>=2.0.0,<3.0.0                # OBS-1: Structured JSON logging
+sentry-sdk[flask]>=2.0.0,<3.0.0                 # OBS-3: Error tracking
+# prometheus-flask-instrumentator   # OBS-2: Prometheus metrics (Currently incompatible with Flask 3)
+
+# ── Video Feed Ranking MVP ───────────────────────────────────────────────────
+supabase>=2.0.0                           # Supabase client for reading videos/interactions and writing cache
+
+# ── Caching & Payment ────────────────────────────────────────────────────────
+redis>=5.0.0,<6.0.0
