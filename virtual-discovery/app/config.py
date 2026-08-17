@@ -116,7 +116,7 @@ class Config:
     # ── TorchServe Audio Toxicity Microservice ────────────────────────────
     TORCHSERVE_ENDPOINT: str = os.getenv(
         "TORCHSERVE_ENDPOINT",
-        "http://localhost:8080/predictions/audio_toxicity"
+        ""  # Set via env var; no localhost default for safety
     )
     TORCHSERVE_TIMEOUT: int = 30
     TORCHSERVE_ENABLED: bool = os.getenv("TORCHSERVE_ENABLED", "0") == "1"
@@ -150,7 +150,7 @@ class Config:
     MIN_AD_BUDGET_INR: float = 500.0
 
     # ── Redis (Caching & Bot Prevention) ──────────────────────────────────
-    REDIS_URI: str = os.getenv("REDIS_URI", "redis://localhost:6379/0")
+    REDIS_URI: str = os.getenv("REDIS_URI", "")  # Set via env var; no localhost default for safety
 
 
 class DevelopmentConfig(Config):
