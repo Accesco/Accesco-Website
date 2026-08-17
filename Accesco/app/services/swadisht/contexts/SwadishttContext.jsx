@@ -9,6 +9,7 @@
 import { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react';
 import { useAuth } from '../../../components/AuthProvider';
 import { getSwadishttCart, setSwadishttCart } from '@/lib/unifiedCart';
+import { updateUserFieldsInFirebase } from '@/lib/userService';
 
 const SwadishttContext = createContext(undefined);
 
@@ -373,11 +374,13 @@ export function SwadishttProvider({ children }) {
         accuracyMeters: options?.accuracyMeters,
       });
 
-      localStorage.setItem('userLocation', JSON.stringify(payloadToStore));
+      if (authUser?.uid) {
+        updateUserFieldsInFirebase(authUser.uid, { selectedLocation: payloadToStore });
+      }
     } catch (e) {
       // ignore storage errors
     }
-  }, []);
+  }, [authUser]);
 
   const detectLocation = useCallback(
     async ({ silent = false } = {}) => {
@@ -503,24 +506,26 @@ export function SwadishttProvider({ children }) {
     setUser(authUser);
   }, [authUser]);
 
-  // Hydrate from shared localStorage + auto-detect once if missing
+  // Hydrate from user profile + auto-detect once if missing
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
     try {
-      const stored = localStorage.getItem('userLocation');
-      const hydrated = parseStoredUserLocationToSwadishttLocation(stored);
-      if (hydrated) {
-        setLocation(hydrated);
-        setLocationLoading(false);
-        return;
+      if (authUser?.selectedLocation) {
+        const stored = typeof authUser.selectedLocation === 'string' ? authUser.selectedLocation : JSON.stringify(authUser.selectedLocation);
+        const hydrated = parseStoredUserLocationToSwadishttLocation(stored);
+        if (hydrated) {
+          setLocation(hydrated);
+          setLocationLoading(false);
+          return;
+        }
       }
     } catch (e) {
       // ignore malformed storage
     }
 
     detectLocation({ silent: true });
-  }, [detectLocation]);
+  }, [authUser, detectLocation]);
 
   // Filters State
   const [filters, setFilters] = useState({

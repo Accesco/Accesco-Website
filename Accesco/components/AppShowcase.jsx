@@ -43,12 +43,6 @@ export default function AppShowcase() {
     let isCancelled = false;
 
     const checkRegistration = async () => {
-      const localRegistered = localStorage.getItem("accesco_waitlist_registered");
-      if (localRegistered === "true") {
-        if (!isCancelled) setAlreadyRegistered(true);
-        return;
-      }
-
       try {
         const res = await fetch("/api/waitlist", { method: "GET" });
         if (res.ok) {
@@ -185,7 +179,6 @@ export default function AppShowcase() {
         throw new Error(data.error || "Failed to submit to waitlist");
       }
 
-      localStorage.setItem("accesco_waitlist_registered", "true");
       setSuccess(true);
       setAlreadyRegistered(true);
       setForm({ name: "", email: "", phone: "", interests: [] });

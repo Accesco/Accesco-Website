@@ -28,22 +28,41 @@ function writeJSON(key, value) {
   localStorage.setItem(key, JSON.stringify(value));
 }
 
-export function getGroklyCart() {
-  const parsed = readJSON(GROKLY_KEY, {});
-  return parsed && typeof parsed === 'object' && !Array.isArray(parsed) ? parsed : {};
-}
-
 export function getInstaStyleCart() {
   const parsed = readJSON(INSTASTYLE_KEY, []);
   return Array.isArray(parsed) ? parsed : [];
 }
 
-export function setGroklyCart(cartMap) {
-  writeJSON(GROKLY_KEY, cartMap);
-}
-
 export function setInstaStyleCart(items) {
   writeJSON(INSTASTYLE_KEY, items);
+}
+
+function getGroklyIdentifier(user) {
+  return user?.uid || user?.email || getGroklyDeviceId();
+}
+
+export async function getGroklyCart(user) {
+  const identifier = getGroklyIdentifier(user);
+  if (!identifier) return {};
+  try {
+    const snap = await getDoc(doc(db, 'grokly_carts', identifier));
+    if (!snap.exists()) return {};
+    const cart = snap.data()?.cart;
+    return cart && typeof cart === 'object' && !Array.isArray(cart) ? cart : {};
+  } catch (err) {
+    console.error('[unifiedCart] Failed to load Grokly cart from Firestore:', err);
+    return {};
+  }
+}
+
+export async function setGroklyCart(user, cartMap) {
+  const identifier = getGroklyIdentifier(user);
+  if (!identifier) return;
+  try {
+    await setDoc(doc(db, 'grokly_carts', identifier), { cart: cartMap, updatedAt: Date.now() });
+  } catch (err) {
+    console.error('[unifiedCart] Failed to save Grokly cart to Firestore:', err);
+  }
 }
 
 const GROKLY_DEVICE_ID_KEY = 'grokly_device_id';
@@ -148,7 +167,8 @@ export async function clearAllBrandCarts({ user, getIdToken } = {}) {
 export async function getUnifiedCartCount(user) {
   const swadishttCart = await getSwadishttCart(user);
   const swadishttCount = swadishttCart.reduce((sum, item) => sum + (item.quantity || 1), 0);
-  const groklyCount = Object.values(getGroklyCart()).reduce((sum, qty) => sum + (qty || 0), 0);
+  const groklyCart = await getGroklyCart(user);
+  const groklyCount = Object.values(groklyCart).reduce((sum, qty) => sum + (qty || 0), 0);
   const instastyleCount = getInstaStyleCart().reduce((sum, item) => sum + (item.quantity || 1), 0);
   return swadishttCount + groklyCount + instastyleCount;
 }
@@ -176,7 +196,7 @@ export async function buildUnifiedStores(user) {
     quantity: item.quantity || 1,
   }));
 
-  const groklyCartMap = getGroklyCart();
+  const groklyCartMap = await getGroklyCart(user);
   const groklyItems = Object.entries(groklyCartMap)
     .map(([productId, qty]) => {
       const product = getProductById(productId);

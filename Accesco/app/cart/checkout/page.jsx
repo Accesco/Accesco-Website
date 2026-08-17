@@ -275,13 +275,7 @@ export default function UnifiedCheckoutPage() {
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
-    let storedLocation = null;
-    try {
-      const rawLocation = localStorage.getItem('userLocation');
-      if (rawLocation) storedLocation = JSON.parse(rawLocation);
-    } catch {
-      // ignore malformed storage
-    }
+    let storedLocation = userData?.selectedLocation || user?.selectedLocation || null;
 
     const resolvedCity =
       (typeof storedLocation?.city === 'string' && storedLocation.city) ||
@@ -306,7 +300,7 @@ export default function UnifiedCheckoutPage() {
       city: prev.city || resolvedCity,
       pincode: prev.pincode || resolvedPincode,
     }));
-  }, [user]);
+  }, [user, userData]);
 
   const activeStores = useMemo(() => stores.filter((s) => s.items.length > 0), [stores]);
   const totalItems = activeStores.reduce((sum, s) => sum + s.itemCount, 0);

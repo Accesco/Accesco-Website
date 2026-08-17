@@ -1,9 +1,10 @@
 'use client'
 
-import { createContext, useContext, useEffect, useState } from 'react'
+import { createContext, useContext, useEffect, useState, useCallback } from 'react'
 import { auth, db } from '../../lib/firebase'
 import { onAuthStateChanged, signOut as firebaseSignOut } from 'firebase/auth'
 import { doc, getDoc } from 'firebase/firestore'
+import { getUserProfileData, migrateLocalStorageToFirebase } from '../../lib/userService'
 
 const AuthContext = createContext(null)
 
@@ -23,13 +24,6 @@ async function getUserDoc(docId) {
   }
 }
 
-// Mirrors the docId convention used in AuthModal: accounts that signed in
-// via Google (with or without a linked phone) are keyed by their Firebase
-// Auth uid. Phone-only accounts are keyed by whatever digits the user typed
-// at signup (AuthModal doesn't normalize before deriving the docId), which
-// is usually a bare 10-digit number rather than Firebase's E.164
-// phoneNumber (which always includes the +91 country code) — so both forms
-// are tried before giving up.
 async function loadUserProfile(firebaseUser) {
   const isGoogleLinked = firebaseUser.providerData.some(
     (p) => p.providerId === 'google.com',
@@ -67,7 +61,17 @@ async function loadUserProfile(firebaseUser) {
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null)
   const [firebaseUser, setFirebaseUser] = useState(null)
+  const [userData, setUserData] = useState(null)
   const [loading, setLoading] = useState(true)
+
+  const refreshUserData = useCallback(async (userId) => {
+    const targetUid = userId || user?.uid;
+    if (!targetUid) return;
+    const data = await getUserProfileData(targetUid);
+    if (data) {
+      setUserData(data);
+    }
+  }, [user?.uid]);
 
   useEffect(() => {
     // Firebase Auth (and Firestore for the profile) is the single source of
@@ -77,12 +81,22 @@ export function AuthProvider({ children }) {
 
       if (!currentUser) {
         setUser(null)
+        setUserData(null)
         setLoading(false)
         return
       }
 
       const profile = await loadUserProfile(currentUser)
       setUser(profile)
+
+      if (profile?.uid) {
+        // Run safe legacy localStorage migration to Firebase
+        await migrateLocalStorageToFirebase(profile.uid)
+        // Fetch authoritative Firestore profile data
+        const profileData = await getUserProfileData(profile.uid)
+        setUserData(profileData)
+      }
+
       setLoading(false)
     })
 
@@ -103,6 +117,7 @@ export function AuthProvider({ children }) {
 
   const signOut = async () => {
     setUser(null)
+    setUserData(null)
     try {
       await firebaseSignOut(auth)
     } catch (e) {
@@ -110,15 +125,17 @@ export function AuthProvider({ children }) {
     }
   }
 
-  // Called right after successful login/signup for an immediate UI update;
-  // onAuthStateChanged will follow up with the authoritative Firestore profile.
-  const signIn = (userData) => {
-    setUser(userData)
+  const signIn = (userDataInput) => {
+    setUser(userDataInput)
+    if (userDataInput?.uid) {
+      refreshUserData(userDataInput.uid);
+    }
   }
 
   return (
-    <AuthContext.Provider value={{ user, loading, signOut, signIn, getIdToken }}>
+    <AuthContext.Provider value={{ user, userData, loading, signOut, signIn, getIdToken, refreshUserData }}>
       {children}
     </AuthContext.Provider>
   )
 }
+
