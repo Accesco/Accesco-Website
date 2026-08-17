@@ -58,8 +58,15 @@ def create_app() -> Flask:
     app.config["MAX_CONTENT_LENGTH"] = config.MAX_CONTENT_LENGTH_BYTES
 
     # ── CORS — allow the frontend origin to call this API ────────────
-    # Update 'origins' to your real frontend URL before deploying.
-    CORS(app, origins=os.getenv("CORS_ALLOWED_ORIGINS", "*").split(","))
+    cors_origins_raw = os.getenv("CORS_ALLOWED_ORIGINS", "")
+    if not cors_origins_raw and not config.DEBUG:
+        raise EnvironmentError(
+            "CORS_ALLOWED_ORIGINS is not set. "
+            "Set it to your frontend domain(s) in .env before deploying. "
+            "Wildcard '*' is not allowed in production."
+        )
+    cors_origins = cors_origins_raw.split(",") if cors_origins_raw else ["*"]
+    CORS(app, origins=cors_origins)
 
     # ── Rate Limiting — bind to this app instance ─────────────────────
     limiter.init_app(app)
@@ -184,12 +191,20 @@ def create_app() -> Flask:
         from werkzeug.security import generate_password_hash
         admins = db["admins"]
         admins.create_index("email", unique=True)
+        default_admin_pw = os.getenv("DEFAULT_ADMIN_PASSWORD", "")
         if not admins.find_one({"email": "admin@accesco.com"}):
-            admins.insert_one({
-                "email": "admin@accesco.com",
-                "password_hash": generate_password_hash("accesco-admin-2026")
-            })
-            logger.info("Created default admin account (admin@accesco.com)")
+            if not default_admin_pw:
+                print(
+                    "⚠️  DEFAULT_ADMIN_PASSWORD env var is not set. "
+                    "Skipping default admin creation. "
+                    "Set it in .env and re-run 'flask setup-db' to create an admin."
+                )
+            else:
+                admins.insert_one({
+                    "email": "admin@accesco.com",
+                    "password_hash": generate_password_hash(default_admin_pw)
+                })
+                logger.info("Created default admin account (admin@accesco.com)")
 
         # Helper: drop all non-_id indexes so we can recreate cleanly.
         # This makes setup-db fully idempotent — safe to run repeatedly.

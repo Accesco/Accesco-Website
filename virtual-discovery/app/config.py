@@ -61,8 +61,18 @@ class Config:
     """Base configuration — shared across all environments."""
 
     # ── Flask ─────────────────────────────────────────────────────────────
-    SECRET_KEY: str = os.getenv("FLASK_SECRET_KEY", "dev-fallback-secret")
+    SECRET_KEY: str = os.getenv("FLASK_SECRET_KEY", "")
     DEBUG: bool = os.getenv("FLASK_DEBUG", "0") == "1"
+
+    # Validate SECRET_KEY at import time — fail fast in production
+    if not SECRET_KEY and not DEBUG:
+        raise EnvironmentError(
+            "FLASK_SECRET_KEY is not set. "
+            "Generate one with: python -c \"import secrets; print(secrets.token_hex(32))\" "
+            "and add it to your .env file."
+        )
+    elif not SECRET_KEY:
+        SECRET_KEY = "dev-only-insecure-fallback-key"
 
     # ── MongoDB ───────────────────────────────────────────────────────────
     MONGO_URI: str = os.getenv("MONGO_URI", "")

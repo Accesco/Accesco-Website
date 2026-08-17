@@ -26,7 +26,7 @@ def admin_login():
 
     admin = db["admins"].find_one({"email": email})
     if not admin or not check_password_hash(admin["password_hash"], password):
-        logger.warning(f"Failed admin login attempt for {email}")
+        logger.warning("Failed admin login attempt for %s", email)
         return jsonify({"error": "Unauthorized", "message": "Invalid email or password."}), 401
 
     payload = {
@@ -38,7 +38,7 @@ def admin_login():
 
     token = jwt.encode(payload, config.JWT_SECRET_KEY, algorithm=config.JWT_ALGORITHM)
 
-    logger.info(f"Admin logged in: {email}")
+    logger.info("Admin logged in: %s", email)
     return jsonify({
         "message": "Login successful.",
         "access_token": token,
