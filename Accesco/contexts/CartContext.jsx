@@ -532,6 +532,7 @@ export function CartProvider({ children }) {
           category: product.category,
           rating: product.rating,
           reviewCount: product.reviewCount,
+          inStock: product.inStock !== undefined ? product.inStock : true,
         },
       ];
     });
