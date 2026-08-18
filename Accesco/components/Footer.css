@@ -329,9 +329,16 @@
     align-items: start;
   }
 
+  .social-row {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
   .footer-watermark {
-    font-size: clamp(48px, 18vw, 120px);
-    letter-spacing: -4px;
+    font-size: clamp(36px, 16vw, 100px);
+    letter-spacing: -2px;
+    word-break: break-all;
+    overflow: hidden;
   }
 }
 

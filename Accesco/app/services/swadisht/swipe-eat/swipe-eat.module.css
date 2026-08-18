@@ -1247,7 +1247,7 @@
 
 @media (max-width: 480px) {
   .page {
-    --swipe-card-width: min(100%, 451px);
+    --swipe-card-width: calc(100vw - 32px);
     --swipe-card-height: 330px;
     --swipe-cart-width: 100%;
   }
