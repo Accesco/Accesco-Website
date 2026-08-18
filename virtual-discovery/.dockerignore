@@ -1,0 +1,55 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# Accesco Living – .dockerignore
+# Exclude files that should NOT be copied into the Docker image.
+# ─────────────────────────────────────────────────────────────────────────────
+
+# Version control
+.git
+.gitignore
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# IDE / Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Python caches
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Local storage (volume-mounted in production)
+storage/raw/*
+storage/processed/*
+storage/tmp/*
+
+# Environment files (secrets injected via --env-file or orchestrator)
+.env
+.env.*
+!.env.example
+
+# Dev artifacts
+*.mp4
+*.mov
+*.log
+logs/
+
+# ML model weights (too large for image — use volume mounts)
+Multilingual-Speech-Moderation/models/
+
+# Documentation
+*.md
+!README.md
+
+# Docker-in-Docker
+Dockerfile
+docker-compose*.yml
+.dockerignore

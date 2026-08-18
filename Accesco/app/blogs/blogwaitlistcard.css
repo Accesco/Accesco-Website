@@ -1,0 +1,153 @@
+.waitlist-card {
+  width: 100%;
+  max-width: 1100px;
+  min-height: 150px;
+
+  margin: 30px auto;
+  padding: 30px 40px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  box-sizing: border-box;
+
+  background: #fff5f9;
+  border-radius: 15px;
+
+  /* Pink glow on the right side */
+  box-shadow: 0 0 45px rgba(214, 24, 103, 0.08);
+}
+
+@media (max-width: 768px) {
+  .waitlist-card {
+    margin-top: 24px;
+    margin-bottom: 0;
+  }
+}
+
+.waitlist-content {
+  flex: 1;
+}
+
+.waitlist-title {
+  margin: 0 0 10px;
+
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 20px;
+  font-weight: 700;
+
+  color: #111;
+}
+
+.waitlist-description {
+  margin: 0;
+
+  font-family: Arial, sans-serif;
+  font-size: 13px;
+  line-height: 1.7;
+
+  color: #77758a;
+}
+
+.waitlist-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  width: 127px;
+}
+
+.waitlist-primary-button,
+.waitlist-secondary-button {
+  width: 127px;
+  height: 34px;
+
+  border-radius: 6px;
+
+  font-family: Arial, sans-serif;
+  font-size: 12px;
+
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.waitlist-primary-button {
+  background: #ce1261;
+  color: white;
+  border: none;
+}
+
+.waitlist-secondary-button {
+  background: transparent;
+  color: #222;
+  border: 1px solid #aaa;
+}
+
+.waitlist-primary-button span,
+.waitlist-secondary-button span {
+  font-size: 16px;
+}
+
+/* Hover effects */
+
+.waitlist-primary-button:hover {
+  background: #b50e54;
+}
+
+.waitlist-secondary-button:hover {
+  background: #f8eaf0;
+}
+
+
+/* Responsive */
+
+@media (max-width: 600px) {
+  .waitlist-card {
+    padding: 25px 20px;
+
+    flex-direction: column;
+    align-items: flex-start;
+
+    gap: 20px;
+  }
+
+  .waitlist-actions {
+    width: 100%;
+  }
+
+  .waitlist-primary-button,
+  .waitlist-secondary-button {
+    width: 100%;
+  }
+
+  @media (max-width: 600px) {
+  .waitlist-card {
+    padding: 20px 15px;
+
+    flex-direction: column;
+    align-items: flex-start;
+
+    gap: 15px;
+  }
+
+  .waitlist-actions {
+    width: 100%;
+
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+  }
+
+  .waitlist-primary-button,
+  .waitlist-secondary-button {
+    width: auto;
+    flex: 1;
+    height: 34px;
+  }
+}
+}

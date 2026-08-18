@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo, useEffect, Suspense } from 'react';
+import { useState, useMemo, useEffect, useRef, Suspense } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import styles from './profile.module.css';
 import { useAuth } from '../../../components/AuthProvider';
+import { updateUserFieldsInFirebase } from '@/lib/userService';
 import GroklyHeader from '../components/GroklyHeader';
 import MobileHeader from '../components/MobileHeader';
 import BottomNav from '../components/BottomNav';
@@ -280,36 +281,30 @@ function GroklyProfileInner() {
   }, [searchParams]);
 
   const [selectedBasketId, setSelectedBasketId] = useState(null);
+  const [baskets, setBaskets] = useState(INITIAL_BASKETS);
+
+  // Sync baskets from Firebase userData
+  useEffect(() => {
+    if (userData && Array.isArray(userData.savedBaskets) && userData.savedBaskets.length > 0) {
+      setBaskets(userData.savedBaskets);
+    }
+  }, [userData]);
+
+  // Persist baskets to Firebase when modified
+  const isInitialBaskets = useRef(true);
+  useEffect(() => {
+    if (isInitialBaskets.current) {
+      isInitialBaskets.current = false;
+      return;
+    }
+    if (user?.uid) {
+      updateUserFieldsInFirebase(user.uid, { savedBaskets: baskets });
+    }
+  }, [baskets, user]);
   
   // Search & Filters
   const [searchQuery, setSearchQuery] = useState('');
   const [sortOrder, setSortOrder] = useState('newest'); // newest | oldest | name
-  
-  // Custom basket list state
-  const [baskets, setBaskets] = useState(INITIAL_BASKETS);
-
-  // Load from local storage
-  useEffect(() => {
-    try {
-      const stored = localStorage.getItem('grokly_baskets');
-      if (stored) {
-        setBaskets(JSON.parse(stored));
-      } else {
-        localStorage.setItem('grokly_baskets', JSON.stringify(INITIAL_BASKETS));
-      }
-    } catch (e) {
-      console.error('Failed to load baskets:', e);
-    }
-  }, []);
-
-  // Save to local storage
-  useEffect(() => {
-    try {
-      localStorage.setItem('grokly_baskets', JSON.stringify(baskets));
-    } catch (e) {
-      console.error('Failed to save baskets:', e);
-    }
-  }, [baskets]);
   
   // Dropdown menu & Toast
   const [activeMenuId, setActiveMenuId] = useState(null);
@@ -1023,7 +1018,6 @@ function GroklyProfileInner() {
                       const newAddr = prompt('Update your delivery address:', location);
                       if (newAddr && newAddr.trim()) {
                         updateLocation(newAddr.trim());
-                        localStorage.setItem('userLocation', JSON.stringify({ displayAddress: newAddr.trim(), fullAddress: newAddr.trim() }));
                         showToast('Address updated!');
                       }
                     }}>Edit</button>

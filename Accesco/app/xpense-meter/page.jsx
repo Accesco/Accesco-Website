@@ -7,7 +7,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useAuth } from "@/app/components/AuthProvider";
 import { fetchXpenseSummary, saveXpenseBudget } from "@/lib/xpenseMeterService";
 
-const XpenseMobileFlow = dynamic(() => import("./XpenseMobileFlow"), {
+const XpenseMobileFlow = dynamic(() => import("./XpenseMobileFlow"), {  
   ssr: false,
 });
 const AuthModal = dynamic(() => import("@/app/components/AuthModal"), {
@@ -424,6 +424,27 @@ function PencilIcon() {
   );
 }
 
+function DownloadIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" width="18" height="18">
+      <path d="M12 3.5v11" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+      <path
+        d="M7.6 10.4 12 14.8l4.4-4.4"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M4.5 17.5v1.6c0 .8.6 1.4 1.4 1.4h12.2c.8 0 1.4-.6 1.4-1.4v-1.6"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
+
 /* ------------------------------------------------------------------ data */
 
 const ACCOUNT_NUMBER = "3948 5521 0783 45";
@@ -445,6 +466,7 @@ export default function XpenseMeterPage() {
   const [userName, setUserName] = useState("User");
   const [modal, setModal] = useState(null); // null | 'budget' | 'viewspend'
   const [showAccount, setShowAccount] = useState(false);
+  const [cardOut, setCardOut] = useState(false);
   const [isAuthOpen, setIsAuthOpen] = useState(false);
 
   const [monthKey, setMonthKey] = useState(() => currentMonthKey());
@@ -635,9 +657,19 @@ export default function XpenseMeterPage() {
           {/* LEFT COLUMN */}
           <div className="xd-col">
             {/* hero wallet */}
-            <div className="xd-hero-wrap">
-              <span className="xd-hero-stack xd-hero-stack-2" aria-hidden="true" />
-              <span className="xd-hero-stack xd-hero-stack-1" aria-hidden="true" />
+            <div className={`xd-hero-wrap ${cardOut ? "is-out" : ""}`} role="button" tabIndex={0} aria-expanded={cardOut} onClick={() => setCardOut((v) => !v)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                setCardOut((v) => !v);
+                }
+            }}>
+              <img
+                className="xd-wallet-back"
+                src="/images/xpense-meter/wallet-back.png"
+                alt=""
+                aria-hidden="true"
+              />
 
               <article className="xd-hero">
                 <div className="xd-hero-top">
@@ -650,46 +682,66 @@ export default function XpenseMeterPage() {
                       <button
                         type="button"
                         className="xd-eye"
-                        onClick={() => setShowAccount((v) => !v)}
+                        onClick = {(e) => {
+                          e.stopPropagation();
+                          setShowAccount((v) => !v);
+                        }} 
                         aria-label={
                           showAccount
                             ? "Hide account number"
                             : "Show account number"
                         }
                       >
-                        <EyeIcon open={showAccount} />
+                        <EyeIcon open={!showAccount} />
                       </button>
                     </div>
                   </div>
 
                   <div className="xd-hero-brand">
-                    <Image
-                      src="/logo.png"
-                      alt="Accesco Living"
-                      width={38}
-                      height={38}
-                    />
+                    <span className="xd-hero-logo">
+                        <Image
+                          src="/logo.png"
+                          alt="Accesco Living"
+                          width={27}
+                          height={26}
+                        />
+                    </span>
                     <small>A1 Wallet</small>
                   </div>
                 </div>
 
-                <div className="xd-hero-bottom">
-                  <div className="xd-hero-left">
-                    <span className="xd-muted">This Month Spend</span>
-                    <strong className="xd-amount">{rupee(totalSpend)}</strong>
-                    <small className="xd-muted">of {rupee(summary?.totalBudget || totalBudget)} Budget</small>
-                    {summary?.monthOverMonthChangePct != null && (
-                      <div className={`xd-trend ${summary.monthOverMonthChangePct >= 0 ? "up" : "down"}`}>
-                        {summary.monthOverMonthChangePct >= 0 ? "↑" : "↓"} {Math.abs(summary.monthOverMonthChangePct)}% From Last Month
-                      </div>
-                    )}
-                  </div>
-
-                  <Link href="/profile?section=payment-methods" className="xd-accounts">
-                    My Accounts
-                  </Link>
-                </div>
+                
               </article>
+              <img
+                className="xd-wallet-front"
+                src="/images/xpense-meter/wallet-front.png"
+                alt=""
+                aria-hidden="true"
+              />
+
+              <div className="xd-wallet-content">
+                <div className="xd-wallet-spend">
+                  <span>This Month Spend</span>
+                  <strong className="xd-amount">{rupee(totalSpend)}</strong>
+                  <small>of {rupee(summary?.totalBudget || totalBudget)} Budget</small>
+                  {summary?.monthOverMonthChangePct != null && (
+                    <div className={`xd-trend ${summary.monthOverMonthChangePct >= 0 ? "up" : "down"}`}>
+                      {summary.monthOverMonthChangePct >= 0 ? "↑" : "↓"} {Math.abs(summary.monthOverMonthChangePct)}% From Last Month
+                    </div>
+                  )}
+                </div>
+
+                <Link
+                href="/profile?section=payment-methods"
+                className="xd-accounts"
+                onClick={(e) => e.stopPropagation()}
+                >
+                  My Accounts
+                </Link>
+              </div>
+
+
+
             </div>
 
             {/* budget by platform */}
@@ -710,7 +762,10 @@ export default function XpenseMeterPage() {
                   <p className="xd-muted" style={{ fontSize: 13 }}>Log in to see budget usage per platform.</p>
                 )}
                 {user && !summaryLoading && platforms.length === 0 && (
-                  <p className="xd-muted" style={{ fontSize: 13 }}>No spend yet this month.</p>
+                  <div className="xd-empty-state">
+                    <strong>No spend yet this month.</strong>
+                    <span>Your platform budget usage will appear here after orders are recorded.</span>
+                  </div>
                 )}
                 {platforms.map((p) => (
                   <div className="xd-plat" key={p.key}>
@@ -742,10 +797,8 @@ export default function XpenseMeterPage() {
               <div className="xd-break-row">
                 <ul className="xd-legend">
                   {breakdown.length === 0 && (
-                    <li>
-                      <span className="xd-legend-name xd-muted">
-                        {user ? "No spend yet this month." : "Log in to see your spend breakdown."}
-                      </span>
+                    <li className="xd-empty-legend">
+                      {user ? "No spend yet this month." : "Log in to see your spend breakdown."}
                     </li>
                   )}
                   {breakdown.map((b) => (
@@ -883,7 +936,7 @@ export default function XpenseMeterPage() {
                     <strong>Highest Spend Day</strong>
                     <p>
                       {summary?.highestSpendDay ? summary.highestSpendDay.label : "—"}{" "}
-                      <b>{rupee(summary?.highestSpendDay?.amount)}</b>
+                      <b className="up">{rupee(summary?.highestSpendDay?.amount)}</b>
                     </p>
                   </div>
                 </div>
@@ -893,7 +946,7 @@ export default function XpenseMeterPage() {
                     <strong>Least Spend Day</strong>
                     <p>
                       {summary?.lowestSpendDay ? summary.lowestSpendDay.label : "—"}{" "}
-                      <b>{rupee(summary?.lowestSpendDay?.amount)}</b>
+                      <b className="down">{rupee(summary?.lowestSpendDay?.amount)}</b>
                     </p>
                   </div>
                 </div>
@@ -1095,7 +1148,7 @@ export default function XpenseMeterPage() {
                 </div>
 
                 <button type="button" className="xd-primary" onClick={closeModal}>
-                  Close
+                  Download Report <DownloadIcon />
                 </button>
               </>
             )}
@@ -1150,7 +1203,7 @@ export default function XpenseMeterPage() {
         }
 
         .xd-dashboard {
-          max-width: 1200px;
+          max-width: 1000px;
           margin: 0 auto;
           background: var(--xd-panel);
           border: 1px solid var(--xd-line);
@@ -1310,6 +1363,7 @@ export default function XpenseMeterPage() {
         .xd-card-head {
           display: flex;
           align-items: center;
+          justify-content: space-between;
           gap: 18px;
           margin-bottom: 18px;
         }
@@ -1321,11 +1375,14 @@ export default function XpenseMeterPage() {
         }
 
         .xd-link {
-          border: 0;
-          background: transparent;
+          height: 30px;
+          padding: 0 12px;
+          border: 1px solid rgba(255, 255, 255, 0.16);
+          border-radius: 8px;
+          background: rgba(255,255,255,0.04);
           color: #fff;
-          font-size: 14px;
-          font-weight: 500;
+          font-size: 13px;
+          font-weight: 600;
           cursor: pointer;
         }
 
@@ -1335,65 +1392,119 @@ export default function XpenseMeterPage() {
 
         /* hero wallet */
         .xd-hero-wrap {
+          cursor: pointer;
+          --card-in: -2px;
+          --card-out: -28px;
           position: relative;
-          padding-top: 14px;
+          padding-top: 0px;
+          padding-bottom: 0px;
         }
 
         /* the two card edges peeking above the wallet */
-        .xd-hero-stack {
+        .xd-wallet-back,
+        .xd-wallet-front {
           position: absolute;
-          left: 26px;
-          right: 26px;
-          height: 30px;
-          border: 1px solid rgba(255, 255, 255, 0.16);
-          border-radius: 16px 16px 0 0;
-          background: #191a1d;
+          left: 0;
+          bottom: 0;
+          width: 100%;
+          height: auto;
+          pointer-events: none;.
+          user-select: none;
         }
 
-        .xd-hero-stack-2 {
-          top: 0;
-          left: 40px;
-          right: 40px;
+        .xd-wallet-back {
+          z-index: 1;
+          top: 20px;
         }
 
-        .xd-hero-stack-1 {
-          top: 7px;
-          background: #1f2023;
+        .xd-wallet-front {
+          z-index: 3;
+          top: 60px;
         }
 
         .xd-hero {
-          position: relative;
+          position: relative; 
           z-index: 2;
-          min-height: 250px;
+          aspect-ratio: 1.83;
+          transform: translateY(var(--card-in));
+          transition: transform 620ms cubic-bezier(0.22, 1, 0.36, 1);
+          will-change: transform;
           display: flex;
           flex-direction: column;
           justify-content: space-between;
           background:
-            linear-gradient(
-              180deg,
-              rgba(8, 8, 10, 0.35) 0%,
-              rgba(8, 8, 10, 0.82) 100%
-            ),
-            url("/images/xpense-meter/wallet.png") 50% 45% / cover no-repeat,
-            #101013;
-          border: 1px solid rgba(255, 255, 255, 0.14);
+            url("/images/xpense-meter/card.png") center / cover no-repeat,
+            #10101300;
+          border: 0px;
           border-radius: 18px;
-          padding: 18px 20px 20px;
+          padding: 25px 50px 30px;
           overflow: hidden;
+        }
+
+
+
+        .xd-wallet-content {
+          position: absolute;
+          left: 62px;
+          right: 48px;
+          bottom: 34px;
+          z-index: 4;
+          display: flex;
+          align-items: flex-end;
+          justify-content: space-between;
+          gap: 20px;
+          pointer-events: none;
+        }
+
+        .xd-wallet-spend {
+          color: #fff;
+          text-shadow: 0 1px 4px rgba(0, 0, 0, 0.75);
+          margin: 0px 0px 5px -15px;
+        }
+
+        .xd-wallet-spend span,
+        .xd-wallet-spend small {
+          display: block;
+          font-size: 16px;
+          line-height: 1.15;
+        }
+
+        .xd-wallet-spend strong {
+          display: block;
+          font-size: 36px;
+          line-height: 1.2;
+          margin: 6px 0 4px;
+          font-weight: 600;
+        }
+
+        .xd-wallet-content .xd-accounts {
+          pointer-events: auto;
+          margin-bottom: 5px;
+        }
+
+        .xd-hero-wrap.is-out .xd-hero {
+          transform: translateY(var(--card-out));
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .xd-hero {
+            transition: none;
+          }
         }
 
         .xd-hero-top {
           display: flex;
           align-items: flex-start;
           justify-content: space-between;
-          gap: 16px;
+          gap: 20px;
         }
 
         .xd-acct-label {
           display: block;
-          font-size: 14px;
-          font-weight: 600;
+          font-size: 16px;
+          font-weight: 700;
           margin-bottom: 2px;
+          text-shadow: 0 1px 4px rgba(0, 0, 0, 0.7);
         }
 
         .xd-acct-row {
@@ -1403,9 +1514,10 @@ export default function XpenseMeterPage() {
         }
 
         .xd-acct-row strong {
-          font-size: 14px;
+          font-size: 16px;
           font-weight: 600;
           letter-spacing: 0.04em;
+          text-shadow: 0 1px 4px rgba(0, 0, 0, 0.7);
         }
 
         .xd-eye {
@@ -1420,9 +1532,9 @@ export default function XpenseMeterPage() {
           place-items: center;
         }
 
-        .xd-eye svg {
-          width: 17px;
-          height: 17px;
+        .xd-eye :global(svg) {
+          width: 18px;
+          height: 18px;
         }
 
         .xd-eye:hover {
@@ -1433,19 +1545,22 @@ export default function XpenseMeterPage() {
           display: flex;
           flex-direction: column;
           align-items: center;
-          gap: 2px;
+          gap: 3px;
+          flex-shrink: 0;
         }
 
-        .xd-hero-brand img {
-          width: 38px;
-          height: 38px;
-          object-fit: contain;
+        /* logo.png is magenta; this renders it pure white per the design */
+        .xd-hero-logo {
+          display: inline-flex;
+          filter: brightness(0) invert(1);
         }
 
         .xd-hero-brand small {
           font-size: 10px;
-          font-weight: 700;
+          font-weight: 800;
           letter-spacing: 0.02em;
+          white-space: nowrap;
+          text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
         }
 
         .xd-hero-bottom {
@@ -1453,26 +1568,28 @@ export default function XpenseMeterPage() {
           align-items: flex-end;
           justify-content: space-between;
           gap: 16px;
+          transform: translateY(-12px);
+
         }
 
         .xd-hero-left span,
         .xd-hero-left small {
           display: block;
-          font-size: 15px;
+          font-size: 16px;
           color: #fff;
         }
 
         .xd-hero-left small {
-          max-width: 110px;
+          max-width: 180px;
           line-height: 1.2;
         }
 
         .xd-hero-left strong {
           display: block;
-          font-size: 30px;
+          font-size: 36px;
           line-height: 1.05;
           margin: 2px 0 2px;
-          font-weight: 700;
+          font-weight: 800;
         }
 
         .xd-trend {
@@ -1514,7 +1631,7 @@ export default function XpenseMeterPage() {
           color: #fff;
         }
 
-        .xd-plat-icon svg {
+        .xd-plat-icon :global(svg) {
           width: 22px;
           height: 22px;
         }
@@ -1553,10 +1670,11 @@ export default function XpenseMeterPage() {
 
         /* spend breakdown */
         .xd-break-row {
-          display: flex;
+          display: grid;
+          grid-template-columns: minmax(0 , 1fr) 140px;
           align-items: center;
-          justify-content: space-between;
-          gap: 18px;
+          gap: 28px;
+          min-height: 150px;
         }
 
         .xd-legend {
@@ -1576,6 +1694,38 @@ export default function XpenseMeterPage() {
           column-gap: 10px;
           row-gap: 2px;
           font-size: 14px;
+        }
+
+        .xd-empty-legend {
+          display: block  !important;
+          max-width: 260px;
+          color: rgba(255, 255, 255, 0.68);
+          font-size: 14px;
+          line-height: 1.45;
+        }
+
+        
+
+
+
+        .xd-empty-state {
+          padding: 10px 0 4px;
+          color: rgba(255, 255, 255, 0.68);
+        }
+
+        .xd-empty-state strong {
+          display: block;
+          color: #fff;
+          font-size: 14px;
+          font-weight: 600;
+          margin-bottom: 4px;
+        }
+
+        .xd-empty-state span {
+          display: block;
+          max-width: 360px;
+          font-size: 12px;
+          line-height: 1.45;
         }
 
         .xd-legend-dot {
@@ -1599,8 +1749,8 @@ export default function XpenseMeterPage() {
 
         .xd-break-donut {
           flex-shrink: 0;
-          width: 116px;
-          height: 116px;
+          width: 104px;
+          height: 104px;
           border-radius: 50%;
           background: conic-gradient(
             from -90deg,
@@ -1616,7 +1766,7 @@ export default function XpenseMeterPage() {
         .xd-break-donut::after {
           content: "";
           position: absolute;
-          inset: 24px;
+          inset: 22px;
           border-radius: 50%;
           background: var(--xd-card);
         }
@@ -1645,13 +1795,18 @@ export default function XpenseMeterPage() {
 
         /* StatIcon is a child component, so styled-jsx can't reach its <svg>.
            The wrapper box constrains it instead. */
-        .xd-stat-icon {
+        .xd-stat .xd-stat-icon {
           display: grid;
           place-items: center;
           width: 32px;
           height: 32px;
           margin: 0 auto 26px;
           color: #fff;
+        }
+
+        .xd-stat-icon :global(svg){
+          width: 32px;
+          height: 32px;
         }
 
         .xd-stat span {
@@ -1691,8 +1846,9 @@ export default function XpenseMeterPage() {
 
         .xd-trend-amount {
           display: flex;
-          align-items: center;
-          gap: 12px;
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 6px;
           margin: 4px 0 10px;
         }
 
@@ -1808,6 +1964,14 @@ export default function XpenseMeterPage() {
           margin-left: 4px;
         }
 
+        .xd-chart-foot p b.up {
+          color: #16c784;
+        }
+
+        .xd-chart-foot p b.down {
+          color: var(--xd-accent);
+        }
+
         .xd-up,
         .xd-down {
           font-size: 20px;
@@ -1824,28 +1988,33 @@ export default function XpenseMeterPage() {
         }
 
         /* on track */
+
         .xd-ontrack {
           grid-column: 1 / -1;
+          position: relative;
           display: flex;
           align-items: center;
           justify-content: center;
           gap: 18px;
           background: var(--xd-card);
           border: 1px solid var(--xd-line);
-          border-radius: 12px;
+          border-radius: 999px;
           padding: 14px 22px;
         }
 
         .xd-ontrack-badge {
+          position: absolute;
+          left: 22px;
+          top: 50%;
+          transform: translateY(-50%);
           width: 28px;
-          height: 28px;
+          height : 28px;
           border-radius: 50%;
           display: grid;
           place-items: center;
           font-size: 14px;
           color: var(--xd-accent);
-          background: rgba(245, 41, 107, 0.14);
-          flex-shrink: 0;
+          background: rgba(245 , 41 , 107 , 0.14);    
         }
 
         .xd-ontrack strong {
@@ -1995,7 +2164,7 @@ export default function XpenseMeterPage() {
           flex-shrink: 0;
         }
 
-        .xd-edit svg {
+        .xd-edit :global(svg) {
           width: 20px;
           height: 20px;
         }
@@ -2027,7 +2196,7 @@ export default function XpenseMeterPage() {
           height: 26px;
         }
 
-        .xd-alloc-top .xd-plat-icon svg {
+        .xd-alloc-top .xd-plat-icon :global(svg) {
           width: 21px;
           height: 21px;
         }
@@ -2047,7 +2216,7 @@ export default function XpenseMeterPage() {
           grid-template-columns: auto minmax(0, 1fr) auto;
           align-items: center;
           gap: 8px;
-          margin-top: 4px;
+          margin: 4px 0 0 36px;
         }
 
         .xd-alloc-slider small {
@@ -2072,6 +2241,10 @@ export default function XpenseMeterPage() {
 
         .xd-alloc-summary > div {
           flex: 1;
+        }
+
+        .xd-alloc-right {
+          text-align: right;
         }
 
         .xd-alloc-summary span {
@@ -2133,9 +2306,9 @@ export default function XpenseMeterPage() {
         .xd-spend-total {
           display: flex;
           align-items: baseline;
-          gap: 14px;
+          justify-content: space-between;
           margin-bottom: 22px;
-          padding-left: 14px;
+          padding: 0 14px;
         }
 
         .xd-spend-total strong {
@@ -2219,8 +2392,8 @@ export default function XpenseMeterPage() {
             font-size: 26px;
           }
           .xd-break-row {
-            flex-direction: column;
-            align-items: flex-start;
+            grid-template-columns: 1fr;
+            justify-items: start;
           }
           .xd-ontrack {
             flex-wrap: wrap;
@@ -2237,7 +2410,7 @@ export default function XpenseMeterPage() {
           <Link>, since the compiler only auto-scopes plain host elements —
           so this one rule has to live in an (ancestor-qualified) global block. */}
       <style jsx global>{`
-        .xd-hero-bottom .xd-accounts {
+        .xd-wallet-content .xd-accounts {
           height: 30px;
           padding: 0 14px;
           border-radius: 6px;
@@ -2245,7 +2418,7 @@ export default function XpenseMeterPage() {
           background: rgba(20, 20, 22, 0.85);
           color: #fff;
           font-size: 12px;
-          font-weight: 500;
+          font-weight: 400;
           cursor: pointer;
           white-space: nowrap;
           display: inline-flex;
@@ -2255,7 +2428,7 @@ export default function XpenseMeterPage() {
         }
 
         .xd-hero-bottom .xd-accounts:hover {
-          background: rgba(255, 255, 255, 0.14);
+          background: rgb(242, 234, 234);
         }
       `}</style>
     </main>

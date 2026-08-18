@@ -66,7 +66,7 @@ function CartContent() {
   // See services/swadisht/checkout/page.jsx's identical comment: this
   // hook needs the real Firebase Auth identity, not SwadishttContext's own
   // (guest-checkout-form) `user`.
-  const { user: authUser, getIdToken } = useAuth();
+  const { user: authUser, userData, getIdToken } = useAuth();
   const { otherStores, updateQuantity: updateOtherQuantity, removeItem: removeOtherItem } = useOtherStoreItems(authUser, 'swadishtt', getIdToken);
   const [promoCode, setPromoCode] = useState('');
   const [appliedPromo, setAppliedPromo] = useState(null);
@@ -82,6 +82,7 @@ function CartContent() {
   const [returnScheduled, setReturnScheduled] = useState(false);
 
   const PROMO_CODES = {
+    'SWADISHT50': { discount: 50, type: 'flat', description: 'Flat ₹50 off on Food Delivery' },
     'FIRST50': { discount: 50, type: 'flat', description: 'Flat ₹50 off on first order' },
     'SAVE20': { discount: 20, type: 'percent', description: '20% off on orders above ₹500' },
     'SWADISHT100': { discount: 100, type: 'flat', description: 'Flat ₹100 off' },
@@ -117,23 +118,17 @@ function CartContent() {
       return;
     }
 
-    // Check redeemed secret codes from Circular Credits in localStorage
-    try {
-      const rawVouchers = localStorage.getItem('instastyle_vouchers') || localStorage.getItem('accesco_user_vouchers');
-      if (rawVouchers) {
-        const vouchers = JSON.parse(rawVouchers);
-        const matched = vouchers.find(v => (v.secretCode || '').toUpperCase() === inputCode);
-        if (matched) {
-          setAppliedPromo({
-            discount: matched.discount || 200,
-            type: matched.type || 'flat',
-            description: `Secret Voucher Applied: ${matched.label} (${matched.secretCode})`,
-          });
-          return;
-        }
+    // Check redeemed secret codes from Firebase userVouchers
+    if (userData && Array.isArray(userData.userVouchers)) {
+      const matched = userData.userVouchers.find(v => (v.secretCode || '').toUpperCase() === inputCode);
+      if (matched) {
+        setAppliedPromo({
+          discount: matched.discount || 200,
+          type: matched.type || 'flat',
+          description: `Secret Voucher Applied: ${matched.label} (${matched.secretCode})`,
+        });
+        return;
       }
-    } catch (e) {
-      console.error(e);
     }
 
     setPromoError('Invalid or expired promo code');

@@ -14,6 +14,7 @@ import {
   deleteAddress as deleteAddressApi,
   selectAddress,
 } from '../../lib/addressService';
+import { updateUserFieldsInFirebase } from '../../lib/userService';
 import './profile.css';
 
 // Import modular section components
@@ -112,7 +113,7 @@ function toDisplayTransaction(tx) {
 }
 
 export default function ProfileContent() {
-  const { user, loading, signOut, signIn, getIdToken } = useAuth();
+  const { user, userData, loading, signOut, signIn, getIdToken, refreshUserData } = useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
   const sectionParam = searchParams?.get('section');
@@ -202,14 +203,9 @@ export default function ProfileContent() {
     }
   }, [sectionParam]);
 
-  // Load REAL data for the logged-in user
+  // Load REAL data for the logged-in user directly from Firebase (userData)
   useEffect(() => {
-    const grokly = JSON.parse(localStorage.getItem('grokly_orders') || '[]');
-    const swadishtt = JSON.parse(localStorage.getItem('swadishtt-orders') || '[]');
-    const instastyle = JSON.parse(localStorage.getItem('instastyle_orders') || '[]');
-    setTotalOrders(grokly.length + swadishtt.length + instastyle.length);
-
-    const savedLocation = localStorage.getItem('userLocation');
+    const savedLocation = typeof window !== 'undefined' ? localStorage.getItem('userLocation') : null;
     if (savedLocation) {
       try {
         const parsedLocation = JSON.parse(savedLocation);
@@ -219,59 +215,32 @@ export default function ProfileContent() {
       }
     }
 
+    // Wallet balance/transactions and addresses are intentionally NOT read
+    // from userData here — they load from the dedicated server-authoritative
+    // effects below (app/api/wallet, app/api/addresses), which is the
+    // audited source of truth for those two fields specifically.
+    if (userData) {
+      setUpiList(userData.upiList ?? []);
+      setCardsList(userData.savedCards ?? []);
+      setSubscriptions(userData.subscriptions ?? []);
+      setHasFreeDelivery(Boolean(userData.hasFreeDelivery));
+      if (userData.notificationSettings) {
+        setNotifSettings(userData.notificationSettings);
+      }
+      if (userData.language) setSelectedLang(userData.language);
+      if (userData.currency) setSelectedCurrency(userData.currency);
+    }
+
+    // Bookmarks aren't part of Firestore userData — the legacy migration in
+    // lib/userService.js never moves the per-service wishlist keys, so this
+    // stays a direct read of each service's wishlist storage.
     const userKey = user?.uid || user?.phone || 'guest';
-
-    // 1. Addresses now load from the backend — see the separate
-    // addresses-loading effect below (lib/addressService.js /
-    // app/api/addresses).
-
-    // 2. Real UPI (wallet balance itself now loads from the backend — see
-    // the separate wallet-loading effect below)
-    const savedUpi = localStorage.getItem(`accesco_upi_list_${userKey}`);
-    if (savedUpi) {
-      try { setUpiList(JSON.parse(savedUpi)); } catch (e) {}
-    } else {
-      setUpiList([]);
-    }
-
-    const savedCards = localStorage.getItem(`accesco_saved_cards_${userKey}`);
-    if (savedCards) {
-      try { setCardsList(JSON.parse(savedCards)); } catch (e) {}
-    } else {
-      setCardsList([]);
-    }
-
-    // 3. Real Wishlist / Bookmarks
     const groklyWish = JSON.parse(localStorage.getItem('grokly_wishlist') || '[]');
     const swadishttWish = JSON.parse(localStorage.getItem('swadishtt_wishlist') || '[]');
     const instastyleWish = JSON.parse(localStorage.getItem('instastyle_wishlist') || '[]');
     const accescoWish = JSON.parse(localStorage.getItem(`accesco_bookmarks_${userKey}`) || '[]');
     setBookmarks([...groklyWish, ...swadishttWish, ...instastyleWish, ...accescoWish]);
-
-    // 4. Real Subscriptions
-    const savedSubs = localStorage.getItem(`accesco_subscriptions_${userKey}`);
-    if (savedSubs) {
-      try { setSubscriptions(JSON.parse(savedSubs)); } catch (e) {}
-    } else {
-      setSubscriptions([]);
-    }
-
-    // 5. Real Notification preferences
-    const savedNotif = localStorage.getItem(`accesco_notif_settings_${userKey}`);
-    if (savedNotif) {
-      try { setNotifSettings(JSON.parse(savedNotif)); } catch (e) {}
-    }
-
-    // 6. Real Language & Currency
-    const savedLang = localStorage.getItem(`accesco_lang_${userKey}`);
-    if (savedLang) setSelectedLang(savedLang);
-    const savedCurr = localStorage.getItem(`accesco_currency_${userKey}`);
-    if (savedCurr) setSelectedCurrency(savedCurr);
-
-    // 9. Real Free Delivery Pass
-    const savedFreeDel = localStorage.getItem(`accesco_free_delivery_${userKey}`);
-    setHasFreeDelivery(savedFreeDel === 'true');
-  }, [user]);
+  }, [user, userData]);
 
   // Referral coins are earned against the phone number a user verified
   // (referralProfiles is keyed by phone digits — see
@@ -415,7 +384,6 @@ export default function ProfileContent() {
     event.target.value = '';
   };
 
-  // Address handlers
   // Address handlers now call the real backend (app/api/addresses via
   // lib/addressService.js) instead of only ever writing to localStorage —
   // each one re-fetches the list afterward so isDefault/ordering stay
@@ -481,37 +449,46 @@ export default function ProfileContent() {
     }
   };
 
-  // Wallet handler
-  // Crediting a real wallet without collecting real payment would be a
-  // fraud vector, and wiring actual payment collection here duplicates the
-  // separate Razorpay-integrity work already scoped elsewhere — so this
-  // stays a visible "coming soon" state rather than a silent fake credit.
+  // Wallet handler. Crediting a real wallet without collecting real payment
+  // would be a fraud vector, and wiring actual payment collection here
+  // duplicates the separate Razorpay-integrity work already scoped
+  // elsewhere — so this stays a visible "coming soon" state rather than a
+  // silent fake credit.
   const handleAddMoney = (e) => {
     e.preventDefault();
     setAddMoneyNotice('Adding money directly is coming soon. For now, redeem a promo code above to add funds to your wallet.');
     setAddAmount('');
   };
 
-  const handleAddUpi = (e) => {
+  const handleAddUpi = async (e) => {
     e.preventDefault();
     if (!newUpi || !newUpi.includes('@')) return;
     const updated = [...upiList, newUpi.trim()];
     setUpiList(updated);
-    localStorage.setItem(`accesco_upi_list_${userKey}`, JSON.stringify(updated));
+    if (user?.uid) {
+      await updateUserFieldsInFirebase(user.uid, { upiList: updated });
+      refreshUserData(user.uid);
+    }
     setNewUpi('');
     setShowAddUpi(false);
   };
 
   // Coupon handler. FREEDEL is a non-monetary delivery perk with no wallet
-  // equivalent, so it's left exactly as it was — local-only. Every other
-  // code now redeems through the real, server-validated wallet (see
-  // app/api/wallet/redeem) instead of the old hardcoded client-side check,
-  // which could never actually stop someone from editing validCodes/reward
-  // in devtools and crediting themselves anything.
+  // transaction, so it's persisted straight to the user's profile instead of
+  // going through the server wallet. Every other code redeems through the
+  // real, server-validated wallet (see app/api/wallet/redeem) instead of a
+  // hardcoded client-side check, which could never actually stop someone
+  // from editing validCodes/reward in devtools and crediting themselves
+  // anything.
   const handleRedeem = async (e, codeToRedeem = null) => {
     if (e && e.preventDefault) e.preventDefault();
     const targetCode = (codeToRedeem || promoInput).trim().toUpperCase();
     if (!targetCode) return;
+
+    if (!user?.uid) {
+      setPromoMessage({ type: 'error', text: '❌ Please sign in to redeem coupon codes.' });
+      return;
+    }
 
     if (targetCode === 'FREEDEL') {
       if (redeemedCoupons.includes('FREEDEL')) {
@@ -519,20 +496,17 @@ export default function ProfileContent() {
         return;
       }
       setHasFreeDelivery(true);
-      localStorage.setItem(`accesco_free_delivery_${userKey}`, 'true');
-      localStorage.setItem('grokly_free_delivery', 'true');
-      localStorage.setItem('swadishtt_free_delivery', 'true');
-
+      try {
+        await updateUserFieldsInFirebase(user.uid, { hasFreeDelivery: true });
+        await refreshUserData(user.uid);
+      } catch (err) {
+        console.error('Failed to persist free delivery pass:', err);
+      }
       setPromoInput('');
       setPromoMessage({
         type: 'success',
         text: `🚚 Coupon code 'FREEDEL' successfully applied! Free Delivery Pass activated across all services.`,
       });
-      return;
-    }
-
-    if (!walletUid) {
-      setPromoMessage({ type: 'error', text: '❌ Please log in to redeem a code.' });
       return;
     }
 
@@ -551,10 +525,13 @@ export default function ProfileContent() {
   };
 
   // Subscription toggle
-  const toggleSub = (id) => {
+  const toggleSub = async (id) => {
     const updated = subscriptions.map((s) => (s.id === id ? { ...s, status: s.status === 'Active' ? 'Paused' : 'Active' } : s));
     setSubscriptions(updated);
-    localStorage.setItem(`accesco_subscriptions_${userKey}`, JSON.stringify(updated));
+    if (user?.uid) {
+      await updateUserFieldsInFirebase(user.uid, { subscriptions: updated });
+      refreshUserData(user.uid);
+    }
   };
 
   // Password update

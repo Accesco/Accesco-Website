@@ -29,14 +29,14 @@ function writeJSON(key, value) {
   localStorage.setItem(key, JSON.stringify(value));
 }
 
-export function getGroklyCart() {
-  const parsed = readJSON(GROKLY_KEY, {});
-  return parsed && typeof parsed === 'object' && !Array.isArray(parsed) ? parsed : {};
-}
-
 export function getInstaStyleCart() {
   const parsed = readJSON(INSTASTYLE_KEY, []);
   return Array.isArray(parsed) ? parsed : [];
+}
+
+export function getGroklyCart() {
+  const parsed = readJSON(GROKLY_KEY, {});
+  return parsed && typeof parsed === 'object' && !Array.isArray(parsed) ? parsed : {};
 }
 
 export function setGroklyCart(cartMap) {
@@ -120,6 +120,41 @@ export async function setGroklyCartAndSync(cartMap, user, getIdToken) {
 
 export function setInstaStyleCart(items) {
   writeJSON(INSTASTYLE_KEY, items);
+}
+
+function getGroklyIdentifier(user) {
+  return user?.uid || user?.email || getGroklyDeviceId();
+}
+
+// Firestore mirror of the guest Grokly cart, keyed by device/uid (see
+// GroklyContext.jsx's identical grokly_carts/{identifier} guest mirror).
+// Named distinctly from getGroklyCart/setGroklyCart above (the synchronous
+// localStorage pair most call sites use) — both used to share those names
+// and merged onto non-overlapping lines, which git's line-based merge
+// doesn't treat as a conflict even though redeclaring the same export twice
+// is a SyntaxError.
+export async function getGroklyCartFirestoreMirror(user) {
+  const identifier = getGroklyIdentifier(user);
+  if (!identifier) return {};
+  try {
+    const snap = await getDoc(doc(db, 'grokly_carts', identifier));
+    if (!snap.exists()) return {};
+    const cart = snap.data()?.cart;
+    return cart && typeof cart === 'object' && !Array.isArray(cart) ? cart : {};
+  } catch (err) {
+    console.error('[unifiedCart] Failed to load Grokly cart from Firestore:', err);
+    return {};
+  }
+}
+
+export async function setGroklyCartFirestoreMirror(user, cartMap) {
+  const identifier = getGroklyIdentifier(user);
+  if (!identifier) return;
+  try {
+    await setDoc(doc(db, 'grokly_carts', identifier), { cart: cartMap, updatedAt: Date.now() });
+  } catch (err) {
+    console.error('[unifiedCart] Failed to save Grokly cart to Firestore:', err);
+  }
 }
 
 const GROKLY_DEVICE_ID_KEY = 'grokly_device_id';
@@ -309,7 +344,8 @@ export async function clearAllBrandCarts({ user, getIdToken } = {}) {
 export async function getUnifiedCartCount(user) {
   const swadishttCart = await getSwadishttCart(user);
   const swadishttCount = swadishttCart.reduce((sum, item) => sum + (item.quantity || 1), 0);
-  const groklyCount = Object.values(getGroklyCart()).reduce((sum, qty) => sum + (qty || 0), 0);
+  const groklyCart = await getGroklyCartFirestoreMirror(user);
+  const groklyCount = Object.values(groklyCart).reduce((sum, qty) => sum + (qty || 0), 0);
   const instastyleCount = getInstaStyleCart().reduce((sum, item) => sum + (item.quantity || 1), 0);
   return swadishttCount + groklyCount + instastyleCount;
 }

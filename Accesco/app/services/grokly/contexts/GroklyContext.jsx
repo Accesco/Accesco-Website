@@ -4,6 +4,7 @@ import { createContext, useContext, useState, useEffect, useMemo, useRef } from 
 import { useAuth } from '../../../components/AuthProvider';
 import { db } from '@/lib/firebase';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { updateUserFieldsInFirebase, updateWalletBalanceInFirebase } from '@/lib/userService';
 
 const GroklyContext = createContext();
 
@@ -122,18 +123,10 @@ export function GroklyProvider({ children }) {
   // Reverse Commerce: items user has selected to return packaging for
   const [returnItems, setReturnItems] = useState([]);
 
-  // Track hydration — skip the first localStorage write so we never overwrite the real cart with an empty SSR value
+  // Track hydration — skip the first write so we never overwrite the real cart with an empty SSR value
   const isHydrated = useRef(false);
 
-  // Load localStorage data once client side has mounted to avoid hydration errors
-  useEffect(() => {
-    const initialLocation = readInitialLocation();
-    const initialOrders = readInitialOrders();
-    setLocation(initialLocation);
-    setOrders(initialOrders);
-  }, []);
-
-  // Fetch orders from backend Firestore on mount/user change (for both registered users and guests)
+  // Fetch orders from backend Firestore on mount/user change
   useEffect(() => {
     const fetchOrders = async () => {
       try {
@@ -280,10 +273,6 @@ export function GroklyProvider({ children }) {
     saveCartToFirestore();
   }, [cart, user]);
 
-  useEffect(() => {
-    localStorage.setItem(ORDERS_STORAGE_KEY, JSON.stringify(orders));
-  }, [orders]);
-
   const cartCount = useMemo(() => {
     return Object.values(cart).reduce((sum, qty) => sum + qty, 0);
   }, [cart]);
@@ -362,42 +351,22 @@ export function GroklyProvider({ children }) {
   const closeCart = () => setIsCartOpen(false);
   const toggleCart = () => setIsCartOpen(prev => !prev);
 
-  const updateLocation = (newLocation) => {
-  const locationText =
-    typeof newLocation === 'object'
-      ? newLocation.fullAddress ||
-        newLocation.displayAddress ||
-        newLocation.address ||
-        'Unknown Location'
-      : newLocation;
+  const updateLocation = async (newLocation) => {
+    const locationText =
+      typeof newLocation === 'object'
+        ? newLocation.fullAddress ||
+          newLocation.displayAddress ||
+          newLocation.address ||
+          'Unknown Location'
+        : newLocation;
 
-  setLocation(locationText);
+    setLocation(locationText);
 
-  if (typeof window !== 'undefined') {
-    try {
-      const existing = localStorage.getItem(LOCATION_STORAGE_KEY);
-      const parsed = existing ? JSON.parse(existing) : {};
-
-      localStorage.setItem(
-        LOCATION_STORAGE_KEY,
-        JSON.stringify({
-          ...parsed,
-          ...(typeof newLocation === 'object' ? newLocation : {}),
-          displayAddress: locationText,
-          fullAddress: locationText,
-        })
-      );
-    } catch (e) {
-      localStorage.setItem(
-        LOCATION_STORAGE_KEY,
-        JSON.stringify({
-          displayAddress: locationText,
-          fullAddress: locationText,
-        })
-      );
+    if (user?.uid) {
+      const locObject = typeof newLocation === 'object' ? newLocation : { displayAddress: locationText, fullAddress: locationText };
+      await updateUserFieldsInFirebase(user.uid, { selectedLocation: locObject });
     }
-  }
-};
+  };
   const openLocationModal = () => setIsLocationModalOpen(true);
   const closeLocationModal = () => setIsLocationModalOpen(false);
 
@@ -500,30 +469,16 @@ export function GroklyProvider({ children }) {
                 try {
                   const bags = parseInt(order.packagingBagsToReturn) || 0;
                   const creditsEarned = bags * 10;
-                  
-                  // Update wallet balance
-                  const currentWallet = parseInt(localStorage.getItem('grokly_wallet_balance') || '0');
-                  localStorage.setItem('grokly_wallet_balance', (currentWallet + creditsEarned).toString());
-                  
-                  // Update recycled bags count
-                  const currentRecycled = parseInt(localStorage.getItem('grokly_recycled_bags_count') || '0');
-                  localStorage.setItem('grokly_recycled_bags_count', (currentRecycled + bags).toString());
-                  
-                  // Add a transaction log
-                  const rawHistory = localStorage.getItem('grokly_eco_history');
-                  const history = rawHistory ? JSON.parse(rawHistory) : [];
-                  history.unshift({
-                    id: `ECO-${Date.now()}`,
-                    date: new Date().toISOString(),
-                    orderId: order.id,
-                    bags,
-                    credits: creditsEarned,
-                    co2Offset: parseFloat((bags * 0.25).toFixed(2)) // 250g CO2 per paper bag
-                  });
-                  localStorage.setItem('grokly_eco_history', JSON.stringify(history));
-                  
-                  // Trigger storage event to sync other pages
-                  window.dispatchEvent(new Event('storage'));
+                  if (user?.uid && creditsEarned > 0) {
+                    updateWalletBalanceInFirebase(user.uid, (user.walletBalance || 0) + creditsEarned, {
+                      id: `ECO-${Date.now()}`,
+                      title: 'Packaging Return Bonus',
+                      type: 'credit',
+                      amount: creditsEarned,
+                      orderId: order.id,
+                      bags,
+                    });
+                  }
                 } catch (e) {
                   console.error('Failed to update eco stats:', e);
                 }
