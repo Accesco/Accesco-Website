@@ -1,6 +1,6 @@
 /**
  * GroklyHeader Component - Desktop Header
- * @version 1.0.0
+ * @version 1.0.1
  */
 
 'use client';
@@ -39,8 +39,8 @@ export default function GroklyHeader({
   return (
     <div className={styles.topbar}>
       <div className={styles.topbarInner}>
-        {/* Logo */}
-        <div className={styles.logo}>
+        {/* Logo - Navigates to Grokly Home */}
+        <Link href="/services/grokly" className={styles.logo} aria-label="Grokly Home">
           <div className={styles.logoIcon}>
             <Image 
               src="/images/grokly-icon.png" 
@@ -50,7 +50,7 @@ export default function GroklyHeader({
             />
           </div>
           <div className={styles.logoText}>Grokly</div>
-        </div>
+        </Link>
 
         {/* Location Button */}
         <button 
@@ -61,9 +61,9 @@ export default function GroklyHeader({
           <div className={styles.locText}>
             <div className={styles.locLabel}>Delivery in 11 minutes</div>
             <div className={styles.locName}>
-  {location?.split(',')[0] || "Select Location"}
-  <span className={styles.locArrow} aria-hidden="true"> ▼</span>
-</div>
+              {location?.split(',')[0] || "Select Location"}
+              <span className={styles.locArrow} aria-hidden="true"> ▼</span>
+            </div>
           </div>
         </button>
 
@@ -73,7 +73,7 @@ export default function GroklyHeader({
           <input
             type="search"
             placeholder="Search for products..."
-            value={searchQuery}
+            value={searchQuery || ''}
             onChange={(e) => onSearchChange(e.target.value)}
             aria-label="Search products"
           />
@@ -87,7 +87,6 @@ export default function GroklyHeader({
             </button>
           )}
         </div>
-
 
         {/* Cart Button */}
         <button 
