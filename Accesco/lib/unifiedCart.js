@@ -43,6 +43,81 @@ export function setGroklyCart(cartMap) {
   writeJSON(GROKLY_KEY, cartMap);
 }
 
+// Backend-aware Grokly cart helpers — kept separate from getGroklyCart/
+// setGroklyCart above (which stay synchronous, localStorage-only, and are
+// used elsewhere — e.g. getUnifiedCartCount's header-badge count — where
+// an extra network round trip isn't warranted) rather than changing those
+// functions' signatures, since some existing callers use them
+// synchronously and a signature change would ripple out to every one of
+// them. These are used by the unified /cart page specifically, where
+// showing the real backend-authoritative cart for a logged-in user matters.
+export async function getGroklyCartFromBackend(user, getIdToken) {
+  if (!user?.uid || typeof getIdToken !== 'function') return null;
+  try {
+    const token = await getIdToken();
+    if (!token) return null;
+    const res = await fetch('/api/grokly/cart', {
+      headers: { Authorization: `Bearer ${token}`, 'x-user-id': user.uid },
+    });
+    if (!res.ok) return null;
+    const data = await res.json();
+    const map = {};
+    (data.items || []).forEach((item) => { map[item.productId] = item.quantity; });
+    return map;
+  } catch (err) {
+    console.error('[unifiedCart] Failed to load Grokly cart from backend:', err);
+    return null;
+  }
+}
+
+// Writes cartMap to localStorage (as setGroklyCart always has) and, for
+// authenticated callers, also diffs it against the backend's current cart
+// and applies only the changed keys — safe because Grokly cart identity is
+// just the productId (no customizations complexity), so the diff key
+// matches the backend's own doc-id scheme exactly with no client-side
+// re-derivation risk.
+export async function setGroklyCartAndSync(cartMap, user, getIdToken) {
+  writeJSON(GROKLY_KEY, cartMap);
+
+  if (!user?.uid || typeof getIdToken !== 'function') return;
+
+  try {
+    const token = await getIdToken();
+    if (!token) return;
+    const headers = { 'Content-Type': 'application/json', Authorization: `Bearer ${token}`, 'x-user-id': user.uid };
+
+    const res = await fetch('/api/grokly/cart', { headers });
+    const backendItems = res.ok ? (await res.json()).items || [] : [];
+    const backendMap = {};
+    backendItems.forEach((item) => { backendMap[item.productId] = item.quantity; });
+
+    const allIds = new Set([...Object.keys(backendMap), ...Object.keys(cartMap)]);
+    for (const id of allIds) {
+      const newQty = Number(cartMap[id]) || 0;
+      const oldQty = Number(backendMap[id]) || 0;
+      if (newQty === oldQty) continue;
+
+      if (newQty <= 0) {
+        await fetch(`/api/grokly/cart/items/${encodeURIComponent(id)}`, { method: 'DELETE', headers });
+      } else if (oldQty === 0) {
+        await fetch('/api/grokly/cart/items', {
+          method: 'POST',
+          headers,
+          body: JSON.stringify({ productId: id, quantity: newQty }),
+        });
+      } else {
+        await fetch(`/api/grokly/cart/items/${encodeURIComponent(id)}`, {
+          method: 'PATCH',
+          headers,
+          body: JSON.stringify({ quantity: newQty }),
+        });
+      }
+    }
+  } catch (err) {
+    console.error('[unifiedCart] Failed to sync Grokly cart to backend:', err);
+  }
+}
+
 export function setInstaStyleCart(items) {
   writeJSON(INSTASTYLE_KEY, items);
 }
@@ -80,8 +155,57 @@ function getSwadishttIdentifier(user) {
   return user?.uid || user?.email || getSwadishttDeviceId();
 }
 
-/** Reads the Swadishtt cart straight from Firestore (`swadishtt_carts/{identifier}`). */
-export async function getSwadishttCart(user) {
+function swadishttItemToBackendPayload(item) {
+  return {
+    productId: item.id,
+    quantity: item.quantity || 1,
+    customizations: item.customizations && typeof item.customizations === 'object' ? item.customizations : {},
+  };
+}
+
+function backendItemToSwadishttItem(item) {
+  return {
+    id: item.productId,
+    name: item.name,
+    price: item.unitPrice,
+    image: item.image,
+    restaurant: item.restaurantName,
+    quantity: item.quantity,
+    customizations: item.customizations || {},
+  };
+}
+
+// Guards concurrent setSwadishttCart calls for the same uid (fired on every
+// cart-array change — see SwadishttContext.jsx's save effect) from
+// interleaving out of order: an older, still-in-flight sync is dropped
+// once a newer one has started for the same user.
+const swadishttSyncVersions = new Map();
+
+/**
+ * Reads the Swadishtt cart. Authenticated callers that pass getIdToken get
+ * the real backend cart (app/api/swadishtt/cart — ownership-enforced,
+ * validates against the live swadishtt_products catalog); everyone else
+ * (guests, or any caller that doesn't pass a token) keeps the existing
+ * direct Firestore-by-identifier read, unchanged.
+ */
+export async function getSwadishttCart(user, getIdToken) {
+  if (user?.uid && typeof getIdToken === 'function') {
+    try {
+      const token = await getIdToken();
+      if (token) {
+        const res = await fetch('/api/swadishtt/cart', {
+          headers: { Authorization: `Bearer ${token}`, 'x-user-id': user.uid },
+        });
+        if (res.ok) {
+          const data = await res.json();
+          return (data.items || []).map(backendItemToSwadishttItem);
+        }
+      }
+    } catch (err) {
+      console.error('[unifiedCart] Failed to load Swadishtt cart from backend, falling back:', err);
+    }
+  }
+
   const identifier = getSwadishttIdentifier(user);
   if (!identifier) return [];
   try {
@@ -95,14 +219,52 @@ export async function getSwadishttCart(user) {
   }
 }
 
-/** Writes the Swadishtt cart straight to Firestore (`swadishtt_carts/{identifier}`). */
-export async function setSwadishttCart(user, items) {
+/**
+ * Writes the Swadishtt cart. Guests (or any caller without getIdToken) keep
+ * the existing direct Firestore-by-identifier write, unchanged. Authenticated
+ * callers additionally sync to the real backend cart: since this is called
+ * with the *whole* new cart array on every change (not a diff), and
+ * replicating the backend's productId+customizations doc-id derivation
+ * client-side would risk drifting out of sync with it, the sync clears the
+ * backend cart and re-adds each item — simple and always correct, at the
+ * cost of a brief window where a concurrent read sees an empty backend
+ * cart. The version guard below prevents an old, slow save from clobbering
+ * a newer one if two saves overlap.
+ */
+export async function setSwadishttCart(user, items, getIdToken) {
   const identifier = getSwadishttIdentifier(user);
-  if (!identifier) return;
+  if (identifier) {
+    try {
+      await setDoc(doc(db, 'swadishtt_carts', identifier), { cart: items, updatedAt: Date.now() });
+    } catch (err) {
+      console.error('[unifiedCart] Failed to save Swadishtt cart to Firestore:', err);
+    }
+  }
+
+  if (!user?.uid || typeof getIdToken !== 'function') return;
+
+  const myVersion = (swadishttSyncVersions.get(user.uid) || 0) + 1;
+  swadishttSyncVersions.set(user.uid, myVersion);
+  const stillCurrent = () => swadishttSyncVersions.get(user.uid) === myVersion;
+
   try {
-    await setDoc(doc(db, 'swadishtt_carts', identifier), { cart: items, updatedAt: Date.now() });
+    const token = await getIdToken();
+    if (!token || !stillCurrent()) return;
+    const headers = { 'Content-Type': 'application/json', Authorization: `Bearer ${token}`, 'x-user-id': user.uid };
+
+    await fetch('/api/swadishtt/cart', { method: 'DELETE', headers });
+    if (!stillCurrent()) return;
+
+    for (const item of items) {
+      if (!stillCurrent()) return;
+      await fetch('/api/swadishtt/cart/items', {
+        method: 'POST',
+        headers,
+        body: JSON.stringify(swadishttItemToBackendPayload(item)),
+      }).catch((err) => console.error('[unifiedCart] Failed to sync a Swadishtt cart item:', err));
+    }
   } catch (err) {
-    console.error('[unifiedCart] Failed to save Swadishtt cart to Firestore:', err);
+    console.error('[unifiedCart] Failed to sync Swadishtt cart to backend:', err);
   }
 }
 
@@ -118,7 +280,7 @@ export async function clearAllBrandCarts({ user, getIdToken } = {}) {
   setGroklyCart({});
   setInstaStyleCart([]);
 
-  await setSwadishttCart(user, []);
+  await setSwadishttCart(user, [], getIdToken);
 
   try {
     const identifier = user?.uid || user?.email || getGroklyDeviceId();
@@ -132,16 +294,14 @@ export async function clearAllBrandCarts({ user, getIdToken } = {}) {
   try {
     const token = typeof getIdToken === 'function' ? await getIdToken() : null;
     if (token && user?.uid) {
-      await fetch('/api/instastyle/cart', {
-        method: 'DELETE',
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'x-user-id': user.uid,
-        },
-      });
+      const headers = { Authorization: `Bearer ${token}`, 'x-user-id': user.uid };
+      await Promise.all([
+        fetch('/api/instastyle/cart', { method: 'DELETE', headers }),
+        fetch('/api/grokly/cart', { method: 'DELETE', headers }),
+      ]);
     }
   } catch (err) {
-    console.error('[unifiedCart] Failed to clear InstaStyle backend cart:', err);
+    console.error('[unifiedCart] Failed to clear an authenticated backend cart:', err);
   }
 }
 
@@ -164,9 +324,16 @@ function withTotals(store) {
   return { ...store, subtotal, savings, itemCount };
 }
 
-/** Builds the normalized { key, name, theme, items[], subtotal, savings, itemCount }[] for the Cart Page. */
-export async function buildUnifiedStores(user) {
-  const swadishttCart = await getSwadishttCart(user);
+/**
+ * Builds the normalized { key, name, theme, items[], subtotal, savings, itemCount }[]
+ * for the Cart Page. Pass getIdToken so authenticated users' Grokly and
+ * Swadishtt items come from the real backend carts (app/api/{grokly,
+ * swadishtt}/cart) instead of only ever reading this browser's local
+ * mirror — omitting it (or being a guest) falls back to that local read
+ * exactly as before, so existing guest behavior is unchanged.
+ */
+export async function buildUnifiedStores(user, getIdToken) {
+  const swadishttCart = await getSwadishttCart(user, getIdToken);
   const swadishttItems = swadishttCart.map((item, idx) => ({
     key: `swadishtt-${item.id}-${idx}`,
     id: item.id,
@@ -175,9 +342,10 @@ export async function buildUnifiedStores(user) {
     price: item.price,
     image: item.image,
     quantity: item.quantity || 1,
+    customizations: item.customizations || {},
   }));
 
-  const groklyCartMap = getGroklyCart();
+  const groklyCartMap = (await getGroklyCartFromBackend(user, getIdToken)) || getGroklyCart();
   const groklyItems = Object.entries(groklyCartMap)
     .map(([productId, qty]) => {
       const product = getProductById(productId);
@@ -226,13 +394,13 @@ export async function buildUnifiedStores(user) {
  * app/cart/page.jsx's own quantity control, so edits made here are visible
  * there (and vice versa) — there's only one underlying cart per brand.
  */
-export function useOtherStoreItems(user, excludeKey) {
+export function useOtherStoreItems(user, excludeKey, getIdToken) {
   const [stores, setStores] = useState([]);
 
   const refresh = useCallback(async () => {
-    const built = await buildUnifiedStores(user);
+    const built = await buildUnifiedStores(user, getIdToken);
     setStores(built);
-  }, [user]);
+  }, [user, getIdToken]);
 
   useEffect(() => {
     refresh();
@@ -240,17 +408,17 @@ export function useOtherStoreItems(user, excludeKey) {
 
   const updateQuantity = useCallback(async (storeKey, item, nextQty) => {
     if (storeKey === 'swadishtt') {
-      const cart = await getSwadishttCart(user);
+      const cart = await getSwadishttCart(user, getIdToken);
       const next = nextQty <= 0
         ? cart.filter((c) => c.id !== item.id)
         : cart.map((c) => (c.id === item.id ? { ...c, quantity: nextQty } : c));
-      await setSwadishttCart(user, next);
+      await setSwadishttCart(user, next, getIdToken);
     } else if (storeKey === 'grokly') {
-      const cart = getGroklyCart();
+      const cart = (await getGroklyCartFromBackend(user, getIdToken)) || getGroklyCart();
       const next = { ...cart };
       if (nextQty <= 0) delete next[item.id];
       else next[item.id] = nextQty;
-      setGroklyCart(next);
+      await setGroklyCartAndSync(next, user, getIdToken);
     } else if (storeKey === 'instastyle') {
       const cart = getInstaStyleCart();
       const matches = (c) => c.id === item.id && c.selectedSize === item.selectedSize && c.selectedColor === item.selectedColor;
@@ -260,7 +428,7 @@ export function useOtherStoreItems(user, excludeKey) {
       setInstaStyleCart(next);
     }
     await refresh();
-  }, [user, refresh]);
+  }, [user, getIdToken, refresh]);
 
   const removeItem = useCallback(
     (storeKey, item) => updateQuantity(storeKey, item, 0),

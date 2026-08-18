@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/firebase';
 import { notifyChatbotRefresh } from '@/lib/notifyChatbot';
+import { requireAdmin } from '../../_lib/authz';
 import {
   collection,
   getDocs,
@@ -72,6 +73,11 @@ export async function GET(request) {
 // ─────────────────────────────────────────────
 export async function POST(request) {
   try {
+    const { error: authError, status: authStatus } = await requireAdmin(request);
+    if (authError) {
+      return NextResponse.json({ success: false, error: authError }, { status: authStatus });
+    }
+
     const body = await request.json();
 
     // Validate required fields

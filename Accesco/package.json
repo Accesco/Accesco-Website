@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "test": "jest"
   },
   "dependencies": {
     "@gsap/react": "^2.1.2",
@@ -35,6 +36,7 @@
     "@types/react-dom": "^19.2.3",
     "eslint": "^8.56.0",
     "eslint-config-next": "14.1.0",
+    "jest": "^30.4.2",
     "typescript": "^5.9.3"
   }
 }

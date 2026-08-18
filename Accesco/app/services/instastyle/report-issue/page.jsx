@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useAuth } from '../../../components/AuthProvider';
 import styles from './report-issue.module.css';
 
 const RECENT_ORDERS = [
@@ -97,6 +98,7 @@ const ISSUE_TYPES = [
 
 export default function InstaStyleReportIssuePage() {
   const router = useRouter();
+  const { user, getIdToken } = useAuth();
 
   const [step, setStep] = useState(1); // 1: select order+item, 2: select issue, 3: details, 4: confirmed
   const [selectedOrder, setSelectedOrder] = useState(RECENT_ORDERS[0]);
@@ -119,9 +121,17 @@ export default function InstaStyleReportIssuePage() {
     };
 
     try {
+      const headers = { 'Content-Type': 'application/json' };
+      if (user?.uid) {
+        const token = await getIdToken();
+        if (token) {
+          headers.Authorization = `Bearer ${token}`;
+          headers['x-user-id'] = user.uid;
+        }
+      }
       await fetch('/api/instastyle/report-issue', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers,
         body: JSON.stringify(payload),
       }).catch((err) => console.error(err));
 

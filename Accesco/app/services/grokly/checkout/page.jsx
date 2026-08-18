@@ -25,7 +25,7 @@ export default function GroklyCheckout() {
   const { cart, placeOrder, location, cartHydrated, returnItems, setReturnItems } = useGrokly();
   const router = useRouter();
   const { user, signIn, getIdToken } = useAuth();
-  const { otherStores, removeItem: removeOtherItem } = useOtherStoreItems(user, 'grokly');
+  const { otherStores, removeItem: removeOtherItem } = useOtherStoreItems(user, 'grokly', getIdToken);
   const [isProcessing, setIsProcessing] = useState(false);
   const [showAuth, setShowAuth] = useState(false);
   const [paymentError, setPaymentError] = useState('');
@@ -254,6 +254,7 @@ export default function GroklyCheckout() {
               payment,
               paymentMethod,
               user: activeUser,
+              getIdToken,
             })
           )
         );
@@ -261,6 +262,7 @@ export default function GroklyCheckout() {
         await postUnifiedOrderRecord({
           unifiedOrderId,
           user: activeUser,
+          getIdToken,
           address: otherAddress,
           paymentMethod,
           payment,

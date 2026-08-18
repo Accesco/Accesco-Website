@@ -100,15 +100,18 @@ export function CartProvider({ children }) {
       try {
         const devId = getDeviceId();
         let queryParam = '';
+        let authHeaders = {};
         if (user) {
           queryParam = user.uid ? `userId=${encodeURIComponent(user.uid)}` : `email=${encodeURIComponent(user.email)}`;
+          const token = await getIdToken();
+          if (token) authHeaders = { Authorization: `Bearer ${token}`, 'x-user-id': user.uid };
         } else if (devId) {
           queryParam = `deviceId=${encodeURIComponent(devId)}`;
         } else {
           return;
         }
 
-        const res = await fetch(`/api/instastyle/orders?${queryParam}`);
+        const res = await fetch(`/api/instastyle/orders?${queryParam}`, { headers: authHeaders });
         if (res.ok) {
           const data = await res.json();
           if (data.orders) {
@@ -498,13 +501,27 @@ export function CartProvider({ children }) {
     setOrders(prev => [newOrder, ...prev]);
     clearCart();
 
-    // Persist to backend (non-blocking — local state already updated)
+    // Persist to backend (non-blocking — local state already updated).
+    // Order creation now requires auth (see app/api/instastyle/orders), so
+    // this fetch is wrapped in an async IIFE to await the id token first
+    // without making placeOrder itself async — it still returns newOrder
+    // synchronously like every other caller expects.
     const customerEmail = orderData.customerEmail || null;
-    fetch('/api/instastyle/orders', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ order: newOrder, customerEmail }),
-    }).catch(err => console.error('[CartContext] Backend order sync failed:', err));
+    (async () => {
+      const headers = { 'Content-Type': 'application/json' };
+      if (user?.uid) {
+        const token = await getIdToken();
+        if (token) {
+          headers.Authorization = `Bearer ${token}`;
+          headers['x-user-id'] = user.uid;
+        }
+      }
+      return fetch('/api/instastyle/orders', {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({ order: newOrder, customerEmail }),
+      });
+    })().catch(err => console.error('[CartContext] Backend order sync failed:', err));
 
     return newOrder;
   };

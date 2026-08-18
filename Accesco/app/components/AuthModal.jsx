@@ -586,7 +586,8 @@ function AuthModalContent({
 
       try {
         const appliedCode = normalizeReferralCode(referralCode)
-        await initializeReferralProfile(p, n, appliedCode)
+        const idToken = await auth.currentUser.getIdToken()
+        await initializeReferralProfile(p, n, appliedCode, idToken)
 
         if (appliedCode && referralVisitUid) {
           await markReferralVisitConsumed(referralVisitUid, p)

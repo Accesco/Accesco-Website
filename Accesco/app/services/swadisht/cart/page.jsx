@@ -5,6 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useSwadishtt } from '../contexts/SwadishttContext';
+import { useAuth } from '../../../components/AuthProvider';
 import SwadishttHeader from '../components/SwadishttHeader';
 import styles from './cart.module.css';
 import { useOtherStoreItems } from '@/lib/unifiedCart';
@@ -62,7 +63,11 @@ const FOOD_ISSUE_TYPES = [
 function CartContent() {
   const router = useRouter();
   const { cart, removeFromCart, updateCartQuantity, clearCart, user } = useSwadishtt();
-  const { otherStores, updateQuantity: updateOtherQuantity, removeItem: removeOtherItem } = useOtherStoreItems(user, 'swadishtt');
+  // See services/swadisht/checkout/page.jsx's identical comment: this
+  // hook needs the real Firebase Auth identity, not SwadishttContext's own
+  // (guest-checkout-form) `user`.
+  const { user: authUser, getIdToken } = useAuth();
+  const { otherStores, updateQuantity: updateOtherQuantity, removeItem: removeOtherItem } = useOtherStoreItems(authUser, 'swadishtt', getIdToken);
   const [promoCode, setPromoCode] = useState('');
   const [appliedPromo, setAppliedPromo] = useState(null);
   const [promoError, setPromoError] = useState('');

@@ -58,6 +58,24 @@ function DishModal({ dish, onClose, onAdd }) {
   );
 }
 
+// Maps a swadishtt_products backend doc onto the same {id, name, category,
+// description, price, image, isVeg, isBestseller} shape the static
+// RESTAURANTS[].menu[] entries already use, so nothing else on this page
+// needs to change based on which source a dish came from.
+function toMenuItem(product) {
+  return {
+    id: product.id,
+    name: product.name,
+    category: product.category,
+    description: product.description,
+    price: product.price,
+    image: product.image,
+    isVeg: product.isVeg,
+    isBestseller: product.isBestseller,
+    inStock: product.inStock,
+  };
+}
+
 export default function RestaurantDetailPage() {
   const params = useParams();
 
@@ -72,6 +90,16 @@ export default function RestaurantDetailPage() {
 
   const [selectedDish, setSelectedDish] =
     useState(null);
+
+  // Backend-driven menu with a static fallback — mirrors the pattern
+  // already used for InstaStyle's catalog (Firestore-backed products with
+  // the bundled static list as a fallback, see _lib/instastyleCart.js's
+  // resolveProduct): if a restaurant's dishes haven't been migrated yet
+  // (see scripts/seed-swadishtt-products.mjs) or the fetch fails, the page
+  // keeps working off the static menu exactly as it did before.
+  const [backendMenu, setBackendMenu] = useState(null); // null = not loaded yet
+  const [menuLoading, setMenuLoading] = useState(true);
+  const [menuError, setMenuError] = useState(false);
 
   const heroVideoRef = useRef(null);
 
@@ -93,23 +121,54 @@ export default function RestaurantDetailPage() {
     [slug]
   );
 
+  useEffect(() => {
+    if (!restaurant) return;
+    let cancelled = false;
+    setMenuLoading(true);
+    setMenuError(false);
+
+    fetch(`/api/swadishtt/products?restaurantId=${encodeURIComponent(restaurant.id)}`)
+      .then((res) => (res.ok ? res.json() : Promise.reject(new Error('Request failed'))))
+      .then((data) => {
+        if (cancelled) return;
+        setBackendMenu((data.products || []).map(toMenuItem));
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setMenuError(true);
+          setBackendMenu(null);
+        }
+      })
+      .finally(() => {
+        if (!cancelled) setMenuLoading(false);
+      });
+
+    return () => { cancelled = true; };
+  }, [restaurant]);
+
+  // Prefer the backend catalog once it's loaded and non-empty (this
+  // restaurant has been seeded — see scripts/seed-swadishtt-products.mjs);
+  // otherwise fall back to the static menu, so a not-yet-migrated
+  // restaurant or a failed request never shows an empty page.
+  const activeMenu = backendMenu && backendMenu.length > 0 ? backendMenu : restaurant?.menu || [];
+
   const visibleMenu = useMemo(() => {
     if (!restaurant) return [];
 
     if (activeFilter === 'veg') {
-      return restaurant.menu.filter(
+      return activeMenu.filter(
         (dish) => dish.isVeg
       );
     }
 
     if (activeFilter === 'non-veg') {
-      return restaurant.menu.filter(
+      return activeMenu.filter(
         (dish) => !dish.isVeg
       );
     }
 
-    return restaurant.menu;
-  }, [activeFilter, restaurant]);
+    return activeMenu;
+  }, [activeFilter, activeMenu, restaurant]);
 
   if (!restaurant) {
     return (
@@ -328,10 +387,17 @@ export default function RestaurantDetailPage() {
             <h2>Featured Items</h2>
 
             <span>
-              {visibleMenu.length} dishes
+              {menuLoading ? 'Updating menu…' : `${visibleMenu.length} dishes`}
             </span>
           </div>
 
+          {!menuLoading && visibleMenu.length === 0 ? (
+            <p style={{ padding: '24px 0', color: '#666' }}>
+              {menuError
+                ? 'Could not load the menu right now — please try again shortly.'
+                : 'No dishes available in this category right now.'}
+            </p>
+          ) : (
           <div className={styles.menuList}>
             {visibleMenu.map((dish) => {
               const quantity =
@@ -484,6 +550,7 @@ export default function RestaurantDetailPage() {
               );
             })}
           </div>
+          )}
         </div>
       </section>
 
