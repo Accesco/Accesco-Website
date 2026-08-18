@@ -109,15 +109,18 @@
   background: rgba(107,29,58,0.04);
 }
 
-/* Thali Grid */
 .thaliGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(480px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 28px;
 }
 
-@media (max-width: 600px) {
-  .thaliGrid { grid-template-columns: 1fr; }
+@media (max-width: 768px) {
+  .pageContent { padding-top: 115px; }
+  .thaliGrid { grid-template-columns: 1fr; gap: 16px; }
+  .container { padding: 24px 16px 60px; }
+  .hero { padding: 40px 16px 36px; }
+  .heroTitle { font-size: 32px; }
 }
 
 /* Thali Card */

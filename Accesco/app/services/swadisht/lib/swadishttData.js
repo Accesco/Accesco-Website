@@ -14,8 +14,19 @@
 
 import { applyDishDetails } from './swadishttDishDetails';
 
-/** Expands to https://images.pexels.com/photos/<id>/pexels-photo-<id>.jpeg?w=600&h=400&fit=crop */
-const px = (id) => `https://images.pexels.com/photos/${id}/pexels-photo-${id}.jpeg?w=600&h=400&fit=crop`;
+const foodFallbacks = [
+  'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=600&h=400&fit=crop',
+  'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=600&h=400&fit=crop',
+  'https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=600&h=400&fit=crop',
+  'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=600&h=400&fit=crop',
+  'https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?w=600&h=400&fit=crop'
+];
+const px = (id) => {
+  if (typeof id === 'number') {
+    return foodFallbacks[id % foodFallbacks.length];
+  }
+  return id || foodFallbacks[0];
+};
 const ALL_DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
 export const RESTAURANTS = [
@@ -160,7 +171,7 @@ export const RESTAURANTS = [
       { id: 'dish-new-025', name: 'Tandoori Chicken Wings', category: 'Starters', description: 'Fried paneer sandwiches filled with sweet nuts, in a rich creamy gravy.', price: 275, image: px(1640770), isVeg: false, isBestseller: false },
       { id: 'dish-new-026', name: 'Elaneer Payasam', category: 'Desserts', description: 'Tender lamb pieces slow cooked in a rich coconut-cashew paste.', price: 280, image: px(5718095), isVeg: true, isBestseller: false },
       { id: 'dish-new-027', name: 'Bhindi Do Pyaza', category: 'Main Course', description: 'Dry, dark-colored chickpeas cooked in authentic Punjabi spice powder.', price: 285, image: px(2338407), isVeg: false, isBestseller: false },
-      { id: 'dish-new-028', name: 'Crispy Chilli Fish', category: 'Starters', description: 'Sauteed button mushrooms in a thick onion, tomato and spice masala.', price: 290, image: 'https://images.pexels.com/photos/60616/fried-chicken-restaurant-60616.jpeg?w=600&h=400&fit=crop', isVeg: true, isBestseller: false },
+      { id: 'dish-new-028', name: 'Crispy Chilli Fish', category: 'Starters', description: 'Sauteed button mushrooms in a thick onion, tomato and spice masala.', price: 290, image: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=600&h=400&fit=crop', isVeg: true, isBestseller: false },
       { id: 'dish-new-029', name: 'Paan Ice Cream', category: 'Desserts', description: 'Boneless chicken pieces simmered in a healthy spiced spinach puree.', price: 295, image: px(5718092), isVeg: false, isBestseller: false },
       { id: 'dish-new-030', name: 'Homestyle Egg Curry', category: 'Main Course', description: 'Deep-fried potato and paneer balls in a rich, creamy cashew gravy.', price: 300, image: px(1640773), isVeg: true, isBestseller: false },
       { id: 'dish-new-031', name: 'Golden Fried Prawns', category: 'Starters', description: 'Warm fried milk dumplings served on a bed of chilled thickened milk.', price: 305, image: px(1640780), isVeg: false, isBestseller: false },
@@ -411,7 +422,7 @@ export const RESTAURANTS = [
       { id: 'dish-1201', name: 'Sarson Da Saag', category: 'Main Course', description: 'Traditional Punjabi mustard greens slow-cooked with spices and finished with dollop of white butter.', price: 260, image: px(5718095), isVeg: true, isBestseller: true },
       { id: 'dish-1202', name: 'Makki di Roti', category: 'Breads', description: 'Rustic cornmeal flatbread cooked on a traditional tawa — perfect with sarson da saag.', price: 40, image: px(2338407), isVeg: true, isBestseller: false },
       { id: 'dish-1203', name: 'Amritsari Fish', category: 'Starters', description: 'Juicy fish fillet marinated in bold Amritsari spices and deep-fried to golden perfection.', price: 380, image: px(5718092), isVeg: false, isBestseller: true },
-      { id: 'dish-1204', name: 'Shahi Paneer', category: 'Main Course', description: 'Royal paneer cooked in a fragrant cashew and cream gravy with saffron and aromatic whole spices.', price: 310, image: 'https://images.pexels.com/photos/60616/fried-chicken-restaurant-60616.jpeg?w=600&h=400&fit=crop', isVeg: true, isBestseller: true },
+      { id: 'dish-1204', name: 'Shahi Paneer', category: 'Main Course', description: 'Royal paneer cooked in a fragrant cashew and cream gravy with saffron and aromatic whole spices.', price: 310, image: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=600&h=400&fit=crop', isVeg: true, isBestseller: true },
       { id: 'dish-1205', name: 'Lassi', category: 'Beverages', description: 'Chilled sweet yogurt drink blended smooth with sugar and a hint of cardamom and rose water.', price: 80, image: px(4197444), isVeg: true, isBestseller: false },
       { id: 'dish-1206', name: 'Dal Tadka', category: 'Main Course', description: 'Yellow lentils tempered with cumin, garlic, ghee, and mild spices in rustic dhaba style.', price: 200, image: px(5718092), isVeg: true, isBestseller: false }
     ]
@@ -606,7 +617,7 @@ export const RESTAURANTS = [
       { id: 'dish-2001', name: 'Malabar Chicken Biryani', category: 'Biryani', description: 'Fragrant Malabar-style biryani with small-grain kaima rice, whole spices, and caramelized onions.', price: 360, image: px(4518672), isVeg: false, isBestseller: true },
       { id: 'dish-2002', name: 'Chemeen Mappas', category: 'Main Course', description: 'Coastal prawn curry in coconut milk with whole spices, tomato, and Malabar pepper.', price: 400, image: px(5718095), isVeg: false, isBestseller: true },
       { id: 'dish-2003', name: 'Pathiri', category: 'Breads', description: 'Thin lacy rice flour flatbreads — a Malabar specialty best paired with coastal curries.', price: 60, image: px(2338407), isVeg: true, isBestseller: false },
-      { id: 'dish-2004', name: 'Thalassery Mutton Curry', category: 'Main Course', description: 'Bold mutton curry marinated with Thalassery spice blend and slow-simmered in coconut gravy.', price: 440, image: 'https://images.pexels.com/photos/60616/fried-chicken-restaurant-60616.jpeg?w=600&h=400&fit=crop', isVeg: false, isBestseller: false },
+      { id: 'dish-2004', name: 'Thalassery Mutton Curry', category: 'Main Course', description: 'Bold mutton curry marinated with Thalassery spice blend and slow-simmered in coconut gravy.', price: 440, image: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=600&h=400&fit=crop', isVeg: false, isBestseller: false },
       { id: 'dish-2005', name: 'Ari Payasam', category: 'Desserts', description: 'Creamy rice kheer cooked in coconut milk with jaggery, cardamom, and cashews.', price: 110, image: px(5718092), isVeg: true, isBestseller: false }
     ]
   },
@@ -641,10 +652,10 @@ export const RESTAURANTS = [
     name: 'The Coastal Kitchen',
     slug: 'coastal-kitchen',
     video: '/video/restaurants/ANDHRAFISH.mp4',
-    coverImage: 'https://images.pexels.com/photos/3296402/pexels-photo-3296402.jpeg?w=600&h=320&fit=crop',
+    coverImage: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=800&h=600&fit=crop',
     logoImage: 'https://images.pexels.com/photos/566346/pexels-photo-566346.jpeg?w=200',
     images: [
-      'https://images.pexels.com/photos/3296402/pexels-photo-3296402.jpeg?w=800&h=600&fit=crop',
+      'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=800&h=600&fit=crop',
       'https://images.pexels.com/photos/566346/pexels-photo-566346.jpeg?w=800&h=600&fit=crop'
     ],
     rating: 4.6,

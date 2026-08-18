@@ -591,14 +591,14 @@ export default function SwipeEatPage() {
 
           <div className={styles.deckArrows} aria-hidden="true">
             <Image
-              src="/images/swadisht/categories/swipe-arrow.png"
+              src="/images/swadisht/categories/Squiggle_Arrow_left.png"
               alt=""
               width={168}
               height={168}
               className={styles.arrowLeft}
             />
             <Image
-              src="/images/swadisht/categories/swipe-arrow.png"
+              src="/images/swadisht/categories/Squiggle_Arrow_right.png"
               alt=""
               width={168}
               height={168}

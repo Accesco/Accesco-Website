@@ -8,6 +8,12 @@
   color: #2d1d17;
 }
 
+@media (max-width: 768px) {
+  .page {
+    padding-top: 115px;
+  }
+}
+
 .loadingPage {
   min-height: 100vh;
   display: grid;

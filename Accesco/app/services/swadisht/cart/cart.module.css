@@ -1435,3 +1435,16 @@ gap: 6px;
   color: #9B7E6A;
   text-align: center;
 }
+
+@media (max-width: 768px) {
+  .page {
+    padding-top: 115px;
+  }
+  .cartLayout {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  .container {
+    padding: 20px 16px 60px;
+  }
+}
