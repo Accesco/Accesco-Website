@@ -293,6 +293,25 @@
 }
 
 @media (max-width: 767px) {
+
+ .brand-desc {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    color: rgba(255, 255, 255, 0.82);
+    line-height: 1.6;
+    margin-bottom: 20px;
+    max-width: 100%;
+  }
+  .logo-component {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  margin-bottom: 16px;
+  justify-content: center;
+}
+
   .accesco-footer-root {
     margin-top: 0 !important;
     padding-top: 0 !important;
@@ -317,6 +336,11 @@
     margin-bottom: 28px;
   }
 
+  .footer-brand-col {
+    min-width: 0;
+    max-width: 100%;
+  }
+
   .footer-links-col {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -324,18 +348,31 @@
       "services company"
       "resources company"
       "resources delivery";
-    column-gap: 34px;
+    column-gap: 24px;
     row-gap: 28px;
     align-items: start;
+    
+  }
+
+  
+  .footer-links-col .link-group:nth-child(1) {
+    grid-area: services;
+  }
+
+  .footer-links-col .link-group:nth-child(2) {
+    grid-area: company;
+  }
+
+  .footer-links-col .link-group:nth-child(3) {
+    grid-area: resources;
+  }
+
+  .footer-links-col .link-group:nth-child(4) {
+    grid-area: delivery;
   }
 
   .footer-watermark {
     font-size: clamp(48px, 18vw, 120px);
     letter-spacing: -4px;
   }
-}
-
-footer.accesco-footer-root {
-  margin-top: 0 !important;
-  padding-top: 0 !important;
 }
