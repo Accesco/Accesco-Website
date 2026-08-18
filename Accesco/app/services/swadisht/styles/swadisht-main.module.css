@@ -1550,10 +1550,12 @@
   }
 
   .heroSection::before {
-    background-position: center;
-    background-size: cover;
-    opacity: 1;
-  }
+  background-image: url("/images/hero-bg.png") !important;
+  background-repeat: no-repeat !important;
+  background-position: center top !important;
+  background-size: cover !important;
+  opacity: 1 !important;
+}
 
   .heroInner {
     width: calc(100% - 32px);
@@ -2397,25 +2399,28 @@
 @media screen and (max-width: 768px) {
 
   .heroSection {
-    width: 100%;
-    min-height: auto;
-    padding: 36px 0 70px !important;
-    overflow: hidden;
-  }
+  position: relative;
+  background: transparent;
+  padding: 125px 0 45px;
+}
 
-  .heroSection::before {
-    background-position: center;
-    background-size: cover;
-  }
-
+.heroSection::before {
+  background-image: url("/images/hero-bg.png") !important;
+  background-repeat: no-repeat !important;
+  background-position: center top !important;
+  background-size: 100% auto !important;
+  opacity: 1 !important;
+}
+  
   .heroInner {
-    width: calc(100% - 32px);
-    min-height: 470px;
-    margin: 0 auto;
-    display: block;
-    position: relative;
-    text-align: left;
-  }
+  width: calc(100% - 32px);
+  min-height: 470px;
+  margin: 0 auto;
+  padding-top: 55px;
+  display: block;
+  position: relative;
+  text-align: left;
+}
 
   /* Hero food image */
   .heroInner::after {
@@ -2440,7 +2445,7 @@
     z-index: 5;
 
     width: 100%;
-    max-width: 100%;
+    max-width: 260px;
 
     display: flex;
     flex-direction: column;
@@ -2452,7 +2457,7 @@
 
   .heroTitle {
     width: 100%;
-    max-width: 330px;
+    max-width: 260px;
     margin: 0;
 
     font-size: 39px;
@@ -2574,37 +2579,7 @@
     font-size: 27px;
   }
 }
-@media screen and (max-width: 768px) {
 
-  /* Remove background image */
-  .heroSection::before {
-    content: none !important;
-    background: none !important;
-  }
-
-  /* Remove food image */
-  .heroInner::after {
-    content: none !important;
-    background: none !important;
-  }
-}
-@media screen and (max-width: 768px) {
-
-  .heroSection{
-    padding: 80px 0 45px;   /* was 42px 0 82px */
-  }
-
-  .heroInner{
-    min-height: auto;       /* remove the fixed 330px */
-    padding-top: 20px;      /* pushes the text down */
-    display: flex;
-    align-items: flex-start;
-  }
-
-  .heroTextBlock{
-    margin-top: 12px;       /* adjust 12–24px to taste */
-  }
-}
 
 /* ===== NEW SWADISHTT DISCOVERY CARDS ===== */
 
@@ -3295,3 +3270,4 @@
     font-size: 11px;
   }
 }
+

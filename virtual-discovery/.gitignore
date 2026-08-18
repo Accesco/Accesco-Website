@@ -1,0 +1,68 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# Accesco Living – Virtual Discovery  |  .gitignore
+# ─────────────────────────────────────────────────────────────────────────────
+
+# ── CRITICAL: Environment & Secrets ──────────────────────────────────────────
+# NEVER commit .env files. They contain live database passwords, JWT secrets,
+# and API keys. Add them manually to your deployment environment instead.
+.env
+.env.*
+!.env.example          # Allow a safe example template without real values
+
+# ── Python ───────────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyo
+*.pyd
+.Python
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+*.egg
+.eggs/
+pip-wheel-metadata/
+
+# ── Local video storage ──────────────────────────────────────────────────────
+# Do NOT commit raw video files. These can be hundreds of megabytes.
+# Phase 2 will move these to cloud storage (AWS S3 / Cloudflare R2).
+storage/raw/*
+storage/processed/*
+storage/tmp/*
+
+# Keep the directory structure but ignore its contents
+!storage/raw/.gitkeep
+!storage/processed/.gitkeep
+!storage/tmp/.gitkeep
+
+# ── Dev artifacts & test files ───────────────────────────────────────────────
+*.mp4
+*.mov
+*_output.txt
+
+# ── IDEs & Editors ───────────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# ── Testing & Coverage ───────────────────────────────────────────────────────
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+
+# ── Logs ─────────────────────────────────────────────────────────────────────
+*.log
+logs/

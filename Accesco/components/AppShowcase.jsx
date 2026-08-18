@@ -167,6 +167,7 @@ export default function AppShowcase() {
         interests: form.interests.join(", "),
       });
 
+
       setSuccess(true);
       setAlreadyRegistered(true);
       setForm({ name: "", email: "", phone: "", interests: [] });

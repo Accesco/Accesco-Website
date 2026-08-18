@@ -285,10 +285,15 @@
 }
 
 .grokly-sidebar-item img {
-  width: 30px;
-  height: 30px;
-  border-radius: var(--grokly-radius-xs);
+  width: 32px;
+  height: 32px;
+  border-radius: 50% !important;
   object-fit: cover;
+  border: 1.5px solid #e2e8f0;
+  background: #ffffff;
+  padding: 2px;
+  box-sizing: border-box;
+  flex-shrink: 0;
 }
 
 .grokly-sidebar-item span {
@@ -452,6 +457,7 @@
   width: 68% !important;
   height: 68% !important;
   object-fit: contain !important;
+  border-radius: 50% !important;
   transition: none;
   user-select: none;
   -webkit-user-select: none;
