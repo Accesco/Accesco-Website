@@ -5,6 +5,7 @@
   color: #1a1a1a;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', sans-serif;
   line-height: 1.6;
+  overflow-x: hidden;
 }
 
 .about-container {
@@ -576,12 +577,16 @@
 }
 
 @media (max-width: 768px) {
+  .about-container {
+    padding: 0 16px;
+  }
+
   .about-hero-section {
-    padding: 140px 20px 100px;
+    padding: 120px 16px 80px;
   }
   
   .about-hero-overlay {
-    padding: 60px 32px;
+    padding: 40px 20px;
     border-radius: 16px;
   }
   
@@ -599,32 +604,32 @@
   }
   
   .about-hero-title {
-    font-size: 36px;
+    font-size: clamp(28px, 6vw, 36px);
   }
   
   .about-hero-description {
-    font-size: 18px;
+    font-size: 16px;
   }
   
   .about-mission-section {
-    padding: 80px 20px;
+    padding: 60px 16px;
   }
   
   .mission-title {
-    font-size: 28px;
+    font-size: clamp(24px, 5vw, 32px);
   }
   
   .about-content-section {
-    padding: 80px 20px;
+    padding: 60px 16px;
   }
   
   .section-heading {
-    font-size: 28px;
+    font-size: 24px;
   }
   
   .section-heading-center {
-    font-size: 32px;
-    margin-bottom: 48px;
+    font-size: 28px;
+    margin-bottom: 36px;
   }
   
   .content-text p {
@@ -632,15 +637,15 @@
   }
   
   .about-ventures-section {
-    padding: 80px 20px;
+    padding: 60px 16px;
   }
   
   .venture-card {
-    padding: 32px 24px;
+    padding: 28px 20px;
   }
   
   .about-stats-section {
-    padding: 80px 20px;
+    padding: 60px 16px;
   }
   
   .stats-grid {
@@ -649,15 +654,15 @@
   }
   
   .stat-value {
-    font-size: 48px;
+    font-size: 40px;
   }
   
   .about-principles-section {
-    padding: 80px 20px;
+    padding: 60px 16px;
   }
   
   .about-team-section {
-    padding: 80px 20px;
+    padding: 60px 16px;
   }
   
   .team-grid {
@@ -666,15 +671,15 @@
   }
   
   .about-vision-section {
-    padding: 80px 20px;
+    padding: 60px 16px;
   }
   
   .vision-title {
-    font-size: 28px;
+    font-size: clamp(24px, 5vw, 32px);
   }
   
   .vision-description {
-    font-size: 18px;
+    font-size: 16px;
     margin-bottom: 32px;
   }
   
@@ -690,50 +695,42 @@
   
   .mission-image {
     max-width: 100%;
-    margin: 0 -20px;
-    border-radius: 0;
-    box-shadow: none;
-  }
-  
-  .mission-image:hover {
-    transform: none;
-    box-shadow: none;
+    margin: 24px 0;
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
   }
   
   .mission-image img {
-    max-height: 300px;
+    max-height: none;
+    height: auto;
     object-fit: cover;
     object-position: center;
   }
   
   .content-image {
     max-width: 100%;
-    margin: 32px -20px;
-    border-radius: 0;
-    box-shadow: none;
-  }
-  
-  .content-image:hover {
-    transform: none;
-    box-shadow: none;
+    margin: 24px 0;
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
   }
   
   .content-image img {
     max-height: none;
+    height: auto;
     object-fit: contain;
     object-position: center;
   }
   
   .team-photo-placeholder {
     aspect-ratio: 16/9;
-    margin: 0 -20px 48px -20px;
-    border-radius: 0;
+    margin: 0 0 36px 0;
+    border-radius: 12px;
   }
 }
 
 @media (max-width: 480px) {
   .about-hero-overlay {
-    padding: 40px 24px;
+    padding: 28px 16px;
   }
   
   .about-hero-meta {
@@ -746,39 +743,36 @@
   }
   
   .mission-image {
-    margin: 0 -20px;
-    border-radius: 0;
+    margin: 16px 0;
   }
   
   .mission-image img {
-    max-height: 220px;
+    max-height: none;
+    height: auto;
   }
   
   .content-image {
-    margin: 24px -20px;
-    border-radius: 0;
+    margin: 16px 0;
   }
   
   .content-image img {
-    max-height: 200px;
+    max-height: none;
+    height: auto;
   }
   
   .about-hero-section {
-    padding: 120px 16px 80px;
+    padding: 100px 12px 60px;
     background-size: cover;
     background-position: center center;
   }
   
-  .about-hero-overlay {
-    padding: 32px 20px;
-  }
-  
   .about-hero-title {
-    font-size: 28px;
-    margin-bottom: 20px;
+    font-size: 24px;
+    margin-bottom: 16px;
   }
   
   .about-hero-description {
-    font-size: 16px;
+    font-size: 15px;
   }
 }
+

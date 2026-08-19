@@ -186,6 +186,7 @@ export default function AccescoHeader() {
   const forceScrolled = (
     pathname.startsWith('/partner') ||
     pathname.startsWith('/blogs') ||
+    pathname.startsWith('/accesco-library') ||
     pathname.startsWith('/faq') ||
     pathname.startsWith('/terms') ||
     pathname.startsWith('/about') ||

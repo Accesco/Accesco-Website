@@ -4,6 +4,7 @@
   color: #1a0a0f;
   font-family: inherit;
   line-height: 1.6;
+  overflow-x: hidden;
 }
 
 .press-container {
@@ -741,24 +742,68 @@
 
 @media (max-width: 768px) {
   .press-hero {
-    padding: 140px 20px 80px;
-    
+    padding: 130px 16px 50px !important;
+    position: relative;
+    overflow: hidden;
+
+    background-color: #AA0152 !important;
+    background-image: url("/images/black-pink.png") !important;
+    background-repeat: no-repeat !important;
+    background-size: cover !important;
+    background-position: center bottom !important;
   }
-   .press-hero-content {
-    transform: translateY(-50px);
-    
+
+  .press-hero::before {
+    display: none !important;
+  }
+
+  .press-hero-content {
+    position: relative;
+    z-index: 2;
+    transform: none;
+    margin-top: 24px;
+  }
+
+  .press-hero-title {
+    margin-top: 6px;
+    font-size: clamp(1.85rem, 7.5vw, 2.75rem);
+    line-height: 1.1;
+    font-weight: 800;
+    letter-spacing: -1px;
+    color: #ffffff !important;
+  }
+
+  .press-hero-subtitle {
+    font-size: 14px;
+    line-height: 1.5;
+    margin-bottom: 24px;
+    color: rgba(255, 255, 255, 0.88) !important;
+  }
+
+  .press-hero-actions {
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .press-hero-actions button {
+    width: 100%;
+    max-width: 280px;
+    height: 48px;
+    border-radius: 999px;
+    font-size: 14px;
+    font-weight: 700;
   }
   
   .press-section-header {
     flex-direction: column;
     align-items: flex-start;
     gap: 16px;
-   
   }
  
   .press-grid {
     grid-template-columns: 1fr;
-    max-width: 480px;
+    max-width: 100%;
     margin: 0 auto;
   }
   
@@ -778,39 +823,13 @@
 }
 
 @media (max-width: 480px) {
+  .press-hero-title {
+    font-size: clamp(1.8rem, 8vw, 2.3rem);
+  }
+
   .press-kit-cards {
     grid-template-columns: 1fr;
     max-width: 280px;
     margin: 0 auto;
-  }
-
-}
-@media (max-width: 768px) {
-  .press-hero {
-    padding: 180px 20px 90px !important;
-    position: relative;
-    overflow: hidden;
-
-    background-color: #AA0152 !important;
-    background-image: url("/images/black-pink.png") !important;
-    background-repeat: no-repeat !important;
-    background-size: cover !important;
-    background-position: center bottom !important;
-  }
-
-  .press-hero::before {
-    display: none !important;
-  }
-
-  .press-hero-content {
-    position: relative;
-    z-index: 2;
-  }
-
-  .press-hero-title {
-    margin-top: 45px;
-     font-size: 100px;
-  line-height: 1.45;
-  font-weight: 800;
   }
 }
