@@ -7,11 +7,14 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import AccescoHeader from '../../components/AccescoHeader';
 import AuthModal from '../components/AuthModal';
 import { useAuth } from '../components/AuthProvider';
+import { fetchWallet, redeemCode } from '../../lib/walletService';
 import {
-  updateWalletBalanceInFirebase,
-  updateUserFieldsInFirebase,
-  redeemCouponInFirebase,
-} from '../../lib/userService';
+  fetchSavedAddresses,
+  createAddress,
+  deleteAddress as deleteAddressApi,
+  selectAddress,
+} from '../../lib/addressService';
+import { updateUserFieldsInFirebase } from '../../lib/userService';
 import './profile.css';
 
 // Import modular section components
@@ -82,8 +85,35 @@ const AVAILABLE_COUPONS = [
   { code: 'FREEDEL', title: 'Free Delivery Across All Services', expiry: 'Valid today', disc: 'No min order' },
 ];
 
+// Maps a backend wallet transaction ({id, type, amount, reason, source,
+// referenceId, createdAt}) to the {id, title, type, amount, date} shape
+// TransactionHistorySection already renders, so that component didn't need
+// to change when the wallet moved from localStorage to a real API.
+function toDisplayTransaction(tx) {
+  return {
+    id: tx.id,
+    title: tx.reason || (tx.type === 'credit' ? 'Wallet Credit' : 'Wallet Debit'),
+    type: tx.type,
+    amount: tx.amount,
+    // Kept (not just for display) so redeemedCoupons below can tell which
+    // transactions were coupon redemptions and for which code.
+    source: tx.source,
+    referenceId: tx.referenceId,
+    date: tx.createdAt
+      ? new Date(tx.createdAt).toLocaleString('en-IN', {
+          day: '2-digit',
+          month: 'short',
+          year: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit',
+          hour12: true,
+        })
+      : '',
+  };
+}
+
 export default function ProfileContent() {
-  const { user, userData, loading, signOut, signIn, refreshUserData } = useAuth();
+  const { user, userData, loading, signOut, signIn, getIdToken, refreshUserData } = useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
   const sectionParam = searchParams?.get('section');
@@ -105,10 +135,12 @@ export default function ProfileContent() {
   const [showAddressForm, setShowAddressForm] = useState(false);
   const [newAddr, setNewAddr] = useState({ tag: 'Home', flat: '', street: '', city: 'Bengaluru', pincode: '' });
 
-  // Payment methods state
+  // Payment methods state — walletBalance/walletTransactions now come from
+  // the real backend (see the wallet-loading effect below), not localStorage.
   const [walletBalance, setWalletBalance] = useState(0);
   const [addAmount, setAddAmount] = useState('');
   const [showAddMoney, setShowAddMoney] = useState(false);
+  const [addMoneyNotice, setAddMoneyNotice] = useState('');
   const [upiList, setUpiList] = useState([]);
   const [newUpi, setNewUpi] = useState('');
   const [showAddUpi, setShowAddUpi] = useState(false);
@@ -117,9 +149,18 @@ export default function ProfileContent() {
   // Redeem code state
   const [promoInput, setPromoInput] = useState('');
   const [promoMessage, setPromoMessage] = useState({ type: '', text: '' });
-  const [redeemedCoupons, setRedeemedCoupons] = useState([]);
   const [walletTransactions, setWalletTransactions] = useState([]);
   const [hasFreeDelivery, setHasFreeDelivery] = useState(false);
+  // Monetary coupons redeemed server-side are derived from the wallet's own
+  // transaction history (source: 'coupon_redemption') rather than tracked
+  // separately — the wallet transaction list is the single source of truth
+  // for "has this code already been redeemed" now that redemption is
+  // server-validated. FREEDEL is the one exception: it's a non-monetary
+  // perk with no wallet transaction, so it's merged in from hasFreeDelivery.
+  const redeemedCoupons = [
+    ...walletTransactions.filter((t) => t.source === 'coupon_redemption').map((t) => t.referenceId),
+    ...(hasFreeDelivery ? ['FREEDEL'] : []),
+  ];
 
   // Bookmarks state
   const [bookmarks, setBookmarks] = useState([]);
@@ -174,27 +215,97 @@ export default function ProfileContent() {
       }
     }
 
+    // Wallet balance/transactions and addresses are intentionally NOT read
+    // from userData here — they load from the dedicated server-authoritative
+    // effects below (app/api/wallet, app/api/addresses), which is the
+    // audited source of truth for those two fields specifically.
     if (userData) {
-      setWalletBalance(userData.walletBalance ?? 0);
-      setRedeemedCoupons(userData.redeemedCoupons ?? []);
-      setHasFreeDelivery(Boolean(userData.hasFreeDelivery));
-      setWalletTransactions(userData.transactions ?? []);
-      setAddresses(userData.savedAddresses ?? []);
       setUpiList(userData.upiList ?? []);
       setCardsList(userData.savedCards ?? []);
       setSubscriptions(userData.subscriptions ?? []);
+      setHasFreeDelivery(Boolean(userData.hasFreeDelivery));
       if (userData.notificationSettings) {
         setNotifSettings(userData.notificationSettings);
       }
       if (userData.language) setSelectedLang(userData.language);
       if (userData.currency) setSelectedCurrency(userData.currency);
-      setBookmarks(userData.bookmarks ?? []);
     }
+
+    // Bookmarks aren't part of Firestore userData — the legacy migration in
+    // lib/userService.js never moves the per-service wishlist keys, so this
+    // stays a direct read of each service's wishlist storage.
+    const userKey = user?.uid || user?.phone || 'guest';
+    const groklyWish = JSON.parse(localStorage.getItem('grokly_wishlist') || '[]');
+    const swadishttWish = JSON.parse(localStorage.getItem('swadishtt_wishlist') || '[]');
+    const instastyleWish = JSON.parse(localStorage.getItem('instastyle_wishlist') || '[]');
+    const accescoWish = JSON.parse(localStorage.getItem(`accesco_bookmarks_${userKey}`) || '[]');
+    setBookmarks([...groklyWish, ...swadishttWish, ...instastyleWish, ...accescoWish]);
   }, [user, userData]);
+
+  // Referral coins are earned against the phone number a user verified
+  // (referralProfiles is keyed by phone digits — see
+  // app/api/referral/attribute/route.js), which for a Google-linked account
+  // can differ from their Firebase uid. Preferring phone digits here — when
+  // the user has a verified phone at all — means someone who has earned
+  // referral rewards actually sees them; falling back to uid covers
+  // Google-only accounts with no phone (who have no referral coins to miss
+  // either way, since earning them requires phone verification).
+  const walletUid = user?.phone ? user.phone.replace(/[^\d]/g, '') : user?.uid;
+
+  // Real wallet balance + ledger from the backend (see app/api/wallet).
+  useEffect(() => {
+    if (!user || !walletUid) {
+      setWalletBalance(0);
+      setWalletTransactions([]);
+      return;
+    }
+    let cancelled = false;
+    (async () => {
+      const { wallet } = await fetchWallet(getIdToken, walletUid);
+      if (cancelled || !wallet) return;
+      setWalletBalance(wallet.balance || 0);
+      setWalletTransactions((wallet.transactions || []).map(toDisplayTransaction));
+    })();
+    return () => { cancelled = true; };
+  }, [user, walletUid]);
 
   const displayName = user?.name || 'Accesco User';
   const phone = user?.phone || 'Not added';
   const email = user?.email || 'Not added';
+
+  // Real saved addresses from the backend (see app/api/addresses). Maps the
+  // backend shape ({label, houseNo, area, city, pincode, isDefault, ...})
+  // onto the {tag, flat, street, city, state, pincode, isDefault} shape
+  // AddressesSection already renders, so that component didn't need to
+  // change: `label` (a permanent Home/Work/Other category) becomes the
+  // display `tag` here, since the backend's own `tag` field means something
+  // different (which address is currently selected for delivery).
+  useEffect(() => {
+    if (!user?.uid) {
+      setAddresses([]);
+      return;
+    }
+    let cancelled = false;
+    (async () => {
+      const { addresses: fetched } = await fetchSavedAddresses(getIdToken, user.uid);
+      if (cancelled) return;
+      setAddresses(
+        (fetched || []).map((addr) => ({
+          id: addr.id,
+          tag: addr.label || 'Other',
+          name: displayName,
+          phone,
+          flat: addr.houseNo || '',
+          street: addr.area || addr.fullAddress || '',
+          city: addr.city || '',
+          state: addr.state || 'Karnataka',
+          pincode: addr.pincode || '',
+          isDefault: !!addr.isDefault,
+        }))
+      );
+    })();
+    return () => { cancelled = true; };
+  }, [user, displayName, phone, getIdToken]);
   const initials = displayName
     .split(' ')
     .filter(Boolean)
@@ -273,82 +384,80 @@ export default function ProfileContent() {
     event.target.value = '';
   };
 
-  // Address handlers
+  // Address handlers now call the real backend (app/api/addresses via
+  // lib/addressService.js) instead of only ever writing to localStorage —
+  // each one re-fetches the list afterward so isDefault/ordering stay
+  // correct regardless of how the server resolved them (e.g. the
+  // auto-promote-next-address-to-default behavior on delete).
+  const refreshAddresses = async () => {
+    if (!user?.uid) return;
+    const { addresses: fetched } = await fetchSavedAddresses(getIdToken, user.uid);
+    setAddresses(
+      (fetched || []).map((addr) => ({
+        id: addr.id,
+        tag: addr.label || 'Other',
+        name: displayName,
+        phone,
+        flat: addr.houseNo || '',
+        street: addr.area || addr.fullAddress || '',
+        city: addr.city || '',
+        state: addr.state || 'Karnataka',
+        pincode: addr.pincode || '',
+        isDefault: !!addr.isDefault,
+      }))
+    );
+  };
+
   const handleAddAddress = async (e) => {
     e.preventDefault();
-    if (!newAddr.flat || !newAddr.street || !newAddr.pincode) return;
-    const added = {
-      id: `addr-${Date.now()}`,
-      tag: newAddr.tag,
-      name: displayName,
-      phone: phone,
-      flat: newAddr.flat,
-      street: newAddr.street,
-      city: newAddr.city,
-      state: 'Karnataka',
-      pincode: newAddr.pincode,
-      isDefault: addresses.length === 0,
-    };
-    const updated = [...addresses, added];
-    setAddresses(updated);
-    if (user?.uid) {
-      await updateUserFieldsInFirebase(user.uid, { savedAddresses: updated });
-      refreshUserData(user.uid);
+    if (!newAddr.flat || !newAddr.street || !newAddr.pincode || !user?.uid) return;
+    try {
+      await createAddress(getIdToken, user.uid, {
+        label: newAddr.tag,
+        houseNo: newAddr.flat,
+        area: newAddr.street,
+        city: newAddr.city,
+        pincode: newAddr.pincode,
+        fullAddress: `${newAddr.flat}, ${newAddr.street}, ${newAddr.city} - ${newAddr.pincode}`,
+        isDefault: addresses.length === 0,
+      });
+      await refreshAddresses();
+      setNewAddr({ tag: 'Home', flat: '', street: '', city: 'Bengaluru', pincode: '' });
+      setShowAddressForm(false);
+    } catch (err) {
+      console.error('Failed to save address:', err);
     }
-    setNewAddr({ tag: 'Home', flat: '', street: '', city: 'Bengaluru', pincode: '' });
-    setShowAddressForm(false);
   };
 
   const setDefaultAddress = async (id) => {
-    const updated = addresses.map((a) => ({ ...a, isDefault: a.id === id }));
-    setAddresses(updated);
-    if (user?.uid) {
-      await updateUserFieldsInFirebase(user.uid, { savedAddresses: updated });
-      refreshUserData(user.uid);
+    if (!user?.uid) return;
+    try {
+      await selectAddress(getIdToken, user.uid, id);
+      await refreshAddresses();
+    } catch (err) {
+      console.error('Failed to set default address:', err);
     }
   };
 
   const deleteAddress = async (id) => {
-    const updated = addresses.filter((a) => a.id !== id);
-    setAddresses(updated);
-    if (user?.uid) {
-      await updateUserFieldsInFirebase(user.uid, { savedAddresses: updated });
-      refreshUserData(user.uid);
+    if (!user?.uid) return;
+    try {
+      await deleteAddressApi(getIdToken, user.uid, id);
+      await refreshAddresses();
+    } catch (err) {
+      console.error('Failed to delete address:', err);
     }
   };
 
-  // Wallet handler
-  const handleAddMoney = async (e) => {
+  // Wallet handler. Crediting a real wallet without collecting real payment
+  // would be a fraud vector, and wiring actual payment collection here
+  // duplicates the separate Razorpay-integrity work already scoped
+  // elsewhere — so this stays a visible "coming soon" state rather than a
+  // silent fake credit.
+  const handleAddMoney = (e) => {
     e.preventDefault();
-    const val = parseFloat(addAmount);
-    if (!val || val <= 0) return;
-    const currentBal = typeof walletBalance === 'number' ? walletBalance : parseFloat(walletBalance) || 0;
-    const newBal = currentBal + val;
-
-    const newTx = {
-      id: `tx_${Date.now()}`,
-      title: `Wallet Top-Up`,
-      type: 'credit',
-      amount: val,
-      date: new Date().toLocaleString('en-IN', {
-        day: '2-digit',
-        month: 'short',
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
-        hour12: true,
-      }),
-    };
-    setWalletBalance(newBal);
-    setWalletTransactions([newTx, ...walletTransactions]);
-
-    if (user?.uid) {
-      await updateWalletBalanceInFirebase(user.uid, newBal, newTx);
-      refreshUserData(user.uid);
-    }
-
+    setAddMoneyNotice('Adding money directly is coming soon. For now, redeem a promo code above to add funds to your wallet.');
     setAddAmount('');
-    setShowAddMoney(false);
   };
 
   const handleAddUpi = async (e) => {
@@ -364,33 +473,54 @@ export default function ProfileContent() {
     setShowAddUpi(false);
   };
 
-  // Coupon handler
+  // Coupon handler. FREEDEL is a non-monetary delivery perk with no wallet
+  // transaction, so it's persisted straight to the user's profile instead of
+  // going through the server wallet. Every other code redeems through the
+  // real, server-validated wallet (see app/api/wallet/redeem) instead of a
+  // hardcoded client-side check, which could never actually stop someone
+  // from editing validCodes/reward in devtools and crediting themselves
+  // anything.
   const handleRedeem = async (e, codeToRedeem = null) => {
     if (e && e.preventDefault) e.preventDefault();
     const targetCode = (codeToRedeem || promoInput).trim().toUpperCase();
     if (!targetCode) return;
 
     if (!user?.uid) {
+      setPromoMessage({ type: 'error', text: '❌ Please sign in to redeem coupon codes.' });
+      return;
+    }
+
+    if (targetCode === 'FREEDEL') {
+      if (redeemedCoupons.includes('FREEDEL')) {
+        setPromoMessage({ type: 'error', text: `❌ Coupon code 'FREEDEL' has already been redeemed!` });
+        return;
+      }
+      setHasFreeDelivery(true);
+      try {
+        await updateUserFieldsInFirebase(user.uid, { hasFreeDelivery: true });
+        await refreshUserData(user.uid);
+      } catch (err) {
+        console.error('Failed to persist free delivery pass:', err);
+      }
+      setPromoInput('');
       setPromoMessage({
-        type: 'error',
-        text: '❌ Please sign in to redeem coupon codes.',
+        type: 'success',
+        text: `🚚 Coupon code 'FREEDEL' successfully applied! Free Delivery Pass activated across all services.`,
       });
       return;
     }
 
-    const result = await redeemCouponInFirebase(user.uid, targetCode, walletBalance, redeemedCoupons);
-    if (result.success) {
+    try {
+      const result = await redeemCode(getIdToken, walletUid, targetCode);
+      setWalletBalance(result.balance);
+      setWalletTransactions((prev) => [toDisplayTransaction(result.transaction), ...prev]);
       setPromoInput('');
       setPromoMessage({
         type: 'success',
-        text: result.message,
+        text: `🎉 Coupon code '${targetCode}' successfully applied! ₹${result.transaction.amount} added to your wallet balance. New Balance: ₹${result.balance}.`,
       });
-      await refreshUserData(user.uid);
-    } else {
-      setPromoMessage({
-        type: 'error',
-        text: result.error,
-      });
+    } catch (err) {
+      setPromoMessage({ type: 'error', text: `❌ ${err.message}` });
     }
   };
 
@@ -628,6 +758,7 @@ export default function ProfileContent() {
                         addAmount={addAmount}
                         setAddAmount={setAddAmount}
                         handleAddMoney={handleAddMoney}
+                        addMoneyNotice={addMoneyNotice}
                         upiList={upiList}
                         showAddUpi={showAddUpi}
                         setShowAddUpi={setShowAddUpi}

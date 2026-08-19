@@ -649,11 +649,17 @@ function AuthModalContent({
 
       try {
         const appliedCode = normalizeReferralCode(referralCode)
-
+        // initializeReferralProfile needs the just-verified id token to call
+        // /api/referral/attribute — that route derives the referee's phone
+        // from the verified token itself rather than trusting a client-
+        // supplied value (see lib/referralService.js), so omitting the
+        // token here would silently skip referral attribution entirely.
+        const idToken = await auth.currentUser.getIdToken()
         await initializeReferralProfile(
           phoneNum,
           resolvedName,
-          appliedCode || null
+          appliedCode || null,
+          idToken
         )
 
         if (appliedCode && referralVisitUid) {

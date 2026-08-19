@@ -8,14 +8,30 @@
  * IMPORTANT: your dev server must already be running (npm run dev)
  * in another terminal before you run this script.
  *
+ * POST /api/products now requires an admin-role caller (see
+ * app/api/_lib/authz.js). Sign in as an admin account in the browser,
+ * grab that account's Firebase ID token (e.g. from devtools:
+ * `await firebase.auth().currentUser.getIdToken()`, or your app's own
+ * getIdToken() helper), and pass it + the account's uid via env vars:
+ *
  * Run with:
- *   node scripts/seed-grokly-products.mjs
+ *   ADMIN_ID_TOKEN=<token> ADMIN_UID=<uid> node scripts/seed-grokly-products.mjs
  */
 
 import { products as groklyProducts } from '../lib/groklyProducts.js';
 import { dishes, dishIngredients } from '../app/services/grokly/lib/dishesData.js';
 
 const BASE_URL = 'http://localhost:3000';
+const ADMIN_ID_TOKEN = process.env.ADMIN_ID_TOKEN || '';
+const ADMIN_UID = process.env.ADMIN_UID || '';
+
+if (!ADMIN_ID_TOKEN || !ADMIN_UID) {
+  console.warn(
+    'Warning: ADMIN_ID_TOKEN/ADMIN_UID not set — POST /api/products now requires an ' +
+    'admin-role caller, so every push below will fail with 403. See the header comment ' +
+    'in this file for how to obtain them.'
+  );
+}
 
 function normalizeGrokly(p) {
   return {
@@ -57,7 +73,10 @@ function normalizeDishIngredient(ing) {
 async function pushProduct(product) {
   const res = await fetch(`${BASE_URL}/api/products`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: {
+      'Content-Type': 'application/json',
+      ...(ADMIN_ID_TOKEN ? { Authorization: `Bearer ${ADMIN_ID_TOKEN}`, 'x-user-id': ADMIN_UID } : {}),
+    },
     body: JSON.stringify(product),
   });
   if (!res.ok) {

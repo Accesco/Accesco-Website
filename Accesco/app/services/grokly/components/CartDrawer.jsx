@@ -50,8 +50,8 @@ export default function CartDrawer() {
   const [appliedCoupon, setAppliedCoupon] = useState(null);
   const [showReturnModal, setShowReturnModal] = useState(false);
 
-  const { user } = useAuth();
-  const { otherStores, updateQuantity: updateOtherQuantity, removeItem: removeOtherItem } = useOtherStoreItems(user, 'grokly');
+  const { user, getIdToken } = useAuth();
+  const { otherStores, updateQuantity: updateOtherQuantity, removeItem: removeOtherItem } = useOtherStoreItems(user, 'grokly', getIdToken);
 
   // Calculate cart items with product details
   const cartItems = useMemo(() => {

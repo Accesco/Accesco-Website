@@ -1,4 +1,6 @@
 import { NextResponse } from 'next/server';
+import { verifyAuthToken } from '../../_lib/auth';
+import { requireAdmin, requireOwnerOrAdmin } from '../../_lib/authz';
 
 export const dynamic = 'force-dynamic';
 
@@ -8,6 +10,11 @@ export const dynamic = 'force-dynamic';
 // grokly_orders / instastyle_orders persistence pattern for parity.
 export async function POST(request) {
   try {
+    const { uid, error } = await verifyAuthToken(request);
+    if (error) {
+      return NextResponse.json({ error }, { status: 401 });
+    }
+
     const body = await request.json();
     const { order, customerEmail } = body;
 
@@ -21,7 +28,9 @@ export async function POST(request) {
       await setDoc(doc(collection(db, 'swadishtt_orders'), order.id), {
         ...order,
         customerEmail: customerEmail || order.customerEmail || null,
-        userId: order.userId || null,
+        // Identity is derived from the verified token, never trusted from
+        // the client body, so an order can't be created under someone else's id.
+        userId: uid,
         createdAt: serverTimestamp(),
       });
     } catch (dbErr) {
@@ -51,10 +60,19 @@ export async function GET(request) {
       if (!docSnap.exists()) {
         return NextResponse.json({ error: 'Order not found.' }, { status: 404 });
       }
-      return NextResponse.json({ order: { id: docSnap.id, ...docSnap.data() } });
+      const orderData = docSnap.data();
+      const authz = await requireOwnerOrAdmin(request, orderData.userId);
+      if (authz.error) {
+        return NextResponse.json({ error: authz.error }, { status: authz.status });
+      }
+      return NextResponse.json({ order: { id: docSnap.id, ...orderData } });
     }
 
     if (userId) {
+      const authz = await requireOwnerOrAdmin(request, userId);
+      if (authz.error) {
+        return NextResponse.json({ error: authz.error }, { status: authz.status });
+      }
       const q = query(collection(db, 'swadishtt_orders'), where('userId', '==', userId), limit(100));
       const snapshot = await getDocs(q);
       const orders = [];
@@ -64,6 +82,10 @@ export async function GET(request) {
     }
 
     if (email) {
+      const authz = await requireAdmin(request);
+      if (authz.error) {
+        return NextResponse.json({ error: authz.error }, { status: authz.status });
+      }
       const q = query(collection(db, 'swadishtt_orders'), where('customerEmail', '==', email), limit(100));
       const snapshot = await getDocs(q);
       const orders = [];
@@ -73,6 +95,12 @@ export async function GET(request) {
     }
 
     // Admin — most recent 50
+    {
+      const authz = await requireAdmin(request);
+      if (authz.error) {
+        return NextResponse.json({ error: authz.error }, { status: authz.status });
+      }
+    }
     const q = query(collection(db, 'swadishtt_orders'), orderBy('createdAt', 'desc'), limit(50));
     const snapshot = await getDocs(q);
     const orders = [];

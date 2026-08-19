@@ -43,3 +43,12 @@ next-env.d.ts
 serviceAccount*.json
 firebase-service-account*.json
 *-firebase-adminsdk-*.json
+
+# Firebase CLI / emulator local artifacts
+.firebase/
+firebase-debug.log
+firestore-debug.log
+database-debug.log
+pubsub-debug.log
+ui-debug.log
+*.emulator-data/

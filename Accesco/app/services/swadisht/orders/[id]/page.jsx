@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import SwadishttHeader from '../../components/SwadishttHeader';
+import { useAuth } from '../../../../components/AuthProvider';
 import styles from './order-detail.module.css';
 
 const ORDERS_STORAGE_KEY = 'swadishtt-orders';
@@ -36,27 +37,60 @@ function StatusBadge({ status }) {
 export default function SwadishttOrderDetailPage() {
   const params = useParams();
   const router = useRouter();
+  const { user: authUser, getIdToken } = useAuth();
   const [order, setOrder] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [containerScheduled, setContainerScheduled] = useState(false);
 
   const orderId = params.id;
 
+  // Backend-driven — same reasoning as the orders list page (see
+  // services/swadisht/orders/page.jsx): reads the real order from
+  // /api/swadishtt/orders?id=..., falling back to the local mirror only if
+  // unauthenticated or the fetch fails.
   useEffect(() => {
-    setIsLoading(true);
-    try {
-      const raw = localStorage.getItem(ORDERS_STORAGE_KEY);
-      if (raw) {
-        const parsed = JSON.parse(raw);
-        const found = (Array.isArray(parsed) ? parsed : []).find(o => o.id === orderId);
-        setOrder(found || null);
+    const loadLocalFallback = () => {
+      try {
+        const raw = localStorage.getItem(ORDERS_STORAGE_KEY);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          const found = (Array.isArray(parsed) ? parsed : []).find(o => o.id === orderId);
+          setOrder(found || null);
+        }
+      } catch (e) {
+        console.error('Error loading order:', e);
       }
-    } catch (e) {
-      console.error('Error loading order:', e);
-    } finally {
+    };
+
+    const loadOrder = async () => {
+      setIsLoading(true);
+      if (!authUser?.uid) {
+        loadLocalFallback();
+        setIsLoading(false);
+        return;
+      }
+      try {
+        const token = await getIdToken();
+        const res = await fetch(`/api/swadishtt/orders?id=${encodeURIComponent(orderId)}`, {
+          headers: token ? { Authorization: `Bearer ${token}`, 'x-user-id': authUser.uid } : {},
+        });
+        if (res.ok) {
+          const data = await res.json();
+          if (data.order) {
+            setOrder(data.order);
+            setIsLoading(false);
+            return;
+          }
+        }
+      } catch (e) {
+        console.warn('Swadishtt order backend read failed, falling back to local:', e);
+      }
+      loadLocalFallback();
       setIsLoading(false);
-    }
-  }, [orderId]);
+    };
+
+    loadOrder();
+  }, [orderId, authUser, getIdToken]);
 
   useEffect(() => {
     // Check if container return already scheduled

@@ -7,6 +7,7 @@ export default function PaymentMethodsSection({
   addAmount,
   setAddAmount,
   handleAddMoney,
+  addMoneyNotice = '',
   upiList,
   showAddUpi,
   setShowAddUpi,
@@ -50,6 +51,12 @@ export default function PaymentMethodsSection({
             Top Up Wallet
           </button>
         </form>
+      )}
+
+      {addMoneyNotice && (
+        <p style={{ margin: '8px 16px 0', color: '#a81c5a', fontSize: '0.88rem', fontStyle: 'italic' }}>
+          {addMoneyNotice}
+        </p>
       )}
 
       <div className="payment-sub-section">

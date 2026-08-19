@@ -2,44 +2,73 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { useAuth } from '../app/components/AuthProvider';
+
+const VENTURE_ROUTES = {
+  Grokly: { api: '/api/grokly/orders', path: '/services/grokly/order-tracking' },
+  Swadishtt: { api: '/api/swadishtt/orders', path: '/services/swadisht/order-tracking' },
+  InstaStyle: { api: '/api/instastyle/orders', path: '/services/instastyle/order-tracking' },
+};
+const VENTURE_LOCAL_KEYS = {
+  Grokly: 'grokly_orders',
+  Swadishtt: 'swadishtt-orders',
+  InstaStyle: 'instastyle_orders',
+};
 
 export default function ActiveOrdersWidget({ venture } = {}) {
   const [activeOrders, setActiveOrders] = useState([]);
   const router = useRouter();
+  const { user: authUser, getIdToken } = useAuth();
 
   useEffect(() => {
-    const loadActiveOrders = () => {
+    const loadFromLocalStorage = () => {
       try {
-        const groklyRaw = localStorage.getItem('grokly_orders');
-        const swadishttRaw = localStorage.getItem('swadishtt-orders');
-        const instastyleRaw = localStorage.getItem('instastyle_orders');
-
-        const grokly = groklyRaw ? JSON.parse(groklyRaw) : [];
-        const swadishtt = swadishttRaw ? JSON.parse(swadishttRaw) : [];
-        const instastyle = instastyleRaw ? JSON.parse(instastyleRaw) : [];
-
-        const combined = [
-          ...grokly.map(o => ({ ...o, venture: 'Grokly', path: '/services/grokly/order-tracking' })),
-          ...swadishtt.map(o => ({ ...o, venture: 'Swadishtt', path: '/services/swadisht/order-tracking' })),
-          ...instastyle.map(o => ({ ...o, venture: 'InstaStyle', path: '/services/instastyle/order-tracking' }))
-        ];
-
-        // When a specific venture is requested (e.g. InstaStyle's own orders page),
-        // only show that venture's orders instead of every service's.
-        const scoped = venture ? combined.filter(o => o.venture === venture) : combined;
-
-        // Filter for orders that are not DELIVERED
-        const active = scoped.filter(o => o.status !== 'DELIVERED');
-        setActiveOrders(active);
+        const ventures = venture ? [venture] : Object.keys(VENTURE_LOCAL_KEYS);
+        const combined = ventures.flatMap((v) => {
+          const raw = localStorage.getItem(VENTURE_LOCAL_KEYS[v]);
+          const orders = raw ? JSON.parse(raw) : [];
+          return orders.map((o) => ({ ...o, venture: v, path: VENTURE_ROUTES[v].path }));
+        });
+        setActiveOrders(combined.filter((o) => o.status !== 'DELIVERED'));
       } catch (error) {
         console.error('Error loading active orders:', error);
       }
     };
 
+    // Backend-driven for authenticated users — queries each relevant
+    // vertical's own order API by userId instead of only ever reading
+    // whatever's cached in this browser's localStorage, so this widget
+    // reflects orders placed on any device. Falls back to the local mirror
+    // for guests or if the fetch fails.
+    const loadActiveOrders = async () => {
+      if (!authUser?.uid) {
+        loadFromLocalStorage();
+        return;
+      }
+      try {
+        const token = await getIdToken();
+        const headers = token ? { Authorization: `Bearer ${token}`, 'x-user-id': authUser.uid } : {};
+        const ventures = venture ? [venture] : Object.keys(VENTURE_ROUTES);
+
+        const results = await Promise.all(
+          ventures.map((v) =>
+            fetch(`${VENTURE_ROUTES[v].api}?userId=${encodeURIComponent(authUser.uid)}`, { headers })
+              .then((res) => (res.ok ? res.json() : { orders: [] }))
+              .then((data) => (data.orders || []).map((o) => ({ ...o, venture: v, path: VENTURE_ROUTES[v].path })))
+              .catch(() => [])
+          )
+        );
+        setActiveOrders(results.flat().filter((o) => o.status !== 'DELIVERED'));
+      } catch (error) {
+        console.warn('Active orders backend read failed, falling back to local:', error);
+        loadFromLocalStorage();
+      }
+    };
+
     loadActiveOrders();
-    const interval = setInterval(loadActiveOrders, 10000);
+    const interval = setInterval(loadActiveOrders, 30000);
     return () => clearInterval(interval);
-  }, [venture]);
+  }, [venture, authUser, getIdToken]);
 
   if (activeOrders.length === 0) return null;
 

@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import styles from './size-memory.module.css';
+import { useAuth } from '../../../components/AuthProvider';
 
 const BRANDS = ['Zara', 'H&M', 'Levi\'s', 'Uniqlo', 'Nike', 'Adidas', 'Gucci'];
 const SIZES_TOP = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
@@ -10,6 +11,7 @@ const SIZES_BOTTOM = ['28', '30', '32', '34', '36', '38', '40'];
 const SIZES_FOOTWEAR = ['UK 6', 'UK 7', 'UK 8', 'UK 9', 'UK 10', 'UK 11'];
 
 export default function SizeMemoryEngine() {
+  const { user, getIdToken } = useAuth();
   const [profile, setProfile] = useState({
     topwearBrand: '',
     topwearSize: '',
@@ -25,8 +27,12 @@ export default function SizeMemoryEngine() {
   useEffect(() => {
     // Fetch existing profile
     const fetchProfile = async () => {
+      if (!user) return;
       try {
-        const res = await fetch('/api/size-memory');
+        const token = await getIdToken();
+        const res = await fetch('/api/size-memory', {
+          headers: { Authorization: `Bearer ${token}`, 'x-user-id': user.uid },
+        });
         if (res.ok) {
           const data = await res.json();
           if (data.profile) {
@@ -38,7 +44,7 @@ export default function SizeMemoryEngine() {
       }
     };
     fetchProfile();
-  }, []);
+  }, [user, getIdToken]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -47,13 +53,22 @@ export default function SizeMemoryEngine() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!user) {
+      setStatus({ type: 'error', message: 'Please log in to save your size profile.' });
+      return;
+    }
     setIsLoading(true);
     setStatus(null);
 
     try {
+      const token = await getIdToken();
       const res = await fetch('/api/size-memory', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+          'x-user-id': user.uid,
+        },
         body: JSON.stringify({ profile }),
       });
 

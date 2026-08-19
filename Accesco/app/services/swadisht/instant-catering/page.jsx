@@ -297,7 +297,7 @@ function PackageCard({ pkg, onBook }) {
 
 // ── Interactive Multi-Step Booking Modal Component ──
 function BookingModal({ pkg, onClose, onSuccess }) {
-  const { user } = useAuth();
+  const { user, getIdToken } = useAuth();
   const [step, setStep] = useState(1);
   const [date, setDate] = useState('');
   const [time, setTime] = useState('');
@@ -401,9 +401,17 @@ function BookingModal({ pkg, onClose, onSuccess }) {
     const bookingId = `CAT-${Date.now().toString(36).toUpperCase()}`;
 
     try {
+      const authHeaders = {};
+      if (user?.uid) {
+        const token = await getIdToken();
+        if (token) {
+          authHeaders.Authorization = `Bearer ${token}`;
+          authHeaders['x-user-id'] = user.uid;
+        }
+      }
       const response = await fetch('/api/swadishtt/orders/update-status', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', ...authHeaders },
         body: JSON.stringify({
           orderId: bookingId,
           newStatus: 'CONFIRMED',
