@@ -123,9 +123,9 @@ export default function Footer() {
                 <Image 
                   src="https://upload.wikimedia.org/wikipedia/commons/3/3c/Download_on_the_App_Store_Badge.svg" 
                   alt="Apple App Store" 
-                  className="badge-img" 
+                  className="badge-img " 
                   width={135} 
-                  height={40} 
+                  height={24} 
                 />
               </a>
             </div>

@@ -904,3 +904,27 @@
     min-height: 44px;
   }
 }
+
+/* Small phones */
+@media (max-width: 480px) {
+  .waitlistCard {
+    padding: 14px;
+    gap: 24px;
+  }
+
+  .leftPanel {
+    height: 260px;
+  }
+
+  .cardTitle {
+    font-size: 1.7rem;
+  }
+
+  .feedbackBody {
+    padding: 22px 16px 20px;
+  }
+
+  .feedbackHeaderMark {
+    display: none !important;
+  }
+}

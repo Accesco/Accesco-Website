@@ -173,6 +173,7 @@
 
 .social-row {
   display: flex;
+  flex-wrap: wrap;
   gap: 12px;
   margin-bottom: 20px;
 }
@@ -197,15 +198,16 @@
 .app-badges {
   display: flex;
   gap: 12px;
+  justify-content: space-between;
 }
 
-.app-badge {
+.download-badge {
   text-decoration: none;
   display: inline-block;
   transition: transform 0.2s ease;
 }
 
-.app-badge img {
+.download-badge img {
   height: 46px;
   width: auto;
   display: block;
@@ -272,7 +274,7 @@
 
 .footer-watermark {
   text-align: center;
-  font-size: 250px;
+  font-size: clamp(96px, 15vw, 250px);
   font-weight: 900;
   line-height: .9;
   color: rgba(255, 255, 255, 0.35);
@@ -280,6 +282,13 @@
   user-select: none;
   margin-top: 30px;
   margin-bottom: 10px;
+}
+
+
+img{
+  user-select:none;
+  -webkit-user-drag:none;
+  
 }
 
 @media (max-width: 900px) {
@@ -370,6 +379,23 @@
   .footer-watermark {
     font-size: clamp(48px, 18vw, 120px);
     letter-spacing: -4px;
+  }
+}
+
+@media (max-width: 480px) {
+  .bottom-bar {
+    flex-direction: column;
+    gap: 8px;
+    text-align: center;
+  }
+
+  .accesco-footer-root .social-icon {
+    width: 36px !important;
+    height: 36px !important;
+  }
+
+  .social-row {
+    gap: 8px;
   }
 }
 
