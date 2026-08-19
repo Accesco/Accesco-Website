@@ -1,11 +1,14 @@
 # Fine-tune DistilBERT for intent classification → intent_model/
 #
 # Usage:
-#   python3 chatbot-ml/train/train_classifier.py [epochs]
+#   python3 chatbot-ml/train/train_classifier.py [max_epochs]
 #
 # Outputs (saved to chatbot-ml/models/):
 #   intent_model/  — Hugging Face model + tokenizer
 #   label_map.json — intent id → intent name mapping
+#
+# 2026-08-19: recipe now uses stratified validation split + early stopping,
+# weight decay (1e-2) and label smoothing (0.1) — see experiment_frozen_head.py.
 
 import csv
 import json
@@ -13,7 +16,9 @@ import os
 import random
 import sys
 
+import numpy as np
 import torch
+from sklearn.model_selection import StratifiedShuffleSplit
 from transformers import AutoModelForSequenceClassification, AutoTokenizer
 
 BASE = os.path.dirname(os.path.abspath(__file__))
@@ -27,8 +32,17 @@ SEED = 42
 BATCH_SIZE = 16
 LEARNING_RATE = 3e-5
 
-# Optional CLI arg: number of epochs (default 5)
-EPOCHS = int(sys.argv[1]) if len(sys.argv) > 1 else 5
+# Regularization recipe validated by train/experiment_frozen_head.py (5-fold CV:
+# fine-tune 0.822 ± 0.032 vs frozen-head 0.622 ± 0.031 → keep fine-tuning). Weight
+# decay + label smoothing + early stopping lifted the production eval from 0.672
+# to 0.816 while shrinking the train/eval gap (0.156 → 0.104) with no suite
+# regressions (150/150, recovery 51/51, live catalog 43/43).
+WEIGHT_DECAY = 1e-2
+LABEL_SMOOTHING = 0.1
+PATIENCE = 3
+
+# Optional CLI arg: max epochs (default 12; early stopping picks the best epoch)
+MAX_EPOCHS = int(sys.argv[1]) if len(sys.argv) > 1 else 12
 
 random.seed(SEED)
 torch.manual_seed(SEED)
@@ -53,9 +67,11 @@ def main():
     with open(LABEL_MAP_PATH, "w") as f:
         json.dump(label_map, f, indent=2)
 
-    random.shuffle(data)
-    split = int(len(data) * 0.8)
-    train_data, eval_data = data[:split], data[split:]
+    labels_arr = np.array([d["labels"] for d in data])
+    sss = StratifiedShuffleSplit(n_splits=1, test_size=0.2, random_state=SEED)
+    (tr_idx, va_idx) = next(sss.split(np.zeros(len(data)), labels_arr))
+    train_data = [data[i] for i in tr_idx]
+    eval_data = [data[i] for i in va_idx]
     print(f"Train: {len(train_data)} | Eval: {len(eval_data)} | Intents: {len(label_map)}")
 
     tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
@@ -73,13 +89,18 @@ def main():
     )
 
     model.train()
-    optimizer = torch.optim.AdamW(model.parameters(), lr=LEARNING_RATE)
+    optimizer = torch.optim.AdamW(
+        model.parameters(), lr=LEARNING_RATE, weight_decay=WEIGHT_DECAY
+    )
 
     train_texts = [d["text"] for d in train_data]
     train_labels = [d["labels"] for d in train_data]
+    eval_texts = [d["text"] for d in eval_data]
+    eval_labels = torch.tensor([d["labels"] for d in eval_data])
 
-    # ─── Training loop ──────────────────────────────────────────────────────
-    for epoch in range(EPOCHS):
+    # ─── Training loop with early stopping ─────────────────────────────────
+    best_acc, best_state, patience = 0.0, None, 0
+    for epoch in range(MAX_EPOCHS):
         total_n, correct = 0, 0
         for i in range(0, len(train_texts), BATCH_SIZE):
             enc = tokenizer(
@@ -93,29 +114,36 @@ def main():
             optimizer.zero_grad()
             out = model(**enc, labels=labels)
             loss = torch.nn.functional.cross_entropy(
-                out.logits, labels, weight=weights
+                out.logits, labels, weight=weights, label_smoothing=LABEL_SMOOTHING
             )
             loss.backward()
             optimizer.step()
             total_n += labels.size(0)
             correct += (out.logits.argmax(-1) == labels).sum().item()
-        print(f"Epoch {epoch + 1}/{EPOCHS}: train_acc={correct / total_n:.3f}")
+        train_acc = correct / total_n
 
-    # ─── Evaluation on held-out set ────────────────────────────────────────
-    model.eval()
-    enc = tokenizer(
-        [d["text"] for d in eval_data],
-        truncation=True,
-        padding=True,
-        max_length=128,
-        return_tensors="pt",
-    )
-    labels = torch.tensor([d["labels"] for d in eval_data])
-    with torch.no_grad():
-        logits = model(**enc).logits
-    preds = logits.argmax(-1)
-    accuracy = (preds == labels).float().mean().item()
-    print(f"Eval accuracy: {accuracy:.3f}")
+        model.eval()
+        with torch.no_grad():
+            enc = tokenizer(
+                eval_texts, truncation=True, padding=True, max_length=128,
+                return_tensors="pt",
+            )
+            eval_logits = model(**enc).logits
+        eval_acc = (eval_logits.argmax(-1) == eval_labels).float().mean().item()
+        print(f"Epoch {epoch + 1}/{MAX_EPOCHS}: train_acc={train_acc:.3f} eval_acc={eval_acc:.3f}")
+
+        if eval_acc > best_acc:
+            best_acc = eval_acc
+            best_state = {k: v.clone() for k, v in model.state_dict().items()}
+            patience = 0
+        else:
+            patience += 1
+            if patience >= PATIENCE:
+                print(f"Early stopping at epoch {epoch + 1} (patience {PATIENCE})")
+                break
+
+    model.load_state_dict(best_state)
+    print(f"Best eval accuracy: {best_acc:.3f}")
 
     # ─── Save model ────────────────────────────────────────────────────────
     os.makedirs(OUTPUT_DIR, exist_ok=True)

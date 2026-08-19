@@ -1143,8 +1143,21 @@ KNOWLEDGE_GUARD_INTENTS = ("comparison", "referral_rewards")
 
 
 def knowledge_reply(text: str, intent: str) -> str | None:
-    """Answer market-research questions from the knowledge base, or None."""
-    if intent in KNOWLEDGE_GUARD_INTENTS:
+    """Answer market-research questions from the knowledge base, or None.
+
+    Guarded three ways so the knowledge base never hijacks other paths:
+      - intent guard: comparison/referral queries the suite locks to canned
+        replies are skipped. Uses keyword_intent (explicit phrasing like
+        "instead of"/"different from"/"referral") rather than the model's
+        label — the regularized model routes pricing-flavored comparisons
+        ("is accesco cheaper than other apps?") to comparison, but those
+        SHOULD get the knowledge answer, while explicit comparison phrasing
+        must keep the locked canned reply.
+      - negative vocabulary: order/buy/deliver/return/payment etc. stay on
+        their own intents.
+      - similarity bar: products/coverage/order queries sit far below it."""
+    kw = keyword_intent(text)
+    if kw in KNOWLEDGE_GUARD_INTENTS:
         return None
     tl = text.lower()
     if any(w in tl for w in KNOWLEDGE_NEGATIVE):

@@ -23,6 +23,7 @@
 | Phase 5: Intent retraining w/ knowledgebase PDF | ✅ Completed (2026-08-19, 140/140 suite) | `chatbot-data/intent_training_faqs_knowledgebase.pdf` + `data/add_knowledgebase_faqs.py` + 4-epoch retrain |
 | Phase 5b: Research-PDF Q&A training rows (Track A) | ✅ Completed (2026-08-19, 140/140 suite) | `data/add_research_faqs.py` + 23 new rows + 4-epoch retrain |
 | Phase 5b: Research-PDF RAG knowledge base (Track B) | ✅ Completed (2026-08-19, 150/150 suite) | `data/build_knowledge_faq.py` + 35 Q&As + `knowledge_reply()` in app.py |
+| Overfitting fix: regularized fine-tune | ✅ Completed (2026-08-19, eval 0.672→0.816, 150/150 suite) | early stop + weight decay + label smoothing; frozen-encoder rejected |
 
 ## Phase 1 — Completed
 
@@ -853,12 +854,48 @@ cd accesco-chatbot/chatbot-ml
       keep canned replies; lays chips → 2 cards; marathahalli → coverage;
       garam masala → 3 cards.
 
+- [x] **Knowledge guard refinement (2026-08-19, after regularized retrain):**
+      guard now uses `keyword_intent(text)` (explicit comparison/referral
+      phrasing like "instead of"/"different from"/"referral") instead of the
+      model's label — the regularized model routes pricing-flavored
+      comparisons ("is accesco cheaper than other apps?", conf 0.61) to
+      `comparison`, but those MUST get the knowledge answer, while explicit
+      comparison phrasing keeps the locked canned reply.
+
+### Overfitting fix — regularization experiment (Completed 2026-08-19)
+- [x] User reported train 0.828 / eval 0.672 (~0.16 gap) as overfitting and
+      asked whether frozen-encoder + regularization + data augmentation could
+      help. **NEW `chatbot-ml/train/experiment_frozen_head.py`** ran stratified
+      5-fold CV on faq_labeled.csv comparing:
+      - fine-tune (production recipe): **0.822 ± 0.032** (per-fold
+        .832/.832/.760/.840/.848)
+      - frozen encoder + head-only (LR 1e-3 — 3e-5 was the mistake, the head
+        is random-init): **0.622 ± 0.031** (.656/.664/.592/.608/.592)
+      → **frozen-encoder REJECTED**: intent phrasing is domain-specific enough
+      that fine-tuned features matter more than overfitting risk.
+- [x] Adopted the regularization *recipe* on the fine-tuned model instead:
+      **stratified 80/20 split + early stopping (patience 3) + AdamW weight
+      decay 1e-2 + label smoothing 0.1**. Retrained → **eval 0.816** (was
+      0.672), train/eval gap shrank **0.156 → 0.104**, best epoch 5 (early
+      stopped at 8). Merged into `train/train_classifier.py` (now takes
+      max_epochs, default 12; the standalone `train_classifier_reg.py` was
+      deleted after merge).
+- [x] Verified with regularized model: suite **150/150**, recovery **51/51**,
+      live catalog **43/43**, spot checks clean (lays chips 2 cards, garam
+      masala 3 cards, coverage/referral/comparison canned replies intact,
+      knowledge answers intact).
+- [x] Rollback safety: pre-regularization model backed up at
+      `/var/folders/.../opencode/model_backup/intent_model_old` (also as
+      `intent_model` in that dir) — restore with a copy back to
+      `chatbot-ml/models/intent_model` if ever needed.
+
 ### Commands
 ```bash
 cd accesco-chatbot/chatbot-ml
 /opt/anaconda3/bin/python3.13 data/add_research_faqs.py    # re-run (dedup-safe)
 /opt/anaconda3/bin/python3.13 data/build_knowledge_faq.py  # Track B knowledge JSON
-/opt/anaconda3/bin/python3.13 train/train_classifier.py 4 # 4 epochs
+/opt/anaconda3/bin/python3.13 train/train_classifier.py    # regularized retrain (early stop, default 12 max epochs)
+/opt/anaconda3/bin/python3.13 train/experiment_frozen_head.py  # frozen vs fine-tune 5-fold CV
 /opt/anaconda3/bin/python3.13 test_suite_runner.py        # 150/150
 ```
 
