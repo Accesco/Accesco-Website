@@ -1736,12 +1736,13 @@
   }
 
   .cravingsRow {
-    width: calc(100% + 16px);
-    margin-right: -16px;
+    width: 100%;
+    margin-right: 0;
     gap: 13px;
-    padding: 2px 16px 12px 0;
+    padding: 2px 0 12px 0;
     overflow-x: auto;
     scroll-snap-type: x proximity;
+    box-sizing: border-box;
   }
 
   .cravingItem {
@@ -1819,11 +1820,12 @@
   }
 
   .storyCardsTrack {
-    width: calc(100% + 16px);
-    margin-right: -16px;
-    padding-right: 16px;
+    width: 100%;
+    margin-right: 0;
+    padding-right: 0;
     gap: 10px;
     scroll-snap-type: x mandatory;
+    box-sizing: border-box;
   }
 
   .storyCard {
@@ -2116,15 +2118,16 @@
   }
 
   .testimonialsGrid {
-    width: calc(100% + 16px);
-    margin-right: -16px;
+    width: 100%;
+    margin-right: 0;
     margin-bottom: 20px;
-    padding-right: 16px;
+    padding-right: 0;
     display: flex;
     gap: 11px;
     overflow-x: auto;
     scroll-snap-type: x mandatory;
     scrollbar-width: none;
+    box-sizing: border-box;
   }
 
   .testimonialsGrid::-webkit-scrollbar {
@@ -2250,10 +2253,14 @@
   }
 
   .heroInner::after {
-    top: 105px;
-    right: -78px;
-    width: 305px;
-    height: 260px;
+    position: relative;
+    top: 0;
+    left: 0;
+    right: 0;
+    width: 280px;
+    height: 220px;
+    max-width: 85%;
+    margin: 12px auto 0;
   }
 
   .heroTitle {
@@ -2364,7 +2371,9 @@
   }
 
   .heroInner::after {
-    right: -90px;
+    left: 0;
+    right: 0;
+    margin: 8px auto 0;
   }
 
   .featureRow {

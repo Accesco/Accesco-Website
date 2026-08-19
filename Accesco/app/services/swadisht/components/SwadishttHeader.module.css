@@ -697,8 +697,9 @@
     height: 40px;
     padding: 0 10px;
     border-radius: 15px;
-    width: 164px;
+    width: 100%;
     max-width: 164px;
+    min-width: 0;
   }
 
   .locationArea {
