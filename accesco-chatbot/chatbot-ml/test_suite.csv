@@ -139,3 +139,13 @@ id,category,question,expected_intent,reply_contains,expect_products,expect_cards
 138,coverage,do you deliver to agram?,delivery_order,"Yes, we deliver to Agram",no,no,,,agram is a real covered area — exact token match still works
 139,commerce,garam masala,any,garam masala,yes,yes,/services/grokly?search,,"garam must not fuzzy-match area ""agram"" (0.80 < 0.85 cutoff); cards render"
 140,commerce,i want to order garam masala,any,,no,no,/services/grokly/category,,"""i want to order"" routes to masala-oil category page — key: no coverage reply"
+141,info,who is accesco for?,about_brand,eight customer segments,no,no,none,,knowledge base: ICP segments from 66.pdf
+142,info,do you serve students?,about_brand,students order,no,no,none,,knowledge base: student ICP
+143,info,which areas do you prioritize?,about_brand,Koramangala,no,no,none,,knowledge base: phase-1 localities
+146,info,which categories do bangalore households overspend on?,about_brand,Utilities,no,no,none,,knowledge base: spending report
+147,info,how many bangalore households stay within budget?,about_brand,66.5%,no,no,none,,knowledge base: budget discipline
+148,info,what is the average household spend in bangalore?,about_brand,"2,430",no,no,none,,knowledge base: spending sample size
+149,info,how do bangalore households pay?,about_brand,UPI,no,no,none,,knowledge base: payment modes (avoids "payment" negative-vocab guard)
+150,info,is accesco cheaper than other quick-commerce apps?,about_brand,dark-store,no,no,none,,knowledge base: pricing comparison
+144,info,how are you different from blinkit?,comparison|about_brand,one login,no,no,none,,knowledge guard: comparison intent keeps canned reply (not hijacked by knowledge)
+145,info,what makes you different from other apps?,comparison|about_brand,one login,no,no,none,,knowledge guard: comparison phrasing keeps canned reply

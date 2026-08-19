@@ -113,6 +113,18 @@ RECOVERY_FAQ_VECTORS = EMBED_MODEL.encode(
     RECOVERY_FAQ_QUESTIONS, normalize_embeddings=True
 ).astype(np.float32)
 
+# Market-research knowledge base (built by chatbot-ml/data/build_knowledge_faq.py).
+# Curated Q&As from chatbot-data/66.pdf (ICP/segments deck) + Bangalore
+# Household Spending Report — answers analytics questions ("who is Accesco
+# for?", "what do households overspend on?") the classifier has no intent for.
+with open(os.path.join(DATA_DIR, "knowledge_faq.json")) as f:
+    KNOWLEDGE_FAQS = json.load(f)["faqs"]
+
+KNOWLEDGE_QUESTIONS = [f["question"] for f in KNOWLEDGE_FAQS]
+KNOWLEDGE_VECTORS = EMBED_MODEL.encode(
+    KNOWLEDGE_QUESTIONS, normalize_embeddings=True
+).astype(np.float32)
+
 # Intent → canned reply fallback (used when intent has no FAQ answer)
 INTENT_REPLIES = {
     "greeting": "Hello! Welcome to Accesco Living. How can I help you today?",
@@ -1114,6 +1126,38 @@ def recovery_reply_for(text: str, intent: str) -> str | None:
     )
 
 
+# ─── Market-research knowledge base (Track B) ────────────────────────────────
+# Answers analytics/insight questions from 66.pdf (ICP deck) + Bangalore
+# Household Spending Report. Runs early in chat() but with a strict similarity
+# bar, a negative vocabulary, and an intent guard so it never steals
+# product/coverage/order queries or canned replies the suite locks (e.g.
+# "why should I use accesco instead of blinkit?" keeps the comparison reply).
+KNOWLEDGE_THRESHOLD = 0.68
+KNOWLEDGE_NEGATIVE = (
+    "order", "buy", "price of", "cost of", "how much", "deliver", "delivery",
+    "pincode", "return", "refund", "track", "account", "password", "login",
+    "payment", "referral", "what is grokly", "what is swadisht",
+    "what is instastyle", "what is xpense", "waitlist",
+)
+KNOWLEDGE_GUARD_INTENTS = ("comparison", "referral_rewards")
+
+
+def knowledge_reply(text: str, intent: str) -> str | None:
+    """Answer market-research questions from the knowledge base, or None."""
+    if intent in KNOWLEDGE_GUARD_INTENTS:
+        return None
+    tl = text.lower()
+    if any(w in tl for w in KNOWLEDGE_NEGATIVE):
+        return None
+    vec = EMBED_MODEL.encode([text], normalize_embeddings=True).astype(np.float32)[0]
+    sims = vec @ KNOWLEDGE_VECTORS.T
+    best = float(sims.max())
+    if best < KNOWLEDGE_THRESHOLD:
+        return None
+    faq = KNOWLEDGE_FAQS[int(sims.argmax())]
+    return faq["answer"]
+
+
 # ─── Route: Combined chat ───────────────────────────────────────────────────
 SINGLE_WORD_INFO = {
     "grokly": "grokly_grocery",
@@ -1156,6 +1200,21 @@ def chat(query: Query):
     if faq_answer:
         return ChatResponse(
             reply=faq_answer, intent="circular_recycle", confidence=confidence, products=[]
+        )
+
+    # 4a. Market-research knowledge base (ICP deck + household spending
+    #     report): answers analytics questions ("who is Accesco for?",
+    #     "which areas do you prioritize?"). Runs before coverage for the
+    #     same reason recovery_faq does — coverage's fuzzy area matcher can
+    #     hijack analytics wording ("which areas do you prioritize?" →
+    #     coverage, "bangalore households overspend" → coverage). Strict
+    #     similarity bar, negative vocabulary, and the intent guard keep it
+    #     from hijacking product/coverage/order queries or locked canned
+    #     replies.
+    knowledge = knowledge_reply(text, intent)
+    if knowledge:
+        return ChatResponse(
+            reply=knowledge, intent="about_brand", confidence=confidence, products=[]
         )
 
     # 4b. Delivery coverage lookup runs before product search so area/pincode
