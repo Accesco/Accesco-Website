@@ -417,7 +417,7 @@ section[class*="hero"] *:not([class*="background"]):not([class*="orb"]):not([cla
   .hero::before,
   .hero-section::before,
   .hero-banner::before,
-  section[class*="hero"]::before {
+  section[class*="hero"]:not([class*="swadisht"]):not([class*="heroSection"])::before {
     background: rgba(0, 0, 0, 0.68);
   }
 }

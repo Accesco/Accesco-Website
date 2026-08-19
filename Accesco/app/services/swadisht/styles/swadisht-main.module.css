@@ -2237,7 +2237,7 @@
 @media screen and (max-width: 480px) {
 
   .pageContent {
-    margin-top: 60px;
+    margin-top: 115px;
   }
 
   .heroSection {
@@ -3255,6 +3255,7 @@
     bottom: 0 !important;
     width: 100% !important;
     height: 100% !important;
+    background-color: transparent !important;
     background-image: url("/images/hero-bg.png") !important;
     background-repeat: no-repeat !important;
     background-position: center top !important;
@@ -3373,6 +3374,55 @@
     width: 100% !important;
     height: 100% !important;
     object-fit: cover !important;
+  }
+
+  .featureImageTop {
+    position: absolute !important;
+    top: 8px !important;
+    left: 8px !important;
+    right: 8px !important;
+    z-index: 10 !important;
+    display: flex !important;
+    align-items: flex-start !important;
+    justify-content: space-between !important;
+    gap: 6px !important;
+    pointer-events: none !important;
+  }
+
+  .featureTags {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 4px !important;
+    min-width: 0 !important;
+    flex: 1 1 auto !important;
+  }
+
+  .featureTag {
+    min-height: 18px !important;
+    padding: 3px 6px !important;
+    font-size: 9.5px !important;
+    line-height: 1 !important;
+    white-space: nowrap !important;
+    border-radius: 999px !important;
+  }
+
+  .featureRating {
+    flex: 0 0 auto !important;
+    flex-shrink: 0 !important;
+    white-space: nowrap !important;
+    font-size: 11.5px !important;
+    font-weight: 800 !important;
+    color: #ffffff !important;
+    background: rgba(0, 0, 0, 0.65) !important;
+    backdrop-filter: blur(4px) !important;
+    padding: 3px 7px !important;
+    border-radius: 999px !important;
+    line-height: 1 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-shadow: none !important;
+    z-index: 15 !important;
   }
 
   .statsBar {
