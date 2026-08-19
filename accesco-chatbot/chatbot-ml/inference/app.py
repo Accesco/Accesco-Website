@@ -187,6 +187,7 @@ class ProductCard(BaseModel):
     image: str
     service: str
     url: str
+    sku: str | None = None
 
 class ChatResponse(BaseModel):
     reply: str
@@ -567,6 +568,7 @@ def product_card(p: dict) -> ProductCard:
         image=p.get("image", ""),
         service=p["service"],
         url=p.get("url", ""),
+        sku=p.get("sku_id"),
     )
 
 PRODUCT_INTENTS = {"grokly_grocery", "swadisht_food", "instastyle_fashion",

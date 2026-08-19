@@ -41,6 +41,79 @@ const [input, setInput] = useState('')
 const [typing, setTyping] = useState(false)
   const endRef = useRef(null);
 
+  const addToCart = (card, quantity = 1) => {
+    try {
+      const svc = (card.service || '').toLowerCase();
+      let storageKey = 'grokly_cart';
+      
+      if (svc.includes('instastyle')) storageKey = 'instastyle_cart';
+      else if (svc.includes('swadisht')) storageKey = 'swadishtt-cart';
+
+      const savedCart = localStorage.getItem(storageKey);
+      let cart = savedCart ? JSON.parse(savedCart) : null;
+      
+      if (storageKey === 'grokly_cart') {
+        if (!cart || typeof cart !== 'object' || Array.isArray(cart)) cart = {};
+        cart[card.sku] = (cart[card.sku] || 0) + quantity;
+      } else if (storageKey === 'swadishtt-cart') {
+        if (!Array.isArray(cart)) cart = [];
+        const existingIndex = cart.findIndex(i => i.id === card.sku);
+        if (existingIndex > -1) {
+          cart[existingIndex].quantity += quantity;
+        } else {
+          cart.push({
+            id: card.sku,
+            name: card.name,
+            price: card.price ? parseInt(String(card.price).replace(/[^\d]/g, ''), 10) : 0,
+            image: card.image,
+            quantity,
+            customizations: {}
+          });
+        }
+      } else if (storageKey === 'instastyle_cart') {
+        if (!Array.isArray(cart)) cart = [];
+        const existingIndex = cart.findIndex(i => i.id === card.sku);
+        if (existingIndex > -1) {
+          cart[existingIndex].quantity += quantity;
+        } else {
+          cart.push({
+            id: card.sku,
+            name: card.name,
+            brand: card.brand,
+            price: card.price ? parseInt(String(card.price).replace(/[^\d]/g, ''), 10) : 0,
+            discountedPrice: card.price ? parseInt(String(card.price).replace(/[^\d]/g, ''), 10) : 0,
+            image: card.image,
+            selectedSize: 'One Size',
+            selectedColor: 'Default',
+            quantity,
+            slug: card.sku
+          });
+        }
+      }
+
+      localStorage.setItem(storageKey, JSON.stringify(cart));
+      window.dispatchEvent(new Event('storage'));
+      
+      // Attempt to visually notify user
+      const btn = document.activeElement;
+      if (btn && btn.classList.contains('ac-ai-add-btn')) {
+        const originalText = btn.innerText;
+        btn.innerText = 'Added!';
+        btn.style.background = '#4CAF50';
+        btn.style.color = 'white';
+        btn.style.borderColor = '#4CAF50';
+        setTimeout(() => {
+          btn.innerText = originalText;
+          btn.style.background = '#ffe6f0';
+          btn.style.color = '#b92b27';
+          btn.style.borderColor = '#ffccde';
+        }, 1500);
+      }
+    } catch (e) {
+      console.error('Failed to add to cart:', e);
+    }
+  };
+
   const [messages, setMessages] = useState([
     {
       id: 1,
@@ -266,6 +339,18 @@ const [typing, setTyping] = useState(false)
                                   ₹{card.originalPrice || '95'}
                                 </span>
                               </div>
+                              <button
+                                className="ac-ai-add-btn"
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  e.stopPropagation();
+                                  if (card.sku) {
+                                    addToCart(card, 1);
+                                  }
+                                }}
+                              >
+                                + Add
+                              </button>
                             </div>
                           </a>
                         ))}
@@ -730,6 +815,24 @@ const [typing, setTyping] = useState(false)
           font-size: 12px;
           color: #9c928f;
           text-decoration: line-through;
+        }
+
+        .ac-ai-add-btn {
+          margin-top: 10px;
+          background: #ffe6f0;
+          color: #b92b27;
+          border: 1px solid #ffccde;
+          border-radius: 6px;
+          padding: 6px 12px;
+          font-size: 13px;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.2s;
+          width: 100%;
+        }
+        
+        .ac-ai-add-btn:hover {
+          background: #ffccde;
         }
 
         .ac-ai-actions {
