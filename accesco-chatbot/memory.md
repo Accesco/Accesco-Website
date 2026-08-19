@@ -24,6 +24,7 @@
 | Phase 5b: Research-PDF Q&A training rows (Track A) | ✅ Completed (2026-08-19, 140/140 suite) | `data/add_research_faqs.py` + 23 new rows + 4-epoch retrain |
 | Phase 5b: Research-PDF RAG knowledge base (Track B) | ✅ Completed (2026-08-19, 150/150 suite) | `data/build_knowledge_faq.py` + 35 Q&As + `knowledge_reply()` in app.py |
 | Overfitting fix: regularized fine-tune | ✅ Completed (2026-08-19, eval 0.672→0.816, 150/150 suite) | early stop + weight decay + label smoothing; frozen-encoder rejected |
+| Phase 6: Add-to-Cart + Variant Selection | 📋 Planned (2026-08-19, feature details from team) | see Phase 6 section below |
 
 ## Phase 1 — Completed
 
@@ -898,6 +899,74 @@ cd accesco-chatbot/chatbot-ml
 /opt/anaconda3/bin/python3.13 train/experiment_frozen_head.py  # frozen vs fine-tune 5-fold CV
 /opt/anaconda3/bin/python3.13 test_suite_runner.py        # 150/150
 ```
+
+## Phase 6 — Add-to-Cart + Variant Selection (PLANNED 2026-08-19)
+
+Feature request from the team: when a user searches for a product, the chatbot
+should show an **Add to Cart** button alongside the existing redirect button.
+If the product has **variants** (different weights/forms of the same item, e.g.
+milk → toned, full cream), the bot should first show the variants, let the user
+pick one, then show that product with both the Add-to-Cart and redirect buttons.
+
+### Current state (what already exists)
+
+- `commerce_reply()` in `inference/app.py` returns product `cards` +
+  `actions` (Order/redirect buttons) — the redirect path works.
+- Grokly already has a full cart: `addToCart(productId, qty)` in
+  `Accesco/app/services/grokly/contexts/GroklyContext.jsx`, stored in
+  localStorage key `grokly_cart` + Firestore sync for logged-in users.
+- Catalog (`chatbot-ml/data/live_catalog.json`, 271 products) has **no
+  variant/grouping field** — e.g. "Amul Taaza Toned Fresh Milk" (sku
+  dairy-001) and "Amul Gold Full Cream Fresh Milk" (sku dairy-002) are
+  separate SKUs with no link between them.
+- `ProductCard` model (app.py) has **no `sku` field** — the frontend cannot
+  call `addToCart` without the product id.
+- The chatbot widget lives on the homepage (`Accesco/app/page.js`), but
+  `GroklyProvider` only wraps `/services/grokly` routes — `useGrokly()` is
+  NOT available where the chatbot renders.
+
+### Implementation plan (backend)
+
+1. Add `sku` to the `ProductCard` model so cards carry the product id.
+2. Add a variant-grouping mechanism: normalize product names by stripping
+   unit/weight words ("500 ml", "200 g") and group by brand + base name so a
+   family like "milk" yields its variants as one group. Prefer a curated
+   `variant_group` field in the catalog build script over pure auto-naming
+   (auto-normalization risks grouping different products, e.g. "Amul Taaza"
+   vs "Amul Gold").
+3. New flow in `commerce_reply()`: when a search hits a product family with
+   variants, reply with a variant list (sku/name/unit/price) and a prompt
+   ("Which one? Toned 500ml ₹27 / Full Cream 500ml ₹32"). After the user
+   picks, return the single product card with both an **Add to Cart** action
+   (new `cart` action type carrying `sku`) and the existing redirect.
+
+### Implementation plan (frontend)
+
+4. Render "Add to Cart" on product cards (or as a `cart`-type action) →
+   `addToCart(sku, 1)`.
+5. Wiring problem: chatbot is on the homepage, `GroklyProvider` only wraps
+   `/services/grokly`. Options:
+   - A (cleanest): lift `GroklyProvider` to the root layout so the chatbot
+     uses the real cart context.
+   - B (lighter): the widget writes to the same localStorage key
+     `grokly_cart` + dispatches a custom `grokly-cart-updated` event that
+     `GroklyContext` listens for.
+6. Add variant-chip UI in the message flow: when `variants` come back, render
+   selectable chips; the selection is sent back to `/chat`, and the final
+   card + both buttons render.
+
+### Verification plan
+
+- New test suite rows: variant search → variant list; variant pick → single
+  card + cart action; cart action carries correct sku.
+- Existing suite must stay green (150/150) + recovery 51/51 + live catalog
+  43/43.
+
+### Open decision for the user
+
+- Variants grouped **automatically** (name normalization — risky) vs
+  **curated manually** per family (safer — define which SKUs are variants of
+  "milk", "lays chips", etc.). Recommendation: manual curation.
 
 ## Known Open Questions / Decisions
 
