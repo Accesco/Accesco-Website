@@ -55,7 +55,7 @@ export default function PaymentMethodsSection({
       <div className="payment-sub-section">
         <div className="sub-section-header">
           <span>Saved UPI IDs</span>
-          <button type="button" onClick={() => setShowAddUpi(!showAddUpi)}>
+          <button type="button" className="panel-btn-secondary btn-sm" onClick={() => setShowAddUpi(!showAddUpi)}>
             + Add UPI
           </button>
         </div>

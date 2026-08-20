@@ -46,7 +46,7 @@ export default function TransactionHistorySection({ transactions = [] }) {
 
             let displayAmount;
             if (isFreeDel) {
-              displayAmount = '🚚 Free Delivery';
+              displayAmount = 'Free Delivery';
             } else if (isSwadisht50) {
               displayAmount = 'Food Delivery Discount: ₹50';
             } else if (typeof tx.amount === 'string') {
