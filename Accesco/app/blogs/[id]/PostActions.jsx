@@ -42,49 +42,40 @@ async function sharePost(post, platform) {
 }
 
 function useBookmark(post) {
-  const { user } = useAuth();
+  const { user, uid } = useAuth();
   const [bookmarkedPosts, setBookmarkedPosts] = useState([]);
 
   useEffect(() => {
     loadBookmarks();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user]);
+  }, [user, uid]);
 
   async function loadBookmarks() {
-    if (user?.email) {
+    const key = user?.email || user?.uid || uid;
+    if (key) {
       try {
-        setBookmarkedPosts(await getUserBookmarks(user.email));
+        setBookmarkedPosts(await getUserBookmarks(key));
       } catch (err) {
         console.error('Failed to load bookmarks:', err);
       }
-    } else {
-      const saved = localStorage.getItem('bookmarkedPosts');
-      if (saved) setBookmarkedPosts(JSON.parse(saved));
     }
   }
 
   const toggleBookmark = async () => {
-    if (user?.email) {
-      try {
-        const isCurrentlyBookmarked = bookmarkedPosts.includes(post.id);
-        if (isCurrentlyBookmarked) {
-          await removeBookmark(user.email, post.id);
-          setBookmarkedPosts((prev) => prev.filter((id) => id !== post.id));
-        } else {
-          await addBookmark(user.email, post.id);
-          setBookmarkedPosts((prev) => [...prev, post.id]);
-        }
-      } catch (error) {
-        console.error('Bookmark error:', error);
+    const key = user?.email || user?.uid || uid;
+    if (!key) return;
+
+    try {
+      const isCurrentlyBookmarked = bookmarkedPosts.includes(post.id);
+      if (isCurrentlyBookmarked) {
+        await removeBookmark(key, post.id);
+        setBookmarkedPosts((prev) => prev.filter((id) => id !== post.id));
+      } else {
+        await addBookmark(key, post.id);
+        setBookmarkedPosts((prev) => [...prev, post.id]);
       }
-    } else {
-      setBookmarkedPosts((prev) => {
-        const newBookmarks = prev.includes(post.id)
-          ? prev.filter((id) => id !== post.id)
-          : [...prev, post.id];
-        localStorage.setItem('bookmarkedPosts', JSON.stringify(newBookmarks));
-        return newBookmarks;
-      });
+    } catch (error) {
+      console.error('Bookmark error:', error);
     }
   };
 

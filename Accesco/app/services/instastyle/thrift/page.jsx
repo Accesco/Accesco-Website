@@ -97,24 +97,7 @@ export default function ThriftMarketplace() {
 
   useEffect(() => {
     const loadThrifts = async () => {
-      // 1. Hydrate from localStorage for instant user experience
-      let localThrifts = [];
-      if (typeof window !== 'undefined') {
-        try {
-          const saved = localStorage.getItem('instastyle_custom_products');
-          if (saved) {
-            const parsed = JSON.parse(saved);
-            if (Array.isArray(parsed)) {
-              localThrifts = parsed.filter(p => p.isThrift || (p.tags && p.tags.includes('thrift')));
-              setCustomThriftProducts(localThrifts);
-            }
-          }
-        } catch (error) {
-          console.error("Failed to load local thrifts:", error);
-        }
-      }
-
-      // 2. Fetch from Firebase Firestore for persistent storage
+      // Fetch from Firebase Firestore for persistent storage
       try {
         const { db } = await import('@/lib/firebase');
         const { collection, getDocs, query } = await import('firebase/firestore');
@@ -129,18 +112,10 @@ export default function ThriftMarketplace() {
         });
 
         if (fbThrifts.length > 0) {
-          setCustomThriftProducts(() => {
-            const merged = [...localThrifts];
-            fbThrifts.forEach(ft => {
-              if (!merged.some(p => p.id === ft.id)) {
-                merged.push(ft);
-              }
-            });
-            return merged;
-          });
+          setCustomThriftProducts(fbThrifts);
         }
       } catch (err) {
-        console.error("Failed to load thrifts from Firestore:", err);
+        console.error("Failed to fetch thrifts from Firestore:", err);
       }
     };
     loadThrifts();

@@ -156,18 +156,30 @@ export default function SwadishttOrdersPage() {
   const [hydrated, setHydrated] = useState(false);
 
   useEffect(() => {
-    if (typeof window === 'undefined') return;
-    try {
-      const raw = localStorage.getItem(ORDERS_STORAGE_KEY);
-      if (raw) {
-        const parsed = JSON.parse(raw);
-        setOrders(Array.isArray(parsed) ? parsed : []);
+    let cancelled = false;
+    async function fetchOrders() {
+      try {
+        const queryParam = user?.uid ? `userId=${encodeURIComponent(user.uid)}` : user?.email ? `email=${encodeURIComponent(user.email)}` : '';
+        const res = await fetch(`/api/swadishtt/orders${queryParam ? `?${queryParam}` : ''}`);
+        if (res.ok) {
+          const data = await res.json();
+          if (!cancelled) {
+            setOrders(Array.isArray(data.orders) ? data.orders : []);
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching Swadishtt orders:', error);
+      } finally {
+        if (!cancelled) {
+          setHydrated(true);
+        }
       }
-    } catch (error) {
-      console.error('Error reading Swadishtt orders:', error);
     }
-    setHydrated(true);
-  }, []);
+    fetchOrders();
+    return () => {
+      cancelled = true;
+    };
+  }, [user]);
 
   const filteredOrders = orders.filter((o) => matchesFilter(o, activeFilter));
 

@@ -168,12 +168,7 @@ export default function SwadishttHeader() {
             timestamp: new Date().toISOString()
           };
 
-          localStorage.setItem(
-            'userLocation',
-            JSON.stringify(locationObject)
-          );
-          
-          console.log("Saved location data:", locationObject);
+          updateLocation(locationObject);
           setShowLocationModal(false);
         }}
       />

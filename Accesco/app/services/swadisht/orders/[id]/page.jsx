@@ -44,26 +44,32 @@ export default function SwadishttOrderDetailPage() {
 
   useEffect(() => {
     setIsLoading(true);
-    try {
-      const raw = localStorage.getItem(ORDERS_STORAGE_KEY);
-      if (raw) {
-        const parsed = JSON.parse(raw);
-        const found = (Array.isArray(parsed) ? parsed : []).find(o => o.id === orderId);
-        setOrder(found || null);
-      }
-    } catch (e) {
-      console.error('Error loading order:', e);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [orderId]);
+    let cancelled = false;
 
-  useEffect(() => {
-    // Check if container return already scheduled
-    try {
-      const returns = JSON.parse(localStorage.getItem('sw_container_returns') || '[]');
-      setContainerScheduled(returns.some(r => r.orderId === orderId));
-    } catch (_) {}
+    async function loadOrder() {
+      try {
+        const res = await fetch('/api/swadishtt/orders');
+        if (res.ok) {
+          const data = await res.json();
+          const found = (Array.isArray(data.orders) ? data.orders : []).find(o => o.id === orderId);
+          if (!cancelled) {
+            setOrder(found || null);
+          }
+        }
+      } catch (e) {
+        console.error('Error loading order:', e);
+      } finally {
+        if (!cancelled) {
+          setIsLoading(false);
+        }
+      }
+    }
+
+    loadOrder();
+
+    return () => {
+      cancelled = true;
+    };
   }, [orderId]);
 
   if (isLoading) {

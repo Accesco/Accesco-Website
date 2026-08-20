@@ -2,94 +2,20 @@
 
 import { createContext, useContext, useState, useEffect, useMemo, useRef } from 'react';
 import { useAuth } from '../../../components/AuthProvider';
-import { db } from '@/lib/firebase';
-import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { db, auth } from '@/lib/firebase';
+import { doc, getDoc, setDoc, onSnapshot } from 'firebase/firestore';
 import { updateUserFieldsInFirebase, updateWalletBalanceInFirebase } from '@/lib/userService';
 
 const GroklyContext = createContext();
 
-const CART_STORAGE_KEY = 'grokly_cart';
-const ORDERS_STORAGE_KEY = 'grokly_orders';
-const LOCATION_STORAGE_KEY = 'userLocation';
-const DEVICE_ID_KEY = 'grokly_device_id';
-
-function getDeviceId() {
-  if (typeof window === 'undefined') return null;
-  let deviceId = localStorage.getItem(DEVICE_ID_KEY);
-  if (!deviceId) {
-    deviceId = `device_${Math.random().toString(36).slice(2, 10)}_${Date.now()}`;
-    localStorage.setItem(DEVICE_ID_KEY, deviceId);
-  }
-  return deviceId;
+function getGroklyUid(user) {
+  return user?.uid || auth?.currentUser?.uid || null;
 }
 
 export function GroklyProvider({ children }) {
-  const { user } = useAuth();
-  // Hydrate synchronously from localStorage to avoid empty flashes during navigation
-  const readInitialCart = () => {
-    if (typeof window === 'undefined') return {};
-    try {
-      const savedCart = localStorage.getItem(CART_STORAGE_KEY);
-      if (!savedCart) return {};
-      const parsed = JSON.parse(savedCart);
-      if (Array.isArray(parsed)) {
-        const mapped = parsed.reduce((acc, item) => {
-          if (!item) return acc;
-          if (typeof item === 'string') {
-            acc[item] = (acc[item] || 0) + 1;
-          } else if (item.id) {
-            acc[item.id] = (acc[item.id] || 0) + (item.quantity || 1);
-          }
-          return acc;
-        }, {});
-        return mapped;
-      } else if (parsed && typeof parsed === 'object') {
-        return parsed;
-      }
-    } catch (e) {
-      // ignore and fallthrough to empty
-    }
-    return {};
-  };
+  const { user, uid } = useAuth();
 
-  const readInitialOrders = () => {
-    if (typeof window === 'undefined') return [];
-    try {
-      const savedOrders = localStorage.getItem(ORDERS_STORAGE_KEY);
-      if (!savedOrders) return [];
-      const parsedOrders = JSON.parse(savedOrders);
-      if (Array.isArray(parsedOrders)) return parsedOrders;
-      if (parsedOrders && typeof parsedOrders === 'object') {
-        if (parsedOrders.id) return [parsedOrders];
-        const vals = Object.values(parsedOrders);
-        if (vals.length && (vals[0].id || vals[0].status || vals[0].timestamp)) return vals;
-      }
-    } catch (e) {}
-    return [];
-  };
-
-  const readInitialLocation = () => {
-    if (typeof window === 'undefined') return 'Koramangala';
-    try {
-      const savedLocation = localStorage.getItem(LOCATION_STORAGE_KEY);
-      if (!savedLocation) return 'Koramangala';
-      let parsedLocation = null;
-      try { parsedLocation = JSON.parse(savedLocation); } catch (e) { return savedLocation; }
-      const resolvedName =
-        parsedLocation?.displayAddress ||
-        (parsedLocation?.city
-          ? `${parsedLocation.city}${parsedLocation?.state || parsedLocation?.region ? `, ${parsedLocation.state || parsedLocation.region}` : ''}`
-          : '') ||
-        parsedLocation?.name ||
-        parsedLocation?.address ||
-        parsedLocation?.fullAddress;
-      return resolvedName || 'Koramangala';
-    } catch (e) {
-      return 'Koramangala';
-    }
-  };
-
-  const [cart, setCart] = useState({}); // starts empty for SSR safety
+  const [cart, setCart] = useState({});
   const [orders, setOrders] = useState([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [location, setLocation] = useState('Koramangala');
@@ -98,22 +24,37 @@ export function GroklyProvider({ children }) {
   // Reverse Commerce: items user has selected to return packaging for
   const [returnItems, setReturnItems] = useState([]);
 
-  // Track hydration — skip the first write so we never overwrite the real cart with an empty SSR value
+  // Track hydration — skip the first write so we never overwrite the real cart with an empty initial value
   const isHydrated = useRef(false);
+
+  // Sync user location if available from Firestore profile
+  useEffect(() => {
+    if (user?.selectedLocation) {
+      const loc = user.selectedLocation;
+      const resolvedName =
+        loc?.displayAddress ||
+        (loc?.city ? `${loc.city}${loc?.state || loc?.region ? `, ${loc.state || loc.region}` : ''}` : '') ||
+        loc?.name ||
+        loc?.address ||
+        loc?.fullAddress;
+      if (resolvedName) {
+        setLocation(resolvedName);
+      }
+    }
+  }, [user]);
 
   // Fetch orders from backend Firestore on mount/user change
   useEffect(() => {
     const fetchOrders = async () => {
+      const currentIdentifier = user?.uid || uid || auth?.currentUser?.uid;
+      if (!currentIdentifier) return;
+
       try {
-        const devId = getDeviceId();
-        let queryParam = '';
-        if (user) {
-          queryParam = user.uid ? `userId=${encodeURIComponent(user.uid)}` : `email=${encodeURIComponent(user.email)}`;
-        } else if (devId) {
-          queryParam = `deviceId=${encodeURIComponent(devId)}`;
-        } else {
-          return;
-        }
+        let queryParam = user?.uid
+          ? `userId=${encodeURIComponent(user.uid)}`
+          : user?.email
+          ? `email=${encodeURIComponent(user.email)}`
+          : `userId=${encodeURIComponent(currentIdentifier)}`;
 
         const res = await fetch(`/api/grokly/orders?${queryParam}`);
         if (res.ok) {
@@ -127,57 +68,54 @@ export function GroklyProvider({ children }) {
       }
     };
     fetchOrders();
-  }, [user]);
+  }, [user, uid]);
 
-  // Fetch cart from Firestore on mount/user change
+  // Fetch cart from Firestore on mount/user change with onSnapshot for real-time sync
   useEffect(() => {
-    const loadCartFromFirestore = async () => {
-      const identifier = user?.uid || user?.email || getDeviceId();
-      if (!identifier) {
-        isHydrated.current = true;
-        setCartHydrated(true);
-        return;
-      }
+    const identifier = user?.uid || uid || auth?.currentUser?.uid;
+    if (!identifier) {
+      isHydrated.current = true;
+      setCartHydrated(true);
+      return;
+    }
 
-      try {
-        const docSnap = await getDoc(doc(db, 'grokly_carts', identifier));
+    const cartDocRef = doc(db, 'grokly_carts', identifier);
+    const unsubscribe = onSnapshot(
+      cartDocRef,
+      (docSnap) => {
         if (docSnap.exists()) {
           const remoteCart = docSnap.data()?.cart;
-          if (remoteCart && typeof remoteCart === 'object') {
+          if (remoteCart && typeof remoteCart === 'object' && !Array.isArray(remoteCart)) {
             setCart(remoteCart);
           }
         }
-      } catch (err) {
-        console.error('[GroklyContext] Failed to load cart from Firestore:', err);
+        isHydrated.current = true;
+        setCartHydrated(true);
+      },
+      (err) => {
+        console.error('[GroklyContext] Failed to listen to cart from Firestore:', err);
+        isHydrated.current = true;
+        setCartHydrated(true);
       }
-      
-      isHydrated.current = true;
-      setCartHydrated(true);
-    };
+    );
 
-    loadCartFromFirestore();
-  }, [user]);
+    return () => unsubscribe();
+  }, [user, uid]);
 
-  // Save cart to Firestore whenever it changes
-  useEffect(() => {
-    if (!isHydrated.current) return;
-    
-    const saveCartToFirestore = async () => {
-      const identifier = user?.uid || user?.email || getDeviceId();
-      if (!identifier) return;
+  // Save cart to Firestore whenever modified
+  const saveCartToFirestore = async (newCart) => {
+    const identifier = user?.uid || uid || auth?.currentUser?.uid;
+    if (!identifier) return;
 
-      try {
-        await setDoc(doc(db, 'grokly_carts', identifier), {
-          cart,
-          updatedAt: Date.now(),
-        });
-      } catch (err) {
-        console.error('[GroklyContext] Failed to save cart to Firestore:', err);
-      }
-    };
-
-    saveCartToFirestore();
-  }, [cart, user]);
+    try {
+      await setDoc(doc(db, 'grokly_carts', identifier), {
+        cart: newCart,
+        updatedAt: Date.now(),
+      });
+    } catch (err) {
+      console.error('[GroklyContext] Failed to save cart to Firestore:', err);
+    }
+  };
 
   const cartCount = useMemo(() => {
     return Object.values(cart).reduce((sum, qty) => sum + qty, 0);
@@ -186,22 +124,30 @@ export function GroklyProvider({ children }) {
   const getProductQuantity = (productId) => cart[productId] || 0;
 
   const addToCart = (productId, quantity = 1) => {
-    setCart(prev => ({
-      ...prev,
-      [productId]: (prev[productId] || 0) + quantity
-    }));
+    setCart(prev => {
+      const next = {
+        ...prev,
+        [productId]: (prev[productId] || 0) + quantity
+      };
+      saveCartToFirestore(next);
+      return next;
+    });
   };
 
   const incrementQuantity = (productId) => addToCart(productId, 1);
+
   const decrementQuantity = (productId) => {
     setCart(prev => {
       const newQty = (prev[productId] || 0) - 1;
+      let next;
       if (newQty <= 0) {
-        const next = { ...prev };
+        next = { ...prev };
         delete next[productId];
-        return next;
+      } else {
+        next = { ...prev, [productId]: newQty };
       }
-      return { ...prev, [productId]: newQty };
+      saveCartToFirestore(next);
+      return next;
     });
   };
 
@@ -209,11 +155,15 @@ export function GroklyProvider({ children }) {
     setCart(prev => {
       const next = { ...prev };
       delete next[productId];
+      saveCartToFirestore(next);
       return next;
     });
   };
 
-  const clearCart = () => setCart({});
+  const clearCart = () => {
+    setCart({});
+    saveCartToFirestore({});
+  };
 
   const openCart = () => setIsCartOpen(true);
   const closeCart = () => setIsCartOpen(false);
@@ -230,11 +180,13 @@ export function GroklyProvider({ children }) {
 
     setLocation(locationText);
 
-    if (user?.uid) {
+    const targetUid = user?.uid || uid || auth?.currentUser?.uid;
+    if (targetUid) {
       const locObject = typeof newLocation === 'object' ? newLocation : { displayAddress: locationText, fullAddress: locationText };
-      await updateUserFieldsInFirebase(user.uid, { selectedLocation: locObject });
+      await updateUserFieldsInFirebase(targetUid, { selectedLocation: locObject });
     }
   };
+
   const openLocationModal = () => setIsLocationModalOpen(true);
   const closeLocationModal = () => setIsLocationModalOpen(false);
 
@@ -250,21 +202,21 @@ export function GroklyProvider({ children }) {
   }, [isCartOpen, isLocationModalOpen]);
 
   const placeOrder = (orderDetails) => {
+    const targetUid = orderDetails.userId || user?.uid || uid || auth?.currentUser?.uid || null;
     const newOrder = {
       id: `GRK-${Date.now()}`,
       status: 'PLACED',
       timestamp: new Date().toISOString(),
       venture: 'Grokly',
-      userId: orderDetails.userId || user?.uid || null,
+      userId: targetUid,
       customerEmail: orderDetails.customerEmail || user?.email || null,
       customerName: orderDetails.customerName || user?.name || user?.displayName || 'Accesco Customer',
-      deviceId: getDeviceId(),
       ...orderDetails
     };
     setOrders(prev => [newOrder, ...prev]);
-    setCart({});
+    clearCart();
 
-    // Persist to backend (non-blocking — local state already updated)
+    // Persist to backend
     const emailToUse = newOrder.customerEmail;
     fetch('/api/grokly/orders', {
       method: 'POST',
@@ -304,14 +256,15 @@ export function GroklyProvider({ children }) {
             }).catch(err => console.error('[GroklyContext] Backend status sync failed:', err));
 
             // If the status transitioned to DELIVERED, and they opted to return packaging,
-            // let's credit their green credits in localStorage!
+            // credit green credits in Firebase
             if (nextStatus === 'DELIVERED') {
               if (order.packagingOptIn && order.packagingBagsToReturn > 0) {
                 try {
                   const bags = parseInt(order.packagingBagsToReturn) || 0;
                   const creditsEarned = bags * 10;
-                  if (user?.uid && creditsEarned > 0) {
-                    updateWalletBalanceInFirebase(user.uid, (user.walletBalance || 0) + creditsEarned, {
+                  const targetUid = user?.uid || uid;
+                  if (targetUid && creditsEarned > 0) {
+                    updateWalletBalanceInFirebase(targetUid, (user?.walletBalance || 0) + creditsEarned, {
                       id: `ECO-${Date.now()}`,
                       title: 'Packaging Return Bonus',
                       type: 'credit',
@@ -335,7 +288,7 @@ export function GroklyProvider({ children }) {
     }, 5000);
     
     return () => clearInterval(interval);
-  }, [orders]);
+  }, [orders, user, uid]);
 
   return (
     <GroklyContext.Provider value={{
@@ -374,3 +327,4 @@ export function useGrokly() {
 }
 
 export const useCart = useGrokly;
+

@@ -18,19 +18,10 @@ export default function InstaStyleOrderDetailPage() {
   useEffect(() => {
     const loadOrder = () => {
       setIsLoading(true);
-      try {
-        const raw = localStorage.getItem('instastyle_orders');
-        let allOrders = contextOrders || [];
-        if (raw) {
-          allOrders = JSON.parse(raw);
-        }
-        const found = allOrders.find(o => o.id === orderId);
-        setOrder(found);
-      } catch (error) {
-        console.error('Error loading order details:', error);
-      } finally {
-        setIsLoading(false);
-      }
+      const allOrders = contextOrders || [];
+      const found = allOrders.find(o => o.id === orderId);
+      setOrder(found || null);
+      setIsLoading(false);
     };
 
     loadOrder();

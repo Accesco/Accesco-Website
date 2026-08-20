@@ -1,23 +1,25 @@
 /**
  * Location Service - High-accuracy delivery location management
  * Uses Nominatim (OpenStreetMap) for street-level address details
- * Perfect for delivery apps requiring precise location information
+ * In-memory runtime cache synchronized with Firestore user profile
  */
 
+let activeUserLocation = null;
+
 /**
- * Get the complete user location data from localStorage
+ * Sets the active location in memory
+ * @param {Object} location
+ */
+export function setUserLocation(location) {
+  activeUserLocation = location;
+}
+
+/**
+ * Get the complete user location data
  * @returns {Object|null} Complete location object or null if not set
  */
 export function getUserLocation() {
-  if (typeof window === 'undefined') return null;
-  
-  try {
-    const location = localStorage.getItem('userLocation');
-    return location ? JSON.parse(location) : null;
-  } catch (error) {
-    console.error('Error parsing user location:', error);
-    return null;
-  }
+  return activeUserLocation;
 }
 
 /**
@@ -62,7 +64,7 @@ export function getFullAddress() {
 export function getDisplayAddress() {
   const location = getUserLocation();
   if (!location) return '';
-  return `${location.city}, ${location.state}`;
+  return `${location.city || ''}${location.state ? `, ${location.state}` : ''}`;
 }
 
 /**
@@ -97,8 +99,7 @@ export function isLocationSet() {
  * Clear stored location
  */
 export function clearLocation() {
-  if (typeof window === 'undefined') return;
-  localStorage.removeItem('userLocation');
+  activeUserLocation = null;
 }
 
 /**
@@ -141,13 +142,13 @@ export function formatAddress(format = 'medium') {
   
   switch (format) {
     case 'short':
-      return `${location.city}, ${location.state}`;
+      return `${location.city || ''}${location.state ? `, ${location.state}` : ''}`;
     case 'medium':
-      return `${location.street ? location.street + ', ' : ''}${location.city}`;
+      return `${location.street ? location.street + ', ' : ''}${location.city || ''}`;
     case 'full':
-      return location.fullAddress;
+      return location.fullAddress || '';
     default:
-      return location.fullAddress;
+      return location.fullAddress || '';
   }
 }
 
@@ -217,6 +218,7 @@ export async function getPersonCity() {
 }
 
 const locationService = {
+  setUserLocation,
   getUserLocation,
   getLocationField,
   getStreetAddress,

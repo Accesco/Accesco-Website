@@ -11,6 +11,8 @@ import {
   stepProgressTowards,
 } from "@/lib/riderTrackingService";
 
+import { useAuth } from "@/app/components/AuthProvider";
+
 const RIDE_DURATION_MS = 3 * 60 * 1000;
 
 // Track which orders already have a running simulation this session, so a
@@ -53,6 +55,7 @@ const userIcon = new L.Icon({
 });
 
 export default function LiveTrackingMap({ orderId }) {
+  const { user } = useAuth();
   const [userLoc, setUserLoc] = useState(null);
   const [routePositions, setRoutePositions] = useState([]);
   const [riderPos, setRiderPos] = useState(null);
@@ -69,26 +72,21 @@ export default function LiveTrackingMap({ orderId }) {
     : [13.08268, 80.27072];
 
   useEffect(() => {
-    const stored = localStorage.getItem("userLocation");
-    if (stored) {
-      try {
-        const parsed = JSON.parse(stored);
-        if ((parsed.lat && parsed.lng) || parsed.lon) {
-          setUserLoc([
-            parseFloat(parsed.lat),
-            parseFloat(parsed.lng) || parseFloat(parsed.lon),
-          ]);
-        } else if (parsed.latitude && parsed.longitude) {
-          setUserLoc([
-            parseFloat(parsed.latitude),
-            parseFloat(parsed.longitude),
-          ]);
-        }
-      } catch (e) {
-        console.error("Failed to parse location data:", e);
+    if (user?.selectedLocation) {
+      const parsed = user.selectedLocation;
+      if ((parsed.lat && parsed.lng) || parsed.lon) {
+        setUserLoc([
+          parseFloat(parsed.lat),
+          parseFloat(parsed.lng) || parseFloat(parsed.lon),
+        ]);
+      } else if (parsed.latitude && parsed.longitude) {
+        setUserLoc([
+          parseFloat(parsed.latitude),
+          parseFloat(parsed.longitude),
+        ]);
       }
     }
-  }, []);
+  }, [user]);
 
   useEffect(() => {
     if (!userLoc) return;

@@ -5,16 +5,17 @@ const COLLECTION = 'userBookmarks';
 
 /**
  * Get user's bookmarked blog IDs
- * @param {string} userEmail - User's email address
+ * @param {string} userIdOrEmail - User's UID or email address
  * @returns {Promise<string[]>} Array of bookmarked blog IDs
  */
-export async function getUserBookmarks(userEmail) {
-  if (!userEmail) return [];
+export async function getUserBookmarks(userIdOrEmail) {
+  if (!userIdOrEmail) return [];
   
   try {
+    const key = String(userIdOrEmail).toLowerCase();
     const q = query(
       collection(db, COLLECTION),
-      where('userEmail', '==', userEmail.toLowerCase())
+      where('userKey', '==', key)
     );
     const snapshot = await getDocs(q);
     
@@ -27,19 +28,22 @@ export async function getUserBookmarks(userEmail) {
 
 /**
  * Add a bookmark
- * @param {string} userEmail - User's email address
+ * @param {string} userIdOrEmail - User's UID or email address
  * @param {string} blogId - Blog post ID to bookmark
  * @returns {Promise<void>}
  */
-export async function addBookmark(userEmail, blogId) {
-  if (!userEmail || !blogId) {
-    throw new Error('User email and blog ID are required');
+export async function addBookmark(userIdOrEmail, blogId) {
+  if (!userIdOrEmail || !blogId) {
+    throw new Error('User identifier and blog ID are required');
   }
 
   try {
-    const docId = `${userEmail.toLowerCase()}_${blogId}`;
+    const key = String(userIdOrEmail).toLowerCase();
+    const docId = `${key}_${blogId}`;
     await setDoc(doc(db, COLLECTION, docId), {
-      userEmail: userEmail.toLowerCase(),
+      userKey: key,
+      userEmail: key.includes('@') ? key : null,
+      userId: !key.includes('@') ? key : null,
       blogId: blogId,
       bookmarkedAt: new Date().toISOString(),
     });
@@ -51,17 +55,18 @@ export async function addBookmark(userEmail, blogId) {
 
 /**
  * Remove a bookmark
- * @param {string} userEmail - User's email address
+ * @param {string} userIdOrEmail - User's UID or email address
  * @param {string} blogId - Blog post ID to unbookmark
  * @returns {Promise<void>}
  */
-export async function removeBookmark(userEmail, blogId) {
-  if (!userEmail || !blogId) {
-    throw new Error('User email and blog ID are required');
+export async function removeBookmark(userIdOrEmail, blogId) {
+  if (!userIdOrEmail || !blogId) {
+    throw new Error('User identifier and blog ID are required');
   }
 
   try {
-    const docId = `${userEmail.toLowerCase()}_${blogId}`;
+    const key = String(userIdOrEmail).toLowerCase();
+    const docId = `${key}_${blogId}`;
     await deleteDoc(doc(db, COLLECTION, docId));
   } catch (error) {
     console.error('Error removing bookmark:', error);
@@ -71,15 +76,15 @@ export async function removeBookmark(userEmail, blogId) {
 
 /**
  * Check if a blog is bookmarked
- * @param {string} userEmail - User's email address
+ * @param {string} userIdOrEmail - User's UID or email address
  * @param {string} blogId - Blog post ID
  * @returns {Promise<boolean>}
  */
-export async function isBookmarked(userEmail, blogId) {
-  if (!userEmail || !blogId) return false;
+export async function isBookmarked(userIdOrEmail, blogId) {
+  if (!userIdOrEmail || !blogId) return false;
 
   try {
-    const bookmarks = await getUserBookmarks(userEmail);
+    const bookmarks = await getUserBookmarks(userIdOrEmail);
     return bookmarks.includes(blogId);
   } catch (error) {
     console.error('Error checking bookmark:', error);

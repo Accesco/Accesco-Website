@@ -324,15 +324,6 @@ export default function SwadishttReturnContainerPage() {
         status: 'scheduled',
       };
 
-      const previousReturns = JSON.parse(
-        localStorage.getItem('sw_container_returns') || '[]'
-      );
-
-      localStorage.setItem(
-        'sw_container_returns',
-        JSON.stringify([...previousReturns, returnRequest])
-      );
-
       await fetch(
         `/api/swadishtt/orders/${orderId}/return-container`,
         {

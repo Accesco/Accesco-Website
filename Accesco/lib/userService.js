@@ -457,7 +457,29 @@ export async function migrateLocalStorageToFirebase(userId) {
       `accesco_user`,
       `grokly_cart`,
       `grokly_orders`,
-      `agriConnectCart`
+      `agriConnectCart`,
+      `grokly_device_id`,
+      `swadishtt_device_id`,
+      `instastyle_device_id`,
+      `instastyle_cart`,
+      `instastyle_wishlist`,
+      `instastyle_orders`,
+      `instastyle_inventory`,
+      `swadishtt-orders`,
+      `sw_issue_reports`,
+      `sw_container_returns`,
+      `instastyle_custom_products`,
+      `instastyle_circular_credits`,
+      `instastyle_activity_log`,
+      `instastyle_profile`,
+      `grokly_wishlist`,
+      `grokly_recycled_bags_count`,
+      `grokly_eco_history`,
+      `swadishtt-health-profile`,
+      `swadishtt-health-mode`,
+      `userLocation`,
+      `SAVED_ADDRESSES_KEY`,
+      `accesso_cookie_consent`
     );
 
     // Perform Firestore update if there's legacy data to migrate

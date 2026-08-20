@@ -377,23 +377,11 @@ export default function LocationModal({
     useState(null);
 
   /* ------------------------------------------------------------------------ */
-  /*                              LOCAL STORAGE                               */
+  /*                              SAVED ADDRESSES                             */
   /* ------------------------------------------------------------------------ */
 
   const persistSavedAddresses = (addressesToSave) => {
     setSavedAddresses(addressesToSave);
-
-    try {
-      localStorage.setItem(
-        SAVED_ADDRESSES_KEY,
-        JSON.stringify(addressesToSave)
-      );
-    } catch (storageError) {
-      console.error(
-        "Could not save addresses:",
-        storageError
-      );
-    }
   };
 
   useEffect(() => {
@@ -407,7 +395,7 @@ export default function LocationModal({
 
     const loadAddresses = async () => {
       setLoading(true);
-      if (user) {
+      if (user?.uid) {
         const { addresses, error } = await fetchSavedAddresses(getIdToken, user.uid);
         if (!error && addresses) {
           const normalizedAddresses = addresses.map(normalizeStoredAddress);
@@ -419,42 +407,13 @@ export default function LocationModal({
         }
       }
       
-      try {
-        const storedValue = localStorage.getItem(SAVED_ADDRESSES_KEY);
-        if (!storedValue) {
-          setSavedAddresses(user ? [] : DEFAULT_SAVED_ADDRESSES);
-          if (!user) {
-            localStorage.setItem(SAVED_ADDRESSES_KEY, JSON.stringify(DEFAULT_SAVED_ADDRESSES));
-            setSelectedAddressId("home");
-          } else {
-            setSelectedAddressId("");
-          }
-          setLoading(false);
-          return;
-        }
-        
-        const parsedValue = JSON.parse(storedValue);
-        if (!Array.isArray(parsedValue)) {
-          setSavedAddresses(user ? [] : DEFAULT_SAVED_ADDRESSES);
-          setSelectedAddressId("home");
-          setLoading(false);
-          return;
-        }
-        
-        const normalizedAddresses = parsedValue.map(normalizeStoredAddress);
-        setSavedAddresses(normalizedAddresses);
-        const selected = normalizedAddresses.find((item) => item.tag === "Selected");
-        setSelectedAddressId(selected?.id || normalizedAddresses[0]?.id || "");
-      } catch (storageError) {
-        console.error("Could not load saved addresses:", storageError);
-        setSavedAddresses(user ? [] : DEFAULT_SAVED_ADDRESSES);
-        setSelectedAddressId("home");
-      }
+      setSavedAddresses(user ? [] : DEFAULT_SAVED_ADDRESSES);
+      setSelectedAddressId(user ? "" : "home");
       setLoading(false);
     };
 
     loadAddresses();
-  }, [isOpen, user]);
+  }, [isOpen, user, getIdToken]);
 
   useEffect(() => {
     if (!openMenuId) return undefined;

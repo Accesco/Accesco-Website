@@ -17,6 +17,8 @@ import {
 import styles from './profile.module.css';
 import { useAuth } from '../../../components/AuthProvider';
 import { updateUserFieldsInFirebase } from '@/lib/userService';
+import { db } from '@/lib/firebase';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
 import GroklyHeader from '../components/GroklyHeader';
 import MobileHeader from '../components/MobileHeader';
 import BottomNav from '../components/BottomNav';
@@ -311,7 +313,7 @@ function GroklyProfileInner() {
   const [toastMessage, setToastMessage] = useState('');
   const [toastType, setToastType] = useState('success'); // success | info | danger
 
-  // Wishlist (stored in localStorage)
+  const { user, uid } = useAuth();
   const [wishlist, setWishlist] = useState([]);
   const [isMounted, setIsMounted] = useState(false);
 
@@ -319,44 +321,33 @@ function GroklyProfileInner() {
   const [recycledBags, setRecycledBags] = useState(0);
   const [ecoHistory, setEcoHistory] = useState([]);
 
-  // Load eco details from localStorage
+  // Load eco details from user profile
   useEffect(() => {
-    const bal = parseInt(localStorage.getItem('grokly_wallet_balance') || '0');
-    const bags = parseInt(localStorage.getItem('grokly_recycled_bags_count') || '0');
-    const rawHist = localStorage.getItem('grokly_eco_history');
-    const hist = rawHist ? JSON.parse(rawHist) : [];
-    
-    setWalletBalance(bal);
-    setRecycledBags(bags);
-    setEcoHistory(hist);
-  }, []);
-
-  // Update on storage event
-  useEffect(() => {
-    const handleStorageChange = () => {
-      const bal = parseInt(localStorage.getItem('grokly_wallet_balance') || '0');
-      const bags = parseInt(localStorage.getItem('grokly_recycled_bags_count') || '0');
-      const rawHist = localStorage.getItem('grokly_eco_history');
-      const hist = rawHist ? JSON.parse(rawHist) : [];
-      
-      setWalletBalance(bal);
-      setRecycledBags(bags);
-      setEcoHistory(hist);
-    };
-    window.addEventListener('storage', handleStorageChange);
-    return () => window.removeEventListener('storage', handleStorageChange);
-  }, []);
+    if (user) {
+      setWalletBalance(user.walletBalance || 0);
+      setRecycledBags(user.recycledBags || 0);
+      setEcoHistory(user.walletTransactions || []);
+    }
+  }, [user]);
 
   useEffect(() => {
     setIsMounted(true);
   }, []);
 
   useEffect(() => {
-    try {
-      const stored = localStorage.getItem('grokly_wishlist');
-      if (stored) setWishlist(JSON.parse(stored));
-    } catch (e) { /* noop */ }
-  }, []);
+    const currentId = user?.uid || uid;
+    if (!currentId) return;
+
+    const loadWishlist = async () => {
+      try {
+        const snap = await getDoc(doc(db, 'grokly_wishlists', currentId));
+        if (snap.exists()) {
+          setWishlist(snap.data()?.items || []);
+        }
+      } catch (e) { /* noop */ }
+    };
+    loadWishlist();
+  }, [user, uid]);
 
   // User Profile
   const [profile, setProfile] = useState({
@@ -911,13 +902,16 @@ function GroklyProfileInner() {
                         const prod = getProductInfo(item.id);
                         const qty = getProductQuantity(item.id);
 
-                        const removeFromWishlist = () => {
+                        const removeFromWishlist = async () => {
+                          const currentId = user?.uid || uid;
+                          if (!currentId) return;
                           try {
-                            const stored = localStorage.getItem('grokly_wishlist');
-                            let list = stored ? JSON.parse(stored) : [];
-                            list = list.filter(i => i.id !== item.id);
-                            localStorage.setItem('grokly_wishlist', JSON.stringify(list));
-                            setWishlist(list);
+                            const updatedList = wishlist.filter(i => i.id !== item.id);
+                            setWishlist(updatedList);
+                            await setDoc(doc(db, 'grokly_wishlists', currentId), {
+                              items: updatedList,
+                              updatedAt: Date.now(),
+                            }, { merge: true });
                           } catch (e) { /* noop */ }
                         };
 

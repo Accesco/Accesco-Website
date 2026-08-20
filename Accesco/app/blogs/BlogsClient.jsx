@@ -10,7 +10,7 @@ import Footer from '../../components/Footer';
 import { useAuth } from '../components/AuthProvider';
 
 export default function BlogsClient({ initialPosts }) {
-  const { user } = useAuth();
+  const { user, uid } = useAuth();
   const [posts, setPosts] = useState(initialPosts);
   const [filteredPosts, setFilteredPosts] = useState(initialPosts);
   const [activeCategory, setActiveCategory] = useState('All');
@@ -20,25 +20,16 @@ export default function BlogsClient({ initialPosts }) {
   useEffect(() => {
     loadBookmarks();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user]);
+  }, [user, uid]);
 
   async function loadBookmarks() {
-    if (user?.email) {
+    const key = user?.email || user?.uid || uid;
+    if (key) {
       try {
-        const bookmarks = await getUserBookmarks(user.email);
+        const bookmarks = await getUserBookmarks(key);
         setBookmarkedPosts(bookmarks);
       } catch (err) {
         console.error('Failed to load bookmarks:', err);
-      }
-    } else {
-      // Load from localStorage for non-logged-in users
-      const saved = localStorage.getItem('bookmarkedPosts');
-      if (saved) {
-        try {
-          setBookmarkedPosts(JSON.parse(saved));
-        } catch (err) {
-          console.error('Failed to parse bookmarks:', err);
-        }
       }
     }
   }
@@ -121,32 +112,22 @@ export default function BlogsClient({ initialPosts }) {
 
   // ── Bookmark Functions ───────────────────────────────────────────────────────
   const toggleBookmark = async (postId) => {
-    if (user?.email) {
-      // Use Firebase for logged-in users
-      try {
-        const isCurrentlyBookmarked = bookmarkedPosts.includes(postId);
+    const key = user?.email || user?.uid || uid;
+    if (!key) return;
 
-        if (isCurrentlyBookmarked) {
-          await removeBookmark(user.email, postId);
-          setBookmarkedPosts(prev => prev.filter(id => id !== postId));
-        } else {
-          await addBookmark(user.email, postId);
-          setBookmarkedPosts(prev => [...prev, postId]);
-        }
-      } catch (error) {
-        console.error('Bookmark error:', error);
-        alert('Failed to update bookmark. Please try again.');
+    try {
+      const isCurrentlyBookmarked = bookmarkedPosts.includes(postId);
+
+      if (isCurrentlyBookmarked) {
+        await removeBookmark(key, postId);
+        setBookmarkedPosts(prev => prev.filter(id => id !== postId));
+      } else {
+        await addBookmark(key, postId);
+        setBookmarkedPosts(prev => [...prev, postId]);
       }
-    } else {
-      // Use localStorage for non-logged-in users
-      setBookmarkedPosts(prev => {
-        const newBookmarks = prev.includes(postId)
-          ? prev.filter(id => id !== postId)
-          : [...prev, postId];
-
-        localStorage.setItem('bookmarkedPosts', JSON.stringify(newBookmarks));
-        return newBookmarks;
-      });
+    } catch (error) {
+      console.error('Bookmark error:', error);
+      alert('Failed to update bookmark. Please try again.');
     }
   };
 

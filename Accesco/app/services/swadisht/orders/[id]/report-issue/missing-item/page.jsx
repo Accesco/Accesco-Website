@@ -25,25 +25,28 @@ export default function SwadishttMissingItemPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
-    try {
-      const raw = localStorage.getItem('swadishtt-orders');
-      if (raw) {
-        const parsed = JSON.parse(raw);
-        const found = (Array.isArray(parsed) ? parsed : []).find(o => o.id === orderId);
-        if (found && Array.isArray(found.items) && found.items.length > 0) {
-          setItems(found.items.map((it, i) => ({
-            id: it.id || `item_${i}`,
-            name: it.name,
-            qty: it.quantity || 1,
-            price: it.price,
-            image: it.image || 'https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=100&q=80',
-          })));
-          setSelectedItemIds([found.items[0]?.id || 'item_0']);
+    async function loadOrder() {
+      try {
+        const res = await fetch(`/api/swadishtt/orders`);
+        if (res.ok) {
+          const data = await res.json();
+          const found = (Array.isArray(data.orders) ? data.orders : []).find(o => o.id === orderId);
+          if (found && Array.isArray(found.items) && found.items.length > 0) {
+            setItems(found.items.map((it, i) => ({
+              id: it.id || `item_${i}`,
+              name: it.name,
+              qty: it.quantity || 1,
+              price: it.price,
+              image: it.image || 'https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=100&q=80',
+            })));
+            setSelectedItemIds([found.items[0]?.id || 'item_0']);
+          }
         }
+      } catch (e) {
+        console.error(e);
       }
-    } catch (e) {
-      console.error(e);
     }
+    loadOrder();
   }, [orderId]);
 
   const toggleSelect = (id) => {
@@ -79,11 +82,6 @@ export default function SwadishttMissingItemPage() {
     };
 
     try {
-      // Local storage persistence
-      const reports = JSON.parse(localStorage.getItem('sw_issue_reports') || '[]');
-      reports.push(payload);
-      localStorage.setItem('sw_issue_reports', JSON.stringify(reports));
-
       // API Call
       await fetch(`/api/swadishtt/orders/${orderId}/report-issue`, {
         method: 'POST',
@@ -91,9 +89,7 @@ export default function SwadishttMissingItemPage() {
         body: JSON.stringify(payload),
       }).catch(err => console.error('API Call error:', err));
 
-      // Store in query state for confirmation page
-      sessionStorage.setItem(`sw_issue_${orderId}`, JSON.stringify(payload));
-      router.push(`/services/swadisht/orders/${orderId}/report-issue/issue-reported`);
+      router.push(`/services/swadisht/orders/${orderId}/report-issue/issue-reported?refundTotal=${refundTotal}&points=10`);
     } catch (e) {
       console.error(e);
     } finally {

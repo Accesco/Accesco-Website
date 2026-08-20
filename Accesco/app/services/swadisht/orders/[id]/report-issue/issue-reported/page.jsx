@@ -1,30 +1,30 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import SwadishttHeader from '../../../../components/SwadishttHeader';
 import styles from './issue-reported.module.css';
 
 export default function SwadishttIssueReportedPage() {
   const params = useParams();
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   const orderId = params.id || '12345';
+  const refundTotal = Number(searchParams?.get('refundTotal')) || 60;
+  const greenPoints = Number(searchParams?.get('points')) || 10;
+
   const [reportData, setReportData] = useState({
-    refundTotal: 60,
-    greenPoints: 10,
+    refundTotal,
+    greenPoints,
   });
 
   useEffect(() => {
-    try {
-      const stored = sessionStorage.getItem(`sw_issue_${orderId}`);
-      if (stored) {
-        setReportData(JSON.parse(stored));
-      }
-    } catch (e) {
-      console.error(e);
-    }
-  }, [orderId]);
+    setReportData({
+      refundTotal,
+      greenPoints,
+    });
+  }, [refundTotal, greenPoints]);
 
   return (
     <div className={styles.page}>

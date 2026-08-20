@@ -23,6 +23,8 @@
 
 import { useEffect, useState } from 'react';
 import { useSwadishtt } from '../contexts/SwadishttContext';
+import { useAuth } from '@/app/components/AuthProvider';
+import { updateUserFieldsInFirebase } from '@/lib/userService';
 import SwadishttHeader from '../components/SwadishttHeader';
 import styles from './healthy-mode.module.css';
 
@@ -39,59 +41,36 @@ const ACTIVITY_MAP = {
 // ---------------------------------------------------------------------------
 // HealthyModeContent
 // ---------------------------------------------------------------------------
-function HealthyModeContent() {
-  const { addToCart, cart } = useSwadishtt();
+export default function HealthyModePage() {
+  const { user, uid } = useAuth();
+  const { cart } = useSwadishtt();
 
-  const [showHealthForm, setShowHealthForm]       = useState(true);
+  const emptyMember = {
+    age: '',
+    gender: 'female',
+    weightRange: '60-70',
+    activityLevel: 'moderate',
+    preferences: [],
+  };
+
+  const [members, setMembers] = useState([emptyMember]);
+  const [showHealthForm, setShowHealthForm] = useState(true);
+  const [healthInsights, setHealthInsights] = useState(null);
+  const [loadingInsights, setLoadingInsights] = useState(false);
   const [submittingProfile, setSubmittingProfile] = useState(false);
-  const [healthInsights, setHealthInsights]       = useState(null);
-  const [loadingInsights, setLoadingInsights]     = useState(false);
-  const [error, setError]                         = useState(null);
+  const [error, setError] = useState(null);
 
-const emptyMember = {
-  age: '',
-  gender: '',
-  weightRange: '',
-  activityLevel: '',
-  preferences: [],
-};
+  const consumedCalories = (cart || []).reduce((sum, item) => sum + (item.calories || 0) * (item.quantity || 1), 0);
+  const targetCal = healthInsights?.householdSummary?.totalCalories || 2000;
+  const progressPercent = targetCal > 0 ? Math.min(Math.round((consumedCalories / targetCal) * 100), 100) : 0;
 
-const [members, setMembers] = useState([emptyMember]);
-  const consumedCalories = cart?.reduce(
-  (sum, item) => sum + (item.calories || 0),
-  0
-) || 0;
-
-const consumedProtein = cart?.reduce(
-  (sum, item) => sum + (item.protein || 0),
-  0
-) || 0;
-
-const consumedCarbs = cart?.reduce(
-  (sum, item) => sum + (item.carbs || 0),
-  0
-) || 0;
-
-const consumedFats = cart?.reduce(
-  (sum, item) => sum + (item.fats || 0),
-  0
-) || 0;
-
-const targetCal = healthInsights?.householdSummary?.totalCalories || 2000;
-const progressPercent = targetCal > 0 ? Math.min(Math.round((consumedCalories / targetCal) * 100), 100) : 0;
-
-  // ── Restore saved profile from localStorage on mount ──
+  // ── Restore saved profile from Firebase user profile on mount ──
   useEffect(() => {
-    try {
-      const saved = localStorage.getItem('swadishtt-health-profile');
-      if (saved) {
-        setMembers(JSON.parse(saved));
-        setShowHealthForm(false);
-      }
-    } catch (e) {
-      console.error('Profile restore error:', e);
+    if (user?.healthProfile && Array.isArray(user.healthProfile) && user.healthProfile.length > 0) {
+      setMembers(user.healthProfile);
+      setShowHealthForm(false);
     }
-  }, []);
+  }, [user]);
 
   // ── Re-fetch insights whenever goal or profile changes ──
   useEffect(() => {
@@ -109,9 +88,9 @@ const progressPercent = targetCal > 0 ? Math.min(Math.round((consumedCalories / 
         const data = await res.json();
         setHealthInsights(data);
       } catch (e) {
-  console.error(e);
-  setError(e.message || 'Something went wrong');
-}finally {
+        console.error(e);
+        setError(e.message || 'Something went wrong');
+      } finally {
         setLoadingInsights(false);
       }
     };
@@ -121,47 +100,49 @@ const progressPercent = targetCal > 0 ? Math.min(Math.round((consumedCalories / 
 
   // ── Form handlers ──
   const handleInput = (index, field, value) => {
-  setMembers((prev) =>
-    prev.map((member, i) =>
-      i === index ? { ...member, [field]: value } : member
-    )
-  );
-};
+    setMembers((prev) =>
+      prev.map((member, i) =>
+        i === index ? { ...member, [field]: value } : member
+      )
+    );
+  };
 
   const handlePreferenceToggle = (index, pref) => {
-  setMembers((prev) =>
-    prev.map((member, i) =>
-      i === index
-        ? {
-            ...member,
-            preferences: member.preferences.includes(pref)
-              ? member.preferences.filter((p) => p !== pref)
-              : [...member.preferences, pref],
-          }
-        : member
-    )
-  );
-};
-const addMember = () => {
-  setMembers((prev) => [...prev, emptyMember]);
-};
+    setMembers((prev) =>
+      prev.map((member, i) =>
+        i === index
+          ? {
+              ...member,
+              preferences: member.preferences.includes(pref)
+                ? member.preferences.filter((p) => p !== pref)
+                : [...member.preferences, pref],
+            }
+          : member
+      )
+    );
+  };
+
+  const addMember = () => {
+    setMembers((prev) => [...prev, emptyMember]);
+  };
 
   // ── Submit → POST to Next.js API route → forwarded to your FastAPI ──
   const getMappedMembers = () => {
-  const activityMap = {
-    low: 'sedentary',
-    moderate: 'moderate',
-    high: 'active',
+    const activityMap = {
+      low: 'sedentary',
+      moderate: 'moderate',
+      high: 'active',
+    };
+
+    return members.map((member) => ({
+      age: member.age,
+      gender: member.gender,
+      weightRange: member.weightRange,
+      activityLevel: activityMap[member.activityLevel] || member.activityLevel,
+      dietaryPreferences: member.preferences || [],
+    }));
   };
 
-  return members.map((member) => ({
-    age: member.age,
-    gender: member.gender,
-    weightRange: member.weightRange,
-    activityLevel: activityMap[member.activityLevel] || member.activityLevel,
-    dietaryPreferences: member.preferences || [],
-  }));
-};
   const handleSubmit = async () => {
     setSubmittingProfile(true);
     setError(null);
@@ -172,7 +153,10 @@ const addMember = () => {
         body: JSON.stringify({ profile: getMappedMembers() }),
       });
       const data = await res.json();
-      localStorage.setItem('swadishtt-health-profile', JSON.stringify(members));
+      const targetUid = user?.uid || uid;
+      if (targetUid) {
+        await updateUserFieldsInFirebase(targetUid, { healthProfile: members, healthMode: true });
+      }
       setHealthInsights(data);
       setShowHealthForm(false);
     } catch (e) {
@@ -194,8 +178,11 @@ const addMember = () => {
         <div className={styles.healthTopBar}>
           <button
             className={styles.exitHealthBtn}
-            onClick={() => {
-              localStorage.setItem('swadishtt-health-mode', JSON.stringify(false));
+            onClick={async () => {
+              const targetUid = user?.uid || uid;
+              if (targetUid) {
+                await updateUserFieldsInFirebase(targetUid, { healthMode: false });
+              }
               window.location.href = '/services/swadisht/profile';
             }}
           >
@@ -414,8 +401,4 @@ const addMember = () => {
       </div>
     </div>
   );
-}
-
-export default function HealthyModePage() {
-  return <HealthyModeContent />;
 }

@@ -55,16 +55,7 @@ function CheckoutContent() {
   }, [cartHydrated, cart.length, orderPlaced, router]);
 
   useEffect(() => {
-    if (typeof window === 'undefined') return;
-
-    let storedLocation = null;
-
-    try {
-      const rawLocation = localStorage.getItem('userLocation');
-      if (rawLocation) storedLocation = JSON.parse(rawLocation);
-    } catch (error) {
-      console.error('Error reading userLocation from localStorage:', error);
-    }
+    const storedLocation = user?.selectedLocation || null;
 
     const resolvedName = typeof user?.name === 'string' ? user.name : '';
     const resolvedPhone = typeof user?.phone === 'string' ? user.phone : '';
@@ -124,16 +115,7 @@ function CheckoutContent() {
   const grandTotal = total + otherStoresSubtotal + otherStoresPlatformFee;
 
   const persistOrder = (nextOrder) => {
-    if (typeof window === 'undefined') return;
-
-    try {
-      const raw = localStorage.getItem(ORDERS_STORAGE_KEY);
-      const parsed = raw ? JSON.parse(raw) : [];
-      const existing = Array.isArray(parsed) ? parsed : [];
-      localStorage.setItem(ORDERS_STORAGE_KEY, JSON.stringify([nextOrder, ...existing]));
-    } catch (error) {
-      console.error('Error saving Swadishtt orders:', error);
-    }
+    // Orders are persisted to Cloud Firestore via backend API
   };
 
   const validateAddress = () => {
@@ -264,14 +246,6 @@ function CheckoutContent() {
           orderData: nextOrder,
         }),
       });
-      const data = await res.json();
-      if (data.success) {
-        const orders = JSON.parse(localStorage.getItem(ORDERS_STORAGE_KEY) || '[]');
-        const updated = orders.map((o) =>
-          o.id === orderId ? { ...o, status: 'CONFIRMED', updatedAt: new Date().toISOString() } : o
-        );
-        localStorage.setItem(ORDERS_STORAGE_KEY, JSON.stringify(updated));
-      }
     } catch (err) {
       console.error('Failed to trigger confirmation email:', err);
     }

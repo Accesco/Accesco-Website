@@ -164,14 +164,9 @@ export default function ProfileContent() {
 
   // Load REAL data for the logged-in user directly from Firebase (userData)
   useEffect(() => {
-    const savedLocation = typeof window !== 'undefined' ? localStorage.getItem('userLocation') : null;
-    if (savedLocation) {
-      try {
-        const parsedLocation = JSON.parse(savedLocation);
-        setCity(parsedLocation?.city || parsedLocation?.displayAddress || 'Bengaluru, Karnataka');
-      } catch {
-        setCity(savedLocation);
-      }
+    const loc = userData?.selectedLocation || user?.selectedLocation;
+    if (loc) {
+      setCity(loc?.city || loc?.displayAddress || loc?.fullAddress || 'Bengaluru, Karnataka');
     }
 
     if (userData) {

@@ -2,21 +2,36 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { useAuth } from '@/app/components/AuthProvider';
 
 export default function ActiveOrdersWidget({ venture } = {}) {
+  const { user, uid } = useAuth();
   const [activeOrders, setActiveOrders] = useState([]);
   const router = useRouter();
 
   useEffect(() => {
-    const loadActiveOrders = () => {
-      try {
-        const groklyRaw = localStorage.getItem('grokly_orders');
-        const swadishttRaw = localStorage.getItem('swadishtt-orders');
-        const instastyleRaw = localStorage.getItem('instastyle_orders');
+    const currentIdentifier = user?.uid || uid;
+    if (!currentIdentifier && !user?.email) return;
 
-        const grokly = groklyRaw ? JSON.parse(groklyRaw) : [];
-        const swadishtt = swadishttRaw ? JSON.parse(swadishttRaw) : [];
-        const instastyle = instastyleRaw ? JSON.parse(instastyleRaw) : [];
+    let cancelled = false;
+
+    const loadActiveOrders = async () => {
+      try {
+        const queryParam = user?.uid
+          ? `userId=${encodeURIComponent(user.uid)}`
+          : user?.email
+          ? `email=${encodeURIComponent(user.email)}`
+          : `userId=${encodeURIComponent(currentIdentifier)}`;
+
+        const [groklyRes, swadishttRes, instastyleRes] = await Promise.allSettled([
+          fetch(`/api/grokly/orders?${queryParam}`).then(r => r.ok ? r.json() : { orders: [] }),
+          fetch(`/api/swadishtt/orders?${queryParam}`).then(r => r.ok ? r.json() : { orders: [] }),
+          fetch(`/api/instastyle/orders?${queryParam}`).then(r => r.ok ? r.json() : { orders: [] }),
+        ]);
+
+        const grokly = groklyRes.status === 'fulfilled' ? (groklyRes.value?.orders || []) : [];
+        const swadishtt = swadishttRes.status === 'fulfilled' ? (swadishttRes.value?.orders || []) : [];
+        const instastyle = instastyleRes.status === 'fulfilled' ? (instastyleRes.value?.orders || []) : [];
 
         const combined = [
           ...grokly.map(o => ({ ...o, venture: 'Grokly', path: '/services/grokly/order-tracking' })),
@@ -30,7 +45,9 @@ export default function ActiveOrdersWidget({ venture } = {}) {
 
         // Filter for orders that are not DELIVERED
         const active = scoped.filter(o => o.status !== 'DELIVERED');
-        setActiveOrders(active);
+        if (!cancelled) {
+          setActiveOrders(active);
+        }
       } catch (error) {
         console.error('Error loading active orders:', error);
       }
@@ -38,8 +55,11 @@ export default function ActiveOrdersWidget({ venture } = {}) {
 
     loadActiveOrders();
     const interval = setInterval(loadActiveOrders, 10000);
-    return () => clearInterval(interval);
-  }, [venture]);
+    return () => {
+      cancelled = true;
+      clearInterval(interval);
+    };
+  }, [venture, user, uid]);
 
   if (activeOrders.length === 0) return null;
 

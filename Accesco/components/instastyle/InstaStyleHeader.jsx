@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useCart } from '@/contexts/CartContext';
 import { useAuth } from '@/app/components/AuthProvider';
+import { updateUserFieldsInFirebase } from '@/lib/userService';
 import AuthModal from '@/app/components/AuthModal';
 import InstaStyleLogo from './InstaStyleLogo';
 import styles from './InstaStyleHeader.module.css';
@@ -14,7 +15,7 @@ import LocationModal from '../LocationModal';
 export default function InstaStyleHeader() {
   const pathname = usePathname();
   const { cart, toggleCart } = useCart();
-  const { user, signIn, signOut } = useAuth();
+  const { user, uid, signIn, signOut } = useAuth();
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -105,20 +106,12 @@ export default function InstaStyleHeader() {
 
   // Location useEffect
   useEffect(() => {
-    const saved = localStorage.getItem('instastyle_location');
-
-    if (saved) {
-      try {
-        const parsed = JSON.parse(saved);
-
-        if (typeof parsed.location === 'string' && parsed.location.trim()) {
-          setSelectedLocation(parsed.location);
-        }
-      } catch (err) {
-        console.error(err);
-      }
+    if (user?.selectedLocation) {
+      const loc = user.selectedLocation;
+      const resolved = loc.fullAddress || loc.displayAddress || loc.city || 'Select Location';
+      setSelectedLocation(resolved);
     }
-  }, []);
+  }, [user]);
 
   const handleSearch = useCallback((e) => {
     e.preventDefault();
@@ -596,20 +589,24 @@ export default function InstaStyleHeader() {
       <LocationModal
         isOpen={isLocationModalOpen}
         onClose={() => setIsLocationModalOpen(false)}
-        onLocationSelect={(location) => {
+        onLocationSelect={async (location) => {
           const addressText = location?.fullAddress || 'Select Location';
-         setSelectedLocation(addressText);
+          setSelectedLocation(addressText);
 
-          localStorage.setItem(
-          'instastyle_location',
-          JSON.stringify({
-             location: addressText,
-            lat: location?.lat ?? null,
-           lng: location?.lng ?? null,
-           accuracy: location?.accuracy ?? null,
-                        timestamp: Date.now(),
-          })
-         );
+          const targetUid = user?.uid || uid;
+          if (targetUid) {
+            await updateUserFieldsInFirebase(targetUid, {
+              selectedLocation: {
+                location: addressText,
+                fullAddress: addressText,
+                displayAddress: addressText,
+                lat: location?.lat ?? null,
+                lng: location?.lng ?? null,
+                accuracy: location?.accuracy ?? null,
+                timestamp: Date.now(),
+              },
+            });
+          }
         }}
       />
 

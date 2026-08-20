@@ -341,22 +341,16 @@ function BookingModal({ pkg, onClose, onSuccess }) {
     if (user.name) setName(user.name);
     if (user.phone) setPhone(user.phone);
     if (user.email) setEmail(user.email);
-  }, [user]);
-
-  // Autofill delivery address from localStorage
-  useEffect(() => {
-    try {
-      const storedLoc = JSON.parse(localStorage.getItem('userLocation') || '{}');
+    if (user.selectedLocation) {
+      const storedLoc = user.selectedLocation;
       const formatted =
         storedLoc?.fullAddress ||
         storedLoc?.formattedAddress ||
         storedLoc?.displayAddress ||
         (storedLoc?.area && storedLoc?.city ? `${storedLoc.area}, ${storedLoc.city}` : '');
       if (formatted) setAddress(formatted);
-    } catch (e) {
-      console.warn('Location storage read error', e);
     }
-  }, []);
+  }, [user]);
 
   const minDate = new Date().toISOString().split('T')[0];
 

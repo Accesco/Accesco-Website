@@ -228,10 +228,8 @@ export default function SwadishttProfilePage() {
   }, [user]);
 
   useEffect(() => {
-    try {
-      const location = JSON.parse(
-        localStorage.getItem('userLocation') || '{}'
-      );
+    if (user?.selectedLocation) {
+      const location = user.selectedLocation;
       setAddress({
         address:
           location.fullAddress ||
@@ -242,19 +240,22 @@ export default function SwadishttProfilePage() {
         city: location.city || '',
         pincode: location.pincode || location.postalCode || '',
       });
-    } catch (error) {
-      console.error(error);
     }
 
-    try {
-      const existingOrders = JSON.parse(
-        localStorage.getItem(ORDERS_KEY) || '[]'
-      );
-      setOrders(Array.isArray(existingOrders) ? existingOrders : []);
-    } catch (error) {
-      console.error(error);
+    async function loadOrders() {
+      try {
+        const queryParam = user?.uid ? `userId=${encodeURIComponent(user.uid)}` : user?.email ? `email=${encodeURIComponent(user.email)}` : '';
+        const res = await fetch(`/api/swadishtt/orders${queryParam ? `?${queryParam}` : ''}`);
+        if (res.ok) {
+          const data = await res.json();
+          setOrders(Array.isArray(data.orders) ? data.orders : []);
+        }
+      } catch (error) {
+        console.error(error);
+      }
     }
-  }, []);
+    loadOrders();
+  }, [user]);
 
   // Once signed in, the backend profile is the source of truth — overwrite the
   // auth-context-seeded state above with the synced record.
@@ -415,18 +416,19 @@ export default function SwadishttProfilePage() {
       }
     }
 
-    localStorage.setItem(
-      'userLocation',
-      JSON.stringify({
-        fullAddress: nextAddress.address,
-        formattedAddress: nextAddress.address,
-        displayAddress: nextAddress.address,
-        area: nextAddress.address.split(',')[0]?.trim() || '',
-        city: nextAddress.city,
-        pincode: nextAddress.pincode,
-        postalCode: nextAddress.pincode,
-      })
-    );
+    if (user?.uid) {
+      await updateUserFieldsInFirebase(user.uid, {
+        selectedLocation: {
+          fullAddress: nextAddress.address,
+          formattedAddress: nextAddress.address,
+          displayAddress: nextAddress.address,
+          area: nextAddress.address.split(',')[0]?.trim() || '',
+          city: nextAddress.city,
+          pincode: nextAddress.pincode,
+          postalCode: nextAddress.pincode,
+        },
+      });
+    }
 
     setAddress(nextAddress);
     setEditAddress(false);
