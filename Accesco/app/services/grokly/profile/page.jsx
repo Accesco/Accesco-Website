@@ -247,7 +247,7 @@ const INITIAL_BASKETS = [
 
 function GroklyProfileInner() {
   const { cart, cartCount, orders, addToCart, openCart, location, updateLocation, getProductQuantity, incrementQuantity, decrementQuantity } = useGrokly();
-  const { user, userData, signOut } = useAuth();
+  const { user, uid, userData, signOut } = useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -313,7 +313,6 @@ function GroklyProfileInner() {
   const [toastMessage, setToastMessage] = useState('');
   const [toastType, setToastType] = useState('success'); // success | info | danger
 
-  const { user, uid } = useAuth();
   const [wishlist, setWishlist] = useState([]);
   const [isMounted, setIsMounted] = useState(false);
 
