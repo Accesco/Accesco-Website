@@ -13,21 +13,16 @@ const ORDERS_STORAGE_KEY = 'instastyle_orders';
 const INVENTORY_STORAGE_KEY = 'instastyle_inventory';
 const DEVICE_ID_KEY = 'instastyle_device_id';
 
+let guestDeviceId = null;
 function getDeviceId() {
   if (typeof window === 'undefined') return null;
-
-  let deviceId = localStorage.getItem(DEVICE_ID_KEY);
-  if (!deviceId) {
-    deviceId = `device_${Math.random().toString(36).slice(2, 10)}_${Date.now()}`;
-    localStorage.setItem(DEVICE_ID_KEY, deviceId);
+  if (!guestDeviceId) {
+    guestDeviceId = `device_${Math.random().toString(36).slice(2, 10)}_${Date.now()}`;
   }
-  return deviceId;
+  return guestDeviceId;
 }
 
 // Calls the authenticated InstaStyle cart backend (app/api/instastyle/cart/**).
-// Returns null (instead of throwing) when there is no live Firebase session,
-// so callers can fall back to local-only behaviour exactly like the rest of
-// this file already does for cloud sync.
 async function cartFetch(getIdToken, uid, path, options = {}) {
   const token = await getIdToken();
   if (!token) return null;
@@ -49,9 +44,7 @@ async function cartFetch(getIdToken, uid, path, options = {}) {
   return data;
 }
 
-// Maps a backend cart item back into this file's existing cart item shape,
-// so every other component that reads `item.id`/`selectedSize`/`price` etc.
-// keeps working unmodified.
+// Maps a backend cart item back into this file's existing cart item shape
 function backendItemToCartEntry(item) {
   return {
     id: item.productId,
@@ -73,27 +66,13 @@ export function CartProvider({ children }) {
   const [cart, setCart] = useState([]);
   const [wishlist, setWishlist] = useState([]);
   const [orders, setOrders] = useState([]);
-  const [inventory, setInventory] = useState({}); // { productId: { size: count } }
+  const [inventory, setInventory] = useState({});
   const [isCartOpen, setIsCartOpen] = useState(false);
   const isHydrated = useRef(false);
 
-  // Load data from localStorage/Firestore on mount/user change
+  // Load data from Firestore on mount/user change
   useEffect(() => {
     if (typeof window === 'undefined') return;
-
-    const loadData = (key, setter) => {
-      const saved = localStorage.getItem(key);
-      if (saved) {
-        try {
-          setter(JSON.parse(saved));
-        } catch (error) {
-          console.error(`Error loading ${key}:`, error);
-        }
-      }
-    };
-
-    loadData(WISHLIST_STORAGE_KEY, setWishlist);
-    loadData(INVENTORY_STORAGE_KEY, setInventory);
 
     // Hydrate orders from cloud
     const fetchOrdersFromCloud = async () => {
@@ -117,15 +96,11 @@ export function CartProvider({ children }) {
           }
         }
       } catch (error) {
-        console.warn('Orders cloud read fallback to local only:', error);
+        console.warn('Orders cloud read error:', error);
       }
-
-      // Fallback
-      loadData(ORDERS_STORAGE_KEY, setOrders);
     };
 
-    // Hydrate cart — authenticated users read from the validated backend cart;
-    // guests keep the existing localStorage/Firestore-by-device behaviour.
+    // Hydrate cart from Firestore
     const hydrateCartFromCloud = async () => {
       if (user?.uid) {
         try {
@@ -136,11 +111,8 @@ export function CartProvider({ children }) {
             return;
           }
         } catch (error) {
-          console.warn('Cart backend read fallback to local only:', error?.message || error);
+          console.warn('Cart backend read error:', error?.message || error);
         }
-        loadData(CART_STORAGE_KEY, setCart);
-        isHydrated.current = true;
-        return;
       }
 
       const identifier = user?.email || getDeviceId();
@@ -151,33 +123,28 @@ export function CartProvider({ children }) {
           const remoteCart = snapshot.data()?.cart;
           if (Array.isArray(remoteCart) && remoteCart.length > 0) {
             setCart(remoteCart);
-            isHydrated.current = true;
-            return;
           }
         }
       } catch (error) {
-        console.warn('Cart cloud read fallback to local only:', error);
+        console.warn('Cart cloud read error:', error);
       }
-
-      // Fallback
-      loadData(CART_STORAGE_KEY, setCart);
       isHydrated.current = true;
     };
 
     // Hydrate wishlist from cloud
     const hydrateWishlistFromCloud = async () => {
-      const deviceId = getDeviceId();
+      const deviceId = user?.uid || getDeviceId();
       if (!deviceId) return;
       try {
         const docSnap = await getDoc(doc(db, 'instastyle_wishlists', deviceId));
         if (docSnap.exists()) {
           const remoteItems = docSnap.data()?.items;
           if (Array.isArray(remoteItems) && remoteItems.length > 0) {
-            setWishlist((current) => (current.length > 0 ? current : remoteItems));
+            setWishlist(remoteItems);
           }
         }
       } catch (error) {
-        console.warn('Wishlist cloud read fallback to local only:', error?.message || error);
+        console.warn('Wishlist cloud read error:', error?.message || error);
       }
     };
 
@@ -186,15 +153,9 @@ export function CartProvider({ children }) {
     fetchOrdersFromCloud();
   }, [user, getIdToken]);
 
-  // Save cart to localStorage always. Authenticated users' carts are kept in
-  // sync with the backend via the granular add/remove/update calls below, so
-  // the raw Firestore mirror here is only needed as a guest fallback.
+  // Sync guest cart to Firestore
   useEffect(() => {
-    if (!isHydrated.current) return;
-
-    localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cart));
-
-    if (user?.uid) return;
+    if (!isHydrated.current || user?.uid) return;
 
     const syncCart = async () => {
       const identifier = user?.email || getDeviceId();
@@ -205,16 +166,12 @@ export function CartProvider({ children }) {
           updatedAt: Date.now(),
         }, { merge: true });
       } catch (error) {
-        console.warn('Cart sync fallback to local only:', error);
+        console.warn('Cart sync error:', error);
       }
     };
 
     syncCart();
   }, [cart, user]);
-
-  useEffect(() => {
-    localStorage.setItem(ORDERS_STORAGE_KEY, JSON.stringify(orders));
-  }, [orders]);
 
   // ═══════════════════════════════════════════════
   // ETA & ORDER ACCEPTANCE SIMULATION
@@ -261,16 +218,10 @@ export function CartProvider({ children }) {
     return () => clearInterval(interval);
   }, [orders]);
 
+  // Sync wishlist to Firestore when available
   useEffect(() => {
-    localStorage.setItem(INVENTORY_STORAGE_KEY, JSON.stringify(inventory));
-  }, [inventory]);
-
-  // Save wishlist locally and sync to Firestore when available
-  useEffect(() => {
-    localStorage.setItem(WISHLIST_STORAGE_KEY, JSON.stringify(wishlist));
-
     const syncWishlist = async () => {
-      const deviceId = getDeviceId();
+      const deviceId = user?.uid || getDeviceId();
       if (!deviceId) return;
 
       try {

@@ -10,6 +10,7 @@ import InstaStyleLogo from './InstaStyleLogo';
 import styles from './InstaStyleHeader.module.css';
 import { MapPin } from 'lucide-react';
 import LocationModal from '../LocationModal';
+import { updateUserFieldsInFirebase } from '@/lib/userService';
 
 export default function InstaStyleHeader() {
   const pathname = usePathname();
@@ -103,22 +104,14 @@ export default function InstaStyleHeader() {
     };
   }, []);
 
+  const { userData } = useAuth();
+
   // Location useEffect
   useEffect(() => {
-    const saved = localStorage.getItem('instastyle_location');
-
-    if (saved) {
-      try {
-        const parsed = JSON.parse(saved);
-
-        if (typeof parsed.location === 'string' && parsed.location.trim()) {
-          setSelectedLocation(parsed.location);
-        }
-      } catch (err) {
-        console.error(err);
-      }
+    if (userData?.selectedLocation?.displayAddress || userData?.selectedLocation?.fullAddress) {
+      setSelectedLocation(userData.selectedLocation.displayAddress || userData.selectedLocation.fullAddress);
     }
-  }, []);
+  }, [userData]);
 
   const handleSearch = useCallback((e) => {
     e.preventDefault();
@@ -598,18 +591,19 @@ export default function InstaStyleHeader() {
         onClose={() => setIsLocationModalOpen(false)}
         onLocationSelect={(location) => {
           const addressText = location?.fullAddress || 'Select Location';
-         setSelectedLocation(addressText);
-
-          localStorage.setItem(
-          'instastyle_location',
-          JSON.stringify({
-             location: addressText,
-            lat: location?.lat ?? null,
-           lng: location?.lng ?? null,
-           accuracy: location?.accuracy ?? null,
-                        timestamp: Date.now(),
-          })
-         );
+          setSelectedLocation(addressText);
+          if (user?.uid) {
+            updateUserFieldsInFirebase(user.uid, {
+              selectedLocation: {
+                location: addressText,
+                fullAddress: addressText,
+                lat: location?.lat ?? null,
+                lng: location?.lng ?? null,
+                accuracy: location?.accuracy ?? null,
+                timestamp: Date.now(),
+              },
+            }).catch((err) => console.error('Failed to update location in Firestore:', err));
+          }
         }}
       />
 

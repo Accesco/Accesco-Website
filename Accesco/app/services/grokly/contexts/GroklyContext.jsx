@@ -8,88 +8,18 @@ import { updateUserFieldsInFirebase, updateWalletBalanceInFirebase } from '@/lib
 
 const GroklyContext = createContext();
 
-const CART_STORAGE_KEY = 'grokly_cart';
-const ORDERS_STORAGE_KEY = 'grokly_orders';
-const LOCATION_STORAGE_KEY = 'userLocation';
-const DEVICE_ID_KEY = 'grokly_device_id';
-
+let guestDeviceId = null;
 function getDeviceId() {
   if (typeof window === 'undefined') return null;
-  let deviceId = localStorage.getItem(DEVICE_ID_KEY);
-  if (!deviceId) {
-    deviceId = `device_${Math.random().toString(36).slice(2, 10)}_${Date.now()}`;
-    localStorage.setItem(DEVICE_ID_KEY, deviceId);
+  if (!guestDeviceId) {
+    guestDeviceId = `device_${Math.random().toString(36).slice(2, 10)}_${Date.now()}`;
   }
-  return deviceId;
+  return guestDeviceId;
 }
 
 export function GroklyProvider({ children }) {
   const { user } = useAuth();
-  // Hydrate synchronously from localStorage to avoid empty flashes during navigation
-  const readInitialCart = () => {
-    if (typeof window === 'undefined') return {};
-    try {
-      const savedCart = localStorage.getItem(CART_STORAGE_KEY);
-      if (!savedCart) return {};
-      const parsed = JSON.parse(savedCart);
-      if (Array.isArray(parsed)) {
-        const mapped = parsed.reduce((acc, item) => {
-          if (!item) return acc;
-          if (typeof item === 'string') {
-            acc[item] = (acc[item] || 0) + 1;
-          } else if (item.id) {
-            acc[item.id] = (acc[item.id] || 0) + (item.quantity || 1);
-          }
-          return acc;
-        }, {});
-        return mapped;
-      } else if (parsed && typeof parsed === 'object') {
-        return parsed;
-      }
-    } catch (e) {
-      // ignore and fallthrough to empty
-    }
-    return {};
-  };
-
-  const readInitialOrders = () => {
-    if (typeof window === 'undefined') return [];
-    try {
-      const savedOrders = localStorage.getItem(ORDERS_STORAGE_KEY);
-      if (!savedOrders) return [];
-      const parsedOrders = JSON.parse(savedOrders);
-      if (Array.isArray(parsedOrders)) return parsedOrders;
-      if (parsedOrders && typeof parsedOrders === 'object') {
-        if (parsedOrders.id) return [parsedOrders];
-        const vals = Object.values(parsedOrders);
-        if (vals.length && (vals[0].id || vals[0].status || vals[0].timestamp)) return vals;
-      }
-    } catch (e) {}
-    return [];
-  };
-
-  const readInitialLocation = () => {
-    if (typeof window === 'undefined') return 'Koramangala';
-    try {
-      const savedLocation = localStorage.getItem(LOCATION_STORAGE_KEY);
-      if (!savedLocation) return 'Koramangala';
-      let parsedLocation = null;
-      try { parsedLocation = JSON.parse(savedLocation); } catch (e) { return savedLocation; }
-      const resolvedName =
-        parsedLocation?.displayAddress ||
-        (parsedLocation?.city
-          ? `${parsedLocation.city}${parsedLocation?.state || parsedLocation?.region ? `, ${parsedLocation.state || parsedLocation.region}` : ''}`
-          : '') ||
-        parsedLocation?.name ||
-        parsedLocation?.address ||
-        parsedLocation?.fullAddress;
-      return resolvedName || 'Koramangala';
-    } catch (e) {
-      return 'Koramangala';
-    }
-  };
-
-  const [cart, setCart] = useState({}); // starts empty for SSR safety
+  const [cart, setCart] = useState({});
   const [orders, setOrders] = useState([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [location, setLocation] = useState('Koramangala');

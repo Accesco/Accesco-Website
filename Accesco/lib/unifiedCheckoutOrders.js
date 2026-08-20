@@ -26,7 +26,7 @@ export async function placeGroklyOrder({ items, subtotal, address, unifiedOrderI
     userId: user?.uid || null,
     customerEmail: address.email,
     customerName: address.name,
-    deviceId: typeof window !== 'undefined' ? localStorage.getItem('grokly_device_id') : null,
+    deviceId: null,
     items: items.map((i) => ({ id: i.id, name: i.name, price: i.price, quantity: i.quantity })),
     subtotal,
     deliveryFee: 0,
@@ -153,13 +153,7 @@ export async function placeSwadishttOrder({ items, subtotal, address, unifiedOrd
     })),
   };
 
-  try {
-    const raw = localStorage.getItem('swadishtt-orders');
-    const existing = raw ? JSON.parse(raw) : [];
-    localStorage.setItem('swadishtt-orders', JSON.stringify([order, ...(Array.isArray(existing) ? existing : [])]));
-  } catch (err) {
-    console.error('[unified checkout] Failed to save Swadishtt order locally:', err);
-  }
+
 
   try {
     await fetch('/api/swadishtt/orders', {

@@ -44,26 +44,25 @@ export default function SwadishttOrderDetailPage() {
 
   useEffect(() => {
     setIsLoading(true);
-    try {
-      const raw = localStorage.getItem(ORDERS_STORAGE_KEY);
-      if (raw) {
-        const parsed = JSON.parse(raw);
-        const found = (Array.isArray(parsed) ? parsed : []).find(o => o.id === orderId);
-        setOrder(found || null);
+    async function fetchOrder() {
+      try {
+        const res = await fetch(`/api/swadishtt/orders/${orderId}`);
+        if (res.ok) {
+          const data = await res.json();
+          if (data.order) {
+            setOrder(data.order);
+            if (data.order.containerReturn) {
+              setContainerScheduled(true);
+            }
+          }
+        }
+      } catch (e) {
+        console.error('Error loading order from cloud:', e);
+      } finally {
+        setIsLoading(false);
       }
-    } catch (e) {
-      console.error('Error loading order:', e);
-    } finally {
-      setIsLoading(false);
     }
-  }, [orderId]);
-
-  useEffect(() => {
-    // Check if container return already scheduled
-    try {
-      const returns = JSON.parse(localStorage.getItem('sw_container_returns') || '[]');
-      setContainerScheduled(returns.some(r => r.orderId === orderId));
-    } catch (_) {}
+    fetchOrder();
   }, [orderId]);
 
   if (isLoading) {

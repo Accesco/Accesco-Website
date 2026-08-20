@@ -9,41 +9,44 @@ import { getProductById } from '@/lib/groklyProducts';
 import { db } from '@/lib/firebase';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 
-const GROKLY_KEY = 'grokly_cart';
-const INSTASTYLE_KEY = 'instastyle_cart';
+let guestDeviceId = null;
+function getGuestDeviceId() {
+  if (!guestDeviceId) {
+    guestDeviceId = `guest_${Math.random().toString(36).slice(2, 10)}_${Date.now()}`;
+  }
+  return guestDeviceId;
+}
 
-function readJSON(key, fallback) {
-  if (typeof window === 'undefined') return fallback;
+function getUserIdentifier(user) {
+  return user?.uid || user?.email || getGuestDeviceId();
+}
+
+export async function getInstaStyleCart(user) {
+  const identifier = getUserIdentifier(user);
+  if (!identifier) return [];
   try {
-    const raw = localStorage.getItem(key);
-    if (!raw) return fallback;
-    const parsed = JSON.parse(raw);
-    return parsed ?? fallback;
-  } catch {
-    return fallback;
+    const snap = await getDoc(doc(db, 'instastyle_carts', identifier));
+    if (!snap.exists()) return [];
+    const cart = snap.data()?.cart;
+    return Array.isArray(cart) ? cart : [];
+  } catch (err) {
+    console.error('[unifiedCart] Failed to load InstaStyle cart from Firestore:', err);
+    return [];
   }
 }
 
-function writeJSON(key, value) {
-  if (typeof window === 'undefined') return;
-  localStorage.setItem(key, JSON.stringify(value));
-}
-
-export function getInstaStyleCart() {
-  const parsed = readJSON(INSTASTYLE_KEY, []);
-  return Array.isArray(parsed) ? parsed : [];
-}
-
-export function setInstaStyleCart(items) {
-  writeJSON(INSTASTYLE_KEY, items);
-}
-
-function getGroklyIdentifier(user) {
-  return user?.uid || user?.email || getGroklyDeviceId();
+export async function setInstaStyleCart(user, items) {
+  const identifier = getUserIdentifier(user);
+  if (!identifier) return;
+  try {
+    await setDoc(doc(db, 'instastyle_carts', identifier), { cart: items, updatedAt: Date.now() });
+  } catch (err) {
+    console.error('[unifiedCart] Failed to save InstaStyle cart to Firestore:', err);
+  }
 }
 
 export async function getGroklyCart(user) {
-  const identifier = getGroklyIdentifier(user);
+  const identifier = getUserIdentifier(user);
   if (!identifier) return {};
   try {
     const snap = await getDoc(doc(db, 'grokly_carts', identifier));
@@ -57,7 +60,7 @@ export async function getGroklyCart(user) {
 }
 
 export async function setGroklyCart(user, cartMap) {
-  const identifier = getGroklyIdentifier(user);
+  const identifier = getUserIdentifier(user);
   if (!identifier) return;
   try {
     await setDoc(doc(db, 'grokly_carts', identifier), { cart: cartMap, updatedAt: Date.now() });
@@ -66,42 +69,9 @@ export async function setGroklyCart(user, cartMap) {
   }
 }
 
-const GROKLY_DEVICE_ID_KEY = 'grokly_device_id';
-
-function getGroklyDeviceId() {
-  if (typeof window === 'undefined') return null;
-  let deviceId = localStorage.getItem(GROKLY_DEVICE_ID_KEY);
-  if (!deviceId) {
-    deviceId = `device_${Math.random().toString(36).slice(2, 10)}_${Date.now()}`;
-    localStorage.setItem(GROKLY_DEVICE_ID_KEY, deviceId);
-  }
-  return deviceId;
-}
-
-// Swadishtt's cart has no localStorage mirror at all — Firestore is read on
-// every access. `swadishtt_device_id` is not cart *data*, just an opaque
-// per-browser key so guests (no Firebase auth) get a stable Firestore doc to
-// read/write across reloads; there's no anonymous Firebase auth in this app
-// to derive one from instead.
-const SWADISHTT_DEVICE_ID_KEY = 'swadishtt_device_id';
-
-function getSwadishttDeviceId() {
-  if (typeof window === 'undefined') return null;
-  let deviceId = localStorage.getItem(SWADISHTT_DEVICE_ID_KEY);
-  if (!deviceId) {
-    deviceId = `device_${Math.random().toString(36).slice(2, 10)}_${Date.now()}`;
-    localStorage.setItem(SWADISHTT_DEVICE_ID_KEY, deviceId);
-  }
-  return deviceId;
-}
-
-function getSwadishttIdentifier(user) {
-  return user?.uid || user?.email || getSwadishttDeviceId();
-}
-
 /** Reads the Swadishtt cart straight from Firestore (`swadishtt_carts/{identifier}`). */
 export async function getSwadishttCart(user) {
-  const identifier = getSwadishttIdentifier(user);
+  const identifier = getUserIdentifier(user);
   if (!identifier) return [];
   try {
     const snap = await getDoc(doc(db, 'swadishtt_carts', identifier));
@@ -116,7 +86,7 @@ export async function getSwadishttCart(user) {
 
 /** Writes the Swadishtt cart straight to Firestore (`swadishtt_carts/{identifier}`). */
 export async function setSwadishttCart(user, items) {
-  const identifier = getSwadishttIdentifier(user);
+  const identifier = getUserIdentifier(user);
   if (!identifier) return;
   try {
     await setDoc(doc(db, 'swadishtt_carts', identifier), { cart: items, updatedAt: Date.now() });
@@ -126,27 +96,12 @@ export async function setSwadishttCart(user, items) {
 }
 
 /**
- * Clears all three brand carts after a successful unified checkout.
- * Called from a page that sits outside every brand's own cart context/provider,
- * so it has to reach into each brand's storage directly instead of calling
- * their `clearCart()`. Swadishtt (Firestore-only) and the Grokly Firestore
- * mirror / authenticated InstaStyle backend cart are all best-effort so a
- * slow/failed network call never blocks checkout from completing.
+ * Clears all three brand carts after a successful unified checkout in Firestore.
  */
 export async function clearAllBrandCarts({ user, getIdToken } = {}) {
-  setGroklyCart({});
-  setInstaStyleCart([]);
-
+  await setGroklyCart(user, {});
+  await setInstaStyleCart(user, []);
   await setSwadishttCart(user, []);
-
-  try {
-    const identifier = user?.uid || user?.email || getGroklyDeviceId();
-    if (identifier) {
-      await setDoc(doc(db, 'grokly_carts', identifier), { cart: {}, updatedAt: Date.now() });
-    }
-  } catch (err) {
-    console.error('[unifiedCart] Failed to clear Grokly Firestore cart:', err);
-  }
 
   try {
     const token = typeof getIdToken === 'function' ? await getIdToken() : null;
@@ -170,7 +125,8 @@ export async function getUnifiedCartCount(user) {
   const swadishttCount = swadishttCart.reduce((sum, item) => sum + (item.quantity || 1), 0);
   const groklyCart = await getGroklyCart(user);
   const groklyCount = Object.values(groklyCart).reduce((sum, qty) => sum + (qty || 0), 0);
-  const instastyleCount = getInstaStyleCart().reduce((sum, item) => sum + (item.quantity || 1), 0);
+  const instastyleCart = await getInstaStyleCart(user);
+  const instastyleCount = instastyleCart.reduce((sum, item) => sum + (item.quantity || 1), 0);
   return swadishttCount + groklyCount + instastyleCount;
 }
 
@@ -215,7 +171,8 @@ export async function buildUnifiedStores(user) {
     })
     .filter(Boolean);
 
-  const instastyleItems = getInstaStyleCart().map((item, idx) => ({
+  const instastyleCart = await getInstaStyleCart(user);
+  const instastyleItems = instastyleCart.map((item, idx) => ({
     key: `instastyle-${item.id}-${item.selectedSize || ''}-${item.selectedColor || ''}-${idx}`,
     id: item.id,
     name: item.name,
@@ -238,13 +195,7 @@ export async function buildUnifiedStores(user) {
 /**
  * For a vertical's own cart drawer/page: everything the user has added in
  * the *other* two verticals, so their own cart isn't the only thing visible
- * before they head to the combined checkout. `excludeKey` is that vertical's
- * own store key ('grokly' | 'swadishtt' | 'instastyle') — dropped from the
- * result alongside any store with no items.
- *
- * `updateQuantity`/`removeItem` reuse the same per-brand read/write calls as
- * app/cart/page.jsx's own quantity control, so edits made here are visible
- * there (and vice versa) — there's only one underlying cart per brand.
+ * before they head to the combined checkout.
  */
 export function useOtherStoreItems(user, excludeKey) {
   const [stores, setStores] = useState([]);
@@ -266,18 +217,18 @@ export function useOtherStoreItems(user, excludeKey) {
         : cart.map((c) => (c.id === item.id ? { ...c, quantity: nextQty } : c));
       await setSwadishttCart(user, next);
     } else if (storeKey === 'grokly') {
-      const cart = getGroklyCart();
+      const cart = await getGroklyCart(user);
       const next = { ...cart };
       if (nextQty <= 0) delete next[item.id];
       else next[item.id] = nextQty;
-      setGroklyCart(next);
+      await setGroklyCart(user, next);
     } else if (storeKey === 'instastyle') {
-      const cart = getInstaStyleCart();
+      const cart = await getInstaStyleCart(user);
       const matches = (c) => c.id === item.id && c.selectedSize === item.selectedSize && c.selectedColor === item.selectedColor;
       const next = nextQty <= 0
         ? cart.filter((c) => !matches(c))
         : cart.map((c) => (matches(c) ? { ...c, quantity: nextQty } : c));
-      setInstaStyleCart(next);
+      await setInstaStyleCart(user, next);
     }
     await refresh();
   }, [user, refresh]);

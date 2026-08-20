@@ -100,37 +100,9 @@ function CatalogContent() {
 
   useEffect(() => {
     const loadProducts = async () => {
-      // 1. Hydrate from localStorage for instant user experience
-      let localProducts = [];
-      if (typeof window !== "undefined") {
-        try {
-          const saved = localStorage.getItem("instastyle_custom_products");
-          if (saved) {
-            const parsed = JSON.parse(saved);
-            if (Array.isArray(parsed)) {
-              localProducts = parsed;
-            }
-          }
-        } catch (error) {
-          console.error("Failed to load local custom products:", error);
-        }
-      }
-
-      setAllProducts(() => {
-        const merged = [...products];
-        localProducts.forEach((lp) => {
-          if (!merged.some((p) => p.id === lp.id)) {
-            merged.push(lp);
-          }
-        });
-        return merged;
-      });
-
-      // 2. Fetch from Firebase Firestore for persistent storage
       try {
         const { db } = await import("@/lib/firebase");
-        const { collection, getDocs, query } =
-          await import("firebase/firestore");
+        const { collection, getDocs, query } = await import("firebase/firestore");
         const q = query(collection(db, "instastyle_products"));
         const snapshot = await getDocs(q);
         const fbProducts = [];
@@ -141,11 +113,6 @@ function CatalogContent() {
         if (fbProducts.length > 0) {
           setAllProducts(() => {
             const merged = [...products];
-            localProducts.forEach((lp) => {
-              if (!merged.some((p) => p.id === lp.id)) {
-                merged.push(lp);
-              }
-            });
             fbProducts.forEach((fp) => {
               if (!merged.some((p) => p.id === fp.id)) {
                 merged.push(fp);

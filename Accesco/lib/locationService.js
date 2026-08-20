@@ -4,20 +4,21 @@
  * Perfect for delivery apps requiring precise location information
  */
 
+let cachedLocation = null;
+
 /**
- * Get the complete user location data from localStorage
+ * Set in-memory user location (synced from Firestore / UI)
+ */
+export function setUserLocation(location) {
+  cachedLocation = location;
+}
+
+/**
+ * Get the complete user location data
  * @returns {Object|null} Complete location object or null if not set
  */
 export function getUserLocation() {
-  if (typeof window === 'undefined') return null;
-  
-  try {
-    const location = localStorage.getItem('userLocation');
-    return location ? JSON.parse(location) : null;
-  } catch (error) {
-    console.error('Error parsing user location:', error);
-    return null;
-  }
+  return cachedLocation;
 }
 
 /**
@@ -97,8 +98,7 @@ export function isLocationSet() {
  * Clear stored location
  */
 export function clearLocation() {
-  if (typeof window === 'undefined') return;
-  localStorage.removeItem('userLocation');
+  cachedLocation = null;
 }
 
 /**

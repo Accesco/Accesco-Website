@@ -11,6 +11,8 @@ import Image from 'next/image';
 import { Zap, Star, Sparkles, Heart } from 'lucide-react';
 import styles from './ProductCard.module.css';
 import { useCart } from '../contexts/GroklyContext';
+import { useAuth } from '@/app/components/AuthProvider';
+import { updateUserFieldsInFirebase } from '@/lib/userService';
 
 /**
  * Generate star rating string
@@ -142,32 +144,30 @@ function ProductCard({ product }) {
     setImgUrl(product.image || getProductImage(product.id, product.category));
   }, [product.id, product.image, product.category]);
 
-  // Wishlist state
+  const { user, userData } = useAuth();
   const [isWishlisted, setIsWishlisted] = useState(false);
 
   useEffect(() => {
-    try {
-      const stored = localStorage.getItem('grokly_wishlist');
-      if (stored) {
-        const list = JSON.parse(stored);
-        setIsWishlisted(list.some(item => item.id === product.id));
-      }
-    } catch (e) { /* noop */ }
-  }, [product.id]);
+    if (Array.isArray(userData?.wishlist)) {
+      setIsWishlisted(userData.wishlist.some(item => item.id === product.id));
+    }
+  }, [userData, product.id]);
 
   const toggleWishlist = (e) => {
     e.stopPropagation();
-    try {
-      const stored = localStorage.getItem('grokly_wishlist');
-      let list = stored ? JSON.parse(stored) : [];
-      if (isWishlisted) {
-        list = list.filter(item => item.id !== product.id);
-      } else {
-        list.push({ id: product.id });
-      }
-      localStorage.setItem('grokly_wishlist', JSON.stringify(list));
-      setIsWishlisted(!isWishlisted);
-    } catch (e) { /* noop */ }
+    const currentList = Array.isArray(userData?.wishlist) ? userData.wishlist : [];
+    let updated;
+    if (isWishlisted) {
+      updated = currentList.filter(item => item.id !== product.id);
+    } else {
+      updated = [...currentList, { id: product.id }];
+    }
+    setIsWishlisted(!isWishlisted);
+    if (user?.uid) {
+      updateUserFieldsInFirebase(user.uid, { wishlist: updated }).catch((err) =>
+        console.error('Error syncing wishlist to Firestore:', err)
+      );
+    }
   };
 
   /**

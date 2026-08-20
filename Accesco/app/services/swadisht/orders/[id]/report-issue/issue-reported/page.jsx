@@ -16,14 +16,20 @@ export default function SwadishttIssueReportedPage() {
   });
 
   useEffect(() => {
-    try {
-      const stored = sessionStorage.getItem(`sw_issue_${orderId}`);
-      if (stored) {
-        setReportData(JSON.parse(stored));
+    async function fetchReport() {
+      try {
+        const res = await fetch(`/api/swadishtt/orders/${orderId}`);
+        if (res.ok) {
+          const data = await res.json();
+          if (data.order?.issueReport) {
+            setReportData(data.order.issueReport);
+          }
+        }
+      } catch (e) {
+        console.error('Failed to fetch issue report:', e);
       }
-    } catch (e) {
-      console.error(e);
     }
+    fetchReport();
   }, [orderId]);
 
   return (

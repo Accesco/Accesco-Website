@@ -2,6 +2,8 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useAuth } from '@/app/components/AuthProvider';
+import { updateUserFieldsInFirebase } from '@/lib/userService';
 import styles from './try-return.module.css';
 
 const RETURNABLE_ITEMS = [
@@ -104,6 +106,7 @@ const RETURN_REASONS = [
 
 export default function InstaStyleTryReturnPage() {
   const router = useRouter();
+  const { user, userData } = useAuth();
   const [selectedItem, setSelectedItem] = useState(RETURNABLE_ITEMS[0]);
   const [selectedReason, setSelectedReason] = useState('size');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -126,26 +129,22 @@ export default function InstaStyleTryReturnPage() {
         }),
       }).catch(e => console.error(e));
 
-      // Add circular credits locally
-      const current = Number(localStorage.getItem('instastyle_circular_credits') || '1918');
-      const newCredits = current + selectedItem.price;
-      localStorage.setItem('instastyle_circular_credits', newCredits.toString());
+      const newAct = {
+        id: `act_tr_${Date.now()}`,
+        type: 'earned',
+        title: 'Try & Return Completed',
+        sub: `${selectedItem.brand} ${selectedItem.name}`,
+        amt: `+${selectedItem.price}`,
+        date: new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }),
+      };
 
-      // Log activity
-      try {
-        const rawActs = localStorage.getItem('instastyle_activity_log');
-        const acts = rawActs ? JSON.parse(rawActs) : [];
-        const newAct = {
-          id: `act_tr_${Date.now()}`,
-          type: 'earned',
-          title: 'Try & Return Completed',
-          sub: `${selectedItem.brand} ${selectedItem.name}`,
-          amt: `+${selectedItem.price}`,
-          date: new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }),
-        };
-        localStorage.setItem('instastyle_activity_log', JSON.stringify([newAct, ...acts]));
-      } catch (e) {
-        console.error(e);
+      if (user?.uid) {
+        const currentCredits = userData?.circularCredits || 1918;
+        const currentLog = Array.isArray(userData?.activityLog) ? userData.activityLog : [];
+        await updateUserFieldsInFirebase(user.uid, {
+          circularCredits: currentCredits + selectedItem.price,
+          activityLog: [newAct, ...currentLog],
+        }).catch((err) => console.error('Failed to update circular credits in Firestore:', err));
       }
 
       setIsConfirmed(true);

@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { useSwadishtt } from '../contexts/SwadishttContext';
 import styles from './SwadishttHeader.module.css';
 import LocationModal from '@/components/LocationModal';
+import { updateUserFieldsInFirebase } from '@/lib/userService';
 
 export default function SwadishttHeader() {
   const [scrolled, setScrolled] = useState(false);
@@ -168,12 +169,14 @@ export default function SwadishttHeader() {
             timestamp: new Date().toISOString()
           };
 
-          localStorage.setItem(
-            'userLocation',
-            JSON.stringify(locationObject)
-          );
-          
-          console.log("Saved location data:", locationObject);
+          if (user?.uid) {
+            updateUserFieldsInFirebase(user.uid, { selectedLocation: locationObject }).catch((e) =>
+              console.error('Failed to update location in Firestore:', e)
+            );
+          }
+          if (typeof updateLocation === 'function') {
+            updateLocation(locationObject.displayAddress || fullAddress);
+          }
           setShowLocationModal(false);
         }}
       />

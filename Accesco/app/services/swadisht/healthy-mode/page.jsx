@@ -23,6 +23,8 @@
 
 import { useEffect, useState } from 'react';
 import { useSwadishtt } from '../contexts/SwadishttContext';
+import { useAuth } from '@/app/components/AuthProvider';
+import { updateUserFieldsInFirebase } from '@/lib/userService';
 import SwadishttHeader from '../components/SwadishttHeader';
 import styles from './healthy-mode.module.css';
 
@@ -80,18 +82,15 @@ const consumedFats = cart?.reduce(
 const targetCal = healthInsights?.householdSummary?.totalCalories || 2000;
 const progressPercent = targetCal > 0 ? Math.min(Math.round((consumedCalories / targetCal) * 100), 100) : 0;
 
-  // ── Restore saved profile from localStorage on mount ──
+  const { user, userData } = useAuth();
+
+  // ── Restore saved profile from Firestore/AuthProvider on mount ──
   useEffect(() => {
-    try {
-      const saved = localStorage.getItem('swadishtt-health-profile');
-      if (saved) {
-        setMembers(JSON.parse(saved));
-        setShowHealthForm(false);
-      }
-    } catch (e) {
-      console.error('Profile restore error:', e);
+    if (userData?.healthProfile) {
+      setMembers(userData.healthProfile);
+      setShowHealthForm(false);
     }
-  }, []);
+  }, [userData]);
 
   // ── Re-fetch insights whenever goal or profile changes ──
   useEffect(() => {
@@ -172,7 +171,9 @@ const addMember = () => {
         body: JSON.stringify({ profile: getMappedMembers() }),
       });
       const data = await res.json();
-      localStorage.setItem('swadishtt-health-profile', JSON.stringify(members));
+      if (user?.uid) {
+        await updateUserFieldsInFirebase(user.uid, { healthProfile: members });
+      }
       setHealthInsights(data);
       setShowHealthForm(false);
     } catch (e) {
@@ -195,7 +196,6 @@ const addMember = () => {
           <button
             className={styles.exitHealthBtn}
             onClick={() => {
-              localStorage.setItem('swadishtt-health-mode', JSON.stringify(false));
               window.location.href = '/services/swadisht/profile';
             }}
           >

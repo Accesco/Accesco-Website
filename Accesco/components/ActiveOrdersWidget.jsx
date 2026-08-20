@@ -2,44 +2,46 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { useAuth } from '@/app/components/AuthProvider';
 
 export default function ActiveOrdersWidget({ venture } = {}) {
   const [activeOrders, setActiveOrders] = useState([]);
   const router = useRouter();
 
-  useEffect(() => {
-    const loadActiveOrders = () => {
-      try {
-        const groklyRaw = localStorage.getItem('grokly_orders');
-        const swadishttRaw = localStorage.getItem('swadishtt-orders');
-        const instastyleRaw = localStorage.getItem('instastyle_orders');
+  const { user } = useAuth ? useAuth() : {};
 
-        const grokly = groklyRaw ? JSON.parse(groklyRaw) : [];
-        const swadishtt = swadishttRaw ? JSON.parse(swadishttRaw) : [];
-        const instastyle = instastyleRaw ? JSON.parse(instastyleRaw) : [];
+  useEffect(() => {
+    const loadActiveOrders = async () => {
+      try {
+        const queryParam = user?.uid ? `userId=${encodeURIComponent(user.uid)}` : '';
+        const [groklyRes, swadishttRes, instastyleRes] = await Promise.all([
+          fetch(`/api/grokly/orders?${queryParam}`).then((r) => (r.ok ? r.json() : {})).catch(() => ({})),
+          fetch(`/api/swadishtt/orders?${queryParam}`).then((r) => (r.ok ? r.json() : {})).catch(() => ({})),
+          fetch(`/api/instastyle/orders?${queryParam}`).then((r) => (r.ok ? r.json() : {})).catch(() => ({})),
+        ]);
+
+        const grokly = Array.isArray(groklyRes.orders) ? groklyRes.orders : [];
+        const swadishtt = Array.isArray(swadishttRes.orders) ? swadishttRes.orders : [];
+        const instastyle = Array.isArray(instastyleRes.orders) ? instastyleRes.orders : [];
 
         const combined = [
-          ...grokly.map(o => ({ ...o, venture: 'Grokly', path: '/services/grokly/order-tracking' })),
-          ...swadishtt.map(o => ({ ...o, venture: 'Swadishtt', path: '/services/swadisht/order-tracking' })),
-          ...instastyle.map(o => ({ ...o, venture: 'InstaStyle', path: '/services/instastyle/order-tracking' }))
+          ...grokly.map((o) => ({ ...o, venture: 'Grokly', path: '/services/grokly/order-tracking' })),
+          ...swadishtt.map((o) => ({ ...o, venture: 'Swadishtt', path: '/services/swadisht/order-tracking' })),
+          ...instastyle.map((o) => ({ ...o, venture: 'InstaStyle', path: '/services/instastyle/order-tracking' })),
         ];
 
-        // When a specific venture is requested (e.g. InstaStyle's own orders page),
-        // only show that venture's orders instead of every service's.
-        const scoped = venture ? combined.filter(o => o.venture === venture) : combined;
-
-        // Filter for orders that are not DELIVERED
-        const active = scoped.filter(o => o.status !== 'DELIVERED');
+        const scoped = venture ? combined.filter((o) => o.venture === venture) : combined;
+        const active = scoped.filter((o) => o.status !== 'DELIVERED');
         setActiveOrders(active);
       } catch (error) {
-        console.error('Error loading active orders:', error);
+        console.error('Error loading active orders from cloud:', error);
       }
     };
 
     loadActiveOrders();
     const interval = setInterval(loadActiveOrders, 10000);
     return () => clearInterval(interval);
-  }, [venture]);
+  }, [venture, user]);
 
   if (activeOrders.length === 0) return null;
 

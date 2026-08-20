@@ -382,16 +382,9 @@ export default function LocationModal({
 
   const persistSavedAddresses = (addressesToSave) => {
     setSavedAddresses(addressesToSave);
-
-    try {
-      localStorage.setItem(
-        SAVED_ADDRESSES_KEY,
-        JSON.stringify(addressesToSave)
-      );
-    } catch (storageError) {
-      console.error(
-        "Could not save addresses:",
-        storageError
+    if (user?.uid) {
+      updateUserFieldsInFirebase(user.uid, { savedAddresses: addressesToSave }).catch((err) =>
+        console.error("Could not save addresses to Firebase:", err)
       );
     }
   };
@@ -418,38 +411,8 @@ export default function LocationModal({
           return;
         }
       }
-      
-      try {
-        const storedValue = localStorage.getItem(SAVED_ADDRESSES_KEY);
-        if (!storedValue) {
-          setSavedAddresses(user ? [] : DEFAULT_SAVED_ADDRESSES);
-          if (!user) {
-            localStorage.setItem(SAVED_ADDRESSES_KEY, JSON.stringify(DEFAULT_SAVED_ADDRESSES));
-            setSelectedAddressId("home");
-          } else {
-            setSelectedAddressId("");
-          }
-          setLoading(false);
-          return;
-        }
-        
-        const parsedValue = JSON.parse(storedValue);
-        if (!Array.isArray(parsedValue)) {
-          setSavedAddresses(user ? [] : DEFAULT_SAVED_ADDRESSES);
-          setSelectedAddressId("home");
-          setLoading(false);
-          return;
-        }
-        
-        const normalizedAddresses = parsedValue.map(normalizeStoredAddress);
-        setSavedAddresses(normalizedAddresses);
-        const selected = normalizedAddresses.find((item) => item.tag === "Selected");
-        setSelectedAddressId(selected?.id || normalizedAddresses[0]?.id || "");
-      } catch (storageError) {
-        console.error("Could not load saved addresses:", storageError);
-        setSavedAddresses(user ? [] : DEFAULT_SAVED_ADDRESSES);
-        setSelectedAddressId("home");
-      }
+      setSavedAddresses(DEFAULT_SAVED_ADDRESSES);
+      setSelectedAddressId("home");
       setLoading(false);
     };
 

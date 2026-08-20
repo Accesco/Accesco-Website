@@ -7,6 +7,8 @@
 
 import { useEffect, useState, useRef, useCallback } from "react";
 import dynamic from "next/dynamic";
+import { useAuth } from "@/app/components/AuthProvider";
+import { updateUserFieldsInFirebase } from "@/lib/userService";
 import {
   MapPin,
   Search,
@@ -287,18 +289,20 @@ export default function LocationModal() {
 
       if (isAccuracyAcceptable) {
         const rawPayload = locationData?.raw || {};
-        localStorage.setItem(
-          "userLocation",
-          JSON.stringify({
-            ...rawPayload,
-            latitude: locationData.coords.latitude,
-            longitude: locationData.coords.longitude,
-            fullAddress: locationData.fullAddress,
-            displayAddress: locationData.name,
-            gpsAccuracyMeters: locationData.coords.accuracy,
-            timestamp: new Date().toISOString(),
-          })
-        );
+        const locObj = {
+          ...rawPayload,
+          latitude: locationData.coords.latitude,
+          longitude: locationData.coords.longitude,
+          fullAddress: locationData.fullAddress,
+          displayAddress: locationData.name,
+          gpsAccuracyMeters: locationData.coords.accuracy,
+          timestamp: new Date().toISOString(),
+        };
+        if (user?.uid) {
+          updateUserFieldsInFirebase(user.uid, { selectedLocation: locObj }).catch((e) =>
+            console.error("Failed to save location in Firestore:", e)
+          );
+        }
       }
     } catch (error) {
       if (error.code === 1 || error.message?.toLowerCase().includes("denied") || error.message?.toLowerCase().includes("permission")) {
@@ -310,7 +314,7 @@ export default function LocationModal() {
       setIsDetecting(false);
       abortControllerRef.current = null;
     }
-  }, [closeLocationModal, fetchLocationDetails, updateLocation]);
+  }, [closeLocationModal, fetchLocationDetails, updateLocation, user]);
 
   useEffect(() => {
     if (!isLocationModalOpen) {
@@ -318,39 +322,35 @@ export default function LocationModal() {
       return;
     }
 
-    try {
-      const stored = localStorage.getItem("userLocation");
-      if (stored) {
-        let parsed = null;
-        try { parsed = JSON.parse(stored); } catch (e) { return; }
-        
-        const storedLatitude = parsed?.latitude ?? parsed?.lat;
-        const storedLongitude = parsed?.longitude ?? parsed?.lon;
-        
-        if (storedLatitude && storedLongitude) {
-          setMapCenter({ lat: Number(storedLatitude), lng: Number(storedLongitude) });
-        }
+    const parsed = userData?.selectedLocation;
+    if (parsed) {
+      const storedLatitude = parsed?.latitude ?? parsed?.lat;
+      const storedLongitude = parsed?.longitude ?? parsed?.lon;
+      
+      if (storedLatitude && storedLongitude) {
+        setMapCenter({ lat: Number(storedLatitude), lng: Number(storedLongitude) });
       }
-    } catch (e) {}
+    }
 
     if (autoDetectAttemptedRef.current) return;
     autoDetectAttemptedRef.current = true;
-    detectLocation({ autoSelect: false }); // Changed to false so map stays open for user verification
-  }, [detectLocation, isLocationModalOpen]);
+    detectLocation({ autoSelect: false });
+  }, [detectLocation, isLocationModalOpen, userData]);
 
   const handleUseDetectedLocation = () => {
     if (!detectedLocation) return;
-    try {
-      const existing = localStorage.getItem("userLocation");
-      const parsedExisting = existing ? JSON.parse(existing) : {};
-      localStorage.setItem("userLocation", JSON.stringify({
-        ...parsedExisting,
-        displayAddress: detectedLocation.name,
-        fullAddress: detectedLocation.fullAddress || detectedLocation.name,
-        latitude: detectedLocation?.coords?.latitude,
-        longitude: detectedLocation?.coords?.longitude,
-      }));
-    } catch (e) {}
+    const locObj = {
+      displayAddress: detectedLocation.name,
+      fullAddress: detectedLocation.fullAddress || detectedLocation.name,
+      latitude: detectedLocation?.coords?.latitude,
+      longitude: detectedLocation?.coords?.longitude,
+      timestamp: new Date().toISOString(),
+    };
+    if (user?.uid) {
+      updateUserFieldsInFirebase(user.uid, { selectedLocation: locObj }).catch((e) =>
+        console.error("Failed to save location in Firestore:", e)
+      );
+    }
     updateLocation(detectedLocation.name);
     closeLocationModal();
   };

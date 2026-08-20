@@ -2,19 +2,32 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     
-    // User profile and account documents
+    // User profile, account documents, and all subcollections
     match /users/{userId} {
       allow read, write: if request.auth != null && (request.auth.uid == userId || request.auth.token.phone_number != null);
       
-      // Transactions subcollection
-      match /transactions/{transactionId} {
+      match /{allPaths=**} {
         allow read, write: if request.auth != null && (request.auth.uid == userId || request.auth.token.phone_number != null);
       }
-      
-      // Coupons subcollection
-      match /coupons/{couponId} {
-        allow read, write: if request.auth != null && (request.auth.uid == userId || request.auth.token.phone_number != null);
-      }
+    }
+    
+    // Carts and wishlists per user/device
+    match /swadishtt_carts/{docId} {
+      allow read, write: if true;
+    }
+    match /grokly_carts/{docId} {
+      allow read, write: if true;
+    }
+    match /instastyle_carts/{docId} {
+      allow read, write: if true;
+    }
+    match /instastyle_wishlists/{docId} {
+      allow read, write: if true;
+    }
+
+    // Orders collection
+    match /orders/{orderId} {
+      allow read, create, update: if true;
     }
     
     // Waitlist collection
@@ -32,5 +45,12 @@ service cloud.firestore {
     match /referralVisits/{visitId} {
       allow read, create, update: if true;
     }
+
+    // Custom products / catalog
+    match /custom_products/{docId} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
   }
 }
+

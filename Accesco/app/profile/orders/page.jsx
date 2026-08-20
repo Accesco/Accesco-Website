@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
+import { useAuth } from '@/app/components/AuthProvider';
 import styles from './orders.module.css';
 
 export default function UnifiedOrdersPage() {
@@ -11,39 +12,33 @@ export default function UnifiedOrdersPage() {
   const [sortBy, setSortBy] = useState('date-desc');
   const [isLoading, setIsLoading] = useState(true);
 
+  const { user } = useAuth();
+
   useEffect(() => {
-    const loadOrders = () => {
+    async function loadOrders() {
       setIsLoading(true);
       try {
-        // Load from all three sources
-        const groklyRaw = localStorage.getItem('grokly_orders');
-        const swadishttRaw = localStorage.getItem('swadishtt-orders');
-        const instastyleRaw = localStorage.getItem('instastyle_orders');
-
-        const groklyOrders = groklyRaw ? JSON.parse(groklyRaw) : [];
-        const swadishttOrders = swadishttRaw ? JSON.parse(swadishttRaw) : [];
-        const instastyleOrders = instastyleRaw ? JSON.parse(instastyleRaw) : [];
-
-        // Combine all orders
-        const combined = [
-          ...groklyOrders.map(o => ({ ...o, venture: 'Grokly' })),
-          ...swadishttOrders.map(o => ({ ...o, venture: 'Swadishtt' })),
-          ...instastyleOrders.map(o => ({ ...o, venture: 'InstaStyle' }))
-        ];
-
-        setAllOrders(combined);
+        const queryParam = user?.uid ? `userId=${encodeURIComponent(user.uid)}` : '';
+        const res = await fetch(`/api/swadishtt/orders?${queryParam}`);
+        if (res.ok) {
+          const data = await res.json();
+          if (Array.isArray(data.orders)) {
+            const mapped = data.orders.map((o) => ({
+              ...o,
+              venture: o.brand || o.venture || 'Swadishtt',
+            }));
+            setAllOrders(mapped);
+          }
+        }
       } catch (error) {
         console.error('Error loading combined orders:', error);
       } finally {
         setIsLoading(false);
       }
-    };
+    }
 
     loadOrders();
-    // Refresh every 30 seconds to update statuses
-    const interval = setInterval(loadOrders, 30000);
-    return () => clearInterval(interval);
-  }, []);
+  }, [user]);
 
   const filteredOrders = useMemo(() => {
     let filtered = allOrders;

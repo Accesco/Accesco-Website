@@ -62,6 +62,13 @@ export async function getUserProfileData(userId) {
       currency: data.currency || 'INR (₹)',
       userVouchers: Array.isArray(data.userVouchers) ? data.userVouchers : [],
       discounts: data.discounts || {},
+      selectedLocation: data.selectedLocation || null,
+      healthProfile: data.healthProfile || null,
+      circularCredits: typeof data.circularCredits === 'number' ? data.circularCredits : 1918,
+      activityLog: Array.isArray(data.activityLog) ? data.activityLog : [],
+      xpenseEntries: Array.isArray(data.xpenseEntries) ? data.xpenseEntries : [],
+      issueReports: Array.isArray(data.issueReports) ? data.issueReports : [],
+      containerReturns: Array.isArray(data.containerReturns) ? data.containerReturns : [],
       transactions,
     };
   } catch (error) {
@@ -436,7 +443,7 @@ export async function migrateLocalStorageToFirebase(userId) {
         updates.selectedLocation = { displayAddress: localLocation, fullAddress: localLocation };
       }
     }
-    keysToRemove.push('userLocation');
+    keysToRemove.push('userLocation', 'instastyle_location');
 
     // 9. Grokly Baskets Migration
     const localBaskets = localStorage.getItem('grokly_baskets');
@@ -448,7 +455,41 @@ export async function migrateLocalStorageToFirebase(userId) {
     }
     keysToRemove.push('grokly_baskets');
 
-    // 10. Additional legacy keys to purge upon verification
+    // 10. Health Profile & Xpense Migration
+    const localHealth = localStorage.getItem('swadishtt-health-profile');
+    if (localHealth && !firebaseData.healthProfile) {
+      try {
+        updates.healthProfile = JSON.parse(localHealth);
+      } catch (e) {}
+    }
+    keysToRemove.push('swadishtt-health-profile', 'swadishtt-health-mode');
+
+    const localXpense = localStorage.getItem('xpense_entries');
+    if (localXpense && (!Array.isArray(firebaseData.xpenseEntries) || firebaseData.xpenseEntries.length === 0)) {
+      try {
+        const parsed = JSON.parse(localXpense);
+        if (Array.isArray(parsed)) updates.xpenseEntries = parsed;
+      } catch (e) {}
+    }
+    keysToRemove.push('xpense_entries');
+
+    const localCredits = localStorage.getItem('instastyle_circular_credits');
+    if (localCredits && typeof firebaseData.circularCredits !== 'number') {
+      const parsed = parseInt(localCredits);
+      if (!isNaN(parsed)) updates.circularCredits = parsed;
+    }
+    keysToRemove.push('instastyle_circular_credits');
+
+    const localLog = localStorage.getItem('instastyle_activity_log');
+    if (localLog && (!Array.isArray(firebaseData.activityLog) || firebaseData.activityLog.length === 0)) {
+      try {
+        const parsed = JSON.parse(localLog);
+        if (Array.isArray(parsed)) updates.activityLog = parsed;
+      } catch (e) {}
+    }
+    keysToRemove.push('instastyle_activity_log');
+
+    // 11. Additional legacy keys to purge upon verification
     keysToRemove.push(
       `accesco_swadisht_discount_${userKey}`,
       `swadishtt_coupon_50`,
@@ -457,6 +498,11 @@ export async function migrateLocalStorageToFirebase(userId) {
       `accesco_user`,
       `grokly_cart`,
       `grokly_orders`,
+      `instastyle_cart`,
+      `instastyle_orders`,
+      `instastyle_wishlist`,
+      `instastyle_inventory`,
+      `swadishtt-orders`,
       `agriConnectCart`
     );
 
@@ -473,8 +519,45 @@ export async function migrateLocalStorageToFirebase(userId) {
           localStorage.removeItem(key);
         } catch (e) {}
       });
+      purgeApplicationLocalStorage();
     }
   } catch (err) {
     console.error('Error migrating localStorage to Firebase:', err);
   }
 }
+
+/**
+ * Purges all application-owned keys from localStorage and sessionStorage,
+ * explicitly preserving third-party SDK keys (Razorpay rzp_*, reCAPTCHA _grecaptcha, etc.)
+ */
+const THIRD_PARTY_KEY_PREFIXES = ['rzp_', '_grecaptcha', 'firebase:'];
+
+export function purgeApplicationLocalStorage() {
+  if (typeof window === 'undefined') return;
+  try {
+    const keysToRemove = [];
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (key && !THIRD_PARTY_KEY_PREFIXES.some((prefix) => key.startsWith(prefix))) {
+        keysToRemove.push(key);
+      }
+    }
+    keysToRemove.forEach((key) => localStorage.removeItem(key));
+  } catch (e) {
+    console.error('Error purging application localStorage:', e);
+  }
+
+  try {
+    const sessionKeysToRemove = [];
+    for (let i = 0; i < sessionStorage.length; i++) {
+      const key = sessionStorage.key(i);
+      if (key && !THIRD_PARTY_KEY_PREFIXES.some((prefix) => key.startsWith(prefix))) {
+        sessionKeysToRemove.push(key);
+      }
+    }
+    sessionKeysToRemove.forEach((key) => sessionStorage.removeItem(key));
+  } catch (e) {
+    console.error('Error purging application sessionStorage:', e);
+  }
+}
+

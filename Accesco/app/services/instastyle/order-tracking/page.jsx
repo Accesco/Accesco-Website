@@ -78,6 +78,7 @@ function OrderTrackingContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const { orders, updateOrderStatus } = useCart();
+  const { userData } = useAuth();
   
   const orderId = searchParams.get('id');
   const eta = searchParams.get('eta') || '12';
@@ -91,9 +92,8 @@ function OrderTrackingContent() {
       return [order.deliveryLat, order.deliveryLng];
     }
     try {
-      const raw = typeof window !== 'undefined' ? localStorage.getItem('userLocation') : null;
-      if (raw) {
-        const loc = JSON.parse(raw);
+      const loc = userData?.selectedLocation;
+      if (loc) {
         const lat = parseFloat(loc.latitude ?? loc.lat);
         const lng = parseFloat(loc.longitude ?? loc.lng ?? loc.lon);
         if (!Number.isNaN(lat) && !Number.isNaN(lng)) return [lat, lng];

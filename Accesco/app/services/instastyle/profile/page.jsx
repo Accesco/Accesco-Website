@@ -8,6 +8,7 @@ import { products } from '@/lib/mockData';
 import ActiveOrdersWidget from '@/components/ActiveOrdersWidget';
 import Select from '@/components/instastyle/Select';
 import { useAuth } from '../../../components/AuthProvider';
+import { updateUserFieldsInFirebase } from '@/lib/userService';
 
 const PROFILE_STORAGE_KEY = 'instastyle_profile';
 
@@ -52,7 +53,7 @@ const accountMoments = [
 
 export default function ProfilePage() {
   const { cart, wishlist } = useCart();
-  const { user } = useAuth();
+  const { user, userData } = useAuth();
   const [profile, setProfile] = useState(initialProfile);
   const [saveStatus, setSaveStatus] = useState('idle');
   const [circularCredits, setCircularCredits] = useState(120);
@@ -68,42 +69,27 @@ export default function ProfilePage() {
   );
 
   useEffect(() => {
-    if (typeof window === 'undefined') return;
-    try {
-      let next = { ...initialProfile };
-      const raw = localStorage.getItem(PROFILE_STORAGE_KEY);
-      if (raw) {
-        const parsed = JSON.parse(raw);
-        next = { ...next, ...parsed };
-      }
-      setProfile(next);
-
-      // Read circular credits
-      const credits = localStorage.getItem('instastyle_circular_credits');
-      if (credits) setCircularCredits(Number(credits));
-    } catch (error) {
-      console.warn('Profile storage read failed:', error);
-    }
-  }, []);
-
-  // Overlay the Firebase-backed auth identity once it's available.
-  useEffect(() => {
-    if (!user) return;
+    if (!userData && !user) return;
     setProfile((prev) => ({
       ...prev,
-      fullName: user.name?.trim() || prev.fullName,
-      phone: user.phone?.trim() || prev.phone,
-      email: user.email?.trim() || prev.email,
+      fullName: user?.name?.trim() || userData?.fullName || prev.fullName,
+      phone: user?.phone?.trim() || userData?.phone || prev.phone,
+      email: user?.email?.trim() || userData?.email || prev.email,
     }));
-  }, [user]);
+    if (typeof userData?.circularCredits === 'number') {
+      setCircularCredits(userData.circularCredits);
+    }
+  }, [user, userData]);
 
   const updateField = (field, value) => {
     setProfile((prev) => ({ ...prev, [field]: value }));
   };
 
-  const saveProfile = () => {
+  const saveProfile = async () => {
     try {
-      localStorage.setItem(PROFILE_STORAGE_KEY, JSON.stringify(profile));
+      if (user?.uid) {
+        await updateUserFieldsInFirebase(user.uid, profile);
+      }
       setSaveStatus('saved');
       setTimeout(() => setSaveStatus('idle'), 1500);
     } catch (error) {

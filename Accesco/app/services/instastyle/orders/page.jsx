@@ -21,18 +21,8 @@ export default function InstaStyleOrdersPage() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    try {
-      const raw = localStorage.getItem("instastyle_orders");
-      if (raw) {
-        setOrders(JSON.parse(raw));
-      } else {
-        setOrders(contextOrders || []);
-      }
-    } catch (e) {
-      console.error(e);
-    } finally {
-      setIsLoading(false);
-    }
+    setOrders(contextOrders || []);
+    setIsLoading(false);
   }, [contextOrders]);
 
   const filteredOrders = useMemo(() => {

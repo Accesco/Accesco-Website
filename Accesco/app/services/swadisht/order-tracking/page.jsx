@@ -31,10 +31,19 @@ export default function SwadishttTrackingPage() {
   const [order, setOrder] = useState(null);
 
   useEffect(() => {
-    if (typeof window === 'undefined') return;
-    const storedOrders = JSON.parse(localStorage.getItem('swadishtt-orders') || '[]');
-    const found = storedOrders.find((o) => o.id === orderId);
-    if (found) setOrder(found);
+    async function fetchOrder() {
+      if (!orderId) return;
+      try {
+        const res = await fetch(`/api/swadishtt/orders/${orderId}`);
+        if (res.ok) {
+          const data = await res.json();
+          if (data.order) setOrder(data.order);
+        }
+      } catch (e) {
+        console.error('Error loading order tracking details:', e);
+      }
+    }
+    fetchOrder();
   }, [orderId]);
 
   const handleAdvanceStatus = useCallback(() => {

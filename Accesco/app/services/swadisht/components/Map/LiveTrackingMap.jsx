@@ -4,6 +4,7 @@ import { useEffect, useState, useRef } from "react";
 import { MapContainer, TileLayer, Marker, Polyline } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
+import { useAuth } from "@/app/components/AuthProvider";
 import {
   subscribeToRiderLocation,
   startRiderSimulation,
@@ -68,27 +69,24 @@ export default function LiveTrackingMap({ orderId }) {
     ? [userLoc[0] + 0.012, userLoc[1] + 0.012]
     : [13.08268, 80.27072];
 
+  const { userData } = useAuth ? useAuth() : {};
+
   useEffect(() => {
-    const stored = localStorage.getItem("userLocation");
-    if (stored) {
-      try {
-        const parsed = JSON.parse(stored);
-        if ((parsed.lat && parsed.lng) || parsed.lon) {
-          setUserLoc([
-            parseFloat(parsed.lat),
-            parseFloat(parsed.lng) || parseFloat(parsed.lon),
-          ]);
-        } else if (parsed.latitude && parsed.longitude) {
-          setUserLoc([
-            parseFloat(parsed.latitude),
-            parseFloat(parsed.longitude),
-          ]);
-        }
-      } catch (e) {
-        console.error("Failed to parse location data:", e);
+    const parsed = userData?.selectedLocation;
+    if (parsed) {
+      if ((parsed.lat && parsed.lng) || parsed.lon) {
+        setUserLoc([
+          parseFloat(parsed.lat),
+          parseFloat(parsed.lng) || parseFloat(parsed.lon),
+        ]);
+      } else if (parsed.latitude && parsed.longitude) {
+        setUserLoc([
+          parseFloat(parsed.latitude),
+          parseFloat(parsed.longitude),
+        ]);
       }
     }
-  }, []);
+  }, [userData]);
 
   useEffect(() => {
     if (!userLoc) return;

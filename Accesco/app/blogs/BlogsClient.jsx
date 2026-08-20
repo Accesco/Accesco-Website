@@ -30,16 +30,6 @@ export default function BlogsClient({ initialPosts }) {
       } catch (err) {
         console.error('Failed to load bookmarks:', err);
       }
-    } else {
-      // Load from localStorage for non-logged-in users
-      const saved = localStorage.getItem('bookmarkedPosts');
-      if (saved) {
-        try {
-          setBookmarkedPosts(JSON.parse(saved));
-        } catch (err) {
-          console.error('Failed to parse bookmarks:', err);
-        }
-      }
     }
   }
 
@@ -138,15 +128,9 @@ export default function BlogsClient({ initialPosts }) {
         alert('Failed to update bookmark. Please try again.');
       }
     } else {
-      // Use localStorage for non-logged-in users
-      setBookmarkedPosts(prev => {
-        const newBookmarks = prev.includes(postId)
-          ? prev.filter(id => id !== postId)
-          : [...prev, postId];
-
-        localStorage.setItem('bookmarkedPosts', JSON.stringify(newBookmarks));
-        return newBookmarks;
-      });
+      setBookmarkedPosts(prev =>
+        prev.includes(postId) ? prev.filter(id => id !== postId) : [...prev, postId]
+      );
     }
   };
 

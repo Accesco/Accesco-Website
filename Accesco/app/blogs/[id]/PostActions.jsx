@@ -57,9 +57,6 @@ function useBookmark(post) {
       } catch (err) {
         console.error('Failed to load bookmarks:', err);
       }
-    } else {
-      const saved = localStorage.getItem('bookmarkedPosts');
-      if (saved) setBookmarkedPosts(JSON.parse(saved));
     }
   }
 
@@ -78,13 +75,9 @@ function useBookmark(post) {
         console.error('Bookmark error:', error);
       }
     } else {
-      setBookmarkedPosts((prev) => {
-        const newBookmarks = prev.includes(post.id)
-          ? prev.filter((id) => id !== post.id)
-          : [...prev, post.id];
-        localStorage.setItem('bookmarkedPosts', JSON.stringify(newBookmarks));
-        return newBookmarks;
-      });
+      setBookmarkedPosts((prev) =>
+        prev.includes(post.id) ? prev.filter((id) => id !== post.id) : [...prev, post.id]
+      );
     }
   };
 

@@ -245,7 +245,7 @@ const INITIAL_BASKETS = [
 
 function GroklyProfileInner() {
   const { cart, cartCount, orders, addToCart, openCart, location, updateLocation, getProductQuantity, incrementQuantity, decrementQuantity } = useGrokly();
-  const { user, signOut } = useAuth();
+  const { user, userData, signOut } = useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -319,43 +319,18 @@ function GroklyProfileInner() {
   const [recycledBags, setRecycledBags] = useState(0);
   const [ecoHistory, setEcoHistory] = useState([]);
 
-  // Load eco details from localStorage
+  // Load eco details from userData
   useEffect(() => {
-    const bal = parseInt(localStorage.getItem('grokly_wallet_balance') || '0');
-    const bags = parseInt(localStorage.getItem('grokly_recycled_bags_count') || '0');
-    const rawHist = localStorage.getItem('grokly_eco_history');
-    const hist = rawHist ? JSON.parse(rawHist) : [];
-    
-    setWalletBalance(bal);
-    setRecycledBags(bags);
-    setEcoHistory(hist);
-  }, []);
-
-  // Update on storage event
-  useEffect(() => {
-    const handleStorageChange = () => {
-      const bal = parseInt(localStorage.getItem('grokly_wallet_balance') || '0');
-      const bags = parseInt(localStorage.getItem('grokly_recycled_bags_count') || '0');
-      const rawHist = localStorage.getItem('grokly_eco_history');
-      const hist = rawHist ? JSON.parse(rawHist) : [];
-      
-      setWalletBalance(bal);
-      setRecycledBags(bags);
-      setEcoHistory(hist);
-    };
-    window.addEventListener('storage', handleStorageChange);
-    return () => window.removeEventListener('storage', handleStorageChange);
-  }, []);
+    if (userData) {
+      setWalletBalance(typeof userData.walletBalance === 'number' ? userData.walletBalance : 0);
+      setRecycledBags(typeof userData.recycledBags === 'number' ? userData.recycledBags : 0);
+      setEcoHistory(Array.isArray(userData.ecoHistory) ? userData.ecoHistory : []);
+      if (Array.isArray(userData.wishlist)) setWishlist(userData.wishlist);
+    }
+  }, [userData]);
 
   useEffect(() => {
     setIsMounted(true);
-  }, []);
-
-  useEffect(() => {
-    try {
-      const stored = localStorage.getItem('grokly_wishlist');
-      if (stored) setWishlist(JSON.parse(stored));
-    } catch (e) { /* noop */ }
   }, []);
 
   // User Profile
@@ -912,13 +887,13 @@ function GroklyProfileInner() {
                         const qty = getProductQuantity(item.id);
 
                         const removeFromWishlist = () => {
-                          try {
-                            const stored = localStorage.getItem('grokly_wishlist');
-                            let list = stored ? JSON.parse(stored) : [];
-                            list = list.filter(i => i.id !== item.id);
-                            localStorage.setItem('grokly_wishlist', JSON.stringify(list));
-                            setWishlist(list);
-                          } catch (e) { /* noop */ }
+                          const updated = wishlist.filter(i => i.id !== item.id);
+                          setWishlist(updated);
+                          if (user?.uid) {
+                            updateUserFieldsInFirebase(user.uid, { wishlist: updated }).catch((e) =>
+                              console.error('Failed to update wishlist in Firestore:', e)
+                            );
+                          }
                         };
 
                         return (

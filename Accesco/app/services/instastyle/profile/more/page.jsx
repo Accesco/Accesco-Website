@@ -8,18 +8,15 @@ import { useAuth } from '../../../../components/AuthProvider';
 
 export default function InstaStyleMorePage() {
   const router = useRouter();
-  const { user } = useAuth();
-  const [credits, setCredits] = useState(120);
+  const { user, userData } = useAuth();
+  const [credits, setCredits] = useState(1918);
   const [userName, setUserName] = useState('Priya Sharma');
 
   useEffect(() => {
-    try {
-      const storedCredits = localStorage.getItem('instastyle_circular_credits');
-      if (storedCredits) setCredits(Number(storedCredits));
-    } catch (e) {
-      console.error(e);
+    if (typeof userData?.circularCredits === 'number') {
+      setCredits(userData.circularCredits);
     }
-  }, []);
+  }, [userData]);
 
   useEffect(() => {
     if (user?.name) setUserName(user.name);

@@ -175,44 +175,11 @@ function buildDonutGradient(breakdown) {
 
 /* --------------------------------------------------------------- helpers */
 
-function getSavedUserName() {
-  if (typeof window === "undefined") return "User";
-
-  const keys = [
-    "user",
-    "currentUser",
-    "loggedInUser",
-    "accesscoUser",
-    "accescoUser",
-    "profile",
-  ];
-
-  for (const key of keys) {
-    const raw = localStorage.getItem(key);
-    if (!raw) continue;
-
-    try {
-      const parsed = JSON.parse(raw);
-      const name =
-        parsed?.name ||
-        parsed?.fullName ||
-        parsed?.displayName ||
-        parsed?.username ||
-        parsed?.firstName;
-
-      if (name) return String(name).split(" ")[0];
-    } catch {
-      if (raw.length < 40) return raw.split(" ")[0];
-    }
-  }
-
-  return (
-    localStorage.getItem("name") ||
-    localStorage.getItem("userName") ||
-    localStorage.getItem("displayName") ||
-    "User"
-  ).split(" ")[0];
-}
+function getFirstNameFromStorage(user) {
+  if (user?.name) return user.name.split(' ')[0];
+  if (user?.displayName) return user.displayName.split(' ')[0];
+  return 'User';
+};
 
 /* Builds a smooth curve through the trend points using Catmull-Rom → cubic
    bezier. Coordinates are in a 0-100 space so the SVG can stretch freely. */
