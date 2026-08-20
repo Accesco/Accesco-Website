@@ -16,12 +16,18 @@ export default function InstaStyleOrdersPage() {
     reorder(order.items || []);
     router.push("/services/instastyle");
   };
-  const [orders, setOrders] = useState([]);
-  const [filter, setFilter] = useState("all");
+  // Backend-driven: CartContext's own orders effect already fetches this
+  // user's real orders from /api/instastyle/orders (falling back to
+  // localStorage only if that fetch itself fails — see contexts/
+  // CartContext.jsx) — reading localStorage again here, and preferring it
+  // whenever it's non-empty, was shadowing that fresh backend data with
+  // whatever was last written locally, which is exactly the "My Orders
+  // doesn't match across devices" gap this page needs to not have.
+  const orders = contextOrders || [];
+  const [filter, setFilter] = useState('all');
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    setOrders(contextOrders || []);
     setIsLoading(false);
   }, [contextOrders]);
 

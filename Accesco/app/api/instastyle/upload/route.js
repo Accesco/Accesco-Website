@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { db, storage } from '@/lib/firebase';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { collection, query, where, getDocs } from 'firebase/firestore';
+import { requireAdmin } from '../../_lib/authz';
 
 export const dynamic = 'force-dynamic';
 
@@ -14,6 +15,11 @@ const COLLECTION = 'instastyle_products';
 // ─────────────────────────────────────────────
 export async function POST(request) {
   try {
+    const { error: authError, status: authStatus } = await requireAdmin(request);
+    if (authError) {
+      return NextResponse.json({ success: false, error: authError }, { status: authStatus });
+    }
+
     const formData = await request.formData();
     const file = formData.get('file');
 
@@ -65,6 +71,11 @@ export async function POST(request) {
 // ─────────────────────────────────────────────
 export async function GET(request) {
   try {
+    const { error: authError, status: authStatus } = await requireAdmin(request);
+    if (authError) {
+      return NextResponse.json({ success: false, error: authError }, { status: authStatus });
+    }
+
     const { searchParams } = new URL(request.url);
     const category = searchParams.get('category');
 

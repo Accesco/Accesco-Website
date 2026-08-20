@@ -169,7 +169,7 @@ function ReverseCommerceView({ orders, walletBalance, ecoHistory, formatDate, sh
                   {ret.items.map(item => (
                     <div key={item.id} style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                       {/* eslint-disable-next-line @next/next/no-img-element -- item.image comes from the product catalog's heterogeneous external hosts, not compatible with next/image's static remotePatterns allowlist */}
-                  <img src={item.image} alt={item.name} width={36} height={36} style={{ borderRadius: '8px', objectFit: 'cover', border: '1px solid #e5e7eb' }} onError={e => { e.target.src = `https://placehold.co/36x36/e8f5e9/0c831f?text=${item.name[0]}`; }} />
+                      <img src={item.image} alt={item.name} width={36} height={36} style={{ borderRadius: '8px', objectFit: 'cover', border: '1px solid #e5e7eb' }} onError={e => { e.target.src = `https://placehold.co/36x36/e8f5e9/0c831f?text=${item.name[0]}`; }} />
                       <div style={{ flex: 1 }}>
                         <p style={{ margin: 0, fontSize: '13px', fontWeight: 600, color: '#374151' }}>{item.name}</p>
                         <p style={{ margin: 0, fontSize: '11px', color: '#9ca3af' }}>{item.quantity} unit{item.quantity > 1 ? 's' : ''}</p>
@@ -247,7 +247,7 @@ const INITIAL_BASKETS = [
 
 function GroklyProfileInner() {
   const { cart, cartCount, orders, addToCart, openCart, location, updateLocation, getProductQuantity, incrementQuantity, decrementQuantity } = useGrokly();
-  const { user, signOut } = useAuth();
+  const { user, userData, signOut } = useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -357,17 +357,18 @@ function GroklyProfileInner() {
     address: 'India'
   });
 
-  // Sync profile details with authenticated user session
+  // Sync profile details with authenticated user session & Firestore userData
   useEffect(() => {
-    if (user) {
+    if (user || userData) {
       setProfile(prev => ({
         ...prev,
-        name: user.name || user.displayName || prev.name,
-        phone: user.phone || user.phoneNumber || prev.phone,
-        email: user.email || prev.email,
+        name: userData?.name || userData?.displayName || user?.name || user?.displayName || prev.name,
+        phone: userData?.phone || userData?.phoneNumber || user?.phone || user?.phoneNumber || prev.phone,
+        email: userData?.email || user?.email || prev.email,
+        address: userData?.selectedLocation?.address || userData?.address || prev.address
       }));
     }
-  }, [user]);
+  }, [user, userData]);
 
   const handleLogout = async () => {
     try {

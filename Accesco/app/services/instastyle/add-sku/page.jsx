@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
+import { useAuth } from "../../../components/AuthProvider";
 import Link from "next/link";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
@@ -132,6 +133,19 @@ const SIZE_OPTIONS = [
 
 export default function AddSKUPage() {
   const router = useRouter();
+  const { user, getIdToken } = useAuth();
+
+  // These calls hit admin-only APIs (POST /api/instastyle/upload,
+  // POST /api/instastyle/products) — this internal add-SKU tool has no
+  // other access control today, so the id token is attached here purely so
+  // an actual admin account can keep using it; a non-admin caller will get
+  // a 403 from the API itself.
+  async function adminAuthHeaders(extra = {}) {
+    if (!user?.uid || !getIdToken) return extra;
+    const token = await getIdToken();
+    if (!token) return extra;
+    return { ...extra, Authorization: `Bearer ${token}`, 'x-user-id': user.uid };
+  }
 
   // Basic states
   const [listingType, setListingType] = useState("retail"); // 'retail' or 'thrift'
@@ -263,6 +277,7 @@ export default function AddSKUPage() {
       formData.append("file", file);
       const res = await fetch("/api/instastyle/upload", {
         method: "POST",
+        headers: await adminAuthHeaders(),
         body: formData,
       });
       const data = await res.json();
@@ -362,7 +377,7 @@ export default function AddSKUPage() {
     try {
       const res = await fetch("/api/instastyle/products", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: await adminAuthHeaders({ "Content-Type": "application/json" }),
         body: JSON.stringify(finalProduct),
       });
       const data = await res.json();

@@ -6,11 +6,19 @@ import { useParams, useSearchParams, useRouter } from 'next/navigation';
 import styles from '../orders.module.css';
 import RiderInfo from '@/components/RiderInfo';
 import { mockRiderData } from '@/lib/mockRiderData';
+import { useAuth } from '../../../components/AuthProvider';
+
+const VENTURE_ROUTES = {
+  Grokly: '/api/grokly/orders',
+  Swadishtt: '/api/swadishtt/orders',
+  InstaStyle: '/api/instastyle/orders',
+};
 
 export default function OrderDetailPage() {
   const params = useParams();
   const searchParams = useSearchParams();
   const router = useRouter();
+  const { user: authUser, uid, getIdToken } = useAuth();
   const [order, setOrder] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -18,35 +26,58 @@ export default function OrderDetailPage() {
   const venture = searchParams.get('venture');
 
   useEffect(() => {
+    let cancelled = false;
+
     const loadOrder = async () => {
       setIsLoading(true);
+
+      const currentId = authUser?.uid || uid;
       try {
-        if (!orderId) return;
+        let authHeaders = {};
+        if (authUser?.uid) {
+          const token = await getIdToken();
+          if (token) authHeaders = { Authorization: `Bearer ${token}`, 'x-user-id': authUser.uid };
+        }
 
-        // Fetch from Grokly order endpoint or generic API
-        let endpoint = '/api/grokly/orders';
-        if (venture === 'Swadishtt') endpoint = '/api/swadishtt/orders';
-        else if (venture === 'InstaStyle') endpoint = '/api/instastyle/orders';
+        const venturesToTry = venture && VENTURE_ROUTES[venture] ? [venture] : Object.keys(VENTURE_ROUTES);
 
-        const res = await fetch(`${endpoint}?orderId=${encodeURIComponent(orderId)}`);
-        if (res.ok) {
-          const data = await res.json();
-          if (data.order) {
-            setOrder(data.order);
-          } else if (Array.isArray(data.orders)) {
-            const found = data.orders.find(o => o.id === orderId);
-            if (found) setOrder(found);
-          }
+        const results = await Promise.all(
+          venturesToTry.map(async (v) => {
+            try {
+              const queryParam = currentId ? `&userId=${encodeURIComponent(currentId)}` : '';
+              const res = await fetch(`${VENTURE_ROUTES[v]}?id=${encodeURIComponent(orderId)}${queryParam}`, { headers: authHeaders });
+              if (res.ok) {
+                const data = await res.json();
+                if (data?.order) return { ...data.order, venture: v };
+                if (Array.isArray(data?.orders)) {
+                  const found = data.orders.find((o) => o.id === orderId);
+                  if (found) return { ...found, venture: v };
+                }
+              }
+            } catch (e) {
+              return null;
+            }
+            return null;
+          })
+        );
+        const found = results.find(Boolean);
+        if (!cancelled) {
+          setOrder(found || null);
         }
       } catch (error) {
-        console.error('Error loading order details from Firestore:', error);
+        console.warn('Order backend read failed:', error);
       } finally {
-        setIsLoading(false);
+        if (!cancelled) {
+          setIsLoading(false);
+        }
       }
     };
 
     loadOrder();
-  }, [orderId, venture]);
+    return () => {
+      cancelled = true;
+    };
+  }, [orderId, venture, authUser, uid, getIdToken]);
 
   if (isLoading) return <div className={styles.container}>Loading...</div>;
   if (!order) return <div className={styles.container}>Order not found</div>;

@@ -173,8 +173,6 @@ function buildDonutGradient(breakdown) {
   return `conic-gradient(from -90deg, ${stops.join(", ")})`;
 }
 
-/* --------------------------------------------------------------- helpers */
-
 function getSavedUserName() {
   return "User";
 }
@@ -428,7 +426,6 @@ const ID_BY_KEY = { grokly: "grocery", swadishtt: "food", instastyle: "fashion" 
 
 export default function XpenseMeterPage() {
   const { user, loading: authLoading, getIdToken, signIn } = useAuth();
-  const [userName, setUserName] = useState("User");
   const [modal, setModal] = useState(null); // null | 'budget' | 'viewspend'
   const [showAccount, setShowAccount] = useState(false);
   const [cardOut, setCardOut] = useState(false);
@@ -540,10 +537,6 @@ export default function XpenseMeterPage() {
     [totalBudget, budgets],
   );
 
-  useEffect(() => {
-    setUserName(getSavedUserName());
-  }, []);
-
   const allocated = useMemo(
     () => budgets.grokly + budgets.swadishtt + budgets.instastyle,
     [budgets],
@@ -610,9 +603,9 @@ export default function XpenseMeterPage() {
             </button>
             <div className="xd-user">
               <span className="xd-user-dot">
-                {userName.charAt(0).toUpperCase()}
+                {(user?.name || "User").charAt(0).toUpperCase()}
               </span>
-              <span className="xd-user-name">{userName}</span>
+              <span className="xd-user-name">{user?.name || "User"}</span>
             </div>
           </div>
         </header>

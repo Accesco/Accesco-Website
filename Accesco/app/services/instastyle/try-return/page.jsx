@@ -105,7 +105,7 @@ const RETURN_REASONS = [
 ];
 
 export default function InstaStyleTryReturnPage() {
-  const { user, uid } = useAuth();
+  const { user, uid, getIdToken } = useAuth();
   const router = useRouter();
   const [selectedItem, setSelectedItem] = useState(RETURNABLE_ITEMS[0]);
   const [selectedReason, setSelectedReason] = useState('size');
@@ -116,9 +116,17 @@ export default function InstaStyleTryReturnPage() {
   const handleConfirm = async () => {
     setIsSubmitting(true);
     try {
+      const headers = { 'Content-Type': 'application/json' };
+      if (user?.uid) {
+        const token = await getIdToken();
+        if (token) {
+          headers.Authorization = `Bearer ${token}`;
+          headers['x-user-id'] = user.uid;
+        }
+      }
       await fetch('/api/instastyle/try-return', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers,
         body: JSON.stringify({
           itemId: selectedItem.id,
           name: `${selectedItem.brand} ${selectedItem.name}`,

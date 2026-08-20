@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import SwadishttHeader from '../components/SwadishttHeader';
 import { useSwadishtt } from '../contexts/SwadishttContext';
+import { useAuth } from '../../../components/AuthProvider';
 import styles from './orders.module.css';
 
 const ORDERS_STORAGE_KEY = 'swadishtt-orders';
@@ -150,17 +151,39 @@ const handleReportIssue = () => {
 
 export default function SwadishttOrdersPage() {
   const { addToCart, user } = useSwadishtt();
+  // Swadishtt's own `user` above is guest checkout form data (name/email/
+  // phone), not the Firebase Auth identity — that's needed separately here
+  // to call the authenticated /api/swadishtt/orders endpoint.
+  const { user: authUser, getIdToken } = useAuth();
   const router = useRouter();
   const [orders, setOrders] = useState([]);
   const [activeFilter, setActiveFilter] = useState('all');
   const [hydrated, setHydrated] = useState(false);
 
+  // Backend-driven: fetches this user's real orders from
+  // /api/swadishtt/orders?userId=... (falling back to the local mirror only
+  // if unauthenticated or the fetch itself fails), instead of only ever
+  // reading the same-browser localStorage mirror — which is what left this
+  // page unable to show orders placed on another device.
   useEffect(() => {
     let cancelled = false;
     async function fetchOrders() {
       try {
-        const queryParam = user?.uid ? `userId=${encodeURIComponent(user.uid)}` : user?.email ? `email=${encodeURIComponent(user.email)}` : '';
-        const res = await fetch(`/api/swadishtt/orders${queryParam ? `?${queryParam}` : ''}`);
+        let authHeaders = {};
+        if (authUser?.uid) {
+          const token = await getIdToken();
+          if (token) authHeaders = { Authorization: `Bearer ${token}`, 'x-user-id': authUser.uid };
+        }
+
+        const queryParam = authUser?.uid
+          ? `userId=${encodeURIComponent(authUser.uid)}`
+          : authUser?.email
+          ? `email=${encodeURIComponent(authUser.email)}`
+          : user?.email
+          ? `email=${encodeURIComponent(user.email)}`
+          : '';
+
+        const res = await fetch(`/api/swadishtt/orders${queryParam ? `?${queryParam}` : ''}`, { headers: authHeaders });
         if (res.ok) {
           const data = await res.json();
           if (!cancelled) {
@@ -179,7 +202,7 @@ export default function SwadishttOrdersPage() {
     return () => {
       cancelled = true;
     };
-  }, [user]);
+  }, [authUser, user, getIdToken]);
 
   const filteredOrders = orders.filter((o) => matchesFilter(o, activeFilter));
 

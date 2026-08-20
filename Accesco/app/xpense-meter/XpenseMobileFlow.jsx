@@ -257,15 +257,11 @@ export default function XpenseMobileFlow({
   onRequestLogin,
 }) {
   const [screen, setScreen] = useState('intro');
-  const [userName, setUserName] = useState('User');
+  const userName = user?.name || 'User';
 
   const [budgets, setBudgets] = useState(DEFAULT_BUDGETS);
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState('');
-
-  useEffect(() => {
-    setUserName(getSavedUserName());
-  }, []);
 
   useEffect(() => {
     if (summary?.budgets) setBudgets(summary.budgets);

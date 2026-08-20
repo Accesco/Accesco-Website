@@ -2,10 +2,16 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { useAuth } from '@/app/components/AuthProvider';
+import { useAuth } from './AuthProvider';
+
+const VENTURE_ROUTES = {
+  Grokly: { api: '/api/grokly/orders', path: '/services/grokly/order-tracking' },
+  Swadishtt: { api: '/api/swadishtt/orders', path: '/services/swadisht/order-tracking' },
+  InstaStyle: { api: '/api/instastyle/orders', path: '/services/instastyle/order-tracking' },
+};
 
 export default function ActiveOrdersWidget({ venture } = {}) {
-  const { user, uid } = useAuth();
+  const { user, uid, getIdToken } = useAuth();
   const [activeOrders, setActiveOrders] = useState([]);
   const router = useRouter();
 
@@ -17,36 +23,32 @@ export default function ActiveOrdersWidget({ venture } = {}) {
 
     const loadActiveOrders = async () => {
       try {
+        let authHeaders = {};
+        if (user?.uid) {
+          const token = await getIdToken();
+          if (token) authHeaders = { Authorization: `Bearer ${token}`, 'x-user-id': user.uid };
+        }
+
         const queryParam = user?.uid
           ? `userId=${encodeURIComponent(user.uid)}`
           : user?.email
           ? `email=${encodeURIComponent(user.email)}`
           : `userId=${encodeURIComponent(currentIdentifier)}`;
 
-        const [groklyRes, swadishttRes, instastyleRes] = await Promise.allSettled([
-          fetch(`/api/grokly/orders?${queryParam}`).then(r => r.ok ? r.json() : { orders: [] }),
-          fetch(`/api/swadishtt/orders?${queryParam}`).then(r => r.ok ? r.json() : { orders: [] }),
-          fetch(`/api/instastyle/orders?${queryParam}`).then(r => r.ok ? r.json() : { orders: [] }),
-        ]);
+        const ventures = venture ? [venture] : Object.keys(VENTURE_ROUTES);
 
-        const grokly = groklyRes.status === 'fulfilled' ? (groklyRes.value?.orders || []) : [];
-        const swadishtt = swadishttRes.status === 'fulfilled' ? (swadishttRes.value?.orders || []) : [];
-        const instastyle = instastyleRes.status === 'fulfilled' ? (instastyleRes.value?.orders || []) : [];
+        const results = await Promise.all(
+          ventures.map((v) =>
+            fetch(`${VENTURE_ROUTES[v].api}?${queryParam}`, { headers: authHeaders })
+              .then((res) => (res.ok ? res.json() : { orders: [] }))
+              .then((data) => (data.orders || []).map((o) => ({ ...o, venture: v, path: VENTURE_ROUTES[v].path })))
+              .catch(() => [])
+          )
+        );
 
-        const combined = [
-          ...grokly.map(o => ({ ...o, venture: 'Grokly', path: '/services/grokly/order-tracking' })),
-          ...swadishtt.map(o => ({ ...o, venture: 'Swadishtt', path: '/services/swadisht/order-tracking' })),
-          ...instastyle.map(o => ({ ...o, venture: 'InstaStyle', path: '/services/instastyle/order-tracking' }))
-        ];
-
-        // When a specific venture is requested (e.g. InstaStyle's own orders page),
-        // only show that venture's orders instead of every service's.
-        const scoped = venture ? combined.filter(o => o.venture === venture) : combined;
-
-        // Filter for orders that are not DELIVERED
-        const active = scoped.filter(o => o.status !== 'DELIVERED');
+        const combined = results.flat().filter((o) => o.status !== 'DELIVERED');
         if (!cancelled) {
-          setActiveOrders(active);
+          setActiveOrders(combined);
         }
       } catch (error) {
         console.error('Error loading active orders:', error);
@@ -54,12 +56,12 @@ export default function ActiveOrdersWidget({ venture } = {}) {
     };
 
     loadActiveOrders();
-    const interval = setInterval(loadActiveOrders, 10000);
+    const interval = setInterval(loadActiveOrders, 15000);
     return () => {
       cancelled = true;
       clearInterval(interval);
     };
-  }, [venture, user, uid]);
+  }, [venture, user, uid, getIdToken]);
 
   if (activeOrders.length === 0) return null;
 

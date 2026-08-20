@@ -4,9 +4,9 @@ import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import SwadishttHeader from '../../components/SwadishttHeader';
+import { useAuth } from '../../../../components/AuthProvider';
 import styles from './order-detail.module.css';
 
-const ORDERS_STORAGE_KEY = 'swadishtt-orders';
 
 function formatDate(value) {
   if (!value) return 'Date unavailable';
@@ -36,19 +36,36 @@ function StatusBadge({ status }) {
 export default function SwadishttOrderDetailPage() {
   const params = useParams();
   const router = useRouter();
+  const { user: authUser, getIdToken } = useAuth();
   const [order, setOrder] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [containerScheduled, setContainerScheduled] = useState(false);
 
   const orderId = params.id;
 
+  // Backend-driven — same reasoning as the orders list page (see
+  // services/swadisht/orders/page.jsx): reads the real order from
+  // /api/swadishtt/orders?id=..., falling back to the local mirror only if
+  // unauthenticated or the fetch fails.
   useEffect(() => {
     setIsLoading(true);
     let cancelled = false;
 
     async function loadOrder() {
       try {
-        const res = await fetch('/api/swadishtt/orders');
+        let authHeaders = {};
+        if (authUser?.uid) {
+          const token = await getIdToken();
+          if (token) authHeaders = { Authorization: `Bearer ${token}`, 'x-user-id': authUser.uid };
+        }
+
+        const queryParam = authUser?.uid
+          ? `userId=${encodeURIComponent(authUser.uid)}`
+          : authUser?.email
+          ? `email=${encodeURIComponent(authUser.email)}`
+          : '';
+
+        const res = await fetch(`/api/swadishtt/orders${queryParam ? `?${queryParam}` : ''}`, { headers: authHeaders });
         if (res.ok) {
           const data = await res.json();
           const found = (Array.isArray(data.orders) ? data.orders : []).find(o => o.id === orderId);
@@ -70,7 +87,7 @@ export default function SwadishttOrderDetailPage() {
     return () => {
       cancelled = true;
     };
-  }, [orderId]);
+  }, [orderId, authUser, getIdToken]);
 
   if (isLoading) {
     return (

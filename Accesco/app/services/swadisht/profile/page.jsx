@@ -244,8 +244,17 @@ export default function SwadishttProfilePage() {
 
     async function loadOrders() {
       try {
-        const queryParam = user?.uid ? `userId=${encodeURIComponent(user.uid)}` : user?.email ? `email=${encodeURIComponent(user.email)}` : '';
-        const res = await fetch(`/api/swadishtt/orders${queryParam ? `?${queryParam}` : ''}`);
+        let authHeaders = {};
+        if (user?.uid) {
+          const token = await getIdToken();
+          if (token) authHeaders = { Authorization: `Bearer ${token}`, 'x-user-id': user.uid };
+        }
+        const queryParam = user?.uid
+          ? `userId=${encodeURIComponent(user.uid)}`
+          : user?.email
+          ? `email=${encodeURIComponent(user.email)}`
+          : '';
+        const res = await fetch(`/api/swadishtt/orders${queryParam ? `?${queryParam}` : ''}`, { headers: authHeaders });
         if (res.ok) {
           const data = await res.json();
           setOrders(Array.isArray(data.orders) ? data.orders : []);
@@ -255,7 +264,7 @@ export default function SwadishttProfilePage() {
       }
     }
     loadOrders();
-  }, [user]);
+  }, [user, getIdToken]);
 
   // Once signed in, the backend profile is the source of truth — overwrite the
   // auth-context-seeded state above with the synced record.

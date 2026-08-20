@@ -11,9 +11,19 @@ import {
   sendSwadishttStatusUpdate,
   sendSwadishttConfirmation,
 } from '@/lib/mailService';
+import { verifyAuthToken } from '../../../_lib/auth';
 
+// Requires an authenticated caller (not admin): this route performs no
+// Firestore mutation (it only sends a status-update/confirmation email) and
+// is called directly by the checkout flow right after a Swadishtt order is
+// placed, so it can't be admin-gated without breaking that flow.
 export async function POST(request) {
   try {
+    const { error: authError } = await verifyAuthToken(request);
+    if (authError) {
+      return NextResponse.json({ error: authError }, { status: 401 });
+    }
+
     const body = await request.json();
     const { orderId, newStatus, customerEmail, customerName, orderData, advance } = body;
 

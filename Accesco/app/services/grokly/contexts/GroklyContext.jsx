@@ -12,8 +12,30 @@ function getGroklyUid(user) {
   return user?.uid || auth?.currentUser?.uid || null;
 }
 
+// Calls the authenticated Grokly cart backend (app/api/grokly/cart/**)
+async function groklyCartFetch(getIdToken, uid, path, options = {}) {
+  const token = await getIdToken();
+  if (!token) return null;
+
+  const res = await fetch(`/api/grokly/cart${path}`, {
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+      'x-user-id': uid,
+      ...(options.headers || {}),
+    },
+  });
+
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) {
+    throw new Error(data.error || 'Cart request failed');
+  }
+  return data;
+}
+
 export function GroklyProvider({ children }) {
-  const { user, uid } = useAuth();
+  const { user, uid, getIdToken } = useAuth();
 
   const [cart, setCart] = useState({});
   const [orders, setOrders] = useState([]);
@@ -56,7 +78,13 @@ export function GroklyProvider({ children }) {
           ? `email=${encodeURIComponent(user.email)}`
           : `userId=${encodeURIComponent(currentIdentifier)}`;
 
-        const res = await fetch(`/api/grokly/orders?${queryParam}`);
+        let authHeaders = {};
+        if (user?.uid) {
+          const token = await getIdToken();
+          if (token) authHeaders = { Authorization: `Bearer ${token}`, 'x-user-id': user.uid };
+        }
+
+        const res = await fetch(`/api/grokly/orders?${queryParam}`, { headers: authHeaders });
         if (res.ok) {
           const data = await res.json();
           if (data.orders) {
@@ -68,7 +96,7 @@ export function GroklyProvider({ children }) {
       }
     };
     fetchOrders();
-  }, [user, uid]);
+  }, [user, uid, getIdToken]);
 
   // Fetch cart from Firestore on mount/user change with onSnapshot for real-time sync
   useEffect(() => {
@@ -123,6 +151,7 @@ export function GroklyProvider({ children }) {
 
   const getProductQuantity = (productId) => cart[productId] || 0;
 
+  // Optimistic local state update + Firestore update + authenticated backend sync
   const addToCart = (productId, quantity = 1) => {
     setCart(prev => {
       const next = {
@@ -132,13 +161,22 @@ export function GroklyProvider({ children }) {
       saveCartToFirestore(next);
       return next;
     });
+
+    if (user?.uid) {
+      groklyCartFetch(getIdToken, user.uid, '/items', {
+        method: 'POST',
+        body: JSON.stringify({ productId, quantity }),
+      }).catch((err) => console.error('[GroklyContext] Backend add-to-cart failed:', err?.message || err));
+    }
   };
 
   const incrementQuantity = (productId) => addToCart(productId, 1);
 
   const decrementQuantity = (productId) => {
+    let nextQuantity = 0;
     setCart(prev => {
       const newQty = (prev[productId] || 0) - 1;
+      nextQuantity = Math.max(0, newQty);
       let next;
       if (newQty <= 0) {
         next = { ...prev };
@@ -149,6 +187,16 @@ export function GroklyProvider({ children }) {
       saveCartToFirestore(next);
       return next;
     });
+
+    if (user?.uid) {
+      const sync = nextQuantity > 0
+        ? groklyCartFetch(getIdToken, user.uid, `/items/${encodeURIComponent(productId)}`, {
+            method: 'PATCH',
+            body: JSON.stringify({ quantity: nextQuantity }),
+          })
+        : groklyCartFetch(getIdToken, user.uid, `/items/${encodeURIComponent(productId)}`, { method: 'DELETE' });
+      sync.catch((err) => console.error('[GroklyContext] Backend quantity update failed:', err?.message || err));
+    }
   };
 
   const removeFromCart = (productId) => {
@@ -158,11 +206,21 @@ export function GroklyProvider({ children }) {
       saveCartToFirestore(next);
       return next;
     });
+
+    if (user?.uid) {
+      groklyCartFetch(getIdToken, user.uid, `/items/${encodeURIComponent(productId)}`, { method: 'DELETE' })
+        .catch((err) => console.error('[GroklyContext] Backend remove-from-cart failed:', err?.message || err));
+    }
   };
 
   const clearCart = () => {
     setCart({});
     saveCartToFirestore({});
+
+    if (user?.uid) {
+      groklyCartFetch(getIdToken, user.uid, '', { method: 'DELETE' })
+        .catch((err) => console.error('[GroklyContext] Backend clear-cart failed:', err?.message || err));
+    }
   };
 
   const openCart = () => setIsCartOpen(true);
@@ -216,13 +274,22 @@ export function GroklyProvider({ children }) {
     setOrders(prev => [newOrder, ...prev]);
     clearCart();
 
-    // Persist to backend
     const emailToUse = newOrder.customerEmail;
-    fetch('/api/grokly/orders', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ order: newOrder, customerEmail: emailToUse }),
-    }).catch(err => console.error('[GroklyContext] Backend order sync failed:', err));
+    (async () => {
+      const headers = { 'Content-Type': 'application/json' };
+      if (user?.uid) {
+        const token = await getIdToken();
+        if (token) {
+          headers.Authorization = `Bearer ${token}`;
+          headers['x-user-id'] = user.uid;
+        }
+      }
+      return fetch('/api/grokly/orders', {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({ order: newOrder, customerEmail: emailToUse }),
+      });
+    })().catch(err => console.error('[GroklyContext] Backend order sync failed:', err));
 
     return newOrder;
   };
@@ -248,15 +315,22 @@ export function GroklyProvider({ children }) {
           if (nextStatus !== order.status) {
             hasChanged = true;
             
-            // Sync status to backend
-            fetch('/api/grokly/orders', {
-              method: 'PATCH',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ orderId: order.id, status: nextStatus }),
-            }).catch(err => console.error('[GroklyContext] Backend status sync failed:', err));
+            (async () => {
+              const headers = { 'Content-Type': 'application/json' };
+              if (user?.uid) {
+                const token = await getIdToken();
+                if (token) {
+                  headers.Authorization = `Bearer ${token}`;
+                  headers['x-user-id'] = user.uid;
+                }
+              }
+              return fetch('/api/grokly/orders', {
+                method: 'PATCH',
+                headers,
+                body: JSON.stringify({ orderId: order.id, status: nextStatus }),
+              });
+            })().catch(err => console.error('[GroklyContext] Backend status sync failed:', err));
 
-            // If the status transitioned to DELIVERED, and they opted to return packaging,
-            // credit green credits in Firebase
             if (nextStatus === 'DELIVERED') {
               if (order.packagingOptIn && order.packagingBagsToReturn > 0) {
                 try {
@@ -288,7 +362,7 @@ export function GroklyProvider({ children }) {
     }, 5000);
     
     return () => clearInterval(interval);
-  }, [orders, user, uid]);
+  }, [orders, user, uid, getIdToken]);
 
   return (
     <GroklyContext.Provider value={{
@@ -327,4 +401,3 @@ export function useGrokly() {
 }
 
 export const useCart = useGrokly;
-
