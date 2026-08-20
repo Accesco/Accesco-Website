@@ -15,7 +15,22 @@ export const STORE_NAMES = {
   instastyle: 'Insta Style',
 };
 
-export async function placeGroklyOrder({ items, subtotal, address, unifiedOrderId, payment, paymentMethod, user }) {
+// Order-creation routes require an authenticated caller (see
+// app/api/grokly|instastyle|swadishtt/orders, app/api/orders) — every
+// placer function below needs getIdToken so it can attach the same
+// Authorization/x-user-id headers already used elsewhere in the app (e.g.
+// contexts/CartContext.jsx's cartFetch).
+async function authHeaders(user, getIdToken) {
+  if (!user?.uid || !getIdToken) return { 'Content-Type': 'application/json' };
+  const token = await getIdToken();
+  return {
+    'Content-Type': 'application/json',
+    Authorization: `Bearer ${token}`,
+    'x-user-id': user.uid,
+  };
+}
+
+export async function placeGroklyOrder({ items, subtotal, address, unifiedOrderId, payment, paymentMethod, user, getIdToken }) {
   const orderId = `GRK-${Date.now()}`;
   const order = {
     id: orderId,
@@ -43,7 +58,7 @@ export async function placeGroklyOrder({ items, subtotal, address, unifiedOrderI
   try {
     await fetch('/api/grokly/orders', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: await authHeaders(user, getIdToken),
       body: JSON.stringify({ order, customerEmail: address.email }),
     });
   } catch (err) {
@@ -61,7 +76,7 @@ export async function placeGroklyOrder({ items, subtotal, address, unifiedOrderI
   };
 }
 
-export async function placeInstaStyleOrder({ items, subtotal, address, unifiedOrderId, payment, paymentMethod, user }) {
+export async function placeInstaStyleOrder({ items, subtotal, address, unifiedOrderId, payment, paymentMethod, user, getIdToken }) {
   const orderId = `INS-${Date.now()}`;
   const order = {
     id: orderId,
@@ -96,7 +111,7 @@ export async function placeInstaStyleOrder({ items, subtotal, address, unifiedOr
   try {
     await fetch('/api/instastyle/orders', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: await authHeaders(user, getIdToken),
       body: JSON.stringify({ order, customerEmail: address.email }),
     });
   } catch (err) {
@@ -114,7 +129,7 @@ export async function placeInstaStyleOrder({ items, subtotal, address, unifiedOr
   };
 }
 
-export async function placeSwadishttOrder({ items, subtotal, address, unifiedOrderId, payment, paymentMethod, user }) {
+export async function placeSwadishttOrder({ items, subtotal, address, unifiedOrderId, payment, paymentMethod, user, getIdToken }) {
   const orderId = `SW${Date.now().toString(36).toUpperCase()}`;
   const order = {
     id: orderId,
@@ -164,7 +179,7 @@ export async function placeSwadishttOrder({ items, subtotal, address, unifiedOrd
   try {
     await fetch('/api/swadishtt/orders', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: await authHeaders(user, getIdToken),
       body: JSON.stringify({ order, customerEmail: address.email }),
     });
   } catch (err) {
@@ -174,7 +189,7 @@ export async function placeSwadishttOrder({ items, subtotal, address, unifiedOrd
   try {
     await fetch('/api/swadishtt/orders/update-status', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: await authHeaders(user, getIdToken),
       body: JSON.stringify({
         orderId,
         newStatus: 'CONFIRMED',
@@ -208,11 +223,11 @@ export const STORE_PLACERS = {
 // order above has been placed, so a single unifiedOrderId can look up
 // "what did this payment cover" across all of them. Best-effort: never blocks
 // checkout from completing since each brand's own order already succeeded.
-export async function postUnifiedOrderRecord({ unifiedOrderId, user, address, paymentMethod, payment, subtotal, platformFee, grandTotal, itemCount, results }) {
+export async function postUnifiedOrderRecord({ unifiedOrderId, user, getIdToken, address, paymentMethod, payment, subtotal, platformFee, grandTotal, itemCount, results }) {
   try {
     await fetch('/api/orders', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: await authHeaders(user, getIdToken),
       body: JSON.stringify({
         order: {
           id: unifiedOrderId,

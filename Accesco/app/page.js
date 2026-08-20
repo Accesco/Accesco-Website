@@ -16,7 +16,7 @@ const AppShowcase = dynamic(() => import('../components/AppShowcase'), { ssr: fa
 const XpenseIntro = dynamic(() => import('@/components/XpenseIntro'), { ssr: false });
 
 export const metadata = {
-  title: 'Accesco Living - Intelligent Circular Commerce Ecosystem',
+  title: 'Accesco Living - Intelligent delivery app',
   description: 'Groceries, food and fashion at your doorstep in minutes.',
 };
 

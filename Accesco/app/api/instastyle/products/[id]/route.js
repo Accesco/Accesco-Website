@@ -10,6 +10,7 @@ import {
   where,
   getDocs,
 } from 'firebase/firestore';
+import { requireAdmin } from '../../../_lib/authz';
 
 export const dynamic = 'force-dynamic';
 
@@ -58,6 +59,11 @@ export async function GET(request, { params }) {
 // ─────────────────────────────────────────────
 export async function PUT(request, { params }) {
   try {
+    const { error: authError, status: authStatus } = await requireAdmin(request);
+    if (authError) {
+      return NextResponse.json({ success: false, error: authError }, { status: authStatus });
+    }
+
     const { id } = params;
     const body = await request.json();
 
@@ -98,6 +104,11 @@ export async function PUT(request, { params }) {
 // ─────────────────────────────────────────────
 export async function DELETE(request, { params }) {
   try {
+    const { error: authError, status: authStatus } = await requireAdmin(request);
+    if (authError) {
+      return NextResponse.json({ success: false, error: authError }, { status: authStatus });
+    }
+
     const { id } = params;
     const result = await findDocByProductId(id);
 

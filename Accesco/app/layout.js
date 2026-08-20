@@ -9,6 +9,7 @@ import JsonLd from '@/components/JsonLd';
 import BreadcrumbJsonLd from '@/components/BreadcrumbJsonLd';
 import GoogleAnalytics from '@/components/GoogleAnalytics';
 import { GA_MEASUREMENT_ID } from '@/lib/gtag';
+import ProtectImages from './components/ProtectImages'
 
 // Configured with display: 'optional' to eliminate font-swap layout shifts (CLS)
 const sora = localFont({
@@ -141,7 +142,7 @@ export default function RootLayout({ children }) {
         <AuthProvider>
           <BreadcrumbJsonLd />
           <ReferralCapture />
-          
+          <ProtectImages/>
           {children}
           <CookieConsent />
         </AuthProvider>

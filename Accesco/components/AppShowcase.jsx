@@ -40,6 +40,23 @@ export default function AppShowcase() {
   const [feedbackReview, setFeedbackReview] = useState("");
   const [feedbackSubmitted, setFeedbackSubmitted] = useState(false);
   const [alreadyRegistered, setAlreadyRegistered] = useState(false);
+  // Real signup count from the backend (see app/api/waitlist/count) instead
+  // of a hardcoded "12,000+" figure. Falls back to that same figure only if
+  // the count fetch fails, so the trust badge never disappears.
+  const [waitlistCount, setWaitlistCount] = useState(null);
+
+  useEffect(() => {
+    let isCancelled = false;
+    fetch('/api/waitlist/count')
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (!isCancelled && typeof data?.count === 'number') {
+          setWaitlistCount(data.count);
+        }
+      })
+      .catch(() => {});
+    return () => { isCancelled = true; };
+  }, []);
 
   // Checks the signed-in user's own registration against Firestore — not a
   // shared browser flag, which would (and did) tell a friend using the same
@@ -360,7 +377,7 @@ export default function AppShowcase() {
           <div className={styles.trustRow}>
             <div className={styles.trustLeft}>
               <div className={styles.trustItem}>
-                <span>Join 12,000+ members</span>
+                <span>Join {waitlistCount !== null ? `${waitlistCount.toLocaleString('en-IN')}+` : '12,000+'} members</span>
               </div>
               <div className={styles.trustDivider}></div>
               <div className={styles.trustItem}>

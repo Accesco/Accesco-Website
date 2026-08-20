@@ -266,15 +266,43 @@ export default function SwadishttProfilePage() {
       console.error(error);
     }
 
-    try {
-      const existingOrders = JSON.parse(
-        localStorage.getItem(ORDERS_KEY) || '[]'
-      );
-      setOrders(Array.isArray(existingOrders) ? existingOrders : []);
-    } catch (error) {
-      console.error(error);
+    const loadLocalOrders = () => {
+      try {
+        const existingOrders = JSON.parse(
+          localStorage.getItem(ORDERS_KEY) || '[]'
+        );
+        setOrders(Array.isArray(existingOrders) ? existingOrders : []);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    // Backend-driven for authenticated users — same reasoning as
+    // services/swadisht/orders/page.jsx: prefers the real order list from
+    // /api/swadishtt/orders over this browser's local mirror.
+    if (user?.uid) {
+      (async () => {
+        try {
+          const token = await getIdToken();
+          const res = await fetch(`/api/swadishtt/orders?userId=${encodeURIComponent(user.uid)}`, {
+            headers: token ? { Authorization: `Bearer ${token}`, 'x-user-id': user.uid } : {},
+          });
+          if (res.ok) {
+            const data = await res.json();
+            if (Array.isArray(data.orders)) {
+              setOrders(data.orders);
+              return;
+            }
+          }
+        } catch (error) {
+          console.warn('Swadishtt profile orders backend read failed, falling back to local:', error);
+        }
+        loadLocalOrders();
+      })();
+    } else {
+      loadLocalOrders();
     }
-  }, []);
+  }, [user, getIdToken]);
 
   // Once signed in, the backend profile is the source of truth — overwrite the
   // auth-context-seeded state above with the synced record.

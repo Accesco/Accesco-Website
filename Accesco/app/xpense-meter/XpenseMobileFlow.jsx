@@ -125,44 +125,7 @@ function buildDonutGradient(breakdown) {
   return `conic-gradient(${stops.join(', ')})`;
 }
 
-function getSavedUserName() {
-  if (typeof window === 'undefined') return 'User';
 
-  const keys = [
-    'user',
-    'currentUser',
-    'loggedInUser',
-    'accesscoUser',
-    'accescoUser',
-    'profile',
-  ];
-
-  for (const key of keys) {
-    const raw = localStorage.getItem(key);
-    if (!raw) continue;
-
-    try {
-      const parsed = JSON.parse(raw);
-      const name =
-        parsed?.name ||
-        parsed?.fullName ||
-        parsed?.displayName ||
-        parsed?.username ||
-        parsed?.firstName;
-
-      if (name) return String(name).split(' ')[0];
-    } catch {
-      if (raw.length < 40) return raw.split(' ')[0];
-    }
-  }
-
-  return (
-    localStorage.getItem('name') ||
-    localStorage.getItem('userName') ||
-    localStorage.getItem('displayName') ||
-    'User'
-  ).split(' ')[0];
-}
 
 function XpmStatusBar() {
   return (
@@ -292,15 +255,11 @@ export default function XpenseMobileFlow({
   onRequestLogin,
 }) {
   const [screen, setScreen] = useState('intro');
-  const [userName, setUserName] = useState('User');
+  const userName = user?.name || 'User';
 
   const [budgets, setBudgets] = useState(DEFAULT_BUDGETS);
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState('');
-
-  useEffect(() => {
-    setUserName(getSavedUserName());
-  }, []);
 
   useEffect(() => {
     if (summary?.budgets) setBudgets(summary.budgets);

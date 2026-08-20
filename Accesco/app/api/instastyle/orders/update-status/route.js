@@ -1,8 +1,14 @@
 import { NextResponse } from 'next/server';
 import { sendInstaStyleStatusUpdate } from '@/lib/mailService';
+import { requireAdmin } from '../../../_lib/authz';
 
 export async function POST(request) {
   try {
+    const { error, status } = await requireAdmin(request);
+    if (error) {
+      return NextResponse.json({ error }, { status });
+    }
+
     const body = await request.json();
     const { orderId, newStatus, customerEmail, customerName, orderData } = body;
 

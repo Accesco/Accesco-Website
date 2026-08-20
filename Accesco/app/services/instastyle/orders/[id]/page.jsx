@@ -15,25 +15,13 @@ export default function InstaStyleOrderDetailPage() {
 
   const orderId = params.id;
 
+  // Backend-driven, same as the orders list page — contextOrders already
+  // comes from /api/instastyle/orders (see contexts/CartContext.jsx), so
+  // this no longer re-reads/prefers localStorage over it.
   useEffect(() => {
-    const loadOrder = () => {
-      setIsLoading(true);
-      try {
-        const raw = localStorage.getItem('instastyle_orders');
-        let allOrders = contextOrders || [];
-        if (raw) {
-          allOrders = JSON.parse(raw);
-        }
-        const found = allOrders.find(o => o.id === orderId);
-        setOrder(found);
-      } catch (error) {
-        console.error('Error loading order details:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    loadOrder();
+    const found = (contextOrders || []).find(o => o.id === orderId);
+    setOrder(found);
+    setIsLoading(false);
   }, [orderId, contextOrders]);
 
   const handleReorder = () => {
