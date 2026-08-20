@@ -189,6 +189,21 @@ class ProductCard(BaseModel):
     url: str
     sku: str | None = None
 
+class VariantInfo(BaseModel):
+    """One pack/type variant of a product family (Phase 6). Shown as a chip
+    in the chatbot; picking one re-queries with `query` (name + its
+    distinguishing token, e.g. "Kurkure Masala Munch 22g") and lands on the
+    single product card + buttons."""
+    sku: str
+    name: str
+    brand: str
+    price: str
+    unit: str
+    image: str
+    url: str
+    service: str
+    query: str = ""
+
 class ChatResponse(BaseModel):
     reply: str
     intent: str
@@ -198,6 +213,8 @@ class ChatResponse(BaseModel):
     # read `reply` keep working; new clients render cards + action buttons.
     cards: list[ProductCard] | None = None
     actions: list[Action] | None = None
+    # Phase 6: variant picker list (generic family query → pick a variant).
+    variants: list[VariantInfo] | None = None
 
 
 # ─── Intent classification (DistilBERT) ─────────────────────────────────────
@@ -632,6 +649,199 @@ def _brand_specific(text: str, products: list[dict], best_distance: float) -> bo
             return True
     return False
 
+
+# ─── Phase 6: Variant families (curated) ────────────────────────────────────
+#
+# Products that are pack/type variants of the same item (Amul milk: toned vs
+# full cream; Kurkure: 22g vs 78g; Tata Tea: 250g vs 500g). When the user
+# asks generically about a family, the chatbot replies with the variant list
+# instead of a single arbitrary card, and the user picks the pack they want.
+# SKUs are curated manually — auto name-normalization is too risky ("Amul
+# Taaza" vs "Amul Gold" are different products, not the same name twice).
+VARIANT_GROUPS: list[dict] = [
+    {
+        "label": "Amul Fresh Milk",
+        "skus": ["dairy-001", "dairy-002"],
+    },
+    {
+        "label": "Kurkure Masala Munch",
+        "skus": ["munch-002", "munch-012"],
+    },
+    {
+        "label": "Pringles Original",
+        "skus": ["munch-006", "munch-016"],
+    },
+    {
+        "label": "Maggi Hot & Sweet Tomato Chilli Sauce",
+        "skus": ["sauce-002", "sauce-005"],
+    },
+    {
+        "label": "Tata Tea Gold",
+        "skus": ["tea-001", "tea-006"],
+    },
+    {
+        "label": "Mango - Alphonso",
+        "skus": ["fruit-004", "veg-017"],
+    },
+]
+
+def _variant_members(group: dict) -> list[dict]:
+    """Group members currently present in the live catalog (sku-keyed)."""
+    products, _ = LIVE.snapshot()
+    by_sku = {p["sku"]: p for p in products}
+    return [by_sku[sku] for sku in group["skus"] if sku in by_sku]
+
+def _specific_variant(text: str, members: list[dict]) -> dict | None:
+    """The single variant the query explicitly names, or None if the query
+    is generic about the family. A variant is "named" when the query
+    contains one of its distinguishing tokens — words in that variant's
+    name+unit that appear in no other member (toned / gold / 22g / 500g...).
+    Single-character tokens ("g", "ml") are ignored so "1kg" can't match
+    the "g" in a competitor's "3 pcs (apx 600 g)". Ambiguous hits (two packs
+    matched) → None → show the full list."""
+    tl = text.lower()
+    per_member_tokens = []
+    for m in members:
+        corpus = " ".join(str(m.get(f) or "") for f in
+                          ("name", "product_name", "brand", "unit")).lower()
+        per_member_tokens.append({t for t in re.findall(r"[a-z0-9]+", corpus)
+                                  if len(t) > 1})
+    named = []
+    for i, m in enumerate(members):
+        others = set()
+        for j, toks in enumerate(per_member_tokens):
+            if j != i:
+                others |= toks
+        distinct = per_member_tokens[i] - others
+        if distinct and any(t in tl for t in distinct):
+            named.append(m)
+    if len(named) == 1:
+        return named[0]
+    return None
+
+def variant_picker_reply(text: str, products: list[dict], best_distance: float,
+                         confidence: float, intent: str) -> ChatResponse | None:
+    """Phase 6: when the user asks generically about a product family that
+    has >=2 curated pack variants, reply with the variant list instead of a
+    single arbitrary card. The frontend renders the `variants` payload as
+    chips; picking one re-queries with the variant name and lands on the
+    normal single-card flow.
+
+    Trigger rules (so unrelated queries never get hijacked):
+      - query tokens overlap a family's member names ("milk", "kurkure",
+        "tata tea"), and
+      - no query token belongs EXCLUSIVELY to a tight non-family product
+        ("oat milk" → 'oat' is Oat Milk's word, not Amul's → normal cards),
+      - the query doesn't already name one specific pack ("toned milk",
+        "amul gold", "kurkure 22g" → that single product's card), and
+      - the family is not a recovery/circular topic."""
+    if intent == "circular_recycle":
+        return None
+    if not products:
+        return None
+    # Generic shopping words ("fresh vegetables" → "fresh" lives in "Amul
+    # Taaza Toned FRESH Milk") must not count as family signals. Only
+    # product-identifying tokens are matched against the family's words.
+    generic_words = {"fresh", "best", "good", "great", "nice", "cheap",
+                     "healthy", "buy", "order", "want", "need", "get", "some",
+                     "please", "show", "large", "small", "big", "natural",
+                     "organic", "pure", "premium", "tasty", "daily"}
+    tokens = {t for t in re.findall(r"[a-z0-9]{3,}", text.lower())
+              if t not in generic_words}
+    if not tokens:
+        return None
+    for group in VARIANT_GROUPS:
+        members = _variant_members(group)
+        if len(members) < 2:
+            continue
+        fam_words = set()
+        for m in members:
+            corpus = " ".join(str(m.get(f) or "") for f in
+                              ("name", "product_name", "brand", "unit")).lower()
+            fam_words |= set(re.findall(r"[a-z0-9]{3,}", corpus))
+        if not (tokens & fam_words):
+            continue
+        # Competitor block: a query token that belongs only to a tight
+        # non-family product means the query is about THAT product.
+        blocked = False
+        for p in products[:5]:
+            if p["sku_id"] in group["skus"] or p.get("distance", 9e9) >= PRODUCT_QUERY_DISTANCE:
+                continue
+            pc = " ".join(str(p.get(f) or "") for f in ("product_name", "brand")).lower()
+            exclusive = set(re.findall(r"[a-z0-9]{3,}", pc)) - fam_words
+            if tokens & exclusive:
+                blocked = True
+                break
+        if blocked:
+            continue
+        # A specific pack was named ("toned milk", "amul gold", "kurkure
+        # 22g") → reply with that single product card + buttons, so the
+        # variant-pick always lands on the Add-to-Cart flow even when the
+        # query's FAISS distance is too loose for the generic P3 path.
+        specific = _specific_variant(text, members)
+        if specific is not None:
+            sku = specific["sku"]
+            products, _ = LIVE.snapshot()
+            live = next((p for p in products if p["sku"] == sku), None)
+            if live is None:
+                return None
+            card = {
+                "product_name": live["name"],
+                "brand": live["brand"],
+                "category": live["category"],
+                "sub_category": live.get("sub_category", ""),
+                "selling_price": live["price"],
+                "sku_id": live["sku"],
+                "service": live["service"],
+                "unit": live.get("unit", ""),
+                "image": live.get("image", ""),
+                "url": live.get("url", ""),
+                "in_stock": live.get("in_stock", True),
+                "distance": 0.0,
+            }
+            return ChatResponse(
+                reply="Here you go:\n\n" + format_products([card]),
+                intent="order_product" if has_order_intent(text) else "grokly_grocery",
+                confidence=confidence,
+                products=[ProductResult(**card)],
+                cards=[product_card(card)],
+                actions=_order_action([card]),
+            )
+        # Generic picker only for tight-ish queries (the specific-variant
+        # path above is token-driven and safe at any distance).
+        if best_distance >= PRODUCT_QUERY_DISTANCE:
+            continue
+        members.sort(key=lambda m: float(m.get("price") or 0))
+        lines = []
+        variants = []
+        for m in members:
+            corpus = " ".join(str(m.get(f) or "") for f in
+                              ("name", "product_name", "brand", "unit")).lower()
+            mtoks = {t for t in re.findall(r"[a-z0-9]+", corpus) if len(t) > 1}
+            others = set()
+            for o in members:
+                if o is not m:
+                    oc = " ".join(str(o.get(f) or "") for f in
+                                  ("name", "product_name", "brand", "unit")).lower()
+                    others |= {t for t in re.findall(r"[a-z0-9]+", oc) if len(t) > 1}
+            distinct = sorted(mtoks - others)
+            query = f"{m['name']} {' '.join(distinct)}".strip()
+            lines.append(f"• {m['name']} — {m.get('unit', '')} — Rs. {m['price']}")
+            variants.append(VariantInfo(
+                sku=m["sku"], name=m["name"], brand=m["brand"], price=m["price"],
+                unit=m.get("unit", ""), image=m.get("image", ""),
+                url=m.get("url", ""), service=m["service"], query=query,
+            ))
+        reply = (
+            f"We've got a few options for that:\n\n" + "\n".join(lines) +
+            "\n\nTap one to pick it, or just tell me which you'd like!"
+        )
+        return ChatResponse(
+            reply=reply, intent="order_variant", confidence=confidence,
+            products=[], variants=variants,
+        )
+    return None
+
 def commerce_reply(text: str, intent: str, confidence: float,
                    products: list[dict], best_distance: float):
     """Build a conversion-oriented reply (product cards / category / vertical
@@ -656,6 +866,14 @@ def commerce_reply(text: str, intent: str, confidence: float,
     cat = match_category(text)
     cat_ok = bool(cat) and (order or intent in VERTICAL_LINKS
                             or intent in ("unknown", "greeting"))
+
+    # P0 — variant family picker (Phase 6): a generic query about a product
+    # family with multiple packs ("milk", "kurkure") gets the variant list
+    # instead of one arbitrary card. Runs before the category shelf so
+    # "i want milk" offers toned/full-cream rather than a shelf redirect.
+    picker = variant_picker_reply(text, products, best_distance, confidence, intent)
+    if picker is not None:
+        return picker
 
     # P1 — category shelf for an order demand that isn't brand-specific
     if cat_ok and order and not _brand_specific(text, products, best_distance):
@@ -859,10 +1077,12 @@ def match_area(text: str) -> tuple[str, dict] | None:
         if cand in AREA_ALIASES and AREA_ALIASES[cand] in AREA_NAME_TO_ZONE:
             alias = AREA_ALIASES[cand]
             return alias, AREA_NAME_TO_ZONE[alias]
-        if len(cand) >= 4:
+        if len(cand) >= 5:
             # Word-boundary substring: candidate must appear as whole word(s)
             # inside the area name, so "order" never matches "Attibele bORder
-            # zone" and "koramangala" still matches "Koramangala (blocks...)"
+            # zone" and "koramangala" still matches "Koramangala (blocks...)".
+            # 5+ chars (not 4) keeps 4-letter product words ("tata" in "tata
+            # tea") from matching multi-word areas ("Tata Silk Farm").
             cand_words = cand.split()
             for name in all_names:
                 name_words = name.split()

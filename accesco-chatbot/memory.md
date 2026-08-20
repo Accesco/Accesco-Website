@@ -24,7 +24,7 @@
 | Phase 5b: Research-PDF Q&A training rows (Track A) | ✅ Completed (2026-08-19, 140/140 suite) | `data/add_research_faqs.py` + 23 new rows + 4-epoch retrain |
 | Phase 5b: Research-PDF RAG knowledge base (Track B) | ✅ Completed (2026-08-19, 150/150 suite) | `data/build_knowledge_faq.py` + 35 Q&As + `knowledge_reply()` in app.py |
 | Overfitting fix: regularized fine-tune | ✅ Completed (2026-08-19, eval 0.672→0.816, 150/150 suite) | early stop + weight decay + label smoothing; frozen-encoder rejected |
-| Phase 6: Add-to-Cart + Variant Selection | ✅ Add-to-Cart Completed (2026-08-19), Variants Planned | `AccescoInlineChatbot.jsx` + `app.py` |
+| Phase 6: Add-to-Cart + Variant Selection | ✅ Completed (2026-08-20, 161/161 suite) | `AccescoInlineChatbot.jsx` + `app.py` |
 
 ## Phase 1 — Completed
 
@@ -900,7 +900,7 @@ cd accesco-chatbot/chatbot-ml
 /opt/anaconda3/bin/python3.13 test_suite_runner.py        # 150/150
 ```
 
-## Phase 6 — Add-to-Cart + Variant Selection (Add-to-Cart Completed 2026-08-19, Variants Planned)
+## Phase 6 — Add-to-Cart + Variant Selection (Completed 2026-08-20, 161/161 suite)
 
 Feature request from the team: when a user searches for a product, the chatbot should show an **Add to Cart** button alongside the existing redirect button. If the product has **variants**, the bot should first show the variants, let the user pick one, then show that product with both the Add-to-Cart and redirect buttons.
 
@@ -915,15 +915,17 @@ Feature request from the team: when a user searches for a product, the chatbot s
     - *InstaStyle*: Array of objects with default `selectedSize` / `selectedColor` inside `instastyle_cart`.
   - The button dispatches a standard `window.dispatchEvent(new Event('storage'))` event so the rest of the application syncs visually.
   - Added a 1.5-second "Added!" visual state to the button for seamless UX.
+- **Quantity stepper**: each product card now shows a `− qty +` stepper (per-message/per-card state keyed `msg.id-ci`, clamp 1–20); the Add button passes the chosen quantity to `addToCart(card, qty)`.
 
-### Variant Selection (Planned)
+### Variant Selection (Completed 2026-08-20)
 
-1. Add a variant-grouping mechanism: normalize product names by stripping unit/weight words ("500 ml", "200 g") and group by brand + base name so a family like "milk" yields its variants as one group. Prefer a curated `variant_group` field in the catalog build script over pure auto-naming.
-2. New flow in `commerce_reply()`: when a search hits a product family with variants, reply with a variant list (sku/name/unit/price) and a prompt ("Which one? Toned 500ml ₹27 / Full Cream 500ml ₹32"). 
-3. After the user picks, return the single product card with both an Add-to-Cart action and the existing redirect.
-
-### Open decision for the user
-- Variants grouped **automatically** (name normalization — risky) vs **curated manually** per family (safer — define which SKUs are variants of "milk", "lays chips", etc.). Recommendation: manual curation.
+- **Manual curation chosen**: `VARIANT_GROUPS` constant in `app.py` — 6 families: Amul Fresh Milk (dairy-001 Taaza Toned 500ml / dairy-002 Gold Full Cream 500ml), Kurkure Masala Munch (munch-012 22g / munch-002 78g), Pringles Original (munch-016 107g / munch-006 134g), Maggi Hot & Sweet Tomato Chilli Sauce (sauce-002 400g / sauce-005 500g), Tata Tea Gold (tea-006 250g / tea-001 500g), Mango Alphonso (fruit-004 1kg / veg-017 3 pcs 600g). Group members resolve from the LIVE catalog snapshot at request time.
+- **`variant_picker_reply()`** (P0 in `commerce_reply`, before category shelf): fires when the query's tokens overlap a family's name/brand/unit words AND no query token belongs exclusively to a tight non-family product (competitor block: "oat milk" → 'oat' is Oat Milk's word → normal cards). Generic shopping words ("fresh", "best", "buy", "want"...) are excluded from family matching so "fresh vegetables" can't trigger the Amul picker.
+- **Specific-variant path**: `_specific_variant()` detects a distinguishing token (toned/gold/22g/78g/250g/1kg...) — single-char tokens ("g", "ml") are ignored so "1kg" can't match a competitor's "3 pcs (apx 600 g)". When one pack is named, the reply is that single product's card + Add/Order actions, token-driven so it works even when the FAISS distance is loose ("kurkure 22g" lands on munch-012 at 1.25).
+- **`VariantInfo` payload**: sku/name/brand/price/unit/image/url/service + `query` = name + its distinguishing tokens (e.g. "Kurkure Masala Munch 22") so the frontend chip click always lands on the single card (names alone are identical across packs).
+- **Frontend chips (`AccescoInlineChatbot.jsx`)**: bot bubble with `variants` renders clickable chips (name + unit·price); clicking one sends `v.query` as a user message → normal single-card flow. `sendMessage` refactored to accept a forced value.
+- **Suite**: `expect_variants` column added to `test_suite_runner.py` (yes/no/any); 11 new rows (151–161) covering picker + specific + competitor + generic-word cases; row 115 "buy milk" updated to expect the variant list. 161/161 passing.
+- **Coverage matcher fix**: single-token substring floor raised `len(cand) >= 4` → `>= 5` so "tata" in "tata tea" no longer matches "Tata Silk Farm" (delivery coverage false positive).
 
 ## Known Open Questions / Decisions
 

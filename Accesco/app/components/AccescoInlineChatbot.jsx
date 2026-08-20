@@ -39,6 +39,7 @@ export default function AccescoInlineChatbot() {
 const [showPreview, setShowPreview] = useState(true)
 const [input, setInput] = useState('')
 const [typing, setTyping] = useState(false)
+const [cardQty, setCardQty] = useState({})
   const endRef = useRef(null);
 
   const addToCart = (card, quantity = 1) => {
@@ -127,10 +128,10 @@ const [typing, setTyping] = useState(false)
     endRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, typing]);
 
-  const sendMessage = async (e) => {
-    e.preventDefault();
+  const sendMessage = async (e, forcedValue) => {
+    if (e && e.preventDefault) e.preventDefault();
 
-    const value = input.trim();
+    const value = (forcedValue ?? input).trim();
     if (!value) return;
 
     setMessages((prev) => [
@@ -150,6 +151,7 @@ const [typing, setTyping] = useState(false)
     let botText;
     let botCards = null;
     let botActions = null;
+    let botVariants = null;
     try {
       const res = await fetch('http://localhost:8000/chat', {
         method: 'POST',
@@ -161,6 +163,7 @@ const [typing, setTyping] = useState(false)
       botText = data.reply;
       botCards = data.cards && data.cards.length ? data.cards : null;
       botActions = data.actions && data.actions.length ? data.actions : null;
+      botVariants = data.variants && data.variants.length ? data.variants : null;
     } catch (err) {
       botText = getAccescoReply(value);
     }
@@ -174,6 +177,7 @@ const [typing, setTyping] = useState(false)
         time: getChatTime(),
         cards: botCards,
         actions: botActions,
+        variants: botVariants,
       },
     ]);
 
@@ -306,6 +310,24 @@ const [typing, setTyping] = useState(false)
                       )}
                     </div>
 
+                    {msg.role === 'bot' && msg.variants && msg.variants.length > 0 && (
+                      <div className="ac-ai-variant-row">
+                        {msg.variants.map((v, vi) => (
+                          <button
+                            key={vi}
+                            type="button"
+                            className="ac-ai-variant-chip"
+                            onClick={() => sendMessage(null, v.query || v.name)}
+                          >
+                            <span className="ac-ai-variant-name">{v.name}</span>
+                            <span className="ac-ai-variant-meta">
+                              {v.unit} · ₹{v.price}
+                            </span>
+                          </button>
+                        ))}
+                      </div>
+                    )}
+
                     {msg.role === 'bot' && msg.cards && msg.cards.length > 0 && (
                       <div className="ac-ai-product-carousel">
                         {msg.cards.map((card, ci) => (
@@ -339,18 +361,52 @@ const [typing, setTyping] = useState(false)
                                   ₹{card.originalPrice || '95'}
                                 </span>
                               </div>
-                              <button
-                                className="ac-ai-add-btn"
-                                onClick={(e) => {
-                                  e.preventDefault();
-                                  e.stopPropagation();
-                                  if (card.sku) {
-                                    addToCart(card, 1);
-                                  }
-                                }}
-                              >
-                                + Add
-                              </button>
+                              <div className="ac-ai-card-hz-actions">
+                                <div className="ac-ai-qty-stepper">
+                                  <button
+                                    type="button"
+                                    className="ac-ai-qty-btn"
+                                    onClick={(e) => {
+                                      e.preventDefault();
+                                      e.stopPropagation();
+                                      const key = `${msg.id}-${ci}`;
+                                      const qty = Math.max(1, (cardQty[key] || 1) - 1);
+                                      setCardQty((prev) => ({ ...prev, [key]: qty }));
+                                    }}
+                                  >
+                                    −
+                                  </button>
+                                  <span className="ac-ai-qty-count">
+                                    {cardQty[`${msg.id}-${ci}`] || 1}
+                                  </span>
+                                  <button
+                                    type="button"
+                                    className="ac-ai-qty-btn"
+                                    onClick={(e) => {
+                                      e.preventDefault();
+                                      e.stopPropagation();
+                                      const key = `${msg.id}-${ci}`;
+                                      const qty = Math.min(20, (cardQty[key] || 1) + 1);
+                                      setCardQty((prev) => ({ ...prev, [key]: qty }));
+                                    }}
+                                  >
+                                    +
+                                  </button>
+                                </div>
+                                <button
+                                  className="ac-ai-add-btn"
+                                  onClick={(e) => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    if (card.sku) {
+                                      const key = `${msg.id}-${ci}`;
+                                      addToCart(card, cardQty[key] || 1);
+                                    }
+                                  }}
+                                >
+                                  + Add
+                                </button>
+                              </div>
                             </div>
                           </a>
                         ))}
@@ -833,6 +889,90 @@ const [typing, setTyping] = useState(false)
         
         .ac-ai-add-btn:hover {
           background: #ffccde;
+        }
+
+        .ac-ai-card-hz-actions {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          margin-top: 10px;
+        }
+
+        .ac-ai-card-hz-actions .ac-ai-add-btn {
+          margin-top: 0;
+          flex: 1;
+          width: auto;
+        }
+
+        .ac-ai-qty-stepper {
+          display: flex;
+          align-items: center;
+          border: 1px solid #ffccde;
+          border-radius: 6px;
+          overflow: hidden;
+          flex-shrink: 0;
+        }
+
+        .ac-ai-qty-btn {
+          width: 26px;
+          height: 30px;
+          border: none;
+          background: #fff5f9;
+          color: #b92b27;
+          font-size: 15px;
+          font-weight: 700;
+          cursor: pointer;
+          line-height: 1;
+        }
+
+        .ac-ai-qty-btn:hover {
+          background: #ffccde;
+        }
+
+        .ac-ai-qty-count {
+          min-width: 24px;
+          text-align: center;
+          font-size: 13px;
+          font-weight: 600;
+          color: #5c4a47;
+        }
+
+        .ac-ai-variant-row {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 8px;
+          margin-top: 12px;
+        }
+
+        .ac-ai-variant-chip {
+          display: flex;
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 2px;
+          background: #ffffff;
+          border: 1px solid #ffccde;
+          border-radius: 10px;
+          padding: 8px 12px;
+          cursor: pointer;
+          text-align: left;
+          transition: all 0.2s;
+          max-width: 100%;
+        }
+
+        .ac-ai-variant-chip:hover {
+          background: #ffe6f0;
+          border-color: #f4a6c3;
+        }
+
+        .ac-ai-variant-name {
+          font-size: 13px;
+          font-weight: 600;
+          color: #2b2220;
+        }
+
+        .ac-ai-variant-meta {
+          font-size: 11px;
+          color: #b92b27;
         }
 
         .ac-ai-actions {

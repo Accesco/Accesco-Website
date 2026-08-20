@@ -96,6 +96,14 @@ def check_row(row: dict, resp: dict) -> list[str]:
     elif expect_cards == "no" and got_cards:
         failures.append(f"cards: expected none, got {len(resp['cards'])}")
 
+    # 4a. variants (Phase 6 variant picker)
+    expect_variants = row.get("expect_variants", "any").strip().lower()
+    got_variants = bool(resp.get("variants"))
+    if expect_variants == "yes" and not got_variants:
+        failures.append("variants: expected variant list, got none")
+    elif expect_variants == "no" and got_variants:
+        failures.append(f"variants: expected none, got {len(resp['variants'])}")
+
     # 5. action urls (any-of substrings; "none" = no actions at all)
     expect_url = row.get("expect_action_url", "").strip()
     if expect_url:
@@ -193,6 +201,7 @@ def main() -> int:
             print(f"       intent={resp['intent']} conf={resp['confidence']:.2f} "
                   f"products={len(resp.get('products') or [])} "
                   f"cards={len(resp.get('cards') or [])} "
+                  f"variants={len(resp.get('variants') or [])} "
                   f"actions={[a.get('url') for a in (resp.get('actions') or [])]}")
             if failures:
                 for fdesc in failures:

@@ -29,7 +29,7 @@
 - Periodic retraining with new data
 - A/B test buy button conversion
 
-## Phase 6: Add-to-Cart + Variant Selection (PLANNED 2026-08-19)
+## Phase 6: Add-to-Cart + Variant Selection (COMPLETED 2026-08-20, 161/161 suite)
 
 Feature request: product searches should show an **Add to Cart** button
 alongside the existing redirect button. Products with **variants** (different
@@ -37,46 +37,33 @@ weights/forms of the same item — e.g. milk → toned, full cream) should first
 show the variant list, let the user pick one, then show that product with both
 buttons.
 
-### Current state
+### What was done
 
-- `commerce_reply()` already returns product `cards` + `actions` (Order/
-  redirect buttons) — redirect path works.
-- Grokly cart exists: `addToCart(productId, qty)` in
-  `Accesco/app/services/grokly/contexts/GroklyContext.jsx` (localStorage
-  `grokly_cart` + Firestore sync).
-- Catalog (`live_catalog.json`, 271 products) has **no variant grouping** —
-  each SKU is standalone.
-- `ProductCard` model has **no `sku` field** — needed for `addToCart`.
-- Chatbot widget renders on the homepage, but `GroklyProvider` only wraps
-  `/services/grokly` routes — `useGrokly()` unavailable where the chatbot
-  renders.
-
-### Backend steps
-
-1. Add `sku` to `ProductCard`.
-2. Variant grouping: normalize names (strip unit/weight words) + group by
-   brand + base name; prefer a curated `variant_group` field in the catalog
-   build script over auto-normalization (risk of wrong groupings).
-3. `commerce_reply()` flow: family with variants → variant list reply
-   (sku/name/unit/price) + picker prompt; after pick → single product card
-   with **Add to Cart** action (new `cart` type carrying `sku`) + redirect.
-
-### Frontend steps
-
-4. Render "Add to Cart" on cards (or `cart`-type action) → `addToCart(sku, 1)`.
-5. Provider wiring — option A: lift `GroklyProvider` to root layout;
-   option B: widget writes `grokly_cart` localStorage + dispatches
-   `grokly-cart-updated` event.
-6. Variant-chip UI: render selectable chips on `variants`, send selection to
-   `/chat`, render final card + both buttons.
+1. `sku` added to `ProductCard`; universal inline `addToCart(card, qty)` in the
+   widget writing vertical-native localStorage carts (grokly/instastyle/
+   swadishtt) + `storage` event dispatch.
+2. **Quantity stepper** on every product card (`− qty +`, clamp 1–20,
+   per-message/per-card state), Add passes the quantity.
+3. **Variant selection (manual curation)**: `VARIANT_GROUPS` in `app.py`
+   (6 families: Amul milk, Kurkure, Pringles, Maggi sauce, Tata Tea Gold,
+   Mango). `variant_picker_reply()` runs as P0 before the category shelf:
+   family-token overlap + competitor block + generic-word exclusion
+   ("fresh vegetables" never fires the milk picker).
+4. **Specific-variant path**: `_specific_variant()` distinguishes packs by
+   tokens (toned/gold/22g/250g/1kg...); single-char tokens ignored; the reply
+   is the single card + buttons, token-driven so loose-FAISS queries
+   ("kurkure 22g" at 1.25) still land on the right pack.
+5. `VariantInfo.query` = name + distinguishing tokens, so frontend chips
+   always land on the exact card (pack names alone are identical).
+6. Frontend: variant chips (name + unit·price) under the bubble; click sends
+   `v.query` as a user message; `sendMessage(e, forcedValue)` refactor.
+7. Suite: `expect_variants` column + 11 new rows (151–161); row 115 "buy milk"
+   updated to the variant list; coverage matcher substring floor 4→5 chars
+   ("tata tea" no longer matches "Tata Silk Farm"). 161/161 green.
 
 ### Verification
 
-- New suite rows: variant search → variant list; variant pick → single card +
-  cart action; cart action carries correct sku.
-- Keep green: suite 150/150, recovery 51/51, live catalog 43/43.
-
-### Open decision
-
-- Variant grouping: automatic (name normalization, risky) vs curated manual
-  per-family (recommended).
+- Suite 161/161, lint clean, `next build` passes.
+- Live checks: milk/kurkure/tata tea/mango/pringles/maggi → variant lists;
+  toned/amul gold/kurkure 22g/mango 1kg → single correct card; oat milk/
+  almond milk → normal cards (competitor block); recovery + coverage intact.
