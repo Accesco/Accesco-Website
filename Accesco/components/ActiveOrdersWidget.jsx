@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { useAuth } from './AuthProvider';
+import { useAuth } from '@/app/components/AuthProvider';
 
 const VENTURE_ROUTES = {
   Grokly: { api: '/api/grokly/orders', path: '/services/grokly/order-tracking' },
