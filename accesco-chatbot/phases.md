@@ -110,3 +110,5 @@ Feature request: the chatbot should understand user mood (romantic, anniversary,
 - Reply dictionary added to `inference/app.py` language‑branch.
 - `memory.md` + `phases.md` updated with this section.
 - `test_suite_runner.py` now supports `expect_mood` column (yes/no/any) – default `any`.
+
+**Pipeline bottom line:** You need (a) a language‑detector, (b) a multilingual fine‑tuned model, (c) a reply dictionary with translations for the intents you care about, and (optional but recommended) (d) product‑name mappings for the regional scripts. With those pieces in place, the bot will reply in pure Hindi, Telugu or Kannada when the user’s message is detected in that script.

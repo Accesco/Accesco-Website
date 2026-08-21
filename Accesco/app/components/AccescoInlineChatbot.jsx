@@ -42,6 +42,29 @@ const [typing, setTyping] = useState(false)
 const [cardQty, setCardQty] = useState({})
   const endRef = useRef(null);
 
+// Language detector: returns 'hi' (Hindi), 'te' (Telugu), 'kn' (Kannada), or 'la' (Latin/English)
+  const detectLanguage = (text) => {
+    // Check for Devanagari (Hindi)
+    const devanagariRegex = /[\u0900-\u097F]/;
+    if (devanagariRegex.test(text)) return 'hi';
+    // Check for Telugu
+    const teluguRegex = /[\u0C00-\u0C7F]/;
+    if (teluguRegex.test(text)) return 'te';
+    // Check for Kannada
+    const kannadaRegex = /[\u0C80-\u0CFF]/;
+    if (kannadaRegex.test(text)) return 'kn';
+    // Fallback: check for common Hinglish keywords
+    const hinglishHi = ['pyaar', 'dil', 'beta', 'behen', 'saanp'];
+    const hinglishTe = ['ante', 'manasu', 'premikojana', 'rakkali'];
+    const hinglishKn = ['prem', 'annayya', 'sneha', 'kurigalu'];
+    const lower = text.toLowerCase();
+    if (hinglishHi.some(w => lower.includes(w))) return 'hi';
+    if (hinglishTe.some(w => lower.includes(w))) return 'te';
+    if (hinglishKn.some(w => lower.includes(w))) return 'kn';
+    // Default: Latin/English
+    return 'la';
+  };
+
   const addToCart = (card, quantity = 1) => {
     try {
       const svc = (card.service || '').toLowerCase();
@@ -134,6 +157,8 @@ const [cardQty, setCardQty] = useState({})
     const value = (forcedValue ?? input).trim();
     if (!value) return;
 
+    const lang = detectLanguage(value);
+
     setMessages((prev) => [
       ...prev,
       {
@@ -141,6 +166,7 @@ const [cardQty, setCardQty] = useState({})
         role: 'user',
         text: value,
         time: getChatTime(),
+        language: lang,
       },
     ]);
 
@@ -156,7 +182,7 @@ const [cardQty, setCardQty] = useState({})
       const res = await fetch('http://localhost:8000/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text: value, top_k: 3 }),
+        body: JSON.stringify({ text: value, top_k: 3, language: lang }),
       });
       if (!res.ok) throw new Error('server error');
       const data = await res.json();
@@ -305,7 +331,7 @@ const [cardQty, setCardQty] = useState({})
 
                       {msg.role === 'user' && (
                         <span className="ac-ai-user-time">
-                          {msg.time}
+                          {msg.time} {msg.language}
                         </span>
                       )}
                     </div>

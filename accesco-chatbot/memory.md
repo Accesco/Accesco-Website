@@ -976,6 +976,17 @@ Feature request: the chatbot should understand user mood (romantic, anniversary,
 5. Text prompt: “I’ve picked these for a romantic evening – would you like to add any of these?”
 6. If no mood recognized → normal product search (existing P3 flow).
 
+### Language Detector Implementation (Completed 2026-08-22)
+- **Function:** `detectLanguage(text)` added to `AccescoInlineChatbot.jsx`.
+- **Script detection:**
+  - Devanagari (Hindi): `[\u0900-\u097F]` → tag `hi`
+  - Telugu: `[\u0C00-\u0C7F]` → tag `te`
+  - Kannada: `[\u0C80-\u0CFF]` → tag `kn`
+- **Hinglish/mixed fallback:** Checks for common bridging keywords per language (e.g., Hindi: `pyaar`, `dil`; Telugu: `ante`, `manasu`; Kannada: `prem`, `annayya`).
+- **Default:** Returns `la` (Latin/English) if no regional script or keyword is found.
+- **UI integration:** The detected tag is stored as `message.language` and displayed beneath each user message (e.g., `05:17 PM   hi`).
+- **Server integration:** The tag is passed to the FastAPI server (`/chat` endpoint `language` field) so the mood‑aware reply path can select the correct language.
+
 ### Guardrails
 - Mood path runs as P0 in `commerce_reply` but includes the same competitor‑block and similarity‑bar (0.68) guards.
 - Never hijacks product, coverage, order, or locked canned replies.
@@ -991,6 +1002,8 @@ Feature request: the chatbot should understand user mood (romantic, anniversary,
 - Reply dictionary added to `inference/app.py` language‑branch.
 - `memory.md` + `phases.md` updated with this section.
 - `test_suite_runner.py` now supports `expect_mood` column (yes/no/any) – default `any`.
+
+**Pipeline bottom line:** You need (a) a language‑detector, (b) a multilingual fine‑tuned model, (c) a reply dictionary with translations for the intents you care about, and (optional but recommended) (d) product‑name mappings for the regional scripts. With those pieces in place, the bot will reply in pure Hindi, Telugu or Kannada when the user’s message is detected in that script.
 
 ## Known Open Questions / Decisions
 
