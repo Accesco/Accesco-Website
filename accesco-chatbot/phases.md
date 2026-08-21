@@ -67,3 +67,46 @@ buttons.
 - Live checks: milk/kurkure/tata tea/mango/pringles/maggi → variant lists;
   toned/amul gold/kurkure 22g/mango 1kg → single correct card; oat milk/
   almond milk → normal cards (competitor block); recovery + coverage intact.
+
+## Phase 7: Mood‑aware Recommendation Engine (IN PROGRESS 2026-08-22)
+
+Feature request: the chatbot should understand user mood (romantic, anniversary, date‑night, etc.) and suggest relevant products from the catalog, with Add‑to‑Cart buttons and regional‑language support.
+
+### Mood Taxonomy & Detection
+- Defined a core mood list (romantic, anniversary, date‑night, friendship‑gift, long‑distance, Valentine’s).
+- Language detection step (script‑based Unicode check → ISO‑639 code `hi`, `bn`, `ta`, `te`, `kn`, `ml`, `gu` …) runs before intent classification.
+- Intent classification kept in English; **Option A (translate‑then‑classify)** uses a small MT model (Helsinki‑NLP/opus‑mt‑en‑hi) to translate the message before the DistilBERT intent model. **Option B (multilingual model)** fine‑tunes `distilbert-base-multilingual-cased` on labeled messages per target language.
+
+### Mood‑to‑SKU Mapping
+- Created `mood_sku_map.json` loaded at server start, mapping each mood to a curated subset of the 271 catalog SKUs (e.g., romantic → premium chocolates, candle‑lit dinner kits, imported champagnes; anniversary → special‑edition hampers, personalized gifts).
+- Exposed `GET /mood-products?mood=romantic` endpoint returning 3‑5 product cards with Add‑to‑Cart and redirect buttons.
+- Guardrails: similarity bar 0.68, competitor‑block, intent guard, recovery/circular topics untouched.
+
+### Reply Dictionary (Regional Language Support)
+- Reply strings stored keyed by `intent + language` (e.g. `greeting.hi`, `greeting.bn`).
+- If a translation is missing, fall back to English.
+- Product names in catalog stay English; optional parallel `product_name_hi` / `product_name_bn` fields for top‑Seller SKUs.
+
+### Chatbot Flow for Mood Queries
+1. User message → language detection → intent classification.
+2. If mood intent detected → look up `mood_sku_map`.
+3. Render a small carousel (3‑4 items) with product image, name, price.
+4. "Add to Cart" button per item (same single‑card flow, quantity stepper included).
+5. Text prompt: “I’ve picked these for a romantic evening – would you like to add any of these?”
+6. If no mood recognized → normal product search (existing P3 flow).
+
+### Guardrails
+- Mood path runs as P0 in `commerce_reply` but includes the same competitor‑block and similarity‑bar (0.68) guards.
+- Never hijacks product, coverage, order, or locked canned replies.
+- Regional‑language replies protected by the same dictionary‑fallback logic.
+
+### Verification (Planned)
+- Add ~10 new suite rows per mood/language with `expect_variants` = yes/no/any.
+- Verify 150+/150 suite still passes, recovery 51/51, catalog 43/43.
+- Spot‑check regional phrase mappings ("pyaar bhare din", "romantic season") resolve correctly.
+
+### Housekeeping
+- `mood_sku_map.json` committed to `chatbot-ml/data/`.
+- Reply dictionary added to `inference/app.py` language‑branch.
+- `memory.md` + `phases.md` updated with this section.
+- `test_suite_runner.py` now supports `expect_mood` column (yes/no/any) – default `any`.

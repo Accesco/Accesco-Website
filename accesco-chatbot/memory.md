@@ -24,7 +24,29 @@
 | Phase 5b: Research-PDF Q&A training rows (Track A) | ✅ Completed (2026-08-19, 140/140 suite) | `data/add_research_faqs.py` + 23 new rows + 4-epoch retrain |
 | Phase 5b: Research-PDF RAG knowledge base (Track B) | ✅ Completed (2026-08-19, 150/150 suite) | `data/build_knowledge_faq.py` + 35 Q&As + `knowledge_reply()` in app.py |
 | Overfitting fix: regularized fine-tune | ✅ Completed (2026-08-19, eval 0.672→0.816, 150/150 suite) | early stop + weight decay + label smoothing; frozen-encoder rejected |
+| Phase | Status | File |
+|---|---|---|
+| Phase 1: Data Preparation | ✅ Completed | `chatbot-data/preprocess.py` |
+| Phase 2: Model Training | ✅ Completed | `chatbot-ml/train/train_classifier.py` |
+| Phase 3: Inference Server | ✅ Completed | `chatbot-ml/inference/app.py` |
+| Phase 3.5: Delivery Coverage Lookup | ✅ Completed | `chatbot-ml/data/build_delivery_coverage.py` + `app.py` |
+| Phase 3.6: SKU Recovery Framework RAG | ✅ Completed | `chatbot-ml/data/build_recovery_index.py` + `app.py` |
+| Phase 3.7: Full E2E Test Suite | ✅ Completed | `chatbot-ml/test_suite.csv` + `chatbot-ml/test_suite_runner.py` |
+| Phase 3.8: Xfail fixes + rule hardening | ✅ Completed | `app.py` + `train/train_classifier.py` (12-epoch retrain) |
+| Phase 3.9: Marketing recovery FAQ answers | ✅ Completed | `chatbot-ml/data/build_recovery_faq.py` + `app.py` |
+| Phase 3.10: Dolo fix + filename reconciliation | ✅ Completed | `build_delivery_coverage.py` + `app.py` |
+| Phase 3.11: SKU FAQ in training data + routing fixes | ✅ Completed | `train_classifier.py` + `app.py` + `test_suite.csv` |
+| Phase 4: Live Catalog Sync + Commerce Actions | ✅ Completed (2026-08-05) | `chatbot-ml/inference/live_catalog.py` + `app.py` |
+| Phase 4a (M1): Live Catalog Sync Service | ✅ Completed (2026-08-05, E2E verified) | `chatbot-ml/inference/live_catalog.py` + `app.py` |
+| Phase 4b (M2): Next.js notify hook | ✅ Completed (2026-08-06) | `Accesco/lib/notifyChatbot.js` + both product POST routes |
+| Phase 4c+4d (M3): Response schema + commerce routing | ✅ Completed (2026-08-06, 132/132 suite) | `app.py` (Action/ProductCard/ChatResponse, commerce_reply) |
+| Phase 4: Frontend rendering (M4) | ✅ Completed (2026-08-06, 140/140 suite) | `Accesco/app/components/AccescoInlineChatbot.jsx` + `useProducts.js` + `page.jsx` + `app.py` |
+| Phase 5: Intent retraining w/ knowledgebase PDF | ✅ Completed (2026-08-19, 140/140 suite) | `chatbot-data/intent_training_faqs_knowledgebase.pdf` + `data/add_knowledgebase_faqs.py` + 4-epoch retrain |
+| Phase 5b: Research-PDF Q&A training rows (Track A) | ✅ Completed (2026-08-19, 140/140 suite) | `data/add_research_faqs.py` + 23 new rows + 4-epoch retrain |
+| Phase 5b: Research-PDF RAG knowledge base (Track B) | ✅ Completed (2026-08-19, 150/150 suite) | `data/build_knowledge_faq.py` + 35 Q&As + `knowledge_reply()` in app.py |
+| Overfitting fix: regularized fine-tune | ✅ Completed (2026-08-19, eval 0.672→0.816, 150/150 suite) | early stop + weight decay + label smoothing; frozen-encoder rejected |
 | Phase 6: Add-to-Cart + Variant Selection | ✅ Completed (2026-08-20, 161/161 suite) | `AccescoInlineChatbot.jsx` + `app.py` |
+| Phase 7: Mood‑aware Recommendation Engine | 🔄 In Progress (2026-08-22) | `inference/app.py` + `AccescoInlineChatbot.jsx` + `memory.md` + `phases.md` |
 
 ## Phase 1 — Completed
 
@@ -926,6 +948,49 @@ Feature request from the team: when a user searches for a product, the chatbot s
 - **Frontend chips (`AccescoInlineChatbot.jsx`)**: bot bubble with `variants` renders clickable chips (name + unit·price); clicking one sends `v.query` as a user message → normal single-card flow. `sendMessage` refactored to accept a forced value.
 - **Suite**: `expect_variants` column added to `test_suite_runner.py` (yes/no/any); 11 new rows (151–161) covering picker + specific + competitor + generic-word cases; row 115 "buy milk" updated to expect the variant list. 161/161 passing.
 - **Coverage matcher fix**: single-token substring floor raised `len(cand) >= 4` → `>= 5` so "tata" in "tata tea" no longer matches "Tata Silk Farm" (delivery coverage false positive).
+
+## Phase 7 — Mood‑aware Recommendation Engine (In Progress 2026-08-22)
+
+Feature request: the chatbot should understand user mood (romantic, anniversary, date‑night, etc.) and suggest relevant products from the catalog, with Add‑to‑Cart buttons and regional‑language support.
+
+### Mood Taxonomy & Detection
+- Defined a core mood list (romantic, anniversary, date‑night, friendship‑gift, long‑distance, Valentine’s).
+- Language detection step (script‑based Unicode check → ISO‑639 code `hi`, `bn`, `ta`, `te`, `kn`, `ml`, `gu` …) runs before intent classification.
+- Intent classification kept in English; **Option A (translate‑then‑classify)** uses a small MT model (Helsinki‑NLP/opus‑mt‑en‑hi) to translate the message before the DistilBERT intent model. **Option B (multilingual model)** fine‑tunes `distilbert-base-multilingual-cased` on labeled messages per target language.
+
+### Mood‑to‑SKU Mapping
+- Created `mood_sku_map.json` loaded at server start, mapping each mood to a curated subset of the 271 catalog SKUs (e.g., romantic → premium chocolates, candle‑lit dinner kits, imported champagnes; anniversary → special‑edition hampers, personalized gifts).
+- Exposed `GET /mood-products?mood=romantic` endpoint returning 3‑5 product cards with Add‑to‑Cart and redirect buttons.
+- Guardrails: similarity bar 0.68, competitor‑block, intent guard, recovery/circular topics untouched.
+
+### Reply Dictionary (Regional Language Support)
+- Reply strings stored keyed by `intent + language` (e.g. `greeting.hi`, `greeting.bn`).
+- If a translation is missing, fall back to English.
+- Product names in catalog stay English; optional parallel `product_name_hi` / `product_name_bn` fields for top‑Seller SKUs.
+
+### Chatbot Flow for Mood Queries
+1. User message → language detection → intent classification.
+2. If mood intent detected → look up `mood_sku_map`.
+3. Render a small carousel (3‑4 items) with product image, name, price.
+4. "Add to Cart" button per item (same single‑card flow, quantity stepper included).
+5. Text prompt: “I’ve picked these for a romantic evening – would you like to add any of these?”
+6. If no mood recognized → normal product search (existing P3 flow).
+
+### Guardrails
+- Mood path runs as P0 in `commerce_reply` but includes the same competitor‑block and similarity‑bar (0.68) guards.
+- Never hijacks product, coverage, order, or locked canned replies.
+- Regional‑language replies protected by the same dictionary‑fallback logic.
+
+### Verification (Planned)
+- Add ~10 new suite rows per mood/language with `expect_variants` = yes/no/any.
+- Verify 150+/150 suite still passes, recovery 51/51, catalog 43/43.
+- Spot‑check regional phrase mappings ("pyaar bhare din", "romantic season") resolve correctly.
+
+### Housekeeping
+- `mood_sku_map.json` committed to `chatbot-ml/data/`.
+- Reply dictionary added to `inference/app.py` language‑branch.
+- `memory.md` + `phases.md` updated with this section.
+- `test_suite_runner.py` now supports `expect_mood` column (yes/no/any) – default `any`.
 
 ## Known Open Questions / Decisions
 
