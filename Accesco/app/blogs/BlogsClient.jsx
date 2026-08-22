@@ -155,15 +155,11 @@ export default function BlogsClient({ initialPosts }) {
   return (
     <>
       {/* Common Website Header */}
- <section className="blog-inspo-hero">
+      <AccescoHeader />
 
-
-  <div className="hero-header-wrap">
-    <AccescoHeader />
-  </div>
-
-  <div className="blog-hero-center">
-    <h1>blog.</h1>
+      <section className="blog-inspo-hero">
+        <div className="blog-hero-center">
+          <h1>blog.</h1>
 
     <div className="hero-categories">
       {[

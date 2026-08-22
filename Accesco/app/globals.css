@@ -27,9 +27,10 @@
   --white: #ffffff;
 
   /* Typography */
-  --font-sora:    var(--font-sora), sans-serif;
-  --font-display: var(--font-sora), sans-serif;
-  --font-body:    var(--font-dm-sans), sans-serif;
+  --font-sora:    var(--font-sora), "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-display: var(--font-sora), "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-body:    var(--font-dm-sans), "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-inter:   "Helvetica Neue", Helvetica, Arial, sans-serif;
 
   /* Easing */
   --ease-out:    cubic-bezier(0.22, 1, 0.36, 1);
@@ -61,16 +62,18 @@ html {
   max-width: 100%;
 }
 
-
-
 body {
-  font-family: var(--font-body);
+  font-family: var(--font-body, "Helvetica Neue", Helvetica, Arial, sans-serif);
   background-color: var(--ac-primary);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: clip;
   max-width: 100%;
   line-height: 1.6;
+}
+
+body, p, li, a, button, input, label, span, textarea {
+  font-family: inherit;
 }
 
 img { max-width: 100%; display: block; }
