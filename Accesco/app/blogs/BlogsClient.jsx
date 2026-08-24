@@ -23,14 +23,15 @@ export default function BlogsClient({ initialPosts }) {
   }, [user, uid]);
 
   async function loadBookmarks() {
-    const key = user?.email || user?.uid || uid;
-    if (key) {
+    if (user || uid) {
       try {
-        const bookmarks = await getUserBookmarks(key);
+        const bookmarks = await getUserBookmarks();
         setBookmarkedPosts(bookmarks);
       } catch (err) {
         console.error('Failed to load bookmarks:', err);
       }
+    } else {
+      setBookmarkedPosts([]);
     }
   }
 
@@ -112,17 +113,19 @@ export default function BlogsClient({ initialPosts }) {
 
   // ── Bookmark Functions ───────────────────────────────────────────────────────
   const toggleBookmark = async (postId) => {
-    const key = user?.email || user?.uid || uid;
-    if (!key) return;
+    if (!user && !uid) {
+      alert('Please sign in to bookmark articles.');
+      return;
+    }
 
     try {
       const isCurrentlyBookmarked = bookmarkedPosts.includes(postId);
 
       if (isCurrentlyBookmarked) {
-        await removeBookmark(key, postId);
+        await removeBookmark(postId);
         setBookmarkedPosts(prev => prev.filter(id => id !== postId));
       } else {
-        await addBookmark(key, postId);
+        await addBookmark(postId);
         setBookmarkedPosts(prev => [...prev, postId]);
       }
     } catch (error) {

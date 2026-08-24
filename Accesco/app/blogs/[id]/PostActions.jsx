@@ -51,27 +51,30 @@ function useBookmark(post) {
   }, [user, uid]);
 
   async function loadBookmarks() {
-    const key = user?.email || user?.uid || uid;
-    if (key) {
+    if (user || uid) {
       try {
-        setBookmarkedPosts(await getUserBookmarks(key));
+        setBookmarkedPosts(await getUserBookmarks());
       } catch (err) {
         console.error('Failed to load bookmarks:', err);
       }
+    } else {
+      setBookmarkedPosts([]);
     }
   }
 
   const toggleBookmark = async () => {
-    const key = user?.email || user?.uid || uid;
-    if (!key) return;
+    if (!user && !uid) {
+      alert('Please sign in to bookmark articles.');
+      return;
+    }
 
     try {
       const isCurrentlyBookmarked = bookmarkedPosts.includes(post.id);
       if (isCurrentlyBookmarked) {
-        await removeBookmark(key, post.id);
+        await removeBookmark(post.id);
         setBookmarkedPosts((prev) => prev.filter((id) => id !== post.id));
       } else {
-        await addBookmark(key, post.id);
+        await addBookmark(post.id);
         setBookmarkedPosts((prev) => [...prev, post.id]);
       }
     } catch (error) {

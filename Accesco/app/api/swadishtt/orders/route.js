@@ -54,24 +54,42 @@ export async function GET(request) {
 
     const { db } = await import('@/lib/firebase');
     const { collection, doc, getDoc, getDocs, query, orderBy, limit, where } = await import('firebase/firestore');
+    const { getUserRole } = await import('../../_lib/authz');
 
+    const authResult = await verifyAuthToken(request);
+    if (authResult.error) {
+      return NextResponse.json({ error: authResult.error }, { status: 401 });
+    }
+
+    const authUid = authResult.uid;
+    const authEmail = authResult.email;
+    const role = await getUserRole(authUid);
+    const isAdmin = role === 'admin';
+
+    // Fetch single order by ID
     if (orderId) {
       const docSnap = await getDoc(doc(db, 'swadishtt_orders', orderId));
       if (!docSnap.exists()) {
         return NextResponse.json({ error: 'Order not found.' }, { status: 404 });
       }
       const orderData = docSnap.data();
-      const authz = await requireOwnerOrAdmin(request, orderData.userId);
-      if (authz.error) {
-        return NextResponse.json({ error: authz.error }, { status: authz.status });
+      const isOwner = orderData.userId === authUid ||
+        (Array.isArray(authResult.allowedUids) && authResult.allowedUids.includes(orderData.userId)) ||
+        (authEmail && orderData.customerEmail && orderData.customerEmail.toLowerCase() === authEmail.toLowerCase());
+
+      if (!isOwner && !isAdmin) {
+        return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
       }
       return NextResponse.json({ order: { id: docSnap.id, ...orderData } });
     }
 
+    // Fetch orders by userId
     if (userId) {
-      const authz = await requireOwnerOrAdmin(request, userId);
-      if (authz.error) {
-        return NextResponse.json({ error: authz.error }, { status: authz.status });
+      const isOwner = userId === authUid ||
+        (Array.isArray(authResult.allowedUids) && authResult.allowedUids.includes(userId));
+
+      if (!isOwner && !isAdmin) {
+        return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
       }
       const q = query(collection(db, 'swadishtt_orders'), where('userId', '==', userId), limit(100));
       const snapshot = await getDocs(q);
@@ -81,10 +99,11 @@ export async function GET(request) {
       return NextResponse.json({ orders });
     }
 
+    // Fetch orders by email
     if (email) {
-      const authz = await requireAdmin(request);
-      if (authz.error) {
-        return NextResponse.json({ error: authz.error }, { status: authz.status });
+      const isOwner = Boolean(authEmail && email.toLowerCase() === authEmail.toLowerCase());
+      if (!isOwner && !isAdmin) {
+        return NextResponse.json({ error: 'Forbidden: admin role required' }, { status: 403 });
       }
       const q = query(collection(db, 'swadishtt_orders'), where('customerEmail', '==', email), limit(100));
       const snapshot = await getDocs(q);
@@ -94,18 +113,21 @@ export async function GET(request) {
       return NextResponse.json({ orders });
     }
 
-    // Admin — most recent 50
-    {
-      const authz = await requireAdmin(request);
-      if (authz.error) {
-        return NextResponse.json({ error: authz.error }, { status: authz.status });
-      }
+    // Fetch all orders (admin — most recent 50) or default to caller's orders
+    if (isAdmin) {
+      const q = query(collection(db, 'swadishtt_orders'), orderBy('createdAt', 'desc'), limit(50));
+      const snapshot = await getDocs(q);
+      const orders = [];
+      snapshot.forEach((d) => orders.push({ id: d.id, ...d.data() }));
+      return NextResponse.json({ orders });
+    } else {
+      const q = query(collection(db, 'swadishtt_orders'), where('userId', '==', authUid), limit(100));
+      const snapshot = await getDocs(q);
+      const orders = [];
+      snapshot.forEach((d) => orders.push({ id: d.id, ...d.data() }));
+      orders.sort((a, b) => new Date(b.placedAt || b.createdAt) - new Date(a.placedAt || a.createdAt));
+      return NextResponse.json({ orders });
     }
-    const q = query(collection(db, 'swadishtt_orders'), orderBy('createdAt', 'desc'), limit(50));
-    const snapshot = await getDocs(q);
-    const orders = [];
-    snapshot.forEach((d) => orders.push({ id: d.id, ...d.data() }));
-    return NextResponse.json({ orders });
   } catch (error) {
     console.error('[swadishtt/orders] GET error:', error);
     return NextResponse.json({ error: 'Internal server error.' }, { status: 500 });

@@ -38,19 +38,19 @@ export async function requireAdmin(request) {
 // specific user's data where the owner is already known (e.g. an order
 // already fetched by id).
 export async function requireOwnerOrAdmin(request, resourceOwnerUid) {
-  const { uid, error } = await verifyAuthToken(request);
+  const { uid, allowedUids, error } = await verifyAuthToken(request);
   if (error) {
     return { uid: null, role: null, error, status: 401 };
   }
 
-  if (uid === resourceOwnerUid) {
+  if (uid === resourceOwnerUid || (Array.isArray(allowedUids) && allowedUids.includes(resourceOwnerUid))) {
     return { uid, role: 'user', error: null, status: 200 };
   }
 
   const role = await getUserRole(uid);
   if (role === 'admin') {
-    return { uid, role, error: null, status: 200 };
+    return { uid, role: 'admin', error: null, status: 200 };
   }
 
-  return { uid, role, error: 'Forbidden', status: 403 };
+  return { uid, role: null, error: 'Forbidden', status: 403 };
 }

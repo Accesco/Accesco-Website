@@ -7,7 +7,7 @@ import styles from './orders.module.css';
 
 export default function UnifiedOrdersPage() {
   const router = useRouter();
-  const { user, uid } = useAuth();
+  const { user, uid, getIdToken } = useAuth();
   const [allOrders, setAllOrders] = useState([]);
   const [filter, setFilter] = useState('all');
   const [sortBy, setSortBy] = useState('date-desc');
@@ -25,6 +25,17 @@ export default function UnifiedOrdersPage() {
     const loadOrders = async () => {
       setIsLoading(true);
       try {
+        let authHeaders = {};
+        if (user?.uid || uid) {
+          const token = await getIdToken();
+          if (token) {
+            authHeaders = {
+              Authorization: `Bearer ${token}`,
+              'x-user-id': user?.uid || uid,
+            };
+          }
+        }
+
         const queryParam = user?.uid
           ? `userId=${encodeURIComponent(user.uid)}`
           : user?.email
@@ -32,9 +43,9 @@ export default function UnifiedOrdersPage() {
           : `userId=${encodeURIComponent(currentIdentifier)}`;
 
         const [groklyRes, swadishttRes, instastyleRes] = await Promise.allSettled([
-          fetch(`/api/grokly/orders?${queryParam}`).then(r => r.ok ? r.json() : { orders: [] }),
-          fetch(`/api/swadishtt/orders?${queryParam}`).then(r => r.ok ? r.json() : { orders: [] }),
-          fetch(`/api/instastyle/orders?${queryParam}`).then(r => r.ok ? r.json() : { orders: [] }),
+          fetch(`/api/grokly/orders?${queryParam}`, { headers: authHeaders }).then(r => r.ok ? r.json() : { orders: [] }),
+          fetch(`/api/swadishtt/orders?${queryParam}`, { headers: authHeaders }).then(r => r.ok ? r.json() : { orders: [] }),
+          fetch(`/api/instastyle/orders?${queryParam}`, { headers: authHeaders }).then(r => r.ok ? r.json() : { orders: [] }),
         ]);
 
         const groklyOrders = groklyRes.status === 'fulfilled' ? (groklyRes.value?.orders || []) : [];
@@ -65,7 +76,7 @@ export default function UnifiedOrdersPage() {
       cancelled = true;
       clearInterval(interval);
     };
-  }, [user, uid]);
+  }, [user, uid, getIdToken]);
 
   const filteredOrders = useMemo(() => {
     let filtered = allOrders;
