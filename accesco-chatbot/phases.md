@@ -112,3 +112,24 @@ Feature request: the chatbot should understand user mood (romantic, anniversary,
 - `test_suite_runner.py` now supports `expect_mood` column (yes/no/any) – default `any`.
 
 **Pipeline bottom line:** You need (a) a language‑detector, (b) a multilingual fine‑tuned model, (c) a reply dictionary with translations for the intents you care about, and (optional but recommended) (d) product‑name mappings for the regional scripts. With those pieces in place, the bot will reply in pure Hindi, Telugu or Kannada when the user’s message is detected in that script.
+
+## Phase 7b: Multilingual Translation Pipeline (COMPLETED 2026-08-24, 161/161 suite)
+
+The bot now understands and replies in Hindi, Telugu and Kannada.
+
+### Architecture
+
+1. **Frontend detector** (`AccescoInlineChatbot.jsx`): Unicode-script + Hinglish keyword check tags every message `hi`/`te`/`kn`/`la`; tag displayed under the message and sent to `/chat`.
+2. **Translation sidecar** (`inference/translate_service.py`, port 8001): IndicTrans2-distilled (200M) both directions, running on **transformers 4.49 inside isolated `.venv-translate`** — IndicTrans2's custom code is incompatible with transformers 5.x, and the venv must NOT share the anaconda site-packages (`av`/`cv2` dylib conflict crashes it).
+3. **Main server wrapper** (`app.py`): regional input → sidecar to_english → existing pipeline untouched → reply prose → sidecar from_english. Card bullet blocks stay English; sidecar failure degrades gracefully to English-only.
+
+### Verified
+
+- Suite 161/161 (English path unchanged).
+- दूध चाहिए / పాలు కావాలి / ಹಾಲು ಬೇಕು → milk variant picker with regional header + English cards.
+- Hinglish ("मुझे kurkure चाहिए") → Kurkure variants; Hindi coverage query → full Hindi answer with transliterated area match.
+- Startup: main server port 8000; sidecar `.venv-translate/bin/python -m uvicorn inference.translate_service:app --port 8001`.
+
+### Known v1 limitation
+
+Language is per-message: chip clicks send English product names → follow-up card replies in English. Session-level language memory = future work.

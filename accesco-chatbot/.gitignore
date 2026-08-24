@@ -27,3 +27,6 @@ chatbot-ml/.pytest_cache/
 # Environment
 .env
 *.env.local
+
+# Translation sidecar venv (transformers 4.x for IndicTrans2)
+chatbot-ml/.venv-translate/

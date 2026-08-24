@@ -153,6 +153,10 @@ INTENT_REPLIES = {
 class Query(BaseModel):
     text: str
     top_k: int = 5
+    # Phase 7 multilingual: ISO-style tag from the frontend language
+    # detector — 'hi' (Hindi), 'te' (Telugu), 'kn' (Kannada), or None/'la'
+    # for English/Latin. Regional tags trigger the translate sidecar.
+    language: str | None = None
 
 class PredictResponse(BaseModel):
     intent: str
@@ -1402,8 +1406,70 @@ SINGLE_WORD_INFO = {
     "xpense": "xpense_budget",
 }
 
+# ─── Multilingual translation sidecar (IndicTrans2, port 8001) ──────────────
+# The sidecar runs IndicTrans2-distilled on transformers 4.x in its own venv
+# (.venv-translate) because IndicTrans2's custom code predates transformers 5.x.
+# Every call degrades gracefully: if the sidecar is down or fails, we fall
+# back to English-only behavior (query as-is / reply as-is).
+
+REGIONAL_LANGS = ("hi", "te", "kn")
+TRANSLATE_SIDECAR = os.environ.get("TRANSLATE_SIDECAR", "http://127.0.0.1:8001")
+
+
+def _sidecar_call(endpoint: str, text: str, lang: str) -> str | None:
+    """POST to the translation sidecar; None on any failure."""
+    try:
+        import requests
+        r = requests.post(f"{TRANSLATE_SIDECAR}/{endpoint}",
+                          json={"text": text, "lang": lang}, timeout=60)
+        if r.status_code == 200:
+            out = (r.json() or {}).get("translation")
+            return out if out else None
+    except Exception:
+        pass
+    return None
+
+
+def _regionalize_reply(reply: str, lang: str) -> str:
+    """Translate the conversational part of a reply into `lang`.
+
+    Product-card blocks ("• Name\n  Brand: ...") stay in English — product
+    names/prices/URLs must remain exact. Only the prose header above the
+    first bullet is translated; bullet-free replies translate fully.
+    """
+    if "\n•" in reply:
+        head, rest = reply.split("\n•", 1)
+        head = head.strip()
+        if not head:
+            return reply
+        regional = _sidecar_call("from_english", head, lang)
+        return f"{regional}\n\n•{rest}" if regional else reply
+    regional = _sidecar_call("from_english", reply, lang)
+    return regional or reply
+
+
 @app.post("/chat", response_model=ChatResponse)
 def chat(query: Query):
+    lang = query.language if query.language in REGIONAL_LANGS else None
+    text = query.text
+
+    # Regional input → English for the whole pipeline (intent rules,
+    # coverage, knowledge RAG and FAISS all operate on English).
+    if lang:
+        english = _sidecar_call("to_english", text, lang)
+        if english:
+            text = english
+
+    response = _chat_core(Query(text=text, top_k=query.top_k))
+
+    # English reply → user's language (conversational part only; see
+    # _regionalize_reply for why card blocks stay in English).
+    if lang and response and response.reply:
+        response.reply = _regionalize_reply(response.reply, lang)
+    return response
+
+
+def _chat_core(query: Query):
     text = query.text
 
     # 1. Time-of-day greetings get a matching reply, no products
