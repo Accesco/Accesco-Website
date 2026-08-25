@@ -30,6 +30,11 @@ try:
 except ImportError:
     from live_catalog import LiveCatalog
 
+try:
+    from inference.mood_catalog import is_mood_intent, mood_has_products, get_mood_products
+except ImportError:
+    from mood_catalog import is_mood_intent, mood_has_products, get_mood_products
+
 torch.set_num_threads(1)
 
 app = FastAPI(title="Accesco Chatbot API")
@@ -145,6 +150,16 @@ INTENT_REPLIES = {
     "account_features": "Accesco supports shared carts, multiple addresses, and personalized recommendations across services.",
     "pricing_payment": "Accesco accepts standard payment methods including UPI, cards, and netbanking.",
     "about_brand": "Accesco Living is an intelligent commerce ecosystem built for urban Indian households.",
+    # ─── 8 Mood tag replies ─────────────────────────────────────────────────
+    "romantic": "Here are some romantic picks for you! Chocolates, premium treats, and special items to make the moment memorable.",
+    "date-night": "Date night essentials! Desserts, drinks, and treats to set the mood for a perfect evening together.",
+    "birthday": "Happy birthday prep! Cakes, snacks, drinks, and party treats — everything you need to celebrate.",
+    "party": "Party time! Chips, nachos, cold drinks, and snacks to keep the good vibes going.",
+    "festival": "Festive shopping! Sweets, dry fruits, snacks, and everything you need for the celebration.",
+    "self-care": "Self-care day! Wellness products, healthy snacks, and pampering essentials just for you.",
+    "housewarming": "Congrats on the new place! Cleaning supplies, kitchenware, and snacks for your guests.",
+    "apology": "Making things right! Premium chocolates, treats, and thoughtful picks to say sorry.",
+    "sports": "Game day fuel! Energy bars, protein, drinks, and snacks to power your performance.",
 }
 
 
@@ -287,6 +302,16 @@ FALLBACK_RULES: list[tuple[str, list[str], list[str]]] = [
     ("account_features", ["account", "login", "sign in", "password", "profile"], []),
     ("support_contact", ["contact", "support", "help line", "reach", "phone number", "email"], []),
     ("privacy_security", ["privacy", "secure", "data safe", "security", "personal data"], []),
+    # ─── Mood tag fallback rules (8 mood tags) ────────────────────────────
+    ("romantic", ["romantic", "valentine", "anniversary", "love", "surprise my partner", "proposal"], []),
+    ("date-night", ["date night", "date", "evening together", "candle light", "dinner for two", "romantic dinner"], []),
+    ("birthday", ["birthday", "bday", "birthday party", "birthday celebration", "birthday gift"], []),
+    ("party", ["party", "house party", "get-together", "friends coming over", "hosting", "gathering"], []),
+    ("festival", ["diwali", "holi", "eid", "christmas", "navratri", "rakhi", "pongal", "onam", "festival", "festive"], []),
+    ("self-care", ["self care", "self-care", "pamper", "me time", "wellness", "relax", "spa day", "treat myself"], []),
+    ("housewarming", ["housewarming", "new flat", "new house", "just moved", "griha pravesh", "settling in"], []),
+    ("apology", ["sorry", "apology", "apologize", "make up", "patch up", "forgive", "messed up", "my fault"], []),
+    ("sports", ["cricket", "football", "gym", "workout", "playing", "match", "sports", "fitness", "exercise"], []),
 ]
 
 def keyword_intent(text: str) -> str | None:
@@ -1569,7 +1594,33 @@ def _chat_core(query: Query):
         return ChatResponse(reply=reply, intent=intent, confidence=confidence,
                             products=[], actions=actions)
 
-    # 8. Commerce routing absorbs the product-search branch. Precedence:
+    # 8. Mood-based product recommendations: if the intent is a mood tag
+    #    that maps to product categories, fetch matching products from the
+    #    LIVE catalog and return them as cards. Only shows products that
+    #    actually exist in Firestore (271 products).
+    if is_mood_intent(intent) and mood_has_products(intent):
+        live_products, _ = LIVE.snapshot()
+        mood_products = get_mood_products(intent, live_products)
+        if mood_products:
+            cards = []
+            for p in mood_products:
+                cards.append(ProductCard(
+                    name=p["name"],
+                    brand=p.get("brand", ""),
+                    price=p.get("price", ""),
+                    unit=p.get("unit", ""),
+                    image=p.get("image", ""),
+                    service=p.get("service", "Grokly"),
+                    url=p.get("url", ""),
+                ))
+            reply = INTENT_REPLIES.get(intent, "Here are some suggestions for you!")
+            actions = [Action(type="redirect", label="Browse more on Grokly", url="/services/grokly")]
+            return ChatResponse(
+                reply=reply, intent=intent, confidence=confidence,
+                products=[], cards=cards, actions=actions,
+            )
+
+    # 9. Commerce routing absorbs the product-search branch. Precedence:
     #    tight product → cards + Order button (intent order_product when an
     #    order verb present, else the classified intent); category / vertical
     #    redirects for order-verb + loose/unknown queries. Returns None when
@@ -1578,7 +1629,7 @@ def _chat_core(query: Query):
     if commerce is not None:
         return commerce
 
-    # 9. Legacy canned replies (nothing commerce-flavored)
+    # 10. Legacy canned replies (nothing commerce-flavored)
     if intent == "greeting":
         reply = INTENT_REPLIES["greeting"]
     elif intent == "unknown":

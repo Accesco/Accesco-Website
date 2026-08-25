@@ -71,7 +71,7 @@ def extract_faqs():
                     "source": filename,
                 })
     faqs.sort(key=lambda x: x["id"])
-    with open(OUT_PATH, "w") as f:
+    with open(OUT_PATH, "w", encoding="utf-8") as f:
         json.dump(faqs, f, indent=2, ensure_ascii=False)
     print(f"Extracted {len(faqs)} Q&A pairs → {OUT_PATH}")
     return faqs

@@ -47,7 +47,7 @@ def label_question(question: str) -> str:
 
 
 def main():
-    with open(DATA_PATH) as f:
+    with open(DATA_PATH, encoding="utf-8") as f:
         faqs = json.load(f)
     rows = []
     for faq in faqs:
@@ -58,7 +58,7 @@ def main():
             "question": faq["question"],
             "answer": faq["answer"],
         })
-    with open(OUT_PATH, "w", newline="") as f:
+    with open(OUT_PATH, "w", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(f, fieldnames=["id", "intent", "question", "answer"])
         writer.writeheader()
         writer.writerows(rows)

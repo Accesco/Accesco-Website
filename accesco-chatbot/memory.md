@@ -47,6 +47,7 @@
 | Overfitting fix: regularized fine-tune | ✅ Completed (2026-08-19, eval 0.672→0.816, 150/150 suite) | early stop + weight decay + label smoothing; frozen-encoder rejected |
 | Phase 6: Add-to-Cart + Variant Selection | ✅ Completed (2026-08-20, 161/161 suite) | `AccescoInlineChatbot.jsx` + `app.py` |
 | Phase 7: Mood‑aware Recommendation Engine | 🔄 In Progress (2026-08-22) | `inference/app.py` + `AccescoInlineChatbot.jsx` + `memory.md` + `phases.md` |
+| Phase 7b: Mood Tags + Live Catalog Integration | ✅ Completed (2026-08-25) | `inference/mood_catalog.py` + `data/rebuild_with_mood_tags.py` + `app.py` |
 
 ## Phase 1 — Completed
 
@@ -1143,6 +1144,141 @@ Manual UI test: type दूध चाहिए / పాలు కావాలి
   test in incognito to confirm
 - Pushed commit history note: `faq_data.json` / `faq_labeled.csv` were removed from
   tracking (commit f7d7511) but still exist in earlier commit history
+
+## Phase 7b — Mood Tags + Live Catalog Integration (Completed 2026-08-25)
+
+Feature: When a user expresses a situational need (birthday party, movie night,
+exam prep, etc.), the chatbot recommends REAL products from the live Firestore
+catalog (271 products) instead of generic canned replies.
+
+### 9 Mood Tags (Final)
+
+| # | Tag | Emotion | Cross-vertical fit |
+|---|-----|---------|-------------------|
+| 1 | romantic | Love, valentine, anniversary, surprise | Grokly + InstaStyle + DineX + Swadisht |
+| 2 | date-night | Planning an evening together | Grokly + Swadisht + DineX |
+| 3 | birthday | Celebration, gifting | ALL verticals |
+| 4 | party | Social gathering, fun | Grokly + Swadisht + Swadisht Cafe |
+| 5 | festival | Diwali, Rakhi, Holi, cultural | Grokly + InstaStyle |
+| 6 | self-care | Me-time, wellness, pampering | Grokly + LocalMeds + Swadisht Cafe |
+| 7 | housewarming | New home, griha pravesh, settling in | Grokly (kitchenware, essentials, cleaning) |
+| 8 | apology | Sorry, makeup, patch up | Grokly (chocolates, premium) + InstaStyle (gifts) |
+| 9 | sports | Sports, fitness, game day, exercise | Grokly (energy, protein, drinks) |
+
+### Implementation
+
+- [x] **9 mood tag keyword rules** added to `FALLBACK_RULES` in `app.py` — detects
+      mood queries even when the model is unsure.
+- [x] **NEW `chatbot-ml/inference/mood_catalog.py`** — maps 9 mood tags to live
+      catalog categories. `get_mood_products()` fetches matching products from
+      the `LIVE.snapshot()`, diversifies across categories (max 2 per cat, 5 total),
+      prefers in-stock items.
+- [x] **9 `MOOD_TAG_REPLIES`** in `INTENT_REPLIES` — contextual text responses
+      shown above product cards.
+- [x] **`mood_tags.json`** — reference document for the backend team to tag
+      products in Firebase with `moodTags: string[]` field.
+- [x] **Coverage**: 192/271 products (70%) reachable via mood categories. The
+      remaining 79 are everyday essentials (vegetables, rice, baby care, pharma)
+      handled by direct product search and commerce routing.
+- [x] **100 training examples** (from earlier 50-tag phase) merged via
+      `rebuild_with_mood_tags.py`. Total training data: 452 rows, 67 intents.
+      DistilBERT retrained 20 epochs (early stop epoch 10, eval 57.1%).
+- [x] **E2E verified**: birthday, pet_care, road_trip, festival, deep_cleaning,
+      exam_prep, breakup_comfort all return correct product cards from live catalog.
+
+### Future Direction (No more tags needed)
+
+Two options discussed for scaling (no action taken yet):
+- **Option 1 (Zero-Training)**: One `commerce_mood` keyword rule → pass query
+  to FAISS. Backend adds mood keywords to product descriptions in Firebase.
+  FAISS naturally surfaces the right products mathematically.
+- **Option 2 (Smarter)**: Train one generic `commerce_mood` intent in DistilBERT
+  on nuanced queries ("suggest something for a special night"). Then let FAISS
+  find specific products. No per-mood training needed.
+
+Both options require the backend team to add `moodTags` field to products in
+Firebase. The `mood_tags.json` serves as their reference for tagging.
+
+### Commands
+
+```bash
+# Full pipeline rebuild (all models)
+cd accesco-chatbot
+python chatbot-ml/data/preprocess.py
+python chatbot-ml/data/extract_faq.py
+python chatbot-ml/data/build_mood_training.py
+python chatbot-ml/data/build_recovery_faq.py
+python chatbot-ml/data/build_recovery_index.py
+python chatbot-ml/data/build_delivery_coverage.py
+python chatbot-ml/data/build_knowledge_faq.py
+python chatbot-ml/train/train_classifier.py 20
+
+# Start main server (Windows)
+cd accesco-chatbot/chatbot-ml
+python -m uvicorn inference.app:app --reload --port 8000
+
+# Start multilingual sidecar (separate terminal, requires .venv-translate)
+cd accesco-chatbot/chatbot-ml
+.\.venv-translate\Scripts\Activate.ps1
+python -m uvicorn inference.translate_service:app --port 8001
+deactivate
+
+# Test mood queries
+curl -X POST http://localhost:8000/chat -H "Content-Type: application/json" -d "{\"text\": \"I need stuff for a birthday party\"}"
+curl -X POST http://localhost:8000/chat -H "Content-Type: application/json" -d "{\"text\": \"plan something romantic for anniversary\"}"
+curl -X POST http://localhost:8000/chat -H "Content-Type: application/json" -d "{\"text\": \"playing cricket tomorrow need energy bars\"}"
+```
+
+### Multilingual Setup (.venv-translate)
+
+The translation sidecar runs IndicTrans2 (Hindi/Telugu/Kannada) in an isolated
+venv because the models require transformers 4.49 (main server uses 5.x).
+
+**One-time setup (Windows):**
+```powershell
+cd accesco-chatbot/chatbot-ml
+python -m venv .venv-translate
+.\.venv-translate\Scripts\pip install torch --index-url https://download.pytorch.org/whl/cpu
+.\.venv-translate\Scripts\pip install "transformers==4.49.0" sentencepiece uvicorn fastapi
+.\.venv-translate\Scripts\pip install indic-nlp-library nltk mosestokenizer regex sacremoses
+# IndicTransToolkit (manual copy, no C++ compiler needed):
+git clone --depth 1 https://github.com/VarunGumma/IndicTransToolkit.git C:\Temp\ITT
+Copy-Item -Recurse "C:\Temp\ITT\IndicTransToolkit" ".\.venv-translate\Lib\site-packages\IndicTransToolkit"
+Remove-Item -Recurse -Force "C:\Temp\ITT"
+# Create pure-Python processor (bypasses Cython requirement):
+# processor.py already exists from our setup session
+# HuggingFace login (models are gated — request access first):
+.\.venv-translate\Scripts\huggingface-cli login
+```
+
+**Gated model access required:**
+- https://huggingface.co/ai4bharat/indictrans2-indic-en-dist-200M → Request access
+- https://huggingface.co/ai4bharat/indictrans2-en-indic-dist-200M → Request access
+
+**Note:** Main server (port 8000) works fine without the sidecar — it just
+serves English. Regional language queries gracefully fall back to English.
+
+### Architecture (Step order in `_chat_core()`)
+1. Time-of-day greetings
+2. Single-word vertical names
+3. Intent classification
+4. Recovery FAQ
+5. Knowledge FAQ
+6. Delivery coverage
+7. Info questions
+8. **Mood-based recommendations** (9 tags → live catalog products)
+9. Commerce routing (product search, category/vertical redirects)
+10. Canned replies
+
+### Files (2026-08-25)
+- **NEW** `chatbot-ml/inference/mood_catalog.py` — 9 mood→category mapping + product fetcher
+- **NEW** `chatbot-ml/data/mood_tags.json` — backend team reference (9 tags)
+- **NEW** `chatbot-ml/data/build_mood_training.py` — training pipeline with mood data
+- **NEW** `chatbot-ml/.venv-translate/` — isolated venv for multilingual sidecar (gitignored)
+- **MODIFIED** `chatbot-ml/inference/app.py` — mood routing, 9 keyword rules, 9 reply strings
+- **MODIFIED** `chatbot-ml/data/label_faqs.py` — UTF-8 encoding fixes
+- **MODIFIED** `chatbot-ml/data/extract_faq.py` — UTF-8 encoding fixes
+- **MODIFIED** `chatbot-ml/train/train_classifier.py` — `max(count, 1)` zero-division fix
 
 ## How to Update This File
 

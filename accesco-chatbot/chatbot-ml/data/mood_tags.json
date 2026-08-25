@@ -1,0 +1,241 @@
+{
+  "version": "2.0",
+  "description": "8 mood/emotion tags for Accesco chatbot product recommendations. Each mood maps to product categories from the live catalog (271 products). Backend team uses this to add moodTags field to Firebase products.",
+  "usage": "Chatbot classifies user message into a mood tag, then fetches matching products from the live Firestore catalog by category.",
+  "total_tags": 9,
+  "tags": [
+    {
+      "tag": "romantic",
+      "emotion": "Love, valentine, anniversary, surprise",
+      "cross_vertical_fit": "Grokly + InstaStyle + DineX + Swadisht",
+      "categories": [
+        "sweet-tooth",
+        "international-foods",
+        "personal-care",
+        "cold-drinks",
+        "bakery-biscuits"
+      ],
+      "keywords": [
+        "romantic",
+        "valentine",
+        "anniversary",
+        "love",
+        "surprise",
+        "couple",
+        "together",
+        "proposal"
+      ],
+      "sample_queries": [
+        "I want to plan something romantic",
+        "anniversary gift ideas",
+        "surprise my partner"
+      ]
+    },
+    {
+      "tag": "date-night",
+      "emotion": "Planning an evening together",
+      "cross_vertical_fit": "Grokly + Swadisht + DineX",
+      "categories": [
+        "sweet-tooth",
+        "cold-drinks",
+        "international-foods",
+        "bakery-biscuits"
+      ],
+      "keywords": [
+        "date night",
+        "date",
+        "evening together",
+        "candle light",
+        "dinner for two",
+        "romantic dinner"
+      ],
+      "sample_queries": [
+        "planning a date night need candles and dessert",
+        "romantic dinner at home"
+      ]
+    },
+    {
+      "tag": "birthday",
+      "emotion": "Celebration, gifting",
+      "cross_vertical_fit": "ALL verticals",
+      "categories": [
+        "sweet-tooth",
+        "cold-drinks",
+        "munchies",
+        "bakery-biscuits",
+        "international-foods",
+        "frozen-snacks"
+      ],
+      "keywords": [
+        "birthday",
+        "bday",
+        "birthday party",
+        "birthday celebration",
+        "birthday gift",
+        "turning"
+      ],
+      "sample_queries": [
+        "I need stuff for a birthday party",
+        "birthday gift for my friend"
+      ]
+    },
+    {
+      "tag": "party",
+      "emotion": "Social gathering, fun",
+      "cross_vertical_fit": "Grokly + Swadisht + Swadisht Cafe",
+      "categories": [
+        "munchies",
+        "cold-drinks",
+        "sweet-tooth",
+        "frozen-snacks",
+        "bakery-biscuits"
+      ],
+      "keywords": [
+        "party",
+        "house party",
+        "get-together",
+        "friends coming over",
+        "hosting",
+        "celebration",
+        "gathering"
+      ],
+      "sample_queries": [
+        "friends coming over tonight need party snacks",
+        "hosting a house party"
+      ]
+    },
+    {
+      "tag": "festival",
+      "emotion": "Diwali, Rakhi, Holi, cultural",
+      "cross_vertical_fit": "Grokly + InstaStyle",
+      "categories": [
+        "sweet-tooth",
+        "munchies",
+        "cold-drinks",
+        "international-foods",
+        "masala-oil",
+        "dairy-breakfast"
+      ],
+      "keywords": [
+        "diwali",
+        "holi",
+        "eid",
+        "christmas",
+        "navratri",
+        "rakhi",
+        "pongal",
+        "onam",
+        "festival",
+        "festive"
+      ],
+      "sample_queries": [
+        "Diwali is coming I need sweets and diyas",
+        "festival shopping list"
+      ]
+    },
+    {
+      "tag": "self-care",
+      "emotion": "Me-time, wellness, pampering",
+      "cross_vertical_fit": "Grokly + LocalMeds + Swadisht Cafe",
+      "categories": [
+        "personal-care",
+        "organic-healthy",
+        "health-supplements",
+        "tea-coffee",
+        "dairy-breakfast"
+      ],
+      "keywords": [
+        "self care",
+        "self-care",
+        "pamper",
+        "me time",
+        "wellness",
+        "relax",
+        "spa day",
+        "treat myself"
+      ],
+      "sample_queries": [
+        "I want to pamper myself today",
+        "self care day what should I get"
+      ]
+    },
+    {
+      "tag": "housewarming",
+      "emotion": "New home, griha pravesh, settling in",
+      "cross_vertical_fit": "Grokly (kitchenware, essentials, cleaning)",
+      "categories": [
+        "cleaning",
+        "kitchenware",
+        "home-office",
+        "munchies",
+        "cold-drinks",
+        "sweet-tooth"
+      ],
+      "keywords": [
+        "housewarming",
+        "new flat",
+        "new house",
+        "just moved",
+        "griha pravesh",
+        "new apartment",
+        "settling in"
+      ],
+      "sample_queries": [
+        "just moved to a new flat need cleaning supplies",
+        "housewarming party shopping"
+      ]
+    },
+    {
+      "tag": "apology",
+      "emotion": "Sorry, makeup, patch up",
+      "cross_vertical_fit": "Grokly (chocolates, premium) + InstaStyle (gifts)",
+      "categories": [
+        "sweet-tooth",
+        "international-foods",
+        "personal-care",
+        "bakery-biscuits"
+      ],
+      "keywords": [
+        "sorry",
+        "apology",
+        "apologize",
+        "make up",
+        "patch up",
+        "forgive",
+        "messed up",
+        "my fault"
+      ],
+      "sample_queries": [
+        "I messed up need to say sorry with a gift",
+        "apologize to my girlfriend"
+      ]
+    },
+    {
+      "tag": "sports",
+      "emotion": "Sports, fitness, game day, exercise",
+      "cross_vertical_fit": "Grokly (energy, protein, drinks)",
+      "categories": [
+        "organic-healthy",
+        "cold-drinks",
+        "health-supplements",
+        "dairy-breakfast",
+        "munchies"
+      ],
+      "keywords": [
+        "cricket",
+        "football",
+        "gym",
+        "workout",
+        "playing",
+        "match",
+        "sports",
+        "fitness",
+        "exercise"
+      ],
+      "sample_queries": [
+        "playing cricket tomorrow need energy bars",
+        "going to the gym what should I eat"
+      ]
+    }
+  ]
+}
