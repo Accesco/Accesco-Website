@@ -37,13 +37,13 @@ export const products = [
     id: 'grok2-002', name: 'Prawns - Medium', brand: 'FreshCatch', category: 'seafood',
     price: 380, mrp: 420, discount: 9, unit: '500 g', deliveryTime: '11 MINS',
     image: 'hhttps://www.bing.com/images/search?view=detailV2&ccid=K2GSx5yi&id=6F65C0B48EB2BC5E208B0BB97BF3A39D893F82B0&thid=OIP.K2GSx5yiBKoV44CoNyMtHwHaE8&mediaurl=https%3a%2f%2foceansbestlk.com%2fwp-content%2fuploads%2f2025%2f11%2fprawns-medium.jpg&exph=1000&expw=1500&q=Prawns+-+Medium&FORM=IRPRST&ck=0FC061FA3B79A2F3BB1E69307CA71BC8&selectedIndex=1&itb=0',
-    inStock: true, tags: ['Premium'], rating: 4.5, reviews: 120
+    inStock: true, tags: ['Premium'], mood_tags: ['date-night'], rating: 4.5, reviews: 120
   },
   {
     id: 'grok2-003', name: 'Tuna Steak', brand: 'OceanFresh', category: 'seafood',
     price: 450, mrp: 510, discount: 11, unit: '200 g', deliveryTime: '11 MINS',
     image: 'https://tse3.mm.bing.net/th/id/OIP.bj4IKh-jNArkxObijQluvwHaLG?r=0&w=2667&h=4000&rs=1&pid=ImgDetMain&o=7&rm=3',
-    inStock: true, tags: [], rating: 4.5, reviews: 120
+    inStock: true, tags: [], mood_tags: ['date-night'], rating: 4.5, reviews: 120
   },
   {
     id: 'grok2-004', name: 'Sardines - Fresh', brand: 'OceanFresh', category: 'seafood',
@@ -55,19 +55,19 @@ export const products = [
     id: 'grok2-005', name: 'Crab - Mud', brand: 'FreshCatch', category: 'seafood',
     price: 520, mrp: 580, discount: 10, unit: '500 g', deliveryTime: '11 MINS',
     image: 'https://www.thenews.com.pk/assets/uploads/akhbar/2020-11-07/740061_3594861_mud-crab_akhbar.jpg',
-    inStock: true, tags: ['Premium'], rating: 4.5, reviews: 120
+    inStock: true, tags: ['Premium'], mood_tags: ['date-night'], rating: 4.5, reviews: 120
   },
   {
     id: 'grok2-006', name: 'Chicken Breast - Boneless', brand: 'FarmFresh', category: 'meat-poultry',
     price: 280, mrp: 320, discount: 12, unit: '500 g', deliveryTime: '11 MINS',
     image: 'https://images.pexels.com/photos/2338407/pexels-photo-2338407.jpeg?w=300',
-    inStock: true, tags: ['Bestseller'], rating: 4.5, reviews: 120
+    inStock: true, tags: ['Bestseller'], mood_tags: ['date-night'], rating: 4.5, reviews: 120
   },
   {
     id: 'grok2-007', name: 'Mutton Keema', brand: 'PureGoat', category: 'meat-poultry',
     price: 480, mrp: 530, discount: 9, unit: '500 g', deliveryTime: '11 MINS',
     image: 'https://tse3.mm.bing.net/th/id/OIP.czucgxt1OktWS_2rD9POHQHaFj?r=0&rs=1&pid=ImgDetMain&o=7&rm=3',
-    inStock: true, tags: [], rating: 4.5, reviews: 120
+    inStock: true, tags: [], mood_tags: ['date-night'], rating: 4.5, reviews: 120
   },
   {
     id: 'grok2-008', name: 'Chicken Wings', brand: 'FarmFresh', category: 'meat-poultry',
@@ -79,7 +79,7 @@ export const products = [
     id: 'grok2-009', name: 'Pork Ribs', brand: 'MeatMaster', category: 'meat-poultry',
     price: 520, mrp: 580, discount: 10, unit: '500 g', deliveryTime: '11 MINS',
     image: 'https://www.bing.com/images/search?view=detailV2&ccid=gDgqSp%2fZ&id=AD28DF41304AC1501155CC3E08CE68F0428EDC6F&thid=OIP.gDgqSp_ZEzaB-CjBRFrDYgHaLH&mediaurl=https%3a%2f%2fi.pinimg.com%2foriginals%2fd4%2fab%2f50%2fd4ab505266163cd766ca6ad786bc90f6.jpg&exph=1200&expw=800&q=BBQ+Baked+Country+Style+Pork+Ribs+Recipe&FORM=IRPRST&ck=15E6C1F1FB15872585650B760115488B&selectedIndex=8&itb=0',
-    inStock: true, tags: ['Premium'], rating: 4.5, reviews: 120
+    inStock: true, tags: ['Premium'], mood_tags: ['date-night'], rating: 4.5, reviews: 120
   },
   {
     id: 'grok2-010', name: 'Duck Leg', brand: 'MeatMaster', category: 'meat-poultry',
@@ -91,31 +91,31 @@ export const products = [
     id: 'grok2-011', name: 'Veg Momos - Frozen', brand: 'MomoCo', category: 'frozen-snacks',
     price: 120, mrp: 145, discount: 17, unit: '12 pcs', deliveryTime: '11 MINS',
     image: 'https://th.bing.com/th/id/OIP._gwRWigwlf3-AKIFhfsDLQHaHa?w=193&h=193&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3',
-    inStock: true, tags: ['Bestseller'], rating: 4.5, reviews: 120
+    inStock: true, tags: ['Bestseller'], mood_tags: ['party', 'date-night'], rating: 4.5, reviews: 120
   },
   {
     id: 'grok2-012', name: 'Chicken Nuggets', brand: 'GoldenBite', category: 'frozen-snacks',
     price: 180, mrp: 210, discount: 14, unit: '400 g', deliveryTime: '11 MINS',
     image: 'https://bakeitwithlove.com/wp-content/uploads/2021/05/Air-Fryer-Chicken-Nuggets-sq.jpg',
-    inStock: true, tags: ['Bestseller'], rating: 4.5, reviews: 120
+    inStock: true, tags: ['Bestseller'], mood_tags: ['party'], rating: 4.5, reviews: 120
   },
   {
     id: 'grok2-013', name: 'Spring Rolls - Veg', brand: 'AsianKitchen', category: 'frozen-snacks',
     price: 140, mrp: 160, discount: 12, unit: '6 pcs', deliveryTime: '11 MINS',
     image: 'https://tse3.mm.bing.net/th/id/OIP.0Ew2XaaDTji1teJ4QDROcgHaIG?r=0&rs=1&pid=ImgDetMain&o=7&rm=3',
-    inStock: true, tags: [], rating: 4.5, reviews: 120
+    inStock: true, tags: [], mood_tags: ['party', 'date-night'], rating: 4.5, reviews: 120
   },
   {
     id: 'grok2-014', name: 'French Fries - Shoestring', brand: 'CrispyBite', category: 'frozen-snacks',
     price: 90, mrp: 110, discount: 18, unit: '400 g', deliveryTime: '11 MINS',
     image: 'https://i0.wp.com/www.aspicyperspective.com/wp-content/uploads/2021/11/Shoestring-Fries-Julienne-Cut-20.jpg?resize=1153%2C1536&ssl=1',
-    inStock: true, tags: ['Bestseller'], rating: 4.5, reviews: 120
+    inStock: true, tags: ['Bestseller'], mood_tags: ['party'], rating: 4.5, reviews: 120
   },
   {
     id: 'grok2-015', name: 'Pizza Base - Ready', brand: 'PizzaHub', category: 'frozen-snacks',
     price: 115, mrp: 135, discount: 15, unit: '2 pcs', deliveryTime: '11 MINS',
     image: 'hhttps://www.bbassets.com/media/uploads/p/l/40226318-2_1-super-pizza-base-half-baked-ready-to-bake.jpg',
-    inStock: true, tags: [], rating: 4.5, reviews: 120
+    inStock: true, tags: [], mood_tags: ['party', 'date-night'], rating: 4.5, reviews: 120
   },
   {
     id: 'grok2-016', name: 'Soy Sauce - Dark', brand: 'TasteOfAsia', category: 'international-foods',
@@ -127,19 +127,19 @@ export const products = [
     id: 'grok2-017', name: 'Pasta - Penne', brand: 'ItaliaKitchen', category: 'international-foods',
     price: 110, mrp: 130, discount: 15, unit: '500 g', deliveryTime: '11 MINS',
     image: 'https://www.bing.com/images/search?view=detailV2&ccid=b6P%2fZ4hj&id=FF7FEDC84DA1FBC09407D33324C99277D574E9E6&thid=OIP.b6P_Z4hjO6szI9CME2hrqAHaJf&mediaurl=https%3a%2f%2ftheclevermeal.com%2fwp-content%2fuploads%2f2021%2f07%2fpenne-arrabbiata_1b.jpg&exph=1500&expw=1170&q=Pasta+-+Penne&FORM=IRPRST&ck=50752409A18A05C8E2A90EAF5209268F&selectedIndex=7&itb=0',
-    inStock: true, tags: [], rating: 4.5, reviews: 120
+    inStock: true, tags: [], mood_tags: ['date-night'], rating: 4.5, reviews: 120
   },
   {
     id: 'grok2-018', name: 'Sriracha Chilli Sauce', brand: 'SpicyWorld', category: 'international-foods',
     price: 140, mrp: 165, discount: 15, unit: '200 g', deliveryTime: '11 MINS',
     image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTcwGSmtiHJn04RTPH9M24ymrOkPkNifn8JMqi_jLyJoEGqIfHeW7UcT3te&s=10',
-    inStock: true, tags: [], rating: 4.5, reviews: 120
+    inStock: true, tags: [], mood_tags: ['date-night'], rating: 4.5, reviews: 120
   },
   {
     id: 'grok2-019', name: 'Tahini Paste', brand: 'MiddleEastFoods', category: 'international-foods',
     price: 220, mrp: 255, discount: 13, unit: '250 g', deliveryTime: '11 MINS',
     image: 'https://th.bing.com/th/id/OIP.GcIr6hwlMZVeiVH1JBaWewHaHa?w=181&h=181&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3',
-    inStock: true, tags: ['Premium'], rating: 4.5, reviews: 120
+    inStock: true, tags: ['Premium'], mood_tags: ['date-night'], rating: 4.5, reviews: 120
   },
   {
     id: 'grok2-020', name: 'Quinoa White', brand: 'HealthAisle', category: 'international-foods',
@@ -151,7 +151,7 @@ export const products = [
     id: 'grok2-021', name: 'Whey Protein - Vanilla', brand: 'NutriPro', category: 'health-supplements',
     price: 1299, mrp: 1499, discount: 13, unit: '1 kg', deliveryTime: '11 MINS',
     image: 'https://tse2.mm.bing.net/th/id/OIP.2h-vvZEl-rxQ8Zj7a3j63AHaHa?r=0&rs=1&pid=ImgDetMain&o=7&rm=3',
-    inStock: true, tags: ['Premium'], rating: 4.5, reviews: 120
+    inStock: true, tags: ['Premium'], mood_tags: ['self-care'], rating: 4.5, reviews: 120
   },
   {
     id: 'grok2-022', name: 'Vitamin D3 Tablets', brand: 'HealthFirst', category: 'health-supplements',
@@ -181,31 +181,31 @@ export const products = [
     id: 'grok2-026', name: 'Steel Kadai - 24cm', brand: 'KitchenPro', category: 'kitchenware',
     price: 649, mrp: 749, discount: 13, unit: '1 pc', deliveryTime: '11 MINS',
     image: 'https://www.bing.com/images/search?view=detailV2&ccid=6b%2ft5VF4&id=AAAED8BBD5D93B027DA11CD15FDAF4CFF4D12CB0&thid=OIP.6b_t5VF48QUJrnAww_wxtgHaHa&mediaurl=https%3a%2f%2fth.bing.com%2fth%2fid%2fR.e9bfede55178f10509ae7030c3fc31b6%3frik%3dsCzR9M%252f02l%252fRHA%26riu%3dhttp%253a%252f%252fwww.latifs.co.uk%252fcdn%252fshop%252ffiles%252f8906106597753.png%253fcrop%253dcenter%2526height%253d1200%2526v%253d1763125259%2526width%253d1200%26ehk%3dT9w6s0Q9Prb1aLCT0jzJGBhNAOvle2qIZZmz%252fYSVe%252bU%253d%26risl%3d%26pid%3dImgRaw%26r%3d0&exph=1200&expw=1200&q=Steel+Kadai+-+24cm&FORM=IRPRST&ck=BA8858E9536298D7EE6BC22302FFFC43&selectedIndex=0&itb=0',
-    inStock: true, tags: [], rating: 4.5, reviews: 120
+    inStock: true, tags: [], mood_tags: ['housewarming'], rating: 4.5, reviews: 120
   },
   {
     id: 'grok2-027', name: 'Non-Stick Tawa', brand: 'CookSmart', category: 'kitchenware',
     price: 449, mrp: 519, discount: 13, unit: '1 pc', deliveryTime: '11 MINS',
     image: 'https://m.media-amazon.com/images/I/71jeUINL5-L._AC_.jpg',
-    inStock: true, tags: ['Bestseller'], rating: 4.5, reviews: 120
+    inStock: true, tags: ['Bestseller'], mood_tags: ['housewarming'], rating: 4.5, reviews: 120
   },
   {
     id: 'grok2-028', name: 'Bamboo Cutting Board', brand: 'EcoKitchen', category: 'kitchenware',
     price: 299, mrp: 349, discount: 14, unit: '1 pc', deliveryTime: '11 MINS',
     image: 'https://thumbs.dreamstime.com/b/eco-friendly-bamboo-cutting-board-featuring-juice-groove-ideal-chopping-fruits-vegetables-bamboo-cutting-board-juice-387501463.jpg',
-    inStock: true, tags: ['Organic'], rating: 4.5, reviews: 120
+    inStock: true, tags: ['Organic'], mood_tags: ['housewarming'], rating: 4.5, reviews: 120
   },
   {
     id: 'grok2-029', name: 'Glass Food Containers Set', brand: 'StoreSafe', category: 'kitchenware',
     price: 799, mrp: 899, discount: 11, unit: '4 pcs', deliveryTime: '11 MINS',
     image: 'https://images-na.ssl-images-amazon.com/images/I/81TRdYFjbOL._AC_SL1500_.jpg',
-    inStock: true, tags: [], rating: 4.5, reviews: 120
+    inStock: true, tags: [], mood_tags: ['housewarming'], rating: 4.5, reviews: 120
   },
   {
     id: 'grok2-030', name: 'Silicone Spatula Set', brand: 'FlexiCook', category: 'kitchenware',
     price: 199, mrp: 239, discount: 16, unit: '3 pcs', deliveryTime: '11 MINS',
     image: 'https://i5.walmartimages.com/seo/Wanbasion-5-Piece-Silicone-Spatula-Set-Heat-Resistant-Colorful-Rubber-Baking-Set-Kitchen-Dishwasher-Safe-Nonstick-Cookware-Cooking-Mixing-Multicolor2_9285e841-c22c-4449-95a5-8c1a7046617c.6522c46edce7d1432ff65ca355dfe63b.jpeg',
-    inStock: true, tags: [], rating: 4.5, reviews: 120
+    inStock: true, tags: [], mood_tags: ['housewarming'], rating: 4.5, reviews: 120
   },
   {
     id: 'grok2-031', name: 'Dragon Fruit', brand: 'Fresho', category: 'vegetables-fruits',
@@ -271,31 +271,31 @@ export const products = [
     id: 'grok2-041', name: 'Cold Brew Coffee', brand: 'BlueTokai', category: 'tea-coffee',
     price: 349, mrp: 399, discount: 12, unit: '250 ml', deliveryTime: '11 MINS',
     image: 'https://www.simplyrecipes.com/thmb/7zYXgL4vpOhXfa04v7_vPO4Dv84=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/Simply-Recipes-Cold-Brew-Coffee-LEAD-6-896c6872ac3e421ca4d88f29b528b349.jpg',
-    inStock: true, tags: ['Premium'], rating: 4.5, reviews: 120
+    inStock: true, tags: ['Premium'], mood_tags: ['romantic', 'date-night', 'self-care'], rating: 4.5, reviews: 120
   },
   {
     id: 'grok2-042', name: 'Green Tea - Jasmine', brand: 'Tetley', category: 'tea-coffee',
     price: 175, mrp: 199, discount: 12, unit: '25 bags', deliveryTime: '11 MINS',
     image: 'https://twinings.com.au/cdn/shop/files/TWIN_070177227913-0.jpg?v=1698815904&width=2040',
-    inStock: true, tags: ['Organic'], rating: 4.5, reviews: 120
+    inStock: true, tags: ['Organic'], mood_tags: ['self-care'], rating: 4.5, reviews: 120
   },
   {
     id: 'grok2-043', name: 'Matcha Powder', brand: 'ZenTea', category: 'tea-coffee',
     price: 499, mrp: 569, discount: 12, unit: '100 g', deliveryTime: '11 MINS',
     image: 'https://i5.walmartimages.com/seo/Organic-Ceremonial-Matcha-Powder-Premium-Matcha-Powder-100g_72c0e0ab-2036-4551-abf6-5f83412e47a1.f63d04cbd3070d0b65564d6d80550107.jpeg',
-    inStock: true, tags: ['Premium'], rating: 4.5, reviews: 120
+    inStock: true, tags: ['Premium'], mood_tags: ['self-care'], rating: 4.5, reviews: 120
   },
   {
     id: 'grok2-044', name: 'Turmeric Latte Mix', brand: 'GoldenSpice', category: 'tea-coffee',
     price: 249, mrp: 289, discount: 13, unit: '200 g', deliveryTime: '11 MINS',
     image: 'https://tse4.mm.bing.net/th/id/OIP.bZ-cxDV1KtfThvCrHjFgVQHaHa?r=0&rs=1&pid=ImgDetMain&o=7&rm=3',
-    inStock: true, tags: ['Organic'], rating: 4.5, reviews: 120
+    inStock: true, tags: ['Organic'], mood_tags: ['self-care'], rating: 4.5, reviews: 120
   },
   {
     id: 'grok2-045', name: 'Masala Chai Blend', brand: 'ChaiWala', category: 'tea-coffee',
     price: 145, mrp: 169, discount: 14, unit: '250 g', deliveryTime: '11 MINS',
     image: 'https://m.media-amazon.com/images/I/71OcGOmM5cL._AC_SL1500_.jpg',
-    inStock: true, tags: ['Bestseller'], rating: 4.5, reviews: 120
+    inStock: true, tags: ['Bestseller'], mood_tags: ['self-care'], rating: 4.5, reviews: 120
   },
   {
     id: 'grok2-046', name: 'Sourdough Bread', brand: 'ArtisanBake', category: 'bakery-biscuits',
@@ -307,13 +307,13 @@ export const products = [
     id: 'grok2-047', name: 'Whole Wheat Croissant', brand: 'BakeFresh', category: 'bakery-biscuits',
     price: 95, mrp: 115, discount: 17, unit: '4 pcs', deliveryTime: '11 MINS',
     image: 'https://tse1.mm.bing.net/th/id/OIP.40lMoW4H2mHgt4bsIQOgPgHaFj?r=0&rs=1&pid=ImgDetMain&o=7&rm=3',
-    inStock: true, tags: [], rating: 4.5, reviews: 120
+    inStock: true, tags: [], mood_tags: ['romantic'], rating: 4.5, reviews: 120
   },
   {
     id: 'grok2-048', name: 'Dark Chocolate Brownie', brand: 'SweetNest', category: 'bakery-biscuits',
     price: 165, mrp: 195, discount: 15, unit: '200 g', deliveryTime: '11 MINS',
     image: 'https://tse2.mm.bing.net/th/id/OIP.ET3mgD83t8--pCUlDUONgwHaHa?r=0&rs=1&pid=ImgDetMain&o=7&rm=3',
-    inStock: true, tags: ['Bestseller'], rating: 4.5, reviews: 120
+    inStock: true, tags: ['Bestseller'], mood_tags: ['romantic', 'birthday', 'apology'], rating: 4.5, reviews: 120
   },
   {
     id: 'grok2-049', name: 'Ragi Cookies', brand: 'HealthBake', category: 'bakery-biscuits',
@@ -325,13 +325,13 @@ export const products = [
     id: 'grok2-050', name: 'Banana Walnut Loaf', brand: 'BakeFresh', category: 'bakery-biscuits',
     price: 145, mrp: 169, discount: 14, unit: '300 g', deliveryTime: '11 MINS',
     image: 'https://nourishplate.com/wp-content/uploads/2018/06/Banana-and-Walnut-Cake5-683x1024.jpg',
-    inStock: true, tags: [], rating: 4.5, reviews: 120
+    inStock: true, tags: [], mood_tags: ['birthday'], rating: 4.5, reviews: 120
   },
   {
     id: 'grok2-051', name: 'Ghee - Pure Cow', brand: 'Amul', category: 'masala-oil',
     price: 699, mrp: 799, discount: 12, unit: '500 ml', deliveryTime: '11 MINS',
     image: 'https://tse4.mm.bing.net/th/id/OIP.zzne7g5owdJ6d0tNQUuBegHaHa?r=0&rs=1&pid=ImgDetMain&o=7&rm=3',
-    inStock: true, tags: ['Premium'], rating: 4.5, reviews: 120
+    inStock: true, tags: ['Premium'], mood_tags: ['festival', 'housewarming'], rating: 4.5, reviews: 120
   },
   {
     id: 'grok2-052', name: 'Mustard Oil - Cold Pressed', brand: 'KachchiGhani', category: 'masala-oil',
@@ -374,13 +374,13 @@ export const products = [
     id: 'grok-new-003', name: 'Sour Cream & Onion Potato Crisps', brand: 'Crunchy Bites', category: 'munchies',
     price: 36, mrp: 41, discount: 10, unit: '200 g', deliveryTime: '11 MINS',
     image: 'https://tse4.mm.bing.net/th/id/OIP.hucttx8dwducqW-WlcULIwHaHg?r=0&rs=1&pid=ImgDetMain&o=7&rm=3',
-    inStock: true, tags: ['New Arrival'], rating: 4.5, reviews: 13
+    inStock: true, tags: ['New Arrival'], mood_tags: ['party'], rating: 4.5, reviews: 13
   },
   {
     id: 'grok-new-004', name: 'Sparkling Apple Cider', brand: 'Crunchy Bites', category: 'cold-drinks',
     price: 38, mrp: 43, discount: 10, unit: '750 mL', deliveryTime: '11 MINS',
     image: 'https://www.bing.com/search?q=Sparkling+Apple+Cider&cvid=e533b9b51f93497f9909ddca79d1febd&gs_lcrp=EgRlZGdlKgYIABBFGDkyBggAEEUYOdIBBzg3NmowajeoAgiwAgE&FORM=ANAB01&PC=HCTS',
-    inStock: true, tags: ['New Arrival'], rating: 4.5, reviews: 14
+    inStock: true, tags: ['New Arrival'], mood_tags: ['party', 'birthday'], rating: 4.5, reviews: 14
   },
   {
     id: 'grok-new-005', name: 'Artisanal Salted Butter', brand: 'Grokly Fresh', category: 'dairy-breakfast',
@@ -392,7 +392,7 @@ export const products = [
     id: 'grok-new-006', name: 'Slow Roasted Salted Cashews', brand: 'Crunchy Bites', category: 'munchies',
     price: 42, mrp: 47, discount: 10, unit: '200 g', deliveryTime: '11 MINS',
     image: 'https://tse3.mm.bing.net/th/id/OIP.z9XrTcSZORj5DN86dASGuwHaHa?r=0&rs=1&pid=ImgDetMain&o=7&rm=3',
-    inStock: true, tags: ['New Arrival'], rating: 4.5, reviews: 16
+    inStock: true, tags: ['New Arrival'], mood_tags: ['party', 'festival'], rating: 4.5, reviews: 16
   },
   {
     id: 'grok-new-007', name: 'Organic Litchi Drink', brand: 'Crunchy Bites', category: 'cold-drinks',
@@ -410,7 +410,7 @@ export const products = [
     id: 'grok-new-009', name: 'Jalapeno Cheddar Popcorn', brand: 'Crunchy Bites', category: 'munchies',
     price: 48, mrp: 53, discount: 10, unit: '200 g', deliveryTime: '11 MINS',
     image: 'https://target.scene7.com/is/image/Target/GUEST_096926df-6fb6-41ce-83f5-d060a34be17f',
-    inStock: true, tags: ['New Arrival'], rating: 4.5, reviews: 19
+    inStock: true, tags: ['New Arrival'], mood_tags: ['party'], rating: 4.5, reviews: 19
   },
   {
     id: 'grok-new-010', name: 'Sugar-Free Ginger Ale', brand: 'Crunchy Bites', category: 'cold-drinks',
@@ -446,7 +446,7 @@ export const products = [
     id: 'grok-new-015', name: 'Baked Ragi & Herbs Crackers', brand: 'Crunchy Bites', category: 'munchies',
     price: 60, mrp: 65, discount: 10, unit: '200 g', deliveryTime: '11 MINS',
     image: 'https://img-global.cpcdn.com/recipes/0cac7dc626f60048/1200x630cq80/photo.jpg',
-    inStock: true, tags: ['New Arrival'], rating: 4.5, reviews: 25
+    inStock: true, tags: ['New Arrival'], mood_tags: ['party'], rating: 4.5, reviews: 25
   },
   {
     id: 'grok-new-016', name: 'Hydroponic Cherry Tomatoes', brand: 'Crunchy Bites', category: 'cold-drinks',
@@ -500,7 +500,7 @@ export const products = [
     id: 'grok-new-025', name: 'Pure Aloe Vera Skin Gel', brand: 'Crunchy Bites', category: 'personal-care',
     price: 80, mrp: 85, discount: 10, unit: '750 mL', deliveryTime: '11 MINS',
     image: 'https://tse4.mm.bing.net/th/id/OIP.C2JbQx8t6L4v5mrX5wrX6wHaHa?r=0&rs=1&pid=ImgDetMain&o=7&rm=3',
-    inStock: true, tags: ['New Arrival'], rating: 4.5, reviews: 35
+    inStock: true, tags: ['New Arrival'], mood_tags: ['self-care'], rating: 4.5, reviews: 35
   },
   {
     id: 'grok-new-026', name: 'Tea Tree & Neem Face Wash', brand: 'Grokly Fresh', category: 'dairy-breakfast',
@@ -512,7 +512,7 @@ export const products = [
     id: 'grok-new-027', name: 'Shea Butter Deep Nourish Lotion', brand: 'Crunchy Bites', category: 'munchies',
     price: 84, mrp: 89, discount: 10, unit: '200 g', deliveryTime: '11 MINS',
     image: 'https://ourkaris.com/cdn/shop/files/SheaButterDeepNourishing.jpg?v=1712321986&width=1080',
-    inStock: true, tags: ['New Arrival'], rating: 4.5, reviews: 37
+    inStock: true, tags: ['New Arrival'], mood_tags: ['self-care'], rating: 4.5, reviews: 37
   },
   {
     id: 'grok-new-028', name: 'Grain-Free Chicken Dog Food', brand: 'Crunchy Bites', category: 'cold-drinks',
@@ -542,31 +542,31 @@ export const products = [
     id: 'grok-new-032', name: 'Classic Sweet Basil Pesto', brand: 'Grokly Fresh', category: 'dairy-breakfast',
     price: 94, mrp: 99, discount: 10, unit: '200 g', deliveryTime: '11 MINS',
     image: 'https://tse4.mm.bing.net/th/id/OIP.WPJa5GWXm7qN2372RTBjrgHaHa?r=0&rs=1&pid=ImgDetMain&o=7&rm=3',
-    inStock: true, tags: ['New Arrival'], rating: 4.5, reviews: 42
+    inStock: true, tags: ['New Arrival'], mood_tags: ['date-night'], rating: 4.5, reviews: 42
   },
   {
     id: 'grok-new-033', name: 'Spicy Szechuan Chilli Stir-Fry Paste', brand: 'Crunchy Bites', category: 'munchies',
     price: 96, mrp: 101, discount: 10, unit: '200 g', deliveryTime: '11 MINS',
     image: 'https://tse1.mm.bing.net/th/id/OIP.S0C6tvS6eRSq1UOZ1eVD0gHaHa?r=0&rs=1&pid=ImgDetMain&o=7&rm=3',
-    inStock: true, tags: ['New Arrival'], rating: 4.5, reviews: 43
+    inStock: true, tags: ['New Arrival'], mood_tags: ['date-night'], rating: 4.5, reviews: 43
   },
   {
     id: 'grok-new-034', name: 'Fresh Atlantic Salmon Fillet', brand: 'Crunchy Bites', category: 'cold-drinks',
     price: 98, mrp: 103, discount: 10, unit: '750 mL', deliveryTime: '11 MINS',
     image: 'https://tse1.explicit.bing.net/th/id/OIP.u7JRyg5K0jYvezLI8V7R9wHaHa?r=0&rs=1&pid=ImgDetMain&o=7&rm=3',
-    inStock: true, tags: ['New Arrival'], rating: 4.5, reviews: 44
+    inStock: true, tags: ['New Arrival'], mood_tags: ['date-night'], rating: 4.5, reviews: 44
   },
   {
     id: 'grok-new-035', name: 'Cleaned Tiger Prawns', brand: 'Grokly Fresh', category: 'dairy-breakfast',
     price: 100, mrp: 105, discount: 10, unit: '200 g', deliveryTime: '11 MINS',
     image: 'https://cdn.grofers.com/da/cms-assets/cms/product/1c56c70e-75c6-49d8-a881-688399cd9d88.jpg',
-    inStock: true, tags: ['New Arrival'], rating: 4.5, reviews: 45
+    inStock: true, tags: ['New Arrival'], mood_tags: ['date-night'], rating: 4.5, reviews: 45
   },
   {
     id: 'grok-new-036', name: 'Tender Chicken Breast Boneless', brand: 'Crunchy Bites', category: 'munchies',
     price: 102, mrp: 107, discount: 10, unit: '200 g', deliveryTime: '11 MINS',
     image: 'https://th.bing.com/th/id/OIP.8zcGGxcmznhbFdIrGbMpzAHaEc?r=0&o=7rm=3&rs=1&pid=ImgDetMain&o=7&rm=3',
-    inStock: true, tags: ['New Arrival'], rating: 4.5, reviews: 46
+    inStock: true, tags: ['New Arrival'], mood_tags: ['date-night'], rating: 4.5, reviews: 46
   },
   {
     id: 'grok-new-037', name: 'Lean Minced Mutton Keema', brand: 'Crunchy Bites', category: 'cold-drinks',
@@ -578,37 +578,37 @@ export const products = [
     id: 'grok-new-038', name: 'Frozen Cheese Corn Nuggets', brand: 'Grokly Fresh', category: 'dairy-breakfast',
     price: 106, mrp: 111, discount: 10, unit: '200 g', deliveryTime: '11 MINS',
     image: 'https://tiimg.tistatic.com/fp/1/009/271/cheese-corn-nuggets-100.jpg',
-    inStock: true, tags: ['New Arrival'], rating: 4.5, reviews: 48
+    inStock: true, tags: ['New Arrival'], mood_tags: ['party', 'date-night'], rating: 4.5, reviews: 48
   },
   {
     id: 'grok-new-039', name: 'Frozen Cocktail Veg Spring Rolls', brand: 'Crunchy Bites', category: 'munchies',
     price: 108, mrp: 113, discount: 10, unit: '200 g', deliveryTime: '11 MINS',
     image: 'https://th.bing.com/th/id/R.5ab4810b7d5b4b1675f699fb8a89bf73?rik=TCi8xHFmQv%2fQ4A&riu=http%3a%2f%2fclickathome.com.au%2fcdn%2fshop%2ffiles%2fcocktailspringroll.webp%3fv%3d1753262514&ehk=rq5vGY7COmMkndZBVm4Dbjc89an%2b8GboTNuuXFjTx%2fU%3d&risl=&pid=ImgRaw&r=0',
-    inStock: true, tags: ['New Arrival'], rating: 4.5, reviews: 49
+    inStock: true, tags: ['New Arrival'], mood_tags: ['party', 'date-night'], rating: 4.5, reviews: 49
   },
   {
     id: 'grok-new-040', name: '70% Cocoa Belgian Dark Chocolate', brand: 'Crunchy Bites', category: 'cold-drinks',
     price: 110, mrp: 115, discount: 10, unit: '750 mL', deliveryTime: '11 MINS',
     image: 'https://media.nedigital.sg/fairprice/fpol/media/images/product/XL/13214054_XL1_20220320.jpg?w=1200&q=70',
-    inStock: true, tags: ['New Arrival'], rating: 4.5, reviews: 50
+    inStock: true, tags: ['New Arrival'], mood_tags: ['romantic', 'birthday', 'festival', 'apology'], rating: 4.5, reviews: 50
   },
   {
     id: 'grok-new-041', name: 'Tin of Soft Rasgullas', brand: 'Grokly Fresh', category: 'dairy-breakfast',
     price: 112, mrp: 117, discount: 10, unit: '200 g', deliveryTime: '11 MINS',
     image: 'https://www.mystore.in/s/62ea2c599d1398fa16dbae0a/67b31dd135d57760b6c155cd/8904004405729_1-800x800.png',
-    inStock: true, tags: ['New Arrival'], rating: 4.5, reviews: 51
+    inStock: true, tags: ['New Arrival'], mood_tags: ['festival', 'birthday'], rating: 4.5, reviews: 51
   },
   {
     id: 'grok-new-042', name: 'Darjeeling Loose Leaf Black Tea', brand: 'Crunchy Bites', category: 'munchies',
     price: 114, mrp: 119, discount: 10, unit: '200 g', deliveryTime: '11 MINS',
     image: 'https://tse2.mm.bing.net/th/id/OIP.VI34WnT3BWSQE69Vdb7MsgHaHa?r=0&rs=1&pid=ImgDetMain&o=7&rm=3',
-    inStock: true, tags: ['New Arrival'], rating: 4.5, reviews: 52
+    inStock: true, tags: ['New Arrival'], mood_tags: ['self-care'], rating: 4.5, reviews: 52
   },
   {
     id: 'grok-new-043', name: 'Roasted Arabica Coffee Beans', brand: 'Crunchy Bites', category: 'cold-drinks',
     price: 116, mrp: 121, discount: 10, unit: '750 mL', deliveryTime: '11 MINS',
     image: 'https://tse1.mm.bing.net/th/id/OIP.o26AxKPqKqhJmIJVE4l5PQHaE7?r=0&rs=1&pid=ImgDetMain&o=7&rm=3',
-    inStock: true, tags: ['New Arrival'], rating: 4.5, reviews: 53
+    inStock: true, tags: ['New Arrival'], mood_tags: ['romantic', 'date-night', 'self-care'], rating: 4.5, reviews: 53
   },
   {
     id: 'grok-new-044', name: 'Raw Organic Forest Honey', brand: 'Grokly Fresh', category: 'dairy-breakfast',
@@ -626,13 +626,13 @@ export const products = [
     id: 'grok-new-048', name: 'Gluten-Free Penne Pasta', brand: 'Crunchy Bites', category: 'munchies',
     price: 126, mrp: 131, discount: 10, unit: '200 g', deliveryTime: '11 MINS',
     image: 'https://i5.walmartimages.com/asr/5879db53-53d8-4104-822f-a658a0d43cbd.3e4f92e3db04004b8572ded6653bb68f.jpeg',
-    inStock: true, tags: ['New Arrival'], rating: 4.5, reviews: 58
+    inStock: true, tags: ['New Arrival'], mood_tags: ['date-night'], rating: 4.5, reviews: 58
   },
   {
     id: 'grok-new-049', name: 'Authentic Tahini Sesame Paste', brand: 'Crunchy Bites', category: 'cold-drinks',
     price: 128, mrp: 133, discount: 10, unit: '750 mL', deliveryTime: '11 MINS',
     image: 'https://tse4.mm.bing.net/th/id/OIP.W1AB-9LuzU-jtuXi8NOalgHaHa?r=0&rs=1&pid=ImgDetMain&o=7&rm=3',
-    inStock: true, tags: ['New Arrival'], rating: 4.5, reviews: 59
+    inStock: true, tags: ['New Arrival'], mood_tags: ['date-night'], rating: 4.5, reviews: 59
   },
   {
     id: 'grok-new-050', name: 'Organic Bamboo Baby Wipes', brand: 'Grokly Fresh', category: 'personal-care',
@@ -650,13 +650,13 @@ export const products = [
     id: 'grok-new-054', name: 'Imported Maple Syrup', brand: 'Crunchy Bites', category: 'munchies',
     price: 138, mrp: 143, discount: 10, unit: '200 g', deliveryTime: '11 MINS',
     image: 'https://tse1.mm.bing.net/th/id/OIP.1fx3qYrsmbFEWq_J4ouTywHaHa?r=0&rs=1&pid=ImgDetMain&o=7&rm=3',
-    inStock: true, tags: ['New Arrival'], rating: 4.5, reviews: 64
+    inStock: true, tags: ['New Arrival'], mood_tags: ['romantic', 'birthday'], rating: 4.5, reviews: 64
   },
   {
     id: 'grok-new-055', name: 'Italian Balsamic Vinegar of Modena', brand: 'Crunchy Bites', category: 'cold-drinks',
     price: 140, mrp: 145, discount: 10, unit: '750 mL', deliveryTime: '11 MINS',
     image: 'https://th.bing.com/th/id/R.3b102efd936764b818d22db6fa418c75?rik=4X4rHtxNgGAa1w&riu=http%3a%2f%2fyummybazaar.com%2fcdn%2fshop%2fproducts%2feb871dc996c311b484-10df-429c-b81f-57ed0a90d709.jpg%3fv%3d1667857255&ehk=TXv6EQZEMtQ2%2fRbgfMbD6LAE2mF6ThiJUfH4Ov9OCZA%3d&risl=&pid=ImgRaw&r=0',
-    inStock: true, tags: ['New Arrival'], rating: 4.5, reviews: 65
+    inStock: true, tags: ['New Arrival'], mood_tags: ['date-night'], rating: 4.5, reviews: 65
   },
 
 
@@ -849,19 +849,19 @@ export const products = [
     id: 'munch-001', name: "Lays Potato Chips - India's Magic Masala", brand: 'Lays', category: 'munchies',
     price: 20, mrp: 20, discount: 0, unit: '52 g', deliveryTime: '11 MINS',
     image: 'data:image/jpeg;base64,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',
-    inStock: true, tags: ['Bestseller'], rating: 4.5, reviews: 5670
+    inStock: true, tags: ['Bestseller'], mood_tags: ['party'], rating: 4.5, reviews: 5670
   },
   {
     id: 'munch-002', name: 'Kurkure Masala Munch', brand: 'Kurkure', category: 'munchies',
     price: 20, mrp: 20, discount: 0, unit: '78 g', deliveryTime: '11 MINS',
     image: 'data:image/jpeg;base64,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',
-    inStock: true, tags: ['Bestseller'], rating: 4.4, reviews: 4230
+    inStock: true, tags: ['Bestseller'], mood_tags: ['party'], rating: 4.4, reviews: 4230
   },
   {
     id: 'munch-003', name: "Haldiram's Aloo Bhujia", brand: "Haldiram's", category: 'munchies',
     price: 55, mrp: 60, discount: 8, unit: '200 g', deliveryTime: '11 MINS',
     image: 'https://www.bbassets.com/media/uploads/p/l/70000834_6-haldirams-namkeen-aloo-bhujia-del.jpg',
-    inStock: true, tags: ['Bestseller'], rating: 4.6, reviews: 3890
+    inStock: true, tags: ['Bestseller'], mood_tags: ['party', 'festival'], rating: 4.6, reviews: 3890
   },
   {
     id: 'munch-004', name: 'Bingo! Mad Angles - Achari Masti', brand: 'Bingo', category: 'munchies',
@@ -911,7 +911,7 @@ export const products = [
     id: 'drink-001', name: 'Coca-Cola Soft Drink', brand: 'Coca-Cola', category: 'cold-drinks',
     price: 40, mrp: 45, discount: 11, unit: '750 ml', deliveryTime: '11 MINS',
     image: 'https://images.pexels.com/photos/339696/pexels-photo-339696.jpeg?w=300',
-    inStock: true, tags: ['Bestseller'], rating: 4.5, reviews: 3450
+    inStock: true, tags: ['Bestseller'], mood_tags: ['party', 'birthday'], rating: 4.5, reviews: 3450
   },
   {
     id: 'drink-002', name: 'Sprite Lime Flavoured Soft Drink', brand: 'Sprite', category: 'cold-drinks',
@@ -983,7 +983,7 @@ export const products = [
     id: 'bakery-001', name: 'Parle-G Gold Biscuits', brand: 'Parle', category: 'bakery-biscuits',
     price: 10, mrp: 10, discount: 0, unit: '100 g', deliveryTime: '11 MINS',
     image: 'https://images.pexels.com/photos/461382/pexels-photo-461382.jpeg?w=300',
-    inStock: true, tags: ['Bestseller'], rating: 4.6, reviews: 12340
+    inStock: true, tags: ['Bestseller'], mood_tags: ['party'], rating: 4.6, reviews: 12340
   },
   {
     id: 'bakery-002', name: 'Britannia Good Day Butter Cookies', brand: 'Britannia', category: 'bakery-biscuits',
@@ -1003,7 +1003,7 @@ export const products = [
     id: 'sweet-001', name: 'Cadbury Dairy Milk Chocolate', brand: 'Cadbury', category: 'sweet-tooth',
     price: 45, mrp: 50, discount: 10, unit: '55 g', deliveryTime: '11 MINS',
     image: 'data:image/avif;base64,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',
-    inStock: true, tags: ['Bestseller'], rating: 4.8, reviews: 8900
+    inStock: true, tags: ['Bestseller'], mood_tags: ['romantic', 'birthday', 'festival', 'apology'], rating: 4.8, reviews: 8900
   },
   {
     id: 'sweet-002', name: 'KitKat Chocolate', brand: 'KitKat', category: 'sweet-tooth',
@@ -1023,7 +1023,7 @@ export const products = [
     id: 'atta-001', name: 'Aashirvaad Whole Wheat Atta', brand: 'Aashirvaad', category: 'atta-rice-dal',
     price: 285, mrp: 310, discount: 8, unit: '5 kg', deliveryTime: '11 MINS',
     image: 'https://encrypted-tbn2.gstatic.com/shopping?q=tbn:ANd9GcTLQnRUUhi3DFn1CMtRlOI9_4PduwKBGOppAUcZkIEmoCXOymFxVuCSuyBdy449FWq5JrsyCAX3ckKdZgL12e_GvOfv9z6ZMBkAnbQ_XSszaPbn1arC9Vl-gg',
-    inStock: true, tags: ['Bestseller'], rating: 4.7, reviews: 6780
+    inStock: true, tags: ['Bestseller'], mood_tags: ['housewarming', 'festival'], rating: 4.7, reviews: 6780
   },
   {
     id: 'atta-002', name: 'India Gate Basmati Rice', brand: 'India Gate', category: 'atta-rice-dal',
@@ -1095,7 +1095,7 @@ export const products = [
     id: 'gym-001', name: 'Yoga Bar 26g Protein Milk Shake - Chocolate', brand: 'Yogabar', category: 'organic-healthy',
     price: 98, mrp: 131, discount: 25, unit: '250 ml', deliveryTime: '11 MINS',
     image: 'https://images.pexels.com/photos/3629537/pexels-photo-3629537.jpeg?w=300',
-    inStock: true, tags: ['Premium'], rating: 4.6, reviews: 320
+    inStock: true, tags: ['Premium'], mood_tags: ['self-care'], rating: 4.6, reviews: 320
   },
   {
     id: 'gym-002', name: 'Yogabar 10g Protein Bars - Blueberry Blast', brand: 'Yogabar', category: 'organic-healthy',
@@ -1119,7 +1119,7 @@ export const products = [
     id: 'gym-005', name: 'GNC Pro Performance Complete Whey Protein Powder', brand: 'GNC', category: 'organic-healthy',
     price: 4527, mrp: 5689, discount: 20, unit: '1.81 kg', deliveryTime: '11 MINS',
     image: 'https://images.pexels.com/photos/3735149/pexels-photo-3735149.jpeg?w=300',
-    inStock: true, tags: ['Premium', 'Bestseller'], rating: 4.7, reviews: 880
+    inStock: true, tags: ['Premium', 'Bestseller'], mood_tags: ['self-care'], rating: 4.7, reviews: 880
   },
   {
     id: 'gym-006', name: 'Oziva Bioactive Plant Protein - Vanilla', brand: 'Oziva', category: 'organic-healthy',
