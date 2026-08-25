@@ -48,9 +48,12 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 SUITE_CSV = os.path.join(HERE, "test_suite.csv")
 
 
-def call_chat(url: str, text: str, timeout: float = 30.0) -> dict:
+def call_chat(url: str, text: str, language: str | None = None, timeout: float = 30.0) -> dict:
     """POST /chat and return the parsed JSON response."""
-    payload = json.dumps({"text": text}).encode("utf-8")
+    body = {"text": text}
+    if language:
+        body["language"] = language
+    payload = json.dumps(body).encode("utf-8")
     req = urllib.request.Request(
         f"{url}/chat", data=payload,
         headers={"Content-Type": "application/json"}, method="POST",
@@ -166,8 +169,9 @@ def main() -> int:
     for row in rows:
         rid, cat, question = row["id"], row["category"], row["question"]
         known_issue = row.get("known_issue", "").strip().lower() == "yes"
+        language = row.get("language", "").strip() or None
         try:
-            resp = call_chat(args.url, question)
+            resp = call_chat(args.url, question, language=language)
         except (urllib.error.URLError, OSError, json.JSONDecodeError) as e:
             errored.append((row, str(e)))
             by_category.setdefault(cat, []).append(False)

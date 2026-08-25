@@ -1431,28 +1431,94 @@ SINGLE_WORD_INFO = {
     "xpense": "xpense_budget",
 }
 
-# ─── Multilingual translation sidecar (IndicTrans2, port 8001) ──────────────
-# The sidecar runs IndicTrans2-distilled on transformers 4.x in its own venv
-# (.venv-translate) because IndicTrans2's custom code predates transformers 5.x.
-# Every call degrades gracefully: if the sidecar is down or fails, we fall
-# back to English-only behavior (query as-is / reply as-is).
+# ─── Multilingual translation (IndicTrans2, inline — single server) ─────────
+# Runs IndicTrans2-distilled directly in-process. No sidecar needed.
+# Requires: transformers ~4.48/4.49, torch, sentencepiece, IndicTransToolkit.
+# Models download on first use (~800 MB × 2) to ~/.cache/huggingface.
+# Graceful degradation: if models fail to load, falls back to English-only.
+
+from transformers import AutoModelForSeq2SeqLM
+
+try:
+    from IndicTransToolkit import IndicProcessor
+except ImportError:
+    from IndicTransToolkit.processor import IndicProcessor
 
 REGIONAL_LANGS = ("hi", "te", "kn")
-TRANSLATE_SIDECAR = os.environ.get("TRANSLATE_SIDECAR", "http://127.0.0.1:8001")
+_LANG_MAP = {"hi": "hin_Deva", "te": "tel_Telu", "kn": "kan_Knda"}
+_IE_NAME = "ai4bharat/indictrans2-indic-en-dist-200M"
+_EI_NAME = "ai4bharat/indictrans2-en-indic-dist-200M"
+
+_trans_state = {"ready": False, "ip": None,
+                "ie_tok": None, "ie_model": None,
+                "ei_tok": None, "ei_model": None}
+
+
+def _load_translation_models():
+    """Load IndicTrans2 models at startup. Safe to call multiple times."""
+    if _trans_state["ready"]:
+        return
+    try:
+        ip = IndicProcessor(inference=True)
+
+        def _one(name):
+            tok = AutoTokenizer.from_pretrained(name, trust_remote_code=True)
+            model = AutoModelForSeq2SeqLM.from_pretrained(name, trust_remote_code=True)
+            model.eval()
+            return tok, model
+
+        ie_tok, ie_model = _one(_IE_NAME)
+        ei_tok, ei_model = _one(_EI_NAME)
+        torch.set_num_threads(int(os.environ.get("TORCH_THREADS", "4")))
+        _trans_state.update(ready=True, ip=ip,
+                           ie_tok=ie_tok, ie_model=ie_model,
+                           ei_tok=ei_tok, ei_model=ei_model)
+        print("[translate] IndicTrans2 models loaded successfully.")
+    except Exception as e:
+        import traceback
+        print(f"[translate] Failed to load IndicTrans2 models: {e}")
+        traceback.print_exc()
+        print("[translate] Falling back to English-only mode.")
+
+
+def _translate(text: str, src_flores: str, tgt_flores: str) -> str | None:
+    """Translate text using IndicTrans2. Returns None on failure."""
+    if not _trans_state["ready"]:
+        return None
+    try:
+        ip = _trans_state["ip"]
+        if tgt_flores == "eng_Latn":
+            tok, model = _trans_state["ie_tok"], _trans_state["ie_model"]
+        else:
+            tok, model = _trans_state["ei_tok"], _trans_state["ei_model"]
+
+        batch = ip.preprocess_batch([text], src_lang=src_flores, tgt_lang=tgt_flores)
+        inputs = tok(batch, return_tensors="pt", padding=True, truncation=True)
+        with torch.no_grad():
+            out = model.generate(**inputs, min_length=1,
+                                 max_new_tokens=128, num_beams=5)
+        with tok.as_target_tokenizer():
+            dec = tok.batch_decode(out, skip_special_tokens=True)
+        result = ip.postprocess_batch(dec, lang=tgt_flores)
+        return result[0].strip() if result else None
+    except Exception:
+        return None
 
 
 def _sidecar_call(endpoint: str, text: str, lang: str) -> str | None:
-    """POST to the translation sidecar; None on any failure."""
-    try:
-        import requests
-        r = requests.post(f"{TRANSLATE_SIDECAR}/{endpoint}",
-                          json={"text": text, "lang": lang}, timeout=60)
-        if r.status_code == 200:
-            out = (r.json() or {}).get("translation")
-            return out if out else None
-    except Exception:
-        pass
+    """Translate inline using IndicTrans2 (replaces the old HTTP sidecar)."""
+    flores = _LANG_MAP.get(lang)
+    if not flores or not text.strip():
+        return None
+    if endpoint == "to_english":
+        return _translate(text, flores, "eng_Latn")
+    elif endpoint == "from_english":
+        return _translate(text, "eng_Latn", flores)
     return None
+
+
+# Load translation models at module import time
+_load_translation_models()
 
 
 def _regionalize_reply(reply: str, lang: str) -> str:

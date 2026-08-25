@@ -1,4 +1,4 @@
-id,category,question,expected_intent,reply_contains,expect_products,expect_cards,expect_variants,expect_action_url,known_issue,notes
+id,category,question,expected_intent,reply_contains,expect_products,expect_cards,expect_variants,expect_action_url,known_issue,notes,language
 1,greeting,hi,greeting,Hello,no,no,any,none,,plain greeting
 2,greeting,hello there,greeting,Hello,no,no,any,none,no,model misroutes to referral_rewards at conf 0.37 (above fallback threshold)
 3,greeting,namaste,greeting,Hello,no,no,any,none,no,model misroutes to swadisht_food at conf 0.74 and shows products
@@ -160,3 +160,94 @@ id,category,question,expected_intent,reply_contains,expect_products,expect_cards
 159,product,oat milk,grokly_grocery,best matches,yes,yes,,,"oat is a competitor product, not Amul variants",no
 160,product,fresh vegetables,grokly_grocery|unknown,best matches,yes,any,,,generic word fresh must not fire milk picker,no
 161,product,mango 1kg,grokly_grocery,here you go,yes,yes,/services/grokly?search,,specific pack via unit token,no
+162,multilingual,दूध चाहिए,order_variant|grokly_grocery,options,no,no,any,none,no,Hindi: milk variant picker,hi
+163,multilingual,పాలు కావాలి,order_variant|grokly_grocery,options,no,no,any,none,no,Telugu: milk variant picker,te
+164,multilingual,ಹಾಲು ಬೇಕು,order_variant|grokly_grocery,options,no,no,any,none,no,Kannada: milk variant picker,kn
+165,multilingual,मुझे kurkure चाहिए,order_variant|grokly_grocery,options,no,no,any,none,no,Hindi-English mix: kurkure variants,hi
+166,multilingual,నాకు బ్రెడ్ కావాలి,grokly_grocery,best matches,yes,yes,any,none,no,Telugu: bread product search,te
+167,multilingual,ನನಗೆ ಬ್ರೆಡ್ ಬೇಕು,grokly_grocery,best matches,yes,yes,any,none,no,Kannada: bread product search,kn
+168,multilingual,मुझे ब्रेड चाहिए,grokly_grocery,best matches,yes,yes,any,none,no,Hindi: bread product search,hi
+169,multilingual,డెలివరీ ఎక్కడ అందుబాటులో ఉంది?,coverage,any,no,no,any,none,no,Telugu: coverage/delivery area query,te
+170,multilingual,डिलीवरी कहाँ उपलब्ध है?,coverage,any,no,no,any,none,no,Hindi: coverage/delivery area query,hi
+171,multilingual,ನಾನು ಡೆಲಿವರಿ ಪಾರ್ಟ್ನರ್ ಆಗಬೇಕು,partner|referral_rewards,any,no,no,any,none,no,Kannada: delivery partner query,kn
+172,multilingual,मैं डिलीवरी पार्टनर बनना चाहता हूँ,partner|referral_rewards,any,no,no,any,none,no,Hindi: delivery partner query,hi
+173,multilingual,హలో,greeting,Hello,no,no,any,none,no,Telugu: greeting,te
+174,multilingual,नमस्ते,greeting,Hello,no,no,any,none,no,Hindi: greeting,hi
+175,multilingual,ಹಲೋ,greeting,Hello,no,no,any,none,no,Kannada: greeting,kn
+176,multilingual,शुभ प्रभात,greeting,Good morning,no,no,any,none,no,Hindi: good morning time greeting,hi
+177,multilingual,శుభోదయం,greeting,Good morning,no,no,any,none,no,Telugu: good morning time greeting,te
+178,multilingual,ಶುಭೋದಯ,greeting,Good morning,no,no,any,none,no,Kannada: good morning time greeting,kn
+179,multilingual,शुभ रात्रि,greeting,Good night,no,no,any,none,no,Hindi: good night greeting,hi
+180,multilingual,Grokly क्या है?,grokly_grocery,grocery,no,no,any,/services/grokly,no,Hindi: what is grokly info question,hi
+181,multilingual,Grokly అంటే ఏమిటి?,grokly_grocery,grocery,no,no,any,/services/grokly,no,Telugu: what is grokly info question,te
+182,multilingual,Grokly ಎಂದರೇನು?,grokly_grocery,grocery,no,no,any,/services/grokly,no,Kannada: what is grokly info question,kn
+183,multilingual,Swadisht क्या है?,swadisht_food,food,no,no,any,/services/swadisht,no,Hindi: what is swadisht,hi
+184,multilingual,Accesco क्या है?,about_brand,Accesco,no,no,any,none,no,Hindi: brand info question,hi
+185,multilingual,Accesco అంటే ఏమిటి?,about_brand,Accesco,no,no,any,none,no,Telugu: brand info question,te
+186,multilingual,मुझे अमूल गोल्ड दूध चाहिए,grokly_grocery|swadisht_food|unknown,best matches|here you go,yes,yes,any,/services/grokly?search,no,Hindi: exact product search amul gold milk,hi
+187,multilingual,నాకు అమూల్ తాజా పాలు కావాలి,grokly_grocery|swadisht_food|unknown,best matches|here you go,yes,yes,any,/services/grokly?search,no,Telugu: amul taaza milk product search,te
+188,multilingual,ನನಗೆ ಮ್ಯಾಗಿ ನೂಡಲ್ಸ್ ಬೇಕು,grokly_grocery|swadisht_food|unknown,best matches,yes,yes,any,/services/grokly?search,no,Kannada: maggi noodles product search,kn
+189,multilingual,मुझे लेज़ चिप्स चाहिए,any,best matches,yes,yes,any,/services/grokly?search,no,Hindi: lays chips product search,hi
+190,multilingual,నాకు కోకా కోలా కావాలి,grokly_grocery|unknown,best matches,yes,yes,any,/services/grokly?search,no,Telugu: coca cola product search,te
+191,multilingual,क्या आप 560001 पर डिलीवर करते हैं?,delivery_order,"Yes, we deliver",no,no,any,none,no,Hindi: covered pincode delivery check,hi
+192,multilingual,మీరు 560001 కు డెలివరీ చేస్తారా?,delivery_order,"Yes, we deliver",no,no,any,none,no,Telugu: covered pincode delivery check,te
+193,multilingual,ನೀವು 560001 ಗೆ ಡೆಲಿವರಿ ಮಾಡುತ್ತೀರಾ?,delivery_order,"Yes, we deliver",no,no,any,none,no,Kannada: covered pincode delivery check,kn
+194,multilingual,क्या आप 110001 पर डिलीवर करते हैं?,delivery_order,not delivering,no,no,any,none,no,Hindi: uncovered pincode (Delhi),hi
+195,multilingual,మీరు 110001 కు డెలివరీ చేస్తారా?,delivery_order,not delivering,no,no,any,none,no,Telugu: uncovered pincode (Delhi),te
+196,multilingual,क्या आप कोरमंगला में डिलीवर करते हैं?,delivery_order,"Yes, we deliver",no,no,any,none,no,Hindi: covered area koramangala,hi
+197,multilingual,మీరు కోరమంగలలో డెలివరీ చేస్తారా?,delivery_order,"Yes, we deliver",no,no,any,none,no,Telugu: covered area koramangala,te
+198,multilingual,ನೀವು ಕೋರಮಂಗಲದಲ್ಲಿ ಡೆಲಿವರಿ ಮಾಡುತ್ತೀರಾ?,delivery_order,"Yes, we deliver",no,no,any,none,no,Kannada: covered area koramangala,kn
+199,multilingual,आप कहाँ-कहाँ डिलीवर करते हैं?,delivery_order,pincodes across,no,no,any,none,no,Hindi: delivery area summary,hi
+200,multilingual,మీరు ఎక్కడెక్కడ డెలివరీ చేస్తారు?,delivery_order,pincodes across,no,no,any,none,no,Telugu: delivery area summary,te
+201,multilingual,क्या आप दूध की बोतलें वापस लेते हैं?,circular_recycle,take back|which one,no,no,any,none,no,Hindi: milk bottle recovery question,hi
+202,multilingual,మీరు పాల బాటిళ్లను తిరిగి తీసుకుంటారా?,circular_recycle,take back|which one,no,no,any,none,no,Telugu: milk bottle recovery question,te
+203,multilingual,ನೀವು ಹಾಲಿನ ಬಾಟಲಿಗಳನ್ನು ಹಿಂದಕ್ಕೆ ತೆಗೆದುಕೊಳ್ಳುತ್ತೀರಾ?,circular_recycle,take back|which one,no,no,any,none,no,Kannada: milk bottle recovery question,kn
+204,multilingual,क्या आप पुराने कपड़े वापस लेते हैं?,circular_recycle,take back,no,no,any,none,no,Hindi: old clothes recovery,hi
+205,multilingual,రీసైక్లింగ్ ప్రోగ్రామ్ ఎలా పని చేస్తుంది?,circular_recycle,circular|recovery|which one,no,no,any,none,no,Telugu: recycling program question,te
+206,multilingual,मैं अपना ऑर्डर वापस करना चाहता हूँ,returns_refunds,refund,no,no,any,none,no,Hindi: return order request,hi
+207,multilingual,నాకు రీఫండ్ కావాలి,returns_refunds,refund,no,no,any,none,no,Telugu: refund request,te
+208,multilingual,ನನಗೆ ರೀಫಂಡ್ ಬೇಕು,returns_refunds,refund,no,no,any,none,no,Kannada: refund request,kn
+209,multilingual,आप कौन से पेमेंट मेथड स्वीकार करते हैं?,pricing_payment,UPI,no,no,any,none,no,Hindi: payment methods FAQ,hi
+210,multilingual,మీరు ఏ పేమెంట్ మెథడ్స్ అంగీకరిస్తారు?,pricing_payment,UPI,no,no,any,none,no,Telugu: payment methods FAQ,te
+211,multilingual,ನೀವು ಯಾವ ಪಾವತಿ ವಿಧಾನಗಳನ್ನು ಸ್ವೀಕರಿಸುತ್ತೀರಿ?,pricing_payment,UPI,no,no,any,none,no,Kannada: payment methods FAQ,kn
+212,multilingual,रेफरल प्रोग्राम कैसे काम करता है?,referral_rewards,referral|rewards,no,no,any,none,no,Hindi: referral program FAQ,hi
+213,multilingual,రిఫరల్ ప్రోగ్రామ్ ఎలా పని చేస్తుంది?,referral_rewards,referral|rewards,no,no,any,none,no,Telugu: referral program FAQ,te
+214,multilingual,कस्टमर सपोर्ट से कैसे संपर्क करें?,support_contact,contact|support,no,no,any,none,no,Hindi: customer support contact,hi
+215,multilingual,కస్టమర్ సపోర్ట్ ని ఎలా కాంటాక్ట్ చేయాలి?,support_contact,contact|support,no,no,any,none,no,Telugu: customer support contact,te
+216,multilingual,ನಾನು ಗ್ರಾಹಕ ಬೆಂಬಲವನ್ನು ಹೇಗೆ ಸಂಪರ್ಕಿಸಬಹುದು?,support_contact,contact|support,no,no,any,none,no,Kannada: customer support contact,kn
+217,multilingual,वेटलिस्ट में कैसे शामिल हों?,waitlist_launch,waitlist,no,no,any,none,no,Hindi: join waitlist FAQ,hi
+218,multilingual,వెయిట్‌లిస్ట్‌లో ఎలా చేరాలి?,waitlist_launch,waitlist,no,no,any,none,no,Telugu: join waitlist FAQ,te
+219,multilingual,ऐप कब लॉन्च होगा?,waitlist_launch,waitlist|launch,no,no,any,none,no,Hindi: app launch timing,hi
+220,multilingual,మुझे स्नैक्स चाहिए,any,,no,no,any,/services/grokly/category/munchies,no,Hindi: category-level snacks order,hi
+221,multilingual,నాకు స్నాక్స్ కావాలి,any,,no,no,any,/services/grokly/category/munchies,no,Telugu: category-level snacks order,te
+222,multilingual,ನನಗೆ ತರಕಾರಿ ಬೇಕು,any,,no,no,any,/services/grokly/category/vegetables-fruits,no,Kannada: category-level vegetables order,kn
+223,multilingual,मुझे सब्जियाँ चाहिए,any,,no,no,any,/services/grokly/category/vegetables-fruits,no,Hindi: category-level vegetables order,hi
+224,multilingual,నాకు కూరగాయలు కావాలి,any,,no,no,any,/services/grokly/category/vegetables-fruits,no,Telugu: category-level vegetables order,te
+225,multilingual,मुझे दवाई चाहिए,any,,no,no,any,/services/localmeds,no,Hindi: medicines category route,hi
+226,multilingual,నాకు మందులు కావాలి,any,,no,no,any,/services/localmeds,no,Telugu: medicines category route,te
+227,multilingual,ನನಗೆ ಔಷಧಿ ಬೇಕು,any,,no,no,any,/services/localmeds,no,Kannada: medicines category route,kn
+228,multilingual,मुझे नए कपड़े चाहिए,any,,no,no,any,/services/instastyle,no,Hindi: fashion/clothes category route,hi
+229,multilingual,నాకు కొత్త బట్టలు కావాలి,any,,no,no,any,/services/instastyle,no,Telugu: fashion/clothes category route,te
+230,multilingual,ನನಗೆ ಹೊಸ ಬಟ್ಟೆ ಬೇಕು,any,,no,no,any,/services/instastyle,no,Kannada: fashion/clothes category route,kn
+231,multilingual,Xpense मीटर मेरे खर्चों को कैसे ट्रैक करता है?,xpense_budget,budget|spending,no,no,any,none,no,Hindi: xpense tracking FAQ,hi
+232,multilingual,క్సపెన్స్ మీటర్ నా ఖర్చులను ఎలా ట్రాక్ చేస్తుంది?,xpense_budget,budget|spending,no,no,any,none,no,Telugu: xpense tracking FAQ,te
+233,multilingual,क्या मैं मासिक बजट सेट कर सकता हूँ?,xpense_budget,budget,no,no,any,none,no,Hindi: monthly budget question,hi
+234,multilingual,क्या मेरा डेटा सुरक्षित है?,privacy_security,secure,no,no,any,none,no,Hindi: data safety/privacy FAQ,hi
+235,multilingual,నా డేటా సురక్షితమేనా?,privacy_security,secure,no,no,any,none,no,Telugu: data safety/privacy FAQ,te
+236,multilingual,ನನ್ನ ಡೇಟಾ ಸುರಕ್ಷಿತವಾಗಿದೆಯೇ?,privacy_security,secure,no,no,any,none,no,Kannada: data safety/privacy FAQ,kn
+237,multilingual,Accesco Zepto से कैसे अलग है?,comparison|about_brand,one login|ecosystem,no,no,any,none,no,Hindi: competitor comparison,hi
+238,multilingual,Accesco Blinkit కంటే ఎందుకు మంచిది?,comparison|about_brand,one login|ecosystem,no,no,any,none,no,Telugu: competitor comparison,te
+239,multilingual,मुझे टाटा टी चाहिए,order_variant|grokly_grocery,options,no,no,any,none,no,Hindi: tata tea variant picker,hi
+240,multilingual,నాకు ప్రింగిల్స్ కావాలి,order_variant|grokly_grocery,options,no,no,any,none,no,Telugu: pringles variant picker,te
+241,multilingual,ನನಗೆ ಮ್ಯಾಗಿ ಹಾಟ್ ಅಂಡ್ ಸ್ವೀಟ್ ಸಾಸ್ ಬೇಕು,order_variant|grokly_grocery,options,no,no,any,none,no,Kannada: maggi sauce variant picker,kn
+242,multilingual,मुझे प्रिंगल्स चाहिए,order_variant|grokly_grocery,options,no,no,any,none,no,Hindi: pringles variant picker,hi
+243,multilingual,मुझे आम चाहिए,order_variant|grokly_grocery,options,no,no,any,none,no,Hindi: mango variant picker,hi
+244,multilingual,నాకు మామిడి కావాలి,order_variant|grokly_grocery,options,no,no,any,none,no,Telugu: mango variant picker,te
+245,multilingual,SKU रिकवरी फ्रेमवर्क क्या है?,circular_recycle,taking back eligible,no,no,any,none,no,Hindi: SKU recovery FAQ,hi
+246,multilingual,ఈ-వేస్ట్ ను Accesco సేకరిస్తుందా?,circular_recycle,e-waste|recycling|take back,no,no,any,none,no,Telugu: e-waste collection FAQ,te
+247,multilingual,क्या खाली दवाई की बोतलें वापस कर सकते हैं?,circular_recycle,recycling|take back|pharmacy,no,no,any,none,no,Hindi: medicine bottle recovery FAQ,hi
+248,multilingual,मेरा ऑर्डर कैसे ट्रैक करें?,delivery_order,share your area|track,no,no,any,none,no,Hindi: order tracking question,hi
+249,multilingual,నా ఆర్డర్ ను ట్రాక్ చేయడం ఎలా?,delivery_order,share your area|track,no,no,any,none,no,Telugu: order tracking question,te
+250,multilingual,मुझे कॉफी चाहिए,any,,any,any,any,/services/grokly/category/tea-coffee|/services/grokly?search,no,Hindi: coffee category/product,hi
+251,multilingual,నాకు కాఫీ కావాలి,any,,any,any,any,/services/grokly/category/tea-coffee|/services/grokly?search,no,Telugu: coffee category/product,te
+252,multilingual,ನನಗೆ ಕಾಫಿ ಬೇಕು,any,,any,any,any,/services/grokly/category/tea-coffee|/services/grokly?search,no,Kannada: coffee category/product,kn

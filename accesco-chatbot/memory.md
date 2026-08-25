@@ -1006,58 +1006,50 @@ Feature request: the chatbot should understand user mood (romantic, anniversary,
 
 **Pipeline bottom line:** You need (a) a language‑detector, (b) a multilingual fine‑tuned model, (c) a reply dictionary with translations for the intents you care about, and (optional but recommended) (d) product‑name mappings for the regional scripts. With those pieces in place, the bot will reply in pure Hindi, Telugu or Kannada when the user’s message is detected in that script.
 
-### Multilingual Translation Pipeline (Completed 2026-08-24, 161/161 suite)
+### Multilingual Translation Pipeline (Updated 2026-08-25, 252 test rows)
 
-The chatbot now **understands and replies in Hindi, Telugu and Kannada** via IndicTrans2‑distilled translation wrapped around the existing English pipeline.
+The chatbot now **understands and replies in Hindi, Telugu and Kannada** via IndicTrans2‑distilled translation running **inline in the main server** — single process, single command.
 
-#### ⚠️ `.venv-translate` — dedicated Python venv for the translation sidecar
+#### Architecture Change (2026-08-25): Sidecar → Inline Single-Server
 
-**What:** a private virtual environment at `chatbot-ml/.venv-translate/` that runs the translation sidecar (`inference/translate_service.py`, port 8001). It is **gitignored** (see `.gitignore`) — every developer/deployment box must recreate it locally once; nothing needs to be pushed.
+**Previous (2026-08-24):** Separate sidecar process on port 8001 in its own `.venv-translate` (transformers 4.49) because IndicTrans2 was incompatible with transformers 5.x.
 
-**Why it exists (two hard requirements):**
-1. IndicTrans2's custom modeling/tokenizer code was written for **transformers ~4.4x** and is broken on the transformers 5.x used by the main server (empty translations, crashes — see issues table below). The venv pins **transformers 4.49**.
-2. The venv MUST be created WITHOUT `--system-site-packages`. Sharing the anaconda site-packages causes silent crashes/hangs from conflicting `av`/`cv2` libav dylibs.
+**Current (2026-08-25):** The main environment already runs **transformers 4.48.3** (compatible with IndicTrans2). No separate venv or sidecar needed. Translation models load directly in the main `app.py` process at startup.
 
-**One-time setup (exact commands):**
+**Why the change worked:** The original sidecar was built on macOS with Anaconda where the main server used transformers 5.x. On the Windows deployment, the main env already has transformers 4.48.3 + torch 2.11 — fully compatible with IndicTrans2, so the isolation boundary is unnecessary.
+
+#### ⚠️ `.venv-translate` is NO LONGER NEEDED
+
+The dedicated venv at `chatbot-ml/.venv-translate/` is obsolete. Everything runs in the system Python environment. The `.gitignore` entry remains harmless.
+
+**Dependencies (installed in main env):**
 ```bash
-cd accesco-chatbot/chatbot-ml
-
-# create isolated venv (do NOT use --system-site-packages)
-/opt/anaconda3/bin/python3.13 -m venv .venv-translate
-
-# CPU-only torch first (small wheel; do NOT pull GPU/CUDA torch)
-./.venv-translate/bin/pip install torch --index-url https://download.pytorch.org/whl/cpu
-
-# translation stack
-./.venv-translate/bin/pip install "transformers==4.49.0" sentencepiece IndicTransToolkit==1.1.1 uvicorn fastapi
-
-# one-time Hugging Face auth — the distilled models are GATED repos
-huggingface-cli login        # or: export HF_TOKEN=hf_...
-```
-Contents after setup: `torch (CPU) · transformers 4.49.0 · sentencepiece · IndicTransToolkit 1.1.1 · fastapi · uvicorn`. Model weights (~800 MB × 2) are NOT in the venv — they live in `~/.cache/huggingface` and download on first sidecar start.
-
-**Verify it works:**
-```bash
-curl http://localhost:8001/health          # {"ready":true} once sidecar is running
+pip install "IndicTransToolkit==1.1.1" sentencepiece
+# torch and transformers already present
+# One-time HuggingFace auth for gated models:
+huggingface-cli login
 ```
 
-#### Architecture
+Model weights (~800 MB × 2) download on first startup to `~/.cache/huggingface`. After that, works fully **offline**.
 
-- **Architecture — translate sidecar (`inference/translate_service.py`, port 8001):**
-  - Runs `ai4bharat/indictrans2-indic-en-dist-200M` + `indictrans2-en-indic-dist-200M` inside the dedicated `.venv-translate` (see setup section above).
-  - Endpoints: `POST /to_english {text, lang}` · `POST /from_english {text, lang}` · `GET /health`. Lang map: hi→hin_Deva, te→tel_Telu, kn→kan_Knda.
-  - HF auth required once for the gated distilled repos (user token Uday533); models cached in ~/.cache/huggingface.
+#### Architecture (Current — Single Server)
+
+- **Inline translation (`app.py`):**
+  - Loads `ai4bharat/indictrans2-indic-en-dist-200M` + `indictrans2-en-indic-dist-200M` at module import time via `_load_translation_models()`.
+  - `_translate()` function does inference directly (no HTTP call). Lang map: hi→hin_Deva, te→tel_Telu, kn→kan_Knda.
+  - `_sidecar_call()` function name kept for minimal diff — now calls `_translate()` inline instead of HTTP POST.
+  - HF auth required once for the gated distilled repos; models cached in ~/.cache/huggingface.
 - **Main server wiring (`app.py`):**
-  - `Query.language` field added ('hi'/'te'/'kn'/None). Frontend `detectLanguage()` already tags every message.
-  - `chat()` is now a thin wrapper: regional input → sidecar `to_english` → `_chat_core()` runs the ENTIRE existing pipeline unchanged (intent rules, coverage, knowledge RAG, recovery, FAISS, variant picker) → reply's conversational part → sidecar `from_english`.
+  - `Query.language` field ('hi'/'te'/'kn'/None). Frontend `detectLanguage()` already tags every message.
+  - `chat()` is a thin wrapper: regional input → `_sidecar_call("to_english",...)` → `_chat_core()` runs the ENTIRE existing pipeline unchanged (intent rules, coverage, knowledge RAG, recovery, FAISS, variant picker) → reply's conversational part → `_sidecar_call("from_english",...)`.
   - `_regionalize_reply()`: product-card bullet blocks stay in English (names/prices/URLs must stay exact); only the prose header above the first "•" is translated; bullet-free canned replies (coverage, recovery, info) translate fully.
-  - Graceful degradation: sidecar down/timeout/failure → English-only behavior, never an error.
+  - Graceful degradation: model load failure → English-only behavior, never an error.
 - **Verified end-to-end:**
-  - Suite **161/161** (English rows never touch the translator).
-  - दूध चाहिए / పాలు కావాలి / ಹಾಲು ಬೇಕು → milk variant picker with Hindi/Telugu/Kannada header + English cards.
+  - Suite **252 rows** (161 English + 91 multilingual).
+  - दूध चाहिए / పాలు కావాలి / ಹಾಲು ಬೇಕు → milk variant picker with Hindi/Telugu/Kannada header + English cards.
   - Hinglish "मुझे kurkure चाहिए" → Kurkure variants; Hindi coverage query → fully-Hindi coverage answer incl. transliterated area match ("मराठहल्ली" → Marathahalli 560037).
   - English queries without `language` field behave exactly as before.
-- **Startup commands:** main server `uvicorn inference.app:app --port 8000`; sidecar `.venv-translate/bin/python -m uvicorn inference.translate_service:app --port 8001` (set OMP_NUM_THREADS≈4).
+- **Startup command (single):** `python -m uvicorn inference.app:app --port 8000`
 - **Known v1 limitation:** language is per-message; variant-chip clicks send English product names (tagged 'la') so the follow-up card replies in English. Session-level language memory is a future improvement.
 
 #### ⚠️ Current limitation — pure regional scripts only; Romanized input may misroute
@@ -1071,40 +1063,40 @@ As of now the multilingual pipeline works reliably **only when the user types in
 | Telugu | పాలు కావాలి → milk variants ✓ | "paalu kaavaali" → treated as English, no product match |
 | Kannada | ಹಾಲು ಬೇಕು → milk variants ✓ | "haalu beku" → treated as English, canned "still learning" reply |
 
-**Planned fix (not yet implemented):** (1) expand the Hinglish keyword dictionaries in `detectLanguage()` so Romanized queries get tagged hi/te/kn, (2) add a Roman→native transliteration step inside the sidecar before IndicTrans2 (it only accepts native-script text), and (3) long-term, fine-tune the intent classifier on Hinglish rows (already part of the research-team dataset spec: ≥30% code-mixed rows per language) so Romanized queries are understood natively without any translation.
+**Planned fix (not yet implemented):** (1) expand the Hinglish keyword dictionaries in `detectLanguage()` so Romanized queries get tagged hi/te/kn, (2) add a Roman→native transliteration step before IndicTrans2 (it only accepts native-script text), and (3) long-term, fine-tune the intent classifier on Hinglish rows (already part of the research-team dataset spec: ≥30% code-mixed rows per language) so Romanized queries are understood natively without any translation.
 
-### Multilingual — Issues Found & Fixes (2026-08-24)
+### Multilingual — Issues Found & Fixes (2026-08-24 → 2026-08-25)
 
 | # | Issue | Root cause | Fix / lesson |
 |---|-------|-----------|--------------|
 | 1 | `IndicTransToolkit` import crash: `cannot import name 'PreTrainedTokenizerBase' from 'transformers.tokenization_utils'` | transformers 5.x moved that class out of the module the toolkit's collator imports from | Shim: `import transformers.tokenization_utils as _tu; _tu.PreTrainedTokenizerBase = transformers.PreTrainedTokenizerBase` before importing the toolkit |
-| 2 | Distilled model repos return **403 gated** | AI4Bharat gates `indictrans2-*-dist-200M`; must accept license + use an HF token | Log in via `huggingface-cli login` (token Uday533); models then cache to ~/.cache/huggingface. The 1B repos are public but have their own tokenizer bug on 5.x |
+| 2 | Distilled model repos return **403 gated** | AI4Bharat gates `indictrans2-*-dist-200M`; must accept license + use an HF token | Log in via `huggingface-cli login`; models then cache to ~/.cache/huggingface. The 1B repos are public but have their own tokenizer bug on 5.x |
 | 3 | Custom tokenizer crash: `IndicTransTokenizer has no attribute _special_tokens_map` | HF repo's custom tokenizer sets special-token ids BEFORE `super().__init__()`; transformers 5.x base `__setattr__` needs `_special_tokens_map` to exist first | Patched `get_class_from_dynamic_module` to pre-init `_special_tokens_map={}` via `object.__setattr__` before original init |
 | 4 | Config load crash: `No module named 'transformers.onnx'` | `transformers.onnx` (ONNX export helpers) was removed in 5.x; repo config file imports it at module level (inference never uses it) | Stub modules `sys.modules["transformers.onnx"]` + `.utils` with dummy `OnnxConfig`/`OnnxSeq2SeqConfigWithPast` |
 | 5 | Model load crash: `tie_weights() got unexpected keyword 'recompute_mapping'` → then `_tie_or_clone_weights` missing → then torch `padding_idx` AttributeError | 5.x changed tie_weights signature; custom class overrides it with 4.x-era internals | Final resolution: make `tie_weights` a NO-OP via dynamic-module patch and let 5.x's own loader handle tying |
 | 6 | `generate()` returns empty/EOS immediately (`EncoderDecoderCache not subscriptable`, then empty decodes) | Custom forward reads legacy tuple-style `past_key_values[0][0]`; 5.x passes EncoderDecoderCache; deeper generation-stack incompatibilities remained even after shims | `use_cache=False` fixed the subscript error; remaining empties were unfixable shim whack-a-mole → **pivoted to transformers 4.x venv** (see #8) |
 | 7 | Venv with `--system-site-packages`: silent hangs/crashes importing IndicTransToolkit & loading models; macOS console showed duplicate objc classes for `av`/`cv2` libav dylibs | Anaconda global env ships both `av` and `cv2` bundling conflicting libav binaries — "may cause spurious crashes" (it did) | Recreate venv FULLY ISOLATED (no system site-packages); install CPU-only torch from the PyTorch index so nothing leaks in from anaconda |
-| 8 | Even with all shims, translations stayed empty/garbage on transformers 5.x | IndicTrans2 code targets ~4.40–4.49 era; too many subtle 5.x behavior changes (masking utils, generation stack, tokenizer internals) to patch safely | **Final architecture:** dedicated sidecar process on transformers 4.49; main server stays on 5.x untouched; they talk over HTTP |
+| 8 | Even with all shims, translations stayed empty/garbage on transformers 5.x | IndicTrans2 code targets ~4.40–4.49 era; too many subtle 5.x behavior changes (masking utils, generation stack, tokenizer internals) to patch safely | **Original fix:** dedicated sidecar process on transformers 4.49; main server stays on 5.x untouched; they talk over HTTP. **Updated fix (2026-08-25):** Windows deployment already has transformers 4.48.3 — load models directly inline, no sidecar needed. |
+| 9 | Windows: `[WinError 206] The filename or extension is too long` when installing torch in `.venv-translate` inside deep project path | Windows 260-char MAX_PATH limit; nested venv path + torch's deeply nested license files exceed it | **Eliminated entirely** by removing the need for `.venv-translate` — inline loading in the main env avoids the path issue completely |
+| 10 | `ModuleNotFoundError: No module named 'torchgen'` after partial torch install | torch installed incompletely due to WinError 206 (path too long); missing internal modules | Same fix as #9 — no separate venv needed |
 
-**Net lesson:** don't fight framework version drift with monkeypatch shims when a clean isolation boundary (separate venv + HTTP) is cheap.
+**Net lesson:** The sidecar architecture was necessary on macOS with transformers 5.x. On Windows with transformers 4.48.3 already in place, the simplest solution is direct inline loading — zero extra processes, zero extra venvs.
 
 ### Multilingual — How to Run & Test
 
 ```bash
-# ── Start backend (2 processes, both required for regional languages) ──────────
+# ── Start backend (single process) ─────────────────────────────────────────────
 cd accesco-chatbot/chatbot-ml
 
-# 1) Main inference server (port 8000)
-OMP_NUM_THREADS=1 /opt/anaconda3/bin/python3.13 \
-  -m uvicorn inference.app:app --port 8000
+# One-time: login to HuggingFace (models are gated)
+huggingface-cli login
 
-# 2) Translation sidecar (port 8001) — English-only mode if skipped
-OMP_NUM_THREADS=4 ./.venv-translate/bin/python \
-  -m uvicorn inference.translate_service:app --port 8001
+# Start server (models download ~1.6GB on first run, then cached offline)
+python -m uvicorn inference.app:app --port 8000
 
-# Health checks
+# Health check
 curl http://localhost:8000/health     # {"status":"ok","products_indexed":271,...}
-curl http://localhost:8001/health     # {"ready":true}
+# Console should print: [translate] IndicTrans2 models loaded successfully.
 
 # ── Start frontend ──────────────────────────────────────────────────────────────
 cd Accesco
@@ -1112,23 +1104,55 @@ npm run dev                           # open http://localhost:3000
 ```
 
 ```bash
-# ── Test translation sidecar directly ───────────────────────────────────────────
-curl -s localhost:8001/to_english   -H 'Content-Type: application/json' \
-     -d '{"text":"పాలు కావాలి","lang":"te"}'
-# → {"translation":"Need milk"}
-curl -s localhost:8001/from_english -H 'Content-Type: application/json' \
-     -d '{"text":"Here you go.","lang":"hi"}'
-# → Hindi translation
-
 # ── Test end-to-end through the main chat API ───────────────────────────────────
-curl -s localhost:8000/chat -H 'Content-Type: application/json' \
-     -d '{"text":"दूध चाहिए","language":"hi"}'
+curl -s localhost:8000/chat -H "Content-Type: application/json" \
+     -d "{\"text\":\"दूध चाहिए\",\"language\":\"hi\"}"
 # → order_variant + Amul milk list, reply header in Hindi, cards in English
 
-# Regression: suite must stay green (English rows never hit the translator)
-cd accesco-chatbot/chatbot-ml && /opt/anaconda3/bin/python3.13 test_suite_runner.py
-# → 161/161 passed
+curl -s localhost:8000/chat -H "Content-Type: application/json" \
+     -d "{\"text\":\"పాలు కావాలి\",\"language\":\"te\"}"
+# → Telugu milk variant picker
+
+curl -s localhost:8000/chat -H "Content-Type: application/json" \
+     -d "{\"text\":\"ಹಾಲು ಬೇಕು\",\"language\":\"kn\"}"
+# → Kannada milk variant picker
+
+# Regression: full suite (English + multilingual)
+python test_suite_runner.py
+# → 252/252 passed
+
+# Multilingual tests only
+python test_suite_runner.py --category multilingual -v
+# → 91 multilingual rows
 ```
+
+### Multilingual Test Coverage (2026-08-25, 91 rows)
+
+| Aspect | Hindi | Telugu | Kannada |
+|--------|-------|--------|---------|
+| Greetings (hello, good morning, good night) | ✅ | ✅ | ✅ |
+| Vertical info (Grokly, Swadisht, Accesco) | ✅ | ✅ | ✅ |
+| Product search (amul, maggi, lays, coca cola) | ✅ | ✅ | ✅ |
+| Variant picker (milk, kurkure, tata tea, pringles, mango) | ✅ | ✅ | ✅ |
+| Coverage — covered pincode (560001) | ✅ | ✅ | ✅ |
+| Coverage — uncovered pincode (110001) | ✅ | ✅ | — |
+| Coverage — area name (koramangala) | ✅ | ✅ | ✅ |
+| Coverage — area summary | ✅ | ✅ | — |
+| Recovery/recycling (bottles, clothes, e-waste) | ✅ | ✅ | ✅ |
+| Returns/refund | ✅ | ✅ | ✅ |
+| Payment methods | ✅ | ✅ | ✅ |
+| Referral program | ✅ | ✅ | — |
+| Customer support | ✅ | ✅ | ✅ |
+| Waitlist/launch | ✅ | ✅ | — |
+| Category routing (snacks, vegetables, medicines, clothes) | ✅ | ✅ | ✅ |
+| Xpense/budget | ✅ | ✅ | — |
+| Privacy/security | ✅ | ✅ | ✅ |
+| Competitor comparison | ✅ | ✅ | — |
+| SKU recovery FAQ | ✅ | ✅ | — |
+| Order tracking | ✅ | ✅ | — |
+| Coffee/tea category | ✅ | ✅ | ✅ |
+| Hindi-English code-mix | ✅ | — | — |
+| Delivery partner | ✅ | — | ✅ |
 
 Manual UI test: type दूध चाहिए / పాలు కావాలి / ಹಾಲು ಬೇಕು in the chatbot — language tag shows under your message, bot replies with a regional header over English product cards.
 
