@@ -1,11 +1,14 @@
-'use client';
+
+  'use client';
 
 import { useRef } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 export default function ServicesCarousel() {
   const scrollRef = useRef(null);
+  const router = useRouter();
 
   const scroll = (direction) => {
     if (scrollRef.current) {
@@ -31,7 +34,11 @@ export default function ServicesCarousel() {
         {/* Grokly */}
         <Link href="/services/grokly" className="serviceCardLinkWrap" style={{ display: 'block', textDecoration: 'none', color: 'inherit' }}>
           <div className="service-premium-card grokly-card">
-            <div className="service-card-visual">
+            <div 
+              className="service-card-visual" 
+              onClick={(e) => { e.preventDefault(); router.push('/services/grokly'); }}
+              style={{ cursor: 'pointer' }}
+            >
               <Image src="/images/grokly-new2.png" alt="Grokly Groceries" fill className="serviceCardVisualImage" sizes="(max-width: 768px) 100vw, 340px" />
             </div>
             <div className="service-icon-circle">
@@ -48,7 +55,11 @@ export default function ServicesCarousel() {
         {/* Swadishtt */}
         <Link href="/services/swadisht" className="serviceCardLinkWrap" style={{ display: 'block', textDecoration: 'none', color: 'inherit' }}>
           <div className="service-premium-card swadisht-card">
-            <div className="service-card-visual">
+            <div 
+              className="service-card-visual" 
+              onClick={(e) => { e.preventDefault(); router.push('/services/swadisht'); }}
+              style={{ cursor: 'pointer' }}
+            >
               <Image src="/images/swadisht/swadisht_logo1.JPG" alt="Swadishtt Meals" fill className="serviceCardVisualImage" sizes="(max-width: 768px) 100vw, 340px" />
             </div>
             <div className="service-icon-circle">
@@ -65,7 +76,11 @@ export default function ServicesCarousel() {
         {/* InstaStyle */}
         <Link href="/services/instastyle" className="serviceCardLinkWrap" style={{ display: 'block', textDecoration: 'none', color: 'inherit' }}>
           <div className="service-premium-card instastyle-card">
-            <div className="service-card-visual">
+            <div 
+              className="service-card-visual" 
+              onClick={(e) => { e.preventDefault(); router.push('/services/instastyle'); }}
+              style={{ cursor: 'pointer' }}
+            >
               <Image src="/images/fashion-new2.png" alt="InstaStyle Fashion" fill className="serviceCardVisualImage" sizes="(max-width: 768px) 100vw, 340px" />
             </div>
             <div className="service-icon-circle">
