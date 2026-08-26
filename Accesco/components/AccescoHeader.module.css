@@ -6,7 +6,7 @@
 
 .header {
   position: fixed;
-  top: 24px;
+  top: 35px;
   left: 50%;
   transform: translateX(-50%);
 
@@ -15,7 +15,7 @@
 
   z-index: 1000;
 
-  background: rgba(255, 255, 255, 0.95);
+  background: rgba(255, 255, 255, 0.78);
   backdrop-filter: blur(30px);
   -webkit-backdrop-filter: blur(18px);
 
@@ -29,7 +29,7 @@
 }
 
 .header.scrolled {
-  background: rgba(255, 255, 255, 0.82);
+  background: rgba(255, 255, 255, 0.72);
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
@@ -932,7 +932,7 @@
 
 @media (max-width: 768px) {
   .header {
-    top: 24px;
+    top: 35px;
     height: 56px;
     width: min(94%, 1320px);
     border-radius: 14px;
@@ -1105,3 +1105,7 @@
   border-radius: 50%;
   object-fit: cover;
 }
+
+   
+
+ 
