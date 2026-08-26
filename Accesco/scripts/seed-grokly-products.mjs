@@ -34,6 +34,7 @@ function normalizeGrokly(p) {
     inStock: p.inStock ?? true,
     stockQty: p.stockQty ?? 100,
     tags: p.tags || [],
+    mood_tags: p.mood_tags || undefined,
     rating: p.rating ?? 0,
     reviews: p.reviews ?? 0,
   };
