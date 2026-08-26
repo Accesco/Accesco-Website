@@ -205,7 +205,37 @@ font-weight:800;
 
 .app-badges {
   display: flex;
-  gap: 12px;
+  align-items: center;
+  gap: 14px;
+  margin-top: 18px;
+}
+
+.download-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  overflow: hidden;
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.badge-img {
+  display: block;
+  width: 150px;
+  height: 45px;
+  object-fit: contain;
+  transition: transform 0.25s ease;
+}
+
+.download-badge:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.18);
+}
+
+.download-badge:hover .badge-img {
+  transform: scale(1.02);
 }
 
 .app-badge {
@@ -763,4 +793,26 @@ color: rgba(255, 255, 255, 0.35);
 footer.accesco-footer-root {
   margin-top: 0 !important;
   padding-top: 0 !important;
+}
+
+@media (max-width: 768px) {
+  .app-badges {
+    gap: 10px;
+  }
+
+  .badge-img {
+    width: 135px;
+    height: 40px;
+  }
+}
+
+@media (max-width: 480px) {
+  .app-badges {
+    gap: 8px;
+  }
+
+  .badge-img {
+    width: 125px;
+    height: 38px;
+  }
 }
