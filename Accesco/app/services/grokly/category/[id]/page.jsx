@@ -16,6 +16,7 @@ import FloatingCartBar from '../../components/FloatingCartBar';
 import BottomNav from '../../components/BottomNav';
 import { categories, products, getProductsByCategory, searchProducts } from '../../lib/groklyData';
 import '../../styles/variables.css';
+import '../../styles/globals.css';
 
 import JsonLd from '../../../../../components/JsonLd';
 
@@ -54,8 +55,6 @@ export default function GroklyCategoryPage() {
       filtered = searchProducts(searchQuery, filtered);
     }
 
-    console.log(products.map(p => p.tags));
-
     switch (activeFilter) {
       case 'bestseller':
         filtered = filtered.filter(p => p.tags && p.tags.includes('Bestseller'));
@@ -92,7 +91,7 @@ export default function GroklyCategoryPage() {
     }
     
     return filtered;
-  }, [id, products, searchQuery, activeFilter, sortBy]);
+  }, [id, searchQuery, activeFilter, sortBy]);
 
   const activeCategoryObject = categories.find(c => c.id === id);
 
@@ -155,7 +154,7 @@ export default function GroklyCategoryPage() {
             </aside>
 
             {/* Right Product Grid - always visible */}
-            <div style={{ flex: 1, minWidth: 0 }}>
+            <div className="grokly-category-products">
               <div className="grokly-category-header">
                 <div>
                   <h1 className="grokly-category-title">
