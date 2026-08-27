@@ -40,11 +40,11 @@ export default function Hero() {
   width: 100%;
   height: 35%;
   background: linear-gradient(
-    to bottom,
-    transparent 0%,
-    rgba(0, 0, 0, 0.3) 40%,
-    #000 100%
-  );
+  to bottom,
+  transparent 0%,
+  rgba(255, 182, 193, 0.3) 40%,
+  #FFB6C1 100%
+);
   z-index: 1;
   pointer-events: none;
 }
