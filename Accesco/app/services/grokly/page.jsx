@@ -1609,7 +1609,7 @@ function GroklyPageContent() {
                       style={{
                         background: "none",
                         border: "none",
-                        color: "#0c831f",
+                        color: "#1B3A2B",
                         fontWeight: 700,
                         fontSize: "14px",
                         cursor: "pointer",
@@ -1716,7 +1716,7 @@ function GroklyPageContent() {
                       style={{
                         background: "none",
                         border: "none",
-                        color: "#0c831f",
+                        color: "#1B3A2B",
                         fontWeight: 700,
                         fontSize: "14px",
                         cursor: "pointer",
@@ -1833,7 +1833,7 @@ function GroklyPageContent() {
                       style={{
                         background: "none",
                         border: "none",
-                        color: "#0c831f",
+                        color: "#1B3A2B",
                         fontWeight: 700,
                         fontSize: "14px",
                         cursor: "pointer",

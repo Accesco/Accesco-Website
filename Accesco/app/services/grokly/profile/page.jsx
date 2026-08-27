@@ -56,7 +56,7 @@ function ReverseCommerceView({ orders, walletBalance, ecoHistory, formatDate, sh
           </button>
           <h2 style={{ margin: 0, fontSize: '17px', fontWeight: 800, color: '#111827' }}>Green Points</h2>
         </div>
-        <div style={{ background: 'linear-gradient(135deg, #15803d, #0c831f)', borderRadius: '20px', padding: '24px', color: '#fff', marginBottom: '20px', position: 'relative', overflow: 'hidden' }}>
+        <div style={{ background: 'linear-gradient(135deg, #12271D, #1B3A2B)', borderRadius: '20px', padding: '24px', color: '#fff', marginBottom: '20px', position: 'relative', overflow: 'hidden' }}>
           <div style={{ position: 'absolute', right: '-20px', top: '-20px', width: '120px', height: '120px', borderRadius: '50%', background: 'rgba(255,255,255,0.06)' }} />
           <p style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '1.5px', textTransform: 'uppercase', opacity: 0.8, margin: '0 0 8px' }}>YOUR GREEN POINTS</p>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
@@ -68,9 +68,9 @@ function ReverseCommerceView({ orders, walletBalance, ecoHistory, formatDate, sh
         <h3 style={{ fontSize: '14px', fontWeight: 700, color: '#374151', margin: '0 0 12px' }}>How to earn</h3>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '20px' }}>
           {[
-            { icon: <RefreshCw size={18} style={{ color: '#15803d' }} />, title: 'Return reusable items', desc: 'Earn points by returning eligible reusable packaging like bottles and containers.' },
-            { icon: <Truck size={18} style={{ color: '#15803d' }} />, title: 'Choose next delivery return', desc: 'Return items in your next order and earn points instantly.' },
-            { icon: <Leaf size={18} style={{ color: '#15803d' }} />, title: 'Reduce waste', desc: 'Help us reduce waste and support a circular future.' },
+            { icon: <RefreshCw size={18} style={{ color: '#12271D' }} />, title: 'Return reusable items', desc: 'Earn points by returning eligible reusable packaging like bottles and containers.' },
+            { icon: <Truck size={18} style={{ color: '#12271D' }} />, title: 'Choose next delivery return', desc: 'Return items in your next order and earn points instantly.' },
+            { icon: <Leaf size={18} style={{ color: '#12271D' }} />, title: 'Reduce waste', desc: 'Help us reduce waste and support a circular future.' },
           ].map((tip, i) => (
             <div key={i} style={{ display: 'flex', gap: '12px', alignItems: 'flex-start', padding: '14px', background: '#f9fafb', borderRadius: '12px', border: '1px solid #e5e7eb' }}>
               <div style={{ flexShrink: 0, marginTop: '2px' }}>{tip.icon}</div>
@@ -88,20 +88,20 @@ function ReverseCommerceView({ orders, walletBalance, ecoHistory, formatDate, sh
               {ecoHistory.slice(0, 5).map(item => (
                 <div key={item.id} style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '12px', background: '#fff', borderRadius: '12px', border: '1px solid #e5e7eb' }}>
                   <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: '#f0fdf4', border: '1px solid #bbf7d0', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                    <RefreshCw size={16} style={{ color: '#15803d' }} />
+                    <RefreshCw size={16} style={{ color: '#12271D' }} />
                   </div>
                   <div style={{ flex: 1 }}>
                     <p style={{ margin: '0 0 2px', fontSize: '13px', fontWeight: 600, color: '#111827' }}>Returned {item.bags} bag{item.bags > 1 ? 's' : ''}</p>
                     <p style={{ margin: 0, fontSize: '11px', color: '#9ca3af' }}>{formatDate(item.date)}</p>
                   </div>
-                  <span style={{ fontSize: '14px', fontWeight: 800, color: '#16a34a' }}>+{item.credits}</span>
+                  <span style={{ fontSize: '14px', fontWeight: 800, color: '#12271D' }}>+{item.credits}</span>
                 </div>
               ))}
             </div>
           </>
         )}
         <button
-          style={{ width: '100%', padding: '14px', borderRadius: '14px', border: 'none', background: 'linear-gradient(135deg, #16a34a, #0c831f)', color: '#fff', fontWeight: 700, fontSize: '15px', cursor: 'pointer', boxShadow: '0 4px 14px rgba(12,131,31,0.3)' }}
+          style={{ width: '100%', padding: '14px', borderRadius: '14px', border: 'none', background: 'linear-gradient(135deg, #12271D, #1B3A2B)', color: '#fff', fontWeight: 700, fontSize: '15px', cursor: 'pointer', boxShadow: '0 4px 14px rgba(12,131,31,0.3)' }}
           onClick={() => showToast('Points redemption coming soon!', 'info')}
         >
           Redeem Points
@@ -114,13 +114,13 @@ function ReverseCommerceView({ orders, walletBalance, ecoHistory, formatDate, sh
     <>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
         <h2 style={{ margin: 0, fontSize: '17px', fontWeight: 800, color: '#111827' }}>Return History</h2>
-        <button onClick={() => setRcTab('points')} style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '8px 14px', borderRadius: '20px', border: '1.5px solid #86efac', background: '#f0fdf4', color: '#15803d', fontWeight: 700, fontSize: '12px', cursor: 'pointer' }}>
+        <button onClick={() => setRcTab('points')} style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '8px 14px', borderRadius: '20px', border: '1.5px solid #86efac', background: '#f0fdf4', color: '#12271D', fontWeight: 700, fontSize: '12px', cursor: 'pointer' }}>
           Green Points: {totalGreenPoints} pts
         </button>
       </div>
       <div style={{ display: 'flex', gap: '8px', marginBottom: '20px' }}>
         {['all', 'completed', 'pending'].map(tab => (
-          <button key={tab} onClick={() => setHistoryFilter(tab)} style={{ padding: '7px 16px', borderRadius: '20px', border: '1.5px solid', cursor: 'pointer', fontWeight: 600, fontSize: '12px', borderColor: historyFilter === tab ? '#15803d' : '#e5e7eb', background: historyFilter === tab ? '#15803d' : '#fff', color: historyFilter === tab ? '#fff' : '#6b7280' }}>
+          <button key={tab} onClick={() => setHistoryFilter(tab)} style={{ padding: '7px 16px', borderRadius: '20px', border: '1.5px solid', cursor: 'pointer', fontWeight: 600, fontSize: '12px', borderColor: historyFilter === tab ? '#12271D' : '#e5e7eb', background: historyFilter === tab ? '#12271D' : '#fff', color: historyFilter === tab ? '#fff' : '#6b7280' }}>
             {tab.charAt(0).toUpperCase() + tab.slice(1)}
           </button>
         ))}
@@ -137,7 +137,7 @@ function ReverseCommerceView({ orders, walletBalance, ecoHistory, formatDate, sh
             <div key={ret.orderId} style={{ background: '#fff', border: '1px solid #e5e7eb', borderRadius: '14px', padding: '14px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <span style={{ fontSize: '13px', fontWeight: 700, color: '#111827' }}>Order {ret.orderId}</span>
-                <span style={{ fontSize: '11px', fontWeight: 700, color: '#0c831f', background: '#dcfce7', padding: '3px 10px', borderRadius: '20px' }}>Next Delivery</span>
+                <span style={{ fontSize: '11px', fontWeight: 700, color: '#1B3A2B', background: '#dcfce7', padding: '3px 10px', borderRadius: '20px' }}>Next Delivery</span>
               </div>
               {ret.items.map(item => (
                 <div key={item.id} style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
@@ -172,7 +172,7 @@ function ReverseCommerceView({ orders, walletBalance, ecoHistory, formatDate, sh
                         <p style={{ margin: 0, fontSize: '13px', fontWeight: 600, color: '#374151' }}>{item.name}</p>
                         <p style={{ margin: 0, fontSize: '11px', color: '#9ca3af' }}>{item.quantity} unit{item.quantity > 1 ? 's' : ''}</p>
                       </div>
-                      <span style={{ fontSize: '12px', fontWeight: 700, color: '#16a34a', whiteSpace: 'nowrap' }}>+{item.creditsEarned || item.quantity * 10} pts</span>
+                      <span style={{ fontSize: '12px', fontWeight: 700, color: '#12271D', whiteSpace: 'nowrap' }}>+{item.creditsEarned || item.quantity * 10} pts</span>
                     </div>
                   ))}
                 </div>
@@ -182,8 +182,8 @@ function ReverseCommerceView({ orders, walletBalance, ecoHistory, formatDate, sh
           {filteredHistory.length === 0 && <div style={{ textAlign: 'center', padding: '32px', color: '#9ca3af', fontSize: '13px' }}>No {historyFilter} returns found.</div>}
         </div>
       )}
-      <div style={{ marginTop: '20px', display: 'flex', alignItems: 'center', gap: '8px', padding: '12px 14px', background: '#f0fdf4', borderRadius: '12px', color: '#15803d', fontSize: '12px' }}>
-        <Leaf size={14} style={{ color: '#15803d' }} />
+      <div style={{ marginTop: '20px', display: 'flex', alignItems: 'center', gap: '8px', padding: '12px 14px', background: '#f0fdf4', borderRadius: '12px', color: '#12271D', fontSize: '12px' }}>
+        <Leaf size={14} style={{ color: '#12271D' }} />
         <span>Green Points are added once the return is successfully completed.</span>
       </div>
     </>
@@ -717,7 +717,7 @@ function GroklyProfileInner() {
                               type="button"
                               onClick={() => handleReorder(order)}
                               className={styles.trackLink}
-                              style={{ border: 'none', cursor: 'pointer', background: '#0c831f', color: '#fff' }}
+                              style={{ border: 'none', cursor: 'pointer', background: '#1B3A2B', color: '#fff' }}
                             >
                               Order Again
                             </button>
@@ -988,7 +988,7 @@ function GroklyProfileInner() {
                           });
                           showToast(`Added ${added} items to cart!`);
                         }}
-                        style={{ background: '#0c831f' }}
+                        style={{ background: '#1B3A2B' }}
                       >
                         <Plus size={18} style={{ marginRight: 8 }} />
                         Add All Wishlist Items to Cart

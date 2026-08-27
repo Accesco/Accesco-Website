@@ -317,7 +317,7 @@ export default function CartDrawer() {
                   aria-label="Return packaging for Green Points"
                 >
                   <div className={styles.rcBannerLeft}>
-                    <RefreshCw size={16} className={styles.rcBannerIcon} style={{ color: '#16a34a' }} />
+                    <RefreshCw size={16} className={styles.rcBannerIcon} style={{ color: '#12271D' }} />
                     <div className={styles.rcBannerText}>
                       {returnItems.length > 0 ? (
                         <>

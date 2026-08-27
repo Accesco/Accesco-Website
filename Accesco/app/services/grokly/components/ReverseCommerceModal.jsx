@@ -81,7 +81,7 @@ export default function ReverseCommerceModal({ isOpen, onClose, cartReturnableIt
 
             {cartReturnableItems.length === 0 ? (
               <div className={styles.emptyState}>
-                <div style={{ fontSize: '24px', marginBottom: '8px', color: '#0c831f' }}>[Cart Empty]</div>
+                <div style={{ fontSize: '24px', marginBottom: '8px', color: '#1B3A2B' }}>[Cart Empty]</div>
                 <p>No returnable packaging items in your current cart.</p>
                 <p className={styles.emptyHint}>Add dairy, milk bottles, or container products to start returning!</p>
               </div>
@@ -162,7 +162,7 @@ export default function ReverseCommerceModal({ isOpen, onClose, cartReturnableIt
         {screen === 'confirmed' && (
           <div className={styles.confirmedScreen}>
             <div className={styles.confirmedIconWrap}>
-              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#0c831f" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#1B3A2B" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
                 <polyline points="20 6 9 17 4 12" />
               </svg>
             </div>
