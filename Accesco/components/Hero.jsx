@@ -32,6 +32,22 @@ export default function Hero() {
           z-index: 0;
           filter: brightness(2);
         }
+          .hero::after {
+           content: "";
+           position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 35%;
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    rgba(0, 0, 0, 0.3) 40%,
+    #000 100%
+  );
+  z-index: 1;
+  pointer-events: none;
+}
 
         .hero-main-content {
           position: relative;
