@@ -35,15 +35,16 @@ export default function Hero() {
           .hero::after {
            content: "";
            position: absolute;
-  left: 0;
-  bottom: 0;
-  width: 100%;
-  height: 35%;
-  background: linear-gradient(
+          left: 0;
+          bottom: 0;
+          width: 100%;
+          height: 35%;
+      background: linear-gradient(
   to bottom,
   transparent 0%,
-  rgba(255, 182, 193, 0.3) 40%,
-  #FFB6C1 100%
+  rgba(109, 27, 61, 0.3) 40%,
+  #6D1B3D 100%
+);
 );
   z-index: 1;
   pointer-events: none;
