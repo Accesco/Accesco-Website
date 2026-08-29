@@ -205,6 +205,7 @@ export default function UnifiedCheckoutPage() {
             payment,
             paymentMethod,
             user,
+            getIdToken,
           })
         )
       );
@@ -212,6 +213,7 @@ export default function UnifiedCheckoutPage() {
       await postUnifiedOrderRecord({
         unifiedOrderId,
         user,
+        getIdToken,
         address: deliveryAddress,
         paymentMethod,
         payment,

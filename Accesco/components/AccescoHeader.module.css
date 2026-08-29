@@ -6,7 +6,7 @@
 
 .header {
   position: fixed;
-  top: 24px;
+  top: 35px;
   left: 50%;
   transform: translateX(-50%);
 
@@ -15,7 +15,7 @@
 
   z-index: 1000;
 
-  background: rgba(255, 255, 255, 0.95);
+  background: rgba(255, 255, 255, 0.78);
   backdrop-filter: blur(30px);
   -webkit-backdrop-filter: blur(18px);
 
@@ -29,7 +29,7 @@
 }
 
 .header.scrolled {
-  background: rgba(255, 255, 255, 0.82);
+  background: rgba(255, 255, 255, 0.72);
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
@@ -931,9 +931,36 @@
 }
 
 @media (max-width: 768px) {
+  .header {
+    top: 35px;
+    height: 56px;
+    width: min(94%, 1320px);
+    border-radius: 14px;
+  }
+
+  .container {
+    padding: 0 10px;
+    gap: 6px;
+  }
+
+  .logo img {
+    width: 32px !important;
+    height: 32px !important;
+  }
+
   .logoDivider,
   .waitlistLink {
     display: none !important;
+  }
+
+  .cartButton {
+    width: 34px !important;
+    height: 34px !important;
+  }
+
+  .cartBadge {
+    top: -4px;
+    right: -4px;
   }
 
   .locationSelector {
@@ -957,7 +984,7 @@
 
   .locationText {
     display: inline-block !important;
-    max-width: 75px !important;
+    max-width: 80px !important;
     overflow: hidden !important;
     text-overflow: ellipsis !important;
     white-space: nowrap !important;
@@ -1014,17 +1041,29 @@
   }
 }
 
-@media (max-width: 420px) {
-  .storeIcon {
-    display: none !important;
-  }
-
-  .actions > a.getAppButton {
-    gap: 0 !important;
+@media (max-width: 430px) {
+  .container {
+    padding: 0 8px;
+    gap: 4px;
   }
 
   .locationText {
-    max-width: 40px !important;
+    max-width: 60px !important;
+  }
+
+  .actions {
+    gap: 5px !important;
+  }
+
+  .actions > button.loginButton,
+  .actions > a.userButton {
+    padding: 0 8px !important;
+  }
+}
+
+@media (max-width: 375px) {
+  .locationText {
+    max-width: 42px !important;
   }
 
   .actions {
@@ -1032,17 +1071,13 @@
   }
 
   .actions > button.loginButton,
-  .actions > a.userButton,
-  .actions > a.getAppButton {
-    padding: 0 8px !important;
-  }
-
-  .container {
-    gap: 8px !important;
+  .actions > a.userButton {
+    padding: 0 7px !important;
+    font-size: 10.5px !important;
   }
 }
 
-@media (max-width: 360px) {
+@media (max-width: 350px) {
   .locationText {
     display: none !important;
   }
@@ -1050,6 +1085,12 @@
   .locationButton {
     padding: 0 6px !important;
     gap: 2px !important;
+  }
+
+  .actions > button.loginButton,
+  .actions > a.userButton {
+    padding: 0 6px !important;
+    font-size: 10px !important;
   }
 }
 
@@ -1064,3 +1105,7 @@
   border-radius: 50%;
   object-fit: cover;
 }
+
+   
+
+ 

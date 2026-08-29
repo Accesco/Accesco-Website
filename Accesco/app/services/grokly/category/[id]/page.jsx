@@ -54,6 +54,8 @@ export default function GroklyCategoryPage() {
       filtered = searchProducts(searchQuery, filtered);
     }
 
+    console.log(products.map(p => p.tags));
+
     switch (activeFilter) {
       case 'bestseller':
         filtered = filtered.filter(p => p.tags && p.tags.includes('Bestseller'));
@@ -90,7 +92,7 @@ export default function GroklyCategoryPage() {
     }
     
     return filtered;
-  }, [id, searchQuery, activeFilter, sortBy]);
+  }, [id, products, searchQuery, activeFilter, sortBy]);
 
   const activeCategoryObject = categories.find(c => c.id === id);
 

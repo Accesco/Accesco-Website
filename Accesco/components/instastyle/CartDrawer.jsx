@@ -21,8 +21,8 @@ export default function CartDrawer() {
     removeFromCart,
   } = useCart();
 
-  const { user } = useAuth();
-  const { otherStores, updateQuantity: updateOtherQuantity, removeItem: removeOtherItem } = useOtherStoreItems(user, 'instastyle');
+  const { user, getIdToken } = useAuth();
+  const { otherStores, updateQuantity: updateOtherQuantity, removeItem: removeOtherItem } = useOtherStoreItems(user, 'instastyle', getIdToken);
 
   // Prevent body scroll when cart is open
   useEffect(() => {

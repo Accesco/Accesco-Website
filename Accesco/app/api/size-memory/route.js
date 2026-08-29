@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { initializeApp, getApps, getApp } from 'firebase/app';
 import { getFirestore, doc, setDoc, getDoc } from 'firebase/firestore';
+import { verifyAuthToken } from '../_lib/auth';
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -32,9 +33,13 @@ let mockSizeProfile = {
 
 export async function GET(request) {
   try {
+    const { uid, error: authError } = await verifyAuthToken(request);
+    if (authError) {
+      return NextResponse.json({ error: authError }, { status: 401 });
+    }
+
     if (db && process.env.NEXT_PUBLIC_FIREBASE_API_KEY) {
-      const userId = 'mock-user-id'; // To be replaced with actual auth session
-      const docRef = doc(db, 'user_sizes', userId);
+      const docRef = doc(db, 'user_sizes', uid);
       const docSnap = await getDoc(docRef);
       if (docSnap.exists()) {
         return NextResponse.json({ profile: docSnap.data() }, { status: 200 });
@@ -49,6 +54,11 @@ export async function GET(request) {
 
 export async function POST(request) {
   try {
+    const { uid, error: authError } = await verifyAuthToken(request);
+    if (authError) {
+      return NextResponse.json({ error: authError }, { status: 401 });
+    }
+
     const body = await request.json();
     const { profile } = body;
 
@@ -57,8 +67,7 @@ export async function POST(request) {
     }
 
     if (db && process.env.NEXT_PUBLIC_FIREBASE_API_KEY) {
-      const userId = 'mock-user-id';
-      await setDoc(doc(db, 'user_sizes', userId), profile, { merge: true });
+      await setDoc(doc(db, 'user_sizes', uid), profile, { merge: true });
     } else {
       mockSizeProfile = { ...mockSizeProfile, ...profile };
     }

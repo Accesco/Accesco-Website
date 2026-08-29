@@ -16,8 +16,13 @@ const ORDERS_STORAGE_KEY = 'swadishtt-orders';
 function CheckoutContent() {
   const router = useRouter();
   const { cart, cartHydrated, clearCart, user } = useSwadishtt();
-  const { getIdToken } = useAuth();
-  const { otherStores, removeItem: removeOtherItem } = useOtherStoreItems(user, 'swadishtt');
+  const { user: authUser, getIdToken } = useAuth();
+  // useOtherStoreItems looks at the *other* verticals' real carts (Grokly/
+  // InstaStyle), so it needs the real Firebase Auth identity (for their
+  // backend-cart lookups) — not this page's own `user`, which is
+  // SwadishttContext's guest-checkout-form state (name/email/phone), not
+  // an auth object with a `.uid`.
+  const { otherStores, removeItem: removeOtherItem } = useOtherStoreItems(authUser, 'swadishtt', getIdToken);
   const otherStoresSubtotal = otherStores.reduce((sum, store) => sum + store.subtotal, 0);
   const otherStoresPlatformFee = otherStoresSubtotal > 0 ? 18 : 0;
   const [step, setStep] = useState(1);
@@ -184,6 +189,7 @@ function CheckoutContent() {
           payment,
           paymentMethod,
           user,
+          getIdToken,
         })
       )
     );
@@ -191,6 +197,7 @@ function CheckoutContent() {
     await postUnifiedOrderRecord({
       unifiedOrderId,
       user,
+      getIdToken,
       address: otherAddress,
       paymentMethod,
       payment,
@@ -253,9 +260,13 @@ function CheckoutContent() {
 
     // Send confirmation email
     try {
+      const idToken = user?.uid && getIdToken ? await getIdToken() : null;
       const res = await fetch('/api/swadishtt/orders/update-status', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          ...(idToken ? { Authorization: `Bearer ${idToken}`, 'x-user-id': user.uid } : {}),
+        },
         body: JSON.stringify({
           orderId,
           newStatus: 'CONFIRMED',

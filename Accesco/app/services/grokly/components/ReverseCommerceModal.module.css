@@ -35,6 +35,20 @@
   from { transform: translateY(100%); }
   to { transform: translateY(0); }
 }
+@media (min-width: 769px) {
+  .sheet {
+    top: 50%;
+    bottom: auto;
+    left: 50%;
+    right: auto;
+    width: min(480px, calc(100vw - 48px));
+    max-height: 80vh;
+    border-radius: 18px;
+    transform: translate(-50%, -50%);
+    animation: none;
+  }
+  .handle { display: none; }
+} 
 
 /* Handle */
 .handle {

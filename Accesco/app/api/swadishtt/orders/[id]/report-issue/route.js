@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { requireOwnerOrAdmin } from '../../../../_lib/authz';
 
 export const dynamic = 'force-dynamic';
 
@@ -7,12 +8,25 @@ export async function POST(request, { params }) {
     const orderId = params.id;
     const body = await request.json();
 
-    try {
-      const { db } = await import('@/lib/firebase');
-      const { collection, addDoc, serverTimestamp } = await import('firebase/firestore');
+    const { db } = await import('@/lib/firebase');
+    const { collection, doc, getDoc, addDoc, serverTimestamp } = await import('firebase/firestore');
 
+    // Order must exist and belong to the caller (or be an admin) before a
+    // report can be filed against it — closes the previous gap where anyone
+    // could file an issue report against any order id with no auth at all.
+    const orderSnap = await getDoc(doc(db, 'swadishtt_orders', orderId));
+    if (!orderSnap.exists()) {
+      return NextResponse.json({ error: 'Order not found' }, { status: 404 });
+    }
+    const authz = await requireOwnerOrAdmin(request, orderSnap.data().userId);
+    if (authz.error) {
+      return NextResponse.json({ error: authz.error }, { status: authz.status });
+    }
+
+    try {
       await addDoc(collection(db, 'swadishtt_issue_reports'), {
         orderId,
+        userId: authz.uid,
         issueType: body.issueType || 'missing',
         items: body.items || [],
         details: body.details || '',

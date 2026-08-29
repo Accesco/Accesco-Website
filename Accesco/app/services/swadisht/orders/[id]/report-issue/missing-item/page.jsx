@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import SwadishttHeader from '../../../../components/SwadishttHeader';
+import { useAuth } from '../../../../../../components/AuthProvider';
 import styles from './missing-item.module.css';
 
 const DEFAULT_ORDER_ITEMS = [
@@ -15,6 +16,7 @@ export default function SwadishttMissingItemPage() {
   const params = useParams();
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { user, getIdToken } = useAuth();
   const issueType = searchParams.get('type') || 'missing';
 
   const orderId = params.id || '12345';
@@ -85,9 +87,17 @@ export default function SwadishttMissingItemPage() {
       localStorage.setItem('sw_issue_reports', JSON.stringify(reports));
 
       // API Call
+      const headers = { 'Content-Type': 'application/json' };
+      if (user?.uid) {
+        const token = await getIdToken();
+        if (token) {
+          headers.Authorization = `Bearer ${token}`;
+          headers['x-user-id'] = user.uid;
+        }
+      }
       await fetch(`/api/swadishtt/orders/${orderId}/report-issue`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers,
         body: JSON.stringify(payload),
       }).catch(err => console.error('API Call error:', err));
 

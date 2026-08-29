@@ -568,7 +568,7 @@
   font-size: 14px;
 }
 
-@media (max-width: 992px) {
+@media (max-width: 1024px) {
   .modal {
     width: 95%;
     max-height: 92vh;

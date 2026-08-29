@@ -16,7 +16,7 @@ export default function CheckoutPage() {
   const router = useRouter();
   const { user, getIdToken } = useAuth();
   const { cart, subtotal, deliveryFee, tax, total, clearCart, placeOrder } = useCart();
-  const { otherStores, removeItem: removeOtherItem } = useOtherStoreItems(user, 'instastyle');
+  const { otherStores, removeItem: removeOtherItem } = useOtherStoreItems(user, 'instastyle', getIdToken);
   const otherStoresSubtotal = otherStores.reduce((sum, store) => sum + store.subtotal, 0);
   const otherStoresPlatformFee = otherStoresSubtotal > 0 ? 18 : 0;
 
@@ -425,6 +425,7 @@ export default function CheckoutPage() {
             payment,
             paymentMethod: formData.paymentMethod,
             user,
+            getIdToken,
           })
         )
       );
@@ -432,6 +433,7 @@ export default function CheckoutPage() {
       await postUnifiedOrderRecord({
         unifiedOrderId,
         user,
+        getIdToken,
         address: otherAddress,
         paymentMethod: formData.paymentMethod,
         payment,

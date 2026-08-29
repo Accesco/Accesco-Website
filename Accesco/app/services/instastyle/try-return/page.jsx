@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useAuth } from '../../../components/AuthProvider';
 import styles from './try-return.module.css';
 
 const RETURNABLE_ITEMS = [
@@ -104,6 +105,7 @@ const RETURN_REASONS = [
 
 export default function InstaStyleTryReturnPage() {
   const router = useRouter();
+  const { user, getIdToken } = useAuth();
   const [selectedItem, setSelectedItem] = useState(RETURNABLE_ITEMS[0]);
   const [selectedReason, setSelectedReason] = useState('size');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -113,9 +115,17 @@ export default function InstaStyleTryReturnPage() {
   const handleConfirm = async () => {
     setIsSubmitting(true);
     try {
+      const headers = { 'Content-Type': 'application/json' };
+      if (user?.uid) {
+        const token = await getIdToken();
+        if (token) {
+          headers.Authorization = `Bearer ${token}`;
+          headers['x-user-id'] = user.uid;
+        }
+      }
       await fetch('/api/instastyle/try-return', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers,
         body: JSON.stringify({
           itemId: selectedItem.id,
           name: `${selectedItem.brand} ${selectedItem.name}`,

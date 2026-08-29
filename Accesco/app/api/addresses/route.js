@@ -51,7 +51,11 @@ export async function POST(request) {
       isDefault
     } = body;
 
-    if (!fullAddress || !lat || !lng) {
+    // lat/lng are optional: the map-based location picker supplies them,
+    // but the plain profile "add address" form (house/street/city/pincode,
+    // no map) doesn't collect coordinates at all, and shouldn't have to —
+    // fullAddress is the one field every caller can always provide.
+    if (!fullAddress) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
@@ -65,8 +69,8 @@ export async function POST(request) {
       area: area || '',
       city: city || 'Bengaluru',
       pincode: pincode || '',
-      lat: Number(lat),
-      lng: Number(lng),
+      lat: lat != null ? Number(lat) : null,
+      lng: lng != null ? Number(lng) : null,
       icon: icon || 'pin',
       isDefault: Boolean(isDefault),
       tag: isDefault ? 'Selected' : '', // Compatibility with frontend

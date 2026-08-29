@@ -7,6 +7,7 @@ export default function PaymentMethodsSection({
   addAmount,
   setAddAmount,
   handleAddMoney,
+  addMoneyNotice = '',
   upiList,
   showAddUpi,
   setShowAddUpi,
@@ -52,10 +53,16 @@ export default function PaymentMethodsSection({
         </form>
       )}
 
+      {addMoneyNotice && (
+        <p style={{ margin: '8px 16px 0', color: '#a81c5a', fontSize: '0.88rem', fontStyle: 'italic' }}>
+          {addMoneyNotice}
+        </p>
+      )}
+
       <div className="payment-sub-section">
         <div className="sub-section-header">
           <span>Saved UPI IDs</span>
-          <button type="button" onClick={() => setShowAddUpi(!showAddUpi)}>
+          <button type="button" className="panel-btn-secondary btn-sm" onClick={() => setShowAddUpi(!showAddUpi)}>
             + Add UPI
           </button>
         </div>

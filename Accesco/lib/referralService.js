@@ -220,9 +220,14 @@ export async function markReferralVisitConsumed(visitUid, phoneDigits = null) {
  * @param {string} phone
  * @param {string} name
  * @param {string} referredByCode
+ * @param {string} [idToken] Fresh Firebase ID token for the just-verified
+ *   session, used to authenticate the attribution call. Callers should fetch
+ *   this via `auth.currentUser.getIdToken()` immediately after phone
+ *   verification/linking completes. Attribution is silently skipped without
+ *   it (matching the existing best-effort `.catch()` around this call).
  * @returns {Promise<string>} The user's referral code
  */
-export async function initializeReferralProfile(phone, name, referredByCode = null) {
+export async function initializeReferralProfile(phone, name, referredByCode = null, idToken = null) {
   const digits = normalizePhoneDigits(phone);
   if (digits.length < 7) throw new Error('A valid phone number is required');
 
@@ -253,18 +258,24 @@ export async function initializeReferralProfile(phone, name, referredByCode = nu
       createdAt: new Date().toISOString(),
     });
 
-    // If referred by someone, trigger the attribution API securely
-    if (cleanReferredBy) {
+    // If referred by someone, trigger the attribution API securely. The
+    // referee's identity is verified server-side from idToken (see
+    // app/api/referral/attribute/route.js) — refereePhone is no longer sent,
+    // since a client-supplied phone can't be trusted.
+    if (cleanReferredBy && idToken) {
       await fetch('/api/referral/attribute', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          Authorization: `Bearer ${idToken}`,
+          'x-user-id': digits,
         },
         body: JSON.stringify({
-          refereePhone: digits,
           referredBy: cleanReferredBy,
         }),
       }).catch((err) => console.error('Failed to attribute referral:', err));
+    } else if (cleanReferredBy) {
+      console.error('Failed to attribute referral: no ID token available');
     }
 
     return newCode;

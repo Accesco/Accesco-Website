@@ -6,7 +6,8 @@ import { useRouter } from 'next/navigation';
 import {
   buildUnifiedStores,
   getGroklyCart,
-  setGroklyCart,
+  getGroklyCartFromBackend,
+  setGroklyCartAndSync,
   getSwadishttCart,
   setSwadishttCart,
   getInstaStyleCart,
@@ -194,13 +195,22 @@ function StoreSection({ store, collapsed, onToggle, onQtyChange, onRemove }) {
 
 export default function CartPage() {
   const router = useRouter();
-  const { user } = useAuth();
+  const { user, getIdToken } = useAuth();
   const [stores, setStores] = useState([]);
   const [isMounted, setIsMounted] = useState(false);
+  const [loadError, setLoadError] = useState(false);
   const [collapsedMap, setCollapsedMap] = useState({});
   const [search, setSearch] = useState('');
 
-  const refresh = async () => setStores(await buildUnifiedStores(user));
+  const refresh = async () => {
+    try {
+      setStores(await buildUnifiedStores(user, getIdToken));
+      setLoadError(false);
+    } catch (err) {
+      console.error('[cart] Failed to load unified cart:', err);
+      setLoadError(true);
+    }
+  };
 
   useEffect(() => {
     refresh();
@@ -227,17 +237,22 @@ export default function CartPage() {
 
   const updateQuantity = async (storeKey, item, nextQty) => {
     if (storeKey === 'swadishtt') {
-      const cart = await getSwadishttCart(user);
+      const cart = await getSwadishttCart(user, getIdToken);
+      // Matches on id + customizations, not just id — a dish can have more
+      // than one cart line when customizations differ (see
+      // _lib/swadishttCart.js's buildCartItemId), so this has to target the
+      // same specific line the displayed `item` came from.
+      const matches = (c) => c.id === item.id && JSON.stringify(c.customizations || {}) === JSON.stringify(item.customizations || {});
       const next = nextQty <= 0
-        ? cart.filter((c) => c.id !== item.id)
-        : cart.map((c) => (c.id === item.id ? { ...c, quantity: nextQty } : c));
-      await setSwadishttCart(user, next);
+        ? cart.filter((c) => !matches(c))
+        : cart.map((c) => (matches(c) ? { ...c, quantity: nextQty } : c));
+      await setSwadishttCart(user, next, getIdToken);
     } else if (storeKey === 'grokly') {
-      const cart = getGroklyCart();
+      const cart = (await getGroklyCartFromBackend(user, getIdToken)) || getGroklyCart();
       const next = { ...cart };
       if (nextQty <= 0) delete next[item.id];
       else next[item.id] = nextQty;
-      setGroklyCart(next);
+      await setGroklyCartAndSync(next, user, getIdToken);
     } else if (storeKey === 'instastyle') {
       const cart = getInstaStyleCart();
       const matches = (c) => c.id === item.id && c.selectedSize === item.selectedSize && c.selectedColor === item.selectedColor;
@@ -297,6 +312,12 @@ export default function CartPage() {
           {!isMounted ? (
             <div className={styles.emptyState}>
               <p>Loading your cart…</p>
+            </div>
+          ) : loadError ? (
+            <div className={styles.emptyState}>
+              <p className={styles.emptyTitle}>Couldn&apos;t load your cart</p>
+              <p className={styles.emptyDesc}>Something went wrong fetching your cart. Please try again.</p>
+              <button type="button" className={styles.emptyCta} onClick={refresh}>Retry</button>
             </div>
           ) : visibleStores.length === 0 ? (
             <div className={styles.emptyState}>

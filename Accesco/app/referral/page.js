@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '../components/AuthProvider';
 import AuthModal from '../components/AuthModal';
@@ -95,6 +96,7 @@ function TierRow({ tier, referralCount, claim }) {
 }
 
 export default function ReferralPage() {
+  const router = useRouter();
   const { user, signIn } = useAuth();
   const [stats, setStats] = useState(null);
   const [copied, setCopied] = useState(false);
@@ -304,7 +306,11 @@ export default function ReferralPage() {
                   🎉 You won ₹{safeStats.lastSurprise.amount} on your last referral!
                 </small>
               ) : null}
-              <button type="button" disabled={!safeUser}>
+              <button
+                type="button"
+                disabled={!safeUser}
+                onClick={() => router.push('/profile?section=redeem-code')}
+              >
                 Redeem Now →
               </button>
             </div>

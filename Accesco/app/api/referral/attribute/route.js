@@ -2,19 +2,30 @@ import { NextResponse } from 'next/server';
 import { db } from '../../../../lib/firebase';
 import { collection, doc, getDocs, query, where, runTransaction, addDoc, arrayUnion } from 'firebase/firestore';
 import { LAYER1_REFERRER_CREDIT, LAYER1_REFEREE_CREDIT, REFERRAL_TIERS, rollSurpriseReward } from '../../../../lib/referralRewards';
+import { verifyAuthToken } from '../../_lib/auth';
+import { creditWallet } from '../../_lib/wallet';
 
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
 
 export async function POST(request) {
   try {
-    const { refereePhone, referredBy } = await request.json();
+    // The referee's identity is derived from their own verified Firebase
+    // token, never trusted from the request body — otherwise anyone could
+    // POST an arbitrary phone number + valid referral code and redirect who
+    // gets attributed as the referrer for that person.
+    const { uid, error: authError } = await verifyAuthToken(request);
+    if (authError) {
+      return NextResponse.json({ error: authError }, { status: 401 });
+    }
 
-    if (!refereePhone || !referredBy) {
+    const { referredBy } = await request.json();
+
+    if (!referredBy) {
       return NextResponse.json({ error: 'Missing required parameters' }, { status: 400 });
     }
 
-    const refereeDigits = String(refereePhone).replace(/[^\d]/g, '');
+    const refereeDigits = String(uid).replace(/[^\d]/g, '');
     if (refereeDigits.length < 7) {
       return NextResponse.json({ error: 'Invalid referee phone' }, { status: 400 });
     }
@@ -138,6 +149,7 @@ export async function POST(request) {
         layer1ReferrerCredit: LAYER1_REFERRER_CREDIT,
         layer1RefereeCredit: LAYER1_REFEREE_CREDIT,
         surpriseAmount,
+        tierCreditTotal,
         tiersAwarded: newlyReachedTiers.map((t) => t.id),
       };
     });
@@ -153,6 +165,39 @@ export async function POST(request) {
       timestamp: new Date().toISOString(),
       ...auditInfo,
     });
+
+    // Mirror the same coins into the real spendable wallet (referralProfiles
+    // .coins itself is untouched and stays the source of truth this route's
+    // own arithmetic reads from — see lib/referralRewards.js). Both sides use
+    // the referral system's own phone-digit identity, since that's what
+    // referralProfiles is keyed by and what verifyAuthToken already accepts
+    // as a valid caller identity for anyone who has verified that phone.
+    // Best-effort: the referral attribution above already fully committed by
+    // this point (coins incremented, referredUsers updated), so a transient
+    // failure here is logged rather than surfaced as a failed attribution —
+    // it would not be retried by a client re-call anyway, since the
+    // referredByProcessed guard above short-circuits any retry to "already
+    // attributed" without re-running this block.
+    try {
+      await creditWallet({
+        uid: referrerDoc.id,
+        amount: auditInfo.layer1ReferrerCredit + auditInfo.surpriseAmount + auditInfo.tierCreditTotal,
+        reason: 'Referral reward',
+        source: 'referral_attribution',
+        referenceId: refereeDigits,
+        idempotencyKey: `referral_attribute_${refereeDigits}_referrer`,
+      });
+      await creditWallet({
+        uid: refereeDigits,
+        amount: auditInfo.layer1RefereeCredit,
+        reason: 'Referral signup bonus',
+        source: 'referral_attribution',
+        referenceId: refereeDigits,
+        idempotencyKey: `referral_attribute_${refereeDigits}_referee`,
+      });
+    } catch (walletErr) {
+      console.error('[referral/attribute] Wallet mirror failed (referralProfiles.coins already updated):', walletErr);
+    }
 
     return NextResponse.json({ success: true, message: 'Attribution successful' }, { status: 200 });
   } catch (error) {
