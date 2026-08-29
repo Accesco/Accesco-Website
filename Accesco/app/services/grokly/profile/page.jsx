@@ -17,6 +17,7 @@ import {
 import styles from './profile.module.css';
 import { useAuth } from '../../../components/AuthProvider';
 import { updateUserFieldsInFirebase } from '@/lib/userService';
+import { fetchWallet } from '@/lib/walletService';
 import GroklyHeader from '../components/GroklyHeader';
 import MobileHeader from '../components/MobileHeader';
 import BottomNav from '../components/BottomNav';
@@ -245,7 +246,7 @@ const INITIAL_BASKETS = [
 
 function GroklyProfileInner() {
   const { cart, cartCount, orders, addToCart, openCart, location, updateLocation, getProductQuantity, incrementQuantity, decrementQuantity } = useGrokly();
-  const { user, userData, signOut } = useAuth();
+  const { user, userData, getIdToken, signOut } = useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -319,33 +320,28 @@ function GroklyProfileInner() {
   const [recycledBags, setRecycledBags] = useState(0);
   const [ecoHistory, setEcoHistory] = useState([]);
 
-  // Load eco details from localStorage
+  // Load eco details from localStorage & server wallet balance
   useEffect(() => {
-    const bal = parseInt(localStorage.getItem('grokly_wallet_balance') || '0');
     const bags = parseInt(localStorage.getItem('grokly_recycled_bags_count') || '0');
     const rawHist = localStorage.getItem('grokly_eco_history');
     const hist = rawHist ? JSON.parse(rawHist) : [];
     
-    setWalletBalance(bal);
     setRecycledBags(bags);
     setEcoHistory(hist);
   }, []);
 
-  // Update on storage event
   useEffect(() => {
-    const handleStorageChange = () => {
-      const bal = parseInt(localStorage.getItem('grokly_wallet_balance') || '0');
-      const bags = parseInt(localStorage.getItem('grokly_recycled_bags_count') || '0');
-      const rawHist = localStorage.getItem('grokly_eco_history');
-      const hist = rawHist ? JSON.parse(rawHist) : [];
-      
-      setWalletBalance(bal);
-      setRecycledBags(bags);
-      setEcoHistory(hist);
-    };
-    window.addEventListener('storage', handleStorageChange);
-    return () => window.removeEventListener('storage', handleStorageChange);
-  }, []);
+    if (!user) return;
+    const walletUid = user.phone ? user.phone.replace(/[^\d]/g, '') : user.uid;
+    let cancelled = false;
+    (async () => {
+      const { wallet } = await fetchWallet(getIdToken, walletUid);
+      if (!cancelled && wallet) {
+        setWalletBalance(wallet.balance || 0);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [user, getIdToken]);
 
   useEffect(() => {
     setIsMounted(true);
@@ -631,10 +627,10 @@ function GroklyProfileInner() {
                 <div className={styles.cashBody}>
                   <div className={styles.balanceInfo}>
                     <span className={styles.balLabel}>Available Balance</span>
-                    <span className={styles.balAmount}>{walletBalance ? `₹${walletBalance}` : "₹XXXX"}</span>
+                    <span className={styles.balAmount}>₹{walletBalance.toLocaleString()}</span>
                   </div>
-                  <button className={styles.addBalBtn} onClick={() => showToast('Payment Gateway coming soon!', 'info')}>
-                    Add Cash
+                  <button className={styles.addBalBtn} onClick={() => router.push('/profile?section=payment-methods')}>
+                    + Add Cash
                   </button>
                 </div>
               </div>

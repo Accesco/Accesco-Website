@@ -40,6 +40,13 @@ export async function POST(request) {
       return NextResponse.json({ error: `Invalid status: ${targetStatus}` }, { status: 400 });
     }
 
+    if (targetStatus === 'CONFIRMED' && orderData?.paymentStatus !== 'SUCCESS') {
+      return NextResponse.json(
+        { error: 'Cannot send confirmation for an unverified or unpaid order.' },
+        { status: 400 }
+      );
+    }
+
     // Send appropriate email
     let result;
     if (targetStatus === 'CONFIRMED') {

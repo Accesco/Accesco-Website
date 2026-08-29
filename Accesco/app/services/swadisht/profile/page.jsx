@@ -11,6 +11,7 @@ import {
   uploadProfileImage,
   deleteProfileImage,
 } from '../../../../lib/profileService';
+import { fetchWallet } from '../../../../lib/walletService';
 import styles from './profile.module.css';
 
 const ORDERS_KEY = 'swadishtt-orders';
@@ -211,6 +212,23 @@ export default function SwadishttProfilePage() {
   const [openBasketMenu, setOpenBasketMenu] = useState(null);
   const [basketNotice, setBasketNotice] = useState('');
   const [avatarUploading, setAvatarUploading] = useState(false);
+  const [walletBalance, setWalletBalance] = useState(0);
+
+  useEffect(() => {
+    if (!user) {
+      setWalletBalance(0);
+      return;
+    }
+    const walletUid = user.phone ? user.phone.replace(/[^\d]/g, '') : user.uid;
+    let cancelled = false;
+    (async () => {
+      const { wallet } = await fetchWallet(getIdToken, walletUid);
+      if (!cancelled && wallet) {
+        setWalletBalance(wallet.balance || 0);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [user, getIdToken]);
 
   // Seed from the Firebase-backed auth user while the fuller backend
   // profile below is still loading.
@@ -579,13 +597,15 @@ export default function SwadishttProfilePage() {
 
             <section className={styles.wallet}>
               <div>
-                <strong>▣ Swadishtt Wallet</strong>
+                <strong>▣ Accesco Pay Wallet</strong>
                 <span>NEW</span>
               </div>
               <small>Available Balance</small>
               <section>
-                <strong>₹X.XX</strong>
-                <button type="button">+ Add Cash</button>
+                <strong>₹{walletBalance.toLocaleString()}</strong>
+                <Link href="/profile?section=payment-methods" className={styles.primaryButton} style={{ padding: '6px 12px', fontSize: '0.82rem', textDecoration: 'none' }}>
+                  + Add Cash
+                </Link>
               </section>
             </section>
 
