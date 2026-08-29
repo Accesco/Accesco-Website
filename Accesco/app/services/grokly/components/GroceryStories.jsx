@@ -3,6 +3,8 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import Image from 'next/image';
 import styles from './GroceryStories.module.css';
+import { useGrokly } from '../contexts/GroklyContext';
+import { getProductById } from '../lib/groklyData';
 
 const STORIES = [
   {
@@ -14,9 +16,9 @@ const STORIES = [
     description: 'See how fresh vegetables are selected, quality-checked, packed and prepared for delivery.',
     tags: ['#FarmFresh', '#VeggieHaul', '#GroklyStories'],
     items: [
-      ['Fresh Vegetable Basket', '1 basket', 199, 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=180&h=180&fit=crop&q=85'],
-      ['Tomato - Hybrid', '500 g', 28, 'https://images.unsplash.com/photo-1607305387299-a3d9611cd469?w=180&h=180&fit=crop&q=85'],
-      ['Green Capsicum', '250 g', 49, 'https://images.unsplash.com/photo-1563565375-f3fdfdbefa83?w=180&h=180&fit=crop&q=85'],
+      { id: 'veg-001', name: 'Tomato - Hybrid', detail: '500 g', price: 28, image: 'https://images.pexels.com/photos/1199562/pexels-photo-1199562.jpeg?w=300' },
+      { id: 'veg-004', name: 'Capsicum - Green', detail: '500 g', price: 45, image: 'https://images.pexels.com/photos/533360/pexels-photo-533360.jpeg?w=300' },
+      { id: 'veg-005', name: 'Carrot', detail: '500 g', price: 38, image: 'https://images.pexels.com/photos/1435706/pexels-photo-1435706.jpeg?w=300' },
     ],
   },
   {
@@ -28,9 +30,9 @@ const STORIES = [
     description: 'Smart pantry staples, simple organisation ideas and everyday essentials that save time.',
     tags: ['#PantryGoals', '#SmartStorage', '#GroklyStories'],
     items: [
-      ['Premium Basmati Rice', '1 kg', 149, 'https://images.unsplash.com/photo-1586201375761-83865001e31c?w=180&h=180&fit=crop&q=85'],
-      ['Toor Dal', '500 g', 96, 'https://images.unsplash.com/photo-1615485737651-580c9159c89c?w=180&h=180&fit=crop&q=85'],
-      ['Storage Jar Set', '3 pieces', 299, 'https://images.unsplash.com/photo-1584473457493-17c4c24290c8?w=180&h=180&fit=crop&q=85'],
+      { id: 'grok-new-074', name: 'Premium Basmati Rice', detail: '1 kg', price: 145, image: 'https://images.pexels.com/photos/4110256/pexels-photo-4110256.jpeg?w=300' },
+      { id: 'grok-new-020', name: 'Unpolished Toor Dal', detail: '200 g', price: 70, image: 'https://images.pexels.com/photos/1640772/pexels-photo-1640772.jpeg?w=300' },
+      { id: 'grok2-029', name: 'Glass Food Containers Set', detail: '4 pcs', price: 799, image: 'https://images-na.ssl-images-amazon.com/images/I/81TRdYFjbOL._AC_SL1500_.jpg' },
     ],
   },
   {
@@ -42,9 +44,9 @@ const STORIES = [
     description: 'A quick guide to reliable home-cleaning essentials for a fresher everyday space.',
     tags: ['#CleanHome', '#DailyEssentials', '#GroklyStories'],
     items: [
-      ['Multipurpose Cleaner', '500 ml', 129, 'https://images.unsplash.com/photo-1585421514738-01798e348b17?w=180&h=180&fit=crop&q=85'],
-      ['Microfibre Cloths', '3 pieces', 99, 'https://images.unsplash.com/photo-1584820927498-cfe5211fd8bf?w=180&h=180&fit=crop&q=85'],
-      ['Dishwash Liquid', '750 ml', 119, 'https://images.unsplash.com/photo-1583947215259-38e31be8751f?w=180&h=180&fit=crop&q=85'],
+      { id: 'clean-006', name: 'Vim Dishwash Liquid - Lemon', detail: '500 ml', price: 60, image: 'https://images.pexels.com/photos/4239098/pexels-photo-4239098.jpeg?w=300' },
+      { id: 'clean-003', name: 'Harpic Power Plus Toilet Cleaner', detail: '500 ml', price: 80, image: 'https://m.media-amazon.com/images/I/51-CLgWAdWL.jpg' },
+      { id: 'clean-004', name: 'Dettol Original Handwash', detail: '250 ml', price: 75, image: 'https://m.media-amazon.com/images/I/51-+1fKrKFL.jpg' },
     ],
   },
   {
@@ -56,9 +58,9 @@ const STORIES = [
     description: 'Fast breakfast combinations made with simple staples for busy weekday mornings.',
     tags: ['#QuickBreakfast', '#MorningFuel', '#GroklyStories'],
     items: [
-      ['Farm Fresh Eggs', '6 pieces', 72, 'https://images.unsplash.com/photo-1506976785307-8732e854ad03?w=180&h=180&fit=crop&q=85'],
-      ['Whole Wheat Bread', '400 g', 55, 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=180&h=180&fit=crop&q=85'],
-      ['Toned Milk', '500 ml', 31, 'https://images.unsplash.com/photo-1563636619-e9143da7973b?w=180&h=180&fit=crop&q=85'],
+      { id: 'dairy-007', name: 'Britannia Bread - Whole Wheat', detail: '450 g', price: 45, image: 'https://images.pexels.com/photos/461382/pexels-photo-461382.jpeg?w=300' },
+      { id: 'dairy-001', name: 'Amul Taaza Toned Fresh Milk', detail: '500 ml', price: 27, image: 'https://images.pexels.com/photos/704569/pexels-photo-704569.jpeg?w=300' },
+      { id: 'dairy-004', name: 'Amul Butter - Salted', detail: '100 g', price: 58, image: 'https://images.pexels.com/photos/209540/pexels-photo-209540.jpeg?w=300' },
     ],
   },
   {
@@ -70,9 +72,9 @@ const STORIES = [
     description: 'Everyday personal-care picks selected for simple routines and dependable daily use.',
     tags: ['#DailyCare', '#SelfCare', '#GroklyStories'],
     items: [
-      ['Gentle Body Lotion', '400 ml', 249, 'https://images.unsplash.com/photo-1556228578-8c89e6adf883?w=180&h=180&fit=crop&q=85'],
-      ['Hand Wash', '250 ml', 99, 'https://images.unsplash.com/photo-1584305574647-0cc949a2bb9f?w=180&h=180&fit=crop&q=85'],
-      ['Bathing Soap', '3 pieces', 135, 'https://images.unsplash.com/photo-1600857544200-b2f666a9a2ec?w=180&h=180&fit=crop&q=85'],
+      { id: 'care-001', name: 'Dove Beauty Bar Soap', detail: '100 g', price: 45, image: 'https://images.pexels.com/photos/4041279/pexels-photo-4041279.jpeg?w=300' },
+      { id: 'care-002', name: 'Head & Shoulders Shampoo', detail: '340 ml', price: 170, image: 'https://images.pexels.com/photos/4234218/pexels-photo-4234218.jpeg?w=300' },
+      { id: 'care-004', name: 'Nivea Moisturizing Cream', detail: '100 ml', price: 95, image: 'https://images.pexels.com/photos/3659862/pexels-photo-3659862.jpeg?w=300' },
     ],
   },
   {
@@ -84,9 +86,9 @@ const STORIES = [
     description: 'Build a practical monthly essentials basket and save more by planning the right quantities.',
     tags: ['#MonthlyStockUp', '#SmartSavings', '#GroklyStories'],
     items: [
-      ['Monthly Staples Combo', '1 combo', 699, 'https://images.unsplash.com/photo-1586201375761-83865001e31c?w=180&h=180&fit=crop&q=85'],
-      ['Whole Wheat Atta', '5 kg', 289, 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=180&h=180&fit=crop&q=85'],
-      ['Cooking Oil', '1 L', 159, 'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=180&h=180&fit=crop&q=85'],
+      { id: 'atta-001', name: 'Aashirvaad Whole Wheat Atta', detail: '5 kg', price: 285, image: 'https://images.pexels.com/photos/4110256/pexels-photo-4110256.jpeg?w=300' },
+      { id: 'grok-new-072', name: 'Everyday Cooking Oil', detail: '1 L', price: 179, image: 'https://images.pexels.com/photos/1435706/pexels-photo-1435706.jpeg?w=300' },
+      { id: 'atta-003', name: 'Tata Sampann Toor Dal', detail: '1 kg', price: 145, image: 'https://images.pexels.com/photos/1640772/pexels-photo-1640772.jpeg?w=300' },
     ],
   },
 ];
@@ -145,11 +147,12 @@ function Icon({ name, filled = false, size = 22 }) {
 }
 
 export default function GroceryStories() {
+  const { cart, addToCart, removeFromCart, getProductQuantity, openCart } = useGrokly();
+
   const [open, setOpen] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
   const [liked, setLiked] = useState(() => new Set());
   const [saved, setSaved] = useState(() => new Set());
-  const [added, setAdded] = useState(() => new Set());
   const [commentsByStory, setCommentsByStory] = useState({});
   const [commentText, setCommentText] = useState('');
   const [muted, setMuted] = useState(true);
@@ -257,6 +260,30 @@ export default function GroceryStories() {
       [story.id]: [...(current[story.id] || []), { id: String(Date.now()), name: 'you', text, time: 'now', likes: 0 }],
     }));
     setCommentText('');
+  };
+
+  // Toggle individual item in the real Grokly Cart
+  const handleToggleItem = (item) => {
+    const qty = getProductQuantity(item.id);
+    if (qty > 0) {
+      removeFromCart(item.id);
+      setToast(`Removed ${item.name} from cart`);
+    } else {
+      addToCart(item.id, 1);
+      setToast(`Added ${item.name} to cart`);
+    }
+  };
+
+  // Add all items in current story to the real Grokly Cart
+  const handleAddAllToCart = () => {
+    let count = 0;
+    story.items.forEach((item) => {
+      if (getProductQuantity(item.id) === 0) {
+        addToCart(item.id, 1);
+        count++;
+      }
+    });
+    setToast(count > 0 ? `Added ${count} items to cart!` : 'All items already in cart!');
   };
 
   useEffect(() => {
@@ -404,21 +431,51 @@ export default function GroceryStories() {
                   <div className={styles.orderSection}>
                     <h3>Add these to your basket</h3>
                     <div className={styles.orderList}>
-                      {story.items.map(([name, detail, price, image]) => {
-                        const key = `${story.id}-${name}`;
-                        const selected = added.has(key);
+                      {story.items.map((item) => {
+                        const inCart = getProductQuantity(item.id) > 0;
                         return (
-                          <div className={styles.orderItem} key={name}>
-                            <Image src={image} alt="" width={40} height={40} />
-                            <div><strong>{name}</strong><span>{detail} &nbsp;•&nbsp; ₹{price}</span></div>
-                            <button type="button" className={`${styles.addButton} ${selected ? styles.added : ''}`} onClick={() => { toggleSet(setAdded, key); setToast(selected ? 'Removed from basket' : 'Added to basket'); }}><Icon name={selected ? 'quality' : 'plus'} size={18} /></button>
+                          <div className={styles.orderItem} key={item.id}>
+                            <Image
+                              src={item.image}
+                              alt={item.name}
+                              width={40}
+                              height={40}
+                              onError={(e) => {
+                                e.target.src = 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=180&h=180&fit=crop&q=85';
+                              }}
+                            />
+                            <div>
+                              <strong>{item.name}</strong>
+                              <span>{item.detail} &nbsp;•&nbsp; ₹{item.price}</span>
+                            </div>
+                            <button
+                              type="button"
+                              className={`${styles.addButton} ${inCart ? styles.added : ''}`}
+                              onClick={() => handleToggleItem(item)}
+                              aria-label={inCart ? `Remove ${item.name} from basket` : `Add ${item.name} to basket`}
+                            >
+                              <Icon name={inCart ? 'quality' : 'plus'} size={18} />
+                            </button>
                           </div>
                         );
                       })}
                     </div>
                     <div className={styles.orderActions}>
-                      <button type="button" className={styles.primaryButton} onClick={() => setToast('Basket updated')}><Icon name="bag" size={18} />Add to basket</button>
-                      <button type="button" className={styles.secondaryButton}>View products<Icon name="arrow" size={18} /></button>
+                      <button type="button" className={styles.primaryButton} onClick={handleAddAllToCart}>
+                        <Icon name="bag" size={18} />
+                        Add all to basket
+                      </button>
+                      <button
+                        type="button"
+                        className={styles.secondaryButton}
+                        onClick={() => {
+                          setOpen(false);
+                          openCart();
+                        }}
+                      >
+                        View cart
+                        <Icon name="arrow" size={18} />
+                      </button>
                     </div>
                   </div>
                 </section>
