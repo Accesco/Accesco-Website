@@ -29,9 +29,9 @@ export default function ServicesCarousel() {
 
       <div ref={scrollRef} id="services-scroll-container" className="services-grid">
         {/* Grokly */}
-        <Link href="/services/grokly" className="serviceCardLinkWrap" style={{ display: 'block', textDecoration: 'none', color: 'inherit' }}>
+        <Link href="/services/grokly" className="serviceCardLinkWrap" style={{ display: 'block', textDecoration: 'none', color: 'inherit' }} aria-label="Open Grokly service page">
           <div className="service-premium-card grokly-card">
-            <div className="service-card-visual">
+            <div className="service-card-visual" style={{ cursor: 'pointer' }}>
               <Image src="/images/grokly-new2.png" alt="Grokly Groceries" fill className="serviceCardVisualImage" sizes="(max-width: 768px) 100vw, 340px" />
             </div>
             <div className="service-icon-circle">
@@ -46,9 +46,9 @@ export default function ServicesCarousel() {
         </Link>
 
         {/* Swadishtt */}
-        <Link href="/services/swadisht" className="serviceCardLinkWrap" style={{ display: 'block', textDecoration: 'none', color: 'inherit' }}>
+        <Link href="/services/swadisht" className="serviceCardLinkWrap" style={{ display: 'block', textDecoration: 'none', color: 'inherit' }} aria-label="Open Swadishtt service page">
           <div className="service-premium-card swadisht-card">
-            <div className="service-card-visual">
+            <div className="service-card-visual" style={{ cursor: 'pointer' }}>
               <Image src="/images/swadisht/swadisht_logo1.JPG" alt="Swadishtt Meals" fill className="serviceCardVisualImage" sizes="(max-width: 768px) 100vw, 340px" />
             </div>
             <div className="service-icon-circle">
@@ -63,9 +63,9 @@ export default function ServicesCarousel() {
         </Link>
 
         {/* InstaStyle */}
-        <Link href="/services/instastyle" className="serviceCardLinkWrap" style={{ display: 'block', textDecoration: 'none', color: 'inherit' }}>
+        <Link href="/services/instastyle" className="serviceCardLinkWrap" style={{ display: 'block', textDecoration: 'none', color: 'inherit' }} aria-label="Open InstaStyle service page">
           <div className="service-premium-card instastyle-card">
-            <div className="service-card-visual">
+            <div className="service-card-visual" style={{ cursor: 'pointer' }}>
               <Image src="/images/fashion-new2.png" alt="InstaStyle Fashion" fill className="serviceCardVisualImage" sizes="(max-width: 768px) 100vw, 340px" />
             </div>
             <div className="service-icon-circle">
