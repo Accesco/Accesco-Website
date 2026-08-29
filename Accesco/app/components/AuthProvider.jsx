@@ -4,7 +4,7 @@ import { createContext, useContext, useEffect, useState, useCallback } from 'rea
 import { auth, db } from '../../lib/firebase'
 import { onAuthStateChanged, signOut as firebaseSignOut, signInAnonymously } from 'firebase/auth'
 import { doc, getDoc } from 'firebase/firestore'
-import { getUserProfileData, migrateLocalStorageToFirebase } from '../../lib/userService'
+import { getUserProfileData, migrateLocalStorageToFirebase, purgeLegacyLocalStorage } from '../../lib/userService'
 
 const AuthContext = createContext(null)
 
@@ -94,6 +94,9 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     let isMounted = true;
 
+    // Safely purge legacy application-owned localStorage on client boot
+    purgeLegacyLocalStorage();
+
     // Firebase Auth (and Firestore for the profile) is the single source of
     // truth for who's logged in — no local caching of the session.
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
@@ -132,6 +135,7 @@ export function AuthProvider({ children }) {
       if (profile?.uid) {
         // Run safe legacy localStorage migration to Firebase
         await migrateLocalStorageToFirebase(profile.uid)
+        purgeLegacyLocalStorage()
         // Fetch authoritative Firestore profile data
         const profileData = await getUserProfileData(profile.uid)
         setUserData(profileData)

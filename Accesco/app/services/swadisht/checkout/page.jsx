@@ -11,7 +11,6 @@ import { useAuth } from '../../../components/AuthProvider';
 import { useOtherStoreItems, clearAllBrandCarts } from '@/lib/unifiedCart';
 import { STORE_PLACERS, postUnifiedOrderRecord } from '@/lib/unifiedCheckoutOrders';
 
-const ORDERS_STORAGE_KEY = 'swadishtt-orders';
 
 function CheckoutContent() {
   const router = useRouter();

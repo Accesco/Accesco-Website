@@ -9,7 +9,6 @@ import { useSwadishtt } from '../contexts/SwadishttContext';
 import { useAuth } from '../../../components/AuthProvider';
 import styles from './orders.module.css';
 
-const ORDERS_STORAGE_KEY = 'swadishtt-orders';
 
 const FILTERS = [
   { key: 'all', label: 'All Orders' },

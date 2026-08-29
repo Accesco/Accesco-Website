@@ -479,7 +479,8 @@ export async function migrateLocalStorageToFirebase(userId) {
       `swadishtt-health-mode`,
       `userLocation`,
       `SAVED_ADDRESSES_KEY`,
-      `accesso_cookie_consent`
+      `accesso_cookie_consent`,
+      `accesco_cookie_consent`
     );
 
     // Perform Firestore update if there's legacy data to migrate
@@ -498,5 +499,93 @@ export async function migrateLocalStorageToFirebase(userId) {
     }
   } catch (err) {
     console.error('Error migrating localStorage to Firebase:', err);
+  }
+}
+
+/**
+ * Safely purges any legacy application-owned keys from localStorage.
+ * Third-party SDK keys (e.g. Razorpay 'rzp_*', reCAPTCHA '_grecaptcha', Firebase internal) are strictly preserved.
+ */
+export function purgeLegacyLocalStorage() {
+  if (typeof window === 'undefined' || !window.localStorage) return;
+
+  const preservedPrefixes = ['rzp_', '_grecaptcha', 'firebase:'];
+  const preservedExact = ['_grecaptcha', 'rzp_checkout_anon_id', 'rzp_device_id'];
+
+  const isPreserved = (key) => {
+    if (preservedExact.includes(key)) return true;
+    return preservedPrefixes.some((prefix) => key.startsWith(prefix));
+  };
+
+  const knownLegacyKeys = [
+    'accesco_cookie_consent',
+    'accesso_cookie_consent',
+    'swadishtt_device_id',
+    'grokly_device_id',
+    'instastyle_device_id',
+    'swadishtt-orders',
+    'grokly_orders',
+    'instastyle_orders',
+    'grokly_cart',
+    'instastyle_cart',
+    'agriConnectCart',
+    'userLocation',
+    'accesco_user',
+    'accesco_waitlist_registered',
+    'sw_issue_reports',
+    'sw_container_returns',
+    'swadishtt-health-profile',
+    'swadishtt-health-mode',
+    'instastyle_custom_products',
+    'instastyle_circular_credits',
+    'instastyle_activity_log',
+    'instastyle_profile',
+    'instastyle_wishlist',
+    'grokly_wishlist',
+    'grokly_baskets',
+    'grokly_recycled_bags_count',
+    'grokly_eco_history',
+    'grokly_wallet_balance',
+    'grokly_free_delivery',
+    'swadishtt_free_delivery',
+    'swadishtt_coupon_50',
+    'accesco_user_vouchers',
+    'instastyle_vouchers',
+    'accesco_saved_addresses',
+    'SAVED_ADDRESSES_KEY',
+  ];
+
+  try {
+    // 1. Remove known legacy keys
+    knownLegacyKeys.forEach((k) => {
+      try {
+        localStorage.removeItem(k);
+      } catch (e) {}
+    });
+
+    // 2. Scan and remove any remaining app-prefixed keys while leaving third-party intact
+    const allKeys = [];
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (key) allKeys.push(key);
+    }
+
+    allKeys.forEach((key) => {
+      if (isPreserved(key)) return;
+      if (
+        key.startsWith('accesco_') ||
+        key.startsWith('accesso_') ||
+        key.startsWith('swadishtt') ||
+        key.startsWith('sw_') ||
+        key.startsWith('grokly_') ||
+        key.startsWith('instastyle_')
+      ) {
+        try {
+          localStorage.removeItem(key);
+        } catch (e) {}
+      }
+    });
+  } catch (e) {
+    console.warn('Error purging legacy localStorage:', e);
   }
 }
