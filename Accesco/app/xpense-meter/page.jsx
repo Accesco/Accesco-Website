@@ -7,9 +7,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useAuth } from "@/app/components/AuthProvider";
 import { fetchXpenseSummary, saveXpenseBudget } from "@/lib/xpenseMeterService";
 
-const XpenseMobileFlow = dynamic(() => import("./XpenseMobileFlow"), {  
-  ssr: false,
-});
+
 const AuthModal = dynamic(() => import("@/app/components/AuthModal"), {
   ssr: false,
 });
@@ -562,15 +560,7 @@ export default function XpenseMeterPage() {
 
   return (
     <main className="xd-root">
-      <XpenseMobileFlow
-        user={user}
-        summary={summary}
-        summaryLoading={summaryLoading}
-        monthKey={monthKey}
-        monthLabel={summary?.monthLabel || formatMonthLabelFallback(monthKey)}
-        onSaveBudget={persistBudget}
-        onRequestLogin={requireLogin}
-      />
+      
 
       {!authLoading && !user && (
         <div className="xd-login-banner">
@@ -1366,7 +1356,7 @@ export default function XpenseMeterPage() {
           bottom: 0;
           width: 100%;
           height: auto;
-          pointer-events: none;.
+          pointer-events: none;
           user-select: none;
         }
 
@@ -2362,6 +2352,36 @@ export default function XpenseMeterPage() {
             flex-basis: 100%;
           }
         }
+}
+        @media (max-width: 420px) {
+  .xd-wallet-content {
+    left: 20px;
+    right: 20px;
+    bottom: 10px;
+    gap: 8px;
+  }
+
+  .xd-wallet-spend {
+    margin-left: 0;
+    margin-bottom: 0;
+  }
+
+  .xd-wallet-spend span,
+  .xd-wallet-spend small {
+    font-size: 12px;
+  }
+
+  .xd-wallet-spend strong {
+    font-size: 28px;
+    margin: 3px 0;
+  }
+
+  .xd-accounts {
+    font-size: 11px;
+    height: 28px;
+    padding: 0 10px;
+  }
+}
       `}</style>
 
       {/* Scoped styled-jsx never applies to custom components like next/link's
