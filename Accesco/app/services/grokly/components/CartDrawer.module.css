@@ -587,7 +587,7 @@
 .rcBannerText strong {
   font-size: 13px;
   font-weight: 700;
-  color: #15803d;
+  color: #12271D;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -595,7 +595,7 @@
 
 .rcBannerText span {
   font-size: 11px;
-  color: #16a34a;
+  color: #12271D;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -610,7 +610,7 @@
   font-size: 12px;
   font-weight: 700;
   color: #fff;
-  background: #16a34a;
+  background: #12271D;
   padding: 5px 10px;
   border-radius: 20px;
 }
@@ -619,7 +619,7 @@
   display: inline-block;
   font-size: 12px;
   font-weight: 600;
-  color: #15803d;
+  color: #12271D;
   background: #bbf7d0;
   padding: 5px 10px;
   border-radius: 20px;
@@ -639,7 +639,7 @@
 
 .rcReturnLabel {
   font-size: 11px;
-  color: #15803d;
+  color: #12271D;
   font-weight: 600;
   white-space: nowrap;
   flex-shrink: 0;
@@ -673,7 +673,7 @@
   position: absolute;
   top: -5px;
   right: -5px;
-  background: #0c831f;
+  background: #1B3A2B;
   color: #fff;
   font-size: 9px;
   font-weight: 700;

@@ -172,7 +172,7 @@
   position: absolute;
   top: -6px;
   right: -6px;
-  background: #0c831f;
+  background: #1B3A2B;
   color: #fff;
   font-size: 10px;
   font-weight: 700;
@@ -251,12 +251,12 @@
   display: block;
   font-size: 15px;
   font-weight: 800;
-  color: #15803d;
+  color: #12271D;
 }
 
 .creditSub {
   font-size: 11px;
-  color: #16a34a;
+  color: #12271D;
 }
 
 .creditTag {
@@ -297,7 +297,7 @@
   padding: 13px;
   border-radius: 12px;
   border: none;
-  background: linear-gradient(135deg, #16a34a, #0c831f);
+  background: linear-gradient(135deg, #12271D, #1B3A2B);
   color: #fff;
   font-size: 14px;
   font-weight: 700;
@@ -390,7 +390,7 @@
 .confirmedSummaryRow:last-child { border-bottom: none; }
 
 .greenText {
-  color: #16a34a;
+  color: #12271D;
 }
 
 .confirmedItems {
@@ -427,7 +427,7 @@
 .confirmedItemCredit {
   font-size: 13px;
   font-weight: 700;
-  color: #16a34a;
+  color: #12271D;
 }
 
 .confirmedNote {
@@ -446,7 +446,7 @@
   padding: 14px;
   border-radius: 14px;
   border: none;
-  background: linear-gradient(135deg, #16a34a, #0c831f);
+  background: linear-gradient(135deg, #12271D, #1B3A2B);
   color: #fff;
   font-size: 15px;
   font-weight: 700;

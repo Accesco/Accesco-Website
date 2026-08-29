@@ -62,7 +62,7 @@
   to { opacity: 1; transform: translate(-50%, 0); }
 }
 
-.toast-success { background: #0c831f; }
+.toast-success { background: #1B3A2B; }
 .toast-info { background: #1565c0; }
 .toast-danger { background: #dc2626; }
 
@@ -134,7 +134,7 @@
 .avatar {
   width: 60px;
   height: 60px;
-  background: #0c831f;
+  background: #1B3A2B;
   color: white;
   display: flex;
   align-items: center;
@@ -179,7 +179,7 @@
 }
 
 .quickCard:hover {
-  border-color: #0c831f;
+  border-color: #1B3A2B;
   background: #fafdfa;
   transform: translateY(-2px);
 }
@@ -218,7 +218,7 @@
 
 /* ── GROKLY CASH CARD ── */
 .zeptoCashCard {
-  background: linear-gradient(135deg, #0c831f 0%, #065f17 100%);
+  background: linear-gradient(135deg, #1B3A2B 0%, #065f17 100%);
   border-radius: 20px;
   padding: 18px;
   color: white;
@@ -283,7 +283,7 @@
 
 .addBalBtn {
   background: white;
-  color: #0c831f;
+  color: #1B3A2B;
   border: none;
   padding: 8px 16px;
   border-radius: 10px;
@@ -333,7 +333,7 @@
   display: inline-block;
   margin-top: 12px;
   padding: 10px 20px;
-  background: #0c831f;
+  background: #1B3A2B;
   color: white;
   text-decoration: none;
   border-radius: 10px;
@@ -359,7 +359,7 @@
 }
 
 .orderCard:hover {
-  border-color: #0c831f;
+  border-color: #1B3A2B;
 }
 
 .orderMain {
@@ -399,7 +399,7 @@
 
 .trackLink {
   text-decoration: none;
-  color: #0c831f;
+  color: #1B3A2B;
   font-weight: 800;
   font-size: 13px;
 }
@@ -439,9 +439,9 @@
 
 .editBtn {
   padding: 6px 12px;
-  border: 1px solid #0c831f;
+  border: 1px solid #1B3A2B;
   background: white;
-  color: #0c831f;
+  color: #1B3A2B;
   border-radius: 8px;
   font-size: 11px;
   font-weight: 700;
@@ -484,7 +484,7 @@
 }
 
 .searchInput:focus {
-  border-color: #0c831f;
+  border-color: #1B3A2B;
   box-shadow: 0 0 0 3px rgba(12, 131, 31, 0.08);
 }
 
@@ -524,7 +524,7 @@
 }
 
 .basketRowCard:hover {
-  border-color: #0c831f;
+  border-color: #1B3A2B;
   box-shadow: 0 6px 16px rgba(12, 131, 31, 0.04);
 }
 
@@ -651,7 +651,7 @@
 
 .menuItem:hover {
   background: #f5faf5;
-  color: #0c831f;
+  color: #1B3A2B;
 }
 
 .menuItemDelete {
@@ -728,9 +728,9 @@
 /* Wishlist add/remove buttons */
 .wishlistAddBtn {
   padding: 6px 16px;
-  border: 1.5px solid #0c831f;
+  border: 1.5px solid #1B3A2B;
   background: #fff;
-  color: #0c831f;
+  color: #1B3A2B;
   border-radius: 8px;
   font-size: 12px;
   font-weight: 800;
@@ -740,7 +740,7 @@
 }
 
 .wishlistAddBtn:hover {
-  background: #0c831f;
+  background: #1B3A2B;
   color: #fff;
 }
 
@@ -784,7 +784,7 @@
 }
 
 .detailEstPrice {
-  color: #0c831f;
+  color: #1B3A2B;
 }
 
 .detailItemsList {
@@ -851,7 +851,7 @@
 .detailPriceActual {
   font-size: 12px;
   font-weight: 800;
-  color: #0c831f;
+  color: #1B3A2B;
 }
 
 .detailPriceMrp {
@@ -879,7 +879,7 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  color: #0c831f;
+  color: #1B3A2B;
   transition: all 0.2s;
   box-shadow: 0 1px 3px rgba(0,0,0,0.05);
 }
@@ -989,12 +989,12 @@
 
 .navTab:hover {
   background: #f4faf4;
-  color: #0c831f;
+  color: #1B3A2B;
 }
 
 .navTab.activeTab {
   background: #eaf6ea;
-  color: #0c831f;
+  color: #1B3A2B;
 }
 
 .quickGridMobile {

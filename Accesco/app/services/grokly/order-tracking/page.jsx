@@ -222,7 +222,7 @@ function GroklyTrackingContent() {
       // Define styled marker icons matching input_file_12.png perfectly (Using more radiant modern green)
       const greenDotIcon = L.divIcon({
         html: `<div style="
-          background: #0c831f;
+          background: #1B3A2B;
           width: 20px;
           height: 20px;
           border-radius: 50%;
@@ -342,7 +342,7 @@ function GroklyTrackingContent() {
     }
     const line = roadRoute.length >= 2 ? roadRoute : [hubCoords, homeCoords];
     roadPolylineRef.current = L.polyline(line, {
-      color: '#0c831f',
+      color: '#1B3A2B',
       weight: 4,
       opacity: 0.85,
     }).addTo(map);
@@ -733,7 +733,7 @@ function GroklyTrackingContent() {
               </div>
               <div className={styles.progressContent}>
                 <div className={styles.stepTitleRow}>
-                  <p className={styles.progressTitle} style={{ color: '#0c831f' }}>Arriving Soon</p>
+                  <p className={styles.progressTitle} style={{ color: '#1B3A2B' }}>Arriving Soon</p>
                   <span className={styles.arrivingLabelTag}>In ~{eta} min</span>
                 </div>
                 <p className={styles.progressDesc}>Rider is on the way — will hand over at your door.</p>
