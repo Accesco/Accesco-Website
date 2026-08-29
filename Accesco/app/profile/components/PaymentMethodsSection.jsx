@@ -16,6 +16,7 @@ export default function PaymentMethodsSection({
   handleAddUpi,
   cardsList = [],
   transactions = [],
+  isAddingMoney = false,
 }) {
   return (
     <div className="settings-card profile-panel-card">
@@ -26,7 +27,7 @@ export default function PaymentMethodsSection({
       <div className="wallet-banner-card">
         <div className="wallet-info">
           <span className="wallet-title">Accesco Pay Wallet</span>
-          <h3 className="wallet-balance">₹{walletBalance}</h3>
+          <h3 className="wallet-balance">₹{typeof walletBalance === 'number' ? walletBalance.toLocaleString() : walletBalance}</h3>
           <p className="wallet-sub">Instant 1-click checkout across Grokly, Swadishtt & InstaStyle</p>
         </div>
         <button
@@ -42,13 +43,16 @@ export default function PaymentMethodsSection({
         <form className="inline-add-box" onSubmit={handleAddMoney}>
           <input
             type="number"
-            placeholder="Enter amount (₹)"
+            placeholder="Enter amount (e.g. 2500)"
             value={addAmount}
             onChange={(e) => setAddAmount(e.target.value)}
+            min="1"
+            max="100000"
+            disabled={isAddingMoney}
             required
           />
-          <button type="submit" className="panel-btn-primary">
-            Top Up Wallet
+          <button type="submit" className="panel-btn-primary" disabled={isAddingMoney}>
+            {isAddingMoney ? 'Opening Payment...' : 'Continue to Payment'}
           </button>
         </form>
       )}

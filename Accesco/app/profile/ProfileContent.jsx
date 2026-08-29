@@ -6,8 +6,8 @@ import Image from 'next/image';
 import { useRouter, useSearchParams } from 'next/navigation';
 import AccescoHeader from '../../components/AccescoHeader';
 import AuthModal from '../components/AuthModal';
-import { useAuth } from '../components/AuthProvider';
-import { fetchWallet, redeemCode } from '../../lib/walletService';
+import { fetchWallet, redeemCode, createWalletTopupOrder, verifyWalletTopup } from '../../lib/walletService';
+import { loadRazorpayScript } from '../../lib/razorpayService';
 import {
   fetchSavedAddresses,
   createAddress,
@@ -141,6 +141,7 @@ export default function ProfileContent() {
   const [addAmount, setAddAmount] = useState('');
   const [showAddMoney, setShowAddMoney] = useState(false);
   const [addMoneyNotice, setAddMoneyNotice] = useState('');
+  const [isAddingMoney, setIsAddingMoney] = useState(false);
   const [upiList, setUpiList] = useState([]);
   const [newUpi, setNewUpi] = useState('');
   const [showAddUpi, setShowAddUpi] = useState(false);
@@ -449,15 +450,93 @@ export default function ProfileContent() {
     }
   };
 
-  // Wallet handler. Crediting a real wallet without collecting real payment
-  // would be a fraud vector, and wiring actual payment collection here
-  // duplicates the separate Razorpay-integrity work already scoped
-  // elsewhere — so this stays a visible "coming soon" state rather than a
-  // silent fake credit.
-  const handleAddMoney = (e) => {
+  const handleAddMoney = async (e) => {
     e.preventDefault();
-    setAddMoneyNotice('Adding money directly is coming soon. For now, redeem a promo code above to add funds to your wallet.');
-    setAddAmount('');
+    setAddMoneyNotice('');
+    const num = Number(addAmount);
+    if (!Number.isFinite(num) || num <= 0 || !Number.isInteger(num)) {
+      setAddMoneyNotice('Please enter a valid positive whole amount in ₹.');
+      return;
+    }
+    if (num > 100000) {
+      setAddMoneyNotice('Maximum top-up amount per transaction is ₹1,00,000.');
+      return;
+    }
+
+    if (!user || !walletUid) {
+      setAddMoneyNotice('Please sign in to top up your wallet.');
+      return;
+    }
+
+    try {
+      setIsAddingMoney(true);
+      const loaded = await loadRazorpayScript();
+      if (!loaded) throw new Error('Failed to load Razorpay SDK. Please check your internet connection.');
+
+      const orderData = await createWalletTopupOrder(getIdToken, walletUid, num);
+
+      await new Promise((resolve, reject) => {
+        const rzp = new window.Razorpay({
+          key: orderData.keyId,
+          amount: orderData.amount,
+          currency: orderData.currency,
+          order_id: orderData.orderId,
+          name: 'Accesco Pay Wallet',
+          description: `Top-up ₹${num.toLocaleString()}`,
+          prefill: {
+            name: displayName !== 'Accesco User' ? displayName : '',
+            email: email !== 'Not added' ? email : '',
+            contact: phone !== 'Not added' ? phone : '',
+          },
+          theme: { color: '#a81c5a' },
+          handler: async (response) => {
+            try {
+              const verified = await verifyWalletTopup(getIdToken, walletUid, {
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature,
+                amount: num,
+              });
+
+              // Refresh wallet balance and ledger from server
+              const { wallet } = await fetchWallet(getIdToken, walletUid);
+              if (wallet) {
+                setWalletBalance(wallet.balance || 0);
+                setWalletTransactions((wallet.transactions || []).map(toDisplayTransaction));
+              }
+
+              setAddMoneyNotice(`Success! ₹${num.toLocaleString()} credited to your Accesco Pay Wallet.`);
+              setAddAmount('');
+              setShowAddMoney(false);
+              resolve(verified);
+            } catch (verr) {
+              setAddMoneyNotice(verr.message || 'Payment verification failed.');
+              reject(verr);
+            }
+          },
+          modal: {
+            ondismiss: () => {
+              setAddMoneyNotice('Top-up payment cancelled.');
+              reject(new Error('Payment cancelled'));
+            },
+          },
+        });
+
+        rzp.on('payment.failed', (resp) => {
+          setAddMoneyNotice(resp?.error?.description || 'Payment failed.');
+          reject(new Error(resp?.error?.description || 'Payment failed'));
+        });
+
+        rzp.open();
+      });
+    } catch (err) {
+      if (err.message !== 'Payment cancelled') {
+        console.error('Wallet top-up error:', err);
+        setAddMoneyNotice(err.message || 'Unable to process top-up right now.');
+      }
+    } finally {
+      setIsAddingMoney(false);
+    }
   };
 
   const handleAddUpi = async (e) => {
@@ -767,6 +846,7 @@ export default function ProfileContent() {
                         handleAddUpi={handleAddUpi}
                         cardsList={cardsList}
                         transactions={walletTransactions}
+                        isAddingMoney={isAddingMoney}
                       />
                     )}
 
