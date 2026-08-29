@@ -7,9 +7,13 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useAuth } from "@/app/components/AuthProvider";
 import { fetchXpenseSummary, saveXpenseBudget } from "@/lib/xpenseMeterService";
 
+<<<<<<< HEAD
 const XpenseMobileFlow = dynamic(() => import("./XpenseMobileFlow"), {  
   ssr: false,
 });
+=======
+
+>>>>>>> 06135bc (fix: make xpense meter responsive)
 const AuthModal = dynamic(() => import("@/app/components/AuthModal"), {
   ssr: false,
 });
@@ -562,16 +566,6 @@ export default function XpenseMeterPage() {
 
   return (
     <main className="xd-root">
-      <XpenseMobileFlow
-        user={user}
-        summary={summary}
-        summaryLoading={summaryLoading}
-        monthKey={monthKey}
-        monthLabel={summary?.monthLabel || formatMonthLabelFallback(monthKey)}
-        onSaveBudget={persistBudget}
-        onRequestLogin={requireLogin}
-      />
-
       {!authLoading && !user && (
         <div className="xd-login-banner">
           <span>Log in to see your real spend across Grokly, Swadishtt &amp; InstaStyle.</span>
