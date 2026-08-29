@@ -7,6 +7,10 @@
   border-radius: var(--grokly-radius-md);
   overflow: hidden;
   animation: pulse 1.5s ease-in-out infinite;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 @keyframes pulse {
@@ -20,7 +24,7 @@
 
 .skeletonImage {
   width: 100%;
-  height: 180px;
+  aspect-ratio: 1;
   background: linear-gradient(
     90deg,
     var(--grokly-bg) 0%,
