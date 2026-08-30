@@ -376,8 +376,9 @@ export default function RestaurantDetailPage() {
     <span
       className={styles.rating}
       style={{
-        fontSize: "15px",
+        fontSize: "20px",
         fontWeight: 700,
+        color:"white"
       }}
     >
     <Star size={16} fill="white" />   {restaurant.rating}
@@ -385,7 +386,7 @@ export default function RestaurantDetailPage() {
 
     <span
       style={{
-        fontSize: "12px",
+        fontSize: "15px",
         opacity: 0.8,
       }}
     >
@@ -397,11 +398,12 @@ export default function RestaurantDetailPage() {
   <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
     <span
       style={{
-        fontSize: "15px",
+        fontSize: "20px",
         fontWeight: 700,
           display: "inline-flex",
           alignItems: "center",
           gap: "6px",
+          color:"white"
         
       }}
     >
@@ -410,8 +412,9 @@ export default function RestaurantDetailPage() {
 
     <span
       style={{
-        fontSize: "12px",
+        fontSize: "15px",
         opacity: 0.8,
+        color:"white"
       }}
     >
       Delivery Time
@@ -422,7 +425,7 @@ export default function RestaurantDetailPage() {
   <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
     <span
       style={{
-        fontSize: "15px",
+        fontSize: "20px",
         fontWeight: 700,
           display: "inline-flex",
           alignItems: "center",
@@ -434,7 +437,7 @@ export default function RestaurantDetailPage() {
 
     <span
       style={{
-        fontSize: "12px",
+        fontSize: "15px",
         opacity: 0.8,
       }}
     >
