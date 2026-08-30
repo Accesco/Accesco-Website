@@ -128,6 +128,16 @@ const pressReleases = [
     logo: '/images/entrepreneur-pioneer-logo.png',
     isFeatured: true,
   },
+ {
+  id: 17,
+  title: 'Accesco Living Targets Bangaluru With Infrastructure-Led Quick Commerce Model.',
+  date: 'August 22, 2026',
+  category: 'Media Coverage',
+  excerpt: 'Fox Story India profile how Accesco Living is building an infrastructure-first approach to quick commerce as it prepares to launch in Bengaluru',
+  image: '/images/foxstoryindia.PNG',
+  readTime: '5 min read',
+  url: 'https://foxstoryindia.com/2026/08/22/accesco-living-targets-bengaluru-with-infrastructure-led-quickcommerce-model/',
+},
 ];
 
 const pressKitItems = [
