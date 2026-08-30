@@ -399,6 +399,10 @@ export default function RestaurantDetailPage() {
       style={{
         fontSize: "15px",
         fontWeight: 700,
+          display: "inline-flex",
+          alignItems: "center",
+          gap: "6px",
+        
       }}
     >
       <Clock size={18} color="white" /> {restaurant.deliveryTime}
@@ -420,6 +424,9 @@ export default function RestaurantDetailPage() {
       style={{
         fontSize: "15px",
         fontWeight: 700,
+          display: "inline-flex",
+          alignItems: "center",
+          gap: "6px",
       }}
     >
       <Truck size={18} color="white" /> Fast

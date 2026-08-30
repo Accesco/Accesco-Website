@@ -101,6 +101,9 @@
   background: rgba(255, 255, 255, 0.18);
   font-size: 13px;
   font-weight: 700;
+   display: inline-flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .heroContent h1 {
@@ -154,7 +157,12 @@
   color: rgba(255, 255, 255, 0.62);
 }
 
-.rating { color: #ffd7a8; }
+.rating { 
+  color: #ffd7a8;
+    display: inline-flex;
+  align-items: center;
+  gap: 6px; 
+}
 
 .cardDivider { height: 1px; margin: 18px 0 14px; background: rgba(255, 255, 255, 0.22); max-width: 620px; }
 
