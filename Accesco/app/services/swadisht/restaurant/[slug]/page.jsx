@@ -9,6 +9,7 @@ import { useSwadishtt } from "../../contexts/SwadishttContext";
 import { RESTAURANTS } from "../../lib/swadishttData";
 import styles from "./restaurant.module.css";
 
+
 const HERO_FALLBACK_IMAGE = "/images/swadisht/Swadishtt-kitchen-bg.png";
 const RESTAURANT_LOGO = "/images/swadisht/swadisht_logo.JPG";
 
@@ -329,18 +330,19 @@ export default function RestaurantDetailPage() {
               <span className={styles.locationPill}>
                 📍 {(location || "Bengaluru").toUpperCase()}
               </span>
-              <span className={styles.hotBadge}>♨ Hot &amp; Popular</span>
+              <span className={styles.hotBadge}>  KORAMANGALA, BANGALORE</span>
             </div>
 
             <h1
               style={{
-                margin: 0,
+                  margin: 0,
                 fontWeight: 900,
+                fontFamily: "'Playfair Display', serif",
                 fontSize: "clamp(46px, 5.6vw, 68px)",
                 lineHeight: 1,
                 color: "#fff",
                 textShadow: "0 2px 12px rgba(0,0,0,0.65)",
-              }}
+ }}
             >
               {restaurant.name}
             </h1>
@@ -358,34 +360,110 @@ export default function RestaurantDetailPage() {
               {description}
             </p>
 
-            <div
-              className={styles.restaurantMeta}
-              style={{
-                margin: 0,
-                display: "flex",
-                flexWrap: "wrap",
-                gap: "12px 24px",
-                fontSize: "15px",
-                color: "#fff",
-                textShadow: "0 1px 4px rgba(0,0,0,0.6)",
-              }}
-            >
-              <span className={styles.rating}>★ {restaurant.rating}</span>
-              <span>{restaurant.ratingCount || 100}+ ratings</span>
-              <span>◷ {restaurant.deliveryTime}</span>
-              <span>🛵 Fast and Reliable</span>
-            </div>
+           <div
+  className={styles.restaurantMeta}
+  style={{
+    margin: 0,
+    display: "flex",
+    alignItems: "flex-start",
+    gap: "28px",
+    color: "#fff",
+    textShadow: "0 1px 4px rgba(0,0,0,0.6)",
+  }}
+>
+  {/* Rating */}
+  <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+    <span
+      className={styles.rating}
+      style={{
+        fontSize: "15px",
+        fontWeight: 700,
+      }}
+    >
+      ★ {restaurant.rating}
+    </span>
 
-            <div className={styles.cardDivider} style={{ margin: "6px 0" }} />
+    <span
+      style={{
+        fontSize: "12px",
+        opacity: 0.8,
+      }}
+    >
+      {restaurant.ratingCount || 100}+ ratings
+    </span>
+  </div>
 
-            <div className={styles.cuisineBlock}>
-              <span className={styles.cuisineLabel}>Cuisine</span>
-              <div className={styles.cuisineChips}>
-                {restaurant.cuisines.map((c) => (
-                  <span key={c}>{c}</span>
-                ))}
-              </div>
-            </div>
+  {/* Delivery Time */}
+  <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+    <span
+      style={{
+        fontSize: "15px",
+        fontWeight: 700,
+      }}
+    >
+      ◷ {restaurant.deliveryTime}
+    </span>
+
+    <span
+      style={{
+        fontSize: "12px",
+        opacity: 0.8,
+      }}
+    >
+      Delivery Time
+    </span>
+  </div>
+
+  {/* Delivery */}
+  <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+    <span
+      style={{
+        fontSize: "15px",
+        fontWeight: 700,
+      }}
+    >
+      🛵 Fast
+    </span>
+
+    <span
+      style={{
+        fontSize: "12px",
+        opacity: 0.8,
+      }}
+    >
+      and Reliable
+    </span>
+  </div>
+</div>
+
+{/* Cuisine */}
+<div
+  className={styles.cuisineBlock}
+  style={{
+    display: "flex",
+    alignItems: "center",
+    gap: "16px",
+    marginTop: "16px",
+  }}
+>
+  <span
+    className={styles.cuisineLabel}
+    style={{
+      fontSize: "12px",
+      fontWeight: 700,
+      letterSpacing: "1px",
+      textTransform: "uppercase",
+    }}
+  >
+    Cuisine
+  </span>
+
+  <div className={styles.cuisineChips}>
+    {restaurant.cuisines.map((c) => (
+      <span key={c}>{c}</span>
+    ))}
+  </div>
+</div>
           </div>
         </section>
 
