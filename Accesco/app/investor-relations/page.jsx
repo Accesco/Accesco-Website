@@ -30,6 +30,9 @@ const ecosystemLogos = [
   { name: "Zoho for Startups", src: "/logos/zoho-startups.png" },
   { name: "Google for Startups", src: "/logos/google-startups.png" },
   { name: "Microsoft for Startups", src: "/logos/microsoft-startups.png" },
+  { name: "MongoDB for Startups", src: "/logos/IMG_8358.PNG" },
+  { name: "Neo4j for Startups", src: "/logos/IMG_8345.JPG.jpeg" },
+  { name: "Zendesk for Startups", src: "/logos/IMG_8331.PNG" }
 ];
 
 const certificationLogos = [
