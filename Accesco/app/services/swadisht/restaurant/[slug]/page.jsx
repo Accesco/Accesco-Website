@@ -8,7 +8,7 @@ import SwadishttHeader from "../../components/SwadishttHeader";
 import { useSwadishtt } from "../../contexts/SwadishttContext";
 import { RESTAURANTS } from "../../lib/swadishttData";
 import styles from "./restaurant.module.css";
-
+import { MapPin, Clock, Truck, Star } from "lucide-react";
 
 const HERO_FALLBACK_IMAGE = "/images/swadisht/Swadishtt-kitchen-bg.png";
 const RESTAURANT_LOGO = "/images/swadisht/swadisht_logo.JPG";
@@ -330,7 +330,7 @@ export default function RestaurantDetailPage() {
               <span className={styles.locationPill}>
                 📍 {(location || "Bengaluru").toUpperCase()}
               </span>
-              <span className={styles.hotBadge}>  KORAMANGALA, BANGALORE</span>
+              <span className={styles.hotBadge}> <MapPin size={18} color="white" /> KORAMANGALA, BANGALORE</span>
             </div>
 
             <h1
@@ -380,7 +380,7 @@ export default function RestaurantDetailPage() {
         fontWeight: 700,
       }}
     >
-      ★ {restaurant.rating}
+    <Star size={16} fill="white" />   {restaurant.rating}
     </span>
 
     <span
@@ -401,7 +401,7 @@ export default function RestaurantDetailPage() {
         fontWeight: 700,
       }}
     >
-      ◷ {restaurant.deliveryTime}
+      <Clock size={18} color="white" /> {restaurant.deliveryTime}
     </span>
 
     <span
@@ -422,7 +422,7 @@ export default function RestaurantDetailPage() {
         fontWeight: 700,
       }}
     >
-      🛵 Fast
+      <Truck size={18} color="white" /> Fast
     </span>
 
     <span
