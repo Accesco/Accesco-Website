@@ -11,6 +11,7 @@ import {
   uploadProfileImage,
   deleteProfileImage,
 } from '../../../../lib/profileService';
+import { fetchWallet } from '../../../../lib/walletService';
 import styles from './profile.module.css';
 
 const ORDERS_KEY = 'swadishtt-orders';
@@ -187,7 +188,7 @@ function Heading({ icon, title, children }) {
 }
 
 export default function SwadishttProfilePage() {
-  const { user, getIdToken, signOut } = useAuth();
+  const { user, getIdToken, signOut, signIn } = useAuth();
   const [profile, setProfile] = useState({
     name: 'Sample',
     phone: '9000000000',
@@ -211,24 +212,60 @@ export default function SwadishttProfilePage() {
   const [openBasketMenu, setOpenBasketMenu] = useState(null);
   const [basketNotice, setBasketNotice] = useState('');
   const [avatarUploading, setAvatarUploading] = useState(false);
+  const [walletBalance, setWalletBalance] = useState(0);
 
   useEffect(() => {
+    if (!user) {
+      setWalletBalance(0);
+      return;
+    }
+    const walletUid = user.phone ? user.phone.replace(/[^\d]/g, '') : user.uid;
+    let cancelled = false;
+    (async () => {
+      const { wallet } = await fetchWallet(getIdToken, walletUid);
+      if (!cancelled && wallet) {
+        setWalletBalance(wallet.balance || 0);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [user, getIdToken]);
+
+  // Food preferences are stored per user and synced with the backend profile.
+  const [foodPreferences, setFoodPreferences] = useState({
+    diet: 'non-vegetarian',
+    allergies: '',
+    cuisines: '',
+  });
+  const [editFoodPreferences, setEditFoodPreferences] = useState(false);
+  const [dietDropdownOpen, setDietDropdownOpen] = useState(false);
+
+  // Seed from the Firebase-backed auth user while the fuller backend
+  // profile below is still loading.
+  useEffect(() => {
+    if (!user) return;
+
     try {
-      const cachedUser = JSON.parse(
-        localStorage.getItem('accesco_user') || '{}'
+      const savedPreferences = localStorage.getItem(
+        `swadishtt-food-preferences-${user.uid}`
       );
-      const loadedProfile = {
-        name: cachedUser.name || 'Sample',
-        phone: cachedUser.phone || '9000000000',
-        email: cachedUser.email || 'sample@gmail.com',
-        photoURL: cachedUser.photoURL || null,
-      };
-      setProfile(loadedProfile);
-      setProfileForm(loadedProfile);
+      if (savedPreferences) {
+        setFoodPreferences(normaliseFoodPreferences(JSON.parse(savedPreferences)));
+      }
     } catch (error) {
-      console.error(error);
+      console.error('Failed to load local food preferences:', error);
     }
 
+    const loadedProfile = {
+      name: user.name || 'Sample',
+      phone: user.phone || '9000000000',
+      email: user.email || 'sample@gmail.com',
+      photoURL: user.photoURL || null,
+    };
+    setProfile(loadedProfile);
+    setProfileForm(loadedProfile);
+  }, [user]);
+
+  useEffect(() => {
     try {
       const location = JSON.parse(
         localStorage.getItem('userLocation') || '{}'
@@ -247,18 +284,46 @@ export default function SwadishttProfilePage() {
       console.error(error);
     }
 
-    try {
-      const existingOrders = JSON.parse(
-        localStorage.getItem(ORDERS_KEY) || '[]'
-      );
-      setOrders(Array.isArray(existingOrders) ? existingOrders : []);
-    } catch (error) {
-      console.error(error);
+    const loadLocalOrders = () => {
+      try {
+        const existingOrders = JSON.parse(
+          localStorage.getItem(ORDERS_KEY) || '[]'
+        );
+        setOrders(Array.isArray(existingOrders) ? existingOrders : []);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    // Backend-driven for authenticated users — same reasoning as
+    // services/swadisht/orders/page.jsx: prefers the real order list from
+    // /api/swadishtt/orders over this browser's local mirror.
+    if (user?.uid) {
+      (async () => {
+        try {
+          const token = await getIdToken();
+          const res = await fetch(`/api/swadishtt/orders?userId=${encodeURIComponent(user.uid)}`, {
+            headers: token ? { Authorization: `Bearer ${token}`, 'x-user-id': user.uid } : {},
+          });
+          if (res.ok) {
+            const data = await res.json();
+            if (Array.isArray(data.orders)) {
+              setOrders(data.orders);
+              return;
+            }
+          }
+        } catch (error) {
+          console.warn('Swadishtt profile orders backend read failed, falling back to local:', error);
+        }
+        loadLocalOrders();
+      })();
+    } else {
+      loadLocalOrders();
     }
-  }, []);
+  }, [user, getIdToken]);
 
   // Once signed in, the backend profile is the source of truth — overwrite the
-  // localStorage-seeded state above with the synced record.
+  // auth-context-seeded state above with the synced record.
   useEffect(() => {
     if (!user?.uid) return;
 
@@ -281,6 +346,10 @@ export default function SwadishttProfilePage() {
         };
         setProfile(loadedProfile);
         setProfileForm(loadedProfile);
+
+        if (remoteProfile.foodPreferences) {
+          setFoodPreferences(normaliseFoodPreferences(remoteProfile.foodPreferences));
+        }
 
         if (remoteProfile.deliveryAddress) {
           setAddress(remoteProfile.deliveryAddress);
@@ -310,6 +379,16 @@ export default function SwadishttProfilePage() {
     setMessage(text);
     window.setTimeout(() => setMessage(''), 2500);
   };
+
+  const normaliseFoodPreferences = (value = {}) => ({
+    diet: value.diet || 'non-vegetarian',
+    allergies: Array.isArray(value.allergies)
+      ? value.allergies.join(', ')
+      : value.allergies || '',
+    cuisines: Array.isArray(value.cuisines)
+      ? value.cuisines.join(', ')
+      : value.cuisines || '',
+  });
 
   const showBasketNotice = (text) => {
     setBasketNotice(text);
@@ -384,16 +463,52 @@ export default function SwadishttProfilePage() {
     }
 
     const mergedProfile = { ...profile, ...nextProfile };
-    const cachedUser = JSON.parse(localStorage.getItem('accesco_user') || '{}');
-    localStorage.setItem(
-      'accesco_user',
-      JSON.stringify({ ...cachedUser, ...nextProfile })
-    );
+    if (user) signIn({ ...user, ...nextProfile });
 
     setProfile(mergedProfile);
     setProfileForm(mergedProfile);
     setEditProfile(false);
     showMessage('Profile updated successfully');
+  };
+
+  const saveFoodPreferences = async (event) => {
+    event.preventDefault();
+
+    const nextPreferences = normaliseFoodPreferences(foodPreferences);
+
+    try {
+      // Keep a local copy as an immediate fallback/cache.
+      if (user?.uid) {
+        localStorage.setItem(
+          `swadishtt-food-preferences-${user.uid}`,
+          JSON.stringify(nextPreferences)
+        );
+      }
+
+      // Sync the same data to the authenticated backend profile.
+      if (user?.uid) {
+        await updateProfile(getIdToken, user.uid, {
+          foodPreferences: {
+            diet: nextPreferences.diet,
+            allergies: nextPreferences.allergies
+              .split(',')
+              .map((item) => item.trim())
+              .filter(Boolean),
+            cuisines: nextPreferences.cuisines
+              .split(',')
+              .map((item) => item.trim())
+              .filter(Boolean),
+          },
+        });
+      }
+
+      setFoodPreferences(nextPreferences);
+      setEditFoodPreferences(false);
+      showMessage('Food preferences saved successfully');
+    } catch (error) {
+      console.error('saveFoodPreferences error:', error);
+      showMessage(error.message || 'Failed to save food preferences');
+    }
   };
 
   const saveAddress = async (event) => {
@@ -461,8 +576,7 @@ export default function SwadishttProfilePage() {
       const { photoURL } = await uploadProfileImage(getIdToken, user.uid, file);
       setProfile((current) => ({ ...current, photoURL }));
       setProfileForm((current) => ({ ...current, photoURL }));
-      const cachedUser = JSON.parse(localStorage.getItem('accesco_user') || '{}');
-      localStorage.setItem('accesco_user', JSON.stringify({ ...cachedUser, photoURL }));
+      signIn({ ...user, photoURL });
       showMessage('Profile photo updated successfully');
     } catch (error) {
       console.error('handleAvatarChange error:', error);
@@ -484,9 +598,7 @@ export default function SwadishttProfilePage() {
       await deleteProfileImage(getIdToken, user.uid);
       setProfile((current) => ({ ...current, photoURL: null }));
       setProfileForm((current) => ({ ...current, photoURL: null }));
-      const cachedUser = JSON.parse(localStorage.getItem('accesco_user') || '{}');
-      delete cachedUser.photoURL;
-      localStorage.setItem('accesco_user', JSON.stringify(cachedUser));
+      signIn({ ...user, photoURL: null });
       showMessage('Profile photo removed');
     } catch (error) {
       console.error('handleAvatarRemove error:', error);
@@ -559,13 +671,15 @@ export default function SwadishttProfilePage() {
 
             <section className={styles.wallet}>
               <div>
-                <strong>▣ Swadishtt Wallet</strong>
+                <strong>▣ Accesco Pay Wallet</strong>
                 <span>NEW</span>
               </div>
               <small>Available Balance</small>
               <section>
-                <strong>₹X.XX</strong>
-                <button type="button">+ Add Cash</button>
+                <strong>₹{walletBalance.toLocaleString()}</strong>
+                <Link href="/profile?section=payment-methods" className={styles.primaryButton} style={{ padding: '6px 12px', fontSize: '0.82rem', textDecoration: 'none' }}>
+                  + Add Cash
+                </Link>
               </section>
             </section>
 
@@ -619,9 +733,8 @@ export default function SwadishttProfilePage() {
             )}
 
             <section
-              className={`${styles.panel} ${
-                section !== 'orders' ? styles.largePanel : ''
-              }`}
+              className={`${styles.panel} ${section !== 'orders' ? styles.largePanel : ''
+                }`}
             >
               {section === 'orders' && (
                 <>
@@ -693,11 +806,10 @@ export default function SwadishttProfilePage() {
                     {filteredBaskets.map((basket) => (
                       <article
                         key={basket.id}
-                        className={`${styles.basket} ${
-                          openBasketMenu === basket.id
+                        className={`${styles.basket} ${openBasketMenu === basket.id
                             ? styles.basketMenuOpen
                             : ''
-                        }`}
+                          }`}
                       >
                         <div className={styles.basketContent}>
                           <div className={styles.basketTitle}>
@@ -1012,15 +1124,168 @@ export default function SwadishttProfilePage() {
 
                       <div className={styles.divider} />
 
-                      <div className={styles.infoRow}>
-                        <Icon type="wishlist" />
-                        <div>
-                          <h3>Food preferences</h3>
-                          <p>
-                            Vegetarian choices, allergies and cuisines.
-                          </p>
+                      {!editFoodPreferences ? (
+                        <div className={styles.infoRow}>
+                          <Icon type="wishlist" />
+                          <div>
+                            <h3>Food preferences</h3>
+                            <p>
+                              {foodPreferences.diet === 'vegetarian'
+                                ? 'Vegetarian'
+                                : foodPreferences.diet === 'vegan'
+                                  ? 'Vegan'
+                                  : 'Non-vegetarian'}
+                              {' · '}
+                              {foodPreferences.allergies
+                                ? `Allergies: ${foodPreferences.allergies}`
+                                : 'No allergies added'}
+                              {' · '}
+                              {foodPreferences.cuisines
+                                ? `Cuisines: ${foodPreferences.cuisines}`
+                                : 'No cuisines added'}
+                            </p>
+                          </div>
+                          <button
+                            type="button"
+                            className={styles.outlineButton}
+                            onClick={() => setEditFoodPreferences(true)}
+                          >
+                            Edit
+                          </button>
                         </div>
-                      </div>
+                      ) : (
+                        <form
+                          className={styles.form}
+                          onSubmit={saveFoodPreferences}
+                        >
+                          <label>
+                            Dietary preference
+                            <div className={styles.customSelectWrapper}>
+                              <label>Dietary preference</label>
+
+                              <div className={styles.customSelect}>
+                                <button
+                                  type="button"
+                                  className={styles.customSelectButton}
+                                  onClick={() =>
+                                    setDietDropdownOpen((current) => !current)
+                                  }
+                                >
+                                  <span>
+                                    {foodPreferences.diet === 'vegetarian'
+                                      ? 'Vegetarian'
+                                      : foodPreferences.diet === 'vegan'
+                                        ? 'Vegan'
+                                        : 'Non-vegetarian'}
+                                  </span>
+
+                                  <span className={styles.customSelectArrow}>
+                                    {dietDropdownOpen ? '⌃' : '⌄'}
+                                  </span>
+                                </button>
+
+                                {dietDropdownOpen && (
+                                  <div className={styles.customSelectMenu}>
+                                    <button
+                                      type="button"
+                                      className={
+                                        foodPreferences.diet === 'vegetarian'
+                                          ? styles.customSelectOptionActive
+                                          : styles.customSelectOption
+                                      }
+                                      onClick={() => {
+                                        setFoodPreferences((current) => ({
+                                          ...current,
+                                          diet: 'vegetarian',
+                                        }));
+                                        setDietDropdownOpen(false);
+                                      }}
+                                    >
+                                      Vegetarian
+                                    </button>
+
+                                    <button
+                                      type="button"
+                                      className={
+                                        foodPreferences.diet === 'vegan'
+                                          ? styles.customSelectOptionActive
+                                          : styles.customSelectOption
+                                      }
+                                      onClick={() => {
+                                        setFoodPreferences((current) => ({
+                                          ...current,
+                                          diet: 'vegan',
+                                        }));
+                                        setDietDropdownOpen(false);
+                                      }}
+                                    >
+                                      Vegan
+                                    </button>
+
+                                    <button
+                                      type="button"
+                                      className={
+                                        foodPreferences.diet === 'non-vegetarian'
+                                          ? styles.customSelectOptionActive
+                                          : styles.customSelectOption
+                                      }
+                                      onClick={() => {
+                                        setFoodPreferences((current) => ({
+                                          ...current,
+                                          diet: 'non-vegetarian',
+                                        }));
+                                        setDietDropdownOpen(false);
+                                      }}
+                                    >
+                                      Non-vegetarian
+                                    </button>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          </label>
+
+                          <label>
+                            Allergies
+                            <input
+                              value={foodPreferences.allergies}
+                              placeholder="e.g. peanuts, dairy"
+                              onChange={(event) =>
+                                setFoodPreferences((current) => ({
+                                  ...current,
+                                  allergies: event.target.value,
+                                }))
+                              }
+                            />
+                            <small>Separate multiple allergies with commas.</small>
+                          </label>
+
+                          <label>
+                            Preferred cuisines
+                            <input
+                              value={foodPreferences.cuisines}
+                              placeholder="e.g. North Indian, South Indian, Chinese"
+                              onChange={(event) =>
+                                setFoodPreferences((current) => ({
+                                  ...current,
+                                  cuisines: event.target.value,
+                                }))
+                              }
+                            />
+                            <small>Separate multiple cuisines with commas.</small>
+                          </label>
+
+                          <div className={styles.formButtons}>
+                            <button
+                              type="button"
+                              onClick={() => setEditFoodPreferences(false)}
+                            >
+                              Cancel
+                            </button>
+                            <button type="submit">Save Preferences</button>
+                          </div>
+                        </form>
+                      )}
 
                       <div className={styles.divider} />
 

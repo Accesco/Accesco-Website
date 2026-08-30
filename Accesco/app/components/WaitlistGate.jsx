@@ -4,9 +4,11 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { BellRing } from 'lucide-react'
 import { isWaitlistRegistered } from '../../lib/waitlistService'
+import { useAuth } from './AuthProvider'
 
 export default function WaitlistGate({ children }) {
   const router = useRouter()
+  const { user, loading: authLoading } = useAuth()
 
   const [status, setStatus] = useState(
     process.env.NODE_ENV === 'development'
@@ -21,10 +23,13 @@ export default function WaitlistGate({ children }) {
       return
     }
 
+    // Wait for the Firebase auth check to resolve before deciding.
+    if (authLoading) return
+
     let cancelled = false
     let timeout
 
-    isWaitlistRegistered().then((registered) => {
+    isWaitlistRegistered({ phone: user?.phone, email: user?.email }).then((registered) => {
       if (cancelled) return
 
       if (registered) {
@@ -46,7 +51,7 @@ export default function WaitlistGate({ children }) {
         clearTimeout(timeout)
       }
     }
-  }, [router])
+  }, [router, authLoading, user])
 
   if (status === 'blocked') {
     return (

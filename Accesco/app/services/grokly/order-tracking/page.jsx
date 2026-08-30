@@ -91,22 +91,8 @@ function GroklyTrackingContent() {
   const eta = searchParams.get('eta') || '12';
   const { orders } = useGrokly();
 
-  // Local state for the current order so we can fall back to localStorage
-  // and respond to updates immediately after placing an order.
-  const [currentOrder, setCurrentOrder] = useState(() => {
-    try {
-      const saved = typeof window !== 'undefined' ? localStorage.getItem('grokly_orders') : null;
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed)) {
-          return parsed.find(o => o.id === orderId) || null;
-        }
-      }
-    } catch (e) {
-      // ignore
-    }
-    return null;
-  });
+  // Local state for the current order synced with context orders
+  const [currentOrder, setCurrentOrder] = useState(null);
 
   // Keep local order in sync with context orders
   useEffect(() => {
@@ -114,33 +100,16 @@ function GroklyTrackingContent() {
     const found = orders.find(o => o.id === orderId);
     if (found) {
       setCurrentOrder(found);
-      // also persist to localStorage for robustness
-      try {
-        const existing = JSON.parse(localStorage.getItem('grokly_orders') || '[]');
-        const updated = [found, ...existing.filter(o => o.id !== found.id)];
-        localStorage.setItem('grokly_orders', JSON.stringify(updated));
-      } catch (e) {}
     }
   }, [orders, orderId]);
 
   const order = currentOrder || orders.find(o => o.id === orderId);
 
   // Resolve the real delivery ("Your door") coordinates: prefer the order's saved
-  // coordinates, fall back to the currently detected location, then a default.
+  // coordinates, fall back to a default.
   const getHomeLatLng = () => {
     if (order?.deliveryLat && order?.deliveryLng) {
       return [order.deliveryLat, order.deliveryLng];
-    }
-    try {
-      const raw = typeof window !== 'undefined' ? localStorage.getItem('userLocation') : null;
-      if (raw) {
-        const loc = JSON.parse(raw);
-        const lat = parseFloat(loc.latitude ?? loc.lat);
-        const lng = parseFloat(loc.longitude ?? loc.lng ?? loc.lon);
-        if (!Number.isNaN(lat) && !Number.isNaN(lng)) return [lat, lng];
-      }
-    } catch (e) {
-      console.error('Failed to resolve delivery coordinates:', e);
     }
     return [12.9592, 77.7610]; // fallback
   };
@@ -253,7 +222,7 @@ function GroklyTrackingContent() {
       // Define styled marker icons matching input_file_12.png perfectly (Using more radiant modern green)
       const greenDotIcon = L.divIcon({
         html: `<div style="
-          background: #0c831f;
+          background: #1B3A2B;
           width: 20px;
           height: 20px;
           border-radius: 50%;
@@ -373,7 +342,7 @@ function GroklyTrackingContent() {
     }
     const line = roadRoute.length >= 2 ? roadRoute : [hubCoords, homeCoords];
     roadPolylineRef.current = L.polyline(line, {
-      color: '#0c831f',
+      color: '#1B3A2B',
       weight: 4,
       opacity: 0.85,
     }).addTo(map);
@@ -764,7 +733,7 @@ function GroklyTrackingContent() {
               </div>
               <div className={styles.progressContent}>
                 <div className={styles.stepTitleRow}>
-                  <p className={styles.progressTitle} style={{ color: '#0c831f' }}>Arriving Soon</p>
+                  <p className={styles.progressTitle} style={{ color: '#1B3A2B' }}>Arriving Soon</p>
                   <span className={styles.arrivingLabelTag}>In ~{eta} min</span>
                 </div>
                 <p className={styles.progressDesc}>Rider is on the way — will hand over at your door.</p>

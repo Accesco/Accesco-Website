@@ -1,0 +1,247 @@
+{
+  "info": {
+    "_postman_id": "accesco-ecosystem-apis-v1",
+    "name": "Accesco Ecosystem APIs",
+    "description": "Production End-to-End API Collection for Accesco, Swadishtt, Grokly, and InstaStyle ecosystem.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000",
+      "type": "string"
+    },
+    {
+      "key": "authToken",
+      "value": "YOUR_FIREBASE_ID_TOKEN",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Wallet",
+      "item": [
+        {
+          "name": "Get Wallet & Transactions",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/wallet",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "wallet"]
+            },
+            "description": "Retrieves the authenticated user's unified server wallet balance and transaction ledger."
+          }
+        },
+        {
+          "name": "Create Top-Up Razorpay Order",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"action\": \"create_order\",\n  \"amount\": 2500\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/wallet/topup",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "wallet", "topup"]
+            },
+            "description": "Creates a Razorpay order for wallet top-up in INR rupees."
+          }
+        },
+        {
+          "name": "Verify Top-Up Payment",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"action\": \"verify_payment\",\n  \"razorpay_order_id\": \"order_9A352Z003\",\n  \"razorpay_payment_id\": \"pay_9A352Z004\",\n  \"razorpay_signature\": \"HMAC_SHA256_SIGNATURE\",\n  \"amount\": 2500\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/wallet/topup",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "wallet", "topup"]
+            },
+            "description": "Verifies Razorpay HMAC signature server-side and credits wallet balance idempotently."
+          }
+        },
+        {
+          "name": "Redeem Coupon Code",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"code\": \"ACCESCO20\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/wallet/redeem",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "wallet", "redeem"]
+            },
+            "description": "Redeems a valid coupon code and credits the wallet balance with server validation."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Swadishtt Catering",
+      "item": [
+        {
+          "name": "Catering Razorpay Order",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"action\": \"create_razorpay_order\",\n  \"packageId\": \"cp-small\",\n  \"amount\": 2100\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/swadishtt/catering",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "swadishtt", "catering"]
+            },
+            "description": "Creates a Razorpay payment order for Swadishtt catering package advance."
+          }
+        },
+        {
+          "name": "Catering Razorpay Verification",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"action\": \"verify_razorpay_payment\",\n  \"packageId\": \"cp-small\",\n  \"amount\": 2100,\n  \"razorpay_order_id\": \"order_9A352Z001\",\n  \"razorpay_payment_id\": \"pay_9A352Z002\",\n  \"razorpay_signature\": \"HMAC_SHA256_SIGNATURE\",\n  \"bookingData\": {\n    \"name\": \"Kabir Merchant\",\n    \"email\": \"kabir@example.com\",\n    \"date\": \"2026-09-15\",\n    \"time\": \"19:00\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/swadishtt/catering",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "swadishtt", "catering"]
+            },
+            "description": "Verifies Razorpay catering booking payment and creates booking record."
+          }
+        },
+        {
+          "name": "Catering Wallet Payment",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"action\": \"pay_wallet\",\n  \"packageId\": \"cp-small\",\n  \"amount\": 2100,\n  \"bookingData\": {\n    \"name\": \"Kabir Merchant\",\n    \"email\": \"kabir@example.com\",\n    \"date\": \"2026-09-15\",\n    \"time\": \"19:00\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/swadishtt/catering",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "swadishtt", "catering"]
+            },
+            "description": "Pays for catering booking using server wallet balance atomically."
+          }
+        },
+        {
+          "name": "Update Order Status",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"orderId\": \"CAT-123\",\n  \"newStatus\": \"CONFIRMED\",\n  \"customerEmail\": \"customer@example.com\",\n  \"orderData\": {\n    \"paymentStatus\": \"SUCCESS\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/swadishtt/orders/update-status",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "swadishtt", "orders", "update-status"]
+            },
+            "description": "Updates order status and sends notification email. Enforces paymentStatus == SUCCESS for CONFIRMED status."
+          }
+        }
+      ]
+    }
+  ]
+}

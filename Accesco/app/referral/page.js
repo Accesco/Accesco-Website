@@ -1,18 +1,12 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '../components/AuthProvider';
 import AuthModal from '../components/AuthModal';
-import {
-  subscribeToReferralStats,
-  claimMilestoneGift,
-} from '../../lib/referralService';
-import {
-  REFERRAL_MILESTONES,
-  COINS_PER_REFERRAL,
-  getGiftChoicesForMilestone,
-} from '../../lib/giftCatalog';
+import { subscribeToReferralStats } from '../../lib/referralService';
+import { REFERRAL_TIERS, LAYER1_REFERRER_CREDIT } from '../../lib/referralRewards';
 import './referral.css';
 
 /* ---------- Inline line icons (24x24, stroke: currentColor) ---------- */
@@ -63,107 +57,48 @@ function IconFile(props) {
 
 /* --------------------------------------------------------------------- */
 
-const milestones = [
-  { referrals: 1 },
-  { referrals: 3 },
-  { referrals: 5 },
-  { referrals: 10, bonus: '+ Giveaway' },
-  { referrals: 20, bonus: '+ Giveaway' },
-  { referrals: 30, bonus: '+ Better Gift' },
-  { referrals: 40, bonus: '+ Best Gift' },
-].map((m) => ({ ...m, coins: m.referrals * COINS_PER_REFERRAL }));
+const nextTierAfter10 = REFERRAL_TIERS.find((t) => t.minReferrals === 10);
 
-const rewardTiers = REFERRAL_MILESTONES.map((tier) => ({
-  id: tier.id,
-  range: `${tier.minReferrals} - ${tier.maxReferrals}`,
-  minimum: tier.minReferrals,
-  coins: tier.minReferrals * COINS_PER_REFERRAL,
-  description: `${tier.choiceCount} gift choices under ₹${tier.priceCap.toLocaleString('en-IN')}`,
-}));
+function statusLabel(status) {
+  switch (status) {
+    case 'pending_conversion':
+      return 'Ships once you join the waitlist';
+    case 'fulfilled_pending_dispatch':
+      return 'Ready to ship';
+    default:
+      return 'Unlocked';
+  }
+}
 
-function RewardCard({ tier, referralCount, claim, user, onClaim, onRequireLogin }) {
-  const unlocked = referralCount >= tier.minimum;
-  const [picking, setPicking] = useState(false);
-  const [selectedGift, setSelectedGift] = useState('');
-  const [claiming, setClaiming] = useState(false);
-  const choices = getGiftChoicesForMilestone(tier.id);
-
-  const handleChooseClick = () => {
-    if (!user) {
-      onRequireLogin();
-      return;
-    }
-    setPicking(true);
-  };
-
-  const handleConfirm = async () => {
-    if (!selectedGift) return;
-    setClaiming(true);
-    try {
-      await onClaim(tier.id, selectedGift);
-      setPicking(false);
-    } finally {
-      setClaiming(false);
-    }
-  };
+/** Read-only tier card — all 9 ladder rewards are auto-granted, so there's
+ * nothing left for the user to choose or claim, just a status to show. */
+function TierRow({ tier, referralCount, claim }) {
+  const unlocked = referralCount >= tier.minReferrals;
+  const isPhysical = tier.effects.some((e) => e.type === 'physical');
 
   return (
     <article className={`rewardCard ${unlocked ? 'unlocked' : ''}`}>
-      <h3>{tier.range}</h3>
-      <p>Referrals</p>
+      <h3>{tier.minReferrals}</h3>
+      <p>{tier.minReferrals === 1 ? 'Referral' : 'Referrals'}</p>
 
       <div className="rewardCoins">
-        <span>₹</span>
-        <strong>{tier.coins} Coins</strong>
+        <span>🎁</span>
+        <strong>{tier.rewardName}</strong>
       </div>
 
-      <small>{tier.description}</small>
+      <small>{tier.role}</small>
 
-      {claim ? (
-        <>
-          <button type="button" disabled>
-            🎁 {claim.giftName}
-          </button>
-          <small style={{ color: '#850043', fontWeight: 700 }}>
-            {claim.status === 'pending_first_order'
-              ? 'Delivered with your first order'
-              : claim.status === 'fulfilled_pending_dispatch'
-              ? 'Ready to ship'
-              : 'Delivered'}
-          </small>
-        </>
-      ) : picking ? (
-        <div className="shareInputRow" style={{ marginTop: 10 }}>
-          <select
-            value={selectedGift}
-            onChange={(e) => setSelectedGift(e.target.value)}
-            style={{ width: '100%', minWidth: 0, height: 46, padding: '0 10px', border: '1px solid #e7dbd5', borderRadius: 10, font: 'inherit', fontSize: 11 }}
-          >
-            <option value="">Choose...</option>
-            {choices.map((g) => (
-              <option key={g.id} value={g.id}>
-                {g.name} (₹{g.price})
-              </option>
-            ))}
-          </select>
-          <button type="button" onClick={handleConfirm} disabled={!selectedGift || claiming}>
-            {claiming ? '...' : 'Confirm'}
-          </button>
-        </div>
-      ) : (
-        <button type="button" onClick={handleChooseClick} disabled={!unlocked}>
-          {unlocked ? 'Choose Reward' : `Unlocks at ${tier.minimum}`}
-          <span>⌄</span>
-        </button>
-      )}
+      <button type="button" disabled>
+        {unlocked ? (isPhysical && claim ? statusLabel(claim.status) : 'Unlocked ✓') : `Unlocks at ${tier.minReferrals}`}
+      </button>
     </article>
   );
 }
 
 export default function ReferralPage() {
+  const router = useRouter();
   const { user, signIn } = useAuth();
   const [stats, setStats] = useState(null);
-  const [error, setError] = useState('');
   const [copied, setCopied] = useState(false);
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [showMilestones, setShowMilestones] = useState(false);
@@ -194,7 +129,7 @@ export default function ReferralPage() {
     : 'Log in to get your referral link';
 
   const progress = useMemo(() => {
-    const maximum = milestones[milestones.length - 1].referrals;
+    const maximum = REFERRAL_TIERS[REFERRAL_TIERS.length - 1].minReferrals;
     return Math.min((referralCount / maximum) * 100, 100);
   }, [referralCount]);
 
@@ -206,17 +141,6 @@ export default function ReferralPage() {
 
     handleShareCode();
   };
-
-  async function handleClaim(tierId, giftId) {
-    if (!user?.phone) return;
-    setError('');
-    try {
-      await claimMilestoneGift(user.phone, tierId, giftId);
-      // subscribeToReferralStats pushes the updated claim automatically
-    } catch (err) {
-      setError(err.message || 'Failed to claim gift');
-    }
-  }
 
   async function copyReferralLink() {
     if (!stats?.referralCode) return;
@@ -288,7 +212,7 @@ export default function ReferralPage() {
               '—'
             )}
           </td>
-          <td className="rewardValue">{completed ? '₹100' : '—'}</td>
+          <td className="rewardValue">{completed ? `₹${LAYER1_REFERRER_CREDIT}` : '—'}</td>
         </tr>
       );
     });
@@ -304,8 +228,8 @@ export default function ReferralPage() {
             className="referralLogo"
           />
           <span className="brandText">
-            ACCESCO
-            <small>L I V I N G</small>
+            Accesco
+            <small>Living</small>
           </span>
         </Link>
 
@@ -377,7 +301,16 @@ export default function ReferralPage() {
               <p>You've Earned</p>
               <strong className="earnedAmount">{safeUser && safeStats ? `₹${coins}` : '₹—'}</strong>
               <small>Available Rewards</small>
-              <button type="button" disabled={!safeUser}>
+              {safeStats?.lastSurprise?.amount ? (
+                <small style={{ color: '#850043', fontWeight: 700 }}>
+                  🎉 You won ₹{safeStats.lastSurprise.amount} on your last referral!
+                </small>
+              ) : null}
+              <button
+                type="button"
+                disabled={!safeUser}
+                onClick={() => router.push('/profile?section=redeem-code')}
+              >
                 Redeem Now →
               </button>
             </div>
@@ -464,7 +397,7 @@ export default function ReferralPage() {
 
             <p className="bonusCaption">
               {Math.max(10 - referralCount, 0)} more invites to unlock{' '}
-              <strong>₹1000 Bonus</strong>
+              <strong>{nextTierAfter10?.rewardName}</strong>
             </p>
 
             <button
@@ -487,34 +420,29 @@ export default function ReferralPage() {
                     </div>
 
                     <div className="meterMilestones">
-                      {milestones.map((milestone) => {
-                        const reached = referralCount >= milestone.referrals;
+                      {REFERRAL_TIERS.map((tier) => {
+                        const reached = referralCount >= tier.minReferrals;
 
                         return (
                           <div
                             className={`milestone ${
                               reached ? 'reached' : ''
                             }`}
-                            key={milestone.referrals}
+                            key={tier.id}
                           >
                             <span className="milestoneDot">
                               {reached ? '✓' : ''}
                             </span>
 
-                            <strong>{milestone.referrals}</strong>
+                            <strong>{tier.minReferrals}</strong>
 
                             <small>
-                              {milestone.referrals === 1
+                              {tier.minReferrals === 1
                                 ? 'Referral'
                                 : 'Referrals'}
                             </small>
 
-                            <b>{milestone.coins}</b>
-                            <small>Coins</small>
-
-                            {milestone.bonus && (
-                              <em>{milestone.bonus}</em>
-                            )}
+                            <em>{tier.rewardName}</em>
                           </div>
                         );
                       })}
@@ -539,26 +467,21 @@ export default function ReferralPage() {
                     </span>
 
                     <div>
-                      <h2>Choose Your Reward</h2>
+                      <h2>Your Reward Ladder</h2>
                       <p>
-                        Reach a milestone and choose one gift from the available
-                        options.
+                        Every referral counts toward the next tier — rewards unlock
+                        automatically, no picking required.
                       </p>
                     </div>
                   </div>
 
-                  {error && safeUser && <p className="errorMessage">{error}</p>}
-
                   <div className="rewardGrid">
-                    {rewardTiers.map((tier) => (
-                      <RewardCard
+                    {REFERRAL_TIERS.map((tier) => (
+                      <TierRow
                         key={tier.id}
                         tier={tier}
                         referralCount={referralCount}
-                        claim={safeStats?.milestoneClaims?.[tier.id] || null}
-                        user={safeUser}
-                        onClaim={handleClaim}
-                        onRequireLogin={() => setIsAuthOpen(true)}
+                        claim={safeStats?.tierClaims?.[tier.id] || null}
                       />
                     ))}
                   </div>

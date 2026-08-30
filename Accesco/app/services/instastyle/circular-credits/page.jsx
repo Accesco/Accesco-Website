@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { useAuth } from '@/app/components/AuthProvider';
+import { updateUserFieldsInFirebase } from '@/lib/userService';
 import styles from './circular-credits.module.css';
 
 const ALL_ACTIVITIES = [
@@ -128,6 +130,7 @@ const EARN_STEPS = [
 
 export default function InstaStyleCircularCreditsPage() {
   const router = useRouter();
+  const { user, userData, refreshUserData } = useAuth();
   const [credits, setCredits] = useState(1918);
   const [activities, setActivities] = useState(ALL_ACTIVITIES);
   const [activeFilter, setActiveFilter] = useState('all');
@@ -141,17 +144,10 @@ export default function InstaStyleCircularCreditsPage() {
   const [copiedCode, setCopiedCode] = useState(null);
 
   useEffect(() => {
-    try {
-      const stored = localStorage.getItem('instastyle_circular_credits');
-      if (stored) setCredits(Number(stored));
-      const storedVouchers = localStorage.getItem('instastyle_vouchers');
-      if (storedVouchers) setRedeemedVouchers(JSON.parse(storedVouchers));
-      const storedActs = localStorage.getItem('instastyle_activity_log');
-      if (storedActs) setActivities(JSON.parse(storedActs));
-    } catch (e) {
-      console.error(e);
+    if (userData && Array.isArray(userData.userVouchers)) {
+      setRedeemedVouchers(userData.userVouchers);
     }
-  }, []);
+  }, [userData]);
 
   const filteredActivities = activities.filter((a) => {
     if (activeFilter === 'all') return true;
@@ -160,7 +156,7 @@ export default function InstaStyleCircularCreditsPage() {
 
   const recentActivities = filteredActivities.slice(0, 4);
 
-  const handleRedeemVoucher = (voucher) => {
+  const handleRedeemVoucher = async (voucher) => {
     if (credits < voucher.cost) return;
 
     // Generate secret promo code
@@ -190,13 +186,9 @@ export default function InstaStyleCircularCreditsPage() {
     const updatedActivities = [newActivity, ...activities];
     setActivities(updatedActivities);
 
-    try {
-      localStorage.setItem('instastyle_circular_credits', newCredits.toString());
-      localStorage.setItem('instastyle_vouchers', JSON.stringify(newVouchers));
-      localStorage.setItem('accesco_user_vouchers', JSON.stringify(newVouchers));
-      localStorage.setItem('instastyle_activity_log', JSON.stringify(updatedActivities));
-    } catch (e) {
-      console.error(e);
+    if (user?.uid) {
+      await updateUserFieldsInFirebase(user.uid, { userVouchers: newVouchers });
+      refreshUserData(user.uid);
     }
 
     setRedeemSuccess({ label: voucher.label, secretCode });

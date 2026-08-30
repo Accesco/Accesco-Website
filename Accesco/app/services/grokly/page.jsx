@@ -6,7 +6,7 @@
 
 'use client';
 
-import { useState, useMemo, useEffect, Suspense } from 'react';
+import { useState, useMemo, useEffect, Suspense, useRef, useCallback } from 'react';
 import Image from 'next/image';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useGrokly } from './contexts/GroklyContext';
@@ -77,6 +77,18 @@ function GroklyPageContent() {
   const { getProductQuantity, addToCart, incrementQuantity, decrementQuantity, openCart } = useGrokly();
   const { products, isLoading: productsLoading } = useProducts('grokly');
 
+  // Refs for horizontal scroll sections
+  const categoryGridRef = useRef(null);
+  const shelf1Ref = useRef(null);
+  const shelf2Ref = useRef(null);
+  const shelf3Ref = useRef(null);
+
+  const scroll = useCallback((ref, dir) => {
+    if (ref.current) {
+      ref.current.scrollBy({ left: dir * 320, behavior: 'smooth' });
+    }
+  }, []);
+
   useEffect(() => {
     setSearchQuery(searchParams.get("search") || "");
   }, [searchParams]);
@@ -131,7 +143,7 @@ function GroklyPageContent() {
     }
 
     return filtered;
-  }, [activeCategory, searchQuery, activeFilter, sortBy]);
+  }, [activeCategory, searchQuery, activeFilter, sortBy, products]);
 
   const productsByCategory = useMemo(() => {
     if (activeCategory !== "all" || searchQuery.trim()) {
@@ -668,7 +680,7 @@ function GroklyPageContent() {
                     before adding.
                   </p>
 
-                  <div style={{ display: "flex", gap: "12px" }}>
+                  <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: "12px" }}>
                     {Object.entries(dishes).map(([key, dish]) => {
                       const isActive = selectedDishKey === key;
                       return (
@@ -687,12 +699,12 @@ function GroklyPageContent() {
                             padding: "10px",
                             display: "flex",
                             alignItems: "center",
-                            gap: "8px",
+                            gap: "12px",
                             cursor: "pointer",
                             textAlign: "left",
                             transition:
                               "background-color var(--grokly-transition-fast), border-color var(--grokly-transition-fast)",
-                            flex: "1",
+                            width: "100%",
                             minWidth: 0,
                           }}
                           onMouseEnter={(e) => {
@@ -726,6 +738,7 @@ function GroklyPageContent() {
                                 whiteSpace: "nowrap",
                                 overflow: "hidden",
                                 textOverflow: "ellipsis",
+                                textTransform: "uppercase"
                               }}
                             >
                               {dish.name}
@@ -1450,225 +1463,89 @@ function GroklyPageContent() {
             padding: "8px 20px",
           }}
         >
-          {/* Category Carousel - Zepto style */}
+          {/* Category Grid Section */}
           {activeCategory === "all" && !searchQuery && (
-            <div style={{ margin: "0 0 32px" }}>
-              <h3
-                style={{
-                  fontFamily: "var(--grokly-font-display)",
-                  fontSize: "22px",
-                  fontWeight: 900,
-                  color: "var(--grokly-text-primary)",
-                  margin: "0 0 16px",
-                }}
-              >
-                Browse by Categories
-              </h3>
-
-              <div style={{ position: "relative" }}>
-                <button
-                  type="button"
-                  onClick={() => {
-                    const rail = document.getElementById(
-                      "grokly-home-category-rail",
-                    );
-                    if (rail) rail.scrollBy({ left: -500, behavior: "smooth" });
-                  }}
+            <div style={{ margin: "0 0 24px" }}>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "12px" }}>
+                <h3
                   style={{
-                    position: "absolute",
-                    left: "-4px",
-                    top: "50%",
-                    transform: "translateY(-50%)",
-                    zIndex: 10,
-
-                    width: "32px",
-                    height: "32px",
-                    borderRadius: "50%",
-                    border: "none",
-
-                    background: "#000",
-                    color: "#fff",
-                    fontSize: "24px",
+                    fontFamily: "var(--grokly-font-display)",
+                    fontSize: "22px",
                     fontWeight: 900,
-                    lineHeight: "1",
-                    padding: 0,
-                    paddingBottom: "3px",
-
-                    cursor: "pointer",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-
-                    boxShadow: "0 4px 12px rgba(0,0,0,0.22)",
+                    color: "var(--grokly-text-primary)",
+                    margin: 0,
                   }}
                 >
-                  ‹
-                </button>
-
-                <div
-                  id="grokly-home-category-rail"
-                  className="hide-scrollbar"
-                  style={{
-                    display: "flex",
-                    gap: "16px",
-                    overflowX: "auto",
-                    overflowY: "hidden",
-                    scrollBehavior: "smooth",
-                    scrollSnapType: "x mandatory",
-                    padding: "4px 8px 14px",
-                    scrollbarWidth: "none",
-                    msOverflowStyle: "none",
-                    WebkitOverflowScrolling: "touch",
-                  }}
-                >
-                  {categories
-                    .filter((c) => c.id !== "all")
-                    .map((cat) => (
-                      <button
-                        key={cat.id}
-                        onClick={() => handleCategorySelect(cat.id)}
-                        style={{
-                          flex: "0 0 128px",
-                          width: "128px",
-                          minHeight: "118px",
-                          background: "#fff",
-                          border: "1px solid #f2f4f6",
-                          borderRadius: "12px",
-                          padding: "12px 8px",
-                          display: "flex",
-                          flexDirection: "column",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          cursor: "pointer",
-                          textAlign: "center",
-                          gap: "8px",
-                          boxShadow: "0 1px 3px rgba(0,0,0,0.02)",
-                          scrollSnapAlign: "start",
-                        }}
-                      >
-                        <div
-                          style={{
-                            width: "64px",
-                            height: "64px",
-                            borderRadius: "8px",
-                            background: "#f8fafc",
-                            overflow: "hidden",
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                          }}
-                        >
-                          <Image
-                            src={cat.image}
-                            alt={cat.name}
-                            width={64}
-                            height={64}
-                            style={{
-                              objectFit: "cover",
-                            }}
-                          />
-                        </div>
-
-                        <span
-                          style={{
-                            fontSize: "12px",
-                            fontWeight: 700,
-                            color: "#1a1a1a",
-                            fontFamily: "var(--grokly-font-primary)",
-                            lineHeight: "1.2",
-                            textTransform: "uppercase",
-                          }}
-                        >
-                          {cat.name}
-                        </span>
-                      </button>
-                    ))}
+                  Browse by Categories
+                </h3>
+                <div style={{ display: "flex", gap: "8px" }}>
+                  <button
+                    onClick={() => scroll(categoryGridRef, -1)}
+                    aria-label="Scroll categories left"
+                    style={{
+                      width: "34px", height: "34px", borderRadius: "50%",
+                      border: "1px solid #e2e8f0", background: "#fff",
+                      cursor: "pointer", display: "flex", alignItems: "center",
+                      justifyContent: "center", boxShadow: "0 2px 6px rgba(0,0,0,0.08)",
+                      fontSize: "16px", color: "#2A211A", transition: "all 0.2s",
+                      flexShrink: 0,
+                    }}
+                    onMouseEnter={e => { e.currentTarget.style.background = "#f7f5ef"; e.currentTarget.style.borderColor = "#1B3A2B"; }}
+                    onMouseLeave={e => { e.currentTarget.style.background = "#fff"; e.currentTarget.style.borderColor = "#e2e8f0"; }}
+                  >
+                    <i className="ri-arrow-left-s-line" />
+                  </button>
+                  <button
+                    onClick={() => scroll(categoryGridRef, 1)}
+                    aria-label="Scroll categories right"
+                    style={{
+                      width: "34px", height: "34px", borderRadius: "50%",
+                      border: "1px solid #e2e8f0", background: "#fff",
+                      cursor: "pointer", display: "flex", alignItems: "center",
+                      justifyContent: "center", boxShadow: "0 2px 6px rgba(0,0,0,0.08)",
+                      fontSize: "16px", color: "#2A211A", transition: "all 0.2s",
+                      flexShrink: 0,
+                    }}
+                    onMouseEnter={e => { e.currentTarget.style.background = "#f7f5ef"; e.currentTarget.style.borderColor = "#1B3A2B"; }}
+                    onMouseLeave={e => { e.currentTarget.style.background = "#fff"; e.currentTarget.style.borderColor = "#e2e8f0"; }}
+                  >
+                    <i className="ri-arrow-right-s-line" />
+                  </button>
                 </div>
-
-                <button
-                  type="button"
-                  onClick={() => {
-                    const rail = document.getElementById(
-                      "grokly-home-category-rail",
-                    );
-                    if (rail) rail.scrollBy({ left: 500, behavior: "smooth" });
-                  }}
-                  style={{
-                    position: "absolute",
-                    right: "-4px",
-                    top: "50%",
-                    transform: "translateY(-50%)",
-                    zIndex: 10,
-
-                    width: "32px",
-                    height: "32px",
-                    borderRadius: "50%",
-                    border: "none",
-
-                    background: "#000",
-                    color: "#fff",
-                    fontSize: "24px",
-                    fontWeight: 900,
-                    lineHeight: "1",
-                    padding: 0,
-                    paddingBottom: "3px",
-
-                    cursor: "pointer",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-
-                    boxShadow: "0 4px 12px rgba(0,0,0,0.22)",
-                  }}
-                >
-                  ›
-                </button>
               </div>
 
-              <style
-                dangerouslySetInnerHTML={{
-                  __html: `
-        #grokly-home-category-rail::-webkit-scrollbar {
-          display: none;
-        }
-
-        @media (max-width: 768px) {
-          #grokly-home-category-rail {
-            gap: 14px !important;
-            padding: 2px 4px 12px !important;
-          }
-
-          #grokly-home-category-rail button {
-            flex: 0 0 112px !important;
-            width: 112px !important;
-            min-height: 128px !important;
-            padding: 12px 8px !important;
-            border-radius: 14px !important;
-          }
-
-          #grokly-home-category-rail button > div {
-            width: 76px !important;
-            height: 76px !important;
-            border-radius: 13px !important;
-          }
-
-          #grokly-home-category-rail span {
-            font-size: 11px !important;
-          }
-
-          #grokly-home-category-rail + button,
-          div:has(> #grokly-home-category-rail) > button {
-            display: none !important;
-          }
-        }
-      `,
-                }}
-              />
+              <div className="grokly-category-grid" ref={categoryGridRef}>
+                {categories
+                  .filter((c) => c.id !== "all")
+                  .map((cat) => (
+                    <button
+                      key={cat.id}
+                      onClick={() => handleCategorySelect(cat.id)}
+                      className="grokly-cat-card"
+                    >
+                      <div className="grokly-cat-img-wrapper">
+                        <Image
+                          src={cat.image}
+                          alt={cat.name}
+                          width={56}
+                          height={56}
+                          className="grokly-cat-img"
+                          draggable={false}
+                          onContextMenu={(e) => e.preventDefault()}
+                        />
+                      </div>
+                      <span className="grokly-cat-title">
+                        {cat.name}
+                      </span>
+                    </button>
+                  ))}
+              </div>
             </div>
           )}
-{activeCategory === "all" && !searchQuery && (
-  <GroceryStories />
-)}
+
+          {activeCategory === "all" && !searchQuery && (
+            <GroceryStories />
+          )}
           {/* Curated Product Sections */}
           {activeCategory === "all" && !searchQuery && (
             <div
@@ -1700,21 +1577,50 @@ function GroklyPageContent() {
                   >
                     Quick Breakfast Corner
                   </h3>
-                  <button
-                    onClick={() => handleCategorySelect("dairy-breakfast")}
-                    style={{
-                      background: "none",
-                      border: "none",
-                      color: "#0c831f",
-                      fontWeight: 700,
-                      fontSize: "14px",
-                      cursor: "pointer",
-                    }}
-                  >
-                    See All
-                  </button>
+                  <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                    <button
+                      onClick={() => scroll(shelf1Ref, -1)}
+                      aria-label="Scroll left"
+                      style={{
+                        width: "30px", height: "30px", borderRadius: "50%",
+                        border: "1px solid #e2e8f0", background: "#fff",
+                        cursor: "pointer", display: "flex", alignItems: "center",
+                        justifyContent: "center", boxShadow: "0 2px 6px rgba(0,0,0,0.08)",
+                        fontSize: "15px", color: "#2A211A", flexShrink: 0,
+                      }}
+                    >
+                      <i className="ri-arrow-left-s-line" />
+                    </button>
+                    <button
+                      onClick={() => scroll(shelf1Ref, 1)}
+                      aria-label="Scroll right"
+                      style={{
+                        width: "30px", height: "30px", borderRadius: "50%",
+                        border: "1px solid #e2e8f0", background: "#fff",
+                        cursor: "pointer", display: "flex", alignItems: "center",
+                        justifyContent: "center", boxShadow: "0 2px 6px rgba(0,0,0,0.08)",
+                        fontSize: "15px", color: "#2A211A", flexShrink: 0,
+                      }}
+                    >
+                      <i className="ri-arrow-right-s-line" />
+                    </button>
+                    <button
+                      onClick={() => handleCategorySelect("dairy-breakfast")}
+                      style={{
+                        background: "none",
+                        border: "none",
+                        color: "#1B3A2B",
+                        fontWeight: 700,
+                        fontSize: "14px",
+                        cursor: "pointer",
+                      }}
+                    >
+                      See All
+                    </button>
+                  </div>
                 </div>
                 <div
+                  ref={shelf1Ref}
                   style={{
                     display: "flex",
                     gap: "12px",
@@ -1723,6 +1629,7 @@ function GroklyPageContent() {
                     scrollbarWidth: "none",
                     msOverflowStyle: "none",
                     alignItems: "stretch",
+                    scrollBehavior: "smooth",
                   }}
                   className="hide-scrollbar"
                 >
@@ -1777,21 +1684,50 @@ function GroklyPageContent() {
                   >
                     Snack Attack & Cold Drinks
                   </h3>
-                  <button
-                    onClick={() => handleCategorySelect("munchies")}
-                    style={{
-                      background: "none",
-                      border: "none",
-                      color: "#0c831f",
-                      fontWeight: 700,
-                      fontSize: "14px",
-                      cursor: "pointer",
-                    }}
-                  >
-                    See All
-                  </button>
+                  <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                    <button
+                      onClick={() => scroll(shelf2Ref, -1)}
+                      aria-label="Scroll left"
+                      style={{
+                        width: "30px", height: "30px", borderRadius: "50%",
+                        border: "1px solid #e2e8f0", background: "#fff",
+                        cursor: "pointer", display: "flex", alignItems: "center",
+                        justifyContent: "center", boxShadow: "0 2px 6px rgba(0,0,0,0.08)",
+                        fontSize: "15px", color: "#2A211A", flexShrink: 0,
+                      }}
+                    >
+                      <i className="ri-arrow-left-s-line" />
+                    </button>
+                    <button
+                      onClick={() => scroll(shelf2Ref, 1)}
+                      aria-label="Scroll right"
+                      style={{
+                        width: "30px", height: "30px", borderRadius: "50%",
+                        border: "1px solid #e2e8f0", background: "#fff",
+                        cursor: "pointer", display: "flex", alignItems: "center",
+                        justifyContent: "center", boxShadow: "0 2px 6px rgba(0,0,0,0.08)",
+                        fontSize: "15px", color: "#2A211A", flexShrink: 0,
+                      }}
+                    >
+                      <i className="ri-arrow-right-s-line" />
+                    </button>
+                    <button
+                      onClick={() => handleCategorySelect("munchies")}
+                      style={{
+                        background: "none",
+                        border: "none",
+                        color: "#1B3A2B",
+                        fontWeight: 700,
+                        fontSize: "14px",
+                        cursor: "pointer",
+                      }}
+                    >
+                      See All
+                    </button>
+                  </div>
                 </div>
                 <div
+                  ref={shelf2Ref}
                   style={{
                     display: "flex",
                     gap: "12px",
@@ -1800,34 +1736,34 @@ function GroklyPageContent() {
                     scrollbarWidth: "none",
                     msOverflowStyle: "none",
                     alignItems: "stretch",
+                    scrollBehavior: "smooth",
                   }}
                   className="hide-scrollbar"
                 >
-                
-  {products
-  .filter((p) =>
-    [
-      "munch-001",
-      "munch-002",
-      "munch-003",
-      "munch-005",
-      "munch-006",
-      "munch-011",
-      "munch-012",
-      "munch-013",
-      "munch-014",
-      "munch-016",
-      "drink-001",
-      "drink-003",
-      "drink-004",
-      "drink-005",
-      "drinks-001",
-      "drinks-002",
-      "drinks-003",
-      "drinks-004",
-      "drinks-005",
-      "drinks-006",
-].includes(p.id),
+                  {products
+                    .filter((p) =>
+                      [
+                        "munch-001",
+                        "munch-002",
+                        "munch-003",
+                        "munch-005",
+                        "munch-006",
+                        "munch-011",
+                        "munch-012",
+                        "munch-013",
+                        "munch-014",
+                        "munch-016",
+                        "drink-001",
+                        "drink-003",
+                        "drink-004",
+                        "drink-005",
+                        "drinks-001",
+                        "drinks-002",
+                        "drinks-003",
+                        "drinks-004",
+                        "drinks-005",
+                        "drinks-006",
+                      ].includes(p.id),
                     )
                     .map((product) => (
                       <div
@@ -1865,21 +1801,50 @@ function GroklyPageContent() {
                   >
                     Daily Cooking Essentials
                   </h3>
-                  <button
-                    onClick={() => handleCategorySelect("atta-rice-dal")}
-                    style={{
-                      background: "none",
-                      border: "none",
-                      color: "#0c831f",
-                      fontWeight: 700,
-                      fontSize: "14px",
-                      cursor: "pointer",
-                    }}
-                  >
-                    See All
-                  </button>
+                  <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                    <button
+                      onClick={() => scroll(shelf3Ref, -1)}
+                      aria-label="Scroll left"
+                      style={{
+                        width: "30px", height: "30px", borderRadius: "50%",
+                        border: "1px solid #e2e8f0", background: "#fff",
+                        cursor: "pointer", display: "flex", alignItems: "center",
+                        justifyContent: "center", boxShadow: "0 2px 6px rgba(0,0,0,0.08)",
+                        fontSize: "15px", color: "#2A211A", flexShrink: 0,
+                      }}
+                    >
+                      <i className="ri-arrow-left-s-line" />
+                    </button>
+                    <button
+                      onClick={() => scroll(shelf3Ref, 1)}
+                      aria-label="Scroll right"
+                      style={{
+                        width: "30px", height: "30px", borderRadius: "50%",
+                        border: "1px solid #e2e8f0", background: "#fff",
+                        cursor: "pointer", display: "flex", alignItems: "center",
+                        justifyContent: "center", boxShadow: "0 2px 6px rgba(0,0,0,0.08)",
+                        fontSize: "15px", color: "#2A211A", flexShrink: 0,
+                      }}
+                    >
+                      <i className="ri-arrow-right-s-line" />
+                    </button>
+                    <button
+                      onClick={() => handleCategorySelect("atta-rice-dal")}
+                      style={{
+                        background: "none",
+                        border: "none",
+                        color: "#1B3A2B",
+                        fontWeight: 700,
+                        fontSize: "14px",
+                        cursor: "pointer",
+                      }}
+                    >
+                      See All
+                    </button>
+                  </div>
                 </div>
                 <div
+                  ref={shelf3Ref}
                   style={{
                     display: "flex",
                     gap: "12px",
@@ -1888,6 +1853,7 @@ function GroklyPageContent() {
                     scrollbarWidth: "none",
                     msOverflowStyle: "none",
                     alignItems: "stretch",
+                    scrollBehavior: "smooth",
                   }}
                   className="hide-scrollbar"
                 >

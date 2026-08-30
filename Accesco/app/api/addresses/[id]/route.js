@@ -3,6 +3,8 @@ import { adminDb } from '../../../../lib/firebaseAdmin';
 import { FieldValue } from 'firebase-admin/firestore';
 import { verifyAuthToken } from '../../_lib/auth';
 
+export const dynamic = 'force-dynamic';
+
 export async function PUT(request, { params }) {
   try {
     const { uid, error } = await verifyAuthToken(request);

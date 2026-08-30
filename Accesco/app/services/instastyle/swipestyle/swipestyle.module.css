@@ -395,3 +395,502 @@
   .sideAdd { right: 4px; }
   .actions { margin-top: 6px; }
 }
+ 
+
+.page,
+.page *,
+.page *::before,
+.page *::after {
+  box-sizing: border-box;
+}
+
+.page {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+.card {
+  max-width: 100%;
+}
+
+.cardContainer {
+  width: min(390px, 100%);
+}
+ 
+
+@media (max-width: 1180px) {
+  .swipeStage {
+    grid-template-columns: 230px minmax(0, 1fr);
+  }
+
+  .heroCopy h1 {
+    font-size: 48px;
+  }
+
+  .arrowLeft {
+    left: 45px;
+  }
+
+  .arrowRight {
+    right: 48px;
+  }
+
+  .sideSkip {
+    left: 0;
+  }
+
+  .sideAdd {
+    right: 0;
+  }
+}
+ 
+
+@media (max-width: 900px) {
+  .page {
+    width: 100%;
+    padding: 8px 12px 30px;
+    overflow-x: hidden;
+  }
+
+  .layout {
+    display: block;
+    width: 100%;
+    min-height: auto;
+  }
+
+  .swipeStage {
+    width: 100%;
+    min-height: auto;
+    display: block;
+    padding: 8px 0 30px;
+  }
+
+  .heroCopy {
+    width: 100%;
+    max-width: 100%;
+    padding: 0 12px;
+    text-align: center;
+  }
+
+  .heroCopy h1 {
+    font-size: clamp(34px, 9vw, 48px);
+    line-height: 0.98;
+  }
+
+  .heroCopy p {
+    max-width: 290px;
+    margin: 20px auto 0;
+  }
+
+  .deckArea {
+    width: 100%;
+    min-height: 0;
+    margin-top: 20px;
+  }
+
+  .remainingPill {
+    position: static;
+    transform: none;
+    width: fit-content;
+    margin: 0 auto 14px;
+  }
+
+  .cardContainer {
+    width: min(100%, 390px);
+    height: clamp(400px, 115vw, 490px);
+    margin: 0 auto;
+  }
+
+  .card {
+    width: min(100%, 360px);
+    max-width: calc(100% - 24px);
+  }
+
+  .cardBehind {
+    width: min(100%, 360px);
+    max-width: calc(100% - 40px);
+  }
+
+  .cardImage {
+    height: clamp(240px, 76vw, 315px);
+  }
+
+  .arrow {
+    display: none;
+  }
+
+  .sideSkip {
+    left: 0;
+  }
+
+  .sideAdd {
+    right: 0;
+  }
+
+  .cartSection {
+    position: fixed;
+    inset: 0 0 0 auto;
+    width: min(340px, 100vw);
+    min-height: 100vh;
+    max-height: 100vh;
+    z-index: 999;
+    border-radius: 0;
+    transform: translateX(100%);
+    transition: transform 0.35s ease;
+    padding-top: 70px;
+  }
+
+  .cartOpen {
+    transform: translateX(0);
+  }
+
+  .cartClose {
+    display: block;
+    position: absolute;
+    top: 20px;
+    right: 18px;
+    border: 0;
+    background: none;
+  }
+
+  .mobileOverlay {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.35);
+    z-index: 998;
+  }
+}
+ 
+
+@media (max-width: 600px) {
+  .page {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+
+  .heroCopy {
+    padding-left: 6px;
+    padding-right: 6px;
+  }
+
+  .heroCopy h1 {
+    font-size: clamp(31px, 9vw, 42px);
+  }
+
+  .heroCopy p {
+    max-width: 280px;
+    font-size: 12px;
+  }
+
+  .cardContainer {
+    width: 100%;
+    height: clamp(390px, 112vw, 450px);
+  }
+
+  .card {
+    width: min(330px, calc(100% - 34px));
+  }
+
+  .cardBehind {
+    width: min(315px, calc(100% - 52px));
+    height: calc(100% - 35px);
+  }
+
+  .cardImage {
+    height: clamp(225px, 70vw, 285px);
+  }
+
+  .cardBody {
+    padding: 12px 14px;
+  }
+
+  .sideAction {
+    width: 44px;
+    height: 44px;
+  }
+
+  .sideSkip {
+    left: 0;
+  }
+
+  .sideAdd {
+    right: 0;
+  }
+}
+ 
+
+@media (max-width: 480px) {
+  .page {
+    padding-top: 6px;
+    padding-bottom: 24px;
+  }
+
+  .swipeStage {
+    padding-top: 6px;
+  }
+
+  .heroCopy h1 {
+    font-size: clamp(29px, 8.8vw, 38px);
+  }
+
+  .heroCopy p {
+    max-width: 270px;
+    margin-top: 17px;
+    line-height: 1.55;
+  }
+
+  .deckArea {
+    margin-top: 16px;
+  }
+
+  .remainingPill {
+    margin-bottom: 10px;
+    padding: 6px 11px;
+    font-size: 10px;
+  }
+
+  .cardContainer {
+    height: clamp(380px, 108vw, 430px);
+  }
+
+  .card {
+    width: min(310px, calc(100% - 38px));
+  }
+
+  .cardBehind {
+    width: min(300px, calc(100% - 56px));
+    height: calc(100% - 32px);
+  }
+
+  .cardImage {
+    height: clamp(220px, 67vw, 270px);
+  }
+
+  .cardBody {
+    padding: 11px 13px;
+  }
+
+  .name {
+    font-size: 15px;
+  }
+
+  .price {
+    font-size: 15px;
+  }
+
+  .sideAction {
+    width: 40px;
+    height: 40px;
+  }
+
+  .sideAdd img {
+    width: 21px;
+    height: 21px;
+  }
+
+  .actions {
+    gap: 8px;
+    margin-top: 8px;
+    padding: 6px;
+  }
+
+  .skipBtn,
+  .addBtn {
+    width: 45px;
+    height: 45px;
+  }
+
+  .undoBtn {
+    width: 38px;
+    height: 38px;
+  }
+}
+
+ 
+
+@media (max-width: 375px) {
+  .page {
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+
+  .heroCopy {
+    padding-left: 4px;
+    padding-right: 4px;
+  }
+
+  .heroCopy h1 {
+    font-size: 31px;
+  }
+
+  .heroCopy p {
+    max-width: 255px;
+    font-size: 11px;
+  }
+
+  .deckArea {
+    margin-top: 14px;
+  }
+
+  .cardContainer {
+    height: 400px;
+  }
+
+  .card {
+    width: min(295px, calc(100% - 30px));
+  }
+
+  .cardBehind {
+    width: min(285px, calc(100% - 46px));
+    height: 365px;
+  }
+
+  .cardImage {
+    height: 230px;
+  }
+
+  .cardBody {
+    padding: 10px 12px;
+  }
+
+  .name {
+    font-size: 14px;
+  }
+
+  .price {
+    font-size: 14px;
+  }
+
+  .sideAction {
+    width: 38px;
+    height: 38px;
+  }
+
+  .sideAdd img {
+    width: 20px;
+    height: 20px;
+  }
+
+  .actions {
+    gap: 7px;
+    margin-top: 6px;
+    padding: 5px;
+  }
+
+  .skipBtn,
+  .addBtn {
+    width: 42px;
+    height: 42px;
+  }
+
+  .undoBtn {
+    width: 36px;
+    height: 36px;
+  }
+
+  .btnIcon {
+    width: 19px;
+    height: 19px;
+  }
+
+  .undoIcon {
+    width: 17px;
+    height: 17px;
+  }
+
+  .swipeHelper {
+    margin-top: 8px;
+    font-size: 9px;
+  }
+}
+
+ 
+
+@media (max-width: 320px) {
+  .page {
+    padding-left: 6px;
+    padding-right: 6px;
+  }
+
+  .heroCopy h1 {
+    font-size: 28px;
+  }
+
+  .heroCopy p {
+    max-width: 240px;
+  }
+
+  .cardContainer {
+    height: 370px;
+  }
+
+  .card {
+    width: min(270px, calc(100% - 20px));
+  }
+
+  .cardBehind {
+    width: min(260px, calc(100% - 32px));
+    height: 340px;
+  }
+
+  .cardImage {
+    height: 210px;
+  }
+
+  .sideAction {
+    display: none;
+  }
+}
+
+ 
+
+@media (max-width: 480px) and (max-height: 700px) {
+  .page {
+    padding-top: 6px;
+  }
+
+  .heroCopy h1 {
+    font-size: clamp(28px, 8.5vw, 35px);
+  }
+
+  .heroCopy p {
+    margin-top: 13px;
+  }
+
+  .deckArea {
+    margin-top: 11px;
+  }
+
+  .cardContainer {
+    height: 370px;
+  }
+
+  .cardImage {
+    height: 215px;
+  }
+
+  .actions {
+    margin-top: 4px;
+  }
+
+  .swipeHelper {
+    margin-top: 6px;
+  }
+}
+
+
+
+
+@supports (padding: env(safe-area-inset-bottom)) {
+  .page {
+    padding-bottom: calc(24px + env(safe-area-inset-bottom));
+  }
+
+  @media (max-width: 900px) {
+    .page {
+      padding-bottom: calc(30px + env(safe-area-inset-bottom));
+    }
+  }
+}

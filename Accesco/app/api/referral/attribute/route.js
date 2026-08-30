@@ -1,20 +1,31 @@
 import { NextResponse } from 'next/server';
 import { db } from '../../../../lib/firebase';
 import { collection, doc, getDocs, query, where, runTransaction, addDoc, arrayUnion } from 'firebase/firestore';
-import { COINS_PER_REFERRAL } from '../../../../lib/giftCatalog';
+import { LAYER1_REFERRER_CREDIT, LAYER1_REFEREE_CREDIT, REFERRAL_TIERS, rollSurpriseReward } from '../../../../lib/referralRewards';
+import { verifyAuthToken } from '../../_lib/auth';
+import { creditWallet } from '../../_lib/wallet';
 
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
 
 export async function POST(request) {
   try {
-    const { refereePhone, referredBy } = await request.json();
+    // The referee's identity is derived from their own verified Firebase
+    // token, never trusted from the request body — otherwise anyone could
+    // POST an arbitrary phone number + valid referral code and redirect who
+    // gets attributed as the referrer for that person.
+    const { uid, error: authError } = await verifyAuthToken(request);
+    if (authError) {
+      return NextResponse.json({ error: authError }, { status: 401 });
+    }
 
-    if (!refereePhone || !referredBy) {
+    const { referredBy } = await request.json();
+
+    if (!referredBy) {
       return NextResponse.json({ error: 'Missing required parameters' }, { status: 400 });
     }
 
-    const refereeDigits = String(refereePhone).replace(/[^\d]/g, '');
+    const refereeDigits = String(uid).replace(/[^\d]/g, '');
     if (refereeDigits.length < 7) {
       return NextResponse.json({ error: 'Invalid referee phone' }, { status: 400 });
     }
@@ -37,10 +48,11 @@ export async function POST(request) {
     }
 
     let alreadyProcessed = false;
+    let auditInfo = null;
 
     // Transaction spans both docs: read+flip the referee's processed flag and
-    // increment the referrer's stats atomically, so a retried/duplicate call
-    // can never award coins twice for the same referee.
+    // apply every reward layer to the referrer atomically, so a retried/
+    // duplicate call can never award anything twice for the same referee.
     await runTransaction(db, async (transaction) => {
       const refereeSnap = await transaction.get(refereeRef);
       if (!refereeSnap.exists()) {
@@ -57,11 +69,54 @@ export async function POST(request) {
         throw new Error('Referrer profile not found');
       }
 
-      const newReferralCount = (referrerSnap.data().referralCount || 0) + 1;
-      const newCoins = (referrerSnap.data().coins || 0) + COINS_PER_REFERRAL;
+      const referrerData = referrerSnap.data();
       const refereeData = refereeSnap.data();
+      const newReferralCount = (referrerData.referralCount || 0) + 1;
 
-      transaction.update(referrerRef, {
+      // Layer 3 — surprise pool: a variable bonus on every successful
+      // referral, stacked on top of the flat Layer 1 credit.
+      const surpriseAmount = rollSurpriseReward();
+
+      // Layer 2 — tier ladder: auto-grant any tier this referral newly
+      // crosses (fixed rewards, no user choice involved).
+      const existingClaims = { ...(referrerData.tierClaims || {}) };
+      const newlyReachedTiers = REFERRAL_TIERS.filter(
+        (tier) => newReferralCount >= tier.minReferrals && !existingClaims[tier.id],
+      );
+
+      let tierCreditTotal = 0;
+      const badgesToAdd = [];
+      let freeDeliveryUntil = referrerData.freeDeliveryUntil || null;
+
+      for (const tier of newlyReachedTiers) {
+        const claim = { rewardName: tier.rewardName, role: tier.role, claimedAt: new Date().toISOString() };
+
+        for (const effect of tier.effects) {
+          if (effect.type === 'credits') {
+            tierCreditTotal += effect.amount;
+          } else if (effect.type === 'badge') {
+            badgesToAdd.push(effect.badge);
+          } else if (effect.type === 'perk' && effect.perk === 'free_delivery') {
+            const candidate = new Date(Date.now() + effect.days * 24 * 60 * 60 * 1000).toISOString();
+            if (!freeDeliveryUntil || candidate > freeDeliveryUntil) {
+              freeDeliveryUntil = candidate;
+            }
+          } else if (effect.type === 'physical') {
+            claim.vertical = effect.vertical;
+            claim.itemName = effect.item;
+            claim.status = referrerData.waitlistJoinedAt ? 'fulfilled_pending_dispatch' : 'pending_conversion';
+          }
+        }
+
+        existingClaims[tier.id] = claim;
+      }
+
+      // Layer 1 — immediate two-sided reward: flat credit for the referrer
+      // (below, combined with Layers 2 & 3) and for the referee (on their
+      // own doc, right after).
+      const newCoins = (referrerData.coins || 0) + LAYER1_REFERRER_CREDIT + surpriseAmount + tierCreditTotal;
+
+      const referrerUpdate = {
         referralCount: newReferralCount,
         coins: newCoins,
         referredUsers: arrayUnion({
@@ -70,11 +125,33 @@ export async function POST(request) {
           status: 'pending',
           referredAt: new Date().toISOString(),
         }),
-      });
+        lastSurprise: { amount: surpriseAmount, at: new Date().toISOString() },
+      };
+
+      if (newlyReachedTiers.length > 0) {
+        referrerUpdate.tierClaims = existingClaims;
+      }
+      if (badgesToAdd.length > 0) {
+        referrerUpdate.badges = arrayUnion(...badgesToAdd);
+      }
+      if (freeDeliveryUntil !== (referrerData.freeDeliveryUntil || null)) {
+        referrerUpdate.freeDeliveryUntil = freeDeliveryUntil;
+      }
+
+      transaction.update(referrerRef, referrerUpdate);
 
       transaction.update(refereeRef, {
         referredByProcessed: true,
+        coins: (refereeData.coins || 0) + LAYER1_REFEREE_CREDIT,
       });
+
+      auditInfo = {
+        layer1ReferrerCredit: LAYER1_REFERRER_CREDIT,
+        layer1RefereeCredit: LAYER1_REFEREE_CREDIT,
+        surpriseAmount,
+        tierCreditTotal,
+        tiersAwarded: newlyReachedTiers.map((t) => t.id),
+      };
     });
 
     if (alreadyProcessed) {
@@ -86,8 +163,41 @@ export async function POST(request) {
       referrerCode: referredBy,
       refereePhone: refereeDigits,
       timestamp: new Date().toISOString(),
-      coinsAwarded: COINS_PER_REFERRAL,
+      ...auditInfo,
     });
+
+    // Mirror the same coins into the real spendable wallet (referralProfiles
+    // .coins itself is untouched and stays the source of truth this route's
+    // own arithmetic reads from — see lib/referralRewards.js). Both sides use
+    // the referral system's own phone-digit identity, since that's what
+    // referralProfiles is keyed by and what verifyAuthToken already accepts
+    // as a valid caller identity for anyone who has verified that phone.
+    // Best-effort: the referral attribution above already fully committed by
+    // this point (coins incremented, referredUsers updated), so a transient
+    // failure here is logged rather than surfaced as a failed attribution —
+    // it would not be retried by a client re-call anyway, since the
+    // referredByProcessed guard above short-circuits any retry to "already
+    // attributed" without re-running this block.
+    try {
+      await creditWallet({
+        uid: referrerDoc.id,
+        amount: auditInfo.layer1ReferrerCredit + auditInfo.surpriseAmount + auditInfo.tierCreditTotal,
+        reason: 'Referral reward',
+        source: 'referral_attribution',
+        referenceId: refereeDigits,
+        idempotencyKey: `referral_attribute_${refereeDigits}_referrer`,
+      });
+      await creditWallet({
+        uid: refereeDigits,
+        amount: auditInfo.layer1RefereeCredit,
+        reason: 'Referral signup bonus',
+        source: 'referral_attribution',
+        referenceId: refereeDigits,
+        idempotencyKey: `referral_attribute_${refereeDigits}_referee`,
+      });
+    } catch (walletErr) {
+      console.error('[referral/attribute] Wallet mirror failed (referralProfiles.coins already updated):', walletErr);
+    }
 
     return NextResponse.json({ success: true, message: 'Attribution successful' }, { status: 200 });
   } catch (error) {

@@ -3,15 +3,11 @@ import { adminAuth } from '../../../lib/firebaseAdmin';
 export async function verifyAuthToken(request) {
   const authHeader = request.headers.get('authorization');
   const requestedUid = request.headers.get('x-user-id');
-  
+
   if (!authHeader?.startsWith('Bearer ')) {
     return { uid: null, error: 'Missing or invalid Authorization header' };
   }
-  
-  if (!requestedUid) {
-    return { uid: null, error: 'Missing x-user-id header' };
-  }
-  
+
   try {
     const token = authHeader.split('Bearer ')[1];
     const decoded = await adminAuth.verifyIdToken(token);
@@ -23,15 +19,22 @@ export async function verifyAuthToken(request) {
       return { uid: null, error: 'Unauthorized: anonymous session' };
     }
 
-    // Verify that the requested UID matches the token's UID or phone number
+    // Verify that the requested UID matches the token's UID or phone number.
+    // Phone-only accounts may be keyed on full E.164 digits or on the bare 10
+    // typed at signup (pre-normalization), so both forms are accepted.
     const tokenUid = decoded.uid;
     const tokenPhone = decoded.phone_number ? decoded.phone_number.replace(/[^\d]/g, '') : null;
-    
-    if (requestedUid !== tokenUid && requestedUid !== tokenPhone) {
-      return { uid: null, error: 'Unauthorized: User ID mismatch' };
+    const tokenPhoneLocal = tokenPhone && tokenPhone.length > 10 ? tokenPhone.slice(-10) : null;
+
+    const allowedUids = [tokenUid, tokenPhone, tokenPhoneLocal].filter(Boolean);
+
+    // If requestedUid doesn't match the token's direct claims (e.g. Google-auth user
+    // sending custom profile phone number as x-user-id), safely fallback to the verified tokenUid.
+    if (requestedUid && !allowedUids.includes(requestedUid)) {
+      return { uid: tokenUid, error: null };
     }
-    
-    return { uid: requestedUid, error: null };
+
+    return { uid: requestedUid || tokenUid, error: null };
   } catch (err) {
     console.error('Token verification error:', err);
     return { uid: null, error: 'Invalid or expired token' };

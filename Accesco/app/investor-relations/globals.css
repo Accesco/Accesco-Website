@@ -116,66 +116,6 @@ a {
   box-shadow: 0 24px 50px rgba(226, 55, 68, 0.34);
 }
 
-@media (max-width: 768px) {
-  .ir-hero {
-    padding: 20px 14px;
-  }
-
-  .ir-hero-inner {
-    min-height: auto;
-    border-radius: 24px;
-    padding: 22px 18px 28px;
-  }
-
-  .ir-links,
-  .ir-login {
-    display: none;
-  }
-
-  .ir-logo {
-    padding: 10px 18px;
-    font-size: 13px;
-  }
-
-  .ir-hero-content {
-    margin-top: 34px;
-  }
-
-  .ir-breadcrumb {
-    font-size: 10px;
-    padding: 7px 18px;
-  }
-
-  .ir-hero h1 {
-    font-size: 58px;
-    letter-spacing: -3px;
-    margin: 16px 0 20px;
-  }
-
-  .ir-bottom {
-    display: block;
-    text-align: center;
-  }
-
-  .ir-bottom p {
-    font-size: 13px;
-    margin-bottom: 24px;
-  }
-
-  .ir-stats {
-    display: none;
-  }
-
-  .ir-actions {
-    flex-direction: column;
-  }
-
-  .deck-btn,
-  .contact-btn {
-    text-align: center;
-    padding: 15px 20px;
-  }
-}
 /* ============================
    Investor Hero
 ============================ */
@@ -199,6 +139,120 @@ a {
 .ir-hero-inner::before,
 .ir-hero-inner::after {
   display: none !important;
+}
+  @media (max-width: 768px) {
+
+  .ir-hero {
+    width: 100%;
+    padding: 16px 12px;
+    box-sizing: border-box;
+  }
+
+  .ir-hero-inner {
+    width: 100%;
+    max-width: 100%;
+    min-height: auto !important;
+    padding: 24px 20px 30px !important;
+    border-radius: 24px;
+    box-sizing: border-box;
+  }
+
+  /* Header */
+  .ir-links,
+  .ir-login {
+    display: none;
+  }
+
+  .ir-logo {
+    padding: 9px 16px;
+    font-size: 12px;
+  }
+
+  /* Content */
+  .ir-hero-content {
+    width: 100%;
+    margin-top: 32px;
+    box-sizing: border-box;
+  }
+
+  .ir-breadcrumb {
+    font-size: 9px;
+    padding: 7px 16px;
+  }
+
+  /* INVESTORS */
+  .ir-hero h1 {
+    font-size: 42px !important;
+    line-height: 1.05 !important;
+    letter-spacing: -1.5px;
+    margin: 26px 0 30px;
+  }
+
+  /* Description */
+  .ir-bottom {
+    display: block !important;
+    width: 100%;
+    text-align: left;
+  }
+
+  .ir-bottom p {
+    width: 100%;
+    max-width: 280px;
+    font-size: 13px;
+    line-height: 1.65;
+    margin: 0 0 32px;
+    text-align: left;
+  }
+
+  /* STATS */
+  .ir-stats {
+    display: flex !important;
+    flex-direction: column;
+    width: 100%;
+    gap: 14px;
+    margin: 0 0 30px;
+  }
+
+  .ir-stats > div {
+    width: 100%;
+    min-width: 0;
+    padding: 14px 16px;
+    text-align: left;
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.08);
+    box-sizing: border-box;
+  }
+
+  .ir-stats strong {
+    display: inline-block;
+    font-size: 25px;
+    margin-right: 8px;
+  }
+
+  .ir-stats span {
+    display: inline;
+    font-size: 9px;
+    line-height: 1.4;
+  }
+
+  /* BUTTONS */
+  .ir-actions {
+    display: flex !important;
+    flex-direction: column;
+    width: 100%;
+    gap: 10px;
+    margin: 0;
+  }
+
+  .deck-btn,
+  .contact-btn {
+    width: 100%;
+    padding: 15px 18px;
+    text-align: center;
+    box-sizing: border-box;
+  }
+
+  /* DPIIT */
 }
 
 .ir-nav{
@@ -588,6 +642,15 @@ a {
     width: 100%;
     overflow-x: auto;
     padding-bottom: 6px;
+    display: flex;
+    flex-wrap: nowrap;
+    white-space: nowrap;
+    gap: 20px;
+  }
+
+  .nav-links a {
+    flex-shrink: 0;
+    white-space: nowrap;
   }
 
   .hero {
@@ -1108,4 +1171,23 @@ a {
 .media-logo img[alt="Pioneer Entrepreneur"] {
   mix-blend-mode: darken;
   background: transparent;
+}
+
+@media (max-width: 768px) {
+  .ir-hero-content {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .ir-hero h1 {
+    width: 100% !important;
+    max-width: none !important;
+    font-size: 42px !important;
+    line-height: 1.1 !important;
+    letter-spacing: -1px !important;
+    margin: 24px 0 32px !important;
+    white-space: normal !important;
+  }
 }

@@ -7,10 +7,11 @@
 'use client';
 
 import { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react';
+import { useAuth } from '../../../components/AuthProvider';
+import { getSwadishttCart, setSwadishttCart } from '@/lib/unifiedCart';
+import { updateUserFieldsInFirebase } from '@/lib/userService';
 
 const SwadishttContext = createContext(undefined);
-
-const CART_STORAGE_KEY = 'swadishtt-cart';
 
 const TARGET_ACCURACY_METERS = 50;
 const ACCEPTABLE_ACCURACY_METERS = 100;
@@ -274,6 +275,8 @@ function buildUserLocationStoragePayload({
 }
 
 export function SwadishttProvider({ children }) {
+  const { user: authUser, loading: authLoading } = useAuth();
+
   // Cart State
   const [cart, setCart] = useState([]);
   const [cartOpen, setCartOpen] = useState(false);
@@ -371,11 +374,13 @@ export function SwadishttProvider({ children }) {
         accuracyMeters: options?.accuracyMeters,
       });
 
-      localStorage.setItem('userLocation', JSON.stringify(payloadToStore));
+      if (authUser?.uid) {
+        updateUserFieldsInFirebase(authUser.uid, { selectedLocation: payloadToStore });
+      }
     } catch (e) {
       // ignore storage errors
     }
-  }, []);
+  }, [authUser]);
 
   const detectLocation = useCallback(
     async ({ silent = false } = {}) => {
@@ -496,33 +501,31 @@ export function SwadishttProvider({ children }) {
     [fetchLocationDetails, updateLocation]
   );
 
-  // Hydrate from shared localStorage + auto-detect once if missing
+  // Mirror the Firebase-backed auth user from AuthProvider
+  useEffect(() => {
+    setUser(authUser);
+  }, [authUser]);
+
+  // Hydrate from user profile + auto-detect once if missing
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
     try {
-      const storedUser = localStorage.getItem('accesco_user');
-      if (storedUser) {
-        setUser(JSON.parse(storedUser));
-      }
-    } catch (e) {
-      console.error('Error reading accesco_user:', e);
-    }
-
-    try {
-      const stored = localStorage.getItem('userLocation');
-      const hydrated = parseStoredUserLocationToSwadishttLocation(stored);
-      if (hydrated) {
-        setLocation(hydrated);
-        setLocationLoading(false);
-        return;
+      if (authUser?.selectedLocation) {
+        const stored = typeof authUser.selectedLocation === 'string' ? authUser.selectedLocation : JSON.stringify(authUser.selectedLocation);
+        const hydrated = parseStoredUserLocationToSwadishttLocation(stored);
+        if (hydrated) {
+          setLocation(hydrated);
+          setLocationLoading(false);
+          return;
+        }
       }
     } catch (e) {
       // ignore malformed storage
     }
 
     detectLocation({ silent: true });
-  }, [detectLocation]);
+  }, [authUser, detectLocation]);
 
   // Filters State
   const [filters, setFilters] = useState({
@@ -536,39 +539,55 @@ export function SwadishttProvider({ children }) {
   // Search State
   const [searchQuery, setSearchQuery] = useState('');
 
-  // Load cart from localStorage
+  // Load cart from Firestore. Keyed by the signed-in user's uid, or a
+  // per-browser device id for guests (see getSwadishttCart in unifiedCart.js)
+  // — re-runs when auth resolves/changes so the right cart gets loaded.
+  //
+  // Waits for auth to finish resolving (authLoading) before fetching at all —
+  // Firebase auth starts as null and resolves asynchronously, so fetching
+  // eagerly means a guest fetch (by device id) immediately followed by a
+  // second fetch once login resolves (by uid), which used to silently wipe
+  // the cart for anyone who had added items as a guest before their
+  // persisted session kicked in. If login resolves to an identity with no
+  // cart of its own yet, any items sitting under the guest device id are
+  // carried over instead of being discarded.
   useEffect(() => {
-    if (typeof window === 'undefined') return;
+    if (typeof window === 'undefined' || authLoading) return;
 
-    // Edited Jabez: hydrate cart before any save writes to prevent overwriting storage.
-    try {
-      const savedCart = localStorage.getItem(CART_STORAGE_KEY);
-      if (savedCart) {
-        const parsed = JSON.parse(savedCart);
-        if (Array.isArray(parsed)) {
-          setCart(parsed);
-        } else {
-          localStorage.removeItem(CART_STORAGE_KEY);
+    let cancelled = false;
+    setCartHydrated(false);
+
+    (async () => {
+      try {
+        let remoteCart = await getSwadishttCart(authUser);
+
+        if (authUser && remoteCart.length === 0) {
+          const guestCart = await getSwadishttCart(null);
+          if (guestCart.length > 0) {
+            remoteCart = guestCart;
+            await setSwadishttCart(authUser, guestCart);
+          }
         }
-      }
-    } catch (error) {
-      console.error('Error loading cart:', error);
-    } finally {
-      setCartHydrated(true);
-    }
-  }, []);
 
-  // Save cart to localStorage
+        if (!cancelled) setCart(remoteCart);
+      } catch (error) {
+        console.error('Error loading cart:', error);
+      } finally {
+        if (!cancelled) setCartHydrated(true);
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [authUser, authLoading]);
+
+  // Save cart to Firestore whenever it changes, once hydration has completed.
   useEffect(() => {
     if (!cartHydrated || typeof window === 'undefined') return;
 
-    // Edited Jabez: skip initial save until hydration completes to keep cart intact.
-    try {
-      localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cart));
-    } catch (error) {
-      console.error('Error saving cart:', error);
-    }
-  }, [cart, cartHydrated]);
+    setSwadishttCart(authUser, cart);
+  }, [cart, cartHydrated, authUser]);
 
   // Cart Functions
   const addToCart = (item, customizations = {}) => {

@@ -217,10 +217,10 @@ export default function AboutPage() {
               position: 'relative',
             }}>
               <Image
-                src="/images/foundersteam.jpg"
+                src="/images/foundersteam.png"
                 alt="Accesco Living founding team"
-                width={1920}
-                height={1080}
+                width={6000}
+                height={3375}
                 style={{
                   width: '100%',
                   height: 'auto',

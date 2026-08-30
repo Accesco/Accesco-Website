@@ -7,10 +7,18 @@ import { useCart } from '@/contexts/CartContext';
 import styles from './checkout.module.css';
 import Select from '@/components/instastyle/Select';
 import { payWithRazorpay } from '@/lib/razorpayService';
+import { useAuth } from '../../../components/AuthProvider';
+import { getDeliveryLocation } from '@/lib/locationService';
+import { useOtherStoreItems, clearAllBrandCarts } from '@/lib/unifiedCart';
+import { STORE_PLACERS, postUnifiedOrderRecord } from '@/lib/unifiedCheckoutOrders';
 
 export default function CheckoutPage() {
   const router = useRouter();
+  const { user, getIdToken } = useAuth();
   const { cart, subtotal, deliveryFee, tax, total, clearCart, placeOrder } = useCart();
+  const { otherStores, removeItem: removeOtherItem } = useOtherStoreItems(user, 'instastyle', getIdToken);
+  const otherStoresSubtotal = otherStores.reduce((sum, store) => sum + store.subtotal, 0);
+  const otherStoresPlatformFee = otherStoresSubtotal > 0 ? 18 : 0;
 
   const [formData, setFormData] = useState({
     fullName: '',
@@ -41,9 +49,17 @@ export default function CheckoutPage() {
   // Dynamic ETA state
   const [deliveryETA, setDeliveryETA] = useState(null);
 
+  // Whether the address fields were prefilled from the location already
+  // selected on the homepage (cleared once the user edits/detects their own).
+  const [usedSavedLocation, setUsedSavedLocation] = useState(false);
+
   const deliverySpeed = 'instant';
   const speedDiscount = 0;
   const finalTotal = total;
+  // Items added in Grokly/Swadishtt ride along on this same payment — one
+  // combined charge covers InstaStyle's own total plus every other store's
+  // subtotal and a flat platform fee for that portion.
+  const grandTotal = finalTotal + otherStoresSubtotal + otherStoresPlatformFee;
 
   const STATE_OPTIONS = [
     'Delhi',
@@ -88,46 +104,62 @@ export default function CheckoutPage() {
   };
 
   useEffect(() => {
-    if (typeof window === 'undefined') return;
+    if (!user) return;
 
-    try {
-      const storedUser = localStorage.getItem('accesco_user');
-      if (!storedUser) return;
+    const name = typeof user.name === 'string' ? user.name.trim() : '';
+    const email = typeof user.email === 'string' ? user.email.trim() : '';
 
-      const parsed = JSON.parse(storedUser);
-      const name = typeof parsed?.name === 'string' ? parsed.name.trim() : '';
-      const email = typeof parsed?.email === 'string' ? parsed.email.trim() : '';
+    let phoneRaw =
+      typeof user.phone === 'string' || typeof user.phone === 'number'
+        ? String(user.phone)
+        : '';
+    let digitsOnly = phoneRaw.replace(/\D/g, '');
+    if (digitsOnly.length > 10) digitsOnly = digitsOnly.slice(-10);
 
-      let phoneRaw =
-        typeof parsed?.phone === 'string' || typeof parsed?.phone === 'number'
-          ? String(parsed.phone)
-          : '';
-      let digitsOnly = phoneRaw.replace(/\D/g, '');
-      if (digitsOnly.length > 10) digitsOnly = digitsOnly.slice(-10);
+    setFormData((prev) => ({
+      ...prev,
+      fullName: prev.fullName || name,
+      phone: prev.phone || digitsOnly,
+      email: prev.email || email,
+    }));
 
-      setFormData((prev) => ({
-        ...prev,
-        fullName: prev.fullName || name,
-        phone: prev.phone || digitsOnly,
-        email: prev.email || email,
-      }));
-
-      setErrors((prev) => ({
-        ...prev,
-        fullName: '',
-        phone: '',
-        email: '',
-      }));
-    } catch {
-      // ignore malformed storage
-    }
-  }, []);
+    setErrors((prev) => ({
+      ...prev,
+      fullName: '',
+      phone: '',
+      email: '',
+    }));
+  }, [user]);
 
   useEffect(() => {
     if (cart.length === 0) {
       router.push('/services/instastyle/catalog');
     }
   }, [cart, router]);
+
+  // One-time prefill from the location already selected on the homepage
+  // (lib/locationService.js reads the same 'userLocation' localStorage key
+  // AccescoHeader's location picker writes to). Never overwrites anything
+  // the user has already typed or detected.
+  useEffect(() => {
+    if (formData.addressLine1) return;
+
+    const loc = getDeliveryLocation();
+    if (!loc) return;
+
+    const primaryLine = loc.streetAddress || loc.fullAddress || '';
+    if (!primaryLine && !loc.city && !loc.postalCode) return;
+
+    setFormData((prev) => ({
+      ...prev,
+      addressLine1: prev.addressLine1 || primaryLine,
+      city: prev.city || loc.city || '',
+      state: prev.state || coerceStateForSelect(loc.state),
+      pincode: prev.pincode || loc.postalCode || '',
+    }));
+    setUsedSavedLocation(true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const validateForm = () => {
     const newErrors = {};
@@ -159,6 +191,7 @@ export default function CheckoutPage() {
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
+    if (name === 'addressLine1') setUsedSavedLocation(false);
     if (errors[name]) {
       setErrors(prev => ({ ...prev, [name]: '' }));
     }
@@ -230,6 +263,7 @@ export default function CheckoutPage() {
             state,
             pincode,
           }));
+          setUsedSavedLocation(false);
 
           setErrors((prev) => ({
             ...prev,
@@ -339,6 +373,7 @@ export default function CheckoutPage() {
         state: coerceStateForSelect(locationData?.state), // unchanged — still restricted to 7 states
         pincode: locationData?.postalCode || '',
       }));
+      setUsedSavedLocation(false);
 
       setErrors((prev) => ({
         ...prev,
@@ -365,7 +400,57 @@ export default function CheckoutPage() {
     setIsProcessing(true);
     setPaymentError('');
 
-    const placeTheOrder = (paymentInfo = {}) => {
+    // The same payment also covers whatever's in the other two services'
+    // carts — place their orders too and fold them into one unified record.
+    const placeOtherStoreOrders = async (payment) => {
+      if (otherStores.length === 0) return;
+
+      const unifiedOrderId = `UNI-${Date.now()}`;
+      const otherAddress = {
+        name: formData.fullName,
+        phone: formData.phone,
+        email: formData.email,
+        address: [formData.addressLine1, formData.addressLine2].filter(Boolean).join(', '),
+        city: formData.city,
+        pincode: formData.pincode,
+      };
+
+      const otherResults = await Promise.all(
+        otherStores.map((store) =>
+          STORE_PLACERS[store.key]({
+            items: store.items,
+            subtotal: store.subtotal,
+            address: otherAddress,
+            unifiedOrderId,
+            payment,
+            paymentMethod: formData.paymentMethod,
+            user,
+            getIdToken,
+          })
+        )
+      );
+
+      await postUnifiedOrderRecord({
+        unifiedOrderId,
+        user,
+        getIdToken,
+        address: otherAddress,
+        paymentMethod: formData.paymentMethod,
+        payment,
+        subtotal: subtotal + otherStoresSubtotal,
+        platformFee: otherStoresPlatformFee,
+        grandTotal,
+        itemCount: cart.length + otherStores.reduce((s, st) => s + st.itemCount, 0),
+        results: [
+          { key: 'instastyle', name: 'Insta Style', theme: 'instastyle', id: null, itemCount: cart.length, subtotal, trackingPath: '' },
+          ...otherResults,
+        ],
+      });
+
+      await clearAllBrandCarts({ user, getIdToken });
+    };
+
+    const placeTheOrder = async (paymentInfo = {}, payment = null) => {
       const order = placeOrder({
         total: finalTotal,
         subtotal,
@@ -381,14 +466,15 @@ export default function CheckoutPage() {
         eta: deliverySpeed === 'batched' ? (typeof batchedETA !== 'undefined' ? batchedETA : null) : (deliveryETA || null),
         ...paymentInfo,
       });
+      await placeOtherStoreOrders(payment);
       router.push(`/services/instastyle/order-tracking?id=${order.id}`);
     };
 
     // Cash on Delivery skips the payment gateway entirely.
     if (formData.paymentMethod === 'cod') {
-      setTimeout(() => {
+      setTimeout(async () => {
+        await placeTheOrder();
         setIsProcessing(false);
-        placeTheOrder();
       }, 1500);
       return;
     }
@@ -396,10 +482,12 @@ export default function CheckoutPage() {
     // Digital payment: collect payment via Razorpay before the order is created.
     try {
       const payment = await payWithRazorpay({
-        amount: finalTotal,
+        amount: grandTotal,
         receipt: `instastyle_${Date.now()}`,
         name: 'InstaStyle',
-        description: `InstaStyle order · ${cart.length} item(s)`,
+        description: otherStores.length > 0
+          ? `Order across ${1 + otherStores.length} store(s) · ${cart.length + otherStores.reduce((s, st) => s + st.itemCount, 0)} item(s)`
+          : `InstaStyle order · ${cart.length} item(s)`,
         prefill: {
           name: formData.fullName,
           email: formData.email,
@@ -407,10 +495,10 @@ export default function CheckoutPage() {
         },
         theme: { color: '#111111' },
       });
-      placeTheOrder({
+      await placeTheOrder({
         razorpayOrderId: payment.orderId,
         razorpayPaymentId: payment.paymentId,
-      });
+      }, payment);
     } catch (err) {
       console.error('Payment failed:', err);
       setPaymentError(err.message || 'Payment failed. Please try again.');
@@ -494,48 +582,48 @@ export default function CheckoutPage() {
               </section>
 
               <section className={styles.section}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+                <div className={styles.addressSectionHeader}>
                   <h2 className={styles.sectionTitle} style={{ margin: 0 }}>Delivery Address</h2>
-                  <button 
-                    type="button" 
-                    onClick={handleDetectLocation} 
+                  <button
+                    type="button"
+                    onClick={handleDetectLocation}
                     disabled={isLocating}
-                    style={{ padding: '8px 16px', cursor: 'pointer', backgroundColor: '#000', color: '#fff', border: 'none', borderRadius: '4px' }}
+                    className={styles.detectLocationBtn}
                   >
                     {isLocating ? 'Locating & Calculating ETA...' : 'Detect My Location'}
                   </button>
                 </div>
-                
+
+                {usedSavedLocation && (
+                  <span className={styles.autoFilledBadge}>📍 From your saved location</span>
+                )}
+
                 {locationError && (
-                  <div style={{ color: 'red', marginBottom: '1rem', fontSize: '0.875rem' }}>
+                  <div className={styles.locationErrorBanner}>
                     {locationError}
                   </div>
                 )}
 
                 {/* Manual address search (new) */}
-                <div style={{ position: 'relative', marginBottom: '1rem' }}>
+                <div className={styles.addressSearchWrap}>
                   <input
                     type="text"
                     placeholder="Or search your address manually..."
                     value={addressSearch}
                     onChange={(e) => handleAddressSearch(e.target.value)}
                     onFocus={() => addressSuggestions.length && setShowSuggestions(true)}
-                    style={{ width: '100%', padding: '10px 12px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '14px' }}
+                    className={styles.addressSearchInput}
                   />
                   {showSuggestions && addressSuggestions.length > 0 && (
-                    <ul style={{
-                      position: 'absolute', top: '100%', left: 0, right: 0, zIndex: 20,
-                      background: '#fff', border: '1px solid #ddd', borderRadius: 6,
-                      maxHeight: 200, overflowY: 'auto', listStyle: 'none', margin: 0, padding: 0,
-                    }}>
+                    <ul className={styles.addressSuggestions}>
                       {addressSuggestions.map((s, i) => (
                         <li
                           key={i}
                           onClick={() => handleSuggestionSelect(s)}
-                          style={{ padding: '10px 12px', cursor: 'pointer', borderBottom: '1px solid #f0f0f0' }}
+                          className={styles.addressSuggestionItem}
                         >
-                          <div style={{ fontWeight: 600, fontSize: 14 }}>{s.label}</div>
-                          <div style={{ fontSize: 12, color: '#777' }}>{s.fullAddress}</div>
+                          <div className={styles.suggestionLabel}>{s.label}</div>
+                          <div className={styles.suggestionAddress}>{s.fullAddress}</div>
                         </li>
                       ))}
                     </ul>
@@ -667,7 +755,7 @@ export default function CheckoutPage() {
               >
                 {isProcessing
                   ? (formData.paymentMethod === 'cod' ? 'Processing...' : 'Processing Payment...')
-                  : `Place Order - ₹${finalTotal.toLocaleString()}`}
+                  : `Place Order - ₹${grandTotal.toLocaleString()}`}
               </button>
             </form>
           </div>
@@ -700,6 +788,34 @@ export default function CheckoutPage() {
                 ))}
               </div>
 
+              {otherStores.length > 0 && (
+                <div style={{ margin: '14px 0', padding: '12px 14px', background: '#f9fafb', borderRadius: '10px', border: '1px solid #e5e7eb' }}>
+                  <div style={{ fontSize: '13px', fontWeight: 800, color: '#374151', marginBottom: '8px' }}>Also in your cart — paid in this order</div>
+                  {otherStores.map((store) => (
+                    <div key={store.key} style={{ marginBottom: '8px' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', fontWeight: 700, color: '#6b7280', marginBottom: '4px' }}>
+                        <span>{store.name}</span>
+                        <span>₹{store.subtotal}</span>
+                      </div>
+                      {store.items.map((item) => (
+                        <div key={item.key} style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', color: '#374151', padding: '3px 0' }}>
+                          <span style={{ flex: 1 }}>{item.name} <span style={{ color: '#9ca3af' }}>x {item.quantity}</span></span>
+                          <span>₹{item.price * item.quantity}</span>
+                          <button
+                            type="button"
+                            onClick={() => removeOtherItem(store.key, item)}
+                            aria-label={`Remove ${item.name}`}
+                            style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#9ca3af', padding: '2px' }}
+                          >
+                            ✕
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  ))}
+                </div>
+              )}
+
               <div className={styles.summaryTotals}>
                 <div className={styles.totalRow}>
                   <span>Subtotal</span>
@@ -721,9 +837,21 @@ export default function CheckoutPage() {
                     <span>-₹{speedDiscount}</span>
                   </div>
                 )}
+                {otherStores.length > 0 && (
+                  <>
+                    <div className={styles.totalRow}>
+                      <span>Other Services&rsquo; Items</span>
+                      <span>₹{otherStoresSubtotal}</span>
+                    </div>
+                    <div className={styles.totalRow}>
+                      <span>Platform Fee</span>
+                      <span>₹{otherStoresPlatformFee}</span>
+                    </div>
+                  </>
+                )}
                 <div className={`${styles.totalRow} ${styles.grandTotal}`}>
                   <span>Total</span>
-                  <span>₹{finalTotal.toLocaleString()}</span>
+                  <span>₹{grandTotal.toLocaleString()}</span>
                 </div>
               </div>
 

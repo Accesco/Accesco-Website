@@ -4,6 +4,7 @@ import { useEffect, useState, useRef } from 'react';
 import Image from 'next/image';
 
 const CHATBOT_LOGO = '/logo.png';
+const CHATBOT_API_URL = process.env.NEXT_PUBLIC_CHATBOT_URL || 'http://localhost:8000';
 
 function getChatTime() {
   return new Date().toLocaleTimeString([], {
@@ -54,7 +55,7 @@ const [typing, setTyping] = useState(false)
     endRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, typing]);
 
-  const sendMessage = (e) => {
+  const sendMessage = async (e) => {
     e.preventDefault();
 
     const value = input.trim();
@@ -73,19 +74,38 @@ const [typing, setTyping] = useState(false)
     setInput('');
     setTyping(true);
 
-    setTimeout(() => {
-      setMessages((prev) => [
-        ...prev,
-        {
-          id: Date.now() + 1,
-          role: 'bot',
-          text: getAccescoReply(value),
-          time: getChatTime(),
-        },
-      ]);
+    // Call FastAPI ML server; fall back to rule-based reply if server is down
+    let botText;
+    let botCards = null;
+    let botActions = null;
+    try {
+      const res = await fetch(`${CHATBOT_API_URL}/chat`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text: value, top_k: 3 }),
+      });
+      if (!res.ok) throw new Error('server error');
+      const data = await res.json();
+      botText = data.reply;
+      botCards = data.cards && data.cards.length ? data.cards : null;
+      botActions = data.actions && data.actions.length ? data.actions : null;
+    } catch (err) {
+      botText = getAccescoReply(value);
+    }
 
-      setTyping(false);
-    }, 650);
+    setMessages((prev) => [
+      ...prev,
+      {
+        id: Date.now() + 1,
+        role: 'bot',
+        text: botText,
+        time: getChatTime(),
+        cards: botCards,
+        actions: botActions,
+      },
+    ]);
+
+    setTyping(false);
   };
 
   return (
@@ -198,7 +218,14 @@ const [typing, setTyping] = useState(false)
 
                   <div className="ac-ai-message-stack">
                     <div className="ac-ai-bubble">
-                      <span>{msg.text}</span>
+                      <span style={{ whiteSpace: 'pre-wrap' }}>
+                        {msg.text.split('\n').map((line, i, arr) => (
+                          <span key={i}>
+                            {line}
+                            {i < arr.length - 1 && <br />}
+                          </span>
+                        ))}
+                      </span>
 
                       {msg.role === 'user' && (
                         <span className="ac-ai-user-time">
@@ -206,6 +233,66 @@ const [typing, setTyping] = useState(false)
                         </span>
                       )}
                     </div>
+
+                    {msg.role === 'bot' && msg.cards && msg.cards.length > 0 && (
+                      <div className="ac-ai-product-carousel">
+                        {msg.cards.map((card, ci) => (
+                          <a
+                            key={ci}
+                            className="ac-ai-product-card-hz"
+                            href={card.url || '#'}
+                            target="_self"
+                          >
+                            <div className="ac-ai-card-hz-thumb">
+                              {card.image ? (
+                                <img src={card.image} alt={card.name} />
+                              ) : (
+                                <span>
+                                  {(card.brand || card.service || card.name || '?').charAt(0)}
+                                </span>
+                              )}
+                            </div>
+                            <div className="ac-ai-card-hz-body">
+                              <p className="ac-ai-card-hz-name">{card.name}</p>
+                              
+                              <div className="ac-ai-card-hz-rating">
+                                <span className="ac-ai-star">★</span> {card.rating || '4.5'} <span className="ac-ai-reviews">({card.reviews || '423'})</span>
+                              </div>
+
+                              <div className="ac-ai-card-hz-price-row">
+                                <span className="ac-ai-card-hz-price">
+                                  ₹{card.price || '68'}
+                                </span>
+                                <span className="ac-ai-card-hz-old-price">
+                                  ₹{card.originalPrice || '95'}
+                                </span>
+                              </div>
+                            </div>
+                          </a>
+                        ))}
+                      </div>
+                    )}
+
+                    {msg.role === 'bot' && msg.actions && msg.actions.length > 0 && (
+                      <div className="ac-ai-actions">
+                        {msg.actions.map((action, ai) => {
+                          const lbl = (action.label || '').toLowerCase();
+                          const isOrder = lbl.includes('order') || lbl.includes('buy');
+                          return (
+                            <a
+                              key={ai}
+                              className={`ac-ai-action ${isOrder ? 'ac-ai-action-green' : 'ac-ai-action-maroon'}`}
+                              href={action.url || '#'}
+                              target="_self"
+                            >
+                              <span className="ac-ai-green-dot" />
+                              <span className="ac-ai-action-label">{action.label}</span>
+                              <span className="ac-ai-action-arrow">→</span>
+                            </a>
+                          );
+                        })}
+                      </div>
+                    )}
 
                     {msg.role === 'bot' && (
                       <div className="ac-ai-time">{msg.time}</div>
@@ -533,6 +620,279 @@ const [typing, setTyping] = useState(false)
           font-weight: 500;
         }
 
+        .ac-ai-product-carousel {
+          margin-top: 12px;
+          display: flex;
+          gap: 12px;
+          overflow-x: auto;
+          padding: 8px;
+          margin-left: -8px;
+          margin-right: -8px;
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+          width: calc(100% + 16px);
+          max-width: calc(100% + 16px);
+        }
+
+        .ac-ai-product-carousel::-webkit-scrollbar {
+          display: none;
+        }
+
+        .ac-ai-product-card-hz {
+          display: flex;
+          flex-direction: column;
+          width: 175px;
+          flex: 0 0 auto;
+          border-radius: 14px;
+          background: #fffdfa;
+          border: 1px solid #f2ebe6;
+          text-decoration: none;
+          overflow: hidden;
+          transition: transform 180ms ease, box-shadow 180ms ease;
+          /* Fix for webkit border-radius leak */
+          transform: translateZ(0); 
+        }
+
+        .ac-ai-product-card-hz:hover {
+          transform: translateY(-2px) translateZ(0);
+          box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+        }
+
+        .ac-ai-card-hz-thumb {
+          width: 100%;
+          height: 140px;
+          padding: 10px 10px 0 10px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          overflow: hidden;
+        }
+
+        .ac-ai-card-hz-thumb img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          border-radius: 8px;
+        }
+
+        .ac-ai-card-hz-thumb span {
+          font-size: 26px;
+          font-weight: 700;
+          color: #8a0048;
+        }
+
+        .ac-ai-card-hz-body {
+          padding: 10px 14px 14px;
+          display: flex;
+          flex-direction: column;
+          gap: 6px;
+        }
+
+        .ac-ai-card-hz-name {
+          margin: 0;
+          font-size: 14px;
+          font-weight: 500;
+          color: #3d2b27;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+
+        .ac-ai-card-hz-rating {
+          font-size: 12px;
+          display: flex;
+          align-items: center;
+          gap: 4px;
+          color: #e58d4a;
+        }
+
+        .ac-ai-card-hz-rating .ac-ai-star {
+          font-size: 13px;
+        }
+
+        .ac-ai-card-hz-rating .ac-ai-reviews {
+          color: #8c7e7b;
+        }
+
+        .ac-ai-card-hz-price-row {
+          display: flex;
+          align-items: baseline;
+          gap: 8px;
+          margin-top: 4px;
+        }
+
+        .ac-ai-card-hz-price {
+          font-size: 16px;
+          font-weight: 600;
+          color: #b92b27;
+        }
+
+        .ac-ai-card-hz-old-price {
+          font-size: 12px;
+          color: #9c928f;
+          text-decoration: line-through;
+        }
+
+        .ac-ai-actions {
+          margin-top: 14px;
+          display: flex;
+          flex-wrap: wrap;
+          gap: 8px;
+          align-items: center;
+        }
+
+        /* Base action button */
+        .ac-ai-action {
+          position: relative;
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+          padding: 9px 16px;
+          border-radius: 999px;
+          font-size: 13px;
+          font-weight: 600;
+          text-decoration: none;
+          letter-spacing: -0.01em;
+          cursor: pointer;
+          white-space: nowrap;
+          transition: transform 150ms ease, box-shadow 200ms ease, filter 200ms ease;
+        }
+
+        .ac-ai-action:active {
+          transform: scale(0.96);
+        }
+
+        /* ORDER button — theme maroon, full-width rectangle, dot + arrow layout */
+        .ac-ai-action-green {
+          background: linear-gradient(135deg, #8a0048 0%, #5e0030 100%);
+          color: #ffffff;
+          border: none;
+          border-radius: 10px;
+          width: 100%;
+          padding: 11px 14px 11px 14px;
+          justify-content: flex-start;
+          box-sizing: border-box;
+          overflow: visible;
+          box-shadow:
+            0 3px 12px rgba(90, 0, 48, 0.4),
+            inset 0 1px 0 rgba(255,255,255,0.12);
+        }
+
+        .ac-ai-action-green .ac-ai-green-dot {
+          display: block;
+          width: 8px;
+          height: 8px;
+          border-radius: 50%;
+          background: #ff7eb3;
+          flex: 0 0 8px;
+          box-shadow: 0 0 0 2px rgba(255, 126, 179, 0.35);
+          animation: acGreenPulse 2s infinite ease-in-out;
+        }
+
+        .ac-ai-action-green .ac-ai-action-label {
+          flex: 1;
+        }
+
+        .ac-ai-action-green .ac-ai-action-arrow {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          width: 20px;
+          height: 20px;
+          min-width: 20px;
+          background: rgba(255,255,255,0.15);
+          border-radius: 50%;
+          font-size: 11px;
+          flex: 0 0 20px;
+          transition: transform 200ms ease, background 200ms ease;
+        }
+
+        .ac-ai-action-green:hover {
+          background: linear-gradient(135deg, #a3005a 0%, #780040 100%);
+          transform: translateY(-1px);
+          box-shadow: 0 6px 18px rgba(90, 0, 48, 0.5);
+        }
+
+        .ac-ai-action-green:hover .ac-ai-action-arrow {
+          transform: translateX(3px);
+          background: rgba(255,255,255,0.25);
+        }
+
+        /* BROWSE button — same as Order, theme maroon */
+        .ac-ai-action-maroon {
+          background: linear-gradient(135deg, #8a0048 0%, #5e0030 100%);
+          color: #ffffff;
+          border: none;
+          border-radius: 10px;
+          width: 100%;
+          padding: 11px 14px 11px 14px;
+          justify-content: flex-start;
+          box-sizing: border-box;
+          overflow: visible;
+          box-shadow:
+            0 3px 12px rgba(90, 0, 48, 0.4),
+            inset 0 1px 0 rgba(255,255,255,0.12);
+        }
+
+        .ac-ai-action-maroon .ac-ai-green-dot {
+          display: block;
+        }
+
+        .ac-ai-action-maroon .ac-ai-action-label {
+          flex: 1;
+        }
+
+        .ac-ai-action-maroon .ac-ai-action-arrow {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          width: 20px;
+          height: 20px;
+          min-width: 20px;
+          background: rgba(255,255,255,0.15);
+          border-radius: 50%;
+          font-size: 11px;
+          flex: 0 0 20px;
+          transition: transform 200ms ease, background 200ms ease;
+        }
+
+        .ac-ai-action-maroon:hover {
+          background: linear-gradient(135deg, #a3005a 0%, #780040 100%);
+          transform: translateY(-1px);
+          box-shadow: 0 6px 18px rgba(90, 0, 48, 0.5);
+        }
+
+        .ac-ai-action-maroon:hover .ac-ai-action-arrow {
+          transform: translateX(3px);
+          background: rgba(255,255,255,0.25);
+        }
+
+        /* Green dot — shared pulse animation */
+        .ac-ai-green-dot {
+          width: 8px;
+          height: 8px;
+          border-radius: 50%;
+          background: #52d68a;
+          flex: 0 0 8px;
+          box-shadow: 0 0 0 2px rgba(82, 214, 138, 0.3);
+          animation: acGreenPulse 2s infinite ease-in-out;
+        }
+
+        @keyframes acGreenPulse {
+          0%, 100% { box-shadow: 0 0 0 2px rgba(82, 214, 138, 0.3); }
+          50% { box-shadow: 0 0 0 5px rgba(82, 214, 138, 0.1); }
+        }
+
+        .ac-ai-action-label {
+          position: relative;
+          z-index: 1;
+        }
+
+        .ac-ai-action-arrow {
+          position: relative;
+          z-index: 1;
+        }
+
         .ac-ai-bubble.typing {
           display: inline-flex;
           align-items: center;
@@ -631,7 +991,7 @@ const [typing, setTyping] = useState(false)
         @media (max-width: 900px) {
           .ac-ai-window {
             right: 18px;
-            left: 18px;
+            left: auto;
             bottom: 92px;
             width: auto;
             height: min(760px, calc(100vh - 116px));
@@ -697,15 +1057,16 @@ const [typing, setTyping] = useState(false)
           .ac-ai-floating-close,
           .ac-ai-launcher {
             right: 24px;
+            left: auto;
             bottom: 22px;
           }
         }
           /* SMALLER CHATBOT SIZE FIX */
 .ac-ai-window {
-  width: min(620px, calc(100vw - 32px)) !important;
-  height: min(610px, calc(100vh - 96px)) !important;
+  width: min(520px, calc(100vw - 32px)) !important;
+  height: min(480px, calc(100vh - 140px)) !important;
   right: 42px !important;
-  bottom: 84px !important;
+  bottom: 96px !important;
   border-radius: 22px !important;
 }
 
@@ -855,7 +1216,7 @@ const [typing, setTyping] = useState(false)
 @media (max-width: 700px) {
   .ac-ai-window {
     right: 14px !important;
-    left: 14px !important;
+    left: auto !important;
     bottom: 84px !important;
     width: auto !important;
     height: min(560px, calc(100vh - 105px)) !important;
@@ -1255,9 +1616,10 @@ const [typing, setTyping] = useState(false)
 @media (max-width: 700px) {
   .ac-ai-preview-wrap {
     right: 12px;
-    left: 12px;
+    left: auto;
     bottom: 14px;
     gap: 10px;
+    justify-content: flex-end;
   }
 
   .ac-ai-preview-card {
@@ -1297,9 +1659,10 @@ const [typing, setTyping] = useState(false)
 @media (max-width: 700px) {
   .ac-ai-preview-wrap {
     right: 12px;
-    left: 12px;
+    left: auto;
     bottom: 16px;
     gap: 10px;
+    justify-content: flex-end;
   }
 
   .ac-ai-preview-card {

@@ -4184,6 +4184,26 @@ opacity:0.5;
   }
 }
 
+/* Phone — below this width the fixed min-height forces the box taller than
+   the image's natural 1200:800 aspect ratio, so object-fit: cover was
+   zooming in and cropping the banner's text off both edges. Drop the
+   min-height floor and switch to contain so the whole image (and its text)
+   stays visible; the section's dark background fills any letterboxing. */
+@media (max-width: 700px) {
+  .about-accesco-image {
+    min-height: 0;
+    object-fit: contain;
+  }
+}
+
+/* Keep the banner edge-to-edge on mobile: globals.css forces a 20px/60px
+   section padding at <=768px, which would letterbox the full-bleed artwork. */
+@media (max-width: 768px) {
+  .about-accesco-section {
+    padding: 0 !important;
+  }
+}
+
 /* Mobile */
 
 /* ===== COMPACT XPENSE METER — MOBILE ONLY ===== */
@@ -4525,7 +4545,7 @@ opacity:0.5;
 
           .services-grid {
             display: grid !important;
-            grid-template-columns: repeat(3, 1f) !important;
+            grid-template-columns: repeat(3, 1fr) !important;
             gap: 8px !important;
             width: 100% !important;
             overflow: visible !important;
@@ -4538,7 +4558,7 @@ opacity:0.5;
             display: none;
           }
 
-          .services-grid > div {
+          .services-grid > * {
             flex: 0 0 100%;
             min-width: 100%;
             max-width: 100%;
@@ -4548,7 +4568,7 @@ opacity:0.5;
             box-sizing: border-box;
           }
 
-          .services-grid > div {
+          .services-grid > * {
             width: 100% !important;
             min-width: 0 !important;
             max-width: none !important;
@@ -4619,39 +4639,42 @@ opacity:0.5;
           }
         }
 
-        @media (max-width: 480px) {
+        @media (max-width: 640px) {
           .services-grid {
             gap: 6px !important;
-  display: grid !important;
-  grid-template-columns: repeat(2, 1fr) !important;
+            display: grid !important;
+            grid-template-columns: repeat(2, 1fr) !important;
             overflow: visible !important;
             scroll-snap-type: none !important;
             padding-bottom: 0 !important;
             margin: 0 !important;
           }
-          .services-grid > div {
+          .services-grid > * {
             width: 100% !important;
             min-width: 0 !important;
             max-width: none !important;
             flex-shrink: 0 !important;
           }
-/* Grokly */
-.services-grid > div:nth-child(1) {
-  grid-column: 1;
-  grid-row: 1;
-}
 
-/* Swadisht - full width */
-.services-grid > div:nth-child(2) {
-  grid-column: 1 / -1;
-  grid-row: 2;
-}
+          /* Grokly - Row 1 Left */
+          .services-grid > *:nth-child(1) {
+            grid-column: 1 !important;
+            grid-row: 1 !important;
+          }
 
-/* InstaStyle */
-.services-grid > div:nth-child(3) {
-  grid-column: 2;
-  grid-row: 1;
-}
+          /* Swadishtt - Row 1 Right */
+          .services-grid > *:nth-child(2) {
+            grid-column: 2 !important;
+            grid-row: 1 !important;
+          }
+
+          /* InstaStyle - Row 2 Center */
+          .services-grid > *:nth-child(3) {
+            grid-column: 1 / -1 !important;
+            grid-row: 2 !important;
+            justify-self: center !important;
+            width: calc(50% - 3px) !important;
+          }
   
        .service-card-visual {
   height: 120px !important;   /* was 85px */
@@ -4671,8 +4694,12 @@ opacity:0.5;
           }
           .service-card-cta {
             padding: 6px 2px !important;
-            font-size: 0.55rem !important;
+            font-size: 0.62rem !important;
             border-radius: 6px !important;
+            min-height: 36px !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
           }
           .service-icon-circle {
             width: 26px !important;
@@ -4790,7 +4817,7 @@ opacity:0.5;
 .bengaluru-launch-section {
   width: 100%;
   padding: 40px 20px;
-  background: #fff2eb;
+  background: #ffffff;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -4816,13 +4843,15 @@ opacity:0.5;
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
+  display: flex;
+  justify-content: center;
 }
 
 .bengaluru-launch-img {
   width: auto;
   height: auto;
   max-width: 100%;
-  max-height: 85vh;
+  max-height: min(70vh, 700px);
   display: block;
   object-fit: contain;
   border-radius: 20px;
@@ -4835,10 +4864,6 @@ opacity:0.5;
 @media (max-width: 768px) {
   .bengaluru-launch-section {
     padding: 24px 14px;
-  }
-
-  .bengaluru-launch-img {
-    max-height: 70vh;
   }
 
   .bengaluru-launch-card,

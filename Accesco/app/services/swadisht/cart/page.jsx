@@ -5,8 +5,10 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useSwadishtt } from '../contexts/SwadishttContext';
+import { useAuth } from '../../../components/AuthProvider';
 import SwadishttHeader from '../components/SwadishttHeader';
 import styles from './cart.module.css';
+import { useOtherStoreItems } from '@/lib/unifiedCart';
 
 const FOOD_ISSUE_TYPES = [
   {
@@ -60,7 +62,12 @@ const FOOD_ISSUE_TYPES = [
 
 function CartContent() {
   const router = useRouter();
-  const { cart, removeFromCart, updateCartQuantity, clearCart } = useSwadishtt();
+  const { cart, removeFromCart, updateCartQuantity, clearCart, user } = useSwadishtt();
+  // See services/swadisht/checkout/page.jsx's identical comment: this
+  // hook needs the real Firebase Auth identity, not SwadishttContext's own
+  // (guest-checkout-form) `user`.
+  const { user: authUser, userData, getIdToken } = useAuth();
+  const { otherStores, updateQuantity: updateOtherQuantity, removeItem: removeOtherItem } = useOtherStoreItems(authUser, 'swadishtt', getIdToken);
   const [promoCode, setPromoCode] = useState('');
   const [appliedPromo, setAppliedPromo] = useState(null);
   const [promoError, setPromoError] = useState('');
@@ -75,6 +82,7 @@ function CartContent() {
   const [returnScheduled, setReturnScheduled] = useState(false);
 
   const PROMO_CODES = {
+    'SWADISHT50': { discount: 50, type: 'flat', description: 'Flat ₹50 off on Food Delivery' },
     'FIRST50': { discount: 50, type: 'flat', description: 'Flat ₹50 off on first order' },
     'SAVE20': { discount: 20, type: 'percent', description: '20% off on orders above ₹500' },
     'SWADISHT100': { discount: 100, type: 'flat', description: 'Flat ₹100 off' },
@@ -110,23 +118,17 @@ function CartContent() {
       return;
     }
 
-    // Check redeemed secret codes from Circular Credits in localStorage
-    try {
-      const rawVouchers = localStorage.getItem('instastyle_vouchers') || localStorage.getItem('accesco_user_vouchers');
-      if (rawVouchers) {
-        const vouchers = JSON.parse(rawVouchers);
-        const matched = vouchers.find(v => (v.secretCode || '').toUpperCase() === inputCode);
-        if (matched) {
-          setAppliedPromo({
-            discount: matched.discount || 200,
-            type: matched.type || 'flat',
-            description: `Secret Voucher Applied: ${matched.label} (${matched.secretCode})`,
-          });
-          return;
-        }
+    // Check redeemed secret codes from Firebase userVouchers
+    if (userData && Array.isArray(userData.userVouchers)) {
+      const matched = userData.userVouchers.find(v => (v.secretCode || '').toUpperCase() === inputCode);
+      if (matched) {
+        setAppliedPromo({
+          discount: matched.discount || 200,
+          type: matched.type || 'flat',
+          description: `Secret Voucher Applied: ${matched.label} (${matched.secretCode})`,
+        });
+        return;
       }
-    } catch (e) {
-      console.error(e);
     }
 
     setPromoError('Invalid or expired promo code');
@@ -279,6 +281,48 @@ function CartContent() {
                 </div>
               </div>
             </div>
+
+            {/* Also in your cart — items added in other Accesco services */}
+            {otherStores.length > 0 && (
+              <div className={styles.otherStores}>
+                <h3 className={styles.otherStoresTitle}>Also in your cart</h3>
+                {otherStores.map((store) => (
+                  <div key={store.key} className={styles.otherStoreBlock}>
+                    <div className={styles.otherStoreHeader}>
+                      <span>{store.name}</span>
+                      <span>₹{store.subtotal}</span>
+                    </div>
+                    {store.items.map((item) => (
+                      <div key={item.key} className={styles.otherStoreItem}>
+                        {/* eslint-disable-next-line @next/next/no-img-element -- heterogeneous external hosts */}
+                        <img
+                          className={styles.otherStoreItemImg}
+                          src={item.image || `https://placehold.co/60x60/262626/FAF9F6?text=${encodeURIComponent(item.name[0])}`}
+                          alt={item.name}
+                          onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = `https://placehold.co/60x60/262626/FAF9F6?text=${encodeURIComponent(item.name[0])}`; }}
+                        />
+                        <div className={styles.otherStoreItemInfo}>
+                          <span className={styles.otherStoreItemName}>{item.name}</span>
+                          {item.variant && <span className={styles.otherStoreItemVariant}>{item.variant}</span>}
+                        </div>
+                        <div className={styles.otherStoreItemQty}>
+                          <button onClick={() => updateOtherQuantity(store.key, item, item.quantity - 1)} aria-label={`Decrease ${item.name} quantity`}>−</button>
+                          <span>{item.quantity}</span>
+                          <button onClick={() => updateOtherQuantity(store.key, item, item.quantity + 1)} aria-label={`Increase ${item.name} quantity`}>+</button>
+                        </div>
+                        <button
+                          className={styles.otherStoreItemRemove}
+                          onClick={() => removeOtherItem(store.key, item)}
+                          aria-label={`Remove ${item.name}`}
+                        >
+                          ✕
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* ── Reusable Container Card ── */}

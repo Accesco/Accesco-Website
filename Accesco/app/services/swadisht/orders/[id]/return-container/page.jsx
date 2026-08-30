@@ -3,6 +3,7 @@
 import { useMemo, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import SwadishttHeader from '../../../components/SwadishttHeader';
+import { useAuth } from '../../../../../components/AuthProvider';
 import styles from './return-container.module.css';
 
 const RETURN_ITEMS = [
@@ -237,6 +238,7 @@ function HelpFooter() {
 export default function SwadishttReturnContainerPage() {
   const params = useParams();
   const router = useRouter();
+  const { user, getIdToken } = useAuth();
 
   const orderId = params.id || '12345';
 
@@ -333,13 +335,19 @@ export default function SwadishttReturnContainerPage() {
         JSON.stringify([...previousReturns, returnRequest])
       );
 
+      const headers = { 'Content-Type': 'application/json' };
+      if (user?.uid) {
+        const token = await getIdToken();
+        if (token) {
+          headers.Authorization = `Bearer ${token}`;
+          headers['x-user-id'] = user.uid;
+        }
+      }
       await fetch(
         `/api/swadishtt/orders/${orderId}/return-container`,
         {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
+          headers,
           body: JSON.stringify(returnRequest),
         }
       ).catch((error) => {

@@ -127,6 +127,35 @@
   color: #6B4F3A;
 }
 
+.formSubheading {
+  margin: 4px 0 -6px;
+  font-size: 12px;
+  font-weight: 800;
+  color: #6B1D3A;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+}
+
+.addressLabelRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.autoFilledBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: rgba(107, 29, 58, 0.08);
+  color: #6B1D3A;
+  font-size: 10.5px;
+  font-weight: 700;
+}
+
 .formInput, .formTextarea {
   background: #FFF8EF;
   border: 1.5px solid #D4B8A0;

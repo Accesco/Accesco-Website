@@ -7,6 +7,8 @@ import {
   saveOtp,
 } from '../_lib/otp-store';
 
+export const dynamic = 'force-dynamic';
+
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 function isValidEmail(email) {

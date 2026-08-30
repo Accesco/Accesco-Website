@@ -108,6 +108,33 @@ const videos = [
     thumbnail: '/images/QTC8.jpeg',
     videoUrl: '/video/qtc (8).MP4',
   },
+   {
+    id: 12,
+    title: 'The Beginning of Something New',
+    category: 'Riders',
+    duration: '00:22',
+    description: 'New ideas. New experiences. One ecosystem.',
+    thumbnail: '/images/QTC9.jpeg',
+    videoUrl: '/video/qtc (9).MP4',
+  },
+  {
+    id: 13,
+    title: 'New outfit. Same old struggle. 👗',
+    category: 'Riders',
+    duration: '00:47',
+    description: 'Ananya just wants something new to wear…',
+    thumbnail: '/images/QTC10.jpeg',
+    videoUrl: '/video/qtc(10).MP4',
+  },
+   {
+    id: 14,
+    title: 'Why I Started Accesco Living',
+    category: 'About',
+    duration: '00:47',
+    description: 'This is the story of how Accesco Living began.',
+    thumbnail: '/images/QTC11.jpeg',
+    videoUrl: '/video/qtc(11).MP4',
+  },
 ];
 
 export default function AccescoLibraryPage() {

@@ -7,12 +7,24 @@ import { useSwadishtt } from '../contexts/SwadishttContext';
 import SwadishttHeader from '../components/SwadishttHeader';
 import styles from './checkout.module.css';
 import { payWithRazorpay } from '@/lib/razorpayService';
+import { useAuth } from '../../../components/AuthProvider';
+import { useOtherStoreItems, clearAllBrandCarts } from '@/lib/unifiedCart';
+import { STORE_PLACERS, postUnifiedOrderRecord } from '@/lib/unifiedCheckoutOrders';
 
 const ORDERS_STORAGE_KEY = 'swadishtt-orders';
 
 function CheckoutContent() {
   const router = useRouter();
-  const { cart, cartHydrated, clearCart } = useSwadishtt();
+  const { cart, cartHydrated, clearCart, user } = useSwadishtt();
+  const { user: authUser, getIdToken } = useAuth();
+  // useOtherStoreItems looks at the *other* verticals' real carts (Grokly/
+  // InstaStyle), so it needs the real Firebase Auth identity (for their
+  // backend-cart lookups) — not this page's own `user`, which is
+  // SwadishttContext's guest-checkout-form state (name/email/phone), not
+  // an auth object with a `.uid`.
+  const { otherStores, removeItem: removeOtherItem } = useOtherStoreItems(authUser, 'swadishtt', getIdToken);
+  const otherStoresSubtotal = otherStores.reduce((sum, store) => sum + store.subtotal, 0);
+  const otherStoresPlatformFee = otherStoresSubtotal > 0 ? 18 : 0;
   const [step, setStep] = useState(1);
   const [deliveryAddress, setDeliveryAddress] = useState({
     name: '',
@@ -34,6 +46,10 @@ function CheckoutContent() {
   // Validation error states
   const [addressErrors, setAddressErrors] = useState({});
   const [isPlacingOrder, setIsPlacingOrder] = useState(false);
+  // Whether the address fields below were prefilled from the location
+  // already selected on the homepage (shown as a small badge, cleared the
+  // moment the user edits the address themselves).
+  const [usedSavedLocation, setUsedSavedLocation] = useState(false);
 
   useEffect(() => {
     if (!cartHydrated) return;
@@ -46,15 +62,7 @@ function CheckoutContent() {
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
-    let storedUser = null;
     let storedLocation = null;
-
-    try {
-      const rawUser = localStorage.getItem('accesco_user');
-      if (rawUser) storedUser = JSON.parse(rawUser);
-    } catch (error) {
-      console.error('Error reading accesco_user from localStorage:', error);
-    }
 
     try {
       const rawLocation = localStorage.getItem('userLocation');
@@ -62,11 +70,11 @@ function CheckoutContent() {
     } catch (error) {
       console.error('Error reading userLocation from localStorage:', error);
     }
-    
-    const resolvedName = typeof storedUser?.name === 'string' ? storedUser.name : '';
-    const resolvedPhone = typeof storedUser?.phone === 'string' ? storedUser.phone : '';
-    const resolvedEmail = typeof storedUser?.email === 'string' ? storedUser.email : '';
-    
+
+    const resolvedName = typeof user?.name === 'string' ? user.name : '';
+    const resolvedPhone = typeof user?.phone === 'string' ? user.phone : '';
+    const resolvedEmail = typeof user?.email === 'string' ? user.email : '';
+
     const resolvedCity =
       (typeof storedLocation?.city === 'string' && storedLocation.city) ||
       (typeof storedLocation?.state === 'string' && storedLocation.state) ||
@@ -93,6 +101,10 @@ function CheckoutContent() {
       (typeof storedLocation?.postalCode === 'number' && String(storedLocation.postalCode)) ||
       '';
     
+    if (!deliveryAddress.address && (resolvedAddress || resolvedCity || resolvedPincode)) {
+      setUsedSavedLocation(true);
+    }
+
     setDeliveryAddress((prev) => ({
       ...prev,
       name: prev.name || resolvedName,
@@ -102,7 +114,8 @@ function CheckoutContent() {
       city: prev.city || resolvedCity,
       pincode: prev.pincode || resolvedPincode,
     }));
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user]);
 
   const subtotal = cart.reduce((sum, item) => sum + (item.price * (item.quantity || 1)), 0);
   const deliveryFee = subtotal >= 300 ? 0 : 40;
@@ -110,6 +123,10 @@ function CheckoutContent() {
   const gst = Math.round(subtotal * 0.05);
   const discount = deliverySpeed === 'batched' ? 20 : 0;
   const total = Math.max(0, subtotal + deliveryFee + platformFee + gst - discount);
+  // Items added in Grokly/InstaStyle ride along on this same payment — one
+  // combined charge covers Swadishtt's own total plus every other store's
+  // subtotal and a flat platform fee for that portion.
+  const grandTotal = total + otherStoresSubtotal + otherStoresPlatformFee;
 
   const persistOrder = (nextOrder) => {
     if (typeof window === 'undefined') return;
@@ -147,7 +164,57 @@ function CheckoutContent() {
     }
   };
 
-  const finalizeOrder = async (paymentInfo = {}) => {
+  // The same payment also covers whatever's in the other two services'
+  // carts — place their orders too and fold them into one unified record.
+  const placeOtherStoreOrders = async (payment, orderId) => {
+    if (otherStores.length === 0) return;
+
+    const unifiedOrderId = `UNI-${Date.now()}`;
+    const otherAddress = {
+      name: deliveryAddress.name,
+      phone: deliveryAddress.phone,
+      email: deliveryAddress.email,
+      address: deliveryAddress.address,
+      city: deliveryAddress.city,
+      pincode: deliveryAddress.pincode,
+    };
+
+    const otherResults = await Promise.all(
+      otherStores.map((store) =>
+        STORE_PLACERS[store.key]({
+          items: store.items,
+          subtotal: store.subtotal,
+          address: otherAddress,
+          unifiedOrderId,
+          payment,
+          paymentMethod,
+          user,
+          getIdToken,
+        })
+      )
+    );
+
+    await postUnifiedOrderRecord({
+      unifiedOrderId,
+      user,
+      getIdToken,
+      address: otherAddress,
+      paymentMethod,
+      payment,
+      subtotal: subtotal + otherStoresSubtotal,
+      platformFee: otherStoresPlatformFee,
+      grandTotal,
+      itemCount: cart.length + otherStores.reduce((s, st) => s + st.itemCount, 0),
+      results: [
+        { key: 'swadishtt', name: 'Swadishtt', theme: 'swadishtt', id: orderId, itemCount: cart.length, subtotal, trackingPath: `/services/swadisht/order-tracking?id=${orderId}` },
+        ...otherResults,
+      ],
+    });
+
+    await clearAllBrandCarts({ user, getIdToken });
+  };
+
+  const finalizeOrder = async (paymentInfo = {}, payment = null) => {
     const customerEmail = deliveryAddress.email || 'customer@accescoliving.com';
     const customerName = deliveryAddress.name || 'Valued Customer';
     const orderId = `SW${Date.now().toString(36).toUpperCase()}`;
@@ -193,9 +260,13 @@ function CheckoutContent() {
 
     // Send confirmation email
     try {
+      const idToken = user?.uid && getIdToken ? await getIdToken() : null;
       const res = await fetch('/api/swadishtt/orders/update-status', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          ...(idToken ? { Authorization: `Bearer ${idToken}`, 'x-user-id': user.uid } : {}),
+        },
         body: JSON.stringify({
           orderId,
           newStatus: 'CONFIRMED',
@@ -215,6 +286,8 @@ function CheckoutContent() {
     } catch (err) {
       console.error('Failed to trigger confirmation email:', err);
     }
+
+    await placeOtherStoreOrders(payment, orderId);
 
     setOrderPlaced(true);
 
@@ -244,10 +317,12 @@ function CheckoutContent() {
     setPaymentError('');
     try {
       const payment = await payWithRazorpay({
-        amount: total,
+        amount: grandTotal,
         receipt: `swadisht_${Date.now()}`,
         name: 'Swadishtt',
-        description: `Swadishtt order · ${cart.length} item(s)`,
+        description: otherStores.length > 0
+          ? `Order across ${1 + otherStores.length} store(s) · ${cart.length + otherStores.reduce((s, st) => s + st.itemCount, 0)} item(s)`
+          : `Swadishtt order · ${cart.length} item(s)`,
         prefill: {
           name: deliveryAddress.name,
           contact: deliveryAddress.phone,
@@ -257,7 +332,7 @@ function CheckoutContent() {
       await finalizeOrder({
         razorpayOrderId: payment.orderId,
         razorpayPaymentId: payment.paymentId,
-      });
+      }, payment);
     } catch (err) {
       console.error('Payment failed:', err);
       setPaymentError(err.message || 'Payment failed. Please try again.');
@@ -508,6 +583,7 @@ function CheckoutContent() {
               <div className={styles.stepContent}>
                 <h2 className={styles.stepTitle}>Delivery Address</h2>
                 <form onSubmit={handleAddressSubmit} className={styles.addressForm}>
+                  <h3 className={styles.formSubheading}>Contact Details</h3>
                   <div className={styles.formRow}>
                     <div className={styles.formGroup}>
                       <label className={styles.formLabel}>Full Name *</label>
@@ -552,12 +628,20 @@ function CheckoutContent() {
                     {addressErrors.email && <span className={styles.fieldError}>{addressErrors.email}</span>}
                   </div>
 
+                  <h3 className={styles.formSubheading}>Delivery Address</h3>
+
                   <div className={styles.formGroup}>
-                    <label className={styles.formLabel}>Complete Address *</label>
+                    <div className={styles.addressLabelRow}>
+                      <label className={styles.formLabel}>Complete Address *</label>
+                      {usedSavedLocation && (
+                        <span className={styles.autoFilledBadge}>📍 From your saved location</span>
+                      )}
+                    </div>
                     <textarea
                       className={`${styles.formTextarea} ${addressErrors.address ? styles.inputError : ''}`}
                       value={deliveryAddress.address}
                       onChange={(e) => {
+                        setUsedSavedLocation(false);
                         setDeliveryAddress({...deliveryAddress, address: e.target.value});
                         setAddressErrors({...addressErrors, address: ''});
                       }}
@@ -735,7 +819,7 @@ function CheckoutContent() {
                   onClick={handlePlaceOrder}
                   disabled={isPlacingOrder || isProcessing}
                 >
-                  {(isPlacingOrder || isProcessing) ? 'Processing...' : `Place Order - ₹${total}`}
+                  {(isPlacingOrder || isProcessing) ? 'Processing...' : `Place Order - ₹${grandTotal}`}
                 </button>
               </div>
             )}
@@ -771,6 +855,34 @@ function CheckoutContent() {
                 ))}
               </div>
 
+              {otherStores.length > 0 && (
+                <div style={{ margin: '14px 0', padding: '12px 14px', background: '#1a1a1a', borderRadius: '10px', border: '1px solid #333' }}>
+                  <div style={{ fontSize: '13px', fontWeight: 800, color: '#FAF9F6', marginBottom: '8px' }}>Also in your cart — paid in this order</div>
+                  {otherStores.map((store) => (
+                    <div key={store.key} style={{ marginBottom: '8px' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', fontWeight: 700, color: '#9ca3af', marginBottom: '4px' }}>
+                        <span>{store.name}</span>
+                        <span>₹{store.subtotal}</span>
+                      </div>
+                      {store.items.map((item) => (
+                        <div key={item.key} style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', color: '#FAF9F6', padding: '3px 0' }}>
+                          <span style={{ flex: 1 }}>{item.name} <span style={{ color: '#9ca3af' }}>x {item.quantity}</span></span>
+                          <span>₹{item.price * item.quantity}</span>
+                          <button
+                            type="button"
+                            onClick={() => removeOtherItem(store.key, item)}
+                            aria-label={`Remove ${item.name}`}
+                            style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#9ca3af', padding: '2px' }}
+                          >
+                            ✕
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  ))}
+                </div>
+              )}
+
               <div className={styles.summaryDivider}></div>
 
               <div className={styles.summaryRow}>
@@ -797,12 +909,24 @@ function CheckoutContent() {
                   <span>-₹20</span>
                 </div>
               )}
+              {otherStores.length > 0 && (
+                <>
+                  <div className={styles.summaryRow}>
+                    <span>Other Services&rsquo; Items</span>
+                    <span>₹{otherStoresSubtotal}</span>
+                  </div>
+                  <div className={styles.summaryRow}>
+                    <span>Platform Fee (Other Services)</span>
+                    <span>₹{otherStoresPlatformFee}</span>
+                  </div>
+                </>
+              )}
 
               <div className={styles.summaryDivider}></div>
 
               <div className={`${styles.summaryRow} ${styles.total}`}>
                 <span>Total</span>
-                <span>₹{total}</span>
+                <span>₹{grandTotal}</span>
               </div>
             </div>
           </div>

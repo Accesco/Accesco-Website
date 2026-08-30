@@ -5,6 +5,8 @@
 
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/firebase';
+import { notifyChatbotRefresh } from '@/lib/notifyChatbot';
+import { requireAdmin } from '../_lib/authz';
 import {
   collection,
   getDocs,
@@ -60,6 +62,11 @@ export async function GET(request) {
 
 export async function POST(request) {
   try {
+    const { error: authError, status: authStatus } = await requireAdmin(request);
+    if (authError) {
+      return NextResponse.json({ error: authError }, { status: authStatus });
+    }
+
     const body = await request.json();
     const { sku, ventureId, ...rest } = body;
 
@@ -73,6 +80,8 @@ export async function POST(request) {
       { sku, ventureId, ...rest, updatedAt: now, createdAt: rest.createdAt || now },
       { merge: true }
     );
+
+    notifyChatbotRefresh();
 
     return NextResponse.json({ success: true, sku });
   } catch (error) {

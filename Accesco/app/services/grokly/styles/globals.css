@@ -21,9 +21,21 @@
   padding: 20px;
 }
 
-/* Mobile Content Padding */
+/* Mobile Content Padding
 @media (max-width: 768px) {
   .grokly-content {
+    padding: 12px;
+    padding-bottom: calc(var(--grokly-bottom-nav-height) + 16px);
+  }
+} */
+
+@media (max-width: 768px) {
+  .grokly-content {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+
     padding: 12px;
     padding-bottom: calc(var(--grokly-bottom-nav-height) + 16px);
   }
@@ -35,13 +47,50 @@
   gap: 12px;
   grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
   width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
 }
+
+.product-grid > * {
+  min-width: 0;
+  max-width: 100%;
+}
+
+/* @media (max-width: 768px) {
+  .product-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+} */
 
 @media (max-width: 768px) {
   .product-grid {
-    grid-template-columns: repeat(2, 1fr) !important;
+    grid-template-columns: 1fr;
     gap: 10px;
   }
+}
+
+
+@media (max-width: 360px) {
+  .product-grid {
+    gap: 8px;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .product-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+/* Category "See All" product area */
+.grokly-category-products {
+  flex: 1;
+  min-width: 0;
+  width: 100%;
+  max-width: 100%;
+  overflow: hidden;
+  box-sizing: border-box;
 }
 
 /* Section Titles */
@@ -285,10 +334,15 @@
 }
 
 .grokly-sidebar-item img {
-  width: 30px;
-  height: 30px;
-  border-radius: var(--grokly-radius-xs);
+  width: 32px;
+  height: 32px;
+  border-radius: 50% !important;
   object-fit: cover;
+  border: 1.5px solid #e2e8f0;
+  background: #ffffff;
+  padding: 2px;
+  box-sizing: border-box;
+  flex-shrink: 0;
 }
 
 .grokly-sidebar-item span {
@@ -391,28 +445,96 @@
   }
 }
 
-/* ─── GROKLY BROWSE BY CATEGORY GRID ────────────────────────────────── */
+/* ─── GROKLY BROWSE BY CATEGORY SCROLLER ────────────────────────────── */
 .grokly-category-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
-  gap: 12px;
+  display: flex;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  overflow-y: hidden;
+  gap: 14px;
+  width: 100%;
+  margin: 12px 0 24px;
+  padding: 4px 4px 8px;
+  scroll-snap-type: x proximity;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  scroll-behavior: smooth;
 }
 
-@media (min-width: 769px) {
-  .grokly-category-grid {
-    grid-template-columns: repeat(9, 1fr) !important;
-  }
+.grokly-category-grid::-webkit-scrollbar {
+  display: none;
+}
+
+.grokly-cat-card {
+  background: none;
+  border: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  text-align: center;
+  gap: 8px;
+  flex: 0 0 auto;
+  width: 76px;
+  box-sizing: border-box;
+  scroll-snap-align: start;
+}
+
+.grokly-cat-img-wrapper {
+  width: 68px;
+  height: 68px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  border-radius: 50%;
+  background: #F5F7FA;
+  border: 1px solid #EEF1F4;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.grokly-cat-card:hover .grokly-cat-img-wrapper {
+  border-color: #cfe9d3;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.07);
+}
+
+.grokly-cat-img {
+  width: 68% !important;
+  height: 68% !important;
+  object-fit: contain !important;
+  border-radius: 50% !important;
+  transition: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-user-drag: none;
+  pointer-events: none;
+}
+
+.grokly-cat-title {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #222222;
+  font-family: var(--grokly-font-primary), sans-serif;
+  line-height: 1.25;
+  text-align: center;
 }
 
 @media (max-width: 768px) {
-  .grokly-category-grid {
-    grid-template-columns: repeat(4, 1fr);
+  .grokly-cat-card {
+    width: 66px;
+  }
+
+  .grokly-cat-img-wrapper {
+    width: 56px;
+    height: 56px;
+  }
+
+  .grokly-cat-title {
+    font-size: 11px;
   }
 }
 
-@media (max-width: 480px) {
-  .grokly-category-grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
-

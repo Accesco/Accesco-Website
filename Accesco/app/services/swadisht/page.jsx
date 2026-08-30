@@ -203,7 +203,7 @@ function RestaurantCard({ rest, idPrefix }) {
     rest.closingStatus ||
     (rest.timings?.close
       ? `Closes at ${rest.timings.close}`
-      : "Closing time unavailable");
+      : "Closes at 11:30 PM");
 
   return (
     <Link

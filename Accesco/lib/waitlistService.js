@@ -1,8 +1,6 @@
 import { db } from './firebase';
 import {
   collection,
-  addDoc,
-  serverTimestamp,
   query,
   where,
   limit,
@@ -14,17 +12,6 @@ const COLLECTION = 'waitlistUsers';
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 // Accepts digits, spaces, dashes, dots, parentheses, and an optional leading +
 const PHONE_RE = /^\+?[\d\s\-().]{7,20}$/;
-
-function getLoggedInUser() {
-  if (typeof window === 'undefined') return null;
-
-  try {
-    const stored = window.localStorage.getItem('accesco_user');
-    return stored ? JSON.parse(stored) : null;
-  } catch {
-    return null;
-  }
-}
 
 // waitlistUsers.phone is stored exactly as the visitor typed it (see
 // addWaitlistEntry below), so an exact-match query can miss entries typed
@@ -74,21 +61,21 @@ export async function checkWaitlistRegistration({ phone, email } = {}) {
 }
 
 /**
- * Whether the current visitor is on the waitlist. Always resolved against
+ * Whether the given account is on the waitlist. Always resolved against
  * Firestore using the logged-in account's phone/email -- there is no local
  * flag involved, so it's correct across devices/browsers and per-account.
  * Visitors with no known phone/email (never logged in) can't be looked up
  * yet, so they're treated as not registered until they do.
+ * @param {{ phone?: string|null; email?: string|null }} identity - the
+ *   signed-in user's identity, e.g. from useAuth()'s `user`.
  * @returns {Promise<boolean>}
  */
-export async function isWaitlistRegistered() {
+export async function isWaitlistRegistered({ phone, email } = {}) {
   if (typeof window === 'undefined') return false;
-
-  const user = getLoggedInUser();
-  if (!user?.phone && !user?.email) return false;
+  if (!phone && !email) return false;
 
   try {
-    return await checkWaitlistRegistration({ phone: user.phone, email: user.email });
+    return await checkWaitlistRegistration({ phone, email });
   } catch (err) {
     console.error('Waitlist registration check failed:', err);
     return false;
@@ -135,13 +122,21 @@ export function validateWaitlistEntry(data) {
 }
 
 /**
- * Save a waitlist signup to Firestore.
- * WARNING: This client-side write cannot be rate-limited.
- * Move this to the backend /api/waitlist route for actual security.
+ * Save a waitlist signup via the backend (app/api/waitlist POST).
  *
- * @param {{ name?: string; email: string; phone: string }} data
- * @returns {Promise<string>} New document id
- * @throws {Error} if validation fails
+ * This used to write directly to Firestore from the browser — flagged in
+ * this file's own history as a real vulnerability, since a client-side
+ * write can't be rate-limited or have its "already registered" check
+ * actually enforced (only the API route's rate limiter can do either). The
+ * write, duplicate check, and rate limiting all now happen server-side;
+ * this function's signature/validation/thrown-error behavior is unchanged
+ * so existing callers (components/AppShowcase.jsx, components/
+ * WaitlistGate.jsx) didn't need to change.
+ *
+ * @param {{ name?: string; email: string; phone: string; interests?: string }} data
+ * @returns {Promise<string|undefined>} New document id
+ * @throws {Error} if validation fails, the request is rate-limited, or the
+ *   phone/email is already registered
  */
 export async function addWaitlistEntry(data) {
   const errors = validateWaitlistEntry(data);
@@ -151,34 +146,28 @@ export async function addWaitlistEntry(data) {
 
   const email = data.email.trim().toLowerCase();
   const name = data.name?.trim() || '';
+  const phone = data.phone.trim();
+  const interests = data.interests?.trim() || '';
 
-  // VULNERABILITY: Direct client-side write. Attackers can spam this without hitting API rate limits.
-  const docRef = await addDoc(collection(db, COLLECTION), {
-    name,
-    email,
-    phone: data.phone.trim(),
-    createdAt: serverTimestamp(),
-  });
-
-  // Send confirmation email (non-blocking — don't let a mail failure break signup)
-  fetch('/api/waitlist', {
+  const response = await fetch('/api/waitlist', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email, name }),
-  }).then(async (res) => {
-    if (res.status === 429) {
-      console.warn('Too many requests');
-    }
-  }).catch((err) => console.error('Confirmation email failed:', err));
+    body: JSON.stringify({ email, name, phone, interests }),
+  });
 
-  // If this person was referred, joining the waitlist is the conversion
-  // event pre-launch (ordering itself is gated behind the waitlist, so a
-  // "first order" is unrealistic to wait for). Non-blocking side effect.
+  const payload = await parseJsonResponse(response);
+  if (!response.ok) {
+    throw new Error(payload?.error || 'Failed to join the waitlist. Please try again.');
+  }
+
+  // If this person was referred, joining the waitlist is what confirms the
+  // referral (not a first order — ordering is itself gated behind the
+  // waitlist, so it would never be the earlier event). Non-blocking side effect.
   import('./referralFulfillment').then(({ markWaitlistJoinAndFulfillGifts }) =>
-    markWaitlistJoinAndFulfillGifts({ phone: data.phone }),
+    markWaitlistJoinAndFulfillGifts({ phone }),
   ).catch((err) => console.error('Referral waitlist conversion failed:', err));
 
-  return docRef.id;
+  return payload?.id;
 }
 
 /**

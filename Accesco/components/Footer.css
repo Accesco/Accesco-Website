@@ -1,21 +1,22 @@
 /* ==========================================
-   ACCESCO LIVING - SNABBIT INSPIRED FOOTER
+   ACCESCO LIVING - FOOTER
    ========================================== */
 
-:root, .accesco-footer-root {
+:root,
+.accesco-footer-root {
   --footer-bg-base: #5A0031;
   --footer-maroon: #7A0042;
   --footer-maroon-mid: #9E1054;
   --footer-pink-accent: #FF2E74;
   --footer-gold: #D4A017;
   --footer-text-primary: #FFFFFF;
-  --footer-text-secondary: rgba(255,255,255,0.60);
-  --footer-text-muted: rgba(255,255,255,0.30);
-  --footer-border-subtle: rgba(255,255,255,0.12);
-  --footer-border-faint: rgba(255,255,255,0.06);
-  --footer-surface-card: rgba(255,255,255,0.06);
-  --footer-surface-hover: rgba(255,255,255,0.12);
-  --footer-social-bg: rgba(255,255,255,0.06);
+  --footer-text-secondary: rgba(255, 255, 255, 0.60);
+  --footer-text-muted: rgba(255, 255, 255, 0.30);
+  --footer-border-subtle: rgba(255, 255, 255, 0.12);
+  --footer-border-faint: rgba(255, 255, 255, 0.06);
+  --footer-surface-card: rgba(255, 255, 255, 0.06);
+  --footer-surface-hover: rgba(255, 255, 255, 0.12);
+  --footer-social-bg: rgba(255, 255, 255, 0.06);
 
   --footer-padding-x: 64px;
   --footer-padding-x-md: 24px;
@@ -29,7 +30,7 @@
 }
 
 .accesco-footer-root {
- position: relative;
+  position: relative;
   width: 100%;
   max-width: none;
   margin: 0;
@@ -37,26 +38,23 @@
   overflow: hidden;
   color: var(--footer-text-primary);
   font-family: 'Montserrat', sans-serif;
-
   background: url("/images/waves.png") center/cover no-repeat;
-  opacity:0.95;
-background-size: cover;
-background-position: center;
-background-repeat: no-repeat;
-}
-.accesco-footer-root::before{
-    content:"";
-    position:absolute;
-    inset:0;
-
-    background:url("/images/wave-desktop3.png") center bottom / cover no-repeat;
-
-    opacity:0.000;      /* was 0.18 */
-    z-index:1;
-    pointer-events:none;
+  opacity: 0.95;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
-/* Wave Background SVG */
+/* Removed unused 328KB wave-desktop3.png download from invisible pseudo-element */
+.accesco-footer-root::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+
 .wave-bg-container {
   position: absolute;
   top: 0;
@@ -78,18 +76,12 @@ background-repeat: no-repeat;
 }
 
 .bg-gradient-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: 
-    radial-gradient(80% 80% at 50% 0%, rgba(107,29,58,0.6) 0%, transparent 100%),
-    radial-gradient(40% 40% at 0% 100%, rgba(224,53,106,0.08) 0%, transparent 100%);
-  z-index: 1;
+  background:
+    radial-gradient(80% 80% at 50% 0%, rgba(62, 33, 27, 0.6) 0%, transparent 100%),
+    radial-gradient(40% 40% at 0% 100%, rgba(124, 74, 45, 0.1) 0%, transparent 100%);
 }
 
-/* Ventures Ticker Strip */
+
 .ventures-ticker {
   position: relative;
   z-index: 2;
@@ -119,8 +111,8 @@ background-repeat: no-repeat;
   max-width: 1320px;
   margin: 0 auto;
   padding: 58px 52px 24px;
-      position:relative;
-    z-index:2;
+  position: relative;
+  z-index: 2;
 }
 
 .footer-grid-layout {
@@ -131,7 +123,6 @@ background-repeat: no-repeat;
   flex-wrap: wrap;
 }
 
-/* Left Brand Column */
 .footer-brand-col {
   flex: 1;
   min-width: 300px;
@@ -165,8 +156,8 @@ background-repeat: no-repeat;
 
 .logo-wordmark {
   font-family: 'Montserrat', sans-serif;
-font-size:22px;
-font-weight:800;
+  font-size: 22px;
+  font-weight: 800;
   color: #fff;
 }
 
@@ -174,7 +165,7 @@ font-weight:800;
   font-family: 'Montserrat', sans-serif;
   font-size: 15px;
   font-weight: 400;
-  color: rgba(255,255,255,.82);
+  color: rgba(255, 255, 255, .82);
   line-height: 1.75;
   margin-bottom: 22px;
   max-width: 260px;
@@ -182,25 +173,26 @@ font-weight:800;
 
 .social-row {
   display: flex;
+  flex-wrap: wrap;
   gap: 12px;
   margin-bottom: 20px;
 }
 
-.accesco-footer-root .social-icon{
-    width:40px !important;
-    height:40px !important;
-    border-radius:50%;
-    background:#fff !important;
-    color:#98004F !important;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    transition:.25s;
+.accesco-footer-root .social-icon {
+  width: 40px !important;
+  height: 40px !important;
+  border-radius: 50%;
+  background: #fff !important;
+  color: #000000 !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: .25s;
 }
 
-.accesco-footer-root .social-icon:hover{
-    background:#f2f2f2 !important;
-    transform:translateY(-2px);
+.accesco-footer-root .social-icon:hover {
+  background: #f2f2f2 !important;
+  transform: translateY(-2px);
 }
 
 .app-badges {
@@ -238,16 +230,15 @@ font-weight:800;
   transform: scale(1.02);
 }
 
-.app-badge {
+.download-badge {
   text-decoration: none;
   display: inline-block;
   transition: transform 0.2s ease;
 }
 
-.app-badge img {
-   height:46px;
-    width:auto;
-
+.download-badge img {
+  height: 46px;
+  width: auto;
   display: block;
   border-radius: 0 !important;
   border: none !important;
@@ -255,11 +246,6 @@ font-weight:800;
   background: transparent !important;
 }
 
-.app-badge:hover {
-  transform: none;
-}
-
-/* Right Links Columns */
 .footer-links-col {
   flex: 2;
   display: grid;
@@ -273,47 +259,65 @@ font-weight:800;
   gap: 10px;
 }
 
-.col-title{
-  font-family:'Montserrat',sans-serif;
-    font-size:11px;
-    font-weight:700;
-    letter-spacing:2px;
-    color:rgba(255,255,255,.55);
-    margin-bottom:18px;
+.col-title {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: rgba(255, 255, 255, .55);
+  margin-bottom: 18px;
 }
 
-.link-item{
-    font-family:'Montserrat',sans-serif;
-    font-size:14px;
-    font-weight:600;
-    color:rgba(255,255,255,.95);
-    text-decoration:none;
-    line-height:2;
+.link-item {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, .95);
+  text-decoration: none;
+  line-height: 2;
 }
 
-.link-item:hover{
-    color:#fff;
+.link-item:hover {
+  color: #fff;
 }
 
-/* Bottom Area */
-.footer-divider-faint{
-    width:100%;
-    height:1px;
-    background:rgba(255,255,255,.18);
-    margin-bottom:20px;
+.footer-divider-faint {
+  width: 100%;
+  height: 1px;
+  background: rgba(255, 255, 255, .18);
+  margin-bottom: 20px;
 }
 
-.bottom-bar{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    font-size:13px;
-    color:rgba(255,255,255,.55);
+.bottom-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+  color: rgba(255, 255, 255, .55);
 }
+
 .copyright-text {
   font-size: 13px;
-/* Quite prominent */
-color: rgba(255, 255, 255, 0.35);
+  color: rgba(255, 255, 255, 0.35);
+}
+
+.footer-watermark {
+  text-align: center;
+  font-size: clamp(96px, 15vw, 250px);
+  font-weight: 900;
+  line-height: .9;
+  color: rgba(255, 255, 255, 0.35);
+  letter-spacing: -8px;
+  user-select: none;
+  margin-top: 30px;
+  margin-bottom: 10px;
+}
+
+
+img{
+  user-select:none;
+  -webkit-user-drag:none;
+  
 }
 
 @media (max-width: 900px) {
@@ -322,99 +326,26 @@ color: rgba(255, 255, 255, 0.35);
   }
 }
 
-@media (max-width: 600px) {
-  .footer-grid-layout {
-    flex-direction: column;
-    gap: 32px;
-  }
-  .footer-links-col {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 32px 16px;
-  }
-  .app-badges {
-    flex-wrap: wrap;
-  }
-}
+@media (max-width: 767px) {
 
-/* AI Chatbot Bubble */
-.chatbot-bubble {
-  position: absolute;
-  bottom: 80px;
-  right: 40px;
-  width: 52px;
-  height: 52px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, var(--footer-pink-accent) 0%, var(--footer-maroon) 100%);
-  border: none;
+ .brand-desc {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    color: rgba(255, 255, 255, 0.82);
+    line-height: 1.6;
+    margin-bottom: 20px;
+    max-width: 100%;
+  }
+  .logo-component {
   display: flex;
   align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  margin-bottom: 16px;
   justify-content: center;
-  cursor: pointer;
-  z-index: 10;
-  box-shadow: 0 8px 32px rgba(224,53,106,0.4), inset 0 0 20px rgba(224,53,106,0.3);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.chatbot-bubble:hover {
-  transform: scale(1.1);
-  box-shadow: 0 12px 40px rgba(224,53,106,0.6), inset 0 0 20px rgba(224,53,106,0.4);
-}
-
-.chatbot-bubble.pulse {
-  box-shadow: 0 8px 48px rgba(224,53,106,0.7), inset 0 0 20px rgba(224,53,106,0.3);
-}
-
-.chatbot-icon {
-  font-size: 24px;
-  color: #fff;
-}
-
-/* Responsive Breakpoints */
-@media (max-width: 1023px) {
-  .footer-main-content {
-    padding: 40px var(--footer-padding-x-md) 30px;
-  }
-  .links-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-  .footer-top-section {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-  .social-block {
-    align-items: flex-start;
-  }
-}
-
-@media (max-width: 767px) {
-  .links-grid {
-    grid-template-columns: 1fr;
-    gap: 32px;
-  }
-  .footer-headline {
-    font-size: 32px;
-  }
-  .bottom-bar {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-  .chatbot-bubble {
-    bottom: 30px;
-    right: 24px;
-  }
-}
-
-/* Clean dark theme background for InstaStyle footer */
-.instastyle-footer-root {
-  background-image: none !important;
-  background-color: #0A0A0A !important;
-}
-/* ==========================================
-   MOBILE WEBSITE FOOTER FIX
-   Snabbit-inspired, website-only, no app CTA
-   ========================================== */
-
-@media (max-width: 767px) {
   .accesco-footer-root {
     margin-top: 0 !important;
     padding-top: 0 !important;
@@ -423,15 +354,6 @@ color: rgba(255, 255, 255, 0.35);
     background-position: center -80px !important;
     background-size: cover !important;
     background-repeat: no-repeat !important;
-  }
-
-  .ventures-ticker {
-    height: 38px;
-  }
-
-  .ticker-item {
-    padding: 0 18px;
-    font-size: 12px;
   }
 
   .footer-main-content {
@@ -448,217 +370,11 @@ color: rgba(255, 255, 255, 0.35);
     margin-bottom: 28px;
   }
 
-  /* Brand block */
   .footer-brand-col {
-    width: 100%;
     min-width: 0;
     max-width: 100%;
-    box-sizing: border-box;
   }
 
-  .logo-component {
-    margin-bottom: 14px;
-  }
-
-  .logo-mark {
-    width: 38px;
-    height: 38px;
-    border-radius: 12px;
-  }
-
-  .logo-wordmark {
-    font-size: 18px;
-    line-height: 1.2;
-  }
-.copyright-text{
-    font-family:'Montserrat',sans-serif;
-    font-size:12px;
-    font-weight:500;
-}
-  .social-row {
-    gap: 10px;
-    margin-bottom: 18px;
-  }
-
-  .accesco-footer-root .social-icon {
-    width: 38px !important;
-    height: 38px !important;
-    background: rgba(255, 255, 255, 0.10) !important;
-  }
-
-  .app-badges {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-  }
-
-  .app-badge img {
-    height: 38px;
-  }
-
-  /* Links area */
-  .footer-links-col {
-    width: 100%;
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 18px 14px;
-  }
-
-  .link-group {
-    min-width: 0;
-    padding: 16px 14px;
-    border-radius: 20px;
-    background: rgba(255, 255, 255, 0.055);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    gap: 9px;
-  }
-
- .col-title {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 11px;
-  font-weight: 700;
-  color: rgba(255,255,255,.55);
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  margin-bottom: 18px;
-}
-
-  .link-item {
-    display: block;
-    font-size: 13.5px;
-    line-height: 1.45;
-    color: rgba(255, 255, 255, 0.86);
-    word-break: normal;
-  }
-
-  .link-item:hover {
-    color: #ffffff;
-  }
-
-  .footer-divider-faint {
-    margin-bottom: 18px;
-  }
-
-  .bottom-bar {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 10px;
-  }
-
-  .copyright-text {
-    font-size: 12px;
-    line-height: 1.5;
-    color: rgba(255, 255, 255, 0.48);
-  }
-
-  .chatbot-bubble {
-    position: fixed;
-    width: 48px;
-    height: 48px;
-    right: 18px;
-    bottom: 20px;
-    z-index: 100;
-  }
-
-  .chatbot-icon {
-    font-size: 22px;
-  }
-}
-
-@media (max-width: 430px) {
-  .footer-main-content {
-    padding: 28px 14px 24px;
-  }
-
-  .footer-links-col {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 14px 10px;
-  }
-
-  .link-group {
-    padding: 15px 12px;
-    border-radius: 18px;
-  }
-
-  .col-title {
-    font-size: 10.5px;
-    letter-spacing: 1px;
-  }
-
-  .link-item {
-    font-size: 13px;
-  }
-
-  .app-badge img {
-    height: 36px;
-  }
-}
-
-@media (max-width: 360px) {
-  .footer-links-col {
-    grid-template-columns: 1fr;
-  }
-
-  .link-group {
-    padding: 16px 14px;
-  }
-}
-/* ==========================================
-   Remove mobile footer transparent boxes
-   Keep clean Snabbit-style link layout
-   ========================================== */
-
-@media (max-width: 767px) {
-  .footer-links-col {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 34px 28px;
-  }
-
-  .link-group {
-    padding: 0 !important;
-    border-radius: 0 !important;
-    background: transparent !important;
-    border: none !important;
-    box-shadow: none !important;
-  }
-
-  .col-title {
-    margin-bottom: 18px;
-    font-size: 12px;
-    letter-spacing: 1.4px;
-    color: rgba(255, 255, 255, 0.55);
-  }
-
-  .link-item {
-    font-size: 15px;
-    line-height: 1.55;
-    color: rgba(255, 255, 255, 0.92);
-  }
-}
-
-@media (max-width: 430px) {
-  .footer-links-col {
-    gap: 34px 26px;
-  }
-
-  .link-item {
-    font-size: 14.5px;
-  }
-}
-
-@media (max-width: 360px) {
-  .footer-links-col {
-    grid-template-columns: 1fr;
-    gap: 30px;
-  }
-}
-/* ==========================================
-   Mobile footer spacing fix
-   Pull Resources directly below Services
-   ========================================== */
-
-@media (max-width: 767px) {
   .footer-links-col {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -666,11 +382,13 @@ color: rgba(255, 255, 255, 0.35);
       "services company"
       "resources company"
       "resources delivery";
-    column-gap: 34px;
+    column-gap: 24px;
     row-gap: 28px;
     align-items: start;
+    
   }
 
+  
   .footer-links-col .link-group:nth-child(1) {
     grid-area: services;
   }
@@ -681,115 +399,35 @@ color: rgba(255, 255, 255, 0.35);
 
   .footer-links-col .link-group:nth-child(3) {
     grid-area: resources;
-    margin-top: 0 !important;
   }
 
   .footer-links-col .link-group:nth-child(4) {
     grid-area: delivery;
-    margin-top: 0 !important;
   }
-}
 
-@media (max-width: 430px) {
-  .footer-links-col {
-    column-gap: 26px;
-    row-gap: 24px;
-  }
-}
-
-@media (max-width: 360px) {
-  .footer-links-col {
-    grid-template-columns: 1fr;
-    grid-template-areas:
-      "services"
-      "company"
-      "resources"
-      "delivery";
-    row-gap: 28px;
-  }
-}
-.footer-watermark{
-    text-align:center;
-    font-size:250px;
-    font-weight:900;
-    line-height:.9;
- /* Quite prominent */
-color: rgba(255, 255, 255, 0.35);
-    letter-spacing:-8px;
-    user-select:none;
-    margin-top:30px;
-    margin-bottom:10px;
-}
-/* Footer watermark — mobile optimized */
-@media (max-width: 767px) {
   .footer-watermark {
-    width: 100%;
-    max-width: 100%;
-    margin: 24px auto 14px;
-    padding: 0;
-
     font-size: clamp(48px, 18vw, 120px);
-    font-weight: 900;
-    line-height: 0.85;
     letter-spacing: -4px;
+  }
+}
+
+@media (max-width: 480px) {
+  .bottom-bar {
+    flex-direction: column;
+    gap: 8px;
     text-align: center;
-    white-space: nowrap;
-
-    color: rgba(255, 255, 255, 0.25);
-
-    overflow: hidden;
-    box-sizing: border-box;
-  }
-}
-
-@media (max-width: 430px) {
-  .footer-watermark {
-    font-size: clamp(54px, 20vw, 88px);
-    letter-spacing: -3px;
-    margin-top: 20px;
-  }
-}
-
-@media (max-width: 360px) {
-  .footer-watermark {
-    font-size: 19vw;
-    letter-spacing: -2px;
-  }
-}
-@media (max-width: 767px) {
-  .social-row {
-    gap: 10px;
-    margin-bottom: 18px;
-    flex-wrap: wrap;
   }
 
   .accesco-footer-root .social-icon {
-    width: 40px !important;
-    height: 40px !important;
-
-    background: #ffffff !important;
-    color: #aa0152 !important;
-
-    border: 1px solid rgba(255, 255, 255, 0.65);
-    box-shadow: 0 5px 14px rgba(40, 0, 20, 0.25);
-
-    font-size: 20px;
-    opacity: 1;
+    width: 36px !important;
+    height: 36px !important;
   }
 
-  .accesco-footer-root .social-icon i {
-    font-size: 20px;
-    line-height: 1;
-    opacity: 1;
-  }
-
-  .accesco-footer-root .social-icon:active {
-    background: #f7e8ef !important;
-    transform: scale(0.95);
+  .social-row {
+    gap: 8px;
   }
 }
 
-/* Remove the space above the footer */
 footer.accesco-footer-root {
   margin-top: 0 !important;
   padding-top: 0 !important;

@@ -16,8 +16,11 @@ import {
   LockKeyhole,
 } from "lucide-react";
 import styles from "./AppShowcase.module.css";
+import { useAuth } from "../app/components/AuthProvider";
+import { isWaitlistRegistered, addWaitlistEntry } from "../lib/waitlistService";
 
 export default function AppShowcase() {
+  const { user } = useAuth();
   const [currentStep, setCurrentStep] = useState(1);
   const [form, setForm] = useState({
     name: "",
@@ -37,37 +40,43 @@ export default function AppShowcase() {
   const [feedbackReview, setFeedbackReview] = useState("");
   const [feedbackSubmitted, setFeedbackSubmitted] = useState(false);
   const [alreadyRegistered, setAlreadyRegistered] = useState(false);
+  // Real signup count from the backend (see app/api/waitlist/count) instead
+  // of a hardcoded "12,000+" figure. Falls back to that same figure only if
+  // the count fetch fails, so the trust badge never disappears.
+  const [waitlistCount, setWaitlistCount] = useState(null);
 
-  // Safe registration check targeting GET /api/waitlist (No 404 console errors)
+  useEffect(() => {
+    let isCancelled = false;
+    fetch('/api/waitlist/count')
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (!isCancelled && typeof data?.count === 'number') {
+          setWaitlistCount(data.count);
+        }
+      })
+      .catch(() => {});
+    return () => { isCancelled = true; };
+  }, []);
+
+  // Checks the signed-in user's own registration against Firestore — not a
+  // shared browser flag, which would (and did) tell a friend using the same
+  // device "you're already registered" for someone else's signup.
   useEffect(() => {
     let isCancelled = false;
 
-    const checkRegistration = async () => {
-      const localRegistered = localStorage.getItem("accesco_waitlist_registered");
-      if (localRegistered === "true") {
-        if (!isCancelled) setAlreadyRegistered(true);
-        return;
-      }
+    if (!user?.phone && !user?.email) {
+      setAlreadyRegistered(false);
+      return undefined;
+    }
 
-      try {
-        const res = await fetch("/api/waitlist", { method: "GET" });
-        if (res.ok) {
-          const data = await res.json().catch(() => ({}));
-          if (!isCancelled && data.registered) {
-            setAlreadyRegistered(true);
-          }
-        }
-      } catch (e) {
-        // Quiet failover
-      }
-    };
-
-    checkRegistration();
+    isWaitlistRegistered({ phone: user?.phone, email: user?.email }).then((registered) => {
+      if (!isCancelled) setAlreadyRegistered(registered);
+    });
 
     return () => {
       isCancelled = true;
     };
-  }, []);
+  }, [user?.phone, user?.email]);
 
   const handleFeedbackNext = () => {
     if (feedbackScore === null) {
@@ -168,24 +177,14 @@ export default function AppShowcase() {
     setLoading(true);
 
     try {
-      const res = await fetch("/api/waitlist", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name: form.name.trim(),
-          email: form.email.trim(),
-          phone: form.phone.trim(),
-          interests: form.interests.join(", "),
-        }),
+      await addWaitlistEntry({
+        name: form.name.trim(),
+        email: form.email.trim(),
+        phone: form.phone.trim(),
+        interests: form.interests.join(", "),
       });
 
-      const data = await res.json().catch(() => ({}));
 
-      if (!res.ok) {
-        throw new Error(data.error || "Failed to submit to waitlist");
-      }
-
-      localStorage.setItem("accesco_waitlist_registered", "true");
       setSuccess(true);
       setAlreadyRegistered(true);
       setForm({ name: "", email: "", phone: "", interests: [] });
@@ -378,7 +377,7 @@ export default function AppShowcase() {
           <div className={styles.trustRow}>
             <div className={styles.trustLeft}>
               <div className={styles.trustItem}>
-                <span>Join 12,000+ members</span>
+                <span>Join {waitlistCount !== null ? `${waitlistCount.toLocaleString('en-IN')}+` : '12,000+'} members</span>
               </div>
               <div className={styles.trustDivider}></div>
               <div className={styles.trustItem}>
@@ -405,13 +404,9 @@ export default function AppShowcase() {
               </p>
             </div>
 
-            <Image
-              src="/images/asterik.png"
-              alt=""
+            <span
               aria-hidden="true"
               className={styles.feedbackHeaderMark}
-              width={63}
-              height={71}
             />
           </div>
 
@@ -725,6 +720,27 @@ export default function AppShowcase() {
           aria-label="Google Play"
         />
         <a href="#" className={styles.appStoreHotspot} aria-label="App Store" />
+      </div>
+
+      <div className={styles.promoPairSection}>
+        <Image
+          src="/images/promo-zero-waste-app.jpg"
+          alt="An app that doesn't end at the doorstep delivery — Accesco Living's zero-waste return system"
+          className={styles.promoPairImage}
+          width={900}
+          height={1125}
+          sizes="(max-width: 768px) 50vw, 450px"
+          loading="lazy"
+        />
+        <Image
+          src="/images/promo-everyday-living-app.jpg"
+          alt="India's Everyday Living app — designed to be smarter"
+          className={styles.promoPairImage}
+          width={900}
+          height={1125}
+          sizes="(max-width: 768px) 50vw, 450px"
+          loading="lazy"
+        />
       </div>
     </section>
   );

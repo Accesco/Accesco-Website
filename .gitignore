@@ -1,3 +1,22 @@
+# Environment secrets – NEVER commit these
+.env
+.env.local
+.env.production
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.pytest_cache/
+.venv/
+venv/
+
+# Video storage (local dev only — Phase 2 moves to cloud)
+storage/raw/*
+storage/processed/*
+storage/tmp/*
+!storage/**/.gitkeep
+
 # Miscellaneous
 *.class
 *.log

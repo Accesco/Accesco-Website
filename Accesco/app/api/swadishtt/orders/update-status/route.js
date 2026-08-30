@@ -11,9 +11,19 @@ import {
   sendSwadishttStatusUpdate,
   sendSwadishttConfirmation,
 } from '@/lib/mailService';
+import { verifyAuthToken } from '../../../_lib/auth';
 
+// Requires an authenticated caller (not admin): this route performs no
+// Firestore mutation (it only sends a status-update/confirmation email) and
+// is called directly by the checkout flow right after a Swadishtt order is
+// placed, so it can't be admin-gated without breaking that flow.
 export async function POST(request) {
   try {
+    const { error: authError } = await verifyAuthToken(request);
+    if (authError) {
+      return NextResponse.json({ error: authError }, { status: 401 });
+    }
+
     const body = await request.json();
     const { orderId, newStatus, customerEmail, customerName, orderData, advance } = body;
 
@@ -30,6 +40,13 @@ export async function POST(request) {
       return NextResponse.json({ error: `Invalid status: ${targetStatus}` }, { status: 400 });
     }
 
+    if (targetStatus === 'CONFIRMED' && orderData?.paymentStatus !== 'SUCCESS') {
+      return NextResponse.json(
+        { error: 'Cannot send confirmation for an unverified or unpaid order.' },
+        { status: 400 }
+      );
+    }
+
     // Send appropriate email
     let result;
     if (targetStatus === 'CONFIRMED') {
@@ -38,15 +55,6 @@ export async function POST(request) {
         customerName,
         email: customerEmail,
       });
-
-      // If this is the user's first order, bundle in any pending referral gifts
-      const phone = orderData?.delivery?.phone;
-      if (phone) {
-        const { markFirstOrderAndFulfillGifts } = await import('@/lib/referralFulfillment');
-        markFirstOrderAndFulfillGifts({ phone, orderId, vertical: 'swadisht' }).catch((err) =>
-          console.error('[swadishtt/orders/update-status] Referral fulfillment failed:', err),
-        );
-      }
     } else {
       result = await sendSwadishttStatusUpdate({
         order: { ...orderData, id: orderId },

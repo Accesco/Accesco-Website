@@ -56,15 +56,21 @@
 
 .brandText {
   display: flex;
-  flex-direction: column;
-  line-height: 1.05;
+  align-items: baseline;
+  gap: 4px;
+  font-family: var(--font-sora), 'Sora', sans-serif;
+  font-weight: 800;
+  font-size: 1.1rem;
+  color: #7A0042;
+  letter-spacing: -0.02em;
 }
 
 .brandText small {
-  color: #9a8b91;
-  font-size: 8px;
-  font-weight: 700;
-  letter-spacing: 0.42em;
+  font-family: inherit;
+  font-weight: inherit;
+  font-size: 1.1rem;
+  color: inherit;
+  letter-spacing: inherit;
 }
 
 .referralNavigation {
@@ -662,7 +668,7 @@ button:disabled {
 }
 
 .meter {
-  min-width: 710px;
+  min-width: 910px;
   padding: 0 10px;
 }
 
@@ -686,7 +692,7 @@ button:disabled {
   position: relative;
   margin-top: -14px;
   display: grid;
-  grid-template-columns: repeat(7, 1fr);
+  grid-template-columns: repeat(9, 1fr);
 }
 
 .milestone {
@@ -942,33 +948,75 @@ button:disabled {
     grid-template-columns: 1.4fr 1fr 1fr;
   }
 }
-
 @media (max-width: 700px) {
+
   .referralHeader {
     width: calc(100% - 20px);
-    padding: 9px 12px;
+    min-height: 58px;
+    padding: 8px 10px;
+    gap: 8px;
   }
 
   .referralBrand {
-    gap: 9px;
-    font-size: 13px;
+    flex: 1;
+    min-width: 0;
+    gap: 6px;
+    overflow: hidden;
   }
 
   .referralLogo {
-    width: 35px;
-    height: 35px;
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+  }
+
+  .brandText {
+    min-width: 0;
+    font-size: 14px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    letter-spacing: -0.03em;
+  }
+
+  .brandText small {
+    font-size: 14px;
   }
 
   .referralNavigation {
-    gap: 6px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    gap: 4px;
   }
 
   .referralNavigation a {
-    min-width: auto;
-    height: 36px;
-    padding: 0 12px;
-    font-size: 11px;
+    min-width: 0 !important;
+    width: auto;
+    height: 32px;
+    padding: 0 8px !important;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    white-space: nowrap;
+    border-radius: 9px;
   }
+
+  .referralNavigation a.getAppButton {
+    display: inline-flex !important;
+    height: 32px !important;
+    padding: 0 8px !important;
+  }
+
+  .referralNavigation a svg {
+    width: 13px;
+    height: 13px;
+    flex-shrink: 0;
+  }
+
+
+  /* Rest of mobile page */
 
   .referralMain {
     width: calc(100% - 20px);

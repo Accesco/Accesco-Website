@@ -4,9 +4,11 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import styles from './more.module.css';
+import { useAuth } from '../../../../components/AuthProvider';
 
 export default function InstaStyleMorePage() {
   const router = useRouter();
+  const { user } = useAuth();
   const [credits, setCredits] = useState(120);
   const [userName, setUserName] = useState('Priya Sharma');
 
@@ -14,15 +16,14 @@ export default function InstaStyleMorePage() {
     try {
       const storedCredits = localStorage.getItem('instastyle_circular_credits');
       if (storedCredits) setCredits(Number(storedCredits));
-      const user = localStorage.getItem('accesco_user');
-      if (user) {
-        const u = JSON.parse(user);
-        if (u.name) setUserName(u.name);
-      }
     } catch (e) {
       console.error(e);
     }
   }, []);
+
+  useEffect(() => {
+    if (user?.name) setUserName(user.name);
+  }, [user]);
 
   return (
     <div className={styles.page}>

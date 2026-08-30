@@ -75,7 +75,7 @@ const nextConfig = {
   },
 
   async headers() {
-    return [
+    const securityHeaders = [
       {
         source: '/(.*)',
         headers: [
@@ -105,10 +105,24 @@ const nextConfig = {
           },
           {
             key: 'Permissions-Policy',
-            value: 'camera=(), microphone=(), geolocation=(self)',
+            value: 'camera=(self), microphone=(), geolocation=(self)',
           },
         ],
       },
+    ];
+
+    // In dev, /_next/static/chunks/* are served from stable filenames that get
+    // rewritten on every restart/recompile (unlike prod's content-hashed
+    // filenames). Caching them for a year as "immutable" makes the browser keep
+    // serving a stale webpack runtime after a restart, which throws
+    // "Cannot read properties of undefined (reading 'call')" — so only mark
+    // them immutable for real production builds.
+    if (process.env.NODE_ENV !== 'production') {
+      return securityHeaders;
+    }
+
+    return [
+      ...securityHeaders,
       {
         source: '/_next/static/(.*)',
         headers: [

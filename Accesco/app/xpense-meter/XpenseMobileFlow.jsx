@@ -5,80 +5,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import Image from 'next/image';
 
-const productImages = {
-  tomato:
-    'https://i.pinimg.com/736x/eb/53/d0/eb53d07a61dcba25bce6508715d0c4c5.jpg',
-  banana:
-    'https://i.pinimg.com/736x/60/19/43/60194343fcbf6d2f0eb21d88ce7115af.jpg',
-  milk:
-    'https://i.pinimg.com/736x/c4/39/4a/c4394aa7d235ece619dc2b3cc3e7c726.jpg',
-  paneer:
-    'https://i.pinimg.com/736x/d9/b7/26/d9b7262bb44c2c77819518ef9017b03c.jpg',
-  biryani:
-    'https://i.pinimg.com/1200x/d3/49/a6/d349a6c01dba16609279e4725f9b4b57.jpg',
-  thali:
-    'https://i.pinimg.com/1200x/01/5e/64/015e64b4720d6bafc1071c79b2804146.jpg',
-  kurta:
-    'https://i.pinimg.com/736x/85/fa/6d/85fa6d4bcf0ea0a56521188812ff9da1.jpg',
-  jeans:
-    'https://i.pinimg.com/736x/56/5a/12/565a12c6333f611af4e87dbf61387691.jpg',
-  bag:
-    'https://i.pinimg.com/236x/5a/5f/2e/5a5f2eb6c445187c379aba96b8601ff9.jpg',
-};
-
-const categories = [
-  {
-    id: 'grocery',
-    title: 'Grocery',
-    amount: '₹5,200',
-    budget: '₹8,000',
-    percent: '42%',
-    used: '65%',
-    color: '#3478ff',
-  },
-  {
-    id: 'food',
-    title: 'Food',
-    amount: '₹4,150',
-    budget: '₹6,000',
-    percent: '33%',
-    used: '69%',
-    color: '#f28a3d',
-  },
-  {
-    id: 'fashion',
-    title: 'Fashion',
-    amount: '₹3,100',
-    budget: '₹4,000',
-    percent: '25%',
-    used: '78%',
-    color: '#8f52d8',
-  },
-];
-
-const orders = [
-  {
-    store: 'Grokly',
-    time: 'Today, 10:30 AM',
-    amount: '₹642',
-    items: '5 items',
-    images: [productImages.tomato, productImages.banana, productImages.milk],
-  },
-  {
-    store: 'Swadishtt',
-    time: 'Yesterday, 7:50 PM',
-    amount: '₹438',
-    items: '3 items',
-    images: [productImages.biryani, productImages.thali, productImages.paneer],
-  },
-  {
-    store: 'InstaStyle',
-    time: '10 Jun, 3:20 PM',
-    amount: '₹4,039',
-    items: '3 items',
-    images: [productImages.kurta, productImages.jeans, productImages.bag],
-  },
-];
+const DEFAULT_BUDGETS = { grokly: 8000, swadishtt: 6000, instastyle: 4000 };
 
 function CategoryIcon({ type }) {
   if (type === 'grocery') {
@@ -173,46 +100,32 @@ function CategoryIcon({ type }) {
   );
 }
 
-const rupee = (num) => `₹${Number(num).toLocaleString('en-IN')}`;
+const rupee = (num) => `₹${Number(num || 0).toLocaleString('en-IN')}`;
 
-function getSavedUserName() {
-  if (typeof window === 'undefined') return 'User';
-
-  const keys = [
-    'user',
-    'currentUser',
-    'loggedInUser',
-    'accesscoUser',
-    'accescoUser',
-    'profile',
-  ];
-
-  for (const key of keys) {
-    const raw = localStorage.getItem(key);
-    if (!raw) continue;
-
-    try {
-      const parsed = JSON.parse(raw);
-      const name =
-        parsed?.name ||
-        parsed?.fullName ||
-        parsed?.displayName ||
-        parsed?.username ||
-        parsed?.firstName;
-
-      if (name) return String(name).split(' ')[0];
-    } catch {
-      if (raw.length < 40) return raw.split(' ')[0];
-    }
+function formatK(value) {
+  if (!value) return '0';
+  if (value >= 1000) {
+    const k = value / 1000;
+    return `${Number.isInteger(k) ? k : k.toFixed(1)}K`;
   }
-
-  return (
-    localStorage.getItem('name') ||
-    localStorage.getItem('userName') ||
-    localStorage.getItem('displayName') ||
-    'User'
-  ).split(' ')[0];
+  return String(Math.round(value));
 }
+
+const DONUT_DOTS = ['#8a0048', '#c94f80', '#ead1df'];
+
+function buildDonutGradient(breakdown) {
+  if (!breakdown || !breakdown.length) return '#ead1df';
+  let cursor = 0;
+  const stops = breakdown.map((b, idx) => {
+    const start = cursor;
+    cursor += b.pct;
+    return `${DONUT_DOTS[idx % DONUT_DOTS.length]} ${start}% ${cursor}%`;
+  });
+  if (cursor < 100) stops.push(`#ead1df ${cursor}% 100%`);
+  return `conic-gradient(${stops.join(', ')})`;
+}
+
+
 
 function XpmStatusBar() {
   return (
@@ -333,19 +246,24 @@ function XpmIntroHeader() {
 }
 
 
-export default function XpenseMobileFlow() {
+export default function XpenseMobileFlow({
+  user,
+  summary,
+  summaryLoading,
+  monthLabel,
+  onSaveBudget,
+  onRequestLogin,
+}) {
   const [screen, setScreen] = useState('intro');
-  const [userName, setUserName] = useState('User');
+  const userName = user?.name || 'User';
 
-  const [budgets, setBudgets] = useState({
-    grokly: 8000,
-    swadishtt: 6000,
-    instastyle: 4000,
-  });
+  const [budgets, setBudgets] = useState(DEFAULT_BUDGETS);
+  const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState('');
 
   useEffect(() => {
-    setUserName(getSavedUserName());
-  }, []);
+    if (summary?.budgets) setBudgets(summary.budgets);
+  }, [summary]);
 
   const totalBudget = useMemo(() => {
     return budgets.grokly + budgets.swadishtt + budgets.instastyle;
@@ -356,6 +274,41 @@ export default function XpenseMobileFlow() {
       ...prev,
       [key]: Number(value),
     }));
+  };
+
+  const platformSpend = useMemo(() => {
+    const byKey = { grokly: 0, swadishtt: 0, instastyle: 0 };
+    (summary?.platforms || []).forEach((p) => {
+      byKey[p.key] = p.spent;
+    });
+    return byKey;
+  }, [summary]);
+
+  const totalSpend = summary?.totalSpend || 0;
+  const spendPct = summary?.totalBudget ? Math.min(100, Math.round((totalSpend / summary.totalBudget) * 100)) : 0;
+  const grokly = summary?.platformDetails?.grokly;
+  const groklyPlatform = summary?.platforms?.find((p) => p.key === 'grokly');
+  const groklyWeekly = grokly?.weeklySpend || [];
+  const groklyMaxWeekly = Math.max(1, ...groklyWeekly.map((w) => w.amount));
+  const groklyTopItems = grokly?.topItems || [];
+
+  const goToBudget = () => {
+    if (!user) return onRequestLogin?.();
+    setSaveError('');
+    setScreen('budget');
+  };
+
+  const handleConfirmBudget = async () => {
+    if (!user) return onRequestLogin?.();
+    setSaving(true);
+    setSaveError('');
+    const result = await onSaveBudget?.(totalBudget, budgets);
+    setSaving(false);
+    if (result?.success) {
+      setScreen('summary');
+    } else if (result?.error) {
+      setSaveError(result.error);
+    }
   };
 
   return (
@@ -378,37 +331,39 @@ export default function XpenseMobileFlow() {
                 </XpmDarkButton>
               </section>
 
-              <button className="xpm-month">May 2026⌄</button>
+              <button className="xpm-month">{monthLabel}⌄</button>
 
               <section className="xpm-panel">
                 <div className="xpm-spend-header">
   <div>
     <span className="xpm-label">This Month Spend</span>
-    <strong className="xpm-amount">₹12,450</strong>
-    <small>of ₹18,000 budget</small>
+    <strong className="xpm-amount">{rupee(totalSpend)}</strong>
+    <small>of {rupee(summary?.totalBudget || totalBudget)} budget</small>
   </div>
 
-  <span className="xpm-percent-pill">68%</span>
+  <span className="xpm-percent-pill">{spendPct}%</span>
 </div>
 
-<XpmProgress value={68} />
+<XpmProgress value={spendPct} />
 
-<div className="xpm-trend-row">
-  <span className="xpm-trend-arrow">↗</span>
-  <span>8% from last month</span>
-</div>
+{summary?.monthOverMonthChangePct != null && (
+  <div className="xpm-trend-row">
+    <span className="xpm-trend-arrow">{summary.monthOverMonthChangePct >= 0 ? '↗' : '↘'}</span>
+    <span>{Math.abs(summary.monthOverMonthChangePct)}% from last month</span>
+  </div>
+)}
 
 <div className="xpm-three-cards">
                   <article>
-                    <b>₹5,200</b>
+                    <b>{rupee(platformSpend.grokly)}</b>
                     <span>Grokly</span>
                   </article>
                   <article>
-                    <b>₹4,150</b>
+                    <b>{rupee(platformSpend.swadishtt)}</b>
                     <span>Swadishtt</span>
                   </article>
                   <article>
-                    <b>₹3,100</b>
+                    <b>{rupee(platformSpend.instastyle)}</b>
                     <span>InstaStyle</span>
                   </article>
                 </div>
@@ -418,10 +373,10 @@ export default function XpenseMobileFlow() {
   <div>
     <span>Your Budget</span>
     <small>Total Budget</small>
-    <strong>₹18,000</strong>
+    <strong>{rupee(summary?.totalBudget || totalBudget)}</strong>
   </div>
 
-  <button type="button" onClick={() => setScreen('budget')}>
+  <button type="button" onClick={goToBudget}>
     Edit Budget →
   </button>
 </section>
@@ -520,28 +475,34 @@ export default function XpenseMobileFlow() {
                 </div>
 
                 <span className="xpm-label">You’ve spent</span>
-                <strong className="xpm-amount">₹12,450</strong>
-                <small>of ₹18,000 budget used</small>
+                <strong className="xpm-amount">{rupee(totalSpend)}</strong>
+                <small>of {rupee(summary?.totalBudget || totalBudget)} budget used</small>
 
-                <XpmProgress value={68} />
+                <XpmProgress value={spendPct} />
 
                 <div className="xpm-three-cards">
                   <button type="button" onClick={() => setScreen('grokly')}>
-                    <b>₹5,200</b>
+                    <b>{rupee(platformSpend.grokly)}</b>
                     <span>Grokly</span>
                   </button>
                   <button type="button">
-                    <b>₹4,150</b>
+                    <b>{rupee(platformSpend.swadishtt)}</b>
                     <span>Swadishtt</span>
                   </button>
                   <button type="button">
-                    <b>₹3,100</b>
+                    <b>{rupee(platformSpend.instastyle)}</b>
                     <span>InstaStyle</span>
                   </button>
                 </div>
 
                 <button type="button" className="xpm-insight" onClick={() => setScreen('dashboard')}>
-                  Food spend is stable this week.
+                  {!user
+                    ? 'Log in to track your real spend.'
+                    : summaryLoading
+                      ? 'Loading your spend…'
+                      : summary?.onTrack === false
+                        ? "You're spending faster than your budget pace."
+                        : "You're on track with your budget."}
                   <span>See full picture</span>
                 </button>
               </section>
@@ -604,53 +565,54 @@ export default function XpenseMobileFlow() {
             </header>
 
             <main className="xpm-scroll">
-              <button className="xpm-month">May 2026⌄</button>
+              <button className="xpm-month">{monthLabel}⌄</button>
 
               <section className="xpm-panel">
                 <span className="xpm-label">Total Doorstep spend</span>
-                <strong className="xpm-amount">₹12,450</strong>
-                <small>of ₹18,000 budget</small>
+                <strong className="xpm-amount">{rupee(totalSpend)}</strong>
+                <small>of {rupee(summary?.totalBudget || totalBudget)} budget</small>
 
-                <XpmProgress value={68} />
+                <XpmProgress value={spendPct} />
 
                 <div className="xpm-donut-row">
-                  <div className="xpm-donut" />
+                  <div className="xpm-donut" style={{ background: buildDonutGradient(summary?.breakdown) }} />
                   <ul>
-                    <li>Grokly ₹5,200 (42%)</li>
-                    <li>Swadishtt ₹4,150 (33%)</li>
-                    <li>InstaStyle ₹3,100 (25%)</li>
+                    {(summary?.breakdown || []).length === 0 && <li>No spend yet this month</li>}
+                    {(summary?.breakdown || []).map((b) => (
+                      <li key={b.key}>{b.name} {rupee(b.amount)} ({b.pct}%)</li>
+                    ))}
                   </ul>
                 </div>
               </section>
 
               <div className="xpm-dashboard-cards">
                 <button type="button" onClick={() => setScreen('grokly')}>
-                  <b>₹5,200</b>
+                  <b>{rupee(platformSpend.grokly)}</b>
                   <span>Grokly</span>
                 </button>
                 <button type="button">
-                  <b>₹4,150</b>
+                  <b>{rupee(platformSpend.swadishtt)}</b>
                   <span>Swadishtt</span>
                 </button>
                 <button type="button">
-                  <b>₹3,100</b>
+                  <b>{rupee(platformSpend.instastyle)}</b>
                   <span>InstaStyle</span>
                 </button>
               </div>
 
               <button type="button" className="xpm-insight">
-                You’re on track!
-                <span>Keep it up, you’re doing great.</span>
+                {summary?.onTrack === false ? "Watch your spend!" : "You’re on track!"}
+                <span>{summary?.onTrack === false ? 'You are spending faster than your budget pace.' : 'Keep it up, you’re doing great.'}</span>
               </button>
 
               <section className="xpm-panel xpm-budget-row">
                 <div>
                   <span>Your monthly budget</span>
-                  <strong>{rupee(totalBudget)}</strong>
-                  <small>₹5,550 remaining</small>
+                  <strong>{rupee(summary?.totalBudget || totalBudget)}</strong>
+                  <small>{rupee(summary?.remaining)} remaining</small>
                 </div>
 
-                <button type="button" onClick={() => setScreen('budget')}>
+                <button type="button" onClick={goToBudget}>
                   Edit Budget ↗
                 </button>
               </section>
@@ -668,8 +630,8 @@ export default function XpenseMobileFlow() {
     <main className="xpm-scroll xpm-grokly-scroll">
       <section className="xpm-detail-hero">
         <span>This Month Spend</span>
-        <strong>₹5,200</strong>
-        <small>of ₹8,000 budget</small>
+        <strong>{rupee(platformSpend.grokly)}</strong>
+        <small>of {rupee(groklyPlatform?.budget)} budget</small>
       </section>
 
       <section className="xpm-chart-section">
@@ -677,15 +639,15 @@ export default function XpenseMobileFlow() {
 
         <div className="xpm-bar-chart">
           <div className="xpm-chart-y-axis">
-            <span>2K</span>
-            <span>1K</span>
+            <span>{formatK(groklyMaxWeekly)}</span>
+            <span>{formatK(groklyMaxWeekly / 2)}</span>
             <span>0</span>
           </div>
 
           <div className="xpm-bar-chart-bars">
-            {[42, 78, 54, 108, 62].map((height, index) => (
-              <div className="xpm-bar-item" key={index}>
-                <i style={{ height }} />
+            {groklyWeekly.map((w, index) => (
+              <div className="xpm-bar-item" key={w.week}>
+                <i style={{ height: Math.max(2, Math.round((w.amount / groklyMaxWeekly) * 108)) }} />
                 <span>W{index + 1}</span>
               </div>
             ))}
@@ -694,23 +656,18 @@ export default function XpenseMobileFlow() {
       </section>
 
       <section className="xpm-top-items-section">
-        <h3 className="xpm-subtitle">Top 5 Most Ordered Items</h3>
+        <h3 className="xpm-subtitle">Top {groklyTopItems.length || ''} Most Ordered Items</h3>
 
         <div className="xpm-panel xpm-list xpm-grokly-list">
-          {[
-            ['🥛', 'Milk', '₹420'],
-            ['🥬', 'Vegetables', '₹1,240'],
-            ['🧄', 'Panneer', '₹560'],
-            ['🍗', 'Chicken', '₹650'],
-            ['🍞', 'Bread', '₹460'],
-          ].map(([icon, name, price]) => (
-            <div key={name} className="xpm-item-row">
+          {groklyTopItems.length === 0 && <div className="xpm-item-row"><span>No Grokly orders yet this month.</span></div>}
+          {groklyTopItems.map((item) => (
+            <div key={item.name} className="xpm-item-row">
               <span className="xpm-item-left">
-                <span className="xpm-item-icon">{icon}</span>
-                <span>{name}</span>
+                <span className="xpm-item-icon">🛒</span>
+                <span>{item.name}</span>
               </span>
 
-              <b>{price}</b>
+              <b>{rupee(item.amount)}</b>
             </div>
           ))}
         </div>
@@ -719,19 +676,23 @@ export default function XpenseMobileFlow() {
       <div className="xpm-two-stats xpm-grokly-stats">
         <article>
           <span>Last Month</span>
-          <b>↑ ₹450 (9%)</b>
+          <b>
+            {grokly?.lastMonthChangePct == null
+              ? '—'
+              : `${grokly.lastMonthChangePct >= 0 ? '↑' : '↓'} ${Math.abs(grokly.lastMonthChangePct)}%`}
+          </b>
         </article>
 
         <article>
           <span>Orders per week</span>
-          <b>3.2</b>
+          <b>{grokly?.ordersPerWeek ?? 0}</b>
         </article>
       </div>
 
       <button
         type="button"
         className="xpm-dark-btn xpm-grokly-budget-btn"
-        onClick={() => setScreen('budget')}
+        onClick={goToBudget}
       >
         Set Budget for Grokly
       </button>
@@ -761,14 +722,15 @@ export default function XpenseMobileFlow() {
                 </div>
                 <input
                   type="range"
-                  min="4000"
-                  max="12000"
+                  min="1000"
+                  max={Math.max(12000, budgets.grokly)}
+                  step="500"
                   value={budgets.grokly}
                   onChange={(e) => updateBudget('grokly', e.target.value)}
                 />
                 <small>
-                  <span>4K</span>
-                  <span>12K</span>
+                  <span>1K</span>
+                  <span>{formatK(Math.max(12000, budgets.grokly))}</span>
                 </small>
               </section>
 
@@ -779,14 +741,15 @@ export default function XpenseMobileFlow() {
                 </div>
                 <input
                   type="range"
-                  min="3000"
-                  max="10000"
+                  min="1000"
+                  max={Math.max(10000, budgets.swadishtt)}
+                  step="500"
                   value={budgets.swadishtt}
                   onChange={(e) => updateBudget('swadishtt', e.target.value)}
                 />
                 <small>
-                  <span>3K</span>
-                  <span>10K</span>
+                  <span>1K</span>
+                  <span>{formatK(Math.max(10000, budgets.swadishtt))}</span>
                 </small>
               </section>
 
@@ -797,14 +760,15 @@ export default function XpenseMobileFlow() {
                 </div>
                 <input
                   type="range"
-                  min="2000"
-                  max="8000"
+                  min="1000"
+                  max={Math.max(8000, budgets.instastyle)}
+                  step="500"
                   value={budgets.instastyle}
                   onChange={(e) => updateBudget('instastyle', e.target.value)}
                 />
                 <small>
-                  <span>2K</span>
-                  <span>8K</span>
+                  <span>1K</span>
+                  <span>{formatK(Math.max(8000, budgets.instastyle))}</span>
                 </small>
               </section>
 
@@ -814,8 +778,10 @@ export default function XpenseMobileFlow() {
                 <small>You can change this anytime</small>
               </section>
 
-              <XpmDarkButton className="xpm-wide" onClick={() => setScreen('summary')}>
-                Looks Good ✓
+              {saveError && <p className="xpm-budget-note" style={{ color: '#c0304a' }}>{saveError}</p>}
+
+              <XpmDarkButton className="xpm-wide" onClick={handleConfirmBudget}>
+                {saving ? 'Saving…' : 'Looks Good ✓'}
               </XpmDarkButton>
             </main>
           </>
@@ -826,42 +792,52 @@ export default function XpenseMobileFlow() {
 
             <header className="xpm-page-head">
               <button type="button" onClick={() => setScreen('budget')}>←</button>
-              <strong>May 2026 Summary</strong>
+              <strong>{monthLabel} Summary</strong>
             </header>
 
             <main className="xpm-scroll">
               <section className="xpm-success">
                 <div>✓</div>
-                <strong>Great job, {userName}!</strong>
-                <span>You stayed within your budget this month.</span>
+                <strong>{summary?.onTrack === false ? `Keep going, ${userName}!` : `Great job, ${userName}!`}</strong>
+                <span>
+                  {summary?.onTrack === false
+                    ? "You're spending a bit faster than planned this month."
+                    : 'You are staying within your budget this month.'}
+                </span>
               </section>
 
               <section className="xpm-panel xpm-summary-grid">
                 <div>
                   <span>Total Spend</span>
-                  <strong>₹17,850</strong>
+                  <strong>{rupee(totalSpend)}</strong>
                   <small>of {rupee(totalBudget)}</small>
                 </div>
 
                 <div>
                   <span>Budget Used</span>
-                  <strong>99%</strong>
+                  <strong>{summary?.percentUsed ?? 0}%</strong>
                 </div>
 
-                <XpmProgress value={99} />
+                <XpmProgress value={Math.min(100, summary?.percentUsed ?? 0)} />
               </section>
 
               <section className="xpm-panel">
                 <span className="xpm-label">Biggest Category</span>
-                <strong>Swadishtt Food</strong>
-                <p>₹6,450 (36%)</p>
+                {summary?.breakdown?.length ? (
+                  <>
+                    <strong>{summary.breakdown[0].name}</strong>
+                    <p>{rupee(summary.breakdown[0].amount)} ({summary.breakdown[0].pct}%)</p>
+                  </>
+                ) : (
+                  <strong>No spend yet</strong>
+                )}
               </section>
 
               <section className="xpm-panel">
-                <span className="xpm-label">Suggested budget for June</span>
-                <strong>₹18,500</strong>
+                <span className="xpm-label">Next month</span>
+                <strong>{rupee(totalBudget)}</strong>
                 <button type="button" className="xpm-link-btn" onClick={() => setScreen('budget')}>
-                  Review & Edit →
+                  Review &amp; Edit →
                 </button>
               </section>
             </main>

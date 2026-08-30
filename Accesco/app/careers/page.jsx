@@ -347,8 +347,8 @@ return (
               <button onClick={() => handleScrollToSection('open-roles')} className="careers-btn-primary" id="hero-view-roles-btn">
                 View Open Positions <ArrowRight size={18} />
               </button>
-              <button onClick={() => handleScrollToSection('why-work-here')} className="careers-btn-secondary" id="hero-life-btn">
-                Life at Accesco <ArrowRight size={18} />
+              <button onClick={() => window.open('/pdfs/Accesco_deck.pdf', '_blank')} className="careers-btn-secondary" id="hero-life-btn">
+                Apply for Project <ArrowRight size={18} />
               </button>
             </div>
           </div>

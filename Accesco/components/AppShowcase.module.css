@@ -461,6 +461,33 @@
   }
 }
 
+.promoPairSection {
+  max-width: 900px;
+  width: 100%;
+  margin: 32px auto 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.promoPairImage {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 24px;
+  box-shadow: 0 18px 45px rgba(122, 0, 66, 0.12);
+}
+
+@media (max-width: 640px) {
+  .promoPairSection {
+    gap: 12px;
+  }
+
+  .promoPairImage {
+    border-radius: 16px;
+  }
+}
+
 .waitlistSection {
   padding: 80px 20px;
   background: #FAFAF9;
@@ -481,7 +508,6 @@
 .flexOneButton {
   flex: 1;
 }
-
 /* Feedback Section */
 .feedbackSection {
   width: 100%;
@@ -495,7 +521,7 @@
   overflow: hidden;
   background: #ffffff;
   border: 1px solid rgba(122, 0, 66, 0.1);
-  border-radius: 22px;
+  border-radius: 40px;
   box-shadow: 0 14px 38px rgba(122, 0, 66, 0.09);
 }
 
@@ -558,11 +584,20 @@
 }
 
 .feedbackHeaderMark {
+  display: inline-block !important;
   width: 110px !important;
   height: 110px !important;
   margin-right: 32px !important;
-  object-fit: contain !important;
   flex: 0 0 110px !important;
+  background-color: #c60055 !important;
+  -webkit-mask-image: url("/images/asterik.png") !important;
+  mask-image: url("/images/asterik.png") !important;
+  -webkit-mask-repeat: no-repeat !important;
+  mask-repeat: no-repeat !important;
+  -webkit-mask-position: center !important;
+  mask-position: center !important;
+  -webkit-mask-size: contain !important;
+  mask-size: contain !important;
 }
 
 .feedbackBody {
@@ -630,20 +665,25 @@
   align-items: center;
   justify-content: center;
   touch-action: manipulation;
+  transition: background 0.2s ease, color 0.2s ease, transform 0.15s ease;
 }
 
 .ratingButton:hover {
   background: #f1edf0;
   color: #a9004b;
-  transform: none;
+  transform: translateY(-2px);
 }
 
 .ratingButtonSelected,
 .ratingButtonSelected:hover {
-  background: #c60055;
+  background: linear-gradient(135deg, #c60055 0%, #8f0140 100%);
   color: #ffffff;
-  box-shadow: none;
-  transform: none;
+  box-shadow: 0 4px 12px rgba(198, 0, 85, 0.35);
+  transform: translateY(-2px) scale(1.06);
+}
+
+.ratingButton:last-child {
+  border-right: 0;
 }
 
 .ratingLabels {
@@ -692,7 +732,7 @@
   font-family: 'DM Sans', sans-serif;
   font-size: 0.92rem;
   line-height: 1.55;
-  transition: border-color 0.2s ease, background 0.2s ease;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
 }
 
 .reviewBox:hover {
@@ -700,7 +740,9 @@
 }
 
 .reviewBox:focus {
-  border-color: #7a0042;
+  border-color: #c60055;
+  background: #ffffff;
+  box-shadow: 0 0 0 4px rgba(198, 0, 85, 0.1);
 }
 
 .reviewCharacterCount {
@@ -718,26 +760,66 @@
   min-height: 500px;
   display: flex;
   flex-direction: column;
+  animation: feedbackFadeIn 0.35s ease;
+}
+
+@keyframes feedbackFadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 .feedbackInfoRow,
 .feedbackQuestionRow {
   display: grid;
-  grid-template-columns: 38px minmax(0, 1fr);
+  grid-template-columns: 32px minmax(0, 1fr);
+  align-items: start;
   gap: 12px;
   padding: 15px 0;
   border-bottom: 1px solid #eee8eb;
 }
 
 .feedbackIconBox {
-  width: 32px;
-  height: 32px;
-  border-radius: 9px;
-  background: #fff0f5;
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #fff0f5 0%, #ffe3ee 100%);
   color: #c60055;
   display: flex;
   align-items: center;
   justify-content: center;
+  margin-top: 2px;
+  box-shadow: 0 2px 6px rgba(198, 0, 85, 0.12);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.feedbackInfoRow:hover .feedbackIconBox,
+.feedbackQuestionRow:hover .feedbackIconBox {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(198, 0, 85, 0.2);
+}
+
+.feedbackQuestionContent {
+  min-width: 0;
+}
+
+.feedbackProgress {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  margin-bottom: 18px;
+}
+
+.feedbackProgressDot {
+  width: 24px;
+  height: 4px;
+  border-radius: 999px;
+  background: #eadde4;
+  transition: background 0.3s ease, width 0.3s ease;
+}
+
+.feedbackProgressDot.active {
+  background: #c60055;
+  width: 36px;
 }
 
 .feedbackOptions {
@@ -785,7 +867,7 @@
   min-height: 44px; /* Touch target fix */
   margin-top: auto;
   border-radius: 999px;
-  background: #c60055;
+  background: linear-gradient(135deg, #c60055 0%, #8f0140 100%);
   color: #ffffff;
   font-family: 'Sora', sans-serif;
   text-transform: uppercase;
@@ -798,11 +880,21 @@
   gap: 8px;
   box-shadow: 0 6px 16px rgba(122, 0, 66, 0.18);
   touch-action: manipulation;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
 }
 
 .feedbackSubmitButton:hover:not(:disabled) {
-  background: #a90049;
-  transform: translateY(-2px);
+  background: linear-gradient(135deg, #a90049 0%, #720133 100%);
+  transform: translateY(-3px);
+  box-shadow: 0 10px 22px rgba(122, 0, 66, 0.28);
+}
+
+.feedbackSubmitButton:hover:not(:disabled) svg {
+  transform: translateX(3px);
+}
+
+.feedbackSubmitButton svg {
+  transition: transform 0.2s ease;
 }
 
 .feedbackSubmitButton:disabled {
@@ -868,3 +960,28 @@
     min-height: 44px;
   }
 }
+
+/* Small phones */
+@media (max-width: 480px) {
+  .waitlistCard {
+    padding: 14px;
+    gap: 24px;
+  }
+
+  .leftPanel {
+    height: 260px;
+  }
+
+  .cardTitle {
+    font-size: 1.7rem;
+  }
+
+  .feedbackBody {
+    padding: 22px 16px 20px;
+  }
+
+  .feedbackHeaderMark {
+    display: none !important;
+  }
+}
+

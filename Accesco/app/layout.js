@@ -9,30 +9,31 @@ import JsonLd from '@/components/JsonLd';
 import BreadcrumbJsonLd from '@/components/BreadcrumbJsonLd';
 import GoogleAnalytics from '@/components/GoogleAnalytics';
 import { GA_MEASUREMENT_ID } from '@/lib/gtag';
+import ProtectImages from './components/ProtectImages'
 
-// Self-hosted from Google Fonts (public/fonts/) — see app/fonts.js for why.
+// Configured with display: 'optional' to eliminate font-swap layout shifts (CLS)
 const sora = localFont({
   src: '../public/fonts/sora-variable.woff2',
   weight: '300 800',
-  display: 'swap',
+  display: 'optional',
   variable: '--font-sora',
-  adjustFontFallback: false,
+  adjustFontFallback: true,
 });
 
 const dmSans = localFont({
   src: '../public/fonts/dm-sans-variable.woff2',
   weight: '400 700',
-  display: 'swap',
+  display: 'optional',
   variable: '--font-dm-sans',
-  adjustFontFallback: false,
+  adjustFontFallback: true,
 });
 
 const inter = localFont({
   src: '../public/fonts/inter-variable.woff2',
   weight: '400 700',
-  display: 'swap',
+  display: 'optional',
   variable: '--font-inter',
-  adjustFontFallback: false,
+  adjustFontFallback: true,
 });
 
 export const viewport = {
@@ -131,25 +132,21 @@ export default function RootLayout({ children }) {
     "url": "https://accescoliving.com",
   };
 
-
-
   return (
-    <html lang="en" className={`${sora.variable} ${dmSans.variable} ${inter.variable} ${spaceGrotesk.variable}`}>
+    <html lang="en" suppressHydrationWarning className={`${sora.variable} ${dmSans.variable} ${inter.variable} ${spaceGrotesk.variable}`}>
       <head>
-        {/* Structured Data for SEO */}
         <JsonLd data={[organizationSchema, websiteSchema]} />
       </head>
 
-      <body>
+      <body suppressHydrationWarning>
         <AuthProvider>
           <BreadcrumbJsonLd />
           <ReferralCapture />
-          
+          <ProtectImages/>
           {children}
           <CookieConsent />
         </AuthProvider>
 
-        {/* RemixIcon loaded lazily — only needed for a few social icons */}
         <Script id="load-remixicon" strategy="lazyOnload">
           {`
             (function () {
@@ -165,9 +162,9 @@ export default function RootLayout({ children }) {
           <>
             <Script
               src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
-              strategy="afterInteractive"
+              strategy="lazyOnload"
             />
-            <Script id="google-analytics" strategy="afterInteractive">
+            <Script id="google-analytics" strategy="lazyOnload">
               {`
                 window.dataLayer = window.dataLayer || [];
                 function gtag(){dataLayer.push(arguments);}
@@ -190,4 +187,3 @@ export default function RootLayout({ children }) {
     </html>
   );
 }
-

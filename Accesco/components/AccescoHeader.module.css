@@ -6,20 +6,20 @@
 
 .header {
   position: fixed;
-  top: 24px;
+  top: 35px;
   left: 50%;
   transform: translateX(-50%);
 
- width: min(92%, 1320px);   /* was 92%, 1320px */
-  height: 68px;              /* was 78px */
+  width: min(92%, 1320px);
+  height: 68px;
 
   z-index: 1000;
 
-  background: rgba(255, 255, 255, 0.95); /* slightly more opaque */
+  background: rgba(255, 255, 255, 0.78);
   backdrop-filter: blur(30px);
   -webkit-backdrop-filter: blur(18px);
 
-  border-radius: 16px;       /* was 24px */
+  border-radius: 16px;
   box-shadow: 0 12px 40px rgba(0,0,0,0.12);
 
   display: flex;
@@ -29,7 +29,7 @@
 }
 
 .header.scrolled {
-  background: rgba(255, 255, 255, 0.82);
+  background: rgba(255, 255, 255, 0.72);
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
@@ -239,6 +239,48 @@
   }
 }
 
+/* ── Cart Button ── */
+.cartButton {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 9999px;
+  border: 1.5px solid #7A0042;
+  background: none;
+  color: #7A0042;
+  cursor: pointer;
+  transition: all 0.25s;
+  flex-shrink: 0;
+}
+
+.cartButton:hover {
+  background: rgba(122, 0, 66, 0.08);
+}
+
+/* WCAG 4.5:1 High Contrast Fix for Cart Badge */
+.cartBadge {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 4px;
+  border-radius: 9999px;
+  background: #8a0048 !important; /* Fixed contrast: High contrast brand maroon */
+  color: #ffffff !important; /* Fixed contrast: Pure white text */
+  font-family: 'Sora', sans-serif;
+  font-size: 0.65rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  box-shadow: 0 0 0 2px #FFFDF8;
+}
+
 /* ── Location Selector ── */
 .locationSelector {
   position: relative;
@@ -256,7 +298,7 @@
   font-family: 'Sora', sans-serif;
   font-size: 0.78rem;
   font-weight: 500;
- color: #7A0042;
+  color: #7A0042;
   border-color:  #7A0042;
   transition: all 0.3s;
   white-space: nowrap;
@@ -538,7 +580,6 @@
   height: 100%;
 }
 
-/* Mobile drawer header */
 .mobileMenuHeader {
   display: flex;
   align-items: center;
@@ -572,7 +613,6 @@
   background: rgba(122, 0, 66, 0.06);
 }
 
-/* Mobile Nav */
 .mobileNav {
   padding: 16px 16px 40px;
   display: flex;
@@ -598,7 +638,6 @@
   color: #7A0042;
 }
 
-/* Mobile Accordion (Services/Partner) */
 .mobileServicesDropdown {
   margin-bottom: 4px;
 }
@@ -671,14 +710,12 @@
   margin-top: 2px;
 }
 
-/* Mobile divider */
 .mobileDivider {
   height: 1px;
   background: rgba(122, 0, 66, 0.1);
   margin: 12px 0;
 }
 
-/* Mobile location row */
 .mobileLocationRow {
   display: flex;
   align-items: center;
@@ -722,7 +759,6 @@
   font-weight: 600;
 }
 
-/* Mobile login button */
 .mobileLoginButton {
   display: flex;
   align-items: center;
@@ -746,7 +782,6 @@
   background: #5A0031;
 }
 
-/* Mobile user card */
 .mobileUserCard {
   display: flex;
   align-items: center;
@@ -798,7 +833,6 @@
   background: rgba(122, 0, 66, 0.06);
 }
 
-/* ── Overlay backdrop ── */
 .overlay {
   position: fixed;
   inset: 0;
@@ -825,18 +859,13 @@
     display: none;
   }
 
-  .locationButton {
-    /* Only show icon if we really need space, or just hide entirely if burger menu is active */
-    display: none;
-  }
-
   .mobileMenuButton {
     display: flex;
   }
 
   .container {
-    padding: 0 16px;
-    gap: 12px;
+    padding: 0 12px;
+    gap: 8px;
   }
 }
 
@@ -848,7 +877,7 @@
 
 @media (max-width: 480px) {
   .loginButton {
-    padding: 9px 18px;
+    padding: 9px 14px;
     font-size: 0.8rem;
   }
 }
@@ -867,16 +896,13 @@
   font-weight: 500;
   color: #7A0042;
   text-decoration: none;
-
   margin-left: 0;
   margin-right: -2px;
-  /* tweak this */
-
 }
 
 .storeIcon {
-  width: 14px;
-  height: 14px;
+  width: 12px;
+  height: 12px;
   filter: brightness(0) invert(1);
   flex-shrink: 0;
 }
@@ -897,18 +923,6 @@
   .mobileText {
     display: inline;
   }
-}
-
-@media (max-width: 1250px) {
-  .actions > button.loginButton {
-    display: inline-flex !important;
-  }
-
-  .actions > a.loginButton {
-    display: inline-flex !important;
-  }
-}
-@media (max-width: 1250px) {
 
   .nav,
   .servicesDropdown {
@@ -917,79 +931,169 @@
 }
 
 @media (max-width: 768px) {
+  .header {
+    top: 35px;
+    height: 56px;
+    width: min(94%, 1320px);
+    border-radius: 14px;
+  }
+
+  .container {
+    padding: 0 10px;
+    gap: 6px;
+  }
+
+  .logo img {
+    width: 32px !important;
+    height: 32px !important;
+  }
 
   .logoDivider,
   .waitlistLink {
     display: none !important;
   }
-}
-/* MOBILE HEADER LOGIN + DOWNLOAD BUTTONS */
-@media (max-width: 768px) {
+
+  .cartButton {
+    width: 34px !important;
+    height: 34px !important;
+  }
+
+  .cartBadge {
+    top: -4px;
+    right: -4px;
+  }
+
+  .locationSelector {
+    display: flex;
+    align-items: center;
+  }
+
+  .locationButton {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 4px !important;
+    height: 34px !important;
+    padding: 0 8px !important;
+    border-radius: 10px !important;
+    font-size: 11px !important;
+    font-weight: 600 !important;
+    white-space: nowrap !important;
+    border: 1px solid rgba(122, 0, 66, 0.3) !important;
+    color: #7A0042 !important;
+  }
+
+  .locationText {
+    display: inline-block !important;
+    max-width: 80px !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+    font-size: 11px !important;
+  }
+
+  .locationIcon {
+    width: 12px !important;
+    height: 12px !important;
+  }
+
   .actions {
-    gap: 8px !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 6px !important;
     margin-left: auto !important;
   }
 
   .actions > button.loginButton,
-  .actions > a.loginButton {
-    height: 38px !important;
-    min-width: 86px !important;
-    padding: 0 16px !important;
-    border-radius: 11px !important;
-    background: #8a0048 !important;
-    color: #ffffff !important;
-    font-size: 12px !important;
-    font-weight: 800 !important;
-    letter-spacing: 0.04em !important;
-    text-transform: uppercase !important;
-    box-shadow: 0 8px 18px rgba(138, 0, 72, 0.22) !important;
-    white-space: nowrap !important;
-  }
-
-  .actions > a.loginButton {
-    min-width: 104px !important;
-    gap: 6px !important;
-  }
-
-  .storeIcon {
-    width: 12px !important;
-    height: 12px !important;
-  }
-}
-@media (max-width: 768px) {
-  .actions > button.loginButton,
-  .actions > a.loginButton {
-    font-family: 'Sora', sans-serif !important;
-    font-size: 12px !important;
-    font-weight: 700 !important;
-    letter-spacing: 0.04em !important;
-    line-height: 1 !important;
-    text-transform: uppercase !important;
-  }
-}
-
-/* FIX MOBILE LOGIN BUTTON SIZE */
-@media (max-width: 768px) {
-  .actions > button.loginButton {
+  .actions > a.userButton,
+  .actions > a.getAppButton {
     height: 34px !important;
-    min-width: 72px !important;
-    padding: 0 14px !important;
+    min-width: unset !important;
+    padding: 0 10px !important;
     border-radius: 10px !important;
-
+    font-family: 'Sora', sans-serif !important;
     font-size: 11px !important;
     font-weight: 700 !important;
     letter-spacing: 0.02em !important;
     line-height: 1 !important;
-
+    text-transform: uppercase !important;
     display: inline-flex !important;
     align-items: center !important;
     justify-content: center !important;
+    box-shadow: 0 4px 12px rgba(122, 0, 66, 0.2) !important;
+    white-space: nowrap !important;
+  }
 
-    box-shadow: 0 6px 14px rgba(122, 0, 66, 0.22) !important;
+  .actions > a.getAppButton {
+    background: #8a0048 !important;
+    color: #ffffff !important;
+    gap: 4px !important;
+    display: none !important;
+  }
+
+  .userButton span {
+    max-width: 60px !important;
+    font-size: 11px !important;
+  }
+
+  .avatar {
+    width: 24px !important;
+    height: 24px !important;
   }
 }
 
-/* Display uploaded profile image in the header */
+@media (max-width: 430px) {
+  .container {
+    padding: 0 8px;
+    gap: 4px;
+  }
+
+  .locationText {
+    max-width: 60px !important;
+  }
+
+  .actions {
+    gap: 5px !important;
+  }
+
+  .actions > button.loginButton,
+  .actions > a.userButton {
+    padding: 0 8px !important;
+  }
+}
+
+@media (max-width: 375px) {
+  .locationText {
+    max-width: 42px !important;
+  }
+
+  .actions {
+    gap: 4px !important;
+  }
+
+  .actions > button.loginButton,
+  .actions > a.userButton {
+    padding: 0 7px !important;
+    font-size: 10.5px !important;
+  }
+}
+
+@media (max-width: 350px) {
+  .locationText {
+    display: none !important;
+  }
+
+  .locationButton {
+    padding: 0 6px !important;
+    gap: 2px !important;
+  }
+
+  .actions > button.loginButton,
+  .actions > a.userButton {
+    padding: 0 6px !important;
+    font-size: 10px !important;
+  }
+}
+
 .avatar {
   overflow: hidden;
 }
@@ -1001,3 +1105,7 @@
   border-radius: 50%;
   object-fit: cover;
 }
+
+   
+
+ 

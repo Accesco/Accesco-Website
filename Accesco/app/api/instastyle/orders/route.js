@@ -1,10 +1,20 @@
 import { NextResponse } from 'next/server';
 import { sendInstaStyleConfirmation } from '@/lib/mailService';
+import { adminDb } from '@/lib/firebaseAdmin';
+import { FieldValue } from 'firebase-admin/firestore';
+import { verifyAuthToken } from '../../_lib/auth';
+import { requireAdmin, requireOwnerOrAdmin } from '../../_lib/authz';
+import { planInstaStyleStockDecrements } from '../../_lib/inventory';
 
 export const dynamic = 'force-dynamic';
 
 export async function POST(request) {
   try {
+    const { uid, error } = await verifyAuthToken(request);
+    if (error) {
+      return NextResponse.json({ error }, { status: 401 });
+    }
+
     const body = await request.json();
     const { order, customerEmail } = body;
 
@@ -12,25 +22,49 @@ export async function POST(request) {
       return NextResponse.json({ error: 'Order data is required.' }, { status: 400 });
     }
 
-    // Persist to Firestore
-    try {
-      const { db } = await import('@/lib/firebase');
-      const { collection, doc, setDoc, serverTimestamp } = await import('firebase/firestore');
-      await setDoc(doc(collection(db, 'instastyle_orders'), order.id), {
+    // Persist to Firestore — order creation and stock decrement happen in
+    // one Admin SDK transaction (switched from the client SDK previously
+    // used here, so this route can share the exact same product-resolution/
+    // stock helpers the InstaStyle cart backend already validates against —
+    // see _lib/instastyleCart.js / _lib/inventory.js). Reading the order doc
+    // first makes this idempotent: a retried request for the same order.id
+    // sees it already exists and never re-decrements stock. Insufficient
+    // stock aborts the whole transaction, so a rejected order is never
+    // partially created. A failure here now fails the request instead of
+    // being silently swallowed, since an order that didn't actually persist
+    // must not be reported as a success (the email send below stays
+    // best-effort/non-blocking, same as before).
+    const orderRef = adminDb.collection('instastyle_orders').doc(order.id);
+
+    const txResult = await adminDb.runTransaction(async (transaction) => {
+      const existing = await transaction.get(orderRef);
+      if (existing.exists) {
+        return { alreadyCreated: true };
+      }
+
+      const stockPlan = await planInstaStyleStockDecrements(transaction, order.items);
+      if (stockPlan.error) {
+        return { error: stockPlan.error, status: stockPlan.status };
+      }
+
+      transaction.set(orderRef, {
         ...order,
         customerEmail: customerEmail || null,
-        createdAt: serverTimestamp(),
+        // Identity is derived from the verified token, never trusted from
+        // the client body, so an order can't be created under someone else's id.
+        userId: uid,
+        createdAt: FieldValue.serverTimestamp(),
       });
-    } catch (dbErr) {
-      console.error('[instastyle/orders] Firestore write failed:', dbErr);
-    }
 
-    // If this is the user's first order, bundle in any pending referral gifts
-    if (order.phone) {
-      const { markFirstOrderAndFulfillGifts } = await import('@/lib/referralFulfillment');
-      markFirstOrderAndFulfillGifts({ phone: order.phone, orderId: order.id, vertical: 'instastyle' }).catch(
-        (err) => console.error('[instastyle/orders] Referral fulfillment failed:', err),
-      );
+      for (const { ref, field, newQty } of stockPlan.decrements) {
+        transaction.update(ref, { [field]: newQty });
+      }
+
+      return { created: true };
+    });
+
+    if (txResult.error) {
+      return NextResponse.json({ error: txResult.error }, { status: txResult.status });
     }
 
     // Send confirmation email using the rich template from mailService
@@ -78,16 +112,22 @@ export async function GET(request) {
     const { db } = await import('@/lib/firebase');
     const { collection, doc, getDoc, getDocs, query, orderBy, limit, where } = await import('firebase/firestore');
 
-    // Fetch single order by ID
+    // Fetch single order by ID — caller must own the order or be admin.
     if (orderId) {
       const docSnap = await getDoc(doc(db, 'instastyle_orders', orderId));
       if (!docSnap.exists()) {
         return NextResponse.json({ error: 'Order not found.' }, { status: 404 });
       }
-      return NextResponse.json({ order: { id: docSnap.id, ...docSnap.data() } });
+      const orderData = docSnap.data();
+      const authz = await requireOwnerOrAdmin(request, orderData.userId);
+      if (authz.error) {
+        return NextResponse.json({ error: authz.error }, { status: authz.status });
+      }
+      return NextResponse.json({ order: { id: docSnap.id, ...orderData } });
     }
 
-    // Fetch orders by deviceId
+    // Fetch orders by deviceId — intentionally left public (guest capability
+    // token, matching the rest of the app's guest-access model).
     if (deviceId) {
       const q = query(
         collection(db, 'instastyle_orders'),
@@ -101,8 +141,12 @@ export async function GET(request) {
       return NextResponse.json({ orders });
     }
 
-    // Fetch orders by userId
+    // Fetch orders by userId — caller must be that user or admin.
     if (userId) {
+      const authz = await requireOwnerOrAdmin(request, userId);
+      if (authz.error) {
+        return NextResponse.json({ error: authz.error }, { status: authz.status });
+      }
       const q = query(
         collection(db, 'instastyle_orders'),
         where('userId', '==', userId),
@@ -115,8 +159,12 @@ export async function GET(request) {
       return NextResponse.json({ orders });
     }
 
-    // Fetch orders by email
+    // Fetch orders by email — admin only.
     if (email) {
+      const authz = await requireAdmin(request);
+      if (authz.error) {
+        return NextResponse.json({ error: authz.error }, { status: authz.status });
+      }
       const q = query(
         collection(db, 'instastyle_orders'),
         where('customerEmail', '==', email),
@@ -130,6 +178,12 @@ export async function GET(request) {
     }
 
     // Fetch all orders (admin — most recent 50)
+    {
+      const authz = await requireAdmin(request);
+      if (authz.error) {
+        return NextResponse.json({ error: authz.error }, { status: authz.status });
+      }
+    }
     const q = query(collection(db, 'instastyle_orders'), orderBy('createdAt', 'desc'), limit(50));
     const snapshot = await getDocs(q);
     const orders = [];

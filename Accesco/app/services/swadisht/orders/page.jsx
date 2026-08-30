@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import SwadishttHeader from '../components/SwadishttHeader';
 import { useSwadishtt } from '../contexts/SwadishttContext';
+import { useAuth } from '../../../components/AuthProvider';
 import styles from './orders.module.css';
 
 const ORDERS_STORAGE_KEY = 'swadishtt-orders';
@@ -150,24 +151,63 @@ const handleReportIssue = () => {
 
 export default function SwadishttOrdersPage() {
   const { addToCart, user } = useSwadishtt();
+  // Swadishtt's own `user` above is guest checkout form data (name/email/
+  // phone), not the Firebase Auth identity — that's needed separately here
+  // to call the authenticated /api/swadishtt/orders endpoint.
+  const { user: authUser, getIdToken } = useAuth();
   const router = useRouter();
   const [orders, setOrders] = useState([]);
   const [activeFilter, setActiveFilter] = useState('all');
   const [hydrated, setHydrated] = useState(false);
 
+  // Backend-driven: fetches this user's real orders from
+  // /api/swadishtt/orders?userId=... (falling back to the local mirror only
+  // if unauthenticated or the fetch itself fails), instead of only ever
+  // reading the same-browser localStorage mirror — which is what left this
+  // page unable to show orders placed on another device.
   useEffect(() => {
     if (typeof window === 'undefined') return;
-    try {
-      const raw = localStorage.getItem(ORDERS_STORAGE_KEY);
-      if (raw) {
-        const parsed = JSON.parse(raw);
-        setOrders(Array.isArray(parsed) ? parsed : []);
+
+    const loadLocalFallback = () => {
+      try {
+        const raw = localStorage.getItem(ORDERS_STORAGE_KEY);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          setOrders(Array.isArray(parsed) ? parsed : []);
+        }
+      } catch (error) {
+        console.error('Error reading Swadishtt orders:', error);
       }
-    } catch (error) {
-      console.error('Error reading Swadishtt orders:', error);
-    }
-    setHydrated(true);
-  }, []);
+    };
+
+    const loadOrders = async () => {
+      if (!authUser?.uid) {
+        loadLocalFallback();
+        setHydrated(true);
+        return;
+      }
+      try {
+        const token = await getIdToken();
+        const res = await fetch(`/api/swadishtt/orders?userId=${encodeURIComponent(authUser.uid)}`, {
+          headers: token ? { Authorization: `Bearer ${token}`, 'x-user-id': authUser.uid } : {},
+        });
+        if (res.ok) {
+          const data = await res.json();
+          if (Array.isArray(data.orders)) {
+            setOrders(data.orders);
+            setHydrated(true);
+            return;
+          }
+        }
+      } catch (error) {
+        console.warn('Swadishtt orders backend read failed, falling back to local:', error);
+      }
+      loadLocalFallback();
+      setHydrated(true);
+    };
+
+    loadOrders();
+  }, [authUser, getIdToken]);
 
   const filteredOrders = orders.filter((o) => matchesFilter(o, activeFilter));
 

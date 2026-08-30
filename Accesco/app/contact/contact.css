@@ -511,10 +511,15 @@ textarea.form-input {
     gap: 16px;
   }
 }
-
 @media (max-width: 768px) {
+
   .contact-hero {
-    padding: 120px 20px 60px;
+    padding: 0 20px 60px;
+    min-height: 520px;
+  }
+
+  .hero-content {
+    padding-top: 100px;
   }
 
   .hero-title {
@@ -569,7 +574,6 @@ textarea.form-input {
     bottom: 16px;
   }
 }
-
 @media (max-width: 480px) {
   .contact-form-wrapper {
     padding: 24px 20px;
