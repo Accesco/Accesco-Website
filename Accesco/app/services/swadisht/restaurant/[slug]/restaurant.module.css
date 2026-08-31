@@ -238,9 +238,25 @@
   gap: 14px;
 }
 
-.menuHeading { margin: 0 0 2px; }
+.menuHeading { 
+  font-family: "Inter", sans-serif;
+font-weight: 800;
+font-style: normal;
+font-size: 60px;
+line-height: 120%;
+letter-spacing: 0;
+ }
 .menuHeading h2 { margin: 0; color: #241812; font-size: 18px; font-weight: 800; }
-.menuSubtext { margin: 0; color: #9b8478; font-size: 11px; }
+.menuSubtext { 
+  font-family: "Inter", sans-serif;
+font-weight: 400;
+font-style: normal;
+font-size: 17.06px;
+line-height: 123%;
+letter-spacing: 0;
+color:  #6B6B6B;
+;
+ }
 
 .filterTabs {
   justify-self: center;
