@@ -4,11 +4,11 @@ import { useState, useMemo, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import ProductCard from "@/components/instastyle/ProductCard";
 import {
-  products,
   categories,
   sortProducts,
   getProductCategoryIds,
 } from "@/lib/mockData";
+import useInstaStyleProducts from "../hooks/useInstaStyleProducts";
 import {
   LayoutGrid,
   UserRound,
@@ -72,10 +72,42 @@ const heroContent = {
   },
 };
 // ✅ Inner component that uses useSearchParams
+
+
+
+function productMatchesSearch(product, searchValue) {
+  const query = String(searchValue || "").toLowerCase().trim();
+
+  if (!query) {
+    return true;
+  }
+
+  const searchableText = [
+    product.name,
+    product.brand,
+    product.sku,
+    product.category,
+    product.subcategory,
+    product.description,
+    ...(Array.isArray(product.categories) ? product.categories : []),
+    ...(Array.isArray(product.tags) ? product.tags : []),
+  ]
+    .filter(Boolean)
+    .join(" ")
+    .toLowerCase();
+
+  return searchableText.includes(query);
+}
+
+
+
+
+
 function CatalogContent() {
   const searchParams = useSearchParams();
+  const searchQuery = searchParams.get("search")?.trim() || "";
 
-  const [allProducts, setAllProducts] = useState(products);
+  const { products : allProducts } = useInstaStyleProducts();
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [sortBy, setSortBy] = useState("newest");
   const [filters, setFilters] = useState({
@@ -98,68 +130,7 @@ function CatalogContent() {
     );
   }, [searchParams]);
 
-  useEffect(() => {
-    const loadProducts = async () => {
-      // 1. Hydrate from localStorage for instant user experience
-      let localProducts = [];
-      if (typeof window !== "undefined") {
-        try {
-          const saved = localStorage.getItem("instastyle_custom_products");
-          if (saved) {
-            const parsed = JSON.parse(saved);
-            if (Array.isArray(parsed)) {
-              localProducts = parsed;
-            }
-          }
-        } catch (error) {
-          console.error("Failed to load local custom products:", error);
-        }
-      }
-
-      setAllProducts(() => {
-        const merged = [...products];
-        localProducts.forEach((lp) => {
-          if (!merged.some((p) => p.id === lp.id)) {
-            merged.push(lp);
-          }
-        });
-        return merged;
-      });
-
-      // 2. Fetch from Firebase Firestore for persistent storage
-      try {
-        const { db } = await import("@/lib/firebase");
-        const { collection, getDocs, query } =
-          await import("firebase/firestore");
-        const q = query(collection(db, "instastyle_products"));
-        const snapshot = await getDocs(q);
-        const fbProducts = [];
-        snapshot.forEach((doc) => {
-          fbProducts.push(doc.data());
-        });
-
-        if (fbProducts.length > 0) {
-          setAllProducts(() => {
-            const merged = [...products];
-            localProducts.forEach((lp) => {
-              if (!merged.some((p) => p.id === lp.id)) {
-                merged.push(lp);
-              }
-            });
-            fbProducts.forEach((fp) => {
-              if (!merged.some((p) => p.id === fp.id)) {
-                merged.push(fp);
-              }
-            });
-            return merged;
-          });
-        }
-      } catch (err) {
-        console.error("Failed to load products from Firestore:", err);
-      }
-    };
-    loadProducts();
-  }, []);
+  
 
   const displayedProducts = useMemo(() => {
     let filtered =
@@ -168,6 +139,13 @@ function CatalogContent() {
         : allProducts.filter((p) =>
             getProductCategoryIds(p).includes(selectedCategory),
           );
+
+    if (searchQuery) {
+      filtered = filtered.filter((product) =>
+        productMatchesSearch(product, searchQuery)
+      );
+    }      
+
 
     if (filters.size.length > 0) {
       filtered = filtered.filter((p) =>
@@ -182,7 +160,9 @@ function CatalogContent() {
     });
 
     return sortProducts(filtered, sortBy);
-}, [allProducts, selectedCategory, filters, sortBy]);
+}, 
+
+[allProducts, selectedCategory,searchQuery ,filters, sortBy]);
 
   const activeFilterCount =
     filters.size.length + (filters.priceRange[1] < 10000 ? 1 : 0);

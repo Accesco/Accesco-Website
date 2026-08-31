@@ -10,6 +10,7 @@ import InstaStyleLogo from './InstaStyleLogo';
 import styles from './InstaStyleHeader.module.css';
 import { MapPin } from 'lucide-react';
 import LocationModal from '../LocationModal';
+import ProductSearch from './ProductSearch';
 
 export default function InstaStyleHeader() {
   const pathname = usePathname();
@@ -19,8 +20,8 @@ export default function InstaStyleHeader() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isMobileViewport, setIsMobileViewport] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [isSearchFocused, setIsSearchFocused] = useState(false);
+
+  
   const [isLocationModalOpen, setIsLocationModalOpen] = useState(false);
   const [selectedLocation, setSelectedLocation] = useState('Select Location');
 
@@ -120,12 +121,7 @@ export default function InstaStyleHeader() {
     }
   }, []);
 
-  const handleSearch = useCallback((e) => {
-    e.preventDefault();
-    if (searchQuery.trim()) {
-      window.location.href = `/services/instastyle/catalog?search=${encodeURIComponent(searchQuery)}`;
-    }
-  }, [searchQuery]);
+  
 
   const toggleMobileMenu = useCallback(() => {
     setIsMobileMenuOpen(prev => !prev);
@@ -347,41 +343,8 @@ export default function InstaStyleHeader() {
             </ul>
           </nav>
 
-          {/* Search Bar */}
-          <form
-            className={`instaHeaderSearch ${styles.searchForm} ${isSearchFocused ? styles.focused : ''}`}
-            style={fallback.searchForm}
-            onSubmit={handleSearch}
-            role="search"
-          >
-            <input
-              type="search"
-              placeholder="Search products..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              onFocus={() => setIsSearchFocused(true)}
-              onBlur={() => setIsSearchFocused(false)}
-              className={`instaHeaderSearchInput ${styles.searchInput}`}
-              style={fallback.searchInput}
-              aria-label="Search products"
-            />
-            <button
-              type="submit"
-              className={`instaHeaderSearchButton ${styles.searchButton}`}
-              style={fallback.searchButton}
-              aria-label="Submit search"
-            >
-              <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-                <path
-                  d="M9 17A8 8 0 1 0 9 1a8 8 0 0 0 0 16zM19 19l-4.35-4.35"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-            </button>
-          </form>
+          {/* Insta-Style Product Search */}
+          <ProductSearch />
 
           <div className={`instaHeaderActions ${styles.actions}`} style={fallback.actions}>
             {/* Location */}
