@@ -935,3 +935,19 @@
     max-width: 520px;
   }
 }
+
+@media (max-width: 768px) {
+  .pageContent {
+    padding-top: 115px;
+  }
+
+  .hero {
+    min-height: auto;
+    padding: 40px 20px;
+    margin-bottom: 30px;
+  }
+
+  .heroTitle {
+    font-size: 32px;
+  }
+}
