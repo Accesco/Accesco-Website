@@ -375,20 +375,13 @@ export default function RestaurantDetailPage() {
   <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
     <span
       className={styles.rating}
-      style={{
-        fontSize: "20px",
-        fontWeight: 700,
-        color:"white"
-      }}
+      
     >
     <Star size={16} fill="white" />   {restaurant.rating}
     </span>
 
     <span
-      style={{
-        fontSize: "15px",
-        opacity: 0.8,
-      }}
+      className={styles.rating2}
     >
       {restaurant.ratingCount || 100}+ ratings
     </span>
@@ -397,25 +390,13 @@ export default function RestaurantDetailPage() {
   {/* Delivery Time */}
   <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
     <span
-      style={{
-        fontSize: "20px",
-        fontWeight: 700,
-          display: "inline-flex",
-          alignItems: "center",
-          gap: "6px",
-          color:"white"
-        
-      }}
+      className={styles.deliveryTime}
     >
       <Clock size={18} color="white" /> {restaurant.deliveryTime}
     </span>
 
     <span
-      style={{
-        fontSize: "15px",
-        opacity: 0.8,
-        color:"white"
-      }}
+      className={styles.deliveryTime2}
     >
       Delivery Time
     </span>
@@ -424,22 +405,13 @@ export default function RestaurantDetailPage() {
   {/* Delivery */}
   <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
     <span
-      style={{
-        fontSize: "20px",
-        fontWeight: 700,
-          display: "inline-flex",
-          alignItems: "center",
-          gap: "6px",
-      }}
+      className={styles.delivery}
     >
       <Truck size={18} color="white" /> Fast
     </span>
 
     <span
-      style={{
-        fontSize: "15px",
-        opacity: 0.8,
-      }}
+      className={styles.delivery2}
     >
       and Reliable
     </span>
