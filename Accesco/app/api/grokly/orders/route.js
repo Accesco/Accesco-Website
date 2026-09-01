@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
-import { verifyAuthToken } from '../../_lib/auth';
-import { requireAdmin, requireOwnerOrAdmin } from '../../_lib/authz';
+import { addRewards, calculatedReward } from '@/lib/rewardService';
 
 export const dynamic = 'force-dynamic';
 
@@ -78,11 +77,6 @@ function buildGroklyOrderEmailHtml({ customerName, orderId, items, subtotal, del
 
 export async function POST(request) {
   try {
-    const { uid, error } = await verifyAuthToken(request);
-    if (error) {
-      return NextResponse.json({ error }, { status: 401 });
-    }
-
     const body = await request.json();
     const { order, customerEmail } = body;
 
@@ -90,51 +84,42 @@ export async function POST(request) {
       return NextResponse.json({ error: 'Order data is required.' }, { status: 400 });
     }
 
-    // Persist to Firestore — order creation and stock decrement happen in
-    // one transaction: reading the order doc first makes this idempotent (a
-    // retried request for the same order.id sees it already exists and
-    // skips straight to "already created", never decrementing stock twice),
-    // and insufficient stock aborts the whole transaction so a rejected
-    // order is never partially created. Unlike the previous version, a
-    // failure here now fails the request instead of being silently
-    // swallowed — an order that didn't actually persist must not be
-    // reported as a success (email send below stays best-effort/non-blocking,
-    // that part of the original resilience is preserved).
-    const { db } = await import('@/lib/firebase');
-    const { collection, doc, runTransaction, serverTimestamp } = await import('firebase/firestore');
-    const { planGroklyStockDecrements } = await import('../../_lib/inventory');
-
-    const orderRef = doc(collection(db, 'grokly_orders'), order.id);
-
-    const txResult = await runTransaction(db, async (transaction) => {
-      const existing = await transaction.get(orderRef);
-      if (existing.exists()) {
-        return { alreadyCreated: true };
-      }
-
-      const stockPlan = await planGroklyStockDecrements(transaction, db, order.items);
-      if (stockPlan.error) {
-        return { error: stockPlan.error, status: stockPlan.status };
-      }
-
-      transaction.set(orderRef, {
+    // Persist to Firestore
+    try {
+      const { db } = await import('@/lib/firebase');
+      const { collection, doc, setDoc, serverTimestamp } = await import('firebase/firestore');
+      await setDoc(doc(collection(db, 'grokly_orders'), order.id), {
         ...order,
         customerEmail: customerEmail || order.customerEmail || null,
-        // Identity is derived from the verified token, never trusted from the
-        // client body, so an order can't be created under someone else's id.
-        userId: uid,
+        userId: order.userId || null,
         createdAt: serverTimestamp(),
       });
+    } catch (dbErr) {
+      console.error('[grokly/orders] Firestore write failed:', dbErr);
+      // Don't fail the request — email still goes out
+    }
 
-      for (const { ref, newQty } of stockPlan.decrements) {
-        transaction.update(ref, { stockQty: newQty });
+    if (order.userId && order.total) {
+      const reward = calculatedReward(order.total);
+
+      if (reward > 0) {
+        try {
+          await addRewards(order.userId, reward);
+          console.log(
+            `[grokly/orders] Added ₹${reward} reward to ${order.userId}`
+          );
+        } catch (rewardError) {
+          console.error('[grokly/orders] Failed to add reward:', rewardError);
+        }
       }
+    }
 
-      return { created: true };
-    });
-
-    if (txResult.error) {
-      return NextResponse.json({ error: txResult.error }, { status: txResult.status });
+    // If this is the user's first order, bundle in any pending referral gifts
+    if (order.phone) {
+      const { markFirstOrderAndFulfillGifts } = await import('@/lib/referralFulfillment');
+      markFirstOrderAndFulfillGifts({ phone: order.phone, orderId: order.id, vertical: 'grokly' }).catch(
+        (err) => console.error('[grokly/orders] Referral fulfillment failed:', err),
+      );
     }
 
     // Send order confirmation email if email is provided
@@ -179,22 +164,9 @@ export async function PATCH(request) {
     }
 
     const { db } = await import('@/lib/firebase');
-    const { doc, getDoc, setDoc } = await import('firebase/firestore');
+    const { doc, setDoc } = await import('firebase/firestore');
 
     const orderRef = doc(db, 'grokly_orders', orderId);
-
-    // The order's own status-progress simulator (GroklyContext.jsx) syncs
-    // status changes here for the order's owner — not just admins — so this
-    // checks ownership (or admin) rather than requiring admin outright.
-    const existing = await getDoc(orderRef);
-    if (!existing.exists()) {
-      return NextResponse.json({ error: 'Order not found.' }, { status: 404 });
-    }
-    const authz = await requireOwnerOrAdmin(request, existing.data().userId);
-    if (authz.error) {
-      return NextResponse.json({ error: authz.error }, { status: authz.status });
-    }
-
     await setDoc(orderRef, { status }, { merge: true });
 
     return NextResponse.json({ success: true, orderId, status }, { status: 200 });
@@ -216,24 +188,16 @@ export async function GET(request) {
     const { db } = await import('@/lib/firebase');
     const { collection, doc, getDoc, getDocs, query, orderBy, limit, where } = await import('firebase/firestore');
 
-    // Fetch single order by ID — the caller must own the order or be admin,
-    // since order ids are timestamp-based and guessable.
+    // Fetch single order by ID
     if (orderId) {
       const docSnap = await getDoc(doc(db, 'grokly_orders', orderId));
       if (!docSnap.exists()) {
         return NextResponse.json({ error: 'Order not found.' }, { status: 404 });
       }
-      const orderData = docSnap.data();
-      const authz = await requireOwnerOrAdmin(request, orderData.userId);
-      if (authz.error) {
-        return NextResponse.json({ error: authz.error }, { status: authz.status });
-      }
-      return NextResponse.json({ order: { id: docSnap.id, ...orderData } });
+      return NextResponse.json({ order: { id: docSnap.id, ...docSnap.data() } });
     }
 
-    // Fetch orders by deviceId — intentionally left public. The device id
-    // itself is the guest's capability token for this brand's local-storage
-    // cart/order identity, matching the rest of the app's guest-access model.
+    // Fetch orders by deviceId
     if (deviceId) {
       const q = query(
         collection(db, 'grokly_orders'),
@@ -247,12 +211,8 @@ export async function GET(request) {
       return NextResponse.json({ orders });
     }
 
-    // Fetch orders by userId — caller must be that user or admin.
+    // Fetch orders by userId
     if (userId) {
-      const authz = await requireOwnerOrAdmin(request, userId);
-      if (authz.error) {
-        return NextResponse.json({ error: authz.error }, { status: authz.status });
-      }
       const q = query(
         collection(db, 'grokly_orders'),
         where('userId', '==', userId),
@@ -266,13 +226,8 @@ export async function GET(request) {
       return NextResponse.json({ orders });
     }
 
-    // Fetch orders by email — admin only (email doesn't verifiably map to
-    // the caller's own token for phone-auth users).
+    // Fetch orders by email
     if (email) {
-      const authz = await requireAdmin(request);
-      if (authz.error) {
-        return NextResponse.json({ error: authz.error }, { status: authz.status });
-      }
       const q = query(
         collection(db, 'grokly_orders'),
         where('customerEmail', '==', email),
@@ -287,12 +242,6 @@ export async function GET(request) {
     }
 
     // Fetch all orders (admin — most recent 50)
-    {
-      const authz = await requireAdmin(request);
-      if (authz.error) {
-        return NextResponse.json({ error: authz.error }, { status: authz.status });
-      }
-    }
     const q = query(collection(db, 'grokly_orders'), orderBy('createdAt', 'desc'), limit(50));
     const snapshot = await getDocs(q);
     const orders = [];

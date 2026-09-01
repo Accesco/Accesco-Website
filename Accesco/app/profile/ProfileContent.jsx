@@ -28,6 +28,8 @@ import NotificationsSection from './components/NotificationsSection';
 import LanguageRegionSection from './components/LanguageRegionSection';
 import SecurityLoginSection from './components/SecurityLoginSection';
 import HelpSupportSection from './components/HelpSupportSection';
+import { getRewardBalance, addRewards } from '../../lib/rewardService';
+import { useAuth } from '../components/AuthProvider';
 
 const services = [
   {
@@ -137,7 +139,9 @@ export default function ProfileContent() {
 
   // Payment methods state — walletBalance/walletTransactions now come from
   // the real backend (see the wallet-loading effect below), not localStorage.
+  const [rewardBalance, setRewardBalance] = useState(0);
   const [walletBalance, setWalletBalance] = useState(0);
+
   const [addAmount, setAddAmount] = useState('');
   const [showAddMoney, setShowAddMoney] = useState(false);
   const [addMoneyNotice, setAddMoneyNotice] = useState('');
@@ -191,6 +195,20 @@ export default function ProfileContent() {
   // Support ticket state
   const [supportTicket, setSupportTicket] = useState({ subject: '', message: '' });
   const [ticketSent, setTicketSent] = useState(false);
+  
+  //fetches rewards balance 
+  useEffect(() => {
+  if (!user?.uid) {
+    setRewardBalance(0);
+    return;
+  }
+
+  getRewardBalance(user.uid)
+    .then(setRewardBalance)
+    .catch((error) => {
+      console.error('Failed to load rewards:', error);
+    });
+}, [user]);
 
   // Sync searchParam with activeSection
   useEffect(() => {
@@ -613,6 +631,25 @@ export default function ProfileContent() {
     }
   };
 
+  //test function for reward 
+  const testReward = async () => {
+  if (!user?.uid) {
+    alert('Please login first');
+    return;
+  }
+
+  try {
+    const newBalance = await addRewards(user.uid, 5);
+
+    setRewardBalance(newBalance);
+
+    alert(`Reward added! New balance: ₹${newBalance}`);
+  } catch (error) {
+    console.error('Reward test failed:', error);
+    alert('Reward test failed. Check console.');
+  }
+};
+
   // Password update
   const handlePasswordSubmit = (e) => {
     e.preventDefault();
@@ -667,6 +704,10 @@ export default function ProfileContent() {
                   <span>Accesco Member</span>
                 </div>
 
+                <button type="button" onClick={testReward}>
+                  Test +₹5 Reward
+                </button>
+
                 <div className="membership-main">
                   <div className="membership-identity">
                     <h2>{displayName}</h2>
@@ -711,7 +752,7 @@ export default function ProfileContent() {
                     <span>Saved addresses</span>
                   </div>
                   <div className="membership-stat">
-                    <strong>₹{walletBalance}</strong>
+                    <strong>₹{rewardBalance}</strong>
                     <span>Reward balance</span>
                   </div>
                   <div className="membership-stat account-status">
