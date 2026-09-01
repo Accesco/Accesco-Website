@@ -704,9 +704,7 @@ export default function ProfileContent() {
                   <span>Accesco Member</span>
                 </div>
 
-                <button type="button" onClick={testReward}>
-                  Test +₹5 Reward
-                </button>
+                 
 
                 <div className="membership-main">
                   <div className="membership-identity">
