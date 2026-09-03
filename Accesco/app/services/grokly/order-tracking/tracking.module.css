@@ -40,7 +40,7 @@
 
 .deliveredBadge {
   background: rgba(12, 131, 31, 0.08);
-  color: #0c831f;
+  color: #1B3A2B;
   padding: 6px 14px;
   border-radius: 99px;
   font-weight: 700;
@@ -55,7 +55,7 @@
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: #0c831f;
+  background: #1B3A2B;
   display: inline-block;
   box-shadow: 0 0 0 2px rgba(12, 131, 31, 0.25);
   animation: pulseBeacon 2s infinite;
@@ -78,7 +78,7 @@
 
 .progressBarFill {
   height: 100%;
-  background: linear-gradient(90deg, #0c831f, #15a329); /* Modern glowing gradient fill */
+  background: linear-gradient(90deg, #1B3A2B, #15a329); /* Modern glowing gradient fill */
   border-radius: 99px;
   transition: width 0.8s ease;
 }
@@ -94,7 +94,7 @@
 
 /* Premium Estimated Arrival Hero Card with High-End CSS Gradients & Soft Inner Highlights */
 .heroRiderCard {
-  background: linear-gradient(145deg, #0c831f 0%, #054a10 100%); /* Radiant premium Grokly Green Gradient */
+  background: linear-gradient(145deg, #1B3A2B 0%, #054a10 100%); /* Radiant premium Grokly Green Gradient */
   color: #ffffff;
   border-radius: 24px;
   padding: 24px;
@@ -236,7 +236,7 @@
 }
 
 .callRiderBtn {
-  background: linear-gradient(135deg, #0c831f 0%, #075c15 100%);
+  background: linear-gradient(135deg, #1B3A2B 0%, #075c15 100%);
   color: #ffffff;
   border: none;
   box-shadow: 0 6px 18px rgba(12, 131, 31, 0.25);
@@ -250,7 +250,7 @@
 
 .msgRiderBtn {
   background: #ffffff;
-  color: #0c831f;
+  color: #1B3A2B;
   border: 1.5px solid rgba(12, 131, 31, 0.3);
   box-shadow: 0 4px 12px rgba(12, 131, 31, 0.03);
 }
@@ -317,7 +317,7 @@
 }
 
 .chatSendBtn {
-  background: #0c831f;
+  background: #1B3A2B;
   color: white;
   border: none;
   border-radius: 8px;
@@ -366,7 +366,7 @@
 
 .mapLiveIndicator {
   background: rgba(12, 131, 31, 0.06);
-  color: #0c831f;
+  color: #1B3A2B;
   border: 1px solid rgba(12, 131, 31, 0.15);
   font-size: 10.5px;
   font-weight: 800;
@@ -380,7 +380,7 @@
 .greenPulseDotMini {
   width: 6px;
   height: 6px;
-  background: #0c831f;
+  background: #1B3A2B;
   border-radius: 50%;
   display: inline-block;
   animation: pulseBeacon 1.5s infinite;
@@ -414,7 +414,7 @@
   width: 24px;
   height: 24px;
   border: 2.5px solid rgba(12, 131, 31, 0.1);
-  border-top-color: #0c831f;
+  border-top-color: #1B3A2B;
   border-radius: 50%;
   animation: spin 1s linear infinite;
 }
@@ -444,10 +444,10 @@
 .bulletNodeStore {
   width: 10px;
   height: 10px;
-  background: #0c831f;
+  background: #1B3A2B;
   border-radius: 50%;
   border: 2px solid white;
-  box-shadow: 0 0 0 1px #0c831f;
+  box-shadow: 0 0 0 1px #1B3A2B;
 }
 
 .bulletNodeHome {
@@ -478,7 +478,7 @@
   margin-bottom: 24px;
 }
 
-@media (max-width: 600px) {
+@media (max-width: 768px) {
   .parallelGrid {
     grid-template-columns: 1fr;
     gap: 14px;
@@ -518,7 +518,7 @@
 }
 
 .productionVectorIcon {
-  color: #0c831f;
+  color: #1B3A2B;
 }
 
 .forgotText h2, .paymentText h2 {
@@ -537,7 +537,7 @@
 }
 
 .addItemsBtn {
-  background: linear-gradient(135deg, #0c831f 0%, #119825 100%);
+  background: linear-gradient(135deg, #1B3A2B 0%, #119825 100%);
   color: #ffffff;
   text-align: center;
   padding: 11px 14px;
@@ -578,7 +578,7 @@
 }
 
 .paySuccessState {
-  color: #0c831f;
+  color: #1B3A2B;
   font-weight: 700;
   font-size: 13.5px;
   display: flex;
@@ -627,7 +627,7 @@
 
 .tabBtnActive {
   background: rgba(12, 131, 31, 0.08);
-  color: #0c831f;
+  color: #1B3A2B;
   box-shadow: 0 2px 6px rgba(12, 131, 31, 0.05);
   border: 1.5px solid rgba(12, 131, 31, 0.18);
 }
@@ -683,7 +683,7 @@
   height: 28px;
   border-radius: 50%;
   background: rgba(12, 131, 31, 0.08);
-  border: 2.5px solid #0c831f;
+  border: 2.5px solid #1B3A2B;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -695,20 +695,20 @@
 .activePulsingCenterDot {
   width: 8px;
   height: 8px;
-  background: #0c831f;
+  background: #1B3A2B;
   border-radius: 50%;
 }
 
 .progressStepCompleted .progressBullet {
-  background: #0c831f;
-  border-color: #0c831f;
+  background: #1B3A2B;
+  border-color: #1B3A2B;
   color: white;
 }
 
 .progressStepActive .progressBullet {
   background: rgba(12, 131, 31, 0.08);
-  border-color: #0c831f;
-  color: #0c831f;
+  border-color: #1B3A2B;
+  color: #1B3A2B;
   box-shadow: 0 0 0 4px rgba(12, 131, 31, 0.15);
   animation: pulseActive 2s infinite;
 }
@@ -749,7 +749,7 @@
 
 .arrivingLabelTag {
   background: rgba(12, 131, 31, 0.08);
-  color: #0c831f;
+  color: #1B3A2B;
   border: 1px solid rgba(12, 131, 31, 0.12);
   font-size: 11.5px;
   font-weight: 700;
@@ -818,12 +818,12 @@
 .totalAmountValue {
   font-size: 20px;
   font-weight: 900;
-  color: #0c831f;
+  color: #1B3A2B;
 }
 
 .paidCheckBadge {
   background: rgba(12, 131, 31, 0.08);
-  color: #0c831f;
+  color: #1B3A2B;
   font-size: 11px;
   font-weight: 800;
   padding: 3px 10px;
@@ -904,7 +904,7 @@
 
 .successBadge {
   background: rgba(12, 131, 31, 0.08);
-  color: #0c831f;
+  color: #1B3A2B;
   border: 1px solid rgba(12, 131, 31, 0.12);
   font-size: 10.5px;
   font-weight: 800;
@@ -945,7 +945,7 @@
 }
 
 .footerShopBtn {
-  background: linear-gradient(135deg, #0c831f 0%, #075c15 100%);
+  background: linear-gradient(135deg, #1B3A2B 0%, #075c15 100%);
   color: #ffffff;
   box-shadow: 0 6px 18px rgba(12, 131, 31, 0.2);
 }

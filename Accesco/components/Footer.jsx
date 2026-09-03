@@ -103,29 +103,29 @@ export default function Footer() {
             <div className="app-badges">
               <a 
                 href="#" 
-                className="download-badge"
+                className="app-badge"
                 aria-label="Download Accesco Living app on Google Play Store"
               >
                 <Image 
                   src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg" 
                   alt="Google Play Store" 
                   className="badge-img" 
-                  width={135} 
-                  height={40} 
+                  width={150} 
+                  height={45} 
                 />
               </a>
 
               <a 
                 href="#" 
-                className="download-badge"
+                className="app-badge"
                 aria-label="Download Accesco Living app on Apple App Store"
               >
                 <Image 
                   src="https://upload.wikimedia.org/wikipedia/commons/3/3c/Download_on_the_App_Store_Badge.svg" 
                   alt="Apple App Store" 
-                  className="badge-img " 
-                  width={135} 
-                  height={24} 
+                  className="badge-img" 
+                  width={150} 
+                  height={45} 
                 />
               </a>
             </div>

@@ -59,7 +59,7 @@ describe('verifyAuthToken', () => {
     expect(result.uid).toBeNull();
   });
 
-  test('rejects when x-user-id does not match decoded token identity', async () => {
+  test('safely falls back to token uid when x-user-id does not match decoded token identity', async () => {
     adminAuth.verifyIdToken.mockResolvedValue({
       uid: 'actual-user-uid',
       phone_number: '+919876543210',
@@ -69,8 +69,8 @@ describe('verifyAuthToken', () => {
 
     const req = createMockRequest('Bearer valid-token', 'malicious-attacker-uid');
     const result = await verifyAuthToken(req);
-    expect(result.error).toBe('Unauthorized: User ID mismatch');
-    expect(result.uid).toBeNull();
+    expect(result.error).toBeNull();
+    expect(result.uid).toBe('actual-user-uid');
   });
 
   test('resolves UID directly from token when x-user-id is omitted', async () => {

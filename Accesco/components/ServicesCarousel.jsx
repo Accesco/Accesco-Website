@@ -29,9 +29,9 @@ export default function ServicesCarousel() {
 
       <div ref={scrollRef} id="services-scroll-container" className="services-grid">
         {/* Grokly */}
-        <div className="serviceCardLinkWrap">
+        <Link href="/services/grokly" className="serviceCardLinkWrap" style={{ display: 'block', textDecoration: 'none', color: 'inherit' }} aria-label="Open Grokly service page">
           <div className="service-premium-card grokly-card">
-            <div className="service-card-visual">
+            <div className="service-card-visual" style={{ cursor: 'pointer' }}>
               <Image src="/images/grokly-new2.png" alt="Grokly Groceries" fill className="serviceCardVisualImage" sizes="(max-width: 768px) 100vw, 340px" />
             </div>
             <div className="service-icon-circle">
@@ -40,15 +40,15 @@ export default function ServicesCarousel() {
             <div className="service-card-body">
               <h3 className="service-card-name">Grokly</h3>
               <p className="service-card-desc">Fresh groceries & curated essentials at your doorstep</p>
-              <Link href="/services/grokly" className="service-card-cta grokly-btn">Shop Groceries</Link>
+              <div className="service-card-cta grokly-btn">Shop Groceries</div>
             </div>
           </div>
-        </div>
+        </Link>
 
         {/* Swadishtt */}
-        <div className="serviceCardLinkWrap">
+        <Link href="/services/swadisht" className="serviceCardLinkWrap" style={{ display: 'block', textDecoration: 'none', color: 'inherit' }} aria-label="Open Swadishtt service page">
           <div className="service-premium-card swadisht-card">
-            <div className="service-card-visual">
+            <div className="service-card-visual" style={{ cursor: 'pointer' }}>
               <Image src="/images/swadisht/swadisht_logo1.JPG" alt="Swadishtt Meals" fill className="serviceCardVisualImage" sizes="(max-width: 768px) 100vw, 340px" />
             </div>
             <div className="service-icon-circle">
@@ -57,15 +57,15 @@ export default function ServicesCarousel() {
             <div className="service-card-body">
               <h3 className="service-card-name">Swadishtt</h3>
               <p className="service-card-desc">Meals made only for you!</p>
-              <Link href="/services/swadisht" className="service-card-cta swadishtt-btn">Order Food</Link>
+              <div className="service-card-cta swadishtt-btn">Order Food</div>
             </div>
           </div>
-        </div>
+        </Link>
 
         {/* InstaStyle */}
-        <div className="serviceCardLinkWrap">
+        <Link href="/services/instastyle" className="serviceCardLinkWrap" style={{ display: 'block', textDecoration: 'none', color: 'inherit' }} aria-label="Open InstaStyle service page">
           <div className="service-premium-card instastyle-card">
-            <div className="service-card-visual">
+            <div className="service-card-visual" style={{ cursor: 'pointer' }}>
               <Image src="/images/fashion-new2.png" alt="InstaStyle Fashion" fill className="serviceCardVisualImage" sizes="(max-width: 768px) 100vw, 340px" />
             </div>
             <div className="service-icon-circle">
@@ -74,10 +74,10 @@ export default function ServicesCarousel() {
             <div className="service-card-body">
               <h3 className="service-card-name">InstaStyle</h3>
               <p className="service-card-desc">Outfit ready, before you are!</p>
-              <Link href="/services/instastyle" className="service-card-cta instastyle-btn">Explore Fashion</Link>
+              <div className="service-card-cta instastyle-btn">Explore Fashion</div>
             </div>
           </div>
-        </div>
+        </Link>
       </div>
 
       <button

@@ -98,7 +98,7 @@
   gap: 14px;
   padding: 14px 20px;
   background: var(--grokly-primary-light, #f0fdf4);
-  border: 1.5px solid var(--grokly-primary, #0c831f);
+  border: 1.5px solid var(--grokly-primary, #1B3A2B);
   border-radius: 12px;
   cursor: pointer;
   transition: all var(--grokly-transition-fast, 0.2s);
@@ -106,7 +106,7 @@
 }
 
 .detectBtn:hover:not(:disabled) {
-  background: var(--grokly-primary, #0c831f);
+  background: var(--grokly-primary, #1B3A2B);
 }
 
 .detectBtn:hover .detectIcon,
@@ -124,7 +124,7 @@
 }
 
 .detectIcon {
-  color: var(--grokly-primary, #0c831f);
+  color: var(--grokly-primary, #1B3A2B);
   flex-shrink: 0;
   transition: color 0.15s ease;
 }
@@ -137,7 +137,7 @@
 .detectLabel {
   font-size: 14px;
   font-weight: 800;
-  color: var(--grokly-primary, #0c831f);
+  color: var(--grokly-primary, #1B3A2B);
   margin-bottom: 2px;
   transition: color 0.15s ease;
 }
@@ -419,7 +419,7 @@
   gap: 4px;
   font-size: 12px;
   font-weight: 600;
-  color: #0c831f;
+  color: #1B3A2B;
   background: #f0fdf4;
   padding: 4px 10px;
   border-radius: 6px;
@@ -431,7 +431,7 @@
 .timeIcon {
   width: 12px;
   height: 12px;
-  color: #0c831f;
+  color: #1B3A2B;
 }
 
 /* No Results */
@@ -568,7 +568,7 @@
   font-size: 14px;
 }
 
-@media (max-width: 992px) {
+@media (max-width: 1024px) {
   .modal {
     width: 95%;
     max-height: 92vh;

@@ -139,7 +139,7 @@ export default function GroklyCheckout() {
             email: activeUser?.email || '',
             contact: activeUser?.phone || customerDetails.phone,
           },
-          theme: { color: '#0c831f' },
+          theme: { color: '#1B3A2B' },
         });
 
         paymentDetails = {
@@ -408,8 +408,8 @@ export default function GroklyCheckout() {
           {/* Reverse Commerce: Eco-Return Section */}
           <section className={styles.section} style={{ background: '#f0fdf4', borderColor: '#86efac', borderWidth: '1.5px', borderStyle: 'solid', padding: '18px', borderRadius: '16px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
-              <RefreshCw size={18} style={{ color: '#15803d' }} />
-              <h2 style={{ color: '#15803d', fontWeight: 800, margin: 0, fontSize: '15px' }}>Reverse Commerce · Eco-Return</h2>
+              <RefreshCw size={18} style={{ color: '#12271D' }} />
+              <h2 style={{ color: '#12271D', fontWeight: 800, margin: 0, fontSize: '15px' }}>Reverse Commerce · Eco-Return</h2>
             </div>
 
             {returnItems.length === 0 ? (
@@ -423,7 +423,7 @@ export default function GroklyCheckout() {
             ) : (
               <>
                 <p style={{ fontSize: '12px', color: '#374151', margin: '0 0 10px', lineHeight: '1.5' }}>
-                  Hand over clean packaging to our rider when your order arrives and earn <strong style={{ color: '#15803d' }}>Green Points</strong> instantly!
+                  Hand over clean packaging to our rider when your order arrives and earn <strong style={{ color: '#12271D' }}>Green Points</strong> instantly!
                 </p>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '10px' }}>
                   {returnItems.map(item => (
@@ -434,12 +434,12 @@ export default function GroklyCheckout() {
                         <div style={{ fontSize: '13px', fontWeight: 700, color: '#111827' }}>{item.name}</div>
                         <div style={{ fontSize: '11px', color: '#6b7280' }}>×{item.quantity} · Reusable</div>
                       </div>
-                      <span style={{ fontSize: '12px', fontWeight: 700, color: '#16a34a' }}>+₹{item.creditsEarned || item.quantity * 10}</span>
+                      <span style={{ fontSize: '12px', fontWeight: 700, color: '#12271D' }}>+₹{item.creditsEarned || item.quantity * 10}</span>
                     </div>
                   ))}
                 </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', background: '#dcfce7', padding: '10px 14px', borderRadius: '10px', color: '#15803d', fontSize: '12px', fontWeight: 700 }}>
-                  <Leaf size={14} style={{ color: '#15803d' }} />
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', background: '#dcfce7', padding: '10px 14px', borderRadius: '10px', color: '#12271D', fontSize: '12px', fontWeight: 700 }}>
+                  <Leaf size={14} style={{ color: '#12271D' }} />
                   <span>Estimated Green Points: ₹{returnItems.reduce((s, i) => s + (i.creditsEarned || i.quantity * 10), 0)} credited on delivery</span>
                   <button onClick={() => setReturnItems([])} style={{ marginLeft: 'auto', background: 'none', border: 'none', cursor: 'pointer', fontSize: '12px', color: '#6b7280', textDecoration: 'underline' }}>Clear</button>
                 </div>

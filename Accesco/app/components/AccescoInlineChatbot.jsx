@@ -1755,20 +1755,34 @@ const [typing, setTyping] = useState(false)
     0 1px 0 rgba(255, 255, 255, 0.9) inset !important;
 }
 
-.ac-ai-preview-bubble {
-  width: 100% !important;
-  padding: 8px 12px !important;
-  background: #f8eef3 !important;
-  border-radius: 10px !important;
+.ac-ai-preview-close {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 28px;
+  height: 28px;
+
+  border: none;
+  background: transparent;
+
+  font-size: 24px;
+  font-weight: 300;
+  color: #444;
+
+  cursor: pointer;
+
+  transition: all 0.2s ease;
 }
 
-.ac-ai-preview-text {
-  margin: 0 !important;
-  max-width: 185px !important;
-  color: #101010 !important;
-  font-size: 11.5px !important;
-  line-height: 1.35 !important;
-  font-weight: 400 !important;
+.ac-ai-preview-close:hover {
+  color: #111;
+  transform: translateY(-50%) scale(1.08);
 }
 
 .ac-ai-preview-close {

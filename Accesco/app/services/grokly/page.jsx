@@ -680,7 +680,7 @@ function GroklyPageContent() {
                     before adding.
                   </p>
 
-                  <div style={{ display: "flex", gap: "12px" }}>
+                  <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: "12px" }}>
                     {Object.entries(dishes).map(([key, dish]) => {
                       const isActive = selectedDishKey === key;
                       return (
@@ -699,12 +699,12 @@ function GroklyPageContent() {
                             padding: "10px",
                             display: "flex",
                             alignItems: "center",
-                            gap: "8px",
+                            gap: "12px",
                             cursor: "pointer",
                             textAlign: "left",
                             transition:
                               "background-color var(--grokly-transition-fast), border-color var(--grokly-transition-fast)",
-                            flex: "1",
+                            width: "100%",
                             minWidth: 0,
                           }}
                           onMouseEnter={(e) => {
@@ -738,6 +738,7 @@ function GroklyPageContent() {
                                 whiteSpace: "nowrap",
                                 overflow: "hidden",
                                 textOverflow: "ellipsis",
+                                textTransform: "uppercase"
                               }}
                             >
                               {dish.name}
@@ -1608,7 +1609,7 @@ function GroklyPageContent() {
                       style={{
                         background: "none",
                         border: "none",
-                        color: "#0c831f",
+                        color: "#1B3A2B",
                         fontWeight: 700,
                         fontSize: "14px",
                         cursor: "pointer",
@@ -1715,7 +1716,7 @@ function GroklyPageContent() {
                       style={{
                         background: "none",
                         border: "none",
-                        color: "#0c831f",
+                        color: "#1B3A2B",
                         fontWeight: 700,
                         fontSize: "14px",
                         cursor: "pointer",
@@ -1832,7 +1833,7 @@ function GroklyPageContent() {
                       style={{
                         background: "none",
                         border: "none",
-                        color: "#0c831f",
+                        color: "#1B3A2B",
                         fontWeight: 700,
                         fontSize: "14px",
                         cursor: "pointer",

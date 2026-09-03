@@ -49,3 +49,48 @@ export async function redeemCode(getIdToken, userId, code) {
 
   return data;
 }
+
+export async function createWalletTopupOrder(getIdToken, userId, amount) {
+  const token = await getIdToken();
+  if (!token || !userId) throw new Error('Not authenticated');
+
+  const response = await fetch('/api/wallet/topup', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+      'x-user-id': userId,
+    },
+    body: JSON.stringify({ action: 'create_order', amount: Number(amount) }),
+  });
+
+  const data = await response.json();
+  if (!response.ok) {
+    throw new Error(data.error || 'Failed to create top-up order');
+  }
+
+  return data;
+}
+
+export async function verifyWalletTopup(getIdToken, userId, payload) {
+  const token = await getIdToken();
+  if (!token || !userId) throw new Error('Not authenticated');
+
+  const response = await fetch('/api/wallet/topup', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+      'x-user-id': userId,
+    },
+    body: JSON.stringify({ action: 'verify_payment', ...payload }),
+  });
+
+  const data = await response.json();
+  if (!response.ok) {
+    throw new Error(data.error || 'Failed to verify top-up payment');
+  }
+
+  return data;
+}
+
