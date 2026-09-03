@@ -31,18 +31,47 @@ export default function SwadishttTrackingPage() {
   const [order, setOrder] = useState(null);
 
   useEffect(() => {
-    if (typeof window === 'undefined') return;
-    const storedOrders = JSON.parse(localStorage.getItem('swadishtt-orders') || '[]');
-    const found = storedOrders.find((o) => o.id === orderId);
-    if (found) setOrder(found);
+    let cancelled = false;
+    async function loadOrder() {
+      if (!orderId) return;
+      try {
+        const res = await fetch('/api/swadishtt/orders');
+        if (res.ok) {
+          const data = await res.json();
+          const found = (Array.isArray(data.orders) ? data.orders : []).find((o) => o.id === orderId);
+          if (found && !cancelled) setOrder(found);
+        }
+      } catch (err) {
+        console.error('Failed to load tracking order:', err);
+      }
+    }
+    loadOrder();
+    return () => {
+      cancelled = true;
+    };
   }, [orderId]);
 
-  const handleAdvanceStatus = useCallback(() => {
+  const handleAdvanceStatus = useCallback(async () => {
     if (!order) return;
     const next = advanceOrderStatus(order.status || 'PENDING');
-    const updated = updateOrderStatusLocal(orderId, next);
-    if (updated) setOrder(updated);
-  }, [order, orderId]);
+    setOrder(prev => prev ? { ...prev, status: next } : prev);
+
+    try {
+      await fetch('/api/swadishtt/orders/update-status', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          orderId,
+          newStatus: next,
+          customerEmail: order.customerEmail || order.delivery?.email || currentUser?.email,
+          customerName: order.customerName || order.delivery?.name || currentUser?.name,
+          orderData: order,
+        }),
+      });
+    } catch (e) {
+      console.error('Failed to sync status update:', e);
+    }
+  }, [order, orderId, currentUser]);
 
   if (!order) {
     return (

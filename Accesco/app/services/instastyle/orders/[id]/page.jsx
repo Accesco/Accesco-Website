@@ -20,7 +20,7 @@ export default function InstaStyleOrderDetailPage() {
   // this no longer re-reads/prefers localStorage over it.
   useEffect(() => {
     const found = (contextOrders || []).find(o => o.id === orderId);
-    setOrder(found);
+    setOrder(found || null);
     setIsLoading(false);
   }, [orderId, contextOrders]);
 

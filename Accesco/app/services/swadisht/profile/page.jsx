@@ -266,10 +266,8 @@ export default function SwadishttProfilePage() {
   }, [user]);
 
   useEffect(() => {
-    try {
-      const location = JSON.parse(
-        localStorage.getItem('userLocation') || '{}'
-      );
+    if (user?.selectedLocation) {
+      const location = user.selectedLocation;
       setAddress({
         address:
           location.fullAddress ||
@@ -280,46 +278,30 @@ export default function SwadishttProfilePage() {
         city: location.city || '',
         pincode: location.pincode || location.postalCode || '',
       });
-    } catch (error) {
-      console.error(error);
     }
 
-    const loadLocalOrders = () => {
+    async function loadOrders() {
       try {
-        const existingOrders = JSON.parse(
-          localStorage.getItem(ORDERS_KEY) || '[]'
-        );
-        setOrders(Array.isArray(existingOrders) ? existingOrders : []);
+        let authHeaders = {};
+        if (user?.uid) {
+          const token = await getIdToken();
+          if (token) authHeaders = { Authorization: `Bearer ${token}`, 'x-user-id': user.uid };
+        }
+        const queryParam = user?.uid
+          ? `userId=${encodeURIComponent(user.uid)}`
+          : user?.email
+          ? `email=${encodeURIComponent(user.email)}`
+          : '';
+        const res = await fetch(`/api/swadishtt/orders${queryParam ? `?${queryParam}` : ''}`, { headers: authHeaders });
+        if (res.ok) {
+          const data = await res.json();
+          setOrders(Array.isArray(data.orders) ? data.orders : []);
+        }
       } catch (error) {
         console.error(error);
       }
-    };
-
-    // Backend-driven for authenticated users — same reasoning as
-    // services/swadisht/orders/page.jsx: prefers the real order list from
-    // /api/swadishtt/orders over this browser's local mirror.
-    if (user?.uid) {
-      (async () => {
-        try {
-          const token = await getIdToken();
-          const res = await fetch(`/api/swadishtt/orders?userId=${encodeURIComponent(user.uid)}`, {
-            headers: token ? { Authorization: `Bearer ${token}`, 'x-user-id': user.uid } : {},
-          });
-          if (res.ok) {
-            const data = await res.json();
-            if (Array.isArray(data.orders)) {
-              setOrders(data.orders);
-              return;
-            }
-          }
-        } catch (error) {
-          console.warn('Swadishtt profile orders backend read failed, falling back to local:', error);
-        }
-        loadLocalOrders();
-      })();
-    } else {
-      loadLocalOrders();
     }
+    loadOrders();
   }, [user, getIdToken]);
 
   // Once signed in, the backend profile is the source of truth — overwrite the
@@ -535,18 +517,19 @@ export default function SwadishttProfilePage() {
       }
     }
 
-    localStorage.setItem(
-      'userLocation',
-      JSON.stringify({
-        fullAddress: nextAddress.address,
-        formattedAddress: nextAddress.address,
-        displayAddress: nextAddress.address,
-        area: nextAddress.address.split(',')[0]?.trim() || '',
-        city: nextAddress.city,
-        pincode: nextAddress.pincode,
-        postalCode: nextAddress.pincode,
-      })
-    );
+    if (user?.uid) {
+      await updateUserFieldsInFirebase(user.uid, {
+        selectedLocation: {
+          fullAddress: nextAddress.address,
+          formattedAddress: nextAddress.address,
+          displayAddress: nextAddress.address,
+          area: nextAddress.address.split(',')[0]?.trim() || '',
+          city: nextAddress.city,
+          pincode: nextAddress.pincode,
+          postalCode: nextAddress.pincode,
+        },
+      });
+    }
 
     setAddress(nextAddress);
     setEditAddress(false);

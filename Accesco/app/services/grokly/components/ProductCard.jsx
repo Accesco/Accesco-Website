@@ -11,6 +11,9 @@ import Image from 'next/image';
 import { Zap, Star, Sparkles, Heart } from 'lucide-react';
 import styles from './ProductCard.module.css';
 import { useCart } from '../contexts/GroklyContext';
+import { useAuth } from '@/app/components/AuthProvider';
+import { db } from '@/lib/firebase';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
 
 /**
  * Generate star rating string
@@ -143,29 +146,42 @@ function ProductCard({ product }) {
   }, [product.id, product.image, product.category]);
 
   // Wishlist state
+  const { user, uid } = useAuth();
   const [isWishlisted, setIsWishlisted] = useState(false);
 
   useEffect(() => {
-    try {
-      const stored = localStorage.getItem('grokly_wishlist');
-      if (stored) {
-        const list = JSON.parse(stored);
-        setIsWishlisted(list.some(item => item.id === product.id));
-      }
-    } catch (e) { /* noop */ }
-  }, [product.id]);
+    const currentId = user?.uid || uid;
+    if (!currentId) return;
 
-  const toggleWishlist = (e) => {
+    const checkWishlist = async () => {
+      try {
+        const snap = await getDoc(doc(db, 'grokly_wishlists', currentId));
+        if (snap.exists()) {
+          const list = snap.data()?.items || [];
+          setIsWishlisted(list.some(item => item.id === product.id));
+        }
+      } catch (e) { /* noop */ }
+    };
+    checkWishlist();
+  }, [product.id, user, uid]);
+
+  const toggleWishlist = async (e) => {
     e.stopPropagation();
+    const currentId = user?.uid || uid;
+    if (!currentId) return;
+
     try {
-      const stored = localStorage.getItem('grokly_wishlist');
-      let list = stored ? JSON.parse(stored) : [];
+      const snap = await getDoc(doc(db, 'grokly_wishlists', currentId));
+      let list = snap.exists() ? (snap.data()?.items || []) : [];
       if (isWishlisted) {
         list = list.filter(item => item.id !== product.id);
       } else {
-        list.push({ id: product.id });
+        list.push({ id: product.id, name: product.name, price: product.price, image: product.image });
       }
-      localStorage.setItem('grokly_wishlist', JSON.stringify(list));
+      await setDoc(doc(db, 'grokly_wishlists', currentId), {
+        items: list,
+        updatedAt: Date.now(),
+      }, { merge: true });
       setIsWishlisted(!isWishlisted);
     } catch (e) { /* noop */ }
   };

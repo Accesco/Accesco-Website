@@ -125,7 +125,9 @@ function buildDonutGradient(breakdown) {
   return `conic-gradient(${stops.join(', ')})`;
 }
 
-
+function getSavedUserName() {
+  return 'User';
+}
 
 function XpmStatusBar() {
   return (

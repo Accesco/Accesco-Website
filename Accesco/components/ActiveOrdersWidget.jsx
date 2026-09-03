@@ -2,73 +2,66 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { useAuth } from '../app/components/AuthProvider';
+import { useAuth } from '@/app/components/AuthProvider';
 
 const VENTURE_ROUTES = {
   Grokly: { api: '/api/grokly/orders', path: '/services/grokly/order-tracking' },
   Swadishtt: { api: '/api/swadishtt/orders', path: '/services/swadisht/order-tracking' },
   InstaStyle: { api: '/api/instastyle/orders', path: '/services/instastyle/order-tracking' },
 };
-const VENTURE_LOCAL_KEYS = {
-  Grokly: 'grokly_orders',
-  Swadishtt: 'swadishtt-orders',
-  InstaStyle: 'instastyle_orders',
-};
 
 export default function ActiveOrdersWidget({ venture } = {}) {
+  const { user, uid, getIdToken } = useAuth();
   const [activeOrders, setActiveOrders] = useState([]);
   const router = useRouter();
-  const { user: authUser, getIdToken } = useAuth();
 
   useEffect(() => {
-    const loadFromLocalStorage = () => {
-      try {
-        const ventures = venture ? [venture] : Object.keys(VENTURE_LOCAL_KEYS);
-        const combined = ventures.flatMap((v) => {
-          const raw = localStorage.getItem(VENTURE_LOCAL_KEYS[v]);
-          const orders = raw ? JSON.parse(raw) : [];
-          return orders.map((o) => ({ ...o, venture: v, path: VENTURE_ROUTES[v].path }));
-        });
-        setActiveOrders(combined.filter((o) => o.status !== 'DELIVERED'));
-      } catch (error) {
-        console.error('Error loading active orders:', error);
-      }
-    };
+    const currentIdentifier = user?.uid || uid;
+    if (!currentIdentifier && !user?.email) return;
 
-    // Backend-driven for authenticated users — queries each relevant
-    // vertical's own order API by userId instead of only ever reading
-    // whatever's cached in this browser's localStorage, so this widget
-    // reflects orders placed on any device. Falls back to the local mirror
-    // for guests or if the fetch fails.
+    let cancelled = false;
+
     const loadActiveOrders = async () => {
-      if (!authUser?.uid) {
-        loadFromLocalStorage();
-        return;
-      }
       try {
-        const token = await getIdToken();
-        const headers = token ? { Authorization: `Bearer ${token}`, 'x-user-id': authUser.uid } : {};
+        let authHeaders = {};
+        if (user?.uid) {
+          const token = await getIdToken();
+          if (token) authHeaders = { Authorization: `Bearer ${token}`, 'x-user-id': user.uid };
+        }
+
+        const queryParam = user?.uid
+          ? `userId=${encodeURIComponent(user.uid)}`
+          : user?.email
+          ? `email=${encodeURIComponent(user.email)}`
+          : `userId=${encodeURIComponent(currentIdentifier)}`;
+
         const ventures = venture ? [venture] : Object.keys(VENTURE_ROUTES);
 
         const results = await Promise.all(
           ventures.map((v) =>
-            fetch(`${VENTURE_ROUTES[v].api}?userId=${encodeURIComponent(authUser.uid)}`, { headers })
+            fetch(`${VENTURE_ROUTES[v].api}?${queryParam}`, { headers: authHeaders })
               .then((res) => (res.ok ? res.json() : { orders: [] }))
               .then((data) => (data.orders || []).map((o) => ({ ...o, venture: v, path: VENTURE_ROUTES[v].path })))
               .catch(() => [])
           )
         );
-        setActiveOrders(results.flat().filter((o) => o.status !== 'DELIVERED'));
+
+        const combined = results.flat().filter((o) => o.status !== 'DELIVERED');
+        if (!cancelled) {
+          setActiveOrders(combined);
+        }
       } catch (error) {
-        console.warn('Active orders backend read failed, falling back to local:', error);
-        loadFromLocalStorage();
+        console.error('Error loading active orders:', error);
       }
     };
 
     loadActiveOrders();
-    const interval = setInterval(loadActiveOrders, 30000);
-    return () => clearInterval(interval);
-  }, [venture, authUser, getIdToken]);
+    const interval = setInterval(loadActiveOrders, 15000);
+    return () => {
+      cancelled = true;
+      clearInterval(interval);
+    };
+  }, [venture, user, uid, getIdToken]);
 
   if (activeOrders.length === 0) return null;
 

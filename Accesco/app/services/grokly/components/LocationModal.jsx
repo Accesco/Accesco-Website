@@ -281,24 +281,8 @@ export default function LocationModal() {
       setDetectedLocation(locationData);
       
       if (autoSelect && isAccuracyAcceptable) {
-        updateLocation(locationData.name);
+        updateLocation(locationData);
         closeLocationModal();
-      }
-
-      if (isAccuracyAcceptable) {
-        const rawPayload = locationData?.raw || {};
-        localStorage.setItem(
-          "userLocation",
-          JSON.stringify({
-            ...rawPayload,
-            latitude: locationData.coords.latitude,
-            longitude: locationData.coords.longitude,
-            fullAddress: locationData.fullAddress,
-            displayAddress: locationData.name,
-            gpsAccuracyMeters: locationData.coords.accuracy,
-            timestamp: new Date().toISOString(),
-          })
-        );
       }
     } catch (error) {
       if (error.code === 1 || error.message?.toLowerCase().includes("denied") || error.message?.toLowerCase().includes("permission")) {
@@ -318,40 +302,14 @@ export default function LocationModal() {
       return;
     }
 
-    try {
-      const stored = localStorage.getItem("userLocation");
-      if (stored) {
-        let parsed = null;
-        try { parsed = JSON.parse(stored); } catch (e) { return; }
-        
-        const storedLatitude = parsed?.latitude ?? parsed?.lat;
-        const storedLongitude = parsed?.longitude ?? parsed?.lon;
-        
-        if (storedLatitude && storedLongitude) {
-          setMapCenter({ lat: Number(storedLatitude), lng: Number(storedLongitude) });
-        }
-      }
-    } catch (e) {}
-
     if (autoDetectAttemptedRef.current) return;
     autoDetectAttemptedRef.current = true;
-    detectLocation({ autoSelect: false }); // Changed to false so map stays open for user verification
+    detectLocation({ autoSelect: false }); // stays open for user verification
   }, [detectLocation, isLocationModalOpen]);
 
   const handleUseDetectedLocation = () => {
     if (!detectedLocation) return;
-    try {
-      const existing = localStorage.getItem("userLocation");
-      const parsedExisting = existing ? JSON.parse(existing) : {};
-      localStorage.setItem("userLocation", JSON.stringify({
-        ...parsedExisting,
-        displayAddress: detectedLocation.name,
-        fullAddress: detectedLocation.fullAddress || detectedLocation.name,
-        latitude: detectedLocation?.coords?.latitude,
-        longitude: detectedLocation?.coords?.longitude,
-      }));
-    } catch (e) {}
-    updateLocation(detectedLocation.name);
+    updateLocation(detectedLocation);
     closeLocationModal();
   };
 

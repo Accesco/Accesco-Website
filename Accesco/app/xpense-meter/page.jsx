@@ -170,9 +170,9 @@ function buildDonutGradient(breakdown) {
   return `conic-gradient(from -90deg, ${stops.join(", ")})`;
 }
 
-/* --------------------------------------------------------------- helpers */
-
-
+function getSavedUserName() {
+  return "User";
+}
 
 /* Builds a smooth curve through the trend points using Catmull-Rom → cubic
    bezier. Coordinates are in a 0-100 space so the SVG can stretch freely. */

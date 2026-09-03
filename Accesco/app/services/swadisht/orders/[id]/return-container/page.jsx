@@ -326,15 +326,6 @@ export default function SwadishttReturnContainerPage() {
         status: 'scheduled',
       };
 
-      const previousReturns = JSON.parse(
-        localStorage.getItem('sw_container_returns') || '[]'
-      );
-
-      localStorage.setItem(
-        'sw_container_returns',
-        JSON.stringify([...previousReturns, returnRequest])
-      );
-
       const headers = { 'Content-Type': 'application/json' };
       if (user?.uid) {
         const token = await getIdToken();
@@ -343,6 +334,7 @@ export default function SwadishttReturnContainerPage() {
           headers['x-user-id'] = user.uid;
         }
       }
+
       await fetch(
         `/api/swadishtt/orders/${orderId}/return-container`,
         {

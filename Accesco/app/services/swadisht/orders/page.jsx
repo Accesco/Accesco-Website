@@ -9,7 +9,6 @@ import { useSwadishtt } from '../contexts/SwadishttContext';
 import { useAuth } from '../../../components/AuthProvider';
 import styles from './orders.module.css';
 
-const ORDERS_STORAGE_KEY = 'swadishtt-orders';
 
 const FILTERS = [
   { key: 'all', label: 'All Orders' },
@@ -166,48 +165,43 @@ export default function SwadishttOrdersPage() {
   // reading the same-browser localStorage mirror — which is what left this
   // page unable to show orders placed on another device.
   useEffect(() => {
-    if (typeof window === 'undefined') return;
-
-    const loadLocalFallback = () => {
+    let cancelled = false;
+    async function fetchOrders() {
       try {
-        const raw = localStorage.getItem(ORDERS_STORAGE_KEY);
-        if (raw) {
-          const parsed = JSON.parse(raw);
-          setOrders(Array.isArray(parsed) ? parsed : []);
+        let authHeaders = {};
+        if (authUser?.uid) {
+          const token = await getIdToken();
+          if (token) authHeaders = { Authorization: `Bearer ${token}`, 'x-user-id': authUser.uid };
         }
-      } catch (error) {
-        console.error('Error reading Swadishtt orders:', error);
-      }
-    };
 
-    const loadOrders = async () => {
-      if (!authUser?.uid) {
-        loadLocalFallback();
-        setHydrated(true);
-        return;
-      }
-      try {
-        const token = await getIdToken();
-        const res = await fetch(`/api/swadishtt/orders?userId=${encodeURIComponent(authUser.uid)}`, {
-          headers: token ? { Authorization: `Bearer ${token}`, 'x-user-id': authUser.uid } : {},
-        });
+        const queryParam = authUser?.uid
+          ? `userId=${encodeURIComponent(authUser.uid)}`
+          : authUser?.email
+          ? `email=${encodeURIComponent(authUser.email)}`
+          : user?.email
+          ? `email=${encodeURIComponent(user.email)}`
+          : '';
+
+        const res = await fetch(`/api/swadishtt/orders${queryParam ? `?${queryParam}` : ''}`, { headers: authHeaders });
         if (res.ok) {
           const data = await res.json();
-          if (Array.isArray(data.orders)) {
-            setOrders(data.orders);
-            setHydrated(true);
-            return;
+          if (!cancelled) {
+            setOrders(Array.isArray(data.orders) ? data.orders : []);
           }
         }
       } catch (error) {
-        console.warn('Swadishtt orders backend read failed, falling back to local:', error);
+        console.error('Error fetching Swadishtt orders:', error);
+      } finally {
+        if (!cancelled) {
+          setHydrated(true);
+        }
       }
-      loadLocalFallback();
-      setHydrated(true);
+    }
+    fetchOrders();
+    return () => {
+      cancelled = true;
     };
-
-    loadOrders();
-  }, [authUser, getIdToken]);
+  }, [authUser, user, getIdToken]);
 
   const filteredOrders = orders.filter((o) => matchesFilter(o, activeFilter));
 

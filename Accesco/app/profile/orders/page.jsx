@@ -2,48 +2,81 @@
 
 import { useState, useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
+import { useAuth } from '@/app/components/AuthProvider';
 import styles from './orders.module.css';
 
 export default function UnifiedOrdersPage() {
   const router = useRouter();
+  const { user, uid, getIdToken } = useAuth();
   const [allOrders, setAllOrders] = useState([]);
   const [filter, setFilter] = useState('all');
   const [sortBy, setSortBy] = useState('date-desc');
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const loadOrders = () => {
+    const currentIdentifier = user?.uid || uid;
+    if (!currentIdentifier && !user?.email) {
+      setIsLoading(false);
+      return;
+    }
+
+    let cancelled = false;
+
+    const loadOrders = async () => {
       setIsLoading(true);
       try {
-        // Load from all three sources
-        const groklyRaw = localStorage.getItem('grokly_orders');
-        const swadishttRaw = localStorage.getItem('swadishtt-orders');
-        const instastyleRaw = localStorage.getItem('instastyle_orders');
+        let authHeaders = {};
+        if (user?.uid || uid) {
+          const token = await getIdToken();
+          if (token) {
+            authHeaders = {
+              Authorization: `Bearer ${token}`,
+              'x-user-id': user?.uid || uid,
+            };
+          }
+        }
 
-        const groklyOrders = groklyRaw ? JSON.parse(groklyRaw) : [];
-        const swadishttOrders = swadishttRaw ? JSON.parse(swadishttRaw) : [];
-        const instastyleOrders = instastyleRaw ? JSON.parse(instastyleRaw) : [];
+        const queryParam = user?.uid
+          ? `userId=${encodeURIComponent(user.uid)}`
+          : user?.email
+          ? `email=${encodeURIComponent(user.email)}`
+          : `userId=${encodeURIComponent(currentIdentifier)}`;
 
-        // Combine all orders
+        const [groklyRes, swadishttRes, instastyleRes] = await Promise.allSettled([
+          fetch(`/api/grokly/orders?${queryParam}`, { headers: authHeaders }).then(r => r.ok ? r.json() : { orders: [] }),
+          fetch(`/api/swadishtt/orders?${queryParam}`, { headers: authHeaders }).then(r => r.ok ? r.json() : { orders: [] }),
+          fetch(`/api/instastyle/orders?${queryParam}`, { headers: authHeaders }).then(r => r.ok ? r.json() : { orders: [] }),
+        ]);
+
+        const groklyOrders = groklyRes.status === 'fulfilled' ? (groklyRes.value?.orders || []) : [];
+        const swadishttOrders = swadishttRes.status === 'fulfilled' ? (swadishttRes.value?.orders || []) : [];
+        const instastyleOrders = instastyleRes.status === 'fulfilled' ? (instastyleRes.value?.orders || []) : [];
+
         const combined = [
           ...groklyOrders.map(o => ({ ...o, venture: 'Grokly' })),
           ...swadishttOrders.map(o => ({ ...o, venture: 'Swadishtt' })),
           ...instastyleOrders.map(o => ({ ...o, venture: 'InstaStyle' }))
         ];
 
-        setAllOrders(combined);
+        if (!cancelled) {
+          setAllOrders(combined);
+        }
       } catch (error) {
         console.error('Error loading combined orders:', error);
       } finally {
-        setIsLoading(false);
+        if (!cancelled) {
+          setIsLoading(false);
+        }
       }
     };
 
     loadOrders();
-    // Refresh every 30 seconds to update statuses
     const interval = setInterval(loadOrders, 30000);
-    return () => clearInterval(interval);
-  }, []);
+    return () => {
+      cancelled = true;
+      clearInterval(interval);
+    };
+  }, [user, uid, getIdToken]);
 
   const filteredOrders = useMemo(() => {
     let filtered = allOrders;

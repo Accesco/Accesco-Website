@@ -13,86 +13,71 @@ const VENTURE_ROUTES = {
   Swadishtt: '/api/swadishtt/orders',
   InstaStyle: '/api/instastyle/orders',
 };
-const VENTURE_LOCAL_KEYS = {
-  Grokly: 'grokly_orders',
-  Swadishtt: 'swadishtt-orders',
-  InstaStyle: 'instastyle_orders',
-};
 
 export default function OrderDetailPage() {
   const params = useParams();
   const searchParams = useSearchParams();
   const router = useRouter();
-  const { user: authUser, getIdToken } = useAuth();
+  const { user: authUser, uid, getIdToken } = useAuth();
   const [order, setOrder] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
   const orderId = params.id;
   const venture = searchParams.get('venture');
 
-  // Backend-driven: queries the real order from whichever vertical's API
-  // has it. Checks all three when venture isn't known — some existing
-  // callers (e.g. components/ActiveOrdersWidget.jsx's "Details" button)
-  // link here without a ?venture= param, so this no longer depends on it
-  // being present to find the order. Falls back to the local per-vertical
-  // mirror only if unauthenticated or nothing was found on the backend.
   useEffect(() => {
-    const loadFromLocalStorage = () => {
-      const keysToTry = venture && VENTURE_LOCAL_KEYS[venture]
-        ? [VENTURE_LOCAL_KEYS[venture]]
-        : Object.values(VENTURE_LOCAL_KEYS);
-
-      for (const storageKey of keysToTry) {
-        try {
-          const raw = localStorage.getItem(storageKey);
-          if (!raw) continue;
-          const orders = JSON.parse(raw);
-          const found = (Array.isArray(orders) ? orders : []).find(o => o.id === orderId);
-          if (found) {
-            const matchedVenture = Object.keys(VENTURE_LOCAL_KEYS).find((v) => VENTURE_LOCAL_KEYS[v] === storageKey);
-            setOrder({ ...found, venture: found.venture || matchedVenture });
-            return;
-          }
-        } catch (error) {
-          console.error('Error loading order details:', error);
-        }
-      }
-    };
+    let cancelled = false;
 
     const loadOrder = async () => {
       setIsLoading(true);
 
-      if (authUser?.uid) {
-        try {
+      const currentId = authUser?.uid || uid;
+      try {
+        let authHeaders = {};
+        if (authUser?.uid) {
           const token = await getIdToken();
-          const headers = token ? { Authorization: `Bearer ${token}`, 'x-user-id': authUser.uid } : {};
-          const venturesToTry = venture && VENTURE_ROUTES[venture] ? [venture] : Object.keys(VENTURE_ROUTES);
+          if (token) authHeaders = { Authorization: `Bearer ${token}`, 'x-user-id': authUser.uid };
+        }
 
-          const results = await Promise.all(
-            venturesToTry.map((v) =>
-              fetch(`${VENTURE_ROUTES[v]}?id=${encodeURIComponent(orderId)}`, { headers })
-                .then((res) => (res.ok ? res.json() : null))
-                .then((data) => (data?.order ? { ...data.order, venture: v } : null))
-                .catch(() => null)
-            )
-          );
-          const found = results.find(Boolean);
-          if (found) {
-            setOrder(found);
-            setIsLoading(false);
-            return;
-          }
-        } catch (error) {
-          console.warn('Order backend read failed, falling back to local:', error);
+        const venturesToTry = venture && VENTURE_ROUTES[venture] ? [venture] : Object.keys(VENTURE_ROUTES);
+
+        const results = await Promise.all(
+          venturesToTry.map(async (v) => {
+            try {
+              const queryParam = currentId ? `&userId=${encodeURIComponent(currentId)}` : '';
+              const res = await fetch(`${VENTURE_ROUTES[v]}?id=${encodeURIComponent(orderId)}${queryParam}`, { headers: authHeaders });
+              if (res.ok) {
+                const data = await res.json();
+                if (data?.order) return { ...data.order, venture: v };
+                if (Array.isArray(data?.orders)) {
+                  const found = data.orders.find((o) => o.id === orderId);
+                  if (found) return { ...found, venture: v };
+                }
+              }
+            } catch (e) {
+              return null;
+            }
+            return null;
+          })
+        );
+        const found = results.find(Boolean);
+        if (!cancelled) {
+          setOrder(found || null);
+        }
+      } catch (error) {
+        console.warn('Order backend read failed:', error);
+      } finally {
+        if (!cancelled) {
+          setIsLoading(false);
         }
       }
-
-      loadFromLocalStorage();
-      setIsLoading(false);
     };
 
     loadOrder();
-  }, [orderId, venture, authUser, getIdToken]);
+    return () => {
+      cancelled = true;
+    };
+  }, [orderId, venture, authUser, uid, getIdToken]);
 
   if (isLoading) return <div className={styles.container}>Loading...</div>;
   if (!order) return <div className={styles.container}>Order not found</div>;

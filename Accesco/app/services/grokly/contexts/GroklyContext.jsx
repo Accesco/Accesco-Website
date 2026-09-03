@@ -2,31 +2,17 @@
 
 import { createContext, useContext, useState, useEffect, useMemo, useRef } from 'react';
 import { useAuth } from '../../../components/AuthProvider';
-import { db } from '@/lib/firebase';
-import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { db, auth } from '@/lib/firebase';
+import { doc, getDoc, setDoc, onSnapshot } from 'firebase/firestore';
 import { updateUserFieldsInFirebase, updateWalletBalanceInFirebase } from '@/lib/userService';
 
 const GroklyContext = createContext();
 
-const CART_STORAGE_KEY = 'grokly_cart';
-const ORDERS_STORAGE_KEY = 'grokly_orders';
-const LOCATION_STORAGE_KEY = 'userLocation';
-const DEVICE_ID_KEY = 'grokly_device_id';
-
-function getDeviceId() {
-  if (typeof window === 'undefined') return null;
-  let deviceId = localStorage.getItem(DEVICE_ID_KEY);
-  if (!deviceId) {
-    deviceId = `device_${Math.random().toString(36).slice(2, 10)}_${Date.now()}`;
-    localStorage.setItem(DEVICE_ID_KEY, deviceId);
-  }
-  return deviceId;
+function getGroklyUid(user) {
+  return user?.uid || auth?.currentUser?.uid || null;
 }
 
-// Calls the authenticated Grokly cart backend (app/api/grokly/cart/**),
-// mirroring contexts/CartContext.jsx's cartFetch helper for InstaStyle.
-// Returns null (instead of throwing) when there's no live session, so
-// callers can fall back to local-only behaviour for guests.
+// Calls the authenticated Grokly cart backend (app/api/grokly/cart/**)
 async function groklyCartFetch(getIdToken, uid, path, options = {}) {
   const token = await getIdToken();
   if (!token) return null;
@@ -49,72 +35,9 @@ async function groklyCartFetch(getIdToken, uid, path, options = {}) {
 }
 
 export function GroklyProvider({ children }) {
-  const { user, getIdToken } = useAuth();
-  // Hydrate synchronously from localStorage to avoid empty flashes during navigation
-  const readInitialCart = () => {
-    if (typeof window === 'undefined') return {};
-    try {
-      const savedCart = localStorage.getItem(CART_STORAGE_KEY);
-      if (!savedCart) return {};
-      const parsed = JSON.parse(savedCart);
-      if (Array.isArray(parsed)) {
-        const mapped = parsed.reduce((acc, item) => {
-          if (!item) return acc;
-          if (typeof item === 'string') {
-            acc[item] = (acc[item] || 0) + 1;
-          } else if (item.id) {
-            acc[item.id] = (acc[item.id] || 0) + (item.quantity || 1);
-          }
-          return acc;
-        }, {});
-        return mapped;
-      } else if (parsed && typeof parsed === 'object') {
-        return parsed;
-      }
-    } catch (e) {
-      // ignore and fallthrough to empty
-    }
-    return {};
-  };
+  const { user, uid, getIdToken } = useAuth();
 
-  const readInitialOrders = () => {
-    if (typeof window === 'undefined') return [];
-    try {
-      const savedOrders = localStorage.getItem(ORDERS_STORAGE_KEY);
-      if (!savedOrders) return [];
-      const parsedOrders = JSON.parse(savedOrders);
-      if (Array.isArray(parsedOrders)) return parsedOrders;
-      if (parsedOrders && typeof parsedOrders === 'object') {
-        if (parsedOrders.id) return [parsedOrders];
-        const vals = Object.values(parsedOrders);
-        if (vals.length && (vals[0].id || vals[0].status || vals[0].timestamp)) return vals;
-      }
-    } catch (e) {}
-    return [];
-  };
-
-  const readInitialLocation = () => {
-    if (typeof window === 'undefined') return 'Koramangala';
-    try {
-      const savedLocation = localStorage.getItem(LOCATION_STORAGE_KEY);
-      if (!savedLocation) return 'Koramangala';
-      let parsedLocation = null;
-      try { parsedLocation = JSON.parse(savedLocation); } catch (e) { return savedLocation; }
-      const resolvedName =
-        parsedLocation?.displayAddress ||
-        (parsedLocation?.city
-          ? `${parsedLocation.city}${parsedLocation?.state || parsedLocation?.region ? `, ${parsedLocation.state || parsedLocation.region}` : ''}`
-          : '') ||
-        parsedLocation?.name ||
-        parsedLocation?.address ||
-        parsedLocation?.fullAddress;
-      return resolvedName || 'Koramangala';
-    } catch (e) {
-      return 'Koramangala';
-    }
-  };
-
-  const [cart, setCart] = useState({}); // starts empty for SSR safety
+  const [cart, setCart] = useState({});
   const [orders, setOrders] = useState([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [location, setLocation] = useState('Koramangala');
@@ -123,24 +46,42 @@ export function GroklyProvider({ children }) {
   // Reverse Commerce: items user has selected to return packaging for
   const [returnItems, setReturnItems] = useState([]);
 
-  // Track hydration — skip the first write so we never overwrite the real cart with an empty SSR value
+  // Track hydration — skip the first write so we never overwrite the real cart with an empty initial value
   const isHydrated = useRef(false);
+
+  // Sync user location if available from Firestore profile
+  useEffect(() => {
+    if (user?.selectedLocation) {
+      const loc = user.selectedLocation;
+      const resolvedName =
+        loc?.displayAddress ||
+        (loc?.city ? `${loc.city}${loc?.state || loc?.region ? `, ${loc.state || loc.region}` : ''}` : '') ||
+        loc?.name ||
+        loc?.address ||
+        loc?.fullAddress;
+      if (resolvedName) {
+        setLocation(resolvedName);
+      }
+    }
+  }, [user]);
 
   // Fetch orders from backend Firestore on mount/user change
   useEffect(() => {
     const fetchOrders = async () => {
+      const currentIdentifier = user?.uid || uid || auth?.currentUser?.uid;
+      if (!currentIdentifier) return;
+
       try {
-        const devId = getDeviceId();
-        let queryParam = '';
+        let queryParam = user?.uid
+          ? `userId=${encodeURIComponent(user.uid)}`
+          : user?.email
+          ? `email=${encodeURIComponent(user.email)}`
+          : `userId=${encodeURIComponent(currentIdentifier)}`;
+
         let authHeaders = {};
-        if (user) {
-          queryParam = user.uid ? `userId=${encodeURIComponent(user.uid)}` : `email=${encodeURIComponent(user.email)}`;
+        if (user?.uid) {
           const token = await getIdToken();
           if (token) authHeaders = { Authorization: `Bearer ${token}`, 'x-user-id': user.uid };
-        } else if (devId) {
-          queryParam = `deviceId=${encodeURIComponent(devId)}`;
-        } else {
-          return;
         }
 
         const res = await fetch(`/api/grokly/orders?${queryParam}`, { headers: authHeaders });
@@ -155,123 +96,54 @@ export function GroklyProvider({ children }) {
       }
     };
     fetchOrders();
-  }, [user]);
+  }, [user, uid, getIdToken]);
 
-  // Show location modal if no location is saved (cart & orders already loaded via useState lazy initializer above)
+  // Fetch cart from Firestore on mount/user change with onSnapshot for real-time sync
   useEffect(() => {
-    try {
-      const savedLocation = localStorage.getItem(LOCATION_STORAGE_KEY);
-      if (!savedLocation) {
-        setIsLocationModalOpen(true);
-        return;
-      }
-      let parsedLocation = null;
-      try {
-        parsedLocation = JSON.parse(savedLocation);
-      } catch (e) {
-        // Plain string stored — already resolved in readInitialLocation, no modal needed
-        return;
-      }
-      const resolvedName =
-        parsedLocation?.displayAddress ||
-        (parsedLocation?.city
-          ? `${parsedLocation.city}${parsedLocation?.state || parsedLocation?.region ? `, ${parsedLocation.state || parsedLocation.region}` : ''}`
-          : '') ||
-        parsedLocation?.name ||
-        parsedLocation?.address ||
-        parsedLocation?.fullAddress;
-      if (!resolvedName) setIsLocationModalOpen(true);
-    } catch (e) {
-      console.error('Failed to check location for Grokly:', e);
+    const identifier = user?.uid || uid || auth?.currentUser?.uid;
+    if (!identifier) {
+      isHydrated.current = true;
+      setCartHydrated(true);
+      return;
     }
-  }, []);
 
-  // Fetch cart on mount/user change. Authenticated users' cart now comes
-  // from the real backend (app/api/grokly/cart) instead of the client-SDK
-  // grokly_carts/{identifier} mirror — that mirror had no server-side
-  // ownership enforcement of its own (identifier was just whatever the
-  // client claimed), and this is also what makes the cart visible to the
-  // unified /cart page's product/price lookups going forward. Guests keep
-  // the existing device-id-based Firestore mirror unchanged.
-  useEffect(() => {
-    const loadCart = async () => {
-      // 1. Always load from localStorage first so the user has immediate access to local items
-      const initialLocal = readInitialCart();
-      if (initialLocal && Object.keys(initialLocal).length > 0) {
-        setCart(initialLocal);
-      }
-
-      if (!user?.uid) {
-        // Guest: unchanged behaviour — Firestore-by-device mirror via the client SDK.
-        const identifier = getDeviceId();
-        if (identifier) {
-          try {
-            const docSnap = await getDoc(doc(db, 'grokly_carts', identifier));
-            if (docSnap.exists()) {
-              const remoteCart = docSnap.data()?.cart;
-              if (remoteCart && typeof remoteCart === 'object') {
-                setCart(remoteCart);
-              }
-            }
-          } catch (err) {
-            console.error('[GroklyContext] Failed to load guest cart from Firestore:', err);
+    const cartDocRef = doc(db, 'grokly_carts', identifier);
+    const unsubscribe = onSnapshot(
+      cartDocRef,
+      (docSnap) => {
+        if (docSnap.exists()) {
+          const remoteCart = docSnap.data()?.cart;
+          if (remoteCart && typeof remoteCart === 'object' && !Array.isArray(remoteCart)) {
+            setCart(remoteCart);
           }
         }
         isHydrated.current = true;
         setCartHydrated(true);
-        return;
+      },
+      (err) => {
+        console.error('[GroklyContext] Failed to listen to cart from Firestore:', err);
+        isHydrated.current = true;
+        setCartHydrated(true);
       }
+    );
 
-      try {
-        const data = await groklyCartFetch(getIdToken, user.uid, '', { method: 'GET' });
-        if (data) {
-          const remoteCart = {};
-          (data.items || []).forEach((item) => {
-            remoteCart[item.productId] = item.quantity;
-          });
-          setCart(remoteCart);
-          isHydrated.current = true;
-          setCartHydrated(true);
-          return;
-        }
-      } catch (err) {
-        console.warn('[GroklyContext] Cart backend read failed, falling back to local:', err?.message || err);
-      }
+    return () => unsubscribe();
+  }, [user, uid]);
 
-      isHydrated.current = true;
-      setCartHydrated(true);
-    };
+  // Save cart to Firestore whenever modified
+  const saveCartToFirestore = async (newCart) => {
+    const identifier = user?.uid || uid || auth?.currentUser?.uid;
+    if (!identifier) return;
 
-    loadCart();
-  }, [user, getIdToken]);
-
-  // Save cart to localStorage always. Authenticated users' carts are kept
-  // in sync with the real backend via the granular add/remove/update calls
-  // below (see addToCart/decrementQuantity/removeFromCart/clearCart), so
-  // the bulk grokly_carts Firestore mirror here is guest-only now.
-  useEffect(() => {
-    if (!isHydrated.current) return;
-
-    localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cart));
-
-    if (user?.uid) return;
-
-    const saveCartToFirestore = async () => {
-      const identifier = user?.email || getDeviceId();
-      if (!identifier) return;
-
-      try {
-        await setDoc(doc(db, 'grokly_carts', identifier), {
-          cart,
-          updatedAt: Date.now(),
-        });
-      } catch (err) {
-        console.error('[GroklyContext] Failed to save cart to Firestore:', err);
-      }
-    };
-
-    saveCartToFirestore();
-  }, [cart, user]);
+    try {
+      await setDoc(doc(db, 'grokly_carts', identifier), {
+        cart: newCart,
+        updatedAt: Date.now(),
+      });
+    } catch (err) {
+      console.error('[GroklyContext] Failed to save cart to Firestore:', err);
+    }
+  };
 
   const cartCount = useMemo(() => {
     return Object.values(cart).reduce((sum, qty) => sum + qty, 0);
@@ -279,18 +151,16 @@ export function GroklyProvider({ children }) {
 
   const getProductQuantity = (productId) => cart[productId] || 0;
 
-  // Every mutator below updates local state immediately (optimistic — the
-  // UI never waits on a network round trip), then fires a best-effort
-  // background sync to the real backend cart for authenticated users,
-  // mirroring contexts/CartContext.jsx's addToCart/removeFromCart/
-  // updateQuantity pattern for InstaStyle. Failures are logged, not
-  // reverted — the eventual next hydration (see the fetch effect above)
-  // reconciles from the backend's own state.
+  // Optimistic local state update + Firestore update + authenticated backend sync
   const addToCart = (productId, quantity = 1) => {
-    setCart(prev => ({
-      ...prev,
-      [productId]: (prev[productId] || 0) + quantity
-    }));
+    setCart(prev => {
+      const next = {
+        ...prev,
+        [productId]: (prev[productId] || 0) + quantity
+      };
+      saveCartToFirestore(next);
+      return next;
+    });
 
     if (user?.uid) {
       groklyCartFetch(getIdToken, user.uid, '/items', {
@@ -301,17 +171,21 @@ export function GroklyProvider({ children }) {
   };
 
   const incrementQuantity = (productId) => addToCart(productId, 1);
+
   const decrementQuantity = (productId) => {
     let nextQuantity = 0;
     setCart(prev => {
       const newQty = (prev[productId] || 0) - 1;
       nextQuantity = Math.max(0, newQty);
+      let next;
       if (newQty <= 0) {
-        const next = { ...prev };
+        next = { ...prev };
         delete next[productId];
-        return next;
+      } else {
+        next = { ...prev, [productId]: newQty };
       }
-      return { ...prev, [productId]: newQty };
+      saveCartToFirestore(next);
+      return next;
     });
 
     if (user?.uid) {
@@ -329,6 +203,7 @@ export function GroklyProvider({ children }) {
     setCart(prev => {
       const next = { ...prev };
       delete next[productId];
+      saveCartToFirestore(next);
       return next;
     });
 
@@ -340,6 +215,7 @@ export function GroklyProvider({ children }) {
 
   const clearCart = () => {
     setCart({});
+    saveCartToFirestore({});
 
     if (user?.uid) {
       groklyCartFetch(getIdToken, user.uid, '', { method: 'DELETE' })
@@ -362,11 +238,13 @@ export function GroklyProvider({ children }) {
 
     setLocation(locationText);
 
-    if (user?.uid) {
+    const targetUid = user?.uid || uid || auth?.currentUser?.uid;
+    if (targetUid) {
       const locObject = typeof newLocation === 'object' ? newLocation : { displayAddress: locationText, fullAddress: locationText };
-      await updateUserFieldsInFirebase(user.uid, { selectedLocation: locObject });
+      await updateUserFieldsInFirebase(targetUid, { selectedLocation: locObject });
     }
   };
+
   const openLocationModal = () => setIsLocationModalOpen(true);
   const closeLocationModal = () => setIsLocationModalOpen(false);
 
@@ -382,24 +260,20 @@ export function GroklyProvider({ children }) {
   }, [isCartOpen, isLocationModalOpen]);
 
   const placeOrder = (orderDetails) => {
+    const targetUid = orderDetails.userId || user?.uid || uid || auth?.currentUser?.uid || null;
     const newOrder = {
       id: `GRK-${Date.now()}`,
       status: 'PLACED',
       timestamp: new Date().toISOString(),
       venture: 'Grokly',
-      userId: orderDetails.userId || user?.uid || null,
+      userId: targetUid,
       customerEmail: orderDetails.customerEmail || user?.email || null,
       customerName: orderDetails.customerName || user?.name || user?.displayName || 'Accesco Customer',
-      deviceId: getDeviceId(),
       ...orderDetails
     };
     setOrders(prev => [newOrder, ...prev]);
-    setCart({});
+    clearCart();
 
-    // Persist to backend (non-blocking — local state already updated). Order
-    // creation now requires auth (see app/api/grokly/orders), so this is
-    // wrapped in an async IIFE to await the id token without making
-    // placeOrder itself async — it still returns newOrder synchronously.
     const emailToUse = newOrder.customerEmail;
     (async () => {
       const headers = { 'Content-Type': 'application/json' };
@@ -441,11 +315,6 @@ export function GroklyProvider({ children }) {
           if (nextStatus !== order.status) {
             hasChanged = true;
             
-            // Sync status to backend. This simulated-progress sync is the
-            // order's own owner updating their own order, so it needs the
-            // same owner auth headers as everywhere else (see
-            // app/api/grokly/orders PATCH, which checks the caller owns the
-            // order rather than requiring admin).
             (async () => {
               const headers = { 'Content-Type': 'application/json' };
               if (user?.uid) {
@@ -462,15 +331,14 @@ export function GroklyProvider({ children }) {
               });
             })().catch(err => console.error('[GroklyContext] Backend status sync failed:', err));
 
-            // If the status transitioned to DELIVERED, and they opted to return packaging,
-            // let's credit their green credits in localStorage!
             if (nextStatus === 'DELIVERED') {
               if (order.packagingOptIn && order.packagingBagsToReturn > 0) {
                 try {
                   const bags = parseInt(order.packagingBagsToReturn) || 0;
                   const creditsEarned = bags * 10;
-                  if (user?.uid && creditsEarned > 0) {
-                    updateWalletBalanceInFirebase(user.uid, (user.walletBalance || 0) + creditsEarned, {
+                  const targetUid = user?.uid || uid;
+                  if (targetUid && creditsEarned > 0) {
+                    updateWalletBalanceInFirebase(targetUid, (user?.walletBalance || 0) + creditsEarned, {
                       id: `ECO-${Date.now()}`,
                       title: 'Packaging Return Bonus',
                       type: 'credit',
@@ -494,7 +362,7 @@ export function GroklyProvider({ children }) {
     }, 5000);
     
     return () => clearInterval(interval);
-  }, [orders]);
+  }, [orders, user, uid, getIdToken]);
 
   return (
     <GroklyContext.Provider value={{

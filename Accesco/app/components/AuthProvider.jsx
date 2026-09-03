@@ -2,9 +2,9 @@
 
 import { createContext, useContext, useEffect, useState, useCallback } from 'react'
 import { auth, db } from '../../lib/firebase'
-import { onAuthStateChanged, signOut as firebaseSignOut } from 'firebase/auth'
+import { onAuthStateChanged, signOut as firebaseSignOut, signInAnonymously } from 'firebase/auth'
 import { doc, getDoc } from 'firebase/firestore'
-import { getUserProfileData, migrateLocalStorageToFirebase } from '../../lib/userService'
+import { getUserProfileData, migrateLocalStorageToFirebase, purgeLegacyLocalStorage } from '../../lib/userService'
 
 const AuthContext = createContext(null)
 
@@ -32,6 +32,10 @@ async function getUserDoc(docId) {
 // both forms are tried before giving up. api/_lib/auth.js accepts either form
 // as the x-user-id header for the same reason.
 async function loadUserProfile(firebaseUser) {
+  if (firebaseUser.isAnonymous) {
+    return null
+  }
+
   const isGoogleLinked = firebaseUser.providerData.some(
     (p) => p.providerId === 'google.com',
   )
@@ -88,12 +92,34 @@ export function AuthProvider({ children }) {
   }, [user?.uid]);
 
   useEffect(() => {
+    let isMounted = true;
+
+    // Safely purge legacy application-owned localStorage on client boot
+    purgeLegacyLocalStorage();
+
     // Firebase Auth (and Firestore for the profile) is the single source of
     // truth for who's logged in — no local caching of the session.
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
-      setFirebaseUser(currentUser)
+      if (!isMounted) return;
 
       if (!currentUser) {
+        // Automatically establish an anonymous user session if no user is signed in
+        try {
+          await signInAnonymously(auth);
+          return;
+        } catch (anonErr) {
+          console.warn('Anonymous auth initialization warning:', anonErr?.message || anonErr);
+          setFirebaseUser(null);
+          setUser(null);
+          setUserData(null);
+          setLoading(false);
+          return;
+        }
+      }
+
+      setFirebaseUser(currentUser)
+
+      if (currentUser.isAnonymous) {
         setUser(null)
         setUserData(null)
         setLoading(false)
@@ -109,6 +135,7 @@ export function AuthProvider({ children }) {
       if (profile?.uid) {
         // Run safe legacy localStorage migration to Firebase
         await migrateLocalStorageToFirebase(profile.uid)
+        purgeLegacyLocalStorage()
         // Fetch authoritative Firestore profile data
         const profileData = await getUserProfileData(profile.uid)
         setUserData(profileData)
@@ -117,7 +144,10 @@ export function AuthProvider({ children }) {
       setLoading(false)
     })
 
-    return () => unsubscribe()
+    return () => {
+      isMounted = false;
+      unsubscribe();
+    }
   }, [])
 
   const getIdToken = async () => {
@@ -149,8 +179,10 @@ export function AuthProvider({ children }) {
     }
   }
 
+  const currentUid = user?.uid || firebaseUser?.uid || null;
+
   return (
-    <AuthContext.Provider value={{ user, userData, loading, signOut, signIn, getIdToken, refreshUserData }}>
+    <AuthContext.Provider value={{ user, firebaseUser, uid: currentUid, userData, loading, signOut, signIn, getIdToken, refreshUserData }}>
       {children}
     </AuthContext.Provider>
   )

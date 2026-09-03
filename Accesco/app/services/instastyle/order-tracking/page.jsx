@@ -3,6 +3,7 @@
 import { Suspense, useState, useEffect, useMemo, useRef } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useCart } from '@/contexts/CartContext';
+import { useAuth } from '@/app/components/AuthProvider';
 import styles from './tracking.module.css';
 import Link from 'next/link';
 import { mockRiderData } from '@/lib/mockRiderData';
@@ -78,6 +79,7 @@ function OrderTrackingContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const { orders, updateOrderStatus } = useCart();
+  const { user } = useAuth();
   
   const orderId = searchParams.get('id');
   const eta = searchParams.get('eta') || '12';
@@ -85,21 +87,16 @@ function OrderTrackingContent() {
   const order = useMemo(() => orders.find(o => o.id === orderId), [orders, orderId]);
 
   // Resolve the real delivery ("Your door") coordinates: prefer the order's saved
-  // coordinates, fall back to the currently detected location, then a default.
+  // coordinates, fall back to user's selected location, then a default.
   const getHomeLatLng = () => {
     if (order?.deliveryLat && order?.deliveryLng) {
       return [order.deliveryLat, order.deliveryLng];
     }
-    try {
-      const raw = typeof window !== 'undefined' ? localStorage.getItem('userLocation') : null;
-      if (raw) {
-        const loc = JSON.parse(raw);
-        const lat = parseFloat(loc.latitude ?? loc.lat);
-        const lng = parseFloat(loc.longitude ?? loc.lng ?? loc.lon);
-        if (!Number.isNaN(lat) && !Number.isNaN(lng)) return [lat, lng];
-      }
-    } catch (e) {
-      console.error('Failed to resolve delivery coordinates:', e);
+    if (user?.selectedLocation) {
+      const loc = user.selectedLocation;
+      const lat = parseFloat(loc.latitude ?? loc.lat);
+      const lng = parseFloat(loc.longitude ?? loc.lng ?? loc.lon);
+      if (!Number.isNaN(lat) && !Number.isNaN(lng)) return [lat, lng];
     }
     return [12.9592, 77.7610]; // fallback
   };

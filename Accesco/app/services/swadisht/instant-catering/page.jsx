@@ -301,8 +301,6 @@ function PackageCard({ pkg, onBook }) {
   );
 }
 
-
-
 // ── Main Page Implementation ──
 export default function InstantCateringPage() {
   const [selectedPkg, setSelectedPkg] = useState(null);

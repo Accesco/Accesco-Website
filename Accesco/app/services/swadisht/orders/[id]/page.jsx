@@ -7,7 +7,6 @@ import SwadishttHeader from '../../components/SwadishttHeader';
 import { useAuth } from '../../../../components/AuthProvider';
 import styles from './order-detail.module.css';
 
-const ORDERS_STORAGE_KEY = 'swadishtt-orders';
 
 function formatDate(value) {
   if (!value) return 'Date unavailable';
@@ -49,56 +48,46 @@ export default function SwadishttOrderDetailPage() {
   // /api/swadishtt/orders?id=..., falling back to the local mirror only if
   // unauthenticated or the fetch fails.
   useEffect(() => {
-    const loadLocalFallback = () => {
-      try {
-        const raw = localStorage.getItem(ORDERS_STORAGE_KEY);
-        if (raw) {
-          const parsed = JSON.parse(raw);
-          const found = (Array.isArray(parsed) ? parsed : []).find(o => o.id === orderId);
-          setOrder(found || null);
-        }
-      } catch (e) {
-        console.error('Error loading order:', e);
-      }
-    };
+    setIsLoading(true);
+    let cancelled = false;
 
-    const loadOrder = async () => {
-      setIsLoading(true);
-      if (!authUser?.uid) {
-        loadLocalFallback();
-        setIsLoading(false);
-        return;
-      }
+    async function loadOrder() {
       try {
-        const token = await getIdToken();
-        const res = await fetch(`/api/swadishtt/orders?id=${encodeURIComponent(orderId)}`, {
-          headers: token ? { Authorization: `Bearer ${token}`, 'x-user-id': authUser.uid } : {},
-        });
+        let authHeaders = {};
+        if (authUser?.uid) {
+          const token = await getIdToken();
+          if (token) authHeaders = { Authorization: `Bearer ${token}`, 'x-user-id': authUser.uid };
+        }
+
+        const queryParam = authUser?.uid
+          ? `userId=${encodeURIComponent(authUser.uid)}`
+          : authUser?.email
+          ? `email=${encodeURIComponent(authUser.email)}`
+          : '';
+
+        const res = await fetch(`/api/swadishtt/orders${queryParam ? `?${queryParam}` : ''}`, { headers: authHeaders });
         if (res.ok) {
           const data = await res.json();
-          if (data.order) {
-            setOrder(data.order);
-            setIsLoading(false);
-            return;
+          const found = (Array.isArray(data.orders) ? data.orders : []).find(o => o.id === orderId);
+          if (!cancelled) {
+            setOrder(found || null);
           }
         }
       } catch (e) {
-        console.warn('Swadishtt order backend read failed, falling back to local:', e);
+        console.error('Error loading order:', e);
+      } finally {
+        if (!cancelled) {
+          setIsLoading(false);
+        }
       }
-      loadLocalFallback();
-      setIsLoading(false);
-    };
+    }
 
     loadOrder();
-  }, [orderId, authUser, getIdToken]);
 
-  useEffect(() => {
-    // Check if container return already scheduled
-    try {
-      const returns = JSON.parse(localStorage.getItem('sw_container_returns') || '[]');
-      setContainerScheduled(returns.some(r => r.orderId === orderId));
-    } catch (_) {}
-  }, [orderId]);
+    return () => {
+      cancelled = true;
+    };
+  }, [orderId, authUser, getIdToken]);
 
   if (isLoading) {
     return (

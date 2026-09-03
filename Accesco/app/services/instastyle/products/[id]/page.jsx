@@ -37,29 +37,7 @@ export default function ProductDetailPage() {
         setSelectedColor(productData.colors[0].name);
       }
     } else {
-      // 1. Fallback to localStorage check first
-      if (typeof window !== "undefined") {
-        try {
-          const saved = localStorage.getItem("instastyle_custom_products");
-          if (saved) {
-            const parsed = JSON.parse(saved);
-            if (Array.isArray(parsed)) {
-              const localProd = parsed.find((p) => p.id === params.id);
-              if (localProd) {
-                setProduct(localProd);
-                if (localProd.colors && localProd.colors.length > 0) {
-                  setSelectedColor(localProd.colors[0].name);
-                }
-                return;
-              }
-            }
-          }
-        } catch (error) {
-          console.error("Error reading product from localStorage:", error);
-        }
-      }
-
-      // 2. Fetch from Firebase Firestore backend database
+      // Fetch from Firebase Firestore backend database
       const fetchProductFromFirestore = async () => {
         try {
           const { db } = await import("@/lib/firebase");

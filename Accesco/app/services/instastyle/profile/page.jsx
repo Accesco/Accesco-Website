@@ -8,8 +8,7 @@ import { products } from '@/lib/mockData';
 import ActiveOrdersWidget from '@/components/ActiveOrdersWidget';
 import Select from '@/components/instastyle/Select';
 import { useAuth } from '../../../components/AuthProvider';
-
-const PROFILE_STORAGE_KEY = 'instastyle_profile';
+import { updateUserFieldsInFirebase } from '@/lib/userService';
 
 const initialProfile = {
   fullName: 'Accesco Customer',
@@ -52,7 +51,7 @@ const accountMoments = [
 
 export default function ProfilePage() {
   const { cart, wishlist } = useCart();
-  const { user } = useAuth();
+  const { user, uid } = useAuth();
   const [profile, setProfile] = useState(initialProfile);
   const [saveStatus, setSaveStatus] = useState('idle');
   const [circularCredits, setCircularCredits] = useState(120);
@@ -67,47 +66,50 @@ export default function ProfilePage() {
       100
   );
 
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-    try {
-      let next = { ...initialProfile };
-      const raw = localStorage.getItem(PROFILE_STORAGE_KEY);
-      if (raw) {
-        const parsed = JSON.parse(raw);
-        next = { ...next, ...parsed };
-      }
-      setProfile(next);
-
-      // Read circular credits
-      const credits = localStorage.getItem('instastyle_circular_credits');
-      if (credits) setCircularCredits(Number(credits));
-    } catch (error) {
-      console.warn('Profile storage read failed:', error);
-    }
-  }, []);
-
-  // Overlay the Firebase-backed auth identity once it's available.
+  // Overlay the Firebase-backed auth identity & style profile once available.
   useEffect(() => {
     if (!user) return;
-    setProfile((prev) => ({
-      ...prev,
-      fullName: user.name?.trim() || prev.fullName,
-      phone: user.phone?.trim() || prev.phone,
-      email: user.email?.trim() || prev.email,
-    }));
+    if (user.instastyleProfile) {
+      setProfile((prev) => ({
+        ...prev,
+        ...user.instastyleProfile,
+        fullName: user.name?.trim() || user.instastyleProfile.fullName || prev.fullName,
+        phone: user.phone?.trim() || user.instastyleProfile.phone || prev.phone,
+        email: user.email?.trim() || user.instastyleProfile.email || prev.email,
+      }));
+    } else {
+      setProfile((prev) => ({
+        ...prev,
+        fullName: user.name?.trim() || prev.fullName,
+        phone: user.phone?.trim() || prev.phone,
+        email: user.email?.trim() || prev.email,
+      }));
+    }
+
+    if (user.walletBalance !== undefined) {
+      setCircularCredits(Number(user.walletBalance));
+    }
   }, [user]);
 
   const updateField = (field, value) => {
     setProfile((prev) => ({ ...prev, [field]: value }));
   };
 
-  const saveProfile = () => {
+  const saveProfile = async () => {
     try {
-      localStorage.setItem(PROFILE_STORAGE_KEY, JSON.stringify(profile));
+      const targetUid = user?.uid || uid;
+      if (targetUid) {
+        await updateUserFieldsInFirebase(targetUid, {
+          name: profile.fullName,
+          phone: profile.phone,
+          email: profile.email,
+          instastyleProfile: profile,
+        });
+      }
       setSaveStatus('saved');
       setTimeout(() => setSaveStatus('idle'), 1500);
     } catch (error) {
-      console.warn('Profile storage write failed:', error);
+      console.warn('Profile write failed:', error);
       setSaveStatus('error');
       setTimeout(() => setSaveStatus('idle'), 2000);
     }

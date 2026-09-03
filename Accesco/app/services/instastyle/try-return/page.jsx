@@ -2,7 +2,8 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useAuth } from '../../../components/AuthProvider';
+import { useAuth } from '@/app/components/AuthProvider';
+import { updateWalletBalanceInFirebase } from '@/lib/userService';
 import styles from './try-return.module.css';
 
 const RETURNABLE_ITEMS = [
@@ -104,8 +105,8 @@ const RETURN_REASONS = [
 ];
 
 export default function InstaStyleTryReturnPage() {
+  const { user, uid, getIdToken } = useAuth();
   const router = useRouter();
-  const { user, getIdToken } = useAuth();
   const [selectedItem, setSelectedItem] = useState(RETURNABLE_ITEMS[0]);
   const [selectedReason, setSelectedReason] = useState('size');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -136,26 +137,21 @@ export default function InstaStyleTryReturnPage() {
         }),
       }).catch(e => console.error(e));
 
-      // Add circular credits locally
-      const current = Number(localStorage.getItem('instastyle_circular_credits') || '1918');
-      const newCredits = current + selectedItem.price;
-      localStorage.setItem('instastyle_circular_credits', newCredits.toString());
-
-      // Log activity
-      try {
-        const rawActs = localStorage.getItem('instastyle_activity_log');
-        const acts = rawActs ? JSON.parse(rawActs) : [];
+      // Credit circular credits in Firebase
+      const targetUid = user?.uid || uid;
+      if (targetUid) {
+        const currentBal = Number(user?.walletBalance || 0);
+        const newCredits = currentBal + selectedItem.price;
         const newAct = {
           id: `act_tr_${Date.now()}`,
           type: 'earned',
           title: 'Try & Return Completed',
           sub: `${selectedItem.brand} ${selectedItem.name}`,
           amt: `+${selectedItem.price}`,
+          amount: selectedItem.price,
           date: new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }),
         };
-        localStorage.setItem('instastyle_activity_log', JSON.stringify([newAct, ...acts]));
-      } catch (e) {
-        console.error(e);
+        await updateWalletBalanceInFirebase(targetUid, newCredits, newAct);
       }
 
       setIsConfirmed(true);

@@ -13,16 +13,8 @@ export default function InstaStyleMorePage() {
   const [userName, setUserName] = useState('Priya Sharma');
 
   useEffect(() => {
-    try {
-      const storedCredits = localStorage.getItem('instastyle_circular_credits');
-      if (storedCredits) setCredits(Number(storedCredits));
-    } catch (e) {
-      console.error(e);
-    }
-  }, []);
-
-  useEffect(() => {
     if (user?.name) setUserName(user.name);
+    if (user?.walletBalance !== undefined) setCredits(Number(user.walletBalance));
   }, [user]);
 
   return (

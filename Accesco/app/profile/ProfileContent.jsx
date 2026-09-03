@@ -206,14 +206,9 @@ export default function ProfileContent() {
 
   // Load REAL data for the logged-in user directly from Firebase (userData)
   useEffect(() => {
-    const savedLocation = typeof window !== 'undefined' ? localStorage.getItem('userLocation') : null;
-    if (savedLocation) {
-      try {
-        const parsedLocation = JSON.parse(savedLocation);
-        setCity(parsedLocation?.city || parsedLocation?.displayAddress || 'Bengaluru, Karnataka');
-      } catch {
-        setCity(savedLocation);
-      }
+    const loc = userData?.selectedLocation || user?.selectedLocation;
+    if (loc) {
+      setCity(loc?.city || loc?.displayAddress || loc?.fullAddress || 'Bengaluru, Karnataka');
     }
 
     // Wallet balance/transactions and addresses are intentionally NOT read
@@ -232,16 +227,25 @@ export default function ProfileContent() {
       if (userData.currency) setSelectedCurrency(userData.currency);
     }
 
-    // Bookmarks aren't part of Firestore userData — the legacy migration in
-    // lib/userService.js never moves the per-service wishlist keys, so this
-    // stays a direct read of each service's wishlist storage.
-    const userKey = user?.uid || user?.phone || 'guest';
-    const groklyWish = JSON.parse(localStorage.getItem('grokly_wishlist') || '[]');
-    const swadishttWish = JSON.parse(localStorage.getItem('swadishtt_wishlist') || '[]');
-    const instastyleWish = JSON.parse(localStorage.getItem('instastyle_wishlist') || '[]');
-    const accescoWish = JSON.parse(localStorage.getItem(`accesco_bookmarks_${userKey}`) || '[]');
-    setBookmarks([...groklyWish, ...swadishttWish, ...instastyleWish, ...accescoWish]);
-  }, [user, userData]);
+    const userKey = user?.uid || uid;
+    if (userKey) {
+      (async () => {
+        try {
+          const { db } = await import('../../lib/firebase');
+          const { doc, getDoc } = await import('firebase/firestore');
+          const [groklySnap, instaSnap] = await Promise.all([
+            getDoc(doc(db, 'grokly_wishlists', userKey)),
+            getDoc(doc(db, 'instastyle_wishlists', userKey)),
+          ]);
+          const groklyWish = groklySnap.exists() ? (groklySnap.data()?.items || []) : [];
+          const instastyleWish = instaSnap.exists() ? (instaSnap.data()?.items || []) : [];
+          setBookmarks([...groklyWish, ...instastyleWish]);
+        } catch (e) {
+          console.error('Error loading bookmarks from Firestore:', e);
+        }
+      })();
+    }
+  }, [user, uid, userData]);
 
   // Referral coins are earned against the phone number a user verified
   // (referralProfiles is keyed by phone digits — see

@@ -373,22 +373,7 @@ export default function AddSKUPage() {
       timestamp: Date.now(),
     };
 
-    // 1. Optimistic local save
-    if (typeof window !== "undefined") {
-      try {
-        const saved = localStorage.getItem("instastyle_custom_products");
-        const list = saved ? JSON.parse(saved) : [];
-        list.push(finalProduct);
-        localStorage.setItem(
-          "instastyle_custom_products",
-          JSON.stringify(list),
-        );
-      } catch (err) {
-        console.error("localStorage save failed:", err);
-      }
-    }
-
-    // 2. Persist via server-side API route (writes to Firestore)
+    // Persist via server-side API route (writes to Firestore)
     try {
       const res = await fetch("/api/instastyle/products", {
         method: "POST",

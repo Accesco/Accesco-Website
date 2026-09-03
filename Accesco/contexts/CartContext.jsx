@@ -1,33 +1,15 @@
 'use client';
 
 import { createContext, useContext, useState, useEffect, useRef } from 'react';
-import { db } from '@/lib/firebase';
-import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { db, auth } from '@/lib/firebase';
+import { doc, getDoc, setDoc, onSnapshot } from 'firebase/firestore';
 import { useAuth } from '@/app/components/AuthProvider';
 
 const CartContext = createContext();
 
-const CART_STORAGE_KEY = 'instastyle_cart';
-const WISHLIST_STORAGE_KEY = 'instastyle_wishlist';
-const ORDERS_STORAGE_KEY = 'instastyle_orders';
-const INVENTORY_STORAGE_KEY = 'instastyle_inventory';
-const DEVICE_ID_KEY = 'instastyle_device_id';
-
-function getDeviceId() {
-  if (typeof window === 'undefined') return null;
-
-  let deviceId = localStorage.getItem(DEVICE_ID_KEY);
-  if (!deviceId) {
-    deviceId = `device_${Math.random().toString(36).slice(2, 10)}_${Date.now()}`;
-    localStorage.setItem(DEVICE_ID_KEY, deviceId);
-  }
-  return deviceId;
-}
-
 // Calls the authenticated InstaStyle cart backend (app/api/instastyle/cart/**).
 // Returns null (instead of throwing) when there is no live Firebase session,
-// so callers can fall back to local-only behaviour exactly like the rest of
-// this file already does for cloud sync.
+// so callers can fall back to Firestore behaviour.
 async function cartFetch(getIdToken, uid, path, options = {}) {
   const token = await getIdToken();
   if (!token) return null;
@@ -69,7 +51,7 @@ function backendItemToCartEntry(item) {
 }
 
 export function CartProvider({ children }) {
-  const { user, getIdToken } = useAuth();
+  const { user, uid, getIdToken } = useAuth();
   const [cart, setCart] = useState([]);
   const [wishlist, setWishlist] = useState([]);
   const [orders, setOrders] = useState([]);
@@ -77,38 +59,24 @@ export function CartProvider({ children }) {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const isHydrated = useRef(false);
 
-  // Load data from localStorage/Firestore on mount/user change
+  // Load data from Firestore on mount/user change
   useEffect(() => {
-    if (typeof window === 'undefined') return;
-
-    const loadData = (key, setter) => {
-      const saved = localStorage.getItem(key);
-      if (saved) {
-        try {
-          setter(JSON.parse(saved));
-        } catch (error) {
-          console.error(`Error loading ${key}:`, error);
-        }
-      }
-    };
-
-    loadData(WISHLIST_STORAGE_KEY, setWishlist);
-    loadData(INVENTORY_STORAGE_KEY, setInventory);
+    const currentIdentifier = user?.uid || uid || auth?.currentUser?.uid;
+    if (!currentIdentifier) return;
 
     // Hydrate orders from cloud
     const fetchOrdersFromCloud = async () => {
       try {
-        const devId = getDeviceId();
-        let queryParam = '';
+        let queryParam = user?.uid
+          ? `userId=${encodeURIComponent(user.uid)}`
+          : user?.email
+          ? `email=${encodeURIComponent(user.email)}`
+          : `userId=${encodeURIComponent(currentIdentifier)}`;
+
         let authHeaders = {};
-        if (user) {
-          queryParam = user.uid ? `userId=${encodeURIComponent(user.uid)}` : `email=${encodeURIComponent(user.email)}`;
+        if (user?.uid) {
           const token = await getIdToken();
           if (token) authHeaders = { Authorization: `Bearer ${token}`, 'x-user-id': user.uid };
-        } else if (devId) {
-          queryParam = `deviceId=${encodeURIComponent(devId)}`;
-        } else {
-          return;
         }
 
         const res = await fetch(`/api/instastyle/orders?${queryParam}`, { headers: authHeaders });
@@ -120,36 +88,28 @@ export function CartProvider({ children }) {
           }
         }
       } catch (error) {
-        console.warn('Orders cloud read fallback to local only:', error);
+        console.warn('Orders cloud read error:', error);
       }
-
-      // Fallback
-      loadData(ORDERS_STORAGE_KEY, setOrders);
     };
 
     // Hydrate cart — authenticated users read from the validated backend cart;
-    // guests keep the existing localStorage/Firestore-by-device behaviour.
+    // guests use Firestore by uid.
     const hydrateCartFromCloud = async () => {
       if (user?.uid) {
         try {
           const data = await cartFetch(getIdToken, user.uid, '', { method: 'GET' });
-          if (data) {
+          if (data && Array.isArray(data.items)) {
             setCart(data.items.map(backendItemToCartEntry));
             isHydrated.current = true;
             return;
           }
         } catch (error) {
-          console.warn('Cart backend read fallback to local only:', error?.message || error);
+          console.warn('Cart backend read error:', error?.message || error);
         }
-        loadData(CART_STORAGE_KEY, setCart);
-        isHydrated.current = true;
-        return;
       }
 
-      const identifier = user?.email || getDeviceId();
-      if (!identifier) return;
       try {
-        const snapshot = await getDoc(doc(db, 'instastyle_carts', identifier));
+        const snapshot = await getDoc(doc(db, 'instastyle_carts', currentIdentifier));
         if (snapshot.exists()) {
           const remoteCart = snapshot.data()?.cart;
           if (Array.isArray(remoteCart) && remoteCart.length > 0) {
@@ -159,20 +119,16 @@ export function CartProvider({ children }) {
           }
         }
       } catch (error) {
-        console.warn('Cart cloud read fallback to local only:', error);
+        console.warn('Cart cloud read error:', error);
       }
 
-      // Fallback
-      loadData(CART_STORAGE_KEY, setCart);
       isHydrated.current = true;
     };
 
     // Hydrate wishlist from cloud
     const hydrateWishlistFromCloud = async () => {
-      const deviceId = getDeviceId();
-      if (!deviceId) return;
       try {
-        const docSnap = await getDoc(doc(db, 'instastyle_wishlists', deviceId));
+        const docSnap = await getDoc(doc(db, 'instastyle_wishlists', currentIdentifier));
         if (docSnap.exists()) {
           const remoteItems = docSnap.data()?.items;
           if (Array.isArray(remoteItems) && remoteItems.length > 0) {
@@ -180,44 +136,35 @@ export function CartProvider({ children }) {
           }
         }
       } catch (error) {
-        console.warn('Wishlist cloud read fallback to local only:', error?.message || error);
+        console.warn('Wishlist cloud read error:', error?.message || error);
       }
     };
 
     hydrateCartFromCloud();
     hydrateWishlistFromCloud();
     fetchOrdersFromCloud();
-  }, [user, getIdToken]);
+  }, [user, uid, getIdToken]);
 
-  // Save cart to localStorage always. Authenticated users' carts are kept in
-  // sync with the backend via the granular add/remove/update calls below, so
-  // the raw Firestore mirror here is only needed as a guest fallback.
+  // Sync cart to Firestore for guest / unauthenticated sessions
   useEffect(() => {
     if (!isHydrated.current) return;
-
-    localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cart));
-
     if (user?.uid) return;
 
     const syncCart = async () => {
-      const identifier = user?.email || getDeviceId();
-      if (!identifier) return;
+      const currentIdentifier = uid || auth?.currentUser?.uid;
+      if (!currentIdentifier) return;
       try {
-        await setDoc(doc(db, 'instastyle_carts', identifier), {
+        await setDoc(doc(db, 'instastyle_carts', currentIdentifier), {
           cart,
           updatedAt: Date.now(),
         }, { merge: true });
       } catch (error) {
-        console.warn('Cart sync fallback to local only:', error);
+        console.warn('Cart sync error:', error);
       }
     };
 
     syncCart();
-  }, [cart, user]);
-
-  useEffect(() => {
-    localStorage.setItem(ORDERS_STORAGE_KEY, JSON.stringify(orders));
-  }, [orders]);
+  }, [cart, user, uid]);
 
   // ═══════════════════════════════════════════════
   // ETA & ORDER ACCEPTANCE SIMULATION
@@ -264,21 +211,16 @@ export function CartProvider({ children }) {
     return () => clearInterval(interval);
   }, [orders]);
 
+  // Sync wishlist to Firestore
   useEffect(() => {
-    localStorage.setItem(INVENTORY_STORAGE_KEY, JSON.stringify(inventory));
-  }, [inventory]);
-
-  // Save wishlist locally and sync to Firestore when available
-  useEffect(() => {
-    localStorage.setItem(WISHLIST_STORAGE_KEY, JSON.stringify(wishlist));
-
+    if (!isHydrated.current) return;
     const syncWishlist = async () => {
-      const deviceId = getDeviceId();
-      if (!deviceId) return;
+      const currentIdentifier = user?.uid || uid || auth?.currentUser?.uid;
+      if (!currentIdentifier) return;
 
       try {
         await setDoc(
-          doc(db, 'instastyle_wishlists', deviceId),
+          doc(db, 'instastyle_wishlists', currentIdentifier),
           {
             items: wishlist,
             updatedAt: Date.now(),
@@ -286,34 +228,12 @@ export function CartProvider({ children }) {
           { merge: true }
         );
       } catch (error) {
-        // Keep local wishlist as source of truth if cloud sync fails.
-        console.warn('Wishlist sync fallback to local only:', error?.message || error);
+        console.warn('Wishlist sync error:', error?.message || error);
       }
     };
 
     syncWishlist();
-  }, [wishlist]);
-
-  useEffect(() => {
-    const hydrateWishlistFromCloud = async () => {
-      const deviceId = getDeviceId();
-      if (!deviceId) return;
-
-      try {
-        const snapshot = await getDoc(doc(db, 'instastyle_wishlists', deviceId));
-        if (!snapshot.exists()) return;
-
-        const remoteItems = snapshot.data()?.items;
-        if (Array.isArray(remoteItems) && remoteItems.length > 0) {
-          setWishlist((current) => (current.length > 0 ? current : remoteItems));
-        }
-      } catch (error) {
-        console.warn('Wishlist cloud read fallback to local only:', error?.message || error);
-      }
-    };
-
-    hydrateWishlistFromCloud();
-  }, []);
+  }, [wishlist, user, uid]);
 
   // Calculate totals
   const subtotal = cart.reduce((sum, item) => {

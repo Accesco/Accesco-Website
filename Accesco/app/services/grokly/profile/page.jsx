@@ -17,6 +17,8 @@ import {
 import styles from './profile.module.css';
 import { useAuth } from '../../../components/AuthProvider';
 import { updateUserFieldsInFirebase } from '@/lib/userService';
+import { db } from '@/lib/firebase';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { fetchWallet } from '@/lib/walletService';
 import GroklyHeader from '../components/GroklyHeader';
 import MobileHeader from '../components/MobileHeader';
@@ -246,7 +248,7 @@ const INITIAL_BASKETS = [
 
 function GroklyProfileInner() {
   const { cart, cartCount, orders, addToCart, openCart, location, updateLocation, getProductQuantity, incrementQuantity, decrementQuantity } = useGrokly();
-  const { user, userData, getIdToken, signOut } = useAuth();
+  const { user, uid, userData, getIdToken, signOut } = useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -312,7 +314,6 @@ function GroklyProfileInner() {
   const [toastMessage, setToastMessage] = useState('');
   const [toastType, setToastType] = useState('success'); // success | info | danger
 
-  // Wishlist (stored in localStorage)
   const [wishlist, setWishlist] = useState([]);
   const [isMounted, setIsMounted] = useState(false);
 
@@ -320,15 +321,15 @@ function GroklyProfileInner() {
   const [recycledBags, setRecycledBags] = useState(0);
   const [ecoHistory, setEcoHistory] = useState([]);
 
-  // Load eco details from localStorage & server wallet balance
+  // Load eco details from user profile (userData when available, otherwise user)
   useEffect(() => {
-    const bags = parseInt(localStorage.getItem('grokly_recycled_bags_count') || '0');
-    const rawHist = localStorage.getItem('grokly_eco_history');
-    const hist = rawHist ? JSON.parse(rawHist) : [];
-    
-    setRecycledBags(bags);
-    setEcoHistory(hist);
-  }, []);
+    const profileData = userData || user;
+    if (profileData) {
+      setWalletBalance(profileData.walletBalance || 0);
+      setRecycledBags(profileData.recycledBags || 0);
+      setEcoHistory(profileData.walletTransactions || []);
+    }
+  }, [user, userData]);
 
   useEffect(() => {
     if (!user) return;
@@ -348,11 +349,19 @@ function GroklyProfileInner() {
   }, []);
 
   useEffect(() => {
-    try {
-      const stored = localStorage.getItem('grokly_wishlist');
-      if (stored) setWishlist(JSON.parse(stored));
-    } catch (e) { /* noop */ }
-  }, []);
+    const currentId = user?.uid || uid;
+    if (!currentId) return;
+
+    const loadWishlist = async () => {
+      try {
+        const snap = await getDoc(doc(db, 'grokly_wishlists', currentId));
+        if (snap.exists()) {
+          setWishlist(snap.data()?.items || []);
+        }
+      } catch (e) { /* noop */ }
+    };
+    loadWishlist();
+  }, [user, uid]);
 
   // User Profile
   const [profile, setProfile] = useState({
@@ -908,13 +917,16 @@ function GroklyProfileInner() {
                         const prod = getProductInfo(item.id);
                         const qty = getProductQuantity(item.id);
 
-                        const removeFromWishlist = () => {
+                        const removeFromWishlist = async () => {
+                          const currentId = user?.uid || uid;
+                          if (!currentId) return;
                           try {
-                            const stored = localStorage.getItem('grokly_wishlist');
-                            let list = stored ? JSON.parse(stored) : [];
-                            list = list.filter(i => i.id !== item.id);
-                            localStorage.setItem('grokly_wishlist', JSON.stringify(list));
-                            setWishlist(list);
+                            const updatedList = wishlist.filter(i => i.id !== item.id);
+                            setWishlist(updatedList);
+                            await setDoc(doc(db, 'grokly_wishlists', currentId), {
+                              items: updatedList,
+                              updatedAt: Date.now(),
+                            }, { merge: true });
                           } catch (e) { /* noop */ }
                         };
 

@@ -29,19 +29,12 @@ export function advanceOrderStatus(currentStatus) {
 }
 
 /**
- * Update order status in localStorage (client-side only).
+ * Update order status (in-memory helper).
  * @param {string} orderId
  * @param {string} newStatus
- * @param {string} storageKey - localStorage key for orders array
  */
-export function updateOrderStatusLocal(orderId, newStatus, storageKey = 'swadishtt-orders') {
-  if (typeof window === 'undefined') return null;
-  const orders = JSON.parse(localStorage.getItem(storageKey) || '[]');
-  const updated = orders.map((o) =>
-    o.id === orderId ? { ...o, status: newStatus, updatedAt: new Date().toISOString() } : o
-  );
-  localStorage.setItem(storageKey, JSON.stringify(updated));
-  return updated.find((o) => o.id === orderId) || null;
+export function updateOrderStatusLocal(orderId, newStatus) {
+  return { id: orderId, status: newStatus, updatedAt: new Date().toISOString() };
 }
 
 // ─── Mail Sender (Resend API) ──────────────────────────────────────────────
