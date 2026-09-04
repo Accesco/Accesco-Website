@@ -134,14 +134,23 @@ export async function placeSwadishttOrder({ items, subtotal, address, unifiedOrd
   const order = {
     id: orderId,
     status: 'CONFIRMED',
+    paymentStatus: 'SUCCESS',
     placedAt: new Date().toISOString(),
     unifiedOrderId,
     userId: user?.uid || null,
     customerEmail: address.email,
     customerName: address.name,
     ...(paymentMethod === 'cod'
-      ? { paymentMethod: 'cod' }
-      : { paymentMethod: 'razorpay', razorpayOrderId: payment.orderId, razorpayPaymentId: payment.paymentId }),
+  ? {
+      paymentMethod: 'cod',
+      paymentStatus: 'PENDING',
+    }
+  : {
+      paymentMethod: 'razorpay',
+      paymentStatus: 'SUCCESS',
+      razorpayOrderId: payment.orderId,
+      razorpayPaymentId: payment.paymentId
+    }),
     delivery: {
       name: address.name,
       phone: address.phone,

@@ -196,7 +196,7 @@ function CheckoutContent() {
 
     await postUnifiedOrderRecord({
       unifiedOrderId,
-      user,
+      user: authUser,
       getIdToken,
       address: otherAddress,
       paymentMethod,
@@ -211,7 +211,7 @@ function CheckoutContent() {
       ],
     });
 
-    await clearAllBrandCarts({ user, getIdToken });
+    await clearAllBrandCarts({ user: authUser, getIdToken });
   };
 
   const finalizeOrder = async (paymentInfo = {}, payment = null) => {
@@ -223,6 +223,7 @@ function CheckoutContent() {
       status: 'CONFIRMED',
       placedAt: new Date().toISOString(),
       paymentMethod,
+      paymentStatus: paymentMethod === 'cod' ? 'PENDING' : 'SUCCESS',
       customerEmail,
       customerName,
       ...paymentInfo,
@@ -258,15 +259,34 @@ function CheckoutContent() {
     persistOrder(nextOrder);
     setLastOrderId(orderId);
 
-    // Send confirmation email
+    // Persist the order and then send its confirmation email. Use the real
+    // Firebase auth user, not the Swadishtt context user.
     try {
-      const idToken = user?.uid && getIdToken ? await getIdToken() : null;
+      const idToken = authUser?.uid && getIdToken ? await getIdToken() : null;
+      const authHeaders = {
+        'Content-Type': 'application/json',
+        ...(idToken ? { Authorization: `Bearer ${idToken}`, 'x-user-id': authUser.uid } : {}),
+      };
+
+      if (idToken) {
+        const orderRes = await fetch('/api/swadishtt/orders', {
+          method: 'POST',
+          headers: authHeaders,
+          body: JSON.stringify({
+            order: nextOrder,
+            customerEmail,
+          }),
+        });
+
+        if (!orderRes.ok) {
+          const errorBody = await orderRes.json().catch(() => ({}));
+          console.error('Failed to persist Swadishtt order:', errorBody);
+        }
+      }
+
       const res = await fetch('/api/swadishtt/orders/update-status', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          ...(idToken ? { Authorization: `Bearer ${idToken}`, 'x-user-id': user.uid } : {}),
-        },
+        headers: authHeaders,
         body: JSON.stringify({
           orderId,
           newStatus: 'CONFIRMED',
@@ -275,8 +295,12 @@ function CheckoutContent() {
           orderData: nextOrder,
         }),
       });
-      const data = await res.json();
-      if (data.success) {
+
+      const data = await res.json().catch(() => ({}));
+
+      if (!res.ok) {
+        console.error('Confirmation email request failed:', data.error || res.statusText);
+      } else if (data.success) {
         const orders = JSON.parse(localStorage.getItem(ORDERS_STORAGE_KEY) || '[]');
         const updated = orders.map((o) =>
           o.id === orderId ? { ...o, status: 'CONFIRMED', updatedAt: new Date().toISOString() } : o
@@ -284,7 +308,7 @@ function CheckoutContent() {
         localStorage.setItem(ORDERS_STORAGE_KEY, JSON.stringify(updated));
       }
     } catch (err) {
-      console.error('Failed to trigger confirmation email:', err);
+      console.error('Failed to persist order or trigger confirmation email:', err);
     }
 
     await placeOtherStoreOrders(payment, orderId);
@@ -330,6 +354,7 @@ function CheckoutContent() {
         theme: { color: '#E23744' },
       });
       await finalizeOrder({
+        paymentStatus: 'SUCCESS',
         razorpayOrderId: payment.orderId,
         razorpayPaymentId: payment.paymentId,
       }, payment);

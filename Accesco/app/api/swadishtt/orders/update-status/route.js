@@ -39,8 +39,14 @@ export async function POST(request) {
     if (!ORDER_STATUSES[targetStatus]) {
       return NextResponse.json({ error: `Invalid status: ${targetStatus}` }, { status: 400 });
     }
+    // Razorpay orders may be confirmed only after server-side payment
+    // verification has marked them SUCCESS. COD orders are intentionally
+    // allowed with a PENDING payment status because payment is collected later.
+    const paymentMethod = String(orderData?.paymentMethod || '').toLowerCase();
+    const isCod = paymentMethod === 'cod';
+    const isPaid = orderData?.paymentStatus === 'SUCCESS';
 
-    if (targetStatus === 'CONFIRMED' && orderData?.paymentStatus !== 'SUCCESS') {
+    if (targetStatus === 'CONFIRMED' && !isPaid && !isCod) {
       return NextResponse.json(
         { error: 'Cannot send confirmation for an unverified or unpaid order.' },
         { status: 400 }

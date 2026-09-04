@@ -49,7 +49,7 @@ function ArrowRightIcon() {
 
 export default function UnifiedCheckoutPage() {
   const router = useRouter();
-  const { user, getIdToken } = useAuth();
+  const { user, userData, getIdToken } = useAuth();
 
   const [isMounted, setIsMounted] = useState(false);
   const [stores, setStores] = useState([]);
