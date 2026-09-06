@@ -1,5 +1,12 @@
 # Accesco Reverse Commerce — Project Requirement Document
 
+> **Scope update (v1, per dataset review):** InstaStyle is **deferred** — v1
+> covers Grokly + Swadisht only. The v1 model is a **binary photo-quality
+> classifier** (`selected` / `rejected`) that filters usable photos/items —
+> not full category/state/grade prediction (that taxonomy moves to a v2
+> model). Labels come from folder names; no labels.csv in v1. See
+> `phases.md` for the updated plan.
+
 ## What to Build
 An AI-powered grading service for the Accesco Reverse Commerce framework
 (Collect → Grade → Reuse / Recycle) that works across all three verticals:
@@ -34,7 +41,8 @@ Firestore records the event and the existing app surfaces the outcome
 
 ## Non-Goals
 - No LLM-based grading (YOLOv8 vision model only)
-- No multi-vertical model v1 — one classification model per vertical
+- No full grading model in v1 — v1 ships one combined binary
+  selected/rejected classifier; per-vertical grade models are v2
 - No automated food-safety sign-off — sanitization status is a hard manual gate
 - No payments processing (existing wallet/razorpay systems handle payouts)
 - No computer-vision grading of condition from seller-provided stock photos only
@@ -51,7 +59,7 @@ Firestore records the event and the existing app surfaces the outcome
 
 ## Success Metrics
 - Grading accuracy > 75% on holdout test set (v1 bar)
-- Precision on `reject` ≥ 90% (false-reuse of soiled/unsafe items is the worst failure)
+- Recall on `rejected` ≥ 90% (a soiled/unsafe item slipping through as "selected" is the worst failure)
 - Review-queue rate < 15% of graded items
 - % of returned items successfully reused/resold vs recycled (recovery rate)
 - InstaStyle resale listing creation funnel: graded → listed → sold

@@ -6,7 +6,7 @@
 - **Google Colab** for training (free GPU) + **Weights & Biases** for tracking
 - **Firebase Storage** for photo uploads; **Firestore** for events and decisions
 - **Rules engine in plain Python** (`rules.py`) — no framework, easily testable
-- Fixture-based test suite (CSV with expected decision/grade per fixture photo)
+- Fixture-based test suite (CSV with expected decision/result per fixture photo)
 - Model weights pinned by version; promote only after the suite passes
 
 ## What to Avoid
@@ -14,8 +14,8 @@
   per-image token cost or latency
 - No heavyweight models (YOLOv8x, RT-DETR large, segmentation-per-class) —
   must run on Cloud Run CPU for v1; move to GPU only if latency forces it
-- No one giant multi-vertical model — one model per vertical keeps data and
-  precision manageable
+- No one giant multi-vertical grading model — v1 is a single binary
+  selected/rejected classifier; per-vertical grading models arrive in v2
 - No auto-decision at low confidence (< 0.7) — always human review
 - No AI sign-off on food-safety — sanitization remains a manual hard gate
 - No cloud-only dependencies that block local dev (Colab for training is fine;

@@ -1,0 +1,17 @@
+# Training photos & datasets — NEVER commit (see rules.md)
+/grokly/
+/swadisht/
+/dataset/
+
+# Model weights — versioned via W&B, not git
+/models/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Env/secrets
+.env
+.env.local
